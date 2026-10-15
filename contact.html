@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Contact Us — TOEGO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin:0!important; padding:0!important; width:100%!important; max-width:100vw; overflow-x:hidden; background:#f1f3f6; font-family:'Roboto',Arial,sans-serif; color:#212121; -webkit-font-smoothing:antialiased; }
+img { max-width:100%; display:block; }
+button { font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+input, select, textarea { font:inherit; }
+a { color:inherit; text-decoration:none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display:none!important; visibility:hidden!important; }
+
+/* ---------- HEADER ---------- */
+.tg-hd { background:#2874f0; position:fixed; top:0; left:0; right:0; z-index:1000; box-shadow:0 1px 4px rgba(0,0,0,.15); width:100%; }
+.tg-hd-inner { display:flex; align-items:center; gap:10px; padding:10px 14px; height:58px; }
+.tg-hd-back { width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:#fff; border-radius:50%; flex-shrink:0; transition:background .15s; }
+.tg-hd-back:hover { background:rgba(255,255,255,.12); }
+.tg-hd-back svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.tg-hd-title { flex:1; color:#fff; font-size:17px; font-weight:700; letter-spacing:-.2px; }
+.tg-hd-actions { display:flex; gap:2px; flex-shrink:0; }
+.tg-hd-btn { width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#fff; border-radius:50%; transition:background .15s; }
+.tg-hd-btn:hover { background:rgba(255,255,255,.12); }
+.tg-hd-btn svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+/* ---------- LAYOUT ---------- */
+.tg-wrap { padding-top:58px; padding-bottom:100px; min-height:100vh; }
+.tg-container { max-width:760px; margin:0 auto; padding:12px; }
+
+/* ---------- HERO ---------- */
+.tg-hero { background:linear-gradient(135deg,#2874f0 0%,#1a5dc7 50%,#0f1729 100%); color:#fff; border-radius:14px; padding:26px 22px; margin-bottom:14px; position:relative; overflow:hidden; box-shadow:0 6px 20px rgba(40,116,240,.25); }
+.tg-hero::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(255,229,0,.20),transparent 70%); border-radius:50%; }
+.tg-hero::after { content:''; position:absolute; bottom:-80px; left:-40px; width:180px; height:180px; background:radial-gradient(circle,rgba(255,255,255,.10),transparent 70%); border-radius:50%; }
+.tg-hero-inner { position:relative; z-index:2; text-align:center; }
+.tg-hero-icon { width:64px; height:64px; background:rgba(255,255,255,.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:30px; border:2px solid rgba(255,255,255,.25); }
+.tg-hero-title { font-size:22px; font-weight:900; margin:0 0 6px; letter-spacing:-.3px; }
+.tg-hero-sub { font-size:13.5px; opacity:.9; margin:0; line-height:1.5; max-width:440px; margin-left:auto; margin-right:auto; }
+
+/* ---------- CONTACT CARDS ---------- */
+.tg-contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+@media (max-width:520px) { .tg-contact-grid { grid-template-columns:1fr; } }
+
+.tg-contact-card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 1px 4px rgba(0,0,0,.05); display:flex; align-items:center; gap:14px; transition:all .18s; cursor:pointer; text-decoration:none; color:inherit; }
+.tg-contact-card:hover { box-shadow:0 6px 18px rgba(0,0,0,.10); transform:translateY(-2px); }
+.tg-contact-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.tg-contact-icon.blue { background:linear-gradient(135deg,#eef3ff,#e0eaff); color:#2874f0; }
+.tg-contact-icon.green { background:linear-gradient(135deg,#e6f7ec,#c8e6c9); color:#1b8a3a; }
+.tg-contact-icon.purple { background:linear-gradient(135deg,#ede7f6,#d1c4e9); color:#7e57c2; }
+.tg-contact-icon.orange { background:linear-gradient(135deg,#fff3e0,#ffe0b2); color:#fb641b; }
+.tg-contact-body { flex:1; min-width:0; }
+.tg-contact-label { font-size:11px; color:#888; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
+.tg-contact-value { font-size:13.5px; font-weight:700; color:#212121; word-break:break-word; }
+.tg-contact-hint { font-size:11px; color:#888; margin-top:2px; }
+
+/* ---------- SECTION ---------- */
+.tg-sec { background:#fff; border-radius:12px; margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); overflow:hidden; }
+.tg-sec-head { padding:18px 20px 14px; border-bottom:1px solid #f1f3f6; display:flex; align-items:center; gap:10px; }
+.tg-sec-head-icon { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.tg-sec-head-icon svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.tg-sec-head-icon.blue { background:linear-gradient(135deg,#eef3ff,#e0eaff); color:#2874f0; }
+.tg-sec-title { font-size:15.5px; font-weight:800; color:#212121; letter-spacing:-.2px; }
+.tg-sec-sub { font-size:12px; color:#888; margin-top:2px; }
+
+/* ---------- TICKET FORM ---------- */
+.tg-form { padding:18px 20px 20px; }
+.tg-field { margin-bottom:14px; }
+.tg-field label { display:block; font-size:11.5px; color:#666; font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:.4px; }
+.tg-field label .rq { color:#d32f2f; }
+.tg-field input, .tg-field select, .tg-field textarea { width:100%; border:1.5px solid #e0e0e0; border-radius:10px; padding:12px 14px; font-size:14px; color:#212121; outline:none; background:#fff; transition:border-color .15s,box-shadow .15s; font-family:inherit; }
+.tg-field input:focus, .tg-field select:focus, .tg-field textarea:focus { border-color:#2874f0; box-shadow:0 0 0 3px rgba(40,116,240,.10); }
+.tg-field textarea { resize:vertical; min-height:100px; }
+
+/* Categories grid */
+.tg-cats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+@media (max-width:480px) { .tg-cats { grid-template-columns:repeat(3,1fr); } }
+.tg-cat { padding:12px 6px; border:1.5px solid #e0e0e0; border-radius:10px; background:#fff; font-size:11.5px; font-weight:700; color:#666; text-align:center; cursor:pointer; transition:all .15s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; line-height:1.3; }
+.tg-cat .em { font-size:20px; }
+.tg-cat:hover { border-color:#2874f0; color:#2874f0; }
+.tg-cat.active { border-color:#2874f0; background:#f0f5ff; color:#2874f0; box-shadow:0 0 0 3px rgba(40,116,240,.08); }
+
+/* Image upload */
+.tg-upload { border:2px dashed #c5cad3; border-radius:12px; padding:22px; text-align:center; cursor:pointer; background:#f8f9fb; transition:all .15s; }
+.tg-upload:hover { border-color:#2874f0; background:#f0f5ff; }
+.tg-upload svg { width:36px; height:36px; stroke:#999; fill:none; stroke-width:1.8; margin:0 auto 8px; }
+.tg-upload-t { font-size:13px; font-weight:700; }
+.tg-upload-d { font-size:11.5px; color:#888; margin-top:3px; }
+.tg-img-preview { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.tg-img-item { position:relative; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1.5px solid #e0e0e0; }
+.tg-img-item img { width:100%; height:100%; object-fit:cover; }
+.tg-img-rm { position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:#d32f2f; color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; font-weight:900; box-shadow:0 2px 6px rgba(0,0,0,.3); border:2px solid #fff; cursor:pointer; }
+
+/* Submit button */
+.tg-submit { width:100%; padding:15px; border-radius:10px; background:linear-gradient(135deg,#2874f0,#1a5dc7); color:#fff; font-size:15px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 18px rgba(40,116,240,.28); transition:all .15s; margin-top:8px; }
+.tg-submit:hover:not(:disabled) { filter:brightness(1.05); transform:translateY(-1px); }
+.tg-submit:disabled { opacity:.6; cursor:not-allowed; }
+.tg-submit svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+
+/* ---------- FAQ ---------- */
+.tg-faq-list { padding:0 0 8px; }
+.tg-faq-item { border-bottom:1px solid #f1f3f6; }
+.tg-faq-item:last-child { border-bottom:none; }
+.tg-faq-q { padding:16px 20px; font-size:14px; font-weight:600; color:#212121; display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; transition:background .15s; }
+.tg-faq-q:hover { background:#f8f9fb; }
+.tg-faq-q .arr { width:20px; height:20px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#2874f0; transition:transform .25s; }
+.tg-faq-q .arr svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
+.tg-faq-item.open .tg-faq-q .arr { transform:rotate(180deg); }
+.tg-faq-a { padding:0 20px; max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s ease; font-size:13.5px; color:#555; line-height:1.6; }
+.tg-faq-item.open .tg-faq-a { max-height:400px; padding:0 20px 18px; }
+
+/* ---------- WORKING HOURS ---------- */
+.tg-hours-card { background:linear-gradient(135deg,#f0fff4,#e6f7ec); border:1.5px solid #a5d6b7; border-radius:12px; padding:16px 20px; margin-bottom:14px; }
+.tg-hours-title { font-size:13px; font-weight:800; color:#1b8a3a; text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.tg-hours-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; font-size:13px; color:#333; }
+.tg-hours-row span:last-child { font-weight:800; color:#1b8a3a; }
+
+/* ---------- TOASTS ---------- */
+.tg-toasts { position:fixed; bottom:88px; left:50%; transform:translateX(-50%); z-index:99999; display:flex; flex-direction:column; gap:8px; max-width:calc(100vw - 24px); pointer-events:none; }
+.tg-toast { padding:12px 20px; background:#212121; color:#fff; font-size:13px; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.3); pointer-events:auto; font-weight:500; animation:tgToastIn .3s; }
+@keyframes tgToastIn { from { transform:translateY(20px); opacity:0; } to { transform:none; opacity:1; } }
+.tg-toast.success { background:#388e3c; }
+.tg-toast.error { background:#d32f2f; }
+.tg-toast.info { background:#2874f0; }
+
+/* ---------- BOTTOM NAV ---------- */
+.tg-bnav { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #e0e0e0; display:flex; z-index:9999; box-shadow:0 -2px 8px rgba(0,0,0,.06); padding-bottom:env(safe-area-inset-bottom,0); }
+.tg-bnav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 2px; gap:3px; font-size:10px; color:#666; font-weight:600; position:relative; transition:color .15s; }
+.tg-bnav-item.active { color:#2874f0; }
+.tg-bnav-item svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.tg-bnav-badge { position:absolute; top:4px; right:calc(50% - 20px); background:#ff6161; color:#fff; font-size:9px; font-weight:700; min-width:15px; height:15px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+
+/* ---------- SUCCESS SCREEN ---------- */
+.tg-success { position:fixed; inset:0; background:linear-gradient(160deg,#ffffff 0%,#f0f9f4 100%); z-index:999999; display:none; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:24px; overflow:hidden; }
+.tg-success.show { display:flex; }
+.tg-success-icon { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#22c55e,#16a34a); display:flex; align-items:center; justify-content:center; margin-bottom:20px; box-shadow:0 12px 40px rgba(34,197,94,.35); animation:tgPop .55s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tgPop { 0% { transform:scale(0) rotate(-45deg); } 60% { transform:scale(1.15) rotate(5deg); } 100% { transform:scale(1) rotate(0); } }
+.tg-success-icon svg { width:52px; height:52px; stroke:#fff; fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:60; stroke-dashoffset:60; animation:tgDraw .5s .35s ease forwards; }
+@keyframes tgDraw { to { stroke-dashoffset:0; } }
+.tg-success-title { font-size:23px; font-weight:900; color:#212121; margin:0 0 8px; }
+.tg-success-desc { font-size:14px; color:#666; margin:0 0 6px; max-width:380px; line-height:1.55; }
+.tg-success-id { font-size:12px; color:#1b8a3a; margin-bottom:22px; font-family:monospace; background:#e6f7ec; padding:8px 16px; border-radius:8px; font-weight:700; border:1.5px dashed #22c55e; }
+.tg-success-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.tg-success-btn { padding:13px 24px; border-radius:8px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px; transition:all .15s; cursor:pointer; }
+.tg-success-btn.primary { background:linear-gradient(135deg,#2874f0,#1a5dc7); color:#fff; box-shadow:0 6px 18px rgba(40,116,240,.3); }
+.tg-success-btn.ghost { background:#f1f3f6; color:#212121; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="javascript:history.back()" class="tg-hd-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+    <div class="tg-hd-title">Contact Us</div>
+    <div class="tg-hd-actions">
+      <a href="shop-home.html" class="tg-hd-btn" aria-label="Shop Home"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- Hero -->
+    <div class="tg-hero">
+      <div class="tg-hero-inner">
+        <div class="tg-hero-icon">💬</div>
+        <h1 class="tg-hero-title">We're here to help!</h1>
+        <p class="tg-hero-sub">Get in touch with our team — questions, feedback, or support, we'd love to hear from you.</p>
+      </div>
+    </div>
+
+    <!-- Quick Contact Cards -->
+    <div class="tg-contact-grid">
+      <a class="tg-contact-card" href="mailto:support@toego.in">
+        <div class="tg-contact-icon blue">📧</div>
+        <div class="tg-contact-body">
+          <div class="tg-contact-label">Email</div>
+          <div class="tg-contact-value">support@toego.in</div>
+          <div class="tg-contact-hint">Reply within 24 hours</div>
+        </div>
+      </a>
+      <a class="tg-contact-card" href="tel:+911234567890">
+        <div class="tg-contact-icon green">📞</div>
+        <div class="tg-contact-body">
+          <div class="tg-contact-label">Call Us</div>
+          <div class="tg-contact-value">+91 12345 67890</div>
+          <div class="tg-contact-hint">Mon–Sat, 9am–7pm</div>
+        </div>
+      </a>
+      <a class="tg-contact-card" href="https://wa.me/911234567890" target="_blank" rel="noopener">
+        <div class="tg-contact-icon purple">💚</div>
+        <div class="tg-contact-body">
+          <div class="tg-contact-label">WhatsApp</div>
+          <div class="tg-contact-value">+91 12345 67890</div>
+          <div class="tg-contact-hint">Fastest response</div>
+        </div>
+      </a>
+      <a class="tg-contact-card" href="https://maps.google.com/?q=Kanpur" target="_blank" rel="noopener">
+        <div class="tg-contact-icon orange">📍</div>
+        <div class="tg-contact-body">
+          <div class="tg-contact-label">Visit Us</div>
+          <div class="tg-contact-value">Kanpur, Uttar Pradesh</div>
+          <div class="tg-contact-hint">India - 208001</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Working Hours -->
+    <div class="tg-hours-card">
+      <div class="tg-hours-title">🕐 Working Hours</div>
+      <div class="tg-hours-row"><span>Monday – Friday</span><span>9:00 AM – 7:00 PM</span></div>
+      <div class="tg-hours-row"><span>Saturday</span><span>10:00 AM – 5:00 PM</span></div>
+      <div class="tg-hours-row"><span>Sunday</span><span>Closed</span></div>
+    </div>
+
+    <!-- ============ SUPPORT TICKET FORM ============ -->
+    <div class="tg-sec">
+      <div class="tg-sec-head">
+        <div class="tg-sec-head-icon blue">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div>
+          <div class="tg-sec-title">Raise a Support Ticket</div>
+          <div class="tg-sec-sub">Our team will respond within 24 hours</div>
+        </div>
+      </div>
+
+      <div class="tg-form">
+        <!-- Category -->
+        <div class="tg-field">
+          <label>What is this about? <span class="rq">*</span></label>
+          <div class="tg-cats" id="tg-cats">
+            <div class="tg-cat" data-cat="Order Issue"><span class="em">📦</span>Order Issue</div>
+            <div class="tg-cat" data-cat="Payment"><span class="em">💳</span>Payment</div>
+            <div class="tg-cat" data-cat="Product"><span class="em">🏷️</span>Product</div>
+            <div class="tg-cat" data-cat="Delivery"><span class="em">🚚</span>Delivery</div>
+            <div class="tg-cat" data-cat="Return/Refund"><span class="em">🔄</span>Return</div>
+            <div class="tg-cat" data-cat="Other"><span class="em">❓</span>Other</div>
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div class="tg-field">
+          <label>Your Name <span class="rq">*</span></label>
+          <input type="text" id="ct-name" placeholder="Enter your full name" maxlength="60" autocomplete="name">
+        </div>
+
+        <!-- Email + Phone -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="tg-field">
+            <label>Email <span class="rq">*</span></label>
+            <input type="email" id="ct-email" placeholder="you@example.com" maxlength="80" autocomplete="email">
+          </div>
+          <div class="tg-field">
+            <label>Phone (optional)</label>
+            <input type="tel" id="ct-phone" placeholder="10-digit" maxlength="10" inputmode="numeric" autocomplete="tel">
+          </div>
+        </div>
+
+        <!-- Order ID (optional) -->
+        <div class="tg-field">
+          <label>Order ID (if any)</label>
+          <input type="text" id="ct-order-id" placeholder="e.g. ABC123XYZ" maxlength="40" autocomplete="off">
+        </div>
+
+        <!-- Subject -->
+        <div class="tg-field">
+          <label>Subject <span class="rq">*</span></label>
+          <input type="text" id="ct-subject" placeholder="Brief about your issue" maxlength="120" autocomplete="off">
+        </div>
+
+        <!-- Description -->
+        <div class="tg-field">
+          <label>Describe your issue <span class="rq">*</span></label>
+          <textarea id="ct-desc" placeholder="Please describe your issue in detail. Include relevant information like order date, product name, etc." maxlength="2000"></textarea>
+        </div>
+
+        <!-- Image upload -->
+        <div class="tg-field">
+          <label>Screenshots (optional, max 3)</label>
+          <div class="tg-upload" onclick="document.getElementById('ct-images').click()">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+            <div class="tg-upload-t">Click to upload images</div>
+            <div class="tg-upload-d">JPG, PNG · Max 3 images · Auto-compressed</div>
+          </div>
+          <input type="file" id="ct-images" accept="image/*" multiple style="display:none;">
+          <div class="tg-img-preview" id="ct-img-preview"></div>
+        </div>
+
+        <!-- Submit -->
+        <button class="tg-submit" id="ct-submit" onclick="tgSubmitContact()">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <span id="ct-submit-text">Send Message</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============ FAQ ============ -->
+    <div class="tg-sec">
+      <div class="tg-sec-head">
+        <div class="tg-sec-head-icon blue">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="tg-sec-title">Frequently Asked Questions</div>
+          <div class="tg-sec-sub">Quick answers to common questions</div>
+        </div>
+      </div>
+
+      <div class="tg-faq-list" id="tg-faq-list">
+        <div class="tg-faq-item">
+          <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+            <span>How long does delivery take?</span>
+            <span class="arr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="tg-faq-a">Standard delivery takes 3-5 business days. For Kanpur pincodes (208xxx, 209xxx), we offer same-day delivery.</div>
+        </div>
+        <div class="tg-faq-item">
+          <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+            <span>What is the return policy?</span>
+            <span class="arr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="tg-faq-a">7-day easy returns on all products. Raise a return request from your Orders page and we'll process it within 24 hours.</div>
+        </div>
+        <div class="tg-faq-item">
+          <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+            <span>How can I track my order?</span>
+            <span class="arr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="tg-faq-a">Go to My Orders → Select your order → You'll see the complete timeline with tracking ID once dispatched.</div>
+        </div>
+        <div class="tg-faq-item">
+          <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+            <span>What payment methods are accepted?</span>
+            <span class="arr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="tg-faq-a">We accept UPI, Credit/Debit cards, Net Banking, Wallets (via Razorpay), and Cash on Delivery.</div>
+        </div>
+        <div class="tg-faq-item">
+          <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+            <span>When will I receive my refund?</span>
+            <span class="arr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="tg-faq-a">Refunds are processed within 3-5 business days after return approval. It may take 5-7 days to reflect in your account.</div>
+        </div>
+        <div class="tg-faq-item">
+          <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+            <span>How do I cancel my order?</span>
+            <span class="arr"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="tg-faq-a">Orders can be cancelled before dispatch. Go to My Orders → Select order → Cancel. Raise a ticket if you need help.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ SUCCESS SCREEN ============ -->
+<div class="tg-success" id="tg-success">
+  <div class="tg-success-icon"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+  <h2 class="tg-success-title">Message Sent! 🎉</h2>
+  <p class="tg-success-desc">Thank you for reaching out. Our support team will get back to you within 24 hours.</p>
+  <div class="tg-success-id" id="tg-success-id">Ticket: —</div>
+  <div class="tg-success-actions">
+    <a href="shop-home.html" class="tg-success-btn primary">Continue Shopping</a>
+    <button class="tg-success-btn ghost" onclick="tgCloseSuccess()">Close</button>
+  </div>
+</div>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ========== FIREBASE INIT ========== */
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
+  try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
+
+  const GUEST_CART_KEY = 'toego_cart_guest';
+  const CLOUD_FALLBACK = { cloudName: '', uploadPreset: '' };
+
+  let currentUser = null;
+  let userProfile = null;
+  let selectedCat = '';
+  let uploadedImages = [];
+  let _uploading = 0;
+  let CLOUD = { cloudName: '', uploadPreset: '' };
+
+  /* ========== HELPERS ========== */
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+
+  function updateCartBadge() {
+    let raw = [];
+    try { raw = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || '[]'); } catch(e) { raw = []; }
+    const n = raw.reduce((s, i) => s + Number(i.qty || 1), 0);
+    const el = document.getElementById('tg-bnav-badge');
+    if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; }
+  }
+
+  /* ========== FAQ TOGGLE ========== */
+  window.tgToggleFaq = function(el) {
+    const item = el.parentElement;
+    const wasOpen = item.classList.contains('open');
+    /* Close all */
+    document.querySelectorAll('.tg-faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  };
+
+  /* ========== CATEGORY SELECT ========== */
+  document.querySelectorAll('.tg-cat').forEach(el => {
+    el.addEventListener('click', function() {
+      document.querySelectorAll('.tg-cat').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+      selectedCat = this.dataset.cat;
+    });
+  });
+
+  /* ========== IMAGE UPLOAD ========== */
+  async function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const TARGET = 100 * 1024;
+          const attempts = [
+            { maxW: 1400, q: 0.85 }, { maxW: 1200, q: 0.80 }, { maxW: 1000, q: 0.75 },
+            { maxW: 900, q: 0.70 }, { maxW: 800, q: 0.65 }, { maxW: 700, q: 0.60 },
+            { maxW: 600, q: 0.55 }, { maxW: 500, q: 0.50 }, { maxW: 400, q: 0.45 },
+            { maxW: 350, q: 0.40 }, { maxW: 300, q: 0.35 }
+          ];
+          let best = null;
+          for (const a of attempts) {
+            let w = img.width, h = img.height;
+            if (w > a.maxW) { h = Math.round(h * (a.maxW / w)); w = a.maxW; }
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = c.toDataURL('image/jpeg', a.q);
+            const bytes = Math.round((dataUrl.split(',')[1]?.length || 0) * 0.75);
+            best = { dataUrl, bytes };
+            if (bytes <= TARGET) { resolve(dataUrl); return; }
+          }
+          resolve(best ? best.dataUrl : null);
+        };
+        img.onerror = () => reject(new Error('Load failed'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Read failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function uploadToCloudinary(dataUrl) {
+    if (!CLOUD.cloudName || !CLOUD.uploadPreset) return null;
+    try {
+      const blob = await (await fetch(dataUrl)).blob();
+      const fd = new FormData();
+      fd.append('file', new File([blob], 'support.jpg', { type: 'image/jpeg' }));
+      fd.append('upload_preset', CLOUD.uploadPreset);
+      fd.append('folder', 'toego/support');
+      const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD.cloudName + '/image/upload', {
+        method: 'POST', body: fd
+      });
+      if (res.ok) {
+        const d = await res.json();
+        return d.secure_url.replace('/upload/', '/upload/q_auto:good,w_1000,c_limit/');
+      }
+    } catch(e) { console.warn('[cloudinary]', e); }
+    return null;
+  }
+
+  function renderImgPreview() {
+    const wrap = document.getElementById('ct-img-preview');
+    if (!wrap) return;
+    let html = '';
+    uploadedImages.forEach((url, i) => {
+      html += '<div class="tg-img-item"><img src="' + esc(url) + '" alt=""><button type="button" class="tg-img-rm" onclick="tgRemoveImg(' + i + ')">✕</button></div>';
+    });
+    for (let i = 0; i < _uploading; i++) {
+      html += '<div class="tg-img-item" style="display:flex;align-items:center;justify-content:center;background:#f0f5ff;font-size:11px;font-weight:800;color:#2874f0;">…</div>';
+    }
+    wrap.innerHTML = html;
+  }
+
+  window.tgRemoveImg = function(i) {
+    uploadedImages.splice(i, 1);
+    renderImgPreview();
+  };
+
+  document.getElementById('ct-images').addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const room = 3 - uploadedImages.length - _uploading;
+    if (room <= 0) { toast('Max 3 images allowed', 'error'); this.value = ''; return; }
+    const toAdd = files.slice(0, room).filter(f => f.type.startsWith('image/'));
+    this.value = '';
+    if (!toAdd.length) return;
+    for (const f of toAdd) {
+      _uploading++;
+      renderImgPreview();
+      try {
+        const dataUrl = await compressImage(f);
+        if (dataUrl) {
+          const cloudUrl = await uploadToCloudinary(dataUrl);
+          uploadedImages.push(cloudUrl || dataUrl);
+        }
+      } catch(err) {
+        console.warn('[upload]', err);
+        toast('Failed to upload ' + f.name, 'error');
+      }
+      _uploading--;
+      renderImgPreview();
+    }
+    toast('✓ ' + uploadedImages.length + '/3 images ready', 'success');
+  });
+
+  /* ========== SUBMIT ========== */
+  window.tgSubmitContact = async function() {
+    const name = (document.getElementById('ct-name').value || '').trim();
+    const email = (document.getElementById('ct-email').value || '').trim();
+    const phone = (document.getElementById('ct-phone').value || '').trim();
+    const orderId = (document.getElementById('ct-order-id').value || '').trim();
+    const subject = (document.getElementById('ct-subject').value || '').trim();
+    const desc = (document.getElementById('ct-desc').value || '').trim();
+
+    /* Validation */
+    if (!selectedCat) { toast('Please select a category', 'error'); return; }
+    if (!name || name.length < 2) { toast('Please enter your name', 'error'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); return; }
+    if (phone && !/^\d{10}$/.test(phone)) { toast('Phone must be 10 digits', 'error'); return; }
+    if (!subject || subject.length < 3) { toast('Please enter a subject', 'error'); return; }
+    if (!desc || desc.length < 10) { toast('Please describe your issue (min 10 chars)', 'error'); return; }
+    if (_uploading > 0) { toast('Please wait for images to upload', 'info'); return; }
+
+    const btn = document.getElementById('ct-submit');
+    const btnText = document.getElementById('ct-submit-text');
+    btn.disabled = true;
+    btnText.textContent = 'Sending…';
+
+    try {
+      const payload = {
+        /* Support ticket fields — compatible with existing superadmin/seller ticket system */
+        category: selectedCat,
+        subject: subject,
+        priority: 'medium',
+        status: 'open',
+        /* User fields */
+        userId: currentUser ? currentUser.uid : '',
+        userName: name,
+        userEmail: email,
+        userPhone: phone,
+        userType: 'customer',
+        /* Order reference (optional) */
+        orderId: orderId || '',
+        /* Message */
+        messages: [{
+          sender: 'user',
+          senderName: name,
+          text: desc,
+          images: uploadedImages.slice(),
+          createdAt: new Date()
+        }],
+        unreadForAdmin: 1,
+        unreadForUser: 0,
+        /* Metadata */
+        source: 'contact-page',
+        createdAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      };
+
+      const ref = await db.collection('supportTickets').add(payload);
+      const ticketId = ref.id;
+
+      /* Show success */
+      document.getElementById('tg-success-id').textContent = 'Ticket: #' + ticketId.slice(0, 10).toUpperCase();
+      document.getElementById('tg-success').classList.add('show');
+      document.body.style.overflow = 'hidden';
+
+      /* Reset form */
+      resetForm();
+
+    } catch(err) {
+      console.error('[submit contact]', err);
+      let msg = 'Failed to send: ' + (err.message || 'Try again');
+      if (err.code === 'permission-denied') msg = '❌ Permission denied — rules check karo';
+      if (err.code === 'unavailable') msg = '❌ Network issue';
+      toast(msg, 'error');
+    } finally {
+      btn.disabled = false;
+      btnText.textContent = 'Send Message';
+    }
+  };
+
+  function resetForm() {
+    selectedCat = '';
+    document.querySelectorAll('.tg-cat').forEach(c => c.classList.remove('active'));
+    ['ct-subject', 'ct-desc', 'ct-order-id', 'ct-phone'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    uploadedImages = [];
+    renderImgPreview();
+    /* Keep name + email (from profile) */
+  }
+
+  window.tgCloseSuccess = function() {
+    document.getElementById('tg-success').classList.remove('show');
+    document.body.style.overflow = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  /* ========== LOAD USER + PREFILL ========== */
+  function loadCloudinary() {
+    return db.collection('siteSettings').doc('cloudinary').get().then(snap => {
+      if (snap.exists) {
+        CLOUD.cloudName = snap.data().cloudName || '';
+        CLOUD.uploadPreset = snap.data().uploadPreset || '';
+      }
+    }).catch(() => {});
+  }
+
+  function prefillFromProfile() {
+    if (!userProfile) return;
+    const nameEl = document.getElementById('ct-name');
+    const emailEl = document.getElementById('ct-email');
+    const phoneEl = document.getElementById('ct-phone');
+    if (nameEl && !nameEl.value) nameEl.value = userProfile.name || '';
+    if (emailEl && !emailEl.value) emailEl.value = userProfile.email || (currentUser && currentUser.email) || '';
+    if (phoneEl && !phoneEl.value) phoneEl.value = userProfile.phone || '';
+  }
+
+  auth.onAuthStateChanged(async (u) => {
+    currentUser = u;
+    if (u) {
+      try {
+        const snap = await db.collection('users').doc(u.uid).get();
+        userProfile = snap.exists ? snap.data() : null;
+      } catch(e) { userProfile = null; }
+      prefillFromProfile();
+    } else {
+      userProfile = null;
+    }
+  });
+
+  /* Enter key submit (Ctrl+Enter in textarea) */
+  document.getElementById('ct-desc').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      window.tgSubmitContact();
+    }
+  });
+
+  /* ========== INIT ========== */
+  updateCartBadge();
+  loadCloudinary();
+
+})();
+</script>
+</body>
+</html>

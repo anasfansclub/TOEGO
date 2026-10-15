@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Account — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+
+<style>
+:root { --tg-primary: #2874f0; --tg-primary-dark: #1a5dc7; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+.tg-hd { background: var(--tg-primary); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 56px; }
+.tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--tg-primary); }
+
+.tg-menu {
+  position: fixed; top: 62px; right: 12px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.08);
+  min-width: 220px;
+  padding: 6px 0;
+  z-index: 1100;
+  opacity: 0; visibility: hidden;
+  transform: translateY(-8px) scale(0.97);
+  transform-origin: top right;
+  transition: opacity .18s, transform .18s, visibility .18s;
+}
+.tg-menu.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+.tg-menu-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; font-size: 14px; color: #212121; cursor: pointer; transition: background .15s; }
+.tg-menu-item:hover { background: #f1f3f6; }
+.tg-menu-item svg { width: 18px; height: 18px; stroke: #555; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.tg-menu-item.danger { color: #d32f2f; }
+.tg-menu-item.danger svg { stroke: #d32f2f; }
+.tg-menu-divider { height: 1px; background: #e5e7eb; margin: 6px 0; }
+
+.tg-wrap { min-height: 100vh; padding-top: 56px; padding-bottom: 76px; }
+.tg-container { max-width: 720px; margin: 0 auto; padding: 12px; }
+
+.tg-profile {
+  background: linear-gradient(135deg, var(--tg-primary) 0%, var(--tg-primary-dark) 100%);
+  border-radius: 12px;
+  padding: 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(40,116,240,0.25);
+}
+.tg-profile::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(255,229,0,0.18), transparent 70%);
+  border-radius: 50%;
+}
+.tg-avatar {
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--tg-primary);
+  font-size: 28px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,0.35);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+.tg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.tg-profile-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
+.tg-profile-name { font-size: 18px; font-weight: 800; margin-bottom: 3px; letter-spacing: -0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-profile-email { font-size: 12.5px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-profile-phone { font-size: 12.5px; opacity: 0.85; margin-top: 2px; }
+.tg-profile-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(255,229,0,0.9);
+  color: #212121;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 6px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.tg-profile-badge svg { width: 11px; height: 11px; fill: currentColor; }
+.tg-profile-badge.seller { background: #ffe500; color: #212121; }
+.tg-profile-badge.admin { background: #fff; color: #d32f2f; }
+.tg-profile-badge.superadmin { background: #fff; color: #7c3aed; }
+.tg-profile-edit {
+  position: relative;
+  z-index: 2;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.tg-profile-edit:hover { background: rgba(255,255,255,0.25); }
+.tg-profile-edit svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+.tg-stats {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-stat { text-align: center; padding: 8px 4px; cursor: pointer; border-radius: 8px; transition: background .15s; }
+.tg-stat:hover { background: #f1f3f6; }
+.tg-stat-num { font-size: 20px; font-weight: 800; color: var(--tg-primary); margin-bottom: 2px; }
+.tg-stat-label { font-size: 11px; color: #666; font-weight: 600; }
+
+.tg-seller-banner {
+  border-radius: 12px;
+  padding: 18px 16px;
+  margin-bottom: 12px;
+  display: none;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
+}
+.tg-seller-banner.show { display: flex; }
+.tg-seller-banner:active { transform: scale(0.98); }
+.tg-seller-banner:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
+
+.tg-seller-banner.apply { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: #fff; }
+.tg-seller-banner.pending { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); color: #212121; cursor: default; box-shadow: 0 2px 8px rgba(255,152,0,0.15); }
+.tg-seller-banner.pending:hover { box-shadow: 0 2px 8px rgba(255,152,0,0.15); transform: none; }
+.tg-seller-banner.pending:active { transform: none; }
+.tg-seller-banner.approved { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: #fff; }
+.tg-seller-banner.rejected { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #fff; }
+.tg-seller-banner.admin { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: #fff; }
+
+.tg-seller-banner::after {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
+  border-radius: 50%;
+}
+
+.tg-seller-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 24px;
+  position: relative;
+  z-index: 2;
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(6px);
+}
+.tg-seller-banner.pending .tg-seller-icon { background: rgba(255,152,0,0.20); }
+.tg-seller-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-seller-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
+.tg-seller-title { font-size: 15px; font-weight: 800; margin-bottom: 3px; letter-spacing: -0.2px; }
+.tg-seller-desc { font-size: 12px; opacity: 0.92; line-height: 1.4; }
+.tg-seller-banner.pending .tg-seller-desc { color: #666; opacity: 1; }
+
+.tg-seller-arrow {
+  position: relative;
+  z-index: 2;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.22);
+}
+.tg-seller-banner.apply .tg-seller-arrow,
+.tg-seller-banner.approved .tg-seller-arrow,
+.tg-seller-banner.rejected .tg-seller-arrow,
+.tg-seller-banner.admin .tg-seller-arrow { display: flex; }
+.tg-seller-arrow svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-seller-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-top: 6px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.25);
+}
+.tg-seller-banner.pending .tg-seller-status-pill { background: rgba(255,152,0,0.20); color: #e65100; }
+
+.tg-sec { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-sec-title { padding: 14px 18px 6px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.8px; }
+
+.tg-orders { display: grid; grid-template-columns: repeat(4, 1fr); padding: 10px 8px 16px; gap: 4px; }
+.tg-order-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 4px; cursor: pointer; border-radius: 10px; transition: background .15s; text-align: center; }
+.tg-order-tile:hover { background: #f1f3f6; }
+.tg-order-tile-icon { width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg,#eef3ff,#e0eaff); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tg-order-tile-icon svg { width: 22px; height: 22px; stroke: var(--tg-primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-order-tile-label { font-size: 11px; font-weight: 600; color: #212121; line-height: 1.25; }
+
+.tg-list { padding: 4px 0 8px; }
+.tg-list-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; cursor: pointer; transition: background .15s; position: relative; }
+.tg-list-item:hover { background: #f8f9fb; }
+.tg-list-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,#eef3ff,#e0eaff); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tg-list-icon svg { width: 20px; height: 20px; stroke: var(--tg-primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-list-icon.green { background: linear-gradient(135deg,#e6f7ec,#d1f0dd); } .tg-list-icon.green svg { stroke: #1b8a3a; }
+.tg-list-icon.orange { background: linear-gradient(135deg,#fff3e0,#ffe0b2); } .tg-list-icon.orange svg { stroke: #fb641b; }
+.tg-list-icon.pink { background: linear-gradient(135deg,#fce4ec,#f8bbd0); } .tg-list-icon.pink svg { stroke: #f43397; }
+.tg-list-icon.purple { background: linear-gradient(135deg,#ede7f6,#d1c4e9); } .tg-list-icon.purple svg { stroke: #7e57c2; }
+.tg-list-body { flex: 1; min-width: 0; }
+.tg-list-title { font-size: 14.5px; font-weight: 600; color: #212121; margin-bottom: 2px; }
+.tg-list-desc { font-size: 12px; color: #888; line-height: 1.35; }
+.tg-list-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.tg-list-badge { background: #ff6161; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.tg-list-badge.blue { background: var(--tg-primary); }
+.tg-list-arrow { width: 16px; height: 16px; stroke: #c5cad3; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-switch { position: relative; width: 42px; height: 24px; background: #ccc; border-radius: 999px; transition: background .2s; flex-shrink: 0; }
+.tg-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform .2s; }
+.tg-switch.on { background: var(--tg-primary); }
+.tg-switch.on::after { transform: translateX(18px); }
+
+.tg-logout { width: 100%; padding: 14px; border-radius: 12px; background: #fff; border: 1.5px solid #ffcdd2; color: #d32f2f; font-size: 14.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; transition: background .15s, border-color .15s; }
+.tg-logout:hover { background: #ffebee; border-color: #ef5350; }
+.tg-logout svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-delete { text-align: center; padding: 6px 0 8px; font-size: 12.5px; color: #999; }
+.tg-delete a { color: #d32f2f; font-weight: 600; }
+.tg-delete a:hover { text-decoration: underline; }
+
+.tg-version { text-align: center; padding: 8px 0 20px; font-size: 11px; color: #aaa; letter-spacing: 0.3px; }
+
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: var(--tg-primary); }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+.tg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s ease; }
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card { width: 100%; max-width: 520px; background: #fff; border-radius: 18px 18px 0 0; padding: 24px 22px 26px; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); max-height: 88vh; overflow-y: auto; }
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; }
+.tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.tg-modal-close:hover { background: #e0e0e0; }
+.tg-modal-field { margin-bottom: 16px; position: relative; }
+.tg-modal-field label { display: block; font-size: 12px; color: #666; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+.tg-modal-field input, .tg-modal-field select { width: 100%; height: 46px; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 0 14px; font-size: 14.5px; color: #212121; outline: none; background: #fff; transition: border-color .15s; }
+.tg-modal-field input:focus, .tg-modal-field select:focus { border-color: var(--tg-primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
+.tg-modal-save { width: 100%; padding: 14px; border-radius: 10px; background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-modal-save:active { transform: translateY(1px); }
+.tg-modal-save:disabled { opacity: 0.75; cursor: not-allowed; }
+
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: var(--tg-primary); }
+
+@media (max-width: 520px) {
+  .tg-container { padding: 10px; }
+  .tg-profile { padding: 16px; gap: 12px; }
+  .tg-avatar { width: 58px; height: 58px; font-size: 24px; }
+  .tg-profile-name { font-size: 16px; }
+  .tg-profile-edit { padding: 7px 10px; font-size: 11.5px; }
+  .tg-order-tile-icon { width: 42px; height: 42px; }
+  .tg-order-tile-icon svg { width: 20px; height: 20px; }
+  .tg-list-icon { width: 36px; height: 36px; }
+  .tg-list-icon svg { width: 18px; height: 18px; }
+  .tg-list-item { padding: 12px 14px; gap: 12px; }
+  .tg-list-title { font-size: 14px; }
+  .tg-modal-card { padding: 20px 18px 22px; }
+  .tg-seller-banner { padding: 16px 14px; gap: 12px; }
+  .tg-seller-icon { width: 46px; height: 46px; font-size: 22px; }
+  .tg-seller-title { font-size: 14px; }
+  .tg-seller-desc { font-size: 11.5px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="shop-home.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">My Account</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+      <button class="tg-hd-btn" id="tg-3dot-btn" aria-label="More options">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="12" cy="19" r="1.8"></circle></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="tg-menu" id="tg-3dot-menu">
+  <div class="tg-menu-item" onclick="tgEditProfile()">
+    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    <span>Edit Profile</span>
+  </div>
+  <div class="tg-menu-item" onclick="tgShareProfile()">
+    <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+    <span>Share Profile</span>
+  </div>
+  <div class="tg-menu-item" onclick="tgCopyUID()">
+    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    <span>Copy User ID</span>
+  </div>
+  <div class="tg-menu-divider"></div>
+  <div class="tg-menu-item" onclick="location.href='my-orders.html'">
+    <svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg>
+    <span>My Orders</span>
+  </div>
+  <div class="tg-menu-item" onclick="location.href='wishlist.html'">
+    <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+    <span>Wishlist</span>
+  </div>
+  <div class="tg-menu-divider"></div>
+  <div class="tg-menu-item" onclick="tgOpenHelp()">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span>Help Center</span>
+  </div>
+  <div class="tg-menu-divider"></div>
+  <div class="tg-menu-item danger" onclick="tgLogout()">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <span>Logout</span>
+  </div>
+</div>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <div class="tg-profile" id="tg-profile">
+      <div class="tg-avatar" id="tg-avatar">T</div>
+      <div class="tg-profile-body">
+        <div class="tg-profile-name" id="tg-p-name">Loading…</div>
+        <div class="tg-profile-email" id="tg-p-email">Please wait…</div>
+        <div class="tg-profile-phone" id="tg-p-phone" style="display:none;"></div>
+        <div id="tg-p-badge-wrap"></div>
+      </div>
+      <button class="tg-profile-edit" onclick="tgEditProfile()">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit
+      </button>
+    </div>
+
+    <div class="tg-seller-banner" id="tg-seller-banner">
+      <div class="tg-seller-icon" id="tg-seller-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="tg-seller-body">
+        <div class="tg-seller-title" id="tg-seller-title">Become a Seller</div>
+        <div class="tg-seller-desc" id="tg-seller-desc">Start selling on TOEGO and grow your business</div>
+        <div id="tg-seller-pill-wrap"></div>
+      </div>
+      <div class="tg-seller-arrow" id="tg-seller-arrow">
+        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+    </div>
+
+    <div class="tg-stats">
+      <div class="tg-stat" onclick="location.href='my-orders.html'">
+        <div class="tg-stat-num" id="tg-stat-orders">0</div>
+        <div class="tg-stat-label">Orders</div>
+      </div>
+      <div class="tg-stat" onclick="location.href='wishlist.html'">
+        <div class="tg-stat-num" id="tg-stat-wish">0</div>
+        <div class="tg-stat-label">Wishlist</div>
+      </div>
+      <div class="tg-stat" onclick="location.href='cart.html'">
+        <div class="tg-stat-num" id="tg-stat-cart">0</div>
+        <div class="tg-stat-label">Cart</div>
+      </div>
+    </div>
+
+    <div class="tg-sec">
+      <div class="tg-sec-title">My Orders</div>
+      <div class="tg-orders">
+        <div class="tg-order-tile" onclick="location.href='my-orders.html?tab=all'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg></div>
+          <div class="tg-order-tile-label">All Orders</div>
+        </div>
+        <div class="tg-order-tile" onclick="location.href='my-orders.html?tab=pending'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="tg-order-tile-label">Pending</div>
+        </div>
+        <div class="tg-order-tile" onclick="location.href='my-orders.html?tab=shipped'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <div class="tg-order-tile-label">Shipped</div>
+        </div>
+        <div class="tg-order-tile" onclick="location.href='my-orders.html?tab=delivered'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div class="tg-order-tile-label">Delivered</div>
+        </div>
+        <div class="tg-order-tile" onclick="location.href='my-orders.html?tab=cancelled'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg></div>
+          <div class="tg-order-tile-label">Cancelled</div>
+        </div>
+        <div class="tg-order-tile" onclick="location.href='my-orders.html?tab=returns'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
+          <div class="tg-order-tile-label">Returns</div>
+        </div>
+        <div class="tg-order-tile" onclick="location.href='my-reviews.html'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="tg-order-tile-label">My Reviews</div>
+        </div>
+        <div class="tg-order-tile" onclick="location.href='returns.html'">
+          <div class="tg-order-tile-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+          <div class="tg-order-tile-label">Raise Return</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-sec">
+      <div class="tg-sec-title">Account Settings</div>
+      <div class="tg-list">
+        <div class="tg-list-item" onclick="location.href='addresses.html'">
+          <div class="tg-list-icon blue"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Saved Addresses</div>
+            <div class="tg-list-desc">Manage delivery addresses</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='payments.html'">
+          <div class="tg-list-icon green"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Payment Methods</div>
+            <div class="tg-list-desc">Cards, UPI, wallets & more</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='coupons.html'">
+          <div class="tg-list-icon orange"><svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">My Coupons</div>
+            <div class="tg-list-desc">View and apply available coupons</div>
+          </div>
+          <div class="tg-list-right">
+            <span class="tg-list-badge blue" id="tg-coupon-count">0</span>
+            <svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='notifications.html'">
+          <div class="tg-list-icon pink"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Notifications</div>
+            <div class="tg-list-desc">Deals, offers & order updates</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="tgToggleDarkMode(this)">
+          <div class="tg-list-icon purple"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Dark Mode</div>
+            <div class="tg-list-desc">Easier on the eyes at night</div>
+          </div>
+          <div class="tg-list-right">
+            <div class="tg-switch" id="tg-dark-switch"></div>
+          </div>
+        </div>
+
+        <div class="tg-list-item" onclick="tgSelectLanguage()">
+          <div class="tg-list-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Language</div>
+            <div class="tg-list-desc" id="tg-lang-desc">English</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-sec">
+      <div class="tg-list" style="padding-top:6px;">
+        <div class="tg-list-item" onclick="tgReferEarn()">
+          <div class="tg-list-icon pink"><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Refer & Earn</div>
+            <div class="tg-list-desc">Get ₹100 for every friend you refer</div>
+          </div>
+          <div class="tg-list-right">
+            <span class="tg-list-badge">NEW</span>
+            <svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-sec">
+      <div class="tg-sec-title">Help & Support</div>
+      <div class="tg-list">
+        <div class="tg-list-item" onclick="tgOpenHelp()">
+          <div class="tg-list-icon blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Help Center</div>
+            <div class="tg-list-desc">FAQs, guides and support</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='contact.html'">
+          <div class="tg-list-icon green"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Contact Us</div>
+            <div class="tg-list-desc">Chat, email or call support</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='shipping.html'">
+          <div class="tg-list-icon orange"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Shipping Info</div>
+            <div class="tg-list-desc">Delivery times & charges</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='returns.html'">
+          <div class="tg-list-icon pink"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Returns & Refunds</div>
+            <div class="tg-list-desc">Easy returns within 7 days</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-sec">
+      <div class="tg-sec-title">About</div>
+      <div class="tg-list">
+        <div class="tg-list-item" onclick="location.href='about.html'">
+          <div class="tg-list-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">About TOEGO</div>
+            <div class="tg-list-desc">Our story & mission</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='terms.html'">
+          <div class="tg-list-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Terms of Use</div>
+            <div class="tg-list-desc">Rules & conditions</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
+        <div class="tg-list-item" onclick="location.href='privacy.html'">
+          <div class="tg-list-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Privacy Policy</div>
+            <div class="tg-list-desc">How we protect your data</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-sec" id="tg-admin-sec" style="display:none;">
+      <div class="tg-sec-title">Admin Panel</div>
+      <div class="tg-list">
+        <div class="tg-list-item" onclick="location.href='admin.html'">
+          <div class="tg-list-icon pink"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Admin Dashboard</div>
+            <div class="tg-list-desc">Full site control panel</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="tg-logout" onclick="tgLogout()">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </button>
+
+    <div class="tg-delete">
+      <a href="#" onclick="tgDeleteAccount(event)">Delete my account</a>
+    </div>
+
+    <div class="tg-version">TOEGO v2.0 · Made in India 🇮🇳</div>
+
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-edit-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Edit Profile</div>
+      <button class="tg-modal-close" onclick="tgCloseEdit()">✕</button>
+    </div>
+    <div class="tg-modal-field">
+      <label>Full Name</label>
+      <input type="text" id="tg-edit-name" maxlength="60" placeholder="Enter your name">
+    </div>
+    <div class="tg-modal-field">
+      <label>Email</label>
+      <input type="email" id="tg-edit-email" placeholder="you@example.com" disabled style="background:#f5f5f5;">
+    </div>
+    <div class="tg-modal-field">
+      <label>Phone Number</label>
+      <input type="tel" id="tg-edit-phone" placeholder="+91 XXXXX XXXXX" maxlength="16">
+    </div>
+    <div class="tg-modal-field">
+      <label>Gender</label>
+      <select id="tg-edit-gender">
+        <option value="">Prefer not to say</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="tg-modal-field">
+      <label>Date of Birth</label>
+      <input type="date" id="tg-edit-dob">
+    </div>
+    <button class="tg-modal-save" id="tg-edit-save" onclick="tgSaveProfile()">
+      <span id="tg-edit-save-text">Save Changes</span>
+    </button>
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-cart-badge-m" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  const SUPER_ADMIN_EMAIL = 'anasfansclub@toego.in';
+  const PROFILE_CACHE_PREFIX = 'toego_acc_profile_v1_';
+  const STATS_CACHE_PREFIX = 'toego_acc_stats_v1_';
+  const SELLER_CACHE_PREFIX = 'toego_acc_seller_v1_';
+  const CACHE_TTL = 5 * 60 * 1000;
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  let LAST_INIT_UID = null;
+  let USER_DOC = null;
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+
+  function adjustColor(hex, pct) {
+    try {
+      hex = hex.replace('#','');
+      const n = parseInt(hex, 16);
+      const r = Math.max(0, Math.min(255, (n >> 16) + pct));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
+      const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    } catch(e) { return hex; }
+  }
+
+  function applyTheme(primary, dark) {
+    primary = primary || '#2874f0';
+    dark = dark || adjustColor(primary, -30);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    document.documentElement.style.setProperty('--tg-primary-dark', dark);
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    let msMeta = document.querySelector('meta[name="msapplication-navbutton-color"]');
+    if (!msMeta) { msMeta = document.createElement('meta'); msMeta.name = 'msapplication-navbutton-color'; document.head.appendChild(msMeta); }
+    msMeta.setAttribute('content', primary);
+    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary, dark })); } catch(e) {}
+  }
+
+  (function bootCachedColor() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {}
+  })();
+
+  async function loadThemeColor() {
+    try {
+      const snap = await db.collection('siteSettings').doc('theme').get();
+      if (!snap.exists) return;
+      const d = snap.data();
+      const primary = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
+      applyTheme(primary, adjustColor(primary, -30));
+    } catch(e) {}
+    db.collection('siteSettings').doc('theme').onSnapshot(snap => {
+      if (!snap.exists) return;
+      const d = snap.data();
+      const primary = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
+      applyTheme(primary, adjustColor(primary, -30));
+    }, () => {});
+  }
+
+  /* ========= CACHE ========= */
+  function cacheSet(key, data) {
+    try { localStorage.setItem(key, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
+  }
+  function cacheGet(key) {
+    try {
+      const r = localStorage.getItem(key);
+      if (!r) return null;
+      const c = JSON.parse(r);
+      if (!c || !c.data) return null;
+      if (Date.now() - (c.time || 0) > CACHE_TTL) return null;
+      return c.data;
+    } catch(e) { return null; }
+  }
+
+  /* ========= TOAST ========= */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2400);
+  }
+
+  /* ========= 3-DOT MENU ========= */
+  const menuBtn = document.getElementById('tg-3dot-btn');
+  const menu = document.getElementById('tg-3dot-menu');
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menu.classList.toggle('show');
+  });
+  document.addEventListener('click', (e) => {
+    if (menu.classList.contains('show') && !menu.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+
+  /* ========= GLOBAL FUNCTIONS ========= */
+  window.tgEditProfile = function() {
+    menu.classList.remove('show');
+    document.getElementById('tg-edit-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgCloseEdit = function() {
+    document.getElementById('tg-edit-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+  document.getElementById('tg-edit-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'tg-edit-modal') tgCloseEdit();
+  });
+
+  window.tgSaveProfile = async function() {
+    const u = auth.currentUser;
+    if (!u) { toast('Please log in first', 'error'); return; }
+    const name = (document.getElementById('tg-edit-name').value || '').trim();
+    const phone = (document.getElementById('tg-edit-phone').value || '').trim();
+    const gender = document.getElementById('tg-edit-gender').value || '';
+    const dob = document.getElementById('tg-edit-dob').value || '';
+    if (!name) { toast('Please enter your name', 'error'); return; }
+
+    const btn = document.getElementById('tg-edit-save');
+    const txt = document.getElementById('tg-edit-save-text');
+    btn.disabled = true; txt.textContent = 'Saving…';
+
+    try {
+      try { await u.updateProfile({ displayName: name }); } catch(e) {}
+      await db.collection('users').doc(u.uid).set({
+        name: name, phone: phone, gender: gender, dob: dob,
+        email: u.email || '', uid: u.uid,
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
+
+      const cached = cacheGet(PROFILE_CACHE_PREFIX + u.uid) || {};
+      cached.name = name; cached.phone = phone; cached.gender = gender; cached.dob = dob;
+      cacheSet(PROFILE_CACHE_PREFIX + u.uid, cached);
+
+      toast('Profile updated ✓', 'success');
+      setTimeout(() => { tgCloseEdit(); location.reload(); }, 700);
+    } catch (err) {
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false;
+      txt.textContent = 'Save Changes';
+    }
+  };
+
+  window.tgShareProfile = async function() {
+    menu.classList.remove('show');
+    const u = auth.currentUser;
+    if (!u) return;
+    const url = window.location.origin + '/account.html?uid=' + u.uid;
+    try {
+      if (navigator.share) { await navigator.share({ title: 'My TOEGO Profile', url }); return; }
+      await navigator.clipboard.writeText(url);
+      toast('Profile link copied ✓', 'success');
+    } catch(e) { toast('Share cancelled'); }
+  };
+
+  window.tgCopyUID = async function() {
+    menu.classList.remove('show');
+    const u = auth.currentUser;
+    if (!u) return;
+    try {
+      await navigator.clipboard.writeText(u.uid);
+      toast('User ID copied ✓', 'success');
+    } catch(e) { toast('Copy failed', 'error'); }
+  };
+
+  window.tgOpenHelp = function() {
+    menu.classList.remove('show');
+    location.href = 'contact.html';
+  };
+
+  window.tgLogout = async function() {
+    menu.classList.remove('show');
+    if (!confirm('Are you sure you want to logout?')) return;
+    try {
+      const uid = auth.currentUser && auth.currentUser.uid;
+      if (uid) {
+        try {
+          localStorage.removeItem(PROFILE_CACHE_PREFIX + uid);
+          localStorage.removeItem(STATS_CACHE_PREFIX + uid);
+          localStorage.removeItem(SELLER_CACHE_PREFIX + uid);
+        } catch(e) {}
+      }
+      await auth.signOut();
+      toast('Logged out successfully', 'success');
+      setTimeout(() => location.href = 'log-in.html', 500);
+    } catch(e) { toast('Logout failed', 'error'); }
+  };
+
+  window.tgDeleteAccount = function(e) {
+    e.preventDefault();
+    if (!confirm('Are you sure? This action cannot be undone.')) return;
+    if (!confirm('Really delete your account? Click OK to confirm.')) return;
+    const u = auth.currentUser;
+    if (!u) return;
+    const uid = u.uid;
+    u.delete().then(() => {
+      try {
+        localStorage.removeItem(PROFILE_CACHE_PREFIX + uid);
+        localStorage.removeItem(STATS_CACHE_PREFIX + uid);
+        localStorage.removeItem(SELLER_CACHE_PREFIX + uid);
+      } catch(e) {}
+      toast('Account deleted', 'success');
+      setTimeout(() => location.href = 'shop-home.html', 600);
+    }).catch(err => {
+      if (err.code === 'auth/requires-recent-login') {
+        toast('Please log out and log back in, then try again', 'error');
+      } else {
+        toast('Failed: ' + err.message, 'error');
+      }
+    });
+  };
+
+  window.tgToggleDarkMode = function(el) {
+    const sw = document.getElementById('tg-dark-switch');
+    sw.classList.toggle('on');
+    const on = sw.classList.contains('on');
+    try { localStorage.setItem('toego_dark_mode', on ? '1' : '0'); } catch(e) {}
+    toast(on ? 'Dark mode enabled' : 'Dark mode disabled');
+  };
+
+  window.tgSelectLanguage = function() {
+    const langs = ['English', 'हिन्दी (Hindi)', 'தமிழ் (Tamil)', 'తెలుగు (Telugu)', 'বাংলা (Bengali)', 'मराठी (Marathi)'];
+    const pick = prompt('Choose language:\n\n' + langs.map((l,i) => (i+1) + '. ' + l).join('\n'), '1');
+    if (!pick) return;
+    const idx = parseInt(pick) - 1;
+    if (idx >= 0 && idx < langs.length) {
+      document.getElementById('tg-lang-desc').textContent = langs[idx];
+      try { localStorage.setItem('toego_lang', langs[idx]); } catch(e) {}
+      toast('Language set to ' + langs[idx], 'success');
+    }
+  };
+
+  window.tgReferEarn = function() {
+    const u = auth.currentUser;
+    if (!u) return;
+    const code = 'TOE' + u.uid.slice(0, 6).toUpperCase();
+    const msg = 'Hey! Use my TOEGO referral code ' + code + ' to get ₹100 off on your first order.';
+    const url = window.location.origin;
+    if (navigator.share) {
+      navigator.share({ title: 'TOEGO Referral', text: msg, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(msg + ' ' + url).then(() => toast('Referral code copied ✓', 'success'));
+    }
+  };
+
+  /* ========= SELLER BANNER ========= */
+  function showSellerBanner(status, data) {
+    const banner = document.getElementById('tg-seller-banner');
+    const title = document.getElementById('tg-seller-title');
+    const desc = document.getElementById('tg-seller-desc');
+    const iconBox = document.getElementById('tg-seller-icon');
+    const pillWrap = document.getElementById('tg-seller-pill-wrap');
+    if (!banner) return;
+
+    banner.classList.remove('apply', 'pending', 'approved', 'rejected', 'admin', 'show');
+    pillWrap.innerHTML = '';
+
+    if (status === 'admin') {
+      banner.classList.add('admin', 'show');
+      title.textContent = 'Admin Dashboard';
+      desc.textContent = 'Manage the entire TOEGO marketplace';
+      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>';
+      pillWrap.innerHTML = '<span class="tg-seller-status-pill">🛡️ Admin Access</span>';
+      banner.onclick = () => location.href = 'admin.html';
+
+    } else if (status === 'approved') {
+      banner.classList.add('approved', 'show');
+      title.textContent = 'Seller Dashboard';
+      desc.textContent = 'Manage your products, orders & earnings';
+      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+      pillWrap.innerHTML = '<span class="tg-seller-status-pill">✓ Approved Seller</span>';
+      banner.onclick = () => location.href = 'seller.html';
+
+    } else if (status === 'pending') {
+      banner.classList.add('pending', 'show');
+      title.textContent = 'Application Under Review';
+      desc.textContent = "We're reviewing your seller application. Usually takes 24-48 hours.";
+      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+      pillWrap.innerHTML = '<span class="tg-seller-status-pill">⏳ Pending</span>';
+      banner.onclick = null;
+
+    } else if (status === 'rejected') {
+      banner.classList.add('rejected', 'show');
+      title.textContent = 'Application Rejected';
+      desc.textContent = 'Your application was not approved. Tap to apply again.';
+      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
+      pillWrap.innerHTML = '<span class="tg-seller-status-pill">✕ Try Again</span>';
+      banner.onclick = () => location.href = 'seller-apply.html';
+
+    } else {
+      banner.classList.add('apply', 'show');
+      title.textContent = 'Become a Seller';
+      desc.textContent = 'Start selling on TOEGO and grow your business';
+      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+      pillWrap.innerHTML = '';
+      banner.onclick = () => location.href = 'seller-apply.html';
+    }
+  }
+
+  /* ========= PROFILE RENDER ========= */
+  function initialFromName(name) {
+    if (!name) return 'T';
+    return name.trim().charAt(0).toUpperCase();
+  }
+
+  function renderProfileUI(user, d, source) {
+    d = d || {};
+    const nameEl = document.getElementById('tg-p-name');
+    const emailEl = document.getElementById('tg-p-email');
+    const phoneEl = document.getElementById('tg-p-phone');
+    const avatarEl = document.getElementById('tg-avatar');
+    const badgeWrap = document.getElementById('tg-p-badge-wrap');
+
+    const name = d.name || user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+    const email = user.email || d.email || '';
+    const phone = d.phone || user.phoneNumber || '';
+    const photo = d.photoURL || user.photoURL || '';
+    const role = (d.role || 'customer').toLowerCase();
+
+    nameEl.textContent = name;
+    emailEl.textContent = email || phone || 'TOEGO User';
+    if (phone) { phoneEl.textContent = phone; phoneEl.style.display = 'block'; }
+
+    if (photo) avatarEl.innerHTML = '<img src="' + photo + '" alt="" />';
+    else avatarEl.textContent = initialFromName(name);
+
+    const isSuperAdmin = user.email === SUPER_ADMIN_EMAIL || role === 'superadmin';
+    if (isSuperAdmin) {
+      badgeWrap.innerHTML = '<div class="tg-profile-badge superadmin"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>SUPER ADMIN</div>';
+    } else if (role === 'admin') {
+      badgeWrap.innerHTML = '<div class="tg-profile-badge admin"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>ADMIN</div>';
+    } else if (role === 'seller') {
+      badgeWrap.innerHTML = '<div class="tg-profile-badge seller"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>SELLER</div>';
+    } else {
+      badgeWrap.innerHTML = '';
+    }
+
+    document.getElementById('tg-edit-name').value = name;
+    document.getElementById('tg-edit-email').value = email;
+    document.getElementById('tg-edit-phone').value = phone;
+    if (d.gender) document.getElementById('tg-edit-gender').value = d.gender;
+    if (d.dob) document.getElementById('tg-edit-dob').value = d.dob;
+
+    if (isSuperAdmin || role === 'admin') {
+      document.getElementById('tg-admin-sec').style.display = 'block';
+    }
+  }
+
+  /* ========= SELLER RESOLVER ========= */
+  function resolveSellerBanner(user, userData) {
+    if (!userData) userData = {};
+    const role = (userData.role || 'customer').toLowerCase();
+    const isSuperAdmin = user.email === SUPER_ADMIN_EMAIL;
+    const isAdmin = ['admin', 'superadmin'].includes(role);
+
+    if (isSuperAdmin || isAdmin) {
+      showSellerBanner('admin');
+      return Promise.resolve('admin');
+    }
+    if (role === 'seller') {
+      showSellerBanner('approved');
+      return Promise.resolve('approved');
+    }
+
+    return db.collection('sellers').doc(user.uid).get().then(sellerSnap => {
+      if (!sellerSnap.exists) {
+        showSellerBanner('none');
+        return 'none';
+      }
+      const sd = sellerSnap.data();
+      const status = (sd.status || '').toLowerCase();
+      if (status === 'approved' || sd.approved === true) {
+        db.collection('users').doc(user.uid).set({ role: 'seller', updatedAt: FV.serverTimestamp() }, { merge: true }).catch(() => {});
+        showSellerBanner('approved');
+        return 'approved';
+      } else if (status === 'rejected') {
+        showSellerBanner('rejected', sd);
+        return 'rejected';
+      } else {
+        showSellerBanner('pending', sd);
+        return 'pending';
+      }
+    }).catch(() => {
+      showSellerBanner('none');
+      return 'none';
+    });
+  }
+
+  /* ========= STATS RENDER ========= */
+  function renderStatsUI(stats) {
+    stats = stats || { orders: 0, wish: 0, cart: 0, coupons: 0 };
+    document.getElementById('tg-stat-orders').textContent = stats.orders || 0;
+    document.getElementById('tg-stat-wish').textContent = stats.wish || 0;
+    document.getElementById('tg-stat-cart').textContent = stats.cart || 0;
+    document.getElementById('tg-coupon-count').textContent = stats.coupons || 0;
+
+    const badge = document.getElementById('tg-cart-badge');
+    const badgeM = document.getElementById('tg-cart-badge-m');
+    const cartCount = stats.cart || 0;
+    if (cartCount > 0) {
+      [badge, badgeM].forEach(b => { if (b) { b.textContent = cartCount; b.style.display = 'flex'; } });
+    } else {
+      [badge, badgeM].forEach(b => { if (b) b.style.display = 'none'; });
+    }
+  }
+
+  /* ========= PARALLEL STATS LOADER ========= */
+  async function loadStatsParallel(user) {
+    const uid = user.uid;
+
+    const ordersP = (async () => {
+      try {
+        const s = await db.collection('orders').where('customerId', '==', uid).get();
+        return s.size || 0;
+      } catch(e) {
+        try {
+          const s2 = await db.collection('orders').where('userId', '==', uid).get();
+          return s2.size || 0;
+        } catch(e2) { return 0; }
+      }
+    })();
+
+    const wishP = (async () => {
+      try {
+        const s = await db.collection('wishlists').doc(uid).get();
+        return (s.exists && Array.isArray(s.data().items)) ? s.data().items.length : 0;
+      } catch(e) { return 0; }
+    })();
+
+    const cartP = (async () => {
+      try {
+        const s = await db.collection('carts').doc(uid).collection('items').get();
+        let c = 0;
+        s.forEach(d => { c += Number(d.data().qty || 1); });
+        return c;
+      } catch(e) {
+        try {
+          const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+          return gc.reduce((a,i) => a + Number(i.qty||1), 0);
+        } catch(e2) { return 0; }
+      }
+    })();
+
+    const couponsP = (async () => {
+      try {
+        const s = await db.collection('coupons').where('active', '==', true).limit(10).get();
+        return s.size || 0;
+      } catch(e) { return 0; }
+    })();
+
+    const [orders, wish, cart, coupons] = await Promise.all([ordersP, wishP, cartP, couponsP]);
+    const stats = { orders, wish, cart, coupons };
+    renderStatsUI(stats);
+    cacheSet(STATS_CACHE_PREFIX + uid, stats);
+    return stats;
+  }
+
+  /* ========= FAST USER DOC LOADER ========= */
+  async function loadUserDoc(user) {
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      const d = snap.exists ? snap.data() : {};
+      USER_DOC = d;
+      renderProfileUI(user, d);
+      cacheSet(PROFILE_CACHE_PREFIX + user.uid, {
+        ...d,
+        _displayName: user.displayName || '',
+        _photoURL: user.photoURL || '',
+        _email: user.email || ''
+      });
+      return d;
+    } catch(e) {
+      renderProfileUI(user, {});
+      return {};
+    }
+  }
+
+  /* ========= MAIN FAST INIT ========= */
+  async function initFast(user) {
+    if (!user) {
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
+      return;
+    }
+    if (LAST_INIT_UID === user.uid) return;
+    LAST_INIT_UID = user.uid;
+
+    // ⚡ STEP 1: INSTANT render from cache
+    const cachedProfile = cacheGet(PROFILE_CACHE_PREFIX + user.uid);
+    if (cachedProfile) {
+      renderProfileUI(user, cachedProfile, 'cache');
+    } else {
+      renderProfileUI(user, {});
+    }
+
+    const cachedStats = cacheGet(STATS_CACHE_PREFIX + user.uid);
+    if (cachedStats) renderStatsUI(cachedStats);
+
+    const cachedSeller = cacheGet(SELLER_CACHE_PREFIX + user.uid);
+    if (cachedSeller && cachedSeller.status) {
+      showSellerBanner(cachedSeller.status, cachedSeller.data);
+      if (cachedSeller.status === 'admin') {
+        document.getElementById('tg-admin-sec').style.display = 'block';
+      }
+    }
+
+    // ⚡ STEP 2: Fire everything in parallel
+    const profilePromise = loadUserDoc(user).then(d => {
+      return resolveSellerBanner(user, d);
+    }).then(sellerStatus => {
+      cacheSet(SELLER_CACHE_PREFIX + user.uid, { status: sellerStatus });
+    }).catch(() => {
+      return resolveSellerBanner(user, {}).then(s => cacheSet(SELLER_CACHE_PREFIX + user.uid, { status: s })).catch(() => {});
+    });
+
+    const statsPromise = loadStatsParallel(user).catch(() => {});
+
+    await Promise.all([profilePromise, statsPromise]);
+  }
+
+  /* ========= RESTORE LOCAL SETTINGS ========= */
+  (function restoreSettings() {
+    try {
+      const dm = localStorage.getItem('toego_dark_mode') === '1';
+      if (dm) document.getElementById('tg-dark-switch').classList.add('on');
+    } catch(e) {}
+    try {
+      const lang = localStorage.getItem('toego_lang');
+      if (lang) document.getElementById('tg-lang-desc').textContent = lang;
+    } catch(e) {}
+  })();
+
+  /* ========= AUTH GUARD ========= */
+  const initialUser = auth.currentUser;
+  if (initialUser) {
+    initFast(initialUser);
+  }
+
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
+      return;
+    }
+    if (user.uid !== LAST_INIT_UID) {
+      initFast(user);
+    }
+  });
+
+  loadThemeColor();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Privacy Policy — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; }
+
+/* HEADER */
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+/* HERO */
+.tg-hero {
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  border-radius: 14px;
+  padding: 28px 24px;
+  color: #fff;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.25);
+}
+.tg-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(255,229,0,0.2), transparent 70%);
+  border-radius: 50%;
+}
+.tg-hero-content { position: relative; z-index: 2; }
+.tg-hero-tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.tg-hero-title { font-size: 26px; font-weight: 900; margin: 0 0 8px; letter-spacing: -0.4px; line-height: 1.15; }
+.tg-hero-sub { font-size: 13.5px; opacity: 0.95; margin: 0; line-height: 1.5; }
+.tg-hero-icon {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 68px;
+  opacity: 0.9;
+  z-index: 2;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+}
+
+/* META STRIP */
+.tg-meta-strip {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  font-size: 12.5px;
+  color: #666;
+  flex-wrap: wrap;
+}
+.tg-meta-strip svg { width: 16px; height: 16px; stroke: #2874f0; fill: none; stroke-width: 2.2; flex-shrink: 0; }
+.tg-meta-strip b { color: #212121; font-weight: 700; }
+
+/* QUICK LINKS */
+.tg-quick-nav {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-quick-nav-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 12px;
+}
+.tg-quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tg-quick-chip {
+  padding: 8px 14px;
+  background: #f5f5f6;
+  border: 1.5px solid #f5f5f6;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #212121;
+  cursor: pointer;
+  transition: all .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tg-quick-chip:hover { background: #e8f0fe; border-color: #2874f0; color: #2874f0; }
+.tg-quick-chip-icon { font-size: 14px; }
+
+/* CONTENT SECTION */
+.tg-section {
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  scroll-margin-top: 72px;
+}
+.tg-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid #f1f3f6;
+}
+.tg-section-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+}
+.tg-section-icon.blue { background: linear-gradient(135deg, #eef3ff, #e0eaff); }
+.tg-section-icon.green { background: linear-gradient(135deg, #e6f7ec, #d1f0dd); }
+.tg-section-icon.orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+.tg-section-icon.pink { background: linear-gradient(135deg, #fce4ec, #f8bbd0); }
+.tg-section-icon.purple { background: linear-gradient(135deg, #ede7f6, #d1c4e9); }
+.tg-section-icon.teal { background: linear-gradient(135deg, #e0f2f1, #b2dfdb); }
+.tg-section-icon.yellow { background: linear-gradient(135deg, #fff8e1, #ffecb3); }
+.tg-section-icon.red { background: linear-gradient(135deg, #ffebee, #ffcdd2); }
+.tg-section-title { font-size: 16px; font-weight: 800; color: #212121; letter-spacing: -0.2px; }
+.tg-section-sub { font-size: 12px; color: #888; margin-top: 2px; }
+.tg-section-body { padding: 16px 20px 20px; font-size: 13.5px; line-height: 1.7; color: #333; }
+.tg-section-body p { margin: 0 0 12px; }
+.tg-section-body p:last-child { margin-bottom: 0; }
+.tg-section-body b { color: #212121; font-weight: 700; }
+.tg-section-body a { color: #2874f0; font-weight: 600; }
+.tg-section-body a:hover { text-decoration: underline; }
+
+.tg-list { list-style: none; padding: 0; margin: 0 0 12px; }
+.tg-list li {
+  padding: 8px 0 8px 26px;
+  position: relative;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+.tg-list li::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 15px;
+  width: 6px;
+  height: 6px;
+  background: #2874f0;
+  border-radius: 50%;
+}
+
+/* HIGHLIGHT BOX */
+.tg-highlight {
+  background: linear-gradient(135deg, #f0f5ff, #e0eaff);
+  border-left: 4px solid #2874f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1a1d21;
+}
+.tg-highlight b { color: #2874f0; }
+.tg-highlight.green {
+  background: linear-gradient(135deg, #e6f7ec, #d1f0dd);
+  border-left-color: #1b8a3a;
+}
+.tg-highlight.green b { color: #1b8a3a; }
+.tg-highlight.orange {
+  background: linear-gradient(135deg, #fff8e1, #ffecb3);
+  border-left-color: #f57c00;
+}
+.tg-highlight.orange b { color: #e65100; }
+
+/* DATA TABLE */
+.tg-data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 12px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  font-size: 12.5px;
+}
+.tg-data-table th {
+  text-align: left;
+  padding: 12px 14px;
+  background: #f8f9fb;
+  font-weight: 800;
+  color: #444;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.tg-data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f3f6;
+  color: #333;
+  line-height: 1.55;
+  vertical-align: top;
+}
+.tg-data-table tr:last-child td { border-bottom: none; }
+
+/* CONTACT CARD */
+.tg-contact-card {
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  color: #fff;
+  border-radius: 12px;
+  padding: 24px 22px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.25);
+}
+.tg-contact-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,229,0,0.2), transparent 70%);
+  border-radius: 50%;
+}
+.tg-contact-content { position: relative; z-index: 2; }
+.tg-contact-title { font-size: 18px; font-weight: 800; margin: 0 0 6px; }
+.tg-contact-desc { font-size: 13px; opacity: 0.92; margin: 0 0 18px; line-height: 1.5; }
+.tg-contact-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.tg-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: #fff;
+  color: #2874f0;
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all .15s;
+}
+.tg-contact-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.tg-contact-btn.ghost {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  box-shadow: none;
+}
+.tg-contact-btn.ghost:hover { background: rgba(255,255,255,0.25); }
+.tg-contact-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+/* VERSION FOOTER */
+.tg-version {
+  text-align: center;
+  padding: 14px 20px 20px;
+  font-size: 11.5px;
+  color: #999;
+  line-height: 1.7;
+}
+.tg-version b { color: #666; }
+
+/* BOTTOM NAV */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* BACK TO TOP */
+.tg-top-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 88px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.4);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all .25s;
+}
+.tg-top-btn.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.tg-top-btn:hover { filter: brightness(1.08); }
+.tg-top-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .tg-container { padding: 8px; }
+  .tg-hero { padding: 22px 18px; }
+  .tg-hero-title { font-size: 21px; }
+  .tg-hero-icon { font-size: 52px; right: 16px; }
+  .tg-section-head { padding: 14px 16px 10px; }
+  .tg-section-icon { width: 36px; height: 36px; font-size: 18px; }
+  .tg-section-title { font-size: 15px; }
+  .tg-section-body { padding: 14px 16px 18px; font-size: 13px; }
+  .tg-list li { font-size: 13px; }
+  .tg-data-table { font-size: 11.5px; }
+  .tg-data-table th, .tg-data-table td { padding: 9px 10px; }
+  .tg-contact-card { padding: 20px 18px; }
+  .tg-contact-btn { font-size: 12px; padding: 10px 16px; }
+  .tg-top-btn { bottom: 82px; right: 12px; width: 40px; height: 40px; }
+  .tg-quick-nav { padding: 14px 16px; }
+  .tg-quick-chip { font-size: 11.5px; padding: 7px 12px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">Privacy Policy</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- HERO -->
+    <div class="tg-hero">
+      <div class="tg-hero-content">
+        <div class="tg-hero-tag">🔒 Your Trust Matters</div>
+        <h1 class="tg-hero-title">Privacy Policy</h1>
+        <p class="tg-hero-sub">Learn how TOEGO collects, uses, and protects your personal information.</p>
+      </div>
+      <div class="tg-hero-icon">🛡️</div>
+    </div>
+
+    <!-- META -->
+    <div class="tg-meta-strip">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Last updated: <b>12 October 2026</b></span>
+    </div>
+
+    <!-- QUICK NAV -->
+    <div class="tg-quick-nav">
+      <div class="tg-quick-nav-title">Jump to Section</div>
+      <div class="tg-quick-chips">
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-info')"><span class="tg-quick-chip-icon">📋</span>Information We Collect</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-use')"><span class="tg-quick-chip-icon">🎯</span>How We Use It</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-share')"><span class="tg-quick-chip-icon">🤝</span>Sharing</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-security')"><span class="tg-quick-chip-icon">🔐</span>Security</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-cookies')"><span class="tg-quick-chip-icon">🍪</span>Cookies</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-rights')"><span class="tg-quick-chip-icon">⚖️</span>Your Rights</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-children')"><span class="tg-quick-chip-icon">👶</span>Children</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-changes')"><span class="tg-quick-chip-icon">📝</span>Changes</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-contact')"><span class="tg-quick-chip-icon">📞</span>Contact</div>
+      </div>
+    </div>
+
+    <!-- INTRO -->
+    <div class="tg-section">
+      <div class="tg-section-head">
+        <div class="tg-section-icon blue">👋</div>
+        <div>
+          <div class="tg-section-title">Welcome to TOEGO</div>
+          <div class="tg-section-sub">Our commitment to your privacy</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>TOEGO ("we", "us", "our") operates the website and mobile experience at <b>toego.in</b>. We are committed to protecting your privacy and being transparent about how we handle your information.</p>
+        <p>This Privacy Policy explains:</p>
+        <ul class="tg-list">
+          <li>What information we collect when you use TOEGO</li>
+          <li>How we use and share that information</li>
+          <li>The choices you have about your data</li>
+          <li>How we protect your information</li>
+        </ul>
+        <p>By using TOEGO, you agree to the practices described in this policy. Please read it carefully.</p>
+      </div>
+    </div>
+
+    <!-- 1. INFORMATION WE COLLECT -->
+    <div class="tg-section" id="sec-info">
+      <div class="tg-section-head">
+        <div class="tg-section-icon green">📋</div>
+        <div>
+          <div class="tg-section-title">1. Information We Collect</div>
+          <div class="tg-section-sub">What we know about you</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We collect the following types of information to provide and improve our services:</p>
+
+        <table class="tg-data-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Examples</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Account Info</b></td>
+              <td>Name, email address, phone number, profile photo, password (encrypted)</td>
+            </tr>
+            <tr>
+              <td><b>Order Info</b></td>
+              <td>Products ordered, delivery address, payment method, order history, tracking IDs</td>
+            </tr>
+            <tr>
+              <td><b>Payment Info</b></td>
+              <td>Payment status, transaction IDs. <b>Note: We do NOT store card numbers, CVV, or UPI PINs.</b></td>
+            </tr>
+            <tr>
+              <td><b>Device Info</b></td>
+              <td>Browser type, IP address, device type, operating system, screen size</td>
+            </tr>
+            <tr>
+              <td><b>Usage Data</b></td>
+              <td>Pages viewed, products searched, time spent, click patterns</td>
+            </tr>
+            <tr>
+              <td><b>Location</b></td>
+              <td>Pincode for delivery, approximate city (if allowed)</td>
+            </tr>
+            <tr>
+              <td><b>Reviews</b></td>
+              <td>Ratings, review text, review photos you upload</td>
+            </tr>
+            <tr>
+              <td><b>Seller Data</b></td>
+              <td>(For sellers) Shop name, GST, bank details, business address, product catalog</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tg-highlight green">
+          💡 <b>Good to know:</b> We only collect information that is necessary to run our marketplace, process your orders, and improve your shopping experience.
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. HOW WE USE -->
+    <div class="tg-section" id="sec-use">
+      <div class="tg-section-head">
+        <div class="tg-section-icon orange">🎯</div>
+        <div>
+          <div class="tg-section-title">2. How We Use Your Information</div>
+          <div class="tg-section-sub">Why we collect what we collect</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We use your information for the following purposes:</p>
+        <ul class="tg-list">
+          <li><b>Order Processing:</b> To accept, process, and deliver your orders.</li>
+          <li><b>Payments:</b> To process payments securely via Razorpay and issue refunds.</li>
+          <li><b>Account Management:</b> To create and secure your account, manage wishlist, cart, and orders.</li>
+          <li><b>Customer Support:</b> To respond to your queries, tickets, and complaints.</li>
+          <li><b>Personalization:</b> To recommend products and show relevant deals.</li>
+          <li><b>Communication:</b> To send order updates, offers, and announcements (you can opt out anytime).</li>
+          <li><b>Fraud Prevention:</b> To detect and prevent fraudulent activity, abuse, or misuse.</li>
+          <li><b>Analytics:</b> To understand user behavior, improve our services, and fix issues.</li>
+          <li><b>Legal Compliance:</b> To comply with applicable laws and regulations in India.</li>
+        </ul>
+        <div class="tg-highlight">
+          📌 We do <b>NOT</b> sell your personal information to third parties for their marketing purposes.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. SHARING -->
+    <div class="tg-section" id="sec-share">
+      <div class="tg-section-head">
+        <div class="tg-section-icon pink">🤝</div>
+        <div>
+          <div class="tg-section-title">3. How We Share Your Information</div>
+          <div class="tg-section-sub">Who sees what and why</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We share your information only with trusted parties as described below:</p>
+
+        <table class="tg-data-table">
+          <thead>
+            <tr>
+              <th>With Whom</th>
+              <th>What We Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Sellers</b></td>
+              <td>Your name, shipping address, phone number (to fulfill your order). Sellers are contractually obligated to protect this data.</td>
+            </tr>
+            <tr>
+              <td><b>Delivery Partners</b></td>
+              <td>Name, phone, delivery address, pincode (to deliver your order).</td>
+            </tr>
+            <tr>
+              <td><b>Payment Providers</b></td>
+              <td>Razorpay and banks — for processing payments and refunds securely.</td>
+            </tr>
+            <tr>
+              <td><b>Service Providers</b></td>
+              <td>Cloud hosting (Firebase, Google Cloud), email/SMS providers, image CDN (Cloudinary), analytics.</td>
+            </tr>
+            <tr>
+              <td><b>Legal Authorities</b></td>
+              <td>When required by law, court order, or to protect the safety of users and our platform.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tg-highlight orange">
+          ⚠️ <b>Important:</b> Every third party we work with is contractually bound to protect your data and use it only for the specific purpose described.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SECURITY -->
+    <div class="tg-section" id="sec-security">
+      <div class="tg-section-head">
+        <div class="tg-section-icon teal">🔐</div>
+        <div>
+          <div class="tg-section-title">4. Data Security</div>
+          <div class="tg-section-sub">How we protect your data</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We take the security of your data seriously. Here's how we protect it:</p>
+        <ul class="tg-list">
+          <li><b>Encryption in Transit:</b> All data is transmitted over HTTPS with TLS 1.3.</li>
+          <li><b>Firebase Authentication:</b> Your password is never stored in plain text — only securely hashed.</li>
+          <li><b>Firestore Rules:</b> Strict database rules ensure users can only access their own data.</li>
+          <li><b>PCI-DSS Compliance:</b> Payment card data is handled by Razorpay (a PCI-DSS Level 1 certified provider). We <b>never</b> store card details.</li>
+          <li><b>Access Control:</b> Internal access to user data is restricted to authorized personnel only.</li>
+          <li><b>Regular Reviews:</b> We regularly review our security practices and update as needed.</li>
+        </ul>
+
+        <div class="tg-highlight">
+          💪 <b>Your role:</b> Please keep your password strong and never share it. Log out from shared devices. If you suspect unauthorized access, contact us immediately.
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. COOKIES -->
+    <div class="tg-section" id="sec-cookies">
+      <div class="tg-section-head">
+        <div class="tg-section-icon yellow">🍪</div>
+        <div>
+          <div class="tg-section-title">5. Cookies & Tracking</div>
+          <div class="tg-section-sub">How we remember your preferences</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>TOEGO uses cookies and similar technologies to enhance your experience:</p>
+        <ul class="tg-list">
+          <li><b>Essential Cookies:</b> Required for login sessions, cart, and security. Cannot be disabled.</li>
+          <li><b>Preference Cookies:</b> Store your theme color, language, and viewing preferences.</li>
+          <li><b>Analytics Cookies:</b> Help us understand how visitors use the site so we can improve.</li>
+          <li><b>Local Storage:</b> Used to cache products, cart items, and recently viewed items for speed.</li>
+        </ul>
+        <p>You can control cookies through your browser settings. Disabling essential cookies may break certain features like staying logged in or keeping items in your cart.</p>
+      </div>
+    </div>
+
+    <!-- 6. YOUR RIGHTS -->
+    <div class="tg-section" id="sec-rights">
+      <div class="tg-section-head">
+        <div class="tg-section-icon purple">⚖️</div>
+        <div>
+          <div class="tg-section-title">6. Your Rights</div>
+          <div class="tg-section-sub">You are in control of your data</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>As a TOEGO user, you have the following rights regarding your personal information:</p>
+
+        <table class="tg-data-table">
+          <thead>
+            <tr>
+              <th>Right</th>
+              <th>What It Means</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Access</b></td>
+              <td>See what personal data we hold about you</td>
+            </tr>
+            <tr>
+              <td><b>Correction</b></td>
+              <td>Update or fix incorrect info from the Account page</td>
+            </tr>
+            <tr>
+              <td><b>Deletion</b></td>
+              <td>Request deletion of your account and personal data</td>
+            </tr>
+            <tr>
+              <td><b>Portability</b></td>
+              <td>Get a copy of your data in a readable format</td>
+            </tr>
+            <tr>
+              <td><b>Withdraw Consent</b></td>
+              <td>Opt out of marketing emails/SMS at any time</td>
+            </tr>
+            <tr>
+              <td><b>Complain</b></td>
+              <td>Lodge a complaint with us or the appropriate authority</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>To exercise any of these rights, visit your <a href="account.html">Account page</a> or contact us at <b>support@toego.in</b>. We typically respond within 7 business days.</p>
+
+        <div class="tg-highlight orange">
+          🗑️ <b>Account Deletion:</b> You can delete your account anytime from the Account page. Some data (like order history) may be retained for legal and tax compliance for up to 8 years.
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. CHILDREN -->
+    <div class="tg-section" id="sec-children">
+      <div class="tg-section-head">
+        <div class="tg-section-icon red">👶</div>
+        <div>
+          <div class="tg-section-title">7. Children's Privacy</div>
+          <div class="tg-section-sub">Age requirements</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>TOEGO is not intended for children under the age of <b>18</b>. We do not knowingly collect personal information from children.</p>
+        <p>If you are a parent or guardian and believe your child has provided us with personal information, please contact us at <b>support@toego.in</b> and we will delete such information promptly.</p>
+      </div>
+    </div>
+
+    <!-- 8. DATA RETENTION -->
+    <div class="tg-section">
+      <div class="tg-section-head">
+        <div class="tg-section-icon blue">📦</div>
+        <div>
+          <div class="tg-section-title">8. Data Retention</div>
+          <div class="tg-section-sub">How long we keep your data</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We retain your personal information only as long as necessary for the purposes described in this policy:</p>
+        <ul class="tg-list">
+          <li><b>Account data:</b> As long as your account is active</li>
+          <li><b>Order records:</b> Up to 8 years (for tax and legal compliance)</li>
+          <li><b>Reviews:</b> Until you delete them or your account</li>
+          <li><b>Marketing preferences:</b> Until you opt out</li>
+          <li><b>Cart/Wishlist:</b> Until you clear them or delete your account</li>
+        </ul>
+        <p>When you delete your account, we remove or anonymize your personal data except where retention is legally required.</p>
+      </div>
+    </div>
+
+    <!-- 9. CHANGES -->
+    <div class="tg-section" id="sec-changes">
+      <div class="tg-section-head">
+        <div class="tg-section-icon pink">📝</div>
+        <div>
+          <div class="tg-section-title">9. Changes to This Policy</div>
+          <div class="tg-section-sub">We'll keep you informed</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We may update this Privacy Policy from time to time to reflect changes in our practices, technology, or legal requirements.</p>
+        <p>When we make significant changes, we will:</p>
+        <ul class="tg-list">
+          <li>Update the "Last updated" date at the top of this page</li>
+          <li>Notify you via email or in-app notification</li>
+          <li>Post a prominent announcement on TOEGO</li>
+        </ul>
+        <p>We encourage you to review this page periodically. Continued use of TOEGO after changes means you accept the updated policy.</p>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="tg-contact-card" id="sec-contact">
+      <div class="tg-contact-content">
+        <div class="tg-contact-title">Questions About Privacy?</div>
+        <p class="tg-contact-desc">Our Data Protection Officer is here to help. Reach out for any privacy-related query, request, or complaint.</p>
+        <div class="tg-contact-actions">
+          <a href="mailto:privacy@toego.in" class="tg-contact-btn">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            Email Us
+          </a>
+          <a href="help-center.html" class="tg-contact-btn ghost">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Help Center
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERSION FOOTER -->
+    <div class="tg-version">
+      <b>TOEGO Privacy Policy</b><br>
+      Version 2.0 · Effective from 12 October 2026<br>
+      © 2026 TOEGO.com · Made in India 🇮🇳
+    </div>
+
+  </div>
+</div>
+
+<!-- BACK TO TOP -->
+<button class="tg-top-btn" id="tg-top-btn" onclick="tgScrollTop()" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- BOTTOM NAV -->
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const GUEST_CART = 'toego_cart_guest';
+  const THEME_KEY = 'toego_theme_colors';
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function adjustColor(hex, pct) {
+    try {
+      hex = hex.replace('#','');
+      const n = parseInt(hex, 16);
+      const r = Math.max(0, Math.min(255, (n >> 16) + pct));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
+      const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    } catch(e) { return hex; }
+  }
+  function applyTheme(primary, dark) {
+    primary = primary || '#2874f0';
+    dark = dark || adjustColor(primary, -30);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    const hd = document.querySelector('.tg-hd'); if (hd) hd.style.background = primary;
+    const hero = document.querySelector('.tg-hero'); if (hero) hero.style.background = 'linear-gradient(135deg, ' + primary + ', ' + dark + ')';
+    const contactCard = document.querySelector('.tg-contact-card'); if (contactCard) contactCard.style.background = 'linear-gradient(135deg, ' + primary + ', ' + dark + ')';
+    const topBtn = document.getElementById('tg-top-btn'); if (topBtn) topBtn.style.background = 'linear-gradient(135deg, ' + primary + ', ' + dark + ')';
+    try { localStorage.setItem(THEME_KEY, JSON.stringify({ primary, dark })); } catch(e) {}
+  }
+  (function boot() {
+    try { const c = localStorage.getItem(THEME_KEY); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {}
+  })();
+  (async function loadTheme() {
+    try {
+      const s = await db.collection('siteSettings').doc('theme').get();
+      if (s.exists) {
+        const d = s.data();
+        const p = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
+        applyTheme(p, adjustColor(p, -30));
+      }
+    } catch(e) {}
+    db.collection('siteSettings').doc('theme').onSnapshot(snap => {
+      if (!snap.exists) return;
+      const d = snap.data();
+      const p = d.themeColor || '#2874f0';
+      applyTheme(p, adjustColor(p, -30));
+    }, () => {});
+  })();
+
+  /* ========= CART BADGE ========= */
+  function getGuestCart() { try { return JSON.parse(localStorage.getItem(GUEST_CART) || '[]'); } catch(e) { return []; } }
+  function cartCount(items) { return (items||[]).reduce((s,i) => s + Number(i.qty || 1), 0); }
+  async function updateCartBadge() {
+    let count = 0;
+    const u = auth.currentUser;
+    try {
+      if (u) {
+        const snap = await db.collection('carts').doc(u.uid).collection('items').get();
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        count = cartCount(getGuestCart());
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-bnav-badge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ========= SCROLL TO SECTION ========= */
+  window.tgGoTo = function(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.pageYOffset - 72;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  };
+
+  /* ========= BACK TO TOP ========= */
+  const topBtn = document.getElementById('tg-top-btn');
+  function updateTopBtn() {
+    if (!topBtn) return;
+    if (window.pageYOffset > 400) topBtn.classList.add('show');
+    else topBtn.classList.remove('show');
+  }
+  window.tgScrollTop = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  window.addEventListener('scroll', updateTopBtn, { passive: true });
+
+  /* ========= AUTH ========= */
+  auth.onAuthStateChanged(() => {
+    updateCartBadge();
+  });
+
+  /* ========= INIT ========= */
+  updateCartBadge();
+  updateTopBtn();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Pickup Partner — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a0e1a">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;padding:0;width:100%;max-width:100vw;overflow-x:hidden;background:#0a0e1a;font-family:'Roboto',Arial,sans-serif;color:#e2e8f0;-webkit-font-smoothing:antialiased;min-height:100vh;}
+img{max-width:100%;display:block;}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select,textarea{font:inherit;}
+a{color:inherit;text-decoration:none;}
+header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb,.breadcrumb{display:none!important;}
+
+/* SPLASH */
+#tg-splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a0e1a 0%,#1a2238 50%,#0a0e1a 100%);z-index:9999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .4s,visibility .4s;}
+#tg-splash.hide{opacity:0;visibility:hidden;}
+.tg-splash-logo{font-size:48px;font-weight:900;font-style:italic;color:#fff;letter-spacing:-1.5px;line-height:1;}
+.tg-splash-logo span{color:#00d4ff;}
+.tg-splash-tag{color:#00d4ff;font-size:11px;letter-spacing:5px;text-transform:uppercase;font-weight:800;}
+.tg-spin{width:44px;height:44px;border:4px solid rgba(0,212,255,0.15);border-top-color:#00d4ff;border-radius:50%;animation:tgSpin .8s linear infinite;margin-top:10px;}
+@keyframes tgSpin{to{transform:rotate(360deg);}}
+
+/* OFFLINE BANNER */
+.tg-offline{position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;font-size:12px;font-weight:800;padding:8px 14px;text-align:center;z-index:99999;display:none;letter-spacing:0.4px;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
+.tg-offline.show{display:block;}
+.tg-offline::before{content:'⚠ ';font-size:14px;}
+
+/* HEADER */
+.tg-hd{background:linear-gradient(135deg,#0f1729 0%,#1a2238 100%);position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:1px solid rgba(0,212,255,0.15);box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:top .3s;}
+.tg-offline.show ~ .tg-hd{top:36px;}
+.tg-hd-i{display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:60px;}
+.tg-hd-logo{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+.tg-hd-lm{width:34px;height:34px;background:linear-gradient(135deg,#00d4ff,#2874f0);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#0a0e1a;font-weight:900;font-style:italic;font-size:18px;box-shadow:0 4px 12px rgba(0,212,255,0.4);flex-shrink:0;}
+.tg-hd-lt{color:#fff;font-weight:900;font-style:italic;font-size:17px;letter-spacing:-0.3px;}
+.tg-hd-lt span{color:#00d4ff;}
+.tg-hd-lb{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;font-size:8.5px;font-weight:900;padding:3px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 2px 6px rgba(0,212,255,0.4);}
+.tg-hd-sp{flex:1;}
+.tg-hd-live{display:flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);padding:5px 10px;border-radius:999px;font-size:10.5px;font-weight:800;color:#4ade80;letter-spacing:0.4px;text-transform:uppercase;flex-shrink:0;transition:all .2s;}
+.tg-hd-live::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px #22c55e;animation:tgLivePulse 1.5s infinite;}
+.tg-hd-live.syncing{background:rgba(250,204,21,0.12);border-color:rgba(250,204,21,0.3);color:#facc15;}
+.tg-hd-live.syncing::before{background:#facc15;box-shadow:0 0 8px #facc15;animation:tgSyncPulse .5s infinite;}
+@keyframes tgSyncPulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+@keyframes tgLivePulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+.tg-hd-b{width:42px;height:42px;display:flex;align-items:center;justify-content:center;color:#8892a6;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);transition:all .15s;flex-shrink:0;}
+.tg-hd-b:hover{background:rgba(239,68,68,0.15);color:#f87171;}
+.tg-hd-b svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.tg-hd-snd{width:42px;height:42px;display:flex;align-items:center;justify-content:center;color:#00d4ff;border-radius:12px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);flex-shrink:0;transition:all .15s;}
+.tg-hd-snd.off{color:#64748b;background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);}
+.tg-hd-snd.on{animation:tgSndRing 1.6s infinite;}
+@keyframes tgSndRing{0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,0.4);}50%{box-shadow:0 0 0 8px rgba(0,212,255,0);}}
+.tg-hd-snd svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* STATS BAR */
+.tg-stats{background:rgba(0,0,0,0.25);padding:8px 14px;display:flex;gap:16px;overflow-x:auto;scrollbar-width:none;border-top:1px solid rgba(255,255,255,0.05);}
+.tg-stats::-webkit-scrollbar{display:none;}
+.tg-st{flex-shrink:0;color:#8892a6;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.tg-st b{color:#00d4ff;font-weight:900;font-size:14px;font-family:'JetBrains Mono',monospace;}
+.tg-st b.green{color:#4ade80;}
+.tg-st b.yellow{color:#facc15;}
+.tg-st b.red{color:#f87171;}
+
+/* MAIN */
+.tg-wrap{padding-top:100px;padding-bottom:80px;min-height:100vh;background:radial-gradient(ellipse at top,rgba(0,212,255,0.06) 0%,#0a0e1a 50%);transition:padding-top .3s;}
+.tg-offline.show ~ .tg-wrap{padding-top:136px;}
+.tg-co{max-width:800px;margin:0 auto;padding:14px;}
+.tg-v{display:none;}
+.tg-v.active{display:block;animation:tgFade .25s;}
+@keyframes tgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* HERO */
+.tg-hero{background:linear-gradient(135deg,rgba(0,212,255,0.15) 0%,rgba(40,116,240,0.12) 50%,rgba(0,212,255,0.08) 100%);border:1px solid rgba(0,212,255,0.25);border-radius:18px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);}
+.tg-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:280px;height:280px;background:radial-gradient(circle,rgba(0,212,255,0.25),transparent 70%);border-radius:50%;}
+.tg-hero-c{position:relative;z-index:2;}
+.tg-hero-t{font-size:20px;font-weight:900;color:#fff;margin:0 0 4px;letter-spacing:-0.4px;}
+.tg-hero-s{font-size:12.5px;color:#8892a6;margin:0 0 14px;font-weight:500;}
+.tg-hero-s b{color:#00d4ff;}
+.tg-hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);}
+.tg-hs{text-align:center;}
+.tg-hs-n{font-size:20px;font-weight:900;color:#00d4ff;font-family:'JetBrains Mono',monospace;line-height:1;letter-spacing:-0.5px;}
+.tg-hs-n.green{color:#4ade80;}
+.tg-hs-l{font-size:9.5px;color:#8892a6;text-transform:uppercase;letter-spacing:0.6px;margin-top:4px;font-weight:800;}
+
+/* DUAL SCAN BUTTONS */
+.tg-scan-dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+@media (max-width:480px){.tg-scan-dual{grid-template-columns:1fr;}}
+.tg-scan-card{border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid;}
+.tg-scan-card:active{transform:scale(0.98);}
+.tg-scan-card.bulk{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.1));border-color:rgba(34,197,94,0.4);}
+.tg-scan-card.bulk:hover{border-color:rgba(34,197,94,0.7);box-shadow:0 12px 32px rgba(34,197,94,0.2);}
+.tg-scan-card.single{background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(40,116,240,0.08));border-color:rgba(0,212,255,0.3);}
+.tg-scan-card.single:hover{border-color:rgba(0,212,255,0.6);box-shadow:0 12px 32px rgba(0,212,255,0.15);}
+.tg-scan-card-ic{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;position:relative;}
+.tg-scan-card.bulk .tg-scan-card-ic{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 8px 24px rgba(34,197,94,0.5);}
+.tg-scan-card.single .tg-scan-card-ic{background:linear-gradient(135deg,#00d4ff,#2874f0);box-shadow:0 8px 24px rgba(0,212,255,0.5);}
+.tg-scan-card-ic::after{content:'';position:absolute;inset:-6px;border:2px solid;border-radius:50%;animation:tgPulseRing 2s infinite;}
+.tg-scan-card.bulk .tg-scan-card-ic::after{border-color:rgba(34,197,94,0.4);}
+.tg-scan-card.single .tg-scan-card-ic::after{border-color:rgba(0,212,255,0.4);}
+@keyframes tgPulseRing{0%{transform:scale(1);opacity:1;}100%{transform:scale(1.4);opacity:0;}}
+.tg-scan-card-ic svg{width:32px;height:32px;stroke:#0a0e1a;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.tg-scan-card-t{font-size:15px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-0.2px;}
+.tg-scan-card-s{font-size:11px;color:#8892a6;line-height:1.4;}
+.tg-scan-card-badge{position:absolute;top:10px;right:10px;font-size:9px;font-weight:900;padding:3px 8px;border-radius:999px;letter-spacing:0.5px;text-transform:uppercase;}
+.tg-scan-card.bulk .tg-scan-card-badge{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.4);}
+.tg-scan-card.single .tg-scan-card-badge{background:rgba(0,212,255,0.2);color:#00d4ff;border:1px solid rgba(0,212,255,0.4);}
+
+/* SECTIONS */
+.tg-sec{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;margin-bottom:14px;overflow:hidden;backdrop-filter:blur(8px);}
+.tg-sh{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.05);}
+.tg-st{font-size:15px;font-weight:800;color:#fff;letter-spacing:-0.2px;}
+.tg-ss{font-size:11.5px;color:#8892a6;margin-top:3px;font-weight:500;}
+
+/* SELLER CARD */
+.tg-seller{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:all .15s;backdrop-filter:blur(8px);border-left:4px solid #00d4ff;}
+.tg-seller:hover{border-color:rgba(0,212,255,0.4);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,212,255,0.15);}
+.tg-sh-head{padding:14px;display:flex;align-items:center;gap:12px;}
+.tg-sh-av{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(40,116,240,0.15));color:#00d4ff;font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.tg-sh-b{flex:1;min-width:0;}
+.tg-sh-n{font-size:14.5px;font-weight:800;color:#fff;margin-bottom:4px;line-height:1.3;}
+.tg-sh-a{font-size:11.5px;color:#8892a6;display:flex;gap:8px;flex-wrap:wrap;font-weight:500;}
+.tg-sh-r{text-align:right;flex-shrink:0;}
+.tg-sh-cnt{font-size:22px;font-weight:900;color:#00d4ff;line-height:1;font-family:'JetBrains Mono',monospace;}
+.tg-sh-cnt-l{font-size:9.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+
+/* PARCEL ROW */
+.tg-parcel{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:12px;}
+.tg-parcel:last-child{border-bottom:none;}
+.tg-parcel-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:rgba(255,255,255,0.04);color:#8892a6;}
+.tg-parcel-ic.done{background:rgba(34,197,94,0.15);color:#4ade80;}
+.tg-parcel-b{flex:1;min-width:0;}
+.tg-parcel-id{font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:800;color:#fff;margin-bottom:2px;letter-spacing:0.5px;}
+.tg-parcel-meta{font-size:11px;color:#8892a6;}
+.tg-parcel-r{flex-shrink:0;}
+.tg-parcel-btn{padding:8px 14px;border-radius:9px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.4px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;box-shadow:0 3px 10px rgba(0,212,255,0.4);font-family:inherit;transition:all .15s;}
+.tg-parcel-btn:hover{filter:brightness(1.1);}
+.tg-parcel-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.tg-parcel-badge{font-size:10px;font-weight:900;padding:5px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.3px;background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+
+/* EMPTY */
+.tg-empty{text-align:center;padding:50px 20px;}
+.tg-empty-i{font-size:54px;margin-bottom:12px;opacity:0.4;}
+.tg-empty-t{font-size:15px;font-weight:800;margin:0 0 6px;color:#fff;}
+.tg-empty-d{font-size:12.5px;color:#8892a6;margin:0;line-height:1.5;}
+
+/* WALLET */
+.tg-wallet{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.08));border:1.5px solid rgba(34,197,94,0.3);border-radius:16px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden;}
+.tg-wallet::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;background:radial-gradient(circle,rgba(34,197,94,0.2),transparent 70%);border-radius:50%;}
+.tg-wallet-lbl{font-size:11px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;position:relative;z-index:2;}
+.tg-wallet-amt{font-size:38px;font-weight:900;color:#4ade80;line-height:1;letter-spacing:-1.5px;font-family:'JetBrains Mono',monospace;position:relative;z-index:2;text-shadow:0 0 20px rgba(74,222,128,0.3);}
+.tg-wallet-sub{font-size:12.5px;color:#8892a6;margin-top:8px;position:relative;z-index:2;}
+
+/* ACTIVITY ROW */
+.tg-hist-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.tg-hist-row:last-child{border-bottom:none;}
+.tg-hist-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:rgba(0,212,255,0.12);color:#00d4ff;}
+.tg-hist-ic.green{background:rgba(34,197,94,0.15);color:#4ade80;}
+.tg-hist-ic.orange{background:rgba(249,115,22,0.15);color:#fb923c;}
+.tg-hist-b{flex:1;min-width:0;}
+.tg-hist-t{font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;}
+.tg-hist-s{font-size:11px;color:#8892a6;font-family:'JetBrains Mono',monospace;}
+.tg-hist-r{text-align:right;flex-shrink:0;}
+.tg-hist-amt{font-size:14px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;}
+
+/* MODAL */
+.tg-mod{position:fixed;inset:0;background:rgba(5,8,16,0.92);backdrop-filter:blur(10px);z-index:99999;display:none;align-items:flex-end;justify-content:center;animation:tgFade .2s;}
+.tg-mod.show{display:flex;}
+.tg-mod-c{width:100%;max-width:640px;background:linear-gradient(180deg,#0f1729 0%,#0a0e1a 100%);border:1px solid rgba(0,212,255,0.2);border-radius:22px 22px 0 0;padding:16px 16px 20px;max-height:96vh;overflow-y:auto;animation:tgSlideUp .3s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -20px 60px rgba(0,0,0,0.6);}
+@media (min-width:640px){.tg-mod{align-items:center;}.tg-mod-c{border-radius:18px;max-height:92vh;}}
+@keyframes tgSlideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.tg-mod-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;}
+.tg-mod-t{font-size:17px;font-weight:900;color:#fff;letter-spacing:-0.3px;}
+.tg-mod-x{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);color:#8892a6;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;cursor:pointer;flex-shrink:0;}
+.tg-mod-x:hover{background:#ef4444;color:#fff;transform:rotate(90deg);}
+
+/* BULK BAR */
+.tg-bulk-bar{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.1));border:1.5px solid rgba(34,197,94,0.4);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.tg-bulk-cnt{display:flex;align-items:center;gap:16px;flex:1;min-width:0;}
+.tg-bulk-cnt-num{font-size:24px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;line-height:1;}
+.tg-bulk-cnt-lbl{font-size:10px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+.tg-bulk-cnt-earn{font-size:15px;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;}
+.tg-bulk-done{padding:9px 16px;border-radius:9px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:11.5px;font-weight:900;letter-spacing:0.4px;text-transform:uppercase;box-shadow:0 4px 12px rgba(34,197,94,0.4);cursor:pointer;flex-shrink:0;border:none;}
+
+/* SCANNER */
+.tg-scanner-wrap{background:#000;border-radius:16px;padding:10px;margin-bottom:10px;position:relative;overflow:hidden;border:1.5px solid rgba(0,212,255,0.3);box-shadow:inset 0 0 60px rgba(0,212,255,0.15);}
+#tg-reader{width:100%;border-radius:12px;overflow:hidden;background:#000;min-height:260px;position:relative;}
+#tg-reader video{width:100%!important;height:auto!important;display:block;border-radius:12px;}
+#tg-reader canvas{display:none!important;}
+.tg-laser{position:absolute;left:8%;right:8%;top:50%;height:3px;background:linear-gradient(90deg,transparent,#00d4ff,#00d4ff,transparent);box-shadow:0 0 20px #00d4ff,0 0 40px #00d4ff,0 0 60px rgba(0,212,255,0.5);animation:tgLaser 2.4s ease-in-out infinite;pointer-events:none;z-index:5;border-radius:2px;}
+@keyframes tgLaser{0%,100%{top:20%;}50%{top:80%;}}
+.tg-corner{position:absolute;width:32px;height:32px;border:3px solid #00d4ff;pointer-events:none;z-index:6;box-shadow:0 0 16px #00d4ff,0 0 32px rgba(0,212,255,0.5);}
+.tg-corner.tl{top:12px;left:12px;border-right:none;border-bottom:none;border-radius:10px 0 0 0;}
+.tg-corner.tr{top:12px;right:12px;border-left:none;border-bottom:none;border-radius:0 10px 0 0;}
+.tg-corner.bl{bottom:12px;left:12px;border-right:none;border-top:none;border-radius:0 0 0 10px;}
+.tg-corner.br{bottom:12px;right:12px;border-left:none;border-top:none;border-radius:0 0 10px 0;}
+.tg-scan-status{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(0,212,255,0.4);color:#00d4ff;font-size:10.5px;font-weight:800;padding:6px 14px;border-radius:999px;letter-spacing:0.5px;text-transform:uppercase;z-index:7;backdrop-filter:blur(8px);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.tg-scan-status::before{content:'';width:6px;height:6px;background:#00d4ff;border-radius:50%;animation:tgLivePulse 1s infinite;box-shadow:0 0 8px #00d4ff;}
+.tg-scan-status.success{border-color:rgba(34,197,94,0.5);color:#4ade80;}
+.tg-scan-status.success::before{background:#22c55e;box-shadow:0 0 8px #22c55e;}
+.tg-scan-status.error{border-color:rgba(239,68,68,0.5);color:#f87171;}
+.tg-scan-status.error::before{background:#ef4444;box-shadow:0 0 8px #ef4444;}
+
+/* CAMERA ERROR */
+.tg-cam-err{background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.4);border-radius:12px;padding:14px;color:#f87171;font-size:12.5px;line-height:1.6;text-align:center;margin-bottom:12px;}
+.tg-cam-err b{color:#fff;}
+
+/* MANUAL INPUT */
+.tg-manual-box{background:rgba(0,212,255,0.06);border:1.5px solid rgba(0,212,255,0.25);border-radius:14px;padding:12px;margin-top:10px;}
+.tg-manual-box label{display:block;font-size:10px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;}
+.tg-manual-box input{width:100%;padding:11px 12px;border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;font-size:14px;font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,0.3);color:#fff;outline:none;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-align:center;}
+.tg-manual-box input:focus{border-color:#00d4ff;box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
+.tg-manual-box input::placeholder{color:#4b5563;letter-spacing:0.5px;font-weight:500;}
+
+/* RECENT LIST */
+.tg-recent-list{margin-top:10px;max-height:180px;overflow-y:auto;border-radius:12px;background:rgba(0,0,0,0.2);padding:4px 0;}
+.tg-recent-empty{text-align:center;padding:14px;color:#64748b;font-size:11.5px;}
+.tg-recent-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);animation:tgRecentIn .35s;}
+.tg-recent-item:last-child{border-bottom:none;}
+@keyframes tgRecentIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
+.tg-recent-ic{width:30px;height:30px;border-radius:8px;background:rgba(34,197,94,0.15);color:#4ade80;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tg-recent-ic.err{background:rgba(239,68,68,0.15);color:#f87171;}
+.tg-recent-b{flex:1;min-width:0;}
+.tg-recent-t{font-size:11.5px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;letter-spacing:0.3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tg-recent-s{font-size:10px;color:#8892a6;}
+.tg-recent-v{font-size:12px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+
+/* BUTTONS */
+.tg-btn{padding:14px 18px;border-radius:12px;font-size:14px;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;border:1.5px solid transparent;cursor:pointer;}
+.tg-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.tg-btn.pri{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;box-shadow:0 6px 20px rgba(0,212,255,0.4);}
+.tg-btn.pri:hover{filter:brightness(1.1);}
+.tg-btn.pri:active{transform:translateY(1px);}
+.tg-btn.suc{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 6px 20px rgba(34,197,94,0.35);}
+.tg-btn.suc:hover{filter:brightness(1.1);}
+.tg-btn.gho{background:rgba(255,255,255,0.06);color:#cbd5e1;border-color:rgba(255,255,255,0.08);}
+.tg-btn.gho:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.tg-btn.wide{width:100%;}
+.tg-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* BOTTOM NAV */
+.tg-bnav{position:fixed;bottom:0;left:0;right:0;background:#0f1729;border-top:1px solid rgba(0,212,255,0.15);display:flex;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,0.4);padding-bottom:env(safe-area-inset-bottom,0);}
+.tg-bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;gap:4px;font-size:10px;color:#64748b;font-weight:800;position:relative;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px;transition:color .15s;}
+.tg-bn.active{color:#00d4ff;}
+.tg-bn.active::before{content:'';position:absolute;top:0;left:25%;right:25%;height:3px;background:linear-gradient(90deg,#00d4ff,#0090c4);border-radius:0 0 3px 3px;box-shadow:0 0 12px #00d4ff;}
+.tg-bn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.tg-bn-b{position:absolute;top:6px;right:calc(50% - 22px);background:linear-gradient(135deg,#ff4d4d,#d32f2f);color:#fff;font-size:9px;font-weight:900;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #0f1729;box-shadow:0 2px 6px rgba(255,77,77,0.5);}
+
+/* FAB */
+.tg-fab{position:fixed;bottom:90px;right:18px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(34,197,94,0.6),0 0 0 1px rgba(34,197,94,0.3);z-index:9998;transition:all .2s;cursor:pointer;border:none;}
+.tg-fab::before{content:'';position:absolute;inset:-4px;border:2px solid rgba(34,197,94,0.4);border-radius:50%;animation:tgPulseRing 2s infinite;}
+.tg-fab:hover{transform:scale(1.08);}
+.tg-fab:active{transform:scale(0.95);}
+.tg-fab svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:2;}
+.tg-fab-lbl{position:absolute;top:-34px;left:50%;transform:translateX(-50%);background:#0a0e1a;color:#4ade80;font-size:10px;font-weight:900;padding:5px 12px;border-radius:7px;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.4);border:1px solid rgba(34,197,94,0.3);}
+.tg-fab-lbl::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid #0a0e1a;}
+
+/* TOASTS */
+.tg-toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 24px);pointer-events:none;max-height:50vh;overflow-y:auto;}
+.tg-toast{padding:11px 16px;background:linear-gradient(135deg,rgba(20,27,45,0.98),rgba(15,23,41,0.98));backdrop-filter:blur(14px);color:#fff;font-size:12.5px;border-radius:12px;box-shadow:0 20px 44px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08);pointer-events:auto;font-weight:600;animation:tgToastIn .3s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;min-width:240px;max-width:380px;position:relative;overflow:hidden;}
+.tg-toast::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#22c55e,#16a34a);box-shadow:0 0 12px #22c55e;}
+.tg-toast.err::before{background:linear-gradient(180deg,#ef4444,#b91c1c);box-shadow:0 0 12px #ef4444;}
+.tg-toast.info::before{background:linear-gradient(180deg,#00d4ff,#0090c4);box-shadow:0 0 12px #00d4ff;}
+.tg-toast-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(34,197,94,0.15);color:#4ade80;}
+.tg-toast.err .tg-toast-icon{background:rgba(239,68,68,0.15);color:#f87171;}
+.tg-toast.info .tg-toast-icon{background:rgba(0,212,255,0.15);color:#00d4ff;}
+@keyframes tgToastIn{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* FLASH OVERLAY */
+.tg-flash-overlay{position:fixed;inset:0;background:rgba(34,197,94,0.25);z-index:999999;pointer-events:none;display:none;align-items:center;justify-content:center;animation:tgFlash .4s ease-out;}
+.tg-flash-overlay.show{display:flex;}
+.tg-flash-overlay.err{background:rgba(239,68,68,0.25);}
+@keyframes tgFlash{from{opacity:0.9;}to{opacity:0;}}
+.tg-flash-icon{font-size:120px;color:#fff;font-weight:900;text-shadow:0 0 40px rgba(34,197,94,1);}
+
+/* BLOCKED OVERLAY */
+.tg-blocked{position:fixed;inset:0;background:rgba(5,8,16,0.98);z-index:9999999;display:none;align-items:center;justify-content:center;padding:24px;text-align:center;}
+.tg-blocked.show{display:flex;flex-direction:column;gap:16px;}
+.tg-blocked-icon{font-size:80px;animation:tgShake .6s ease-in-out;}
+@keyframes tgShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+.tg-blocked-title{font-size:22px;font-weight:900;color:#f87171;letter-spacing:-0.3px;}
+.tg-blocked-desc{font-size:14px;color:#8892a6;max-width:360px;line-height:1.6;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:3px;}
+
+@media (max-width:640px){
+  .tg-co{padding:10px;}
+  .tg-hero{padding:18px;}
+  .tg-hero-t{font-size:17px;}
+  .tg-hs-n{font-size:17px;}
+  .tg-fab{width:60px;height:60px;bottom:84px;right:14px;}
+  .tg-fab svg{width:26px;height:26px;}
+  .tg-fab-lbl{display:none;}
+  #tg-reader{min-height:220px;}
+  .tg-flash-icon{font-size:80px;}
+}
+</style>
+</head>
+<body>
+
+<!-- OFFLINE BANNER -->
+<div class="tg-offline" id="tg-offline">Offline · Reconnecting...</div>
+
+<!-- SPLASH -->
+<div id="tg-splash">
+  <div class="tg-splash-logo">TOE<span>GO</span></div>
+  <div class="tg-splash-tag">PICKUP PARTNER</div>
+  <div class="tg-spin"></div>
+</div>
+
+<!-- BLOCKED OVERLAY -->
+<div class="tg-blocked" id="tg-blocked">
+  <div class="tg-blocked-icon">🚫</div>
+  <div class="tg-blocked-title">Account Blocked</div>
+  <div class="tg-blocked-desc" id="tg-blocked-msg">Aapka account admin ne block kar diya hai. Support se contact karein.</div>
+</div>
+
+<!-- HEADER -->
+<header class="tg-hd" id="tg-hd" style="display:none;">
+  <div class="tg-hd-i">
+    <div class="tg-hd-logo">
+      <div class="tg-hd-lm">T</div>
+      <div class="tg-hd-lt">TOE<span>GO</span></div>
+      <span class="tg-hd-lb">Pickup</span>
+    </div>
+    <div class="tg-hd-sp"></div>
+    <div class="tg-hd-live" id="tg-live-badge">LIVE</div>
+    <button class="tg-hd-snd on" id="tg-snd-btn" onclick="tgToggleSound()" title="Sound">
+      <svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+    </button>
+    <button class="tg-hd-b" onclick="tgLogout()" title="Logout">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </div>
+  <div class="tg-stats">
+    <div class="tg-st">Today <b id="sb-today">0</b></div>
+    <div class="tg-st">Pending <b class="yellow" id="sb-pending">0</b></div>
+    <div class="tg-st">With Me <b id="sb-withme">0</b></div>
+    <div class="tg-st">Earned <b class="green" id="sb-earn">₹0</b></div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="tg-wrap" id="tg-wrap" style="display:none;">
+  <div class="tg-co">
+
+    <!-- DASHBOARD -->
+    <div class="tg-v active" id="v-dash">
+      <div class="tg-hero">
+        <div class="tg-hero-c">
+          <div class="tg-hero-t" id="hi-name">Hi Partner! 👋</div>
+          <div class="tg-hero-s">Zone: <b id="hi-zone">—</b></div>
+          <div class="tg-hero-stats">
+            <div class="tg-hs"><div class="tg-hs-n" id="d-today">0</div><div class="tg-hs-l">Today</div></div>
+            <div class="tg-hs"><div class="tg-hs-n green" id="d-earn">₹0</div><div class="tg-hs-l">Today Earn</div></div>
+            <div class="tg-hs"><div class="tg-hs-n yellow" id="d-rate">₹0</div><div class="tg-hs-l">Per Packet</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tg-scan-dual">
+        <div class="tg-scan-card bulk" onclick="openScanner('bulk')">
+          <div class="tg-scan-card-badge">FASTEST</div>
+          <div class="tg-scan-card-ic"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg></div>
+          <div class="tg-scan-card-t">Bulk Scan</div>
+          <div class="tg-scan-card-s">Continuous · auto-collect · no confirm</div>
+        </div>
+        <div class="tg-scan-card single" onclick="openScanner('single')">
+          <div class="tg-scan-card-badge">1 BY 1</div>
+          <div class="tg-scan-card-ic"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="4"/></svg></div>
+          <div class="tg-scan-card-t">Single Scan</div>
+          <div class="tg-scan-card-s">Ek packet scan karo · result dekho</div>
+        </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st">🏪 Assigned Sellers</div><div class="tg-ss">Seller tap karo → uske parcels dekho</div></div>
+          <span class="tg-parcel-badge" id="d-seller-count">0</span>
+        </div>
+        <div id="d-sellers-list" style="padding:12px;"></div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st">📦 Collected by Me</div><div class="tg-ss">Admin ko dene ke liye ready</div></div>
+          <button class="tg-btn suc" style="padding:8px 14px;font-size:11.5px;width:auto;" id="d-handover-btn" onclick="createHandover()">Handover</button>
+        </div>
+        <div id="d-collected-preview" style="padding:12px;"></div>
+      </div>
+    </div>
+
+    <!-- SELLERS -->
+    <div class="tg-v" id="v-sellers">
+      <div style="background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="seller-search" placeholder="Search seller..." oninput="renderSellerGroups()" style="flex:1;border:none;outline:none;font-size:14px;background:transparent;color:#fff;min-width:0;">
+      </div>
+      <div id="sellers-full-list"></div>
+    </div>
+
+    <!-- COLLECTED -->
+    <div class="tg-v" id="v-collected">
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st">📦 Collected</div><div class="tg-ss">Aapke paas hain · admin ko handover karo</div></div>
+          <span class="tg-parcel-badge" id="col-count">0</span>
+        </div>
+        <div id="collected-list" style="padding:12px;"></div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st">📤 Pending Handovers</div><div class="tg-ss">Admin receive karne ka wait</div></div>
+        </div>
+        <div id="handover-list"></div>
+      </div>
+    </div>
+
+    <!-- EARNINGS -->
+    <div class="tg-v" id="v-earn">
+      <div class="tg-wallet">
+        <div class="tg-wallet-lbl">Available for Payout</div>
+        <div class="tg-wallet-amt" id="w-eligible">₹0</div>
+        <div class="tg-wallet-sub" id="w-note">Weekly payout · Every Monday</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);position:relative;z-index:2;">
+          <div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">⏳ Pending</div><div style="font-size:18px;font-weight:900;color:#facc15;font-family:monospace;margin-top:4px;" id="w-pending">₹0</div></div>
+          <div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">✓ Settled</div><div style="font-size:18px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:4px;" id="w-settled">₹0</div></div>
+        </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh"><div><div class="tg-st">💵 Earning Breakdown</div><div class="tg-ss">Current week</div></div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">📦 Scans this week</div></div><div class="tg-hist-amt" id="e-week-scans" style="color:#fff;">0</div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">💰 Rate per packet</div></div><div class="tg-hist-amt" id="e-rate" style="color:#fff;">₹0</div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t" style="color:#4ade80;">Week Earnings</div></div><div class="tg-hist-amt" id="e-week-earn" style="font-size:17px;">₹0</div></div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh"><div><div class="tg-st">📜 Activity Log</div></div></div>
+        <div id="activity-list"></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="tg-v" id="v-profile">
+      <div style="background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(40,116,240,0.1));border:1.5px solid rgba(0,212,255,0.3);color:#fff;border-radius:16px;padding:22px 20px;display:flex;align-items:center;gap:16px;margin-bottom:12px;position:relative;overflow:hidden;">
+        <div style="width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#2874f0);color:#0a0e1a;font-size:26px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;box-shadow:0 8px 24px rgba(0,212,255,0.4);" id="p-av">P</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:17px;font-weight:900;margin-bottom:3px;color:#fff;" id="p-name">Pickup Partner</div>
+          <div style="font-size:12.5px;color:#8892a6;" id="p-zone">Zone: —</div>
+          <div style="font-size:12.5px;color:#8892a6;margin-top:2px;" id="p-phone">📞 —</div>
+          <div style="font-size:12.5px;color:#4ade80;margin-top:4px;font-weight:800;" id="p-rate-tag">💰 ₹10/packet</div>
+        </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh"><div><div class="tg-st">📊 My Stats</div></div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">📦 Total Scans</div></div><div class="tg-hist-amt" id="p-total-scans" style="color:#fff;">0</div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">📤 Total Handovers</div></div><div class="tg-hist-amt" id="p-total-handovers" style="color:#fff;">0</div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">💰 Lifetime Earnings</div></div><div class="tg-hist-amt" id="p-lifetime">₹0</div></div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh"><div><div class="tg-st">💰 Payout History</div></div></div>
+        <div id="payout-hist"></div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:#4b5563;padding:20px 0;">TOEGO Pickup Partner · v3.5 LIVE</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAB -->
+<div class="tg-fab" id="tg-fab" onclick="openScanner('bulk')" style="display:none;">
+  <div class="tg-fab-lbl">BULK SCAN</div>
+  <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="tg-bnav" id="tg-bnav" style="display:none;">
+  <div class="tg-bn active" data-v="dash" onclick="switchView('dash')"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></div>
+  <div class="tg-bn" data-v="sellers" onclick="switchView('sellers')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Sellers</span><span class="tg-bn-b" id="bn-sellers" style="display:none;">0</span></div>
+  <div class="tg-bn" data-v="collected" onclick="switchView('collected')"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg><span>Bag</span><span class="tg-bn-b" id="bn-collected" style="display:none;">0</span></div>
+  <div class="tg-bn" data-v="earn" onclick="switchView('earn')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Wallet</span></div>
+  <div class="tg-bn" data-v="profile" onclick="switchView('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Profile</span></div>
+</nav>
+
+<!-- SCANNER MODAL -->
+<div class="tg-mod" id="tg-scan-modal">
+  <div class="tg-mod-c">
+    <div class="tg-mod-h">
+      <div class="tg-mod-t" id="scanner-title">📷 Scan Packet</div>
+      <button class="tg-mod-x" onclick="closeScanner()">✕</button>
+    </div>
+
+    <div class="tg-bulk-bar" id="tg-bulk-bar" style="display:none;">
+      <div class="tg-bulk-cnt">
+        <div>
+          <div class="tg-bulk-cnt-num" id="bulk-count">0</div>
+          <div class="tg-bulk-cnt-lbl">Collected</div>
+        </div>
+        <div>
+          <div class="tg-bulk-cnt-earn" id="bulk-earn">₹0</div>
+          <div class="tg-bulk-cnt-lbl">Earned</div>
+        </div>
+      </div>
+      <button class="tg-bulk-done" onclick="closeScanner()">✓ Done</button>
+    </div>
+
+    <div class="tg-scanner-wrap" id="tg-scan-container">
+      <div class="tg-scan-status" id="tg-scan-status">Initializing...</div>
+      <div id="tg-reader"></div>
+      <div class="tg-laser" id="tg-laser"></div>
+      <div class="tg-corner tl"></div>
+      <div class="tg-corner tr"></div>
+      <div class="tg-corner bl"></div>
+      <div class="tg-corner br"></div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:#8892a6;padding:6px 0 4px;font-weight:600;letter-spacing:0.3px;" id="scan-hint-text">
+      📸 Barcode ko frame ke andar rakho · Auto-collect hoga
+    </div>
+
+    <div id="tg-scan-err" style="display:none;"></div>
+
+    <div class="tg-recent-list" id="tg-recent-list">
+      <div class="tg-recent-empty">Recent scans yahan dikhenge...</div>
+    </div>
+
+    <div class="tg-manual-box" id="tg-manual-box">
+      <label>🔢 Ya Order ID manually daalo</label>
+      <input type="text" id="tg-scan-manual" placeholder="PKP-XXXXX" autocomplete="off" onkeypress="if(event.key==='Enter')scanManual()">
+      <button class="tg-btn pri wide" style="margin-top:8px;padding:11px;" onclick="scanManual()">
+        <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        Confirm Manual Entry
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="tg-mod" id="tg-confirm-modal">
+  <div class="tg-mod-c" style="max-width:440px;">
+    <div class="tg-mod-h"><div class="tg-mod-t" id="cf-t">Confirm</div><button class="tg-mod-x" onclick="closeConfirm()">✕</button></div>
+    <p id="cf-m" style="font-size:14px;color:#cbd5e1;line-height:1.6;margin:0 0 18px;"></p>
+    <div style="display:flex;gap:10px;">
+      <button class="tg-btn gho" style="flex:0 0 40%;" onclick="closeConfirm()">Cancel</button>
+      <button class="tg-btn suc" id="cf-b" onclick="doConfirm()" style="flex:1;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLASH -->
+<div class="tg-flash-overlay" id="tg-flash">
+  <div class="tg-flash-icon" id="tg-flash-icon">✓</div>
+</div>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function(){
+  'use strict';
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
+  try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
+
+  let USER = null, PARTNER = null;
+  let TASKS = [];
+  let HANDOVERS = [];
+  let LOGS = [];
+  let SETTLEMENTS = [];
+  let scanner = null;
+  let scannerRunning = false;
+  let confirmCb = null;
+  let currentScanTarget = null;
+  let SCAN_MODE = 'bulk';
+  let BULK_SESSION = { count: 0, earned: 0, scannedIds: [], recent: [] };
+  let unsubT, unsubH, unsubL, unsubS, unsubPartner, unsubUser;
+  let audioCtx = null;
+  let soundEnabled = true;
+  try { soundEnabled = localStorage.getItem('tg_pickup_sound') !== '0'; } catch(e) {}
+  let prevPendingCount = -1;
+  let prevPartnerSignature = '';
+  let lastScanTime = 0;
+  let SCANNER_DEBUG = false;
+  let RECENT_SCAN_CODES = new Map();
+  let IS_BLOCKED = false;
+  let JUST_APPROVED_SHOWN = false;
+
+  // HELPERS
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const icons = { info:'ℹ', success:'✓', error:'✕' };
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + (type === 'success' ? '' : type === 'error' ? 'err' : 'info');
+    el.innerHTML = '<div class="tg-toast-icon">' + (icons[type]||icons.info) + '</div><div>' + msg + '</div>';
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2400);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function inr(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+  function fdate(d) { if (!d) return '—'; const dt = d.toDate?d.toDate():new Date(d); return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+  function ftime(d) { if (!d) return ''; const dt = d.toDate?d.toDate():new Date(d); return dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+  function tago(d) { if (!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s<60) return 'Just now'; if (s<3600) return Math.floor(s/60)+'m ago'; if (s<86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
+  function ini(n) { return String(n||'P').trim().charAt(0).toUpperCase(); }
+  function setText(id,v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+  function openM(id) { const el = document.getElementById(id); if (el) { el.classList.add('show'); document.body.style.overflow='hidden'; } }
+  function closeM(id) { const el = document.getElementById(id); if (el) { el.classList.remove('show'); document.body.style.overflow=''; } }
+
+  // NETWORK STATUS
+  function setOnlineStatus(online) {
+    const el = document.getElementById('tg-offline');
+    const badge = document.getElementById('tg-live-badge');
+    if (online) {
+      if (el) el.classList.remove('show');
+      if (badge) { badge.classList.remove('syncing'); badge.textContent = 'LIVE'; }
+    } else {
+      if (el) el.classList.add('show');
+      if (badge) { badge.classList.add('syncing'); badge.textContent = 'OFFLINE'; }
+    }
+  }
+  window.addEventListener('online', () => setOnlineStatus(true));
+  window.addEventListener('offline', () => setOnlineStatus(false));
+  setOnlineStatus(navigator.onLine);
+
+  // AUDIO
+  function initAudio() { if (audioCtx) return; try { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
+  function beepOk() {
+    if (!soundEnabled) return;
+    initAudio(); if (!audioCtx) return;
+    try {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const t = audioCtx.currentTime;
+      const o1 = audioCtx.createOscillator(); const g1 = audioCtx.createGain();
+      o1.type = 'sine'; o1.frequency.value = 1500;
+      g1.gain.setValueAtTime(0.35, t); g1.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+      o1.connect(g1); g1.connect(audioCtx.destination); o1.start(t); o1.stop(t + 0.1);
+      const o2 = audioCtx.createOscillator(); const g2 = audioCtx.createGain();
+      o2.type = 'sine'; o2.frequency.value = 2000;
+      g2.gain.setValueAtTime(0.35, t + 0.08); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+      o2.connect(g2); g2.connect(audioCtx.destination); o2.start(t + 0.08); o2.stop(t + 0.22);
+    } catch(e) {}
+  }
+  function beepErr() {
+    if (!soundEnabled) return;
+    initAudio(); if (!audioCtx) return;
+    try {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const t = audioCtx.currentTime;
+      const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+      o.type = 'square'; o.frequency.value = 260;
+      g.gain.setValueAtTime(0.35, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+      o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + 0.35);
+    } catch(e) {}
+  }
+  function beepAlert() {
+    if (!soundEnabled) return;
+    initAudio(); if (!audioCtx) return;
+    try {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const now = audioCtx.currentTime;
+      [800, 1000, 1200].forEach((f,i) => {
+        const t = now + i * 0.12;
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.type = 'sine'; o.frequency.value = f;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.35, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + 0.24);
+      });
+    } catch(e) {}
+  }
+  function vibrate(ms) { try { navigator.vibrate && navigator.vibrate(ms||150); } catch(e){} }
+  document.addEventListener('click', function unlock() {
+    initAudio(); if (audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+    document.removeEventListener('click', unlock);
+  }, { once: true });
+
+  window.tgToggleSound = function() {
+    soundEnabled = !soundEnabled;
+    try { localStorage.setItem('tg_pickup_sound', soundEnabled ? '1' : '0'); } catch(e) {}
+    const btn = document.getElementById('tg-snd-btn');
+    btn.classList.toggle('on', soundEnabled);
+    btn.classList.toggle('off', !soundEnabled);
+    initAudio(); if (audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+    toast(soundEnabled ? '🔔 Sound ON' : '🔕 Sound OFF', soundEnabled ? 'success' : 'info');
+    if (soundEnabled) beepOk();
+  };
+
+  function flashSuccess() {
+    const el = document.getElementById('tg-flash');
+    const ic = document.getElementById('tg-flash-icon');
+    el.classList.remove('err');
+    ic.textContent = '✓';
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 400);
+  }
+  function flashError() {
+    const el = document.getElementById('tg-flash');
+    const ic = document.getElementById('tg-flash-icon');
+    el.classList.add('err');
+    ic.textContent = '✕';
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 400);
+  }
+
+  // SPLASH
+  setTimeout(() => {
+    const sp = document.getElementById('tg-splash');
+    if (sp) sp.classList.add('hide');
+  }, 1000);
+
+  // ============ AUTH ============
+  auth.onAuthStateChanged(async u => {
+    USER = u;
+    if (!u) { location.replace('log-in.html?redirect=' + encodeURIComponent('pickup.html')); return; }
+    startLiveMode();
+  });
+
+  async function startLiveMode() {
+    // ⭐ LIVE: user doc listener (role change / block)
+    if (unsubUser) try { unsubUser(); } catch(e){}
+    unsubUser = db.collection('users').doc(USER.uid).onSnapshot(snap => {
+      const ud = snap.exists ? snap.data() : {};
+      const role = (ud.role||'').toLowerCase();
+      const blocked = ud.blocked === true;
+      const isAdmin = USER.email === 'anasfansclub@toego.in' || ['admin','superadmin'].includes(role);
+      const isPickup = ['delivery_partner','pickup_partner'].includes(role);
+
+      // BLOCKED — kick out
+      if (blocked && !isAdmin) {
+        showBlocked(ud.blockReason || 'Aapka account admin ne block kar diya hai.');
+        return;
+      }
+
+      // Role removed
+      if (!isPickup && !isAdmin && PARTNER) {
+        toast('Aapka pickup access hataya gaya', 'error');
+        setTimeout(() => location.href = 'pickup-apply.html', 1500);
+        return;
+      }
+    }, err => console.warn('User listener err:', err.message));
+
+    // ⭐ LIVE: partner doc listener (rate, status, block, zone change)
+    if (unsubPartner) try { unsubPartner(); } catch(e){}
+    unsubPartner = db.collection('deliveryPartners').doc(USER.uid).onSnapshot(async snap => {
+      if (!snap.exists) {
+        const ud = await db.collection('users').doc(USER.uid).get();
+        const isAdmin = USER.email === 'anasfansclub@toego.in' || (ud.exists && ['admin','superadmin'].includes((ud.data().role||'').toLowerCase()));
+        if (!isAdmin) {
+          toast('Partner profile nahi mila', 'error');
+          setTimeout(() => location.href = 'pickup-apply.html', 1500);
+          return;
+        }
+        PARTNER = { name: USER.displayName || 'Admin', zone: 'All', ratePerPacket: 10 };
+      } else {
+        PARTNER = snap.data();
+      }
+
+      // Blocked check
+      if (PARTNER.blocked === true) {
+        showBlocked(PARTNER.blockReason || 'Aapka account admin ne block kar diya hai.');
+        return;
+      }
+
+      // Status check
+      const status = (PARTNER.status || '').toLowerCase();
+      const userSnap = await db.collection('users').doc(USER.uid).get();
+      const isAdmin = USER.email === 'anasfansclub@toego.in' || (userSnap.exists && ['admin','superadmin'].includes((userSnap.data().role||'').toLowerCase()));
+
+      if (status !== 'approved' && PARTNER.approved !== true && !isAdmin) {
+        // Status changed → send back
+        if (status === 'rejected') {
+          toast('Application rejected by admin', 'error');
+          setTimeout(() => location.href = 'pickup-apply.html', 1500);
+          return;
+        }
+        if (!JUST_APPROVED_SHOWN) {
+          toast('Approval pending · Please wait', 'info');
+          setTimeout(() => location.href = 'pickup-apply.html', 1500);
+          return;
+        }
+      }
+
+      // First time → init
+      const sig = JSON.stringify({
+        name: PARTNER.name, zone: PARTNER.zone,
+        rate: PARTNER.ratePerPacket, status: PARTNER.status,
+        approved: PARTNER.approved
+      });
+      if (prevPartnerSignature === '') {
+        // First load
+        initUI();
+        listenAll();
+        JUST_APPROVED_SHOWN = true;
+      } else if (prevPartnerSignature !== sig) {
+        // Changed → update UI live
+        updatePartnerUI();
+        const oldRate = JSON.parse(prevPartnerSignature).rate;
+        const newRate = PARTNER.ratePerPacket;
+        if (oldRate != newRate) {
+          toast('💰 Rate updated: ' + inr(newRate) + '/packet', 'success');
+          beepAlert();
+        }
+        // Re-render everything with new rate
+        renderAll();
+      }
+      prevPartnerSignature = sig;
+
+    }, err => console.warn('Partner listener err:', err.message));
+  }
+
+  function showBlocked(reason) {
+    IS_BLOCKED = true;
+    const el = document.getElementById('tg-blocked');
+    const msg = document.getElementById('tg-blocked-msg');
+    if (msg) msg.textContent = reason || 'Aapka account admin ne block kar diya hai. Support se contact karein.';
+    if (el) el.classList.add('show');
+    // Stop scanner
+    stopScanner();
+  }
+
+  function updatePartnerUI() {
+    if (!PARTNER) return;
+    const name = PARTNER.name || 'Partner';
+    setText('hi-name', 'Hi ' + name.split(' ')[0] + '! 👋');
+    setText('hi-zone', (PARTNER.zone||'') || '—');
+    setText('p-av', ini(name));
+    setText('p-name', name);
+    setText('p-zone', 'Zone: ' + (PARTNER.zone||'—'));
+    setText('p-phone', '📞 ' + (PARTNER.phone||'—'));
+    setText('p-rate-tag', '💰 ' + inr(PARTNER.ratePerPacket || 10) + '/packet');
+    setText('d-rate', inr(PARTNER.ratePerPacket || 10));
+    setText('e-rate', inr(PARTNER.ratePerPacket || 10));
+  }
+
+  function initUI() {
+    document.getElementById('tg-hd').style.display='block';
+    document.getElementById('tg-wrap').style.display='block';
+    document.getElementById('tg-bnav').style.display='flex';
+    document.getElementById('tg-fab').style.display='flex';
+    updatePartnerUI();
+    const snd = document.getElementById('tg-snd-btn');
+    snd.classList.toggle('on', soundEnabled);
+    snd.classList.toggle('off', !soundEnabled);
+  }
+
+  // ============ LISTENERS ============
+  function listenAll() {
+    if (unsubT) try { unsubT(); } catch(e){}
+    unsubT = db.collection('pickupTasks').where('pickupBoyId', '==', USER.uid).onSnapshot(snap => {
+      TASKS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      TASKS.sort((a,b) => {
+        const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+        return bt - at;
+      });
+      const pendingCount = TASKS.filter(t => (t.status||'assigned') === 'assigned').length;
+      if (prevPendingCount >= 0 && pendingCount > prevPendingCount) {
+        beepAlert(); vibrate([80,40,80,40,160]);
+        const diff = pendingCount - prevPendingCount;
+        toast('🔔 ' + diff + ' new parcel' + (diff > 1 ? 's' : '') + ' assigned!', 'success');
+      }
+      prevPendingCount = pendingCount;
+      renderAll();
+    }, err => console.warn('Tasks err:', err.message));
+
+    if (unsubH) try { unsubH(); } catch(e){}
+    unsubH = db.collection('handovers').where('pickupBoyId', '==', USER.uid).onSnapshot(snap => {
+      HANDOVERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      HANDOVERS.sort((a,b) => {
+        const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+        return bt - at;
+      });
+      renderAll();
+    }, () => {});
+
+    if (unsubL) try { unsubL(); } catch(e){}
+    unsubL = db.collection('scanLogs').where('boyId', '==', USER.uid).limit(500).onSnapshot(snap => {
+      LOGS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      LOGS.sort((a,b) => {
+        const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+        return bt - at;
+      });
+      renderAll();
+    }, () => {});
+
+    if (unsubS) try { unsubS(); } catch(e){}
+    unsubS = db.collection('settlements').where('boyId', '==', USER.uid).limit(100).onSnapshot(snap => {
+      SETTLEMENTS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      SETTLEMENTS.sort((a,b) => {
+        const at = a.settledAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.settledAt?.toDate?.()?.getTime?.() || 0;
+        return bt - at;
+      });
+      const prevSettleCount = (window.__prevSettleCount || 0);
+      if (SETTLEMENTS.length > prevSettleCount && prevSettleCount > 0) {
+        beepAlert(); vibrate([60,40,60,40,120]);
+        toast('💸 Payment received!', 'success');
+      }
+      window.__prevSettleCount = SETTLEMENTS.length;
+      renderAll();
+    }, () => {});
+  }
+
+  // ============ RENDER ============
+  function renderAll() {
+    if (IS_BLOCKED) return;
+    renderHeaderStats();
+    renderDashboard();
+    renderSellerGroups();
+    renderCollected();
+    renderHandovers();
+    renderEarnings();
+    renderProfile();
+    updateBadges();
+  }
+
+  function renderHeaderStats() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const tMs = today.getTime();
+    let scans = 0, earn = 0;
+    LOGS.forEach(l => {
+      const t = l.createdAt?.toDate?.()?.getTime?.() || 0;
+      if (t >= tMs) { scans++; earn += Number(l.earning || 0); }
+    });
+    const pending = TASKS.filter(t => (t.status||'assigned') === 'assigned').length;
+    const withMe = TASKS.filter(t => t.status === 'collected').length;
+    setText('sb-today', scans);
+    setText('sb-pending', pending);
+    setText('sb-withme', withMe);
+    setText('sb-earn', inr(earn));
+  }
+
+  function renderDashboard() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const tMs = today.getTime();
+    let scans = 0, earn = 0;
+    LOGS.forEach(l => {
+      const t = l.createdAt?.toDate?.()?.getTime?.() || 0;
+      if (t >= tMs) { scans++; earn += Number(l.earning || 0); }
+    });
+    setText('d-today', scans);
+    setText('d-earn', inr(earn));
+
+    const groups = groupBySeller(TASKS.filter(t => (t.status||'assigned') === 'assigned'));
+    setText('d-seller-count', groups.length);
+    const el = document.getElementById('d-sellers-list');
+    if (!groups.length) {
+      el.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:44px;">📭</div><div class="tg-empty-t">No parcels assigned</div><div class="tg-empty-d">Naye parcels aate hi yahan dikhenge</div></div>';
+    } else {
+      el.innerHTML = groups.slice(0, 5).map(g => sellerCard(g)).join('');
+    }
+
+    const collected = TASKS.filter(t => t.status === 'collected');
+    const previewEl = document.getElementById('d-collected-preview');
+    if (!collected.length) {
+      previewEl.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:44px;">📦</div><div class="tg-empty-t">No collected packets</div><div class="tg-empty-d">Seller se scan karke collect karo</div></div>';
+    } else {
+      previewEl.innerHTML = collected.slice(0, 3).map(t => collectedRow(t)).join('') + (collected.length > 3 ? '<div style="text-align:center;padding:8px;color:#00d4ff;font-size:12px;font-weight:700;">+ ' + (collected.length - 3) + ' more</div>' : '');
+    }
+    document.getElementById('d-handover-btn').style.display = collected.length > 0 ? 'inline-flex' : 'none';
+  }
+
+  function renderSellerGroups() {
+    const el = document.getElementById('sellers-full-list'); if (!el) return;
+    const q = (document.getElementById('seller-search')?.value || '').toLowerCase().trim();
+    const groups = groupBySeller(TASKS.filter(t => (t.status||'assigned') === 'assigned'));
+    let list = groups;
+    if (q) list = list.filter(g => (g.sellerName||'').toLowerCase().includes(q) || (g.sellerPincode||'').includes(q));
+    if (!list.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">🏪</div><div class="tg-empty-t">No sellers</div><div class="tg-empty-d">Assigned sellers yahan dikhenge</div></div>';
+      return;
+    }
+    el.innerHTML = list.map(g => sellerCard(g)).join('');
+  }
+
+  function groupBySeller(tasks) {
+    const map = new Map();
+    tasks.forEach(t => {
+      const sid = t.sellerId || 'unknown';
+      if (!map.has(sid)) {
+        map.set(sid, {
+          sellerId: sid,
+          sellerName: t.sellerName || 'Seller',
+          sellerPhone: t.sellerPhone || '',
+          sellerAddress: t.sellerAddress || '',
+          sellerPincode: t.sellerPincode || '',
+          tasks: []
+        });
+      }
+      map.get(sid).tasks.push(t);
+    });
+    return Array.from(map.values());
+  }
+
+  function sellerCard(g) {
+    const count = g.tasks.length;
+    return '<div class="tg-seller" onclick="openSellerTasks(\'' + esc(g.sellerId) + '\')">' +
+      '<div class="tg-sh-head">' +
+        '<div class="tg-sh-av">' + esc(ini(g.sellerName)) + '</div>' +
+        '<div class="tg-sh-b">' +
+          '<div class="tg-sh-n">' + esc(g.sellerName) + '</div>' +
+          '<div class="tg-sh-a"><span>📞 ' + esc(g.sellerPhone || '—') + '</span></div>' +
+          (g.sellerPincode ? '<div class="tg-sh-a" style="margin-top:4px;"><span>📍 ' + esc(g.sellerPincode) + '</span></div>' : '') +
+        '</div>' +
+        '<div class="tg-sh-r">' +
+          '<div class="tg-sh-cnt">' + count + '</div>' +
+          '<div class="tg-sh-cnt-l">Packet' + (count > 1 ? 's' : '') + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  window.openSellerTasks = function(sid) {
+    const group = groupBySeller(TASKS.filter(t => (t.status||'assigned') === 'assigned')).find(g => g.sellerId === sid);
+    if (!group) { toast('No parcels', 'info'); return; }
+    const modal = document.createElement('div');
+    modal.id = 'tg-seller-modal';
+    modal.className = 'tg-mod show';
+    modal.style.alignItems = 'flex-end';
+    modal.innerHTML = '<div class="tg-mod-c" style="max-width:640px;">' +
+        '<div class="tg-mod-h">' +
+          '<div><div class="tg-mod-t">' + esc(group.sellerName) + '</div><div style="font-size:11.5px;color:#8892a6;margin-top:3px;">' + group.tasks.length + ' parcel' + (group.tasks.length>1?'s':'') + '</div></div>' +
+          '<button class="tg-mod-x" onclick="closeSellerModal()">✕</button>' +
+        '</div>' +
+        '<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:12px 14px;font-size:12.5px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">' +
+          '📞 ' + esc(group.sellerPhone || '—') + '<br>' +
+          '📍 ' + esc(group.sellerAddress || '—') + (group.sellerPincode ? ' · ' + esc(group.sellerPincode) : '') +
+        '</div>' +
+        '<button class="tg-btn suc wide" style="padding:12px;margin-bottom:10px;font-size:12.5px;" onclick="closeSellerModal();startBulkFromSeller(\'' + esc(sid) + '\')">' +
+          '<svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>' +
+          'Bulk Scan All (' + group.tasks.length + ')' +
+        '</button>' +
+        '<div style="max-height:45vh;overflow-y:auto;">' +
+          group.tasks.map(t => sellerTaskRow(t)).join('') +
+        '</div>' +
+        '<button class="tg-btn gho wide" style="margin-top:12px;" onclick="closeSellerModal()">Close</button>' +
+      '</div>';
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeSellerModal(); });
+  };
+
+  window.closeSellerModal = function() {
+    const m = document.getElementById('tg-seller-modal');
+    if (m) m.remove();
+    document.body.style.overflow = '';
+  };
+
+  window.startBulkFromSeller = function(sid) {
+    openScanner('bulk');
+  };
+
+  function sellerTaskRow(t) {
+    const done = t.status === 'collected';
+    const badge = done ? '<span class="tg-parcel-badge">✓ Collected</span>' :
+      '<button class="tg-parcel-btn" onclick="startSingleScan(\'' + esc(t.id) + '\')"><svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>Scan</button>';
+    return '<div class="tg-parcel">' +
+      '<div class="tg-parcel-ic ' + (done?'done':'') + '">' + (done?'✓':'📦') + '</div>' +
+      '<div class="tg-parcel-b">' +
+        '<div class="tg-parcel-id">#' + esc((t.orderDisplayId || t.id).slice(0,14).toUpperCase()) + '</div>' +
+        '<div class="tg-parcel-meta">' + esc(t.customerName || 'Customer') + ' · ' + esc(t.customerPincode || '') + '</div>' +
+      '</div>' +
+      '<div class="tg-parcel-r">' + badge + '</div>' +
+    '</div>';
+  }
+
+  function renderCollected() {
+    const el = document.getElementById('collected-list'); if (!el) return;
+    const collected = TASKS.filter(t => t.status === 'collected');
+    setText('col-count', collected.length);
+    if (!collected.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No collected packets</div><div class="tg-empty-d">Scan karke packets collect karo</div></div>';
+      return;
+    }
+    const groups = groupBySeller(collected);
+    el.innerHTML = groups.map(g => {
+      return '<div style="margin-bottom:12px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.1);border-radius:10px;padding:10px;">' +
+        '<div style="font-size:12.5px;font-weight:800;margin-bottom:8px;color:#00d4ff;">🏪 ' + esc(g.sellerName) + ' · ' + g.tasks.length + ' parcel' + (g.tasks.length>1?'s':'') + '</div>' +
+        g.tasks.map(t => collectedRow(t)).join('') +
+      '</div>';
+    }).join('');
+  }
+
+  function collectedRow(t) {
+    return '<div class="tg-parcel" style="background:rgba(20,27,45,0.6);border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.04);">' +
+      '<div class="tg-parcel-ic done">✓</div>' +
+      '<div class="tg-parcel-b">' +
+        '<div class="tg-parcel-id">#' + esc((t.orderDisplayId || t.id).slice(0,14).toUpperCase()) + '</div>' +
+        '<div class="tg-parcel-meta">' + esc(t.sellerName || '') + '</div>' +
+      '</div>' +
+      '<div class="tg-parcel-r" style="font-size:11px;color:#8892a6;font-weight:700;">' + esc(tago(t.collectedAt)) + '</div>' +
+    '</div>';
+  }
+
+  function renderHandovers() {
+    const el = document.getElementById('handover-list'); if (!el) return;
+    if (!HANDOVERS.length) {
+      el.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:44px;">📤</div><div class="tg-empty-t">No handovers yet</div><div class="tg-empty-d">Admin ko dene ke baad yahan dikhega</div></div>';
+      return;
+    }
+    el.innerHTML = HANDOVERS.slice(0, 20).map(h => {
+      const st = h.status || 'pending';
+      const pill = st === 'received' ? '<span class="tg-parcel-badge" style="background:rgba(34,197,94,0.15);color:#4ade80;border-color:rgba(34,197,94,0.3);">✓ Received</span>' : '<span class="tg-parcel-badge" style="background:rgba(250,204,21,0.15);color:#facc15;border-color:rgba(250,204,21,0.3);">⏳ Pending</span>';
+      return '<div class="tg-parcel">' +
+        '<div class="tg-parcel-ic ' + (st==='received'?'done':'') + '">' + (st==='received'?'✓':'📤') + '</div>' +
+        '<div class="tg-parcel-b">' +
+          '<div class="tg-parcel-id">Handover #' + esc((h.id||'').slice(0,8).toUpperCase()) + '</div>' +
+          '<div class="tg-parcel-meta">' + (h.packetCount||0) + ' packet' + ((h.packetCount||0)>1?'s':'') + ' · ' + esc(tago(h.createdAt)) + '</div>' +
+        '</div>' +
+        '<div class="tg-parcel-r">' + pill + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderEarnings() {
+    const ws = getWeekStart();
+    let pending = 0, weekEarn = 0, weekScans = 0, settled = 0;
+    LOGS.forEach(l => {
+      const t = l.createdAt?.toDate?.()?.getTime?.() || 0;
+      const amt = Number(l.earning || 0);
+      if (t < ws) pending += amt;
+      else { weekScans++; weekEarn += amt; }
+    });
+    SETTLEMENTS.forEach(s => { if (s.type !== 'cod_deposit') settled += Number(s.amount || 0); });
+    const eligible = Math.max(0, pending - settled);
+
+    setText('w-eligible', inr(eligible));
+    setText('w-pending', inr(pending));
+    setText('w-settled', inr(settled));
+    const next = getNextPayoutDate();
+    const daysLeft = Math.ceil((next.getTime() - Date.now()) / 86400000);
+    setText('w-note', 'Next payout: ' + next.toLocaleDateString('en-IN',{day:'numeric',month:'short'}) + ' (' + daysLeft + ' din)');
+    setText('e-week-scans', weekScans);
+    setText('e-rate', inr(PARTNER?.ratePerPacket || 10));
+    setText('e-week-earn', inr(weekEarn));
+
+    const el = document.getElementById('activity-list');
+    const recent = LOGS.slice(0, 30);
+    if (!recent.length) {
+      el.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:44px;">📋</div><div class="tg-empty-t">No activity yet</div></div>';
+    } else {
+      el.innerHTML = recent.map(l => {
+        const dt = l.createdAt?.toDate ? l.createdAt.toDate() : null;
+        const lbl = l.type === 'pickup' ? '📦 Parcel Scanned' : l.type === 'handover' ? '📤 Handover Created' : '📋 ' + (l.type||'Activity');
+        return '<div class="tg-hist-row">' +
+          '<div class="tg-hist-ic ' + (l.type === 'pickup' ? 'green' : 'orange') + '">' + (l.type === 'pickup' ? '📦' : '📤') + '</div>' +
+          '<div class="tg-hist-b">' +
+            '<div class="tg-hist-t">' + lbl + '</div>' +
+            '<div class="tg-hist-s">' + (dt ? fdate(dt) + ' · ' + ftime(dt) : '') + ' · #' + esc((l.orderDisplayId||'').slice(0,12)) + '</div>' +
+          '</div>' +
+          '<div class="tg-hist-r"><div class="tg-hist-amt">+' + inr(l.earning||0) + '</div></div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+
+  function renderProfile() {
+    let totalScans = 0, lifetime = 0;
+    LOGS.forEach(l => { totalScans++; lifetime += Number(l.earning || 0); });
+    setText('p-total-scans', totalScans);
+    setText('p-total-handovers', HANDOVERS.length);
+    setText('p-lifetime', inr(lifetime));
+
+    const el = document.getElementById('payout-hist');
+    const settledList = SETTLEMENTS.filter(s => s.type !== 'cod_deposit');
+    if (!settledList.length) {
+      el.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:44px;">💸</div><div class="tg-empty-t">No payouts yet</div><div class="tg-empty-d">Pehla payout Monday ko milega</div></div>';
+    } else {
+      el.innerHTML = settledList.map(s => {
+        const dt = s.settledAt?.toDate ? s.settledAt.toDate() : null;
+        return '<div class="tg-hist-row">' +
+          '<div class="tg-hist-ic green">💸</div>' +
+          '<div class="tg-hist-b"><div class="tg-hist-t">Weekly Payout</div><div class="tg-hist-s">' + (dt ? fdate(dt) + ' · ' + ftime(dt) : '') + '</div></div>' +
+          '<div class="tg-hist-r"><div class="tg-hist-amt">+' + inr(s.amount) + '</div></div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+
+  function updateBadges() {
+    const pending = TASKS.filter(t => (t.status||'assigned') === 'assigned').length;
+    const collected = TASKS.filter(t => t.status === 'collected').length;
+    const b1 = document.getElementById('bn-sellers');
+    if (b1) { b1.textContent = pending; b1.style.display = pending > 0 ? 'flex' : 'none'; }
+    const b2 = document.getElementById('bn-collected');
+    if (b2) { b2.textContent = collected; b2.style.display = collected > 0 ? 'flex' : 'none'; }
+  }
+
+  function getWeekStart() {
+    const d = new Date();
+    const day = d.getDay();
+    const diff = day === 0 ? 6 : day - 1;
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate() - diff, 0, 0, 0).getTime();
+  }
+  function getNextPayoutDate() {
+    const d = new Date();
+    const day = d.getDay();
+    const daysToMon = day === 0 ? 1 : (8 - day);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate() + daysToMon, 10, 0, 0);
+  }
+
+  // ============ NAV ============
+  window.switchView = function(v) {
+    document.querySelectorAll('.tg-v').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('v-' + v); if (el) el.classList.add('active');
+    document.querySelectorAll('.tg-bn').forEach(i => i.classList.toggle('active', i.dataset.v === v));
+    window.scrollTo({top:0,behavior:'smooth'});
+    if (v === 'sellers') renderSellerGroups();
+    if (v === 'collected') { renderCollected(); renderHandovers(); }
+    if (v === 'earn') renderEarnings();
+    if (v === 'profile') renderProfile();
+  };
+
+  // ============ SCANNER ============
+  window.openScanner = function(mode) {
+    if (scannerRunning || IS_BLOCKED) return;
+    SCAN_MODE = mode || 'bulk';
+    currentScanTarget = null;
+    BULK_SESSION = { count: 0, earned: 0, scannedIds: [], recent: [] };
+    RECENT_SCAN_CODES.clear();
+
+    const title = document.getElementById('scanner-title');
+    if (title) title.textContent = SCAN_MODE === 'bulk' ? '📷 Bulk Scan · Auto-Collect' : '📷 Single Scan';
+    const hint = document.getElementById('scan-hint-text');
+    if (hint) hint.textContent = SCAN_MODE === 'bulk'
+      ? '📸 Continuous scanning · Auto-collect · No confirm'
+      : '📸 Ek packet scan karo · Result dekho';
+
+    const bulkBar = document.getElementById('tg-bulk-bar');
+    if (bulkBar) bulkBar.style.display = SCAN_MODE === 'bulk' ? 'flex' : 'none';
+    setText('bulk-count', 0);
+    setText('bulk-earn', '₹0');
+
+    const recentEl = document.getElementById('tg-recent-list');
+    if (recentEl) recentEl.innerHTML = '<div class="tg-recent-empty">Recent scans yahan dikhenge...</div>';
+
+    document.getElementById('tg-scan-err').style.display = 'none';
+    document.getElementById('tg-scan-manual').value = '';
+
+    openM('tg-scan-modal');
+    setScanStatus('Starting camera...', '');
+    setTimeout(() => startScanner(), 300);
+  };
+
+  window.startSingleScan = function(tid) {
+    if (scannerRunning || IS_BLOCKED) return;
+    closeSellerModal();
+    currentScanTarget = tid;
+    SCAN_MODE = 'single';
+    BULK_SESSION = { count: 0, earned: 0, scannedIds: [], recent: [] };
+    RECENT_SCAN_CODES.clear();
+
+    const title = document.getElementById('scanner-title');
+    if (title) title.textContent = '📷 Single Scan';
+    const hint = document.getElementById('scan-hint-text');
+    if (hint) hint.textContent = '📸 Ye packet scan karo';
+    const bulkBar = document.getElementById('tg-bulk-bar');
+    if (bulkBar) bulkBar.style.display = 'none';
+
+    const recentEl = document.getElementById('tg-recent-list');
+    if (recentEl) recentEl.innerHTML = '<div class="tg-recent-empty">Recent scans yahan dikhenge...</div>';
+
+    document.getElementById('tg-scan-err').style.display = 'none';
+    document.getElementById('tg-scan-manual').value = '';
+
+    openM('tg-scan-modal');
+    setScanStatus('Starting camera...', '');
+    setTimeout(() => startScanner(), 300);
+  };
+
+  window.closeScanner = function() {
+    if (SCAN_MODE === 'bulk' && BULK_SESSION.count > 0) {
+      toast('✓ Bulk session · ' + BULK_SESSION.count + ' collected · ' + inr(BULK_SESSION.earned), 'success');
+    }
+    stopScanner();
+    closeM('tg-scan-modal');
+    currentScanTarget = null;
+    SCAN_MODE = 'bulk';
+  };
+
+  function setScanStatus(txt, cls) {
+    const el = document.getElementById('tg-scan-status');
+    if (!el) return;
+    el.textContent = txt;
+    el.classList.remove('success', 'error');
+    if (cls === 'success') el.classList.add('success');
+    if (cls === 'error') el.classList.add('error');
+  }
+
+  async function startScanner() {
+    if (scannerRunning) return;
+    const errEl = document.getElementById('tg-scan-err');
+
+    if (typeof Html5Qrcode === 'undefined') {
+      errEl.style.display = 'block';
+      errEl.className = 'tg-cam-err';
+      errEl.innerHTML = '⚠ <b>Scanner library load nahi hui</b><br>Internet check karo ya page refresh karo.';
+      setScanStatus('Library error', 'error');
+      return;
+    }
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      errEl.style.display = 'block';
+      errEl.className = 'tg-cam-err';
+      errEl.innerHTML = '⚠ <b>HTTPS required</b><br>Camera ke liye HTTPS zaroori hai.';
+      setScanStatus('HTTPS required', 'error');
+      return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      errEl.style.display = 'block';
+      errEl.className = 'tg-cam-err';
+      errEl.innerHTML = '⚠ <b>Camera API not supported</b>';
+      setScanStatus('Not supported', 'error');
+      return;
+    }
+
+    try {
+      setScanStatus('Requesting permission...', '');
+      const readerEl = document.getElementById('tg-reader');
+      readerEl.innerHTML = '';
+
+      scanner = new Html5Qrcode("tg-reader", {
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.CODE_93,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+          Html5QrcodeSupportedFormats.ITF,
+          Html5QrcodeSupportedFormats.CODABAR
+        ],
+        verbose: SCANNER_DEBUG,
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true }
+      });
+
+      const config = {
+        fps: 15,
+        qrbox: function(vw, vh) {
+          const min = Math.min(vw, vh);
+          const size = Math.floor(min * 0.7);
+          return { width: size, height: Math.max(120, Math.floor(size * 0.5)) };
+        },
+        aspectRatio: 1.2,
+        disableFlip: false,
+        videoConstraints: {
+          facingMode: { ideal: 'environment' },
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+
+      setScanStatus('Starting camera...', '');
+
+      await scanner.start(
+        { facingMode: { ideal: 'environment' } },
+        config,
+        onScanSuccess,
+        onScanFailure
+      );
+
+      scannerRunning = true;
+      setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', '');
+      errEl.style.display = 'none';
+
+    } catch(e) {
+      scannerRunning = false;
+      console.error('[Scanner start error]', e);
+      let msg = '';
+      const em = String(e && e.message || e || '');
+
+      if (em.includes('NotAllowedError') || em.includes('Permission') || em.includes('denied')) {
+        msg = '⚠ <b>Camera permission denied</b><br>Browser settings me camera allow karo.<br><br>Manually order ID daalo niche.';
+        setScanStatus('Permission denied', 'error');
+      } else if (em.includes('NotFoundError') || em.includes('Requested device not found') || em.includes('no camera')) {
+        msg = '⚠ <b>Camera not found</b>';
+        setScanStatus('No camera', 'error');
+      } else if (em.includes('NotReadableError') || em.includes('TrackStartError') || em.includes('in use')) {
+        msg = '⚠ <b>Camera busy</b><br>Kisi aur app me camera open hai.';
+        setScanStatus('Camera busy', 'error');
+      } else {
+        msg = '⚠ <b>Camera error</b><br>' + esc(em || 'Unknown error');
+        setScanStatus('Error', 'error');
+      }
+
+      errEl.style.display = 'block';
+      errEl.className = 'tg-cam-err';
+      errEl.innerHTML = msg;
+
+      try { await scanner.stop(); } catch(e2){}
+      try { scanner.clear(); } catch(e2){}
+      scanner = null;
+    }
+  }
+
+  async function stopScanner() {
+    if (scanner) {
+      try { if (scannerRunning) await scanner.stop(); } catch(e) {}
+      try { scanner.clear(); } catch(e) {}
+      scanner = null;
+      scannerRunning = false;
+    }
+    const reader = document.getElementById('tg-reader');
+    if (reader) reader.innerHTML = '';
+  }
+
+  function onScanSuccess(decodedText, decodedResult) {
+    const now = Date.now();
+    if (now - lastScanTime < 800) return;
+    lastScanTime = now;
+
+    let code = String(decodedText || '').trim().toUpperCase();
+    if (!code) return;
+    code = code.replace(/^\*|\*$/g, '').trim();
+
+    const recentTs = RECENT_SCAN_CODES.get(code);
+    if (recentTs && (now - recentTs) < 5000) return;
+
+    vibrate([50, 30, 50]);
+    processScan(code);
+  }
+
+  function onScanFailure(err) { if (SCANNER_DEBUG) console.log('[scan fail]', err); }
+
+  window.scanManual = function() {
+    const v = (document.getElementById('tg-scan-manual').value || '').trim().toUpperCase();
+    if (!v) { toast('Order ID daalo', 'error'); return; }
+    processScan(v);
+  };
+
+  async function processScan(code) {
+    const clean = String(code||'').replace(/^\*|\*$/g, '').trim().toUpperCase();
+    if (!clean) return;
+
+    let task = null;
+    if (currentScanTarget) {
+      task = TASKS.find(t => t.id === currentScanTarget);
+    } else {
+      task = TASKS.find(t => {
+        const status = t.status || 'assigned';
+        if (status !== 'assigned') return false;
+        const oid = String(t.orderDisplayId || '').toUpperCase();
+        const tid = String(t.id || '').toUpperCase();
+        return oid === clean || tid === clean || oid.includes(clean) || clean.includes(oid);
+      });
+    }
+
+    if (!task) {
+      beepErr(); vibrate([100, 60, 100]); flashError();
+      if (SCAN_MODE === 'single') {
+        setScanStatus('❌ Not found', 'error');
+        showResultCard('error', 'Not Found', 'Code: ' + esc(clean), '');
+      } else {
+        setScanStatus('❌ Not found — retry', 'error');
+      }
+      addRecentItem({ code: clean, ok: false, msg: 'Not found' });
+      toast('❌ No matching parcel', 'error');
+      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1500);
+      return;
+    }
+
+    if ((task.status || 'assigned') !== 'assigned') {
+      beepErr(); vibrate([100, 60, 100]); flashError();
+      if (SCAN_MODE === 'single') {
+        setScanStatus('⚠ Already ' + task.status, 'error');
+        showResultCard('error', 'Already Collected', 'Packet: #' + esc((task.orderDisplayId || task.id).slice(0,14).toUpperCase()), '');
+      } else {
+        setScanStatus('⚠ Already collected', 'error');
+      }
+      addRecentItem({ code: clean, ok: false, msg: 'Already collected' });
+      toast('Already collected', 'error');
+      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1500);
+      return;
+    }
+
+    try {
+      const earn = Number(PARTNER?.ratePerPacket || task.ratePerPacket || 10);
+      const now = FV.serverTimestamp();
+
+      await db.collection('pickupTasks').doc(task.id).update({
+        status: 'collected',
+        collectedAt: now,
+        collectedBy: USER.uid,
+        updatedAt: now
+      });
+
+      await db.collection('scanLogs').add({
+        boyId: USER.uid,
+        boyName: PARTNER?.name || 'Pickup',
+        type: 'pickup',
+        pickupTaskId: task.id,
+        orderId: task.orderId || '',
+        orderDisplayId: task.orderDisplayId || '',
+        scannedCode: clean,
+        earning: earn,
+        createdAt: now
+      });
+
+      try {
+        await db.collection('deliveryPartners').doc(USER.uid).set({
+          totalPickups: FV.increment(1),
+          totalEarnings: FV.increment(earn),
+          updatedAt: now
+        }, { merge: true });
+      } catch(e) { console.warn('Partner total update failed:', e); }
+
+      RECENT_SCAN_CODES.set(clean, Date.now());
+      BULK_SESSION.count++;
+      BULK_SESSION.earned += earn;
+      BULK_SESSION.scannedIds.push(task.id);
+
+      beepOk();
+      vibrate([60, 30, 100]);
+      flashSuccess();
+
+      if (SCAN_MODE === 'bulk') {
+        setText('bulk-count', BULK_SESSION.count);
+        setText('bulk-earn', '₹' + BULK_SESSION.earned);
+        setScanStatus('✓ Collected · scanning...', 'success');
+        setTimeout(() => { if (scannerRunning) setScanStatus('🎯 Bulk scanning...', ''); }, 1200);
+      } else {
+        setScanStatus('✓ Collected', 'success');
+        showResultCard('success', 'Collected!',
+          'Packet: <b>#' + esc((task.orderDisplayId || task.id).slice(0,14).toUpperCase()) + '</b><br>Seller: <b>' + esc(task.sellerName || '—') + '</b>',
+          '+' + inr(earn));
+        setTimeout(() => closeScanner(), 1800);
+      }
+
+      addRecentItem({
+        code: clean, ok: true,
+        packet: (task.orderDisplayId || task.id).slice(0,14).toUpperCase(),
+        seller: task.sellerName || '',
+        earn: earn
+      });
+
+      document.getElementById('tg-scan-manual').value = '';
+      lastScanTime = Date.now() - 700;
+
+    } catch(e) {
+      console.error('[processScan error]', e);
+      beepErr(); flashError();
+      addRecentItem({ code: clean, ok: false, msg: 'Error: ' + (e.message || 'Network') });
+      toast('Failed: ' + e.message, 'error');
+      if (scannerRunning) setScanStatus('❌ Error — retry', 'error');
+      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1500);
+    }
+  }
+
+  function showResultCard(type, title, info, amount) {
+    const el = document.getElementById('tg-scan-err');
+    if (!el) return;
+    const isOk = type === 'success';
+    el.style.display = 'block';
+    el.className = 'tg-cam-err';
+    el.style.background = isOk ? 'linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.08))' : 'rgba(239,68,68,0.12)';
+    el.style.borderColor = isOk ? 'rgba(34,197,94,0.5)' : 'rgba(239,68,68,0.4)';
+    el.style.color = isOk ? '#4ade80' : '#f87171';
+    el.innerHTML =
+      '<div style="text-align:center;">' +
+        '<div style="font-size:22px;margin-bottom:6px;">' + (isOk ? '✓' : '✕') + '</div>' +
+        '<div style="font-size:15px;font-weight:900;margin-bottom:6px;color:' + (isOk ? '#4ade80' : '#f87171') + ';">' + title + '</div>' +
+        '<div style="font-size:12px;color:#cbd5e1;line-height:1.6;">' + info + '</div>' +
+        (amount ? '<div style="font-size:20px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:8px;">' + amount + '</div>' : '') +
+      '</div>';
+    setTimeout(() => { el.style.display = 'none'; }, isOk ? 1600 : 2500);
+  }
+
+  function addRecentItem(data) {
+    const el = document.getElementById('tg-recent-list');
+    if (!el) return;
+    const empty = el.querySelector('.tg-recent-empty');
+    if (empty) empty.remove();
+
+    const item = document.createElement('div');
+    item.className = 'tg-recent-item';
+    if (data.ok) {
+      item.innerHTML =
+        '<div class="tg-recent-ic">✓</div>' +
+        '<div class="tg-recent-b">' +
+          '<div class="tg-recent-t">#' + esc(data.packet || data.code) + '</div>' +
+          '<div class="tg-recent-s">' + esc(data.seller || 'Seller') + '</div>' +
+        '</div>' +
+        '<div class="tg-recent-v">+' + inr(data.earn || 0) + '</div>';
+    } else {
+      item.innerHTML =
+        '<div class="tg-recent-ic err">✕</div>' +
+        '<div class="tg-recent-b">' +
+          '<div class="tg-recent-t">' + esc(data.code || '') + '</div>' +
+          '<div class="tg-recent-s">' + esc(data.msg || 'Error') + '</div>' +
+        '</div>' +
+        '<div class="tg-recent-v" style="color:#f87171;">—</div>';
+    }
+    el.insertBefore(item, el.firstChild);
+    while (el.children.length > 15) el.removeChild(el.lastChild);
+  }
+
+  // ============ HANDOVER ============
+  window.createHandover = function() {
+    const collected = TASKS.filter(t => t.status === 'collected');
+    if (!collected.length) { toast('No collected packets', 'info'); return; }
+    confirmCb = async () => {
+      try {
+        const taskIds = collected.map(t => t.id);
+        const handoverRef = db.collection('handovers').doc();
+        await handoverRef.set({
+          pickupBoyId: USER.uid,
+          pickupBoyName: PARTNER?.name || 'Pickup',
+          pickupBoyPhone: PARTNER?.phone || '',
+          taskIds: taskIds,
+          packetCount: collected.length,
+          status: 'pending',
+          zone: PARTNER?.zone || '',
+          createdAt: FV.serverTimestamp(),
+          updatedAt: FV.serverTimestamp()
+        });
+        const batch = db.batch();
+        collected.forEach(t => {
+          batch.update(db.collection('pickupTasks').doc(t.id), {
+            status: 'handover_pending',
+            handoverId: handoverRef.id,
+            handoverAt: FV.serverTimestamp(),
+            updatedAt: FV.serverTimestamp()
+          });
+        });
+        await batch.commit();
+        await db.collection('scanLogs').add({
+          boyId: USER.uid,
+          boyName: PARTNER?.name || 'Pickup',
+          type: 'handover',
+          handoverId: handoverRef.id,
+          packetCount: collected.length,
+          earning: 0,
+          createdAt: FV.serverTimestamp()
+        });
+        toast('✓ Handover created · ' + collected.length + ' packet(s)', 'success');
+        beepOk(); vibrate([60,40,120]);
+        closeConfirm();
+      } catch(e) { toast('Failed: ' + e.message, 'error'); }
+    };
+    document.getElementById('cf-t').textContent = 'Handover to Admin?';
+    document.getElementById('cf-m').innerHTML = '<b>' + collected.length + ' packet(s)</b> admin ko handover ho jayenge.<br><br>Admin scan karke receive karega.';
+    document.getElementById('cf-b').textContent = 'Handover';
+    openM('tg-confirm-modal');
+  };
+
+  window.closeConfirm = function() { closeM('tg-confirm-modal'); confirmCb = null; };
+  window.doConfirm = async function() { if (confirmCb) await confirmCb(); };
+
+  window.tgLogout = function() {
+    if (!confirm('Logout?')) return;
+    stopScanner();
+    auth.signOut().then(() => location.href = 'log-in.html');
+  };
+
+  document.querySelectorAll('.tg-mod').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) {
+      m.classList.remove('show');
+      document.body.style.overflow='';
+      if (m.id === 'tg-scan-modal') { stopScanner(); currentScanTarget = null; SCAN_MODE = 'bulk'; }
+    }});
+  });
+
+  // ⭐ Handle Firestore sync errors — show syncing status
+  try {
+    db.collection('pickupTasks').limit(1).onSnapshot(
+      () => {},
+      err => {
+        if (err && (err.code === 'unavailable' || err.code === 'deadline-exceeded')) {
+          setOnlineStatus(false);
+        }
+      }
+    );
+  } catch(e) {}
+
+  // Reconnect on visible
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      setOnlineStatus(navigator.onLine);
+    }
+  });
+
+  window.addEventListener('beforeunload', () => { stopScanner(); });
+  window.addEventListener('pagehide', () => { stopScanner(); });
+
+})();
+</script>
+</body>
+</html>

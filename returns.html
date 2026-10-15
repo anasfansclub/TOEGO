@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Raise Return — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+:root { --tg-primary: #2874f0; --tg-primary-dark: #1a5dc7; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; }
+
+.tg-hd { background: var(--tg-primary); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--tg-primary); }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+.tg-info-banner {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-left: 4px solid var(--tg-primary);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #1565c0;
+}
+.tg-info-banner-icon {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(40,116,240,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.tg-info-banner b { color: var(--tg-primary); font-weight: 800; }
+
+.tg-tabs-wrap { background: #fff; border-radius: 10px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-tabs-wrap::-webkit-scrollbar { display: none; }
+.tg-tabs { display: flex; padding: 0 4px; width: max-content; min-width: 100%; }
+.tg-tab { padding: 14px 18px 12px; font-size: 13.5px; font-weight: 600; color: #666; white-space: nowrap; cursor: pointer; position: relative; transition: color .2s; display: flex; align-items: center; gap: 6px; }
+.tg-tab.active { color: var(--tg-primary); font-weight: 700; }
+.tg-tab::after { content: ''; position: absolute; bottom: 0; left: 8px; right: 8px; height: 3px; background: var(--tg-primary); border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform .25s cubic-bezier(.4,0,.2,1); }
+.tg-tab.active::after { transform: scaleX(1); }
+.tg-tab-count { background: #f1f3f6; color: #666; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 8px; min-width: 18px; text-align: center; }
+.tg-tab.active .tg-tab-count { background: var(--tg-primary); color: #fff; }
+
+.tg-orders { display: flex; flex-direction: column; gap: 12px; }
+
+.tg-order {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  overflow: hidden;
+  transition: box-shadow .2s;
+}
+.tg-order:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+
+.tg-order-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f3f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tg-order-meta { display: flex; gap: 16px; flex-wrap: wrap; flex: 1; min-width: 0; }
+.tg-order-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.tg-order-meta-label { font-size: 10.5px; color: #878787; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.tg-order-meta-value { font-size: 13px; font-weight: 700; color: #212121; font-family: monospace; }
+.tg-order-meta-value.normal { font-family: inherit; font-weight: 600; }
+
+.tg-order-status {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+.tg-order-status.delivered { background: #e6f7ec; color: #1b8a3a; }
+.tg-order-status.return_requested { background: #f3e5f5; color: #6a1b9a; }
+.tg-order-status.returned { background: #e0f2f1; color: #00695c; }
+
+.tg-order-items { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+.tg-order-item { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; }
+.tg-order-item-img { width: 64px; height: 64px; border-radius: 8px; overflow: hidden; background: #f5f5f6; }
+.tg-order-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.tg-order-item-body { min-width: 0; }
+.tg-order-item-name { font-size: 13.5px; font-weight: 600; color: #212121; line-height: 1.35; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tg-order-item-meta { font-size: 11.5px; color: #888; }
+.tg-order-item-price { font-size: 14px; font-weight: 800; color: #212121; }
+
+.tg-order-foot {
+  padding: 12px 16px;
+  border-top: 1px solid #f1f3f6;
+  background: #fafbfc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tg-order-foot-info { font-size: 12px; color: #666; line-height: 1.5; }
+.tg-order-foot-info b { color: #1b8a3a; }
+.tg-order-foot-info .warn { color: #f57c00; font-weight: 700; }
+
+.tg-raise-btn {
+  padding: 11px 20px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(40,116,240,0.3);
+  transition: all .15s;
+}
+.tg-raise-btn:hover { filter: brightness(1.05); box-shadow: 0 6px 16px rgba(40,116,240,0.4); }
+.tg-raise-btn:active { transform: translateY(1px); }
+.tg-raise-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.tg-raise-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+.tg-status-chip.returned { background: #e0f2f1; color: #00695c; }
+
+.tg-empty {
+  background: #fff;
+  border-radius: 12px;
+  padding: 50px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-empty-icon { width: 100px; height: 100px; margin: 0 auto 20px; background: linear-gradient(135deg, #eef3ff, #e0eaff); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+.tg-empty-title { font-size: 18px; font-weight: 800; margin: 0 0 8px; }
+.tg-empty-desc { font-size: 13.5px; color: #666; line-height: 1.55; margin: 0 auto 20px; max-width: 340px; }
+.tg-empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; font-size: 13px; font-weight: 800; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.4px; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-empty-cta svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+.tg-skel { background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 6px; }
+@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tg-skel-order { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: var(--tg-primary); }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.65); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s; }
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card { width: 100%; max-width: 560px; background: #fff; border-radius: 18px 18px 0 0; padding: 22px 20px 26px; max-height: 92vh; overflow-y: auto; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); }
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@media (min-width: 640px) { .tg-modal { align-items: center; } .tg-modal-card { border-radius: 16px; max-height: 88vh; } }
+
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 10px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; }
+.tg-modal-close { width: 34px; height: 34px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.tg-modal-close:hover { background: #e0e0e0; }
+
+.tg-modal-product {
+  background: #f8f9fb;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.tg-modal-product-img { width: 56px; height: 56px; border-radius: 8px; overflow: hidden; background: #fff; flex-shrink: 0; }
+.tg-modal-product-img img { width: 100%; height: 100%; object-fit: cover; }
+.tg-modal-product-name { font-size: 13.5px; font-weight: 700; line-height: 1.3; }
+.tg-modal-product-meta { font-size: 11.5px; color: #888; margin-top: 3px; }
+
+.tg-field { margin-bottom: 14px; }
+.tg-field label { display: block; font-size: 12px; color: #666; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.tg-field label .req { color: #d32f2f; }
+.tg-field select, .tg-field textarea, .tg-field input[type="text"] {
+  width: 100%;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  font-family: inherit;
+}
+.tg-field select:focus, .tg-field textarea:focus, .tg-field input[type="text"]:focus {
+  border-color: var(--tg-primary);
+  box-shadow: 0 0 0 3px rgba(40,116,240,0.10);
+}
+.tg-field textarea { min-height: 100px; resize: vertical; }
+
+.tg-reason-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (max-width: 400px) { .tg-reason-grid { grid-template-columns: 1fr; } }
+.tg-reason {
+  padding: 12px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .15s;
+  font-size: 13px;
+  font-weight: 600;
+  color: #212121;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.3;
+}
+.tg-reason:hover { border-color: var(--tg-primary); background: #f8fbff; }
+.tg-reason.active { border-color: var(--tg-primary); background: #f0f5ff; color: var(--tg-primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.08); }
+.tg-reason-emoji { font-size: 18px; flex-shrink: 0; }
+
+.tg-refund-info {
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  border-left: 4px solid #1b8a3a;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #1b8a3a;
+}
+.tg-refund-info b { font-weight: 800; }
+
+.tg-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.tg-modal-btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+.tg-modal-btn.primary { background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-modal-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
+.tg-modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.tg-success-modal { position: fixed; inset: 0; background: #fff; z-index: 999999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 24px; }
+.tg-success-modal.show { display: flex; }
+.tg-success-icon { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 12px 40px rgba(34,197,94,0.35); animation: tgSuccessPop .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tgSuccessPop { from { transform: scale(0); } to { transform: scale(1); } }
+.tg-success-icon svg { width: 52px; height: 52px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.tg-success-title { font-size: 24px; font-weight: 800; color: #212121; margin: 0 0 8px; }
+.tg-success-desc { font-size: 14px; color: #666; margin: 0 0 24px; max-width: 340px; line-height: 1.55; }
+.tg-success-info { font-size: 12px; color: #999; margin-bottom: 20px; font-family: monospace; background: #f1f3f6; padding: 8px 16px; border-radius: 8px; }
+.tg-success-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.tg-success-btn { padding: 13px 26px; border-radius: 8px; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+.tg-success-btn.primary { background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-success-btn.ghost { background: #f1f3f6; color: #212121; }
+
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: var(--tg-primary); }
+
+@media (max-width: 600px) {
+  .tg-container { padding: 8px; }
+  .tg-order-head, .tg-order-items, .tg-order-foot { padding: 12px; }
+  .tg-order-item { grid-template-columns: 56px 1fr auto; gap: 10px; }
+  .tg-order-item-img { width: 56px; height: 56px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">Returns & Refunds</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <div class="tg-info-banner">
+      <div class="tg-info-banner-icon">ℹ️</div>
+      <div>
+        <b>7-day easy return</b> from delivery date. Product must be unused and in original packaging. Return request Super Admin ki approval ke baad process hoga.
+      </div>
+    </div>
+
+    <div class="tg-tabs-wrap">
+      <div class="tg-tabs" id="tg-tabs">
+        <div class="tg-tab active" data-tab="available" onclick="tgPickTab('available')">Available for Return <span class="tg-tab-count" id="tg-count-available">0</span></div>
+        <div class="tg-tab" data-tab="requested" onclick="tgPickTab('requested')">My Return Requests <span class="tg-tab-count" id="tg-count-requested">0</span></div>
+      </div>
+    </div>
+
+    <div class="tg-orders" id="tg-orders"></div>
+
+    <div id="tg-loading">
+      <div class="tg-skel-order">
+        <div class="tg-skel" style="width:40%;height:12px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="tg-skel" style="width:64px;height:64px;border-radius:8px;"></div>
+          <div style="flex:1;">
+            <div class="tg-skel" style="width:80%;height:12px;margin-bottom:8px;"></div>
+            <div class="tg-skel" style="width:50%;height:12px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-empty" id="tg-empty" style="display:none;">
+      <div class="tg-empty-icon">📦</div>
+      <h2 class="tg-empty-title" id="tg-empty-title">No orders available</h2>
+      <p class="tg-empty-desc" id="tg-empty-desc">Delivered orders hi return kar sakte hain. Start shopping karo!</p>
+      <a href="shop-home.html" class="tg-empty-cta">
+        <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+        Start Shopping
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- RAISE RETURN MODAL -->
+<div class="tg-modal" id="tg-return-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Raise Return Request</div>
+      <button class="tg-modal-close" onclick="tgCloseReturn()">✕</button>
+    </div>
+
+    <div class="tg-modal-product" id="tg-modal-product"></div>
+
+    <div class="tg-refund-info">
+      💰 Refund amount: <b id="tg-refund-amount">₹0</b> · Return Super Admin ki approval ke baad process hoga. Approval me <b>7 days</b> tak lag sakte hain.
+    </div>
+
+    <div class="tg-field">
+      <label>Why are you returning this? <span class="req">*</span></label>
+      <div class="tg-reason-grid" id="tg-reason-grid">
+        <div class="tg-reason" data-reason="Product is damaged" onclick="tgPickReason(this)"><span class="tg-reason-emoji">💔</span> Product is damaged</div>
+        <div class="tg-reason" data-reason="Wrong item delivered" onclick="tgPickReason(this)"><span class="tg-reason-emoji">❌</span> Wrong item delivered</div>
+        <div class="tg-reason" data-reason="Size doesn't fit" onclick="tgPickReason(this)"><span class="tg-reason-emoji">📏</span> Size doesn't fit</div>
+        <div class="tg-reason" data-reason="Product not as described" onclick="tgPickReason(this)"><span class="tg-reason-emoji">📋</span> Not as described</div>
+        <div class="tg-reason" data-reason="Quality not as expected" onclick="tgPickReason(this)"><span class="tg-reason-emoji">⭐</span> Quality not good</div>
+        <div class="tg-reason" data-reason="Other reason" onclick="tgPickReason(this)"><span class="tg-reason-emoji">💬</span> Other reason</div>
+      </div>
+    </div>
+
+    <div class="tg-field">
+      <label>Additional comments (optional)</label>
+      <textarea id="tg-return-comment" placeholder="Tell us more about the issue..." maxlength="500"></textarea>
+    </div>
+
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseReturn()">Cancel</button>
+      <button class="tg-modal-btn primary" id="tg-return-submit" onclick="tgSubmitReturn()" disabled>Submit Return</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="tg-success-modal" id="tg-success-modal">
+  <div class="tg-success-icon"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+  <h2 class="tg-success-title">Return Request Submitted! 🎉</h2>
+  <p class="tg-success-desc">Super Admin aapki request review karega. Approval ke baad return pickup arrange hoga aur refund process hoga.</p>
+  <div class="tg-success-info" id="tg-success-order">Order: —</div>
+  <div class="tg-success-actions">
+    <a href="my-orders.html" class="tg-success-btn primary">Track Orders</a>
+    <a href="shop-home.html" class="tg-success-btn ghost">Continue Shopping</a>
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-cart-badge-m" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  const RETURN_DAYS = 7;
+  const RETURN_CUT = 150;
+
+  let USER = null;
+  let ALL_ORDERS = [];
+  let CURRENT_TAB = 'available';
+  let returnTargetOrder = null;
+  let returnReason = '';
+  let unsubOrders = null;
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function adjustColor(hex, pct) {
+    try { hex = hex.replace('#',''); const n = parseInt(hex, 16);
+      const r = Math.max(0, Math.min(255, (n >> 16) + pct));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
+      const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    } catch(e) { return hex; }
+  }
+  function applyTheme(p, d) {
+    p = p || '#2874f0';
+    d = d || adjustColor(p, -30);
+    document.documentElement.style.setProperty('--tg-primary', p);
+    document.documentElement.style.setProperty('--tg-primary-dark', d);
+    if (themeMeta) themeMeta.setAttribute('content', p);
+    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary: p, dark: d })); } catch(e) {}
+  }
+  (function() { try { const c = localStorage.getItem('toego_theme_colors'); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {} })();
+  (async () => {
+    try { const s = await db.collection('siteSettings').doc('theme').get(); if (s.exists) { const d = s.data(); const p = d.themeColor || '#2874f0'; applyTheme(p, adjustColor(p, -30)); } } catch(e) {}
+    db.collection('siteSettings').doc('theme').onSnapshot(snap => { if (!snap.exists) return; const d = snap.data(); const p = d.themeColor || '#2874f0'; applyTheme(p, adjustColor(p, -30)); }, () => {});
+  })();
+
+  /* ========= HELPERS ========= */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts'); if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function inr(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+  function fdate(d) { if (!d) return '—'; const dt = d.toDate ? d.toDate() : new Date(d); return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+
+  /* ========= STATUS ========= */
+  function normStatus(o) {
+    if (!o) return 'pending';
+    const raw = o.status || 'pending';
+    const k = String(raw).toLowerCase().trim().replace(/\s+/g, '_').replace(/-/g, '_');
+    if (!k || k === 'new' || k === 'placed' || k === 'pending' || k === 'confirmed') return 'pending';
+    if (k.includes('cancel')) return 'cancelled';
+    if (k.includes('return_request') || k === 'return_pending') return 'return_requested';
+    if (k.includes('return') || k.includes('refund')) return 'returned';
+    if (k.includes('deliver') || k === 'completed') return 'delivered';
+    if (k.includes('dispatch') || k.includes('shipped') || k === 'in_transit' || k === 'ofd' || k === 'out_for_delivery') return 'dispatched';
+    if (k.includes('process') || k.includes('packing') || k === 'packed' || k === 'ready_to_ship') return 'processing';
+    if (k.includes('label_generat')) return 'label_generated';
+    if (k.includes('admin_approv') || k === 'rtd' || k === 'approved') return 'admin_approved';
+    if (k.includes('seller_accept') || k === 'accepted') return 'seller_accepted';
+    return 'pending';
+  }
+
+  /* ⭐ Return eligibility: delivered & within 7 days */
+  function isReturnEligible(o) {
+    if (normStatus(o) !== 'delivered') return false;
+    const dd = o.deliveredAt?.toDate?.() || o.deliveredAt ? new Date(o.deliveredAt) : null;
+    if (!dd) return false;
+    return (Date.now() - dd.getTime()) / 86400000 <= RETURN_DAYS;
+  }
+
+  function daysLeft(o) {
+    const dd = o.deliveredAt?.toDate?.() || o.deliveredAt ? new Date(o.deliveredAt) : null;
+    if (!dd) return 0;
+    const used = Math.floor((Date.now() - dd.getTime()) / 86400000);
+    return Math.max(0, RETURN_DAYS - used);
+  }
+
+  /* ========= TABS ========= */
+  window.tgPickTab = function(tab) {
+    CURRENT_TAB = tab;
+    document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    renderOrders();
+  };
+
+  function getFiltered() {
+    if (CURRENT_TAB === 'available') {
+      return ALL_ORDERS.filter(o => isReturnEligible(o));
+    }
+    return ALL_ORDERS.filter(o => {
+      const s = normStatus(o);
+      return s === 'return_requested' || s === 'returned';
+    });
+  }
+
+  function updateCounts() {
+    const avail = ALL_ORDERS.filter(o => isReturnEligible(o)).length;
+    const req = ALL_ORDERS.filter(o => { const s = normStatus(o); return s === 'return_requested' || s === 'returned'; }).length;
+    document.getElementById('tg-count-available').textContent = avail;
+    document.getElementById('tg-count-requested').textContent = req;
+  }
+
+  function renderOrders() {
+    const wrap = document.getElementById('tg-orders');
+    const loading = document.getElementById('tg-loading');
+    const empty = document.getElementById('tg-empty');
+    if (!wrap) return;
+    if (loading) loading.style.display = 'none';
+
+    updateCounts();
+    const list = getFiltered();
+
+    if (!ALL_ORDERS.length) {
+      wrap.innerHTML = '';
+      empty.style.display = 'block';
+      document.getElementById('tg-empty-title').textContent = 'No orders yet';
+      document.getElementById('tg-empty-desc').textContent = "Looks like you haven't placed any orders. Start shopping!";
+      return;
+    }
+
+    if (!list.length) {
+      wrap.innerHTML = '';
+      empty.style.display = 'block';
+      if (CURRENT_TAB === 'available') {
+        document.getElementById('tg-empty-title').textContent = 'No orders available for return';
+        document.getElementById('tg-empty-desc').textContent = 'Only delivered orders within 7 days can be returned.';
+      } else {
+        document.getElementById('tg-empty-title').textContent = 'No return requests';
+        document.getElementById('tg-empty-desc').textContent = "You haven't raised any return requests yet.";
+      }
+      return;
+    }
+
+    empty.style.display = 'none';
+    wrap.innerHTML = list.map(orderHtml).join('');
+  }
+
+  function orderHtml(o) {
+    const orderId = o.id || o.orderId || '';
+    const shortId = orderId.slice(0, 10).toUpperCase();
+    const status = normStatus(o);
+    const items = Array.isArray(o.items) ? o.items : [];
+    const firstItem = items[0] || {};
+    const extraCount = items.length - 1;
+    const total = Number(o.total || 0);
+    const left = daysLeft(o);
+
+    let statusBadge = '';
+    let footInfo = '';
+    let actionBtn = '';
+
+    if (status === 'delivered' && isReturnEligible(o)) {
+      statusBadge = '<span class="tg-order-status delivered">✓ Delivered</span>';
+      footInfo = '<div class="tg-order-foot-info">Return window: <span class="warn">' + left + ' day' + (left === 1 ? '' : 's') + ' left</span></div>';
+      actionBtn = '<button class="tg-raise-btn" onclick="tgOpenReturn(\'' + esc(orderId) + '\')"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Raise Return</button>';
+    } else if (status === 'delivered') {
+      statusBadge = '<span class="tg-order-status delivered">✓ Delivered</span>';
+      footInfo = '<div class="tg-order-foot-info">Return window expired</div>';
+      actionBtn = '<button class="tg-raise-btn" disabled><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Expired</button>';
+    } else if (status === 'return_requested') {
+      statusBadge = '<span class="tg-order-status return_requested">⏳ Return Pending</span>';
+      footInfo = '<div class="tg-order-foot-info">Waiting for admin approval' + (o.returnReason ? ' · ' + esc(o.returnReason) : '') + '</div>';
+      actionBtn = '<span class="tg-status-chip">⏳ Under Review</span>';
+    } else if (status === 'returned') {
+      statusBadge = '<span class="tg-order-status returned">✓ Returned</span>';
+      footInfo = '<div class="tg-order-foot-info"><b>Refund processing</b> · ₹' + RETURN_CUT + ' deducted from seller</div>';
+      actionBtn = '<span class="tg-status-chip returned">✓ Approved</span>';
+    }
+
+    return '<div class="tg-order">' +
+      '<div class="tg-order-head">' +
+        '<div class="tg-order-meta">' +
+          '<div class="tg-order-meta-item"><div class="tg-order-meta-label">Order ID</div><div class="tg-order-meta-value">#' + esc(shortId) + '</div></div>' +
+          '<div class="tg-order-meta-item"><div class="tg-order-meta-label">Order Date</div><div class="tg-order-meta-value normal">' + esc(fdate(o.createdAt)) + '</div></div>' +
+        '</div>' +
+        statusBadge +
+      '</div>' +
+
+      '<div class="tg-order-items">' +
+        items.slice(0, 2).map(it =>
+          '<div class="tg-order-item">' +
+            '<div class="tg-order-item-img"><img src="' + esc(it.image || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T') + '" loading="lazy" /></div>' +
+            '<div class="tg-order-item-body">' +
+              '<div class="tg-order-item-name">' + esc(it.name || 'Product') + (it.size ? ' · ' + esc(it.size) : '') + (it.color ? ' · ' + esc(it.color) : '') + '</div>' +
+              '<div class="tg-order-item-meta">Qty: ' + Number(it.qty || 1) + ' · ' + inr(it.price) + '</div>' +
+            '</div>' +
+            '<div class="tg-order-item-price">' + inr(Number(it.price || 0) * Number(it.qty || 1)) + '</div>' +
+          '</div>'
+        ).join('') +
+        (extraCount > 0 ? '<div style="font-size:12px;color:var(--tg-primary);font-weight:700;">+ ' + extraCount + ' more item' + (extraCount > 1 ? 's' : '') + '</div>' : '') +
+      '</div>' +
+
+      '<div class="tg-order-foot">' +
+        '<div>' + footInfo + '<div class="tg-order-foot-info" style="margin-top:2px;">Total: <b style="color:#212121;">' + inr(total) + '</b></div></div>' +
+        actionBtn +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ========= RETURN MODAL ========= */
+  window.tgOpenReturn = function(orderId) {
+    const o = ALL_ORDERS.find(x => (x.id || x.orderId) === orderId);
+    if (!o) { toast('Order not found', 'error'); return; }
+    if (!isReturnEligible(o)) { toast('Return window expired', 'error'); return; }
+
+    returnTargetOrder = o;
+    returnReason = '';
+
+    // Product summary
+    const items = Array.isArray(o.items) ? o.items : [];
+    const first = items[0] || {};
+    const img = first.image || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T';
+    document.getElementById('tg-modal-product').innerHTML =
+      '<div class="tg-modal-product-img"><img src="' + esc(img) + '" /></div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="tg-modal-product-name">' + esc(first.name || 'Product') + (items.length > 1 ? ' + ' + (items.length - 1) + ' more' : '') + '</div>' +
+        '<div class="tg-modal-product-meta">Order #' + esc((o.id || '').slice(0, 10).toUpperCase()) + ' · ' + inr(o.total) + '</div>' +
+      '</div>';
+
+    document.getElementById('tg-refund-amount').textContent = inr(o.total || 0);
+    document.getElementById('tg-return-comment').value = '';
+    document.querySelectorAll('#tg-reason-grid .tg-reason').forEach(r => r.classList.remove('active'));
+    document.getElementById('tg-return-submit').disabled = true;
+
+    document.getElementById('tg-return-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgCloseReturn = function() {
+    document.getElementById('tg-return-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    returnTargetOrder = null;
+    returnReason = '';
+  };
+
+  window.tgPickReason = function(el) {
+    document.querySelectorAll('#tg-reason-grid .tg-reason').forEach(r => r.classList.remove('active'));
+    el.classList.add('active');
+    returnReason = el.dataset.reason || '';
+    document.getElementById('tg-return-submit').disabled = !returnReason;
+  };
+
+  window.tgSubmitReturn = async function() {
+    if (!returnTargetOrder || !returnReason) { toast('Please select a reason', 'error'); return; }
+    const btn = document.getElementById('tg-return-submit');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+      const o = returnTargetOrder;
+      const orderId = o.id || o.orderId;
+      const comment = (document.getElementById('tg-return-comment').value || '').trim();
+
+      // Build sellerIds array for admin settlement
+      const sellerIdsSet = new Set();
+      const items = Array.isArray(o.items) ? o.items : [];
+      items.forEach(it => {
+        const sid = it.sellerId || it.seller_id || it.sid || it.sellerUid;
+        if (sid) sellerIdsSet.add(String(sid));
+      });
+      if (o.sellerId) sellerIdsSet.add(String(o.sellerId));
+      if (Array.isArray(o.sellerIds)) o.sellerIds.forEach(s => sellerIdsSet.add(String(s)));
+
+      const update = {
+        status: 'return_requested',
+        returnReason: returnReason,
+        returnComment: comment,
+        returnRequestedAt: FV.serverTimestamp(),
+        returnRequestedBy: 'customer',
+        returnRequestedByUid: USER.uid,
+        returnRequestedByName: USER.displayName || (USER.email || '').split('@')[0] || 'Customer',
+        returnRequestedByEmail: USER.email || '',
+        returnCut: RETURN_CUT,
+        returnOrderSnapshot: {
+          total: Number(o.total || 0),
+          itemCount: items.length,
+          items: items.map(it => ({
+            name: it.name || '',
+            qty: Number(it.qty || 1),
+            price: Number(it.price || 0),
+            size: it.size || '',
+            color: it.color || ''
+          }))
+        },
+        updatedAt: FV.serverTimestamp()
+      };
+
+      if (sellerIdsSet.size) update.sellerIds = Array.from(sellerIdsSet);
+
+      await db.collection('orders').doc(orderId).update(update);
+
+      // Show success
+      document.getElementById('tg-success-order').textContent = 'Order: #' + orderId.slice(0, 10).toUpperCase();
+      tgCloseReturn();
+      document.getElementById('tg-success-modal').classList.add('show');
+
+      toast('Return request submitted ✓', 'success');
+    } catch(err) {
+      console.error('Return submit failed:', err);
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false;
+      btn.textContent = 'Submit Return';
+    }
+  };
+
+  /* ========= LOAD ORDERS ========= */
+  function userMatchesOrder(o, uid, email, phone) {
+    const cands = [
+      o.customerId, o.userId, o.uid, o.user_id, o.customer_id,
+      o.customer && o.customer.id, o.user && o.user.id, o.user && o.user.uid,
+      o.userEmail, o.email, o.customerEmail,
+      o.userPhone, o.phone, o.customerPhone
+    ].filter(Boolean).map(x => String(x).toLowerCase());
+    if (cands.includes(uid.toLowerCase())) return true;
+    if (email && cands.includes(email)) return true;
+    if (phone && cands.some(c => c.replace(/\D/g,'') === phone)) return true;
+    return false;
+  }
+
+  function loadOrders() {
+    if (!USER) {
+      document.getElementById('tg-loading').style.display = 'none';
+      return;
+    }
+    if (unsubOrders) { try { unsubOrders(); } catch(e) {} unsubOrders = null; }
+
+    const uid = USER.uid;
+    const email = (USER.email || '').toLowerCase();
+    const phone = (USER.phoneNumber || '').replace(/\D/g, '');
+    const col = db.collection('orders');
+    const map = new Map();
+
+    function pushAll() {
+      ALL_ORDERS = Array.from(map.values());
+      ALL_ORDERS.sort((a, b) => {
+        const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+        return bt - at;
+      });
+      renderOrders();
+    }
+
+    // Q1: customerId
+    try {
+      col.where('customerId', '==', uid).limit(100).onSnapshot(snap => {
+        snap.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() }));
+        pushAll();
+      }, () => {});
+    } catch(e) {}
+
+    // Q2: userId
+    try {
+      col.where('userId', '==', uid).limit(100).onSnapshot(snap => {
+        snap.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() }));
+        pushAll();
+      }, () => {});
+    } catch(e) {}
+
+    // Q3: fallback - recent orders client filter
+    try {
+      col.orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
+        let a = 0;
+        snap.docs.forEach(d => {
+          const o = { id: d.id, ...d.data() };
+          if (!map.has(d.id) && userMatchesOrder(o, uid, email, phone)) { map.set(d.id, o); a++; }
+        });
+        if (a > 0) pushAll();
+      }, () => {
+        col.limit(100).get().then(snap => {
+          snap.docs.forEach(d => {
+            const o = { id: d.id, ...d.data() };
+            if (userMatchesOrder(o, uid, email, phone)) map.set(d.id, o);
+          });
+          pushAll();
+        }).catch(() => {});
+      });
+    } catch(e) {}
+
+    setTimeout(() => { if (!ALL_ORDERS.length) pushAll(); }, 1200);
+  }
+
+  /* ========= CART BADGE ========= */
+  async function updateCartBadge() {
+    let count = 0;
+    try {
+      if (USER) {
+        const snap = await db.collection('carts').doc(USER.uid).collection('items').get();
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+        gc.forEach(i => { count += Number(i.qty || 1); });
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ========= MODAL CLOSE OUTSIDE ========= */
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', e => {
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  /* ========= INIT ========= */
+  auth.onAuthStateChanged(u => {
+    USER = u;
+    if (!u) {
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('returns.html'));
+      return;
+    }
+    loadOrders();
+    updateCartBadge();
+  });
+
+})();
+</script>
+</body>
+</html>

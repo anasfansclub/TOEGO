@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cart — TOEGO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://checkout.razorpay.com">
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin:0!important; padding:0!important; width:100%!important; max-width:100vw; overflow-x:hidden; background:#f1f3f6; font-family:'Roboto',Arial,sans-serif; color:#212121; -webkit-font-smoothing:antialiased; }
+img { max-width:100%; display:block; }
+button { font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+input, select, textarea { font:inherit; }
+a { color:inherit; text-decoration:none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display:none!important; visibility:hidden!important; height:0!important; width:0!important; overflow:hidden!important; }
+
+.tg-hd { background:#2874f0; position:fixed; top:0; left:0; right:0; z-index:1000; box-shadow:0 1px 4px rgba(0,0,0,.15); width:100%; }
+.tg-hd-inner { display:flex; align-items:center; gap:10px; padding:10px 14px; height:58px; }
+.tg-hd-back { width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:#fff; border-radius:50%; flex-shrink:0; transition:background .15s; }
+.tg-hd-back:hover { background:rgba(255,255,255,.12); }
+.tg-hd-back svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.tg-hd-title { flex:1; color:#fff; font-size:17px; font-weight:700; letter-spacing:-.2px; display:flex; align-items:center; gap:8px; }
+.tg-hd-count { font-size:12.5px; font-weight:500; opacity:.85; }
+.tg-hd-actions { display:flex; gap:2px; flex-shrink:0; }
+.tg-hd-btn { width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#fff; border-radius:50%; position:relative; transition:background .15s; }
+.tg-hd-btn:hover { background:rgba(255,255,255,.12); }
+.tg-hd-btn svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+.tg-wrap { padding-top:58px; padding-bottom:180px; min-height:100vh; }
+.tg-container { max-width:1400px; margin:0 auto; padding:12px; display:grid; grid-template-columns:1fr 380px; gap:14px; align-items:start; }
+.tg-left { min-width:0; }
+.tg-pin { background:#fff; border-radius:12px; padding:14px 16px; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,.05); display:flex; align-items:center; gap:12px; }
+.tg-pin-icon { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#eef3ff,#e0eaff); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.tg-pin-icon svg { width:18px; height:18px; stroke:#2874f0; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.tg-pin-body { flex:1; min-width:0; }
+.tg-pin-label { font-size:13px; font-weight:600; color:#212121; }
+.tg-pin-label span { color:#2874f0; cursor:pointer; margin-left:4px; font-weight:700; }
+.tg-pin-sub { font-size:11.5px; color:#666; margin-top:2px; }
+
+.tg-selectall { background:#fff; border-radius:12px; padding:12px 16px; margin-bottom:10px; display:flex; align-items:center; gap:12px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+.tg-checkbox { width:20px; height:20px; border:1.5px solid #c5cad3; border-radius:5px; position:relative; flex-shrink:0; cursor:pointer; transition:all .15s; appearance:none; background:#fff; }
+.tg-checkbox:checked { background:#2874f0; border-color:#2874f0; }
+.tg-checkbox:checked::after { content:''; position:absolute; left:5px; top:1px; width:6px; height:11px; border:solid #fff; border-width:0 2.2px 2.2px 0; transform:rotate(45deg); }
+.tg-selectall-label { flex:1; font-size:14px; font-weight:600; color:#212121; cursor:pointer; user-select:none; }
+.tg-selectall-remove { color:#d32f2f; font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; padding:6px 10px; border-radius:6px; transition:background .15s; }
+.tg-selectall-remove:hover { background:#ffebee; }
+
+.tg-items { display:flex; flex-direction:column; gap:10px; }
+.tg-item { background:#fff; border-radius:12px; padding:14px; display:grid; grid-template-columns:auto 100px 1fr; gap:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); position:relative; contain:layout style; animation:tgItemIn .3s cubic-bezier(.34,1.2,.64,1); }
+@keyframes tgItemIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+.tg-item.removing { opacity:.4; transform:scale(.98); pointer-events:none; }
+.tg-item-check { display:flex; align-items:flex-start; padding-top:4px; }
+.tg-item-check input { margin:0; }
+.tg-item-img { width:100px; height:100px; border-radius:10px; overflow:hidden; background:#f5f5f6; flex-shrink:0; cursor:pointer; position:relative; display:flex; align-items:center; justify-content:center; }
+.tg-item-img img { max-width:100%; max-height:100%; object-fit:contain; padding:4px; transition:transform .35s ease; }
+.tg-item:hover .tg-item-img img { transform:scale(1.06); }
+.tg-item-body { min-width:0; display:flex; flex-direction:column; }
+.tg-item-title { font-size:14.5px; font-weight:500; color:#212121; line-height:1.35; margin-bottom:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer; padding-right:8px; }
+.tg-item-title:hover { color:#2874f0; }
+.tg-item-seller { font-size:11.5px; color:#878787; margin-bottom:4px; }
+.tg-item-seller b { color:#666; font-weight:600; }
+.tg-item-meta { font-size:12px; color:#878787; margin-bottom:2px; display:flex; gap:10px; flex-wrap:wrap; }
+.tg-item-rating { display:inline-flex; align-items:center; gap:4px; margin-top:4px; margin-bottom:8px; align-self:flex-start; }
+.tg-item-rating-badge { background:#388e3c; color:#fff; font-size:11px; font-weight:700; padding:2px 7px; border-radius:4px; display:flex; align-items:center; gap:2px; }
+.tg-item-rating-badge svg { width:9px; height:9px; fill:#fff; }
+.tg-item-rating-count { color:#878787; font-size:11px; }
+.tg-item-price-row { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+.tg-item-price { font-size:18px; font-weight:800; color:#212121; }
+.tg-item-mrp { font-size:13px; color:#878787; text-decoration:line-through; }
+.tg-item-off { font-size:13px; color:#388e3c; font-weight:700; }
+.tg-item-gst { font-size:11.5px; color:#666; margin-bottom:8px; display:flex; align-items:center; gap:6px; background:#f8f9fb; padding:5px 10px; border-radius:6px; align-self:flex-start; }
+.tg-item-gst b { color:#212121; font-weight:600; }
+.tg-item-delivery { font-size:12px; color:#212121; margin-bottom:10px; display:flex; align-items:center; gap:5px; font-weight:500; }
+.tg-item-delivery.same-day b { color:#fb641b; }
+
+.tg-qty { display:inline-flex; align-items:center; border:1px solid #e0e0e0; border-radius:8px; overflow:hidden; align-self:flex-start; margin-bottom:10px; transition:border-color .15s; }
+.tg-qty:hover { border-color:#2874f0; }
+.tg-qty-btn { width:34px; height:34px; display:flex; align-items:center; justify-content:center; background:#fff; color:#2874f0; font-size:18px; font-weight:700; transition:background .15s; user-select:none; }
+.tg-qty-btn:hover:not(:disabled) { background:#f0f5ff; }
+.tg-qty-btn:disabled { color:#ccc; cursor:not-allowed; }
+.tg-qty-val { min-width:44px; height:34px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#212121; border-left:1px solid #e0e0e0; border-right:1px solid #e0e0e0; background:#fff; }
+
+.tg-item-actions { display:flex; gap:16px; flex-wrap:wrap; font-size:13px; font-weight:700; letter-spacing:.2px; text-transform:uppercase; }
+.tg-item-action { color:#212121; padding:4px 0; transition:color .15s; display:flex; align-items:center; gap:5px; }
+.tg-item-action:hover { color:#2874f0; }
+.tg-item-action.danger:hover { color:#d32f2f; }
+.tg-item-action svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.tg-item-remove { position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; background:#f1f3f6; color:#666; display:flex; align-items:center; justify-content:center; transition:all .2s; opacity:.5; z-index:3; }
+.tg-item:hover .tg-item-remove { opacity:1; }
+.tg-item-remove:hover { background:#d32f2f; color:#fff; transform:rotate(90deg); }
+.tg-item-remove svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
+.tg-mobile-order { position:fixed; bottom:60px; left:0; right:0; background:#fff; padding:10px 14px; padding-bottom:calc(10px + env(safe-area-inset-bottom,0)); box-shadow:0 -4px 20px rgba(0,0,0,.12); display:none; align-items:center; gap:12px; z-index:9998; border-top:1px solid #e0e0e0; }
+.tg-mobile-order-price { flex:1; }
+.tg-mobile-order-total { font-size:18px; font-weight:800; color:#212121; }
+.tg-mobile-order-save { font-size:11.5px; color:#388e3c; font-weight:600; margin-top:1px; }
+.tg-mobile-order-btn { background:linear-gradient(135deg,#fb641b 0%,#e05515 100%); color:#fff; font-size:14.5px; font-weight:800; padding:12px 26px; border-radius:8px; letter-spacing:.4px; text-transform:uppercase; box-shadow:0 4px 14px rgba(251,100,27,.35); display:flex; align-items:center; gap:6px; transition:all .15s; }
+.tg-mobile-order-btn:disabled { opacity:.55; cursor:not-allowed; }
+
+.tg-mobile-tags { position:fixed; bottom:132px; left:0; right:0; background:#fff; padding:8px 12px; box-shadow:0 -2px 12px rgba(0,0,0,.06); display:none; flex-wrap:wrap; gap:6px; z-index:9997; border-top:1px solid #f1f3f6; max-height:100px; overflow-y:auto; }
+.tg-mobile-tags.has-tags { display:flex; }
+
+.tg-right { position:sticky; top:74px; }
+.tg-price-card { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,.05); overflow:hidden; }
+.tg-price-head { padding:16px 20px 12px; border-bottom:1px solid #f1f3f6; font-size:12px; font-weight:700; color:#878787; text-transform:uppercase; letter-spacing:.7px; }
+.tg-price-body { padding:16px 20px; }
+.tg-price-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; margin-bottom:12px; color:#212121; }
+.tg-price-row:last-child { margin-bottom:0; }
+.tg-price-row.discount .val, .tg-price-row.coupon .val { color:#388e3c; }
+.tg-price-row.free .val { color:#388e3c; font-weight:600; }
+.tg-price-row .val { font-weight:500; }
+.tg-price-row.gst .val { color:#666; font-weight:600; }
+.tg-price-divider { height:1px; margin:12px 0; border:none; border-top:1px dashed #d4d5d9; }
+.tg-price-total { display:flex; justify-content:space-between; align-items:center; font-size:18px; font-weight:800; color:#212121; margin-top:12px; }
+.tg-price-total .label { font-size:16px; font-weight:700; }
+.tg-price-save { background:#e6f7ec; color:#1b8a3a; font-size:13px; font-weight:700; padding:10px 14px; border-radius:8px; margin-top:12px; display:flex; align-items:center; gap:8px; }
+.tg-price-save svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.tg-place-order { width:calc(100% - 40px); padding:15px; background:linear-gradient(135deg,#fb641b 0%,#e05515 100%); color:#fff; font-size:15px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; border-radius:8px; margin:16px 20px 20px; box-shadow:0 4px 14px rgba(251,100,27,.3); display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+.tg-place-order:disabled { opacity:.55; cursor:not-allowed; filter:grayscale(.3); }
+
+.tg-price-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; padding-top:12px; border-top:1px dashed #e5e7eb; }
+.tg-tag { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:5px 10px; border-radius:999px; letter-spacing:.2px; white-space:nowrap; }
+.tg-tag svg { width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+.tg-tag.handling { background:linear-gradient(135deg,#fff3e0,#ffe0b2); color:#e65100; }
+.tg-tag.discount { background:linear-gradient(135deg,#e6f7ec,#c8e6c9); color:#1b5e20; }
+.tg-tag.info { background:linear-gradient(135deg,#f1f3f6,#e0e5eb); color:#455a64; }
+.tg-tag.gst-rate { background:linear-gradient(135deg,#e3f2fd,#bbdefb); color:#0d47a1; }
+
+.tg-coupon { background:#fff; border-radius:12px; padding:14px 18px; margin-top:12px; box-shadow:0 1px 4px rgba(0,0,0,.05); display:flex; align-items:center; gap:12px; cursor:pointer; transition:box-shadow .18s,transform .15s,border-color .18s; border:1.5px solid transparent; }
+.tg-coupon:hover { box-shadow:0 4px 14px rgba(0,0,0,.08); transform:translateY(-1px); }
+.tg-coupon.applied { border-color:#1b8a3a; background:linear-gradient(135deg,#f0fff4,#e6f7ec); }
+.tg-coupon.applied .tg-coupon-icon { background:linear-gradient(135deg,#22c55e,#16a34a); }
+.tg-coupon.applied .tg-coupon-icon svg { stroke:#fff; }
+.tg-coupon.applied .tg-coupon-label { color:#1b8a3a; }
+.tg-coupon-icon { width:34px; height:34px; border-radius:8px; background:linear-gradient(135deg,#fff3e0,#ffe0b2); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; }
+.tg-coupon-icon svg { width:16px; height:16px; stroke:#fb641b; fill:none; stroke-width:2; transition:all .15s; }
+.tg-coupon-body { flex:1; min-width:0; }
+.tg-coupon-label { font-size:13px; font-weight:700; color:#212121; }
+.tg-coupon-sub { font-size:11.5px; color:#666; margin-top:1px; }
+.tg-coupon-sub .remove-link { color:#d32f2f; text-decoration:underline; font-weight:700; cursor:pointer; }
+.tg-trust { background:#fff; border-radius:12px; padding:14px 18px; margin-top:12px; box-shadow:0 1px 4px rgba(0,0,0,.05); display:flex; align-items:center; gap:12px; font-size:12px; color:#666; }
+.tg-trust svg { width:22px; height:22px; stroke:#2874f0; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+.tg-trust b { color:#212121; font-weight:700; }
+
+.tg-empty-wrap { max-width:500px; margin:40px auto; text-align:center; padding:0 20px; }
+.tg-empty-img { width:160px; height:160px; margin:0 auto 20px; background:linear-gradient(135deg,#eef3ff,#e0eaff); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:70px; box-shadow:0 12px 40px rgba(40,116,240,.15); }
+.tg-empty-title { font-size:20px; font-weight:800; color:#212121; margin:0 0 8px; }
+.tg-empty-desc { font-size:14px; color:#666; line-height:1.55; margin:0 0 24px; }
+.tg-empty-cta { display:inline-flex; align-items:center; gap:8px; padding:13px 30px; background:linear-gradient(135deg,#2874f0,#1a5dc7); color:#fff; font-size:14px; font-weight:800; border-radius:8px; letter-spacing:.4px; text-transform:uppercase; box-shadow:0 6px 18px rgba(40,116,240,.3); transition:all .15s; }
+.tg-empty-cta svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+.tg-empty-suggest { margin-top:34px; padding-top:24px; border-top:1px solid #e0e0e0; }
+.tg-empty-suggest-title { font-size:12px; color:#878787; font-weight:700; text-transform:uppercase; letter-spacing:.7px; margin-bottom:12px; text-align:center; }
+.tg-empty-chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.tg-empty-chip { padding:8px 14px; background:#fff; border:1.5px solid #e5e7eb; border-radius:999px; font-size:12.5px; font-weight:600; color:#212121; transition:all .15s; }
+.tg-empty-chip:hover { border-color:#2874f0; color:#2874f0; transform:translateY(-1px); }
+
+.tg-toasts { position:fixed; bottom:88px; left:50%; transform:translateX(-50%); z-index:99999; display:flex; flex-direction:column; gap:8px; max-width:calc(100vw - 24px); pointer-events:none; }
+.tg-toast { padding:12px 20px; background:#212121; color:#fff; font-size:13px; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.3); pointer-events:auto; font-weight:500; animation:tgToastIn .3s; }
+@keyframes tgToastIn { from { transform:translateY(20px); opacity:0; } to { transform:none; opacity:1; } }
+.tg-toast.success { background:#388e3c; }
+.tg-toast.error { background:#d32f2f; }
+.tg-toast.info { background:#2874f0; }
+
+.tg-skel { background:linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size:200% 100%; animation:tgShim 1.2s infinite; border-radius:8px; }
+@keyframes tgShim { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+.tg-item-skel { display:grid; grid-template-columns:auto 100px 1fr; gap:14px; padding:14px; background:#fff; border-radius:12px; margin-bottom:10px; }
+
+.tg-bnav { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #e0e0e0; display:flex; z-index:9999; box-shadow:0 -2px 8px rgba(0,0,0,.06); padding-bottom:env(safe-area-inset-bottom,0); }
+.tg-bnav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 2px; gap:3px; font-size:10px; color:#666; font-weight:600; position:relative; transition:color .15s; }
+.tg-bnav-item.active { color:#2874f0; }
+.tg-bnav-item svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.tg-bnav-badge { position:absolute; top:4px; right:calc(50% - 20px); background:#ff6161; color:#fff; font-size:9px; font-weight:700; min-width:15px; height:15px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+
+.tg-modal { position:fixed; inset:0; background:rgba(15,23,41,.6); backdrop-filter:blur(4px); z-index:99999; display:none; align-items:flex-end; justify-content:center; animation:tgFadeIn .18s ease; }
+.tg-modal.show { display:flex; }
+@keyframes tgFadeIn { from { opacity:0; } to { opacity:1; } }
+.tg-modal-card { width:100%; max-width:520px; background:#fff; border-radius:18px 18px 0 0; padding:22px 20px 26px; animation:tgSlideUp .28s cubic-bezier(.34,1.2,.64,1); max-height:92vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+@keyframes tgSlideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+.tg-modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; position:sticky; top:-22px; background:#fff; padding-top:4px; z-index:2; }
+.tg-modal-title { font-size:18px; font-weight:800; color:#212121; }
+.tg-modal-close { width:32px; height:32px; border-radius:50%; background:#f1f3f6; color:#666; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all .15s; }
+.tg-modal-close:hover { background:#e0e0e0; }
+.tg-modal-field { margin-bottom:12px; }
+.tg-modal-field label { display:block; font-size:11.5px; color:#666; font-weight:700; margin-bottom:5px; text-transform:uppercase; letter-spacing:.4px; }
+.tg-modal-field input, .tg-modal-field textarea { width:100%; border:1.5px solid #e0e0e0; border-radius:10px; padding:12px 14px; font-size:14px; color:#212121; outline:none; background:#fff; transition:border-color .15s,box-shadow .15s; font-family:inherit; }
+.tg-modal-field input:focus, .tg-modal-field textarea:focus { border-color:#2874f0; box-shadow:0 0 0 3px rgba(40,116,240,.10); }
+.tg-modal-field textarea { resize:vertical; min-height:70px; }
+.tg-modal-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.tg-modal-save { width:100%; padding:14px; border-radius:10px; background:linear-gradient(135deg,#2874f0,#1a5dc7); color:#fff; font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 18px rgba(40,116,240,.3); margin-top:8px; transition:all .15s; }
+.tg-modal-save:disabled { opacity:.7; cursor:not-allowed; }
+
+.tg-addr-types { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.tg-addr-type { padding:10px 6px; border:1.5px solid #e0e0e0; border-radius:10px; background:#fff; font-size:13px; font-weight:700; color:#666; text-align:center; transition:all .15s; display:flex; align-items:center; justify-content:center; gap:5px; }
+.tg-addr-type:hover { border-color:#2874f0; color:#2874f0; }
+.tg-addr-type.active { border-color:#2874f0; background:#f0f5ff; color:#2874f0; box-shadow:0 0 0 3px rgba(40,116,240,.08); }
+
+.tg-addr-default-row { display:flex; align-items:center; gap:10px; padding:12px 14px; background:#f8f9fb; border-radius:10px; margin-bottom:14px; cursor:pointer; user-select:none; }
+.tg-addr-default-row input { width:18px; height:18px; accent-color:#2874f0; cursor:pointer; }
+.tg-addr-default-row span { font-size:13px; font-weight:600; color:#212121; }
+
+.tg-addr-item { padding:14px; border:1.5px solid #e0e0e0; border-radius:10px; margin-bottom:10px; display:flex; gap:12px; cursor:pointer; transition:all .15s; position:relative; }
+.tg-addr-item:hover { border-color:#2874f0; background:#f8fbff; }
+.tg-addr-item.active { border-color:#2874f0; background:#f0f5ff; box-shadow:0 0 0 3px rgba(40,116,240,.08); }
+.tg-addr-radio { width:20px; height:20px; border:2px solid #c5cad3; border-radius:50%; flex-shrink:0; margin-top:2px; position:relative; }
+.tg-addr-item.active .tg-addr-radio { border-color:#2874f0; }
+.tg-addr-item.active .tg-addr-radio::after { content:''; position:absolute; inset:3px; background:#2874f0; border-radius:50%; }
+.tg-addr-body { flex:1; min-width:0; padding-right:32px; }
+.tg-addr-name { font-size:14px; font-weight:700; color:#212121; margin-bottom:4px; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+.tg-addr-name .tg-addr-phone { font-size:12px; color:#666; font-weight:500; }
+.tg-addr-badge { font-size:9.5px; font-weight:800; padding:2px 7px; border-radius:4px; text-transform:uppercase; letter-spacing:.4px; }
+.tg-addr-badge.home { background:#e0eaff; color:#2874f0; }
+.tg-addr-badge.work { background:#fff3e0; color:#fb641b; }
+.tg-addr-badge.other { background:#f3eefb; color:#7e57c2; }
+.tg-addr-badge.default { background:#e6f7ec; color:#1b8a3a; }
+.tg-addr-text { font-size:12.5px; color:#666; line-height:1.5; }
+.tg-addr-text b { color:#212121; font-weight:600; }
+.tg-addr-del { position:absolute; top:10px; right:10px; width:28px; height:28px; border-radius:50%; background:#fff0f0; color:#d32f2f; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; transition:all .15s; }
+.tg-addr-del:hover { background:#d32f2f; color:#fff; }
+.tg-addr-empty { text-align:center; padding:20px 10px; color:#666; font-size:13px; }
+
+.tg-pay-list { display:flex; flex-direction:column; gap:10px; margin:8px 0 14px; }
+.tg-pay-opt { display:flex; align-items:center; gap:12px; padding:14px; border:1.5px solid #e0e0e0; border-radius:10px; cursor:pointer; transition:all .15s; }
+.tg-pay-opt:hover { border-color:#2874f0; background:#f8fbff; }
+.tg-pay-opt.active { border-color:#2874f0; background:#f0f5ff; box-shadow:0 0 0 3px rgba(40,116,240,.08); }
+.tg-pay-opt-icon { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.tg-pay-opt-icon.rzp { background:linear-gradient(135deg,#072654,#3395ff); color:#fff; font-weight:900; font-size:14px; }
+.tg-pay-opt-icon.cod { background:linear-gradient(135deg,#e6f7ec,#d1f0dd); }
+.tg-pay-opt-body { flex:1; }
+.tg-pay-opt-title { font-size:14px; font-weight:700; color:#212121; }
+.tg-pay-opt-desc { font-size:11.5px; color:#666; margin-top:2px; }
+.tg-pay-opt-radio { width:20px; height:20px; border:2px solid #c5cad3; border-radius:50%; position:relative; flex-shrink:0; }
+.tg-pay-opt.active .tg-pay-opt-radio { border-color:#2874f0; }
+.tg-pay-opt.active .tg-pay-opt-radio::after { content:''; position:absolute; inset:3px; background:#2874f0; border-radius:50%; }
+
+.tg-coupon-input-wrap { display:flex; gap:8px; margin-bottom:16px; }
+.tg-coupon-input-wrap input { flex:1; border:1.5px solid #e0e0e0; border-radius:10px; padding:12px 14px; font-size:14px; outline:none; font-family:'Courier New',monospace; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; transition:border-color .15s,box-shadow .15s; min-width:0; }
+.tg-coupon-input-wrap input:focus { border-color:#2874f0; box-shadow:0 0 0 3px rgba(40,116,240,.10); }
+.tg-coupon-input-wrap button { padding:0 20px; border-radius:10px; background:linear-gradient(135deg,#2874f0,#1a5dc7); color:#fff; font-size:13px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; flex-shrink:0; }
+.tg-coupon-section-title { font-size:11.5px; color:#888; font-weight:800; text-transform:uppercase; letter-spacing:.6px; margin:6px 0 10px; display:flex; align-items:center; gap:6px; }
+.tg-coupon-section-title::before, .tg-coupon-section-title::after { content:''; height:1px; background:#e5e7eb; flex:1; }
+.tg-coupon-list { display:flex; flex-direction:column; gap:10px; }
+.tg-coupon-ticket { display:flex; background:#fff; border:1.5px solid #e0e0e0; border-radius:12px; overflow:hidden; position:relative; contain:layout style; transition:all .18s; }
+.tg-coupon-ticket:hover { border-color:#2874f0; }
+.tg-coupon-ticket.applied { border-color:#1b8a3a; background:linear-gradient(135deg,#f0fff4,#ffffff); }
+.tg-coupon-ticket.expired { opacity:.55; filter:grayscale(.6); }
+.tg-coupon-ticket.used { opacity:.75; }
+.tg-coupon-ticket-left { flex:0 0 88px; background:linear-gradient(135deg,#7e57c2,#5e35b1); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:14px 6px; text-align:center; }
+.tg-coupon-ticket.applied .tg-coupon-ticket-left { background:linear-gradient(135deg,#22c55e,#16a34a); }
+.tg-coupon-ticket.expired .tg-coupon-ticket-left { background:linear-gradient(135deg,#9e9e9e,#616161); }
+.tg-coupon-ticket.used .tg-coupon-ticket-left { background:linear-gradient(135deg,#1b8a3a,#0d5c22); }
+.tg-coupon-ticket-discount { font-size:20px; font-weight:900; line-height:1; letter-spacing:-.8px; margin-bottom:3px; }
+.tg-coupon-ticket-discount small { font-size:11px; font-weight:800; }
+.tg-coupon-ticket-label { font-size:9px; opacity:.9; text-transform:uppercase; font-weight:700; letter-spacing:.5px; }
+.tg-coupon-ticket-body { flex:1; padding:12px 14px; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:5px; }
+.tg-coupon-ticket-code { font-family:'Courier New',monospace; font-size:13px; font-weight:900; color:#7e57c2; letter-spacing:1.5px; background:#f3eefb; padding:3px 9px; border-radius:6px; border:1.5px dashed #7e57c2; display:inline-block; align-self:flex-start; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tg-coupon-ticket.applied .tg-coupon-ticket-code { color:#1b8a3a; background:#e6f7ec; border-color:#1b8a3a; }
+.tg-coupon-ticket-desc { font-size:12px; color:#333; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.tg-coupon-ticket-terms { font-size:10.5px; color:#888; display:flex; gap:10px; flex-wrap:wrap; margin-top:2px; }
+.tg-coupon-ticket-terms .expiring { color:#f57c00; font-weight:800; }
+.tg-coupon-ticket-terms .expired-txt { color:#d32f2f; font-weight:800; }
+.tg-coupon-ticket-action { flex:0 0 auto; padding:0 16px; display:flex; align-items:center; justify-content:center; border-left:1.5px dashed #e0e0e0; }
+.tg-coupon-ticket-btn { padding:8px 14px; border-radius:8px; font-size:11.5px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; background:linear-gradient(135deg,#7e57c2,#5e35b1); color:#fff; white-space:nowrap; }
+.tg-coupon-ticket-btn.applied-btn { background:linear-gradient(135deg,#22c55e,#16a34a); }
+.tg-coupon-ticket-btn.disabled { background:#e0e0e0; color:#999; cursor:not-allowed; }
+.tg-coupon-empty { text-align:center; padding:40px 20px; color:#999; font-size:13px; }
+.tg-coupon-empty-icon { font-size:44px; opacity:.4; margin-bottom:10px; }
+
+.tg-success { position:fixed; inset:0; background:linear-gradient(160deg,#ffffff 0%,#f0f9f4 100%); z-index:999999; display:none; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:24px; overflow:hidden; }
+.tg-success.show { display:flex; }
+.tg-success-rings { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100px; height:100px; pointer-events:none; z-index:0; }
+.tg-success-ring { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100px; height:100px; border:3px solid #22c55e; border-radius:50%; opacity:0; animation:tgRingOut 2s ease-out infinite; }
+.tg-success-ring:nth-child(2) { animation-delay:.7s; }
+.tg-success-ring:nth-child(3) { animation-delay:1.4s; }
+@keyframes tgRingOut { 0% { transform:translate(-50%,-50%) scale(1); opacity:.9; } 100% { transform:translate(-50%,-50%) scale(4); opacity:0; } }
+.tg-success-icon { width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#22c55e,#16a34a); display:flex; align-items:center; justify-content:center; margin-bottom:20px; box-shadow:0 12px 40px rgba(34,197,94,.35); animation:tgSuccessPop .55s cubic-bezier(.34,1.56,.64,1); position:relative; z-index:2; }
+@keyframes tgSuccessPop { 0% { transform:scale(0) rotate(-45deg); } 60% { transform:scale(1.15) rotate(5deg); } 100% { transform:scale(1) rotate(0); } }
+.tg-success-icon svg { width:52px; height:52px; stroke:#fff; fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:60; stroke-dashoffset:60; animation:tgCheckDraw .5s .35s ease forwards; }
+@keyframes tgCheckDraw { to { stroke-dashoffset:0; } }
+.tg-success-title { font-size:24px; font-weight:900; color:#212121; margin:0 0 8px; position:relative; z-index:2; }
+.tg-success-desc { font-size:14px; color:#666; margin:0 0 24px; max-width:340px; line-height:1.55; position:relative; z-index:2; }
+.tg-success-order { font-size:12px; color:#1b8a3a; margin-bottom:20px; font-family:monospace; background:#e6f7ec; padding:8px 16px; border-radius:8px; font-weight:700; position:relative; z-index:2; border:1.5px dashed #22c55e; }
+.tg-success-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; position:relative; z-index:2; }
+.tg-success-btn { padding:13px 26px; border-radius:8px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px; transition:all .15s; }
+.tg-success-btn.primary { background:linear-gradient(135deg,#2874f0,#1a5dc7); color:#fff; box-shadow:0 6px 18px rgba(40,116,240,.3); }
+.tg-success-btn.ghost { background:#f1f3f6; color:#212121; }
+.tg-confetti-wrap { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
+.tg-confetti { position:absolute; width:10px; height:10px; top:-20px; animation:tgConfettiFall linear forwards; }
+@keyframes tgConfettiFall { 0% { transform:translateY(0) rotate(0deg); opacity:1; } 100% { transform:translateY(110vh) rotate(720deg); opacity:0; } }
+
+@media (max-width:991px) { .tg-container { grid-template-columns:1fr; } .tg-right { position:static; } }
+@media (max-width:768px) {
+  .tg-hd-title { font-size:15px; }
+  .tg-container { padding:8px; }
+  .tg-item { grid-template-columns:auto 84px 1fr; gap:10px; padding:12px; border-radius:10px; }
+  .tg-item-img { width:84px; height:84px; }
+  .tg-item-title { font-size:13.5px; }
+  .tg-item-price { font-size:16px; }
+  .tg-item-mrp, .tg-item-off { font-size:11.5px; }
+  .tg-qty-btn { width:30px; height:30px; font-size:16px; }
+  .tg-qty-val { min-width:38px; height:30px; font-size:13px; }
+  .tg-item-actions { font-size:11.5px; gap:12px; }
+  .tg-item-remove { top:8px; right:8px; width:26px; height:26px; opacity:.9; }
+  .tg-price-card { display:none; }
+  .tg-trust { display:none; }
+  .tg-mobile-order { display:flex; }
+  .tg-wrap { padding-bottom:200px; }
+}
+@media (max-width:480px) {
+  .tg-coupon-ticket-left { flex:0 0 74px; padding:12px 4px; }
+  .tg-coupon-ticket-discount { font-size:17px; }
+  .tg-coupon-ticket-action { padding:0 10px; }
+  .tg-coupon-ticket-btn { padding:7px 10px; font-size:10.5px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="shop-home.html" class="tg-hd-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+    <div class="tg-hd-title">My Cart <span class="tg-hd-count" id="tg-hd-count"></span></div>
+    <div class="tg-hd-actions">
+      <a href="wishlist.html" class="tg-hd-btn" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container" id="tg-container">
+    <div class="tg-left" id="tg-left">
+      <div class="tg-pin">
+        <div class="tg-pin-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="tg-pin-body">
+          <div class="tg-pin-label">Deliver to: <span id="tg-pin-city">Select Location</span> <span onclick="tgChangePin()">Change</span></div>
+          <div class="tg-pin-sub">Enter delivery pincode to check availability</div>
+        </div>
+      </div>
+
+      <div id="tg-loading">
+        <div class="tg-item-skel">
+          <div class="tg-skel" style="width:20px;height:20px;"></div>
+          <div class="tg-skel" style="width:100px;height:100px;"></div>
+          <div>
+            <div class="tg-skel" style="width:80%;height:14px;margin-bottom:8px;"></div>
+            <div class="tg-skel" style="width:50%;height:12px;margin-bottom:12px;"></div>
+            <div class="tg-skel" style="width:40%;height:18px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tg-selectall" id="tg-selectall" style="display:none;">
+        <input type="checkbox" class="tg-checkbox" id="tg-select-all">
+        <label class="tg-selectall-label" for="tg-select-all" id="tg-selectall-label">Select All</label>
+        <button class="tg-selectall-remove" id="tg-remove-selected" onclick="tgRemoveSelected()">Remove</button>
+      </div>
+
+      <div class="tg-items" id="tg-items" style="display:none;"></div>
+
+      <div class="tg-empty-wrap" id="tg-empty" style="display:none;">
+        <div class="tg-empty-img">🛒</div>
+        <h2 class="tg-empty-title">Your cart is empty!</h2>
+        <p class="tg-empty-desc">Add items to it now. Explore top categories and get exclusive deals only on TOEGO.</p>
+        <a href="shop-home.html" class="tg-empty-cta"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>Shop Now</a>
+        <div class="tg-empty-suggest">
+          <div class="tg-empty-suggest-title">— Top Categories —</div>
+          <div class="tg-empty-chips">
+            <a href="products.html?category=slippers" class="tg-empty-chip">🩴 Slippers</a>
+            <a href="products.html?category=shoes" class="tg-empty-chip">👟 Shoes</a>
+            <a href="products.html?category=sandals" class="tg-empty-chip">👡 Sandals</a>
+            <a href="products.html?category=watches" class="tg-empty-chip">⌚ Watches</a>
+            <a href="products.html?category=bags" class="tg-empty-chip">🎒 Bags</a>
+            <a href="products.html?category=beauty" class="tg-empty-chip">💄 Beauty</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="tg-right" id="tg-right" style="display:none;">
+      <div class="tg-price-card">
+        <div class="tg-price-head">Price Details</div>
+        <div class="tg-price-body">
+          <div class="tg-price-row"><span class="label">Price (<span id="tg-total-items">0</span> items)</span><span class="val" id="tg-price-total-mrp">₹0</span></div>
+          <div class="tg-price-row discount"><span class="label">Discount</span><span class="val" id="tg-price-discount">− ₹0</span></div>
+          <div class="tg-price-row coupon" id="tg-price-coupon-row" style="display:none;"><span class="label">Coupon Discount <span id="tg-price-coupon-code-label" style="color:#7e57c2;font-weight:800;"></span></span><span class="val" id="tg-price-coupon">− ₹0</span></div>
+          <div class="tg-price-row gst" id="tg-price-gst-row"><span class="label">GST <span id="tg-gst-pct-label"></span></span><span class="val" id="tg-price-gst">₹0</span></div>
+          <div class="tg-price-row" id="tg-price-cartcharge-row" style="display:none;"><span class="label">Handling Fee <span id="tg-cartcharge-pct-label" style="color:#666;font-weight:600;font-size:12.5px;"></span></span><span class="val" id="tg-price-cartcharge">₹0</span></div>
+          <hr class="tg-price-divider">
+          <div class="tg-price-total"><span class="label">Total Amount</span><span id="tg-price-final">₹0</span></div>
+          <div class="tg-price-tags" id="tg-price-tags"></div>
+          <div class="tg-price-save" id="tg-price-save-box" style="display:none;">
+            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>You will save <b id="tg-price-save-amt">₹0</b> on this order</span>
+          </div>
+        </div>
+        <button class="tg-place-order" id="tg-place-order" onclick="tgPlaceOrder()">Place Order</button>
+      </div>
+
+      <div class="tg-coupon" id="tg-coupon-card" onclick="tgOpenCoupons()">
+        <div class="tg-coupon-icon"><svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+        <div class="tg-coupon-body">
+          <div class="tg-coupon-label" id="tg-coupon-label">Apply Coupon</div>
+          <div class="tg-coupon-sub" id="tg-coupon-sub">Save extra on your order</div>
+        </div>
+        <svg style="width:16px;height:16px;stroke:#999;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+
+      <div class="tg-trust">
+        <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+        <div>Safe and secure payments via Razorpay. Easy returns. <b>100% Authentic.</b></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="tg-mobile-tags" id="tg-mobile-tags"></div>
+
+<div class="tg-mobile-order" id="tg-mobile-order">
+  <div class="tg-mobile-order-price">
+    <div class="tg-mobile-order-total" id="tg-m-total">₹0</div>
+    <div class="tg-mobile-order-save" id="tg-m-save"></div>
+  </div>
+  <button class="tg-mobile-order-btn" id="tg-m-btn" onclick="tgPlaceOrder()">Place Order</button>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-modal" id="tg-addr-list-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Select Delivery Address</div>
+      <button class="tg-modal-close" onclick="tgCloseAddrList()">✕</button>
+    </div>
+    <div id="tg-addr-list"></div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-addr-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Delivery Address</div>
+      <button class="tg-modal-close" onclick="tgCloseAddr()">✕</button>
+    </div>
+
+    <div class="tg-modal-field">
+      <label>Address Type *</label>
+      <div class="tg-addr-types" id="tg-addr-types">
+        <button type="button" class="tg-addr-type active" data-type="home" onclick="tgPickAddrType('home',this)">🏠 Home</button>
+        <button type="button" class="tg-addr-type" data-type="work" onclick="tgPickAddrType('work',this)">🏢 Work</button>
+        <button type="button" class="tg-addr-type" data-type="other" onclick="tgPickAddrType('other',this)">📍 Other</button>
+      </div>
+    </div>
+
+    <div class="tg-modal-field"><label>Full Name *</label><input type="text" id="tg-addr-name" placeholder="Enter full name" maxlength="60" autocomplete="name"></div>
+
+    <div class="tg-modal-row">
+      <div class="tg-modal-field"><label>Phone Number *</label><input type="tel" id="tg-addr-phone" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" autocomplete="tel"></div>
+      <div class="tg-modal-field"><label>Alternate Phone</label><input type="tel" id="tg-addr-alt-phone" placeholder="Optional" maxlength="10" inputmode="numeric"></div>
+    </div>
+
+    <div class="tg-modal-field"><label>Address Line (House No., Building, Street) *</label><textarea id="tg-addr-line" placeholder="House no., building, street, area" maxlength="180" autocomplete="street-address"></textarea></div>
+
+    <div class="tg-modal-row">
+      <div class="tg-modal-field"><label>Locality / Area</label><input type="text" id="tg-addr-locality" placeholder="e.g. Civil Lines" maxlength="60"></div>
+      <div class="tg-modal-field"><label>Landmark</label><input type="text" id="tg-addr-landmark" placeholder="e.g. Near SBI Bank" maxlength="60"></div>
+    </div>
+
+    <div class="tg-modal-row">
+      <div class="tg-modal-field"><label>City *</label><input type="text" id="tg-addr-city" placeholder="City" maxlength="40" autocomplete="address-level2"></div>
+      <div class="tg-modal-field"><label>Pincode *</label><input type="text" id="tg-addr-pin" placeholder="6-digit" maxlength="6" inputmode="numeric" autocomplete="postal-code"></div>
+    </div>
+
+    <div class="tg-modal-row">
+      <div class="tg-modal-field"><label>District</label><input type="text" id="tg-addr-district" placeholder="District" maxlength="40"></div>
+      <div class="tg-modal-field"><label>State *</label><input type="text" id="tg-addr-state" placeholder="State" maxlength="40" autocomplete="address-level1"></div>
+    </div>
+
+    <div class="tg-modal-field"><label>Email (optional)</label><input type="email" id="tg-addr-email" placeholder="you@example.com" maxlength="80" autocomplete="email"></div>
+
+    <label class="tg-addr-default-row">
+      <input type="checkbox" id="tg-addr-default">
+      <span>Set as default address</span>
+    </label>
+
+    <button class="tg-modal-save" id="tg-addr-save" onclick="tgSaveAddr()"><span id="tg-addr-save-text">Save & Continue</span></button>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-pay-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Choose Payment Method</div>
+      <button class="tg-modal-close" onclick="tgClosePay()">✕</button>
+    </div>
+    <div style="background:#f8f9fb;border-radius:10px;padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;color:#666;font-weight:600;">Amount to Pay</span>
+      <span style="font-size:20px;font-weight:800;color:#212121;" id="tg-pay-amount">₹0</span>
+    </div>
+    <div class="tg-pay-list" id="tg-pay-list">
+      <div class="tg-pay-opt" data-method="razorpay" onclick="tgPickPay('razorpay', this)">
+        <div class="tg-pay-opt-icon rzp">R</div>
+        <div class="tg-pay-opt-body">
+          <div class="tg-pay-opt-title">Razorpay (Online)</div>
+          <div class="tg-pay-opt-desc">UPI, Cards, Netbanking, Wallets</div>
+        </div>
+        <div class="tg-pay-opt-radio"></div>
+      </div>
+      <div class="tg-pay-opt" data-method="cod" onclick="tgPickPay('cod', this)" id="tg-cod-opt">
+        <div class="tg-pay-opt-icon cod">💵</div>
+        <div class="tg-pay-opt-body">
+          <div class="tg-pay-opt-title">Cash on Delivery</div>
+          <div class="tg-pay-opt-desc">Pay when order arrives</div>
+        </div>
+        <div class="tg-pay-opt-radio"></div>
+      </div>
+    </div>
+    <button class="tg-modal-save" id="tg-pay-continue" onclick="tgConfirmPay()"><span id="tg-pay-continue-text">Continue</span></button>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-coupon-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Apply Coupon</div>
+      <button class="tg-modal-close" onclick="tgCloseCouponModal()">✕</button>
+    </div>
+    <div class="tg-coupon-input-wrap">
+      <input type="text" id="tg-coupon-input" placeholder="ENTER CODE" maxlength="20" autocomplete="off" autocapitalize="characters">
+      <button onclick="tgApplyCouponManual()">Apply</button>
+    </div>
+    <div class="tg-coupon-section-title">Available Coupons</div>
+    <div class="tg-coupon-list" id="tg-coupon-list">
+      <div class="tg-coupon-empty"><div class="tg-coupon-empty-icon">🎟️</div>Loading coupons…</div>
+    </div>
+  </div>
+</div>
+
+<div class="tg-success" id="tg-success">
+  <div class="tg-confetti-wrap" id="tg-confetti-wrap"></div>
+  <div class="tg-success-rings"><span class="tg-success-ring"></span><span class="tg-success-ring"></span><span class="tg-success-ring"></span></div>
+  <div class="tg-success-icon"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+  <h2 class="tg-success-title">Order Placed! 🎉</h2>
+  <p class="tg-success-desc">Thank you for shopping with TOEGO. Your order has been confirmed and will be delivered soon.</p>
+  <div class="tg-success-order" id="tg-success-order">Order ID: —</div>
+  <div class="tg-success-actions">
+    <a href="my-orders.html" class="tg-success-btn primary">Track Order</a>
+    <a href="shop-home.html" class="tg-success-btn ghost">Continue Shopping</a>
+  </div>
+</div>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
+  try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
+
+  const GUEST_CART_KEY = 'toego_cart_guest';
+  const SELECTED_KEY = 'toego_cart_selected';
+  const PIN_KEY = 'toego_delivery_pin';
+  const ADDR_KEY = 'toego_last_address';
+  const ADDR_LIST_KEY = 'toego_saved_addresses';
+  const ADDR_LAST_IDX = 'toego_last_addr_index';
+  const BUY_NOW_KEY = 'toego_buy_now_doc';
+  const PCACHE_KEY = 'toego_pcache_v2';
+  const PCACHE_TTL = 15 * 60 * 1000;
+  const COUPON_KEY = 'toego_applied_coupon';
+  const CART_MIRROR_PREFIX = 'toego_cart_mirror_';
+  const NS_MARK = '__no_';
+
+  let SETTINGS = {
+    razorpayEnabled: true, razorpayKeyId: '', currency: 'INR',
+    gstEnabled: true, gstPercent: 18, gstIncludedInPrice: false,
+    codEnabled: true, freeDeliveryAbove: 0, deliveryCharge: 0
+  };
+
+  let SELLER_GLOBAL = {
+    commissionPercent: 0
+  };
+
+  const _pCache = new Map();
+  let _pCacheDirty = false;
+  let _pCacheSaveTimer = null;
+
+  function _pCacheBoot() {
+    try {
+      const raw = localStorage.getItem(PCACHE_KEY);
+      if (!raw) return;
+      const obj = JSON.parse(raw);
+      const now = Date.now();
+      for (const k in obj) {
+        const v = obj[k];
+        if (v && v.ts && (now - v.ts) < PCACHE_TTL) _pCache.set(k, v);
+      }
+    } catch(e) {}
+  }
+  function _pCacheFlush() {
+    if (!_pCacheDirty) return;
+    try {
+      const obj = {};
+      for (const [k, v] of _pCache) obj[k] = v;
+      localStorage.setItem(PCACHE_KEY, JSON.stringify(obj));
+      _pCacheDirty = false;
+    } catch(e) {}
+  }
+  function _pCacheScheduleFlush() {
+    if (_pCacheSaveTimer) return;
+    _pCacheSaveTimer = setTimeout(() => { _pCacheSaveTimer = null; _pCacheFlush(); }, 1500);
+  }
+  function _pGet(id) {
+    if (!id) return undefined;
+    const v = _pCache.get(id);
+    if (!v) return undefined;
+    if ((Date.now() - v.ts) > PCACHE_TTL) { _pCache.delete(id); return undefined; }
+    return v.data;
+  }
+  function _pSet(id, data) {
+    if (!id) return;
+    _pCache.set(id, { data: data || null, ts: Date.now() });
+    _pCacheDirty = true;
+    _pCacheScheduleFlush();
+  }
+  _pCacheBoot();
+  window.addEventListener('beforeunload', _pCacheFlush);
+
+  async function fetchProductsBatch(ids) {
+    const now = Date.now();
+    const missing = [];
+    for (const id of ids) {
+      const c = _pCache.get(id);
+      if (!c || (now - c.ts) > PCACHE_TTL) missing.push(id);
+    }
+    if (!missing.length) return;
+    const CHUNK = 30;
+    const chunks = [];
+    for (let i = 0; i < missing.length; i += CHUNK) chunks.push(missing.slice(i, i + CHUNK));
+    await Promise.all(chunks.map(async chunk => {
+      try {
+        const snap = await db.collection('products')
+          .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+          .get();
+        const got = new Set();
+        snap.forEach(d => { _pSet(d.id, d.data()); got.add(d.id); });
+        chunk.forEach(id => { if (!got.has(id)) _pSet(id, null); });
+      } catch(e) {
+        await Promise.all(chunk.map(async id => {
+          try {
+            const d = await db.collection('products').doc(id).get();
+            _pSet(id, d.exists ? d.data() : null);
+          } catch(e2) { _pSet(id, null); }
+        }));
+      }
+    }));
+  }
+
+  function _pickNum(obj, keys) {
+    if (!obj) return null;
+    for (const k of keys) {
+      const v = obj[k];
+      if (v != null && !isNaN(Number(v)) && Number(v) > 0) return Number(v);
+    }
+    return null;
+  }
+  function _pickCount(obj, keys) {
+    if (!obj) return null;
+    for (const k of keys) {
+      const v = obj[k];
+      if (v != null && !isNaN(Number(v))) return Number(v);
+    }
+    return null;
+  }
+
+  /* ✅ FIX #1: enrich now copies gst + gstIncluded from product */
+  function enrichFromCacheSync(items) {
+    return items.map(it => {
+      const p = _pGet(it.productId);
+      if (!p) return it;
+      const productGst = _pickNum(p, ['gst', 'gstPercent', 'gstRate', 'tax']) || 0;
+      return {
+        ...it,
+        sellerId: it.sellerId || p.sellerId || p.seller_id || p.sid || p.sellerUid || '',
+        sellerName: it.sellerName || p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '',
+        rating: (it.rating != null) ? it.rating : _pickNum(p, ['rating','avgRating','averageRating','stars','ratingAvg']),
+        ratingCount: (it.ratingCount != null) ? it.ratingCount : _pickCount(p, ['ratingCount','reviewCount','numReviews','ratingsCount','totalRatings','totalReviews','reviewsCount']),
+        /* ✅ GST copied from product — fallback to item's own value */
+        gst: (it.gst != null && Number(it.gst) >= 0) ? Number(it.gst) : productGst,
+        gstIncluded: (it.gstIncluded != null) ? it.gstIncluded : (p.gstIncluded === true)
+      };
+    });
+  }
+
+  async function enrichCartItemsFast(items) {
+    if (!items || !items.length) return items;
+    const needFetch = [];
+    for (const it of items) {
+      if (!it.productId) continue;
+      const cached = _pGet(it.productId);
+      if (cached === undefined) needFetch.push(it.productId);
+    }
+    if (needFetch.length) {
+      try { await fetchProductsBatch([...new Set(needFetch)]); } catch(e) {}
+    }
+    return enrichFromCacheSync(items);
+  }
+
+  function _cartChanged(a, b) {
+    if (a.length !== b.length) return true;
+    for (let i = 0; i < a.length; i++) {
+      if (a[i].id !== b[i].id) return true;
+      if (a[i].rating !== b[i].rating) return true;
+      if (a[i].ratingCount !== b[i].ratingCount) return true;
+      if (a[i].sellerName !== b[i].sellerName) return true;
+      if (a[i].gst !== b[i].gst) return true;
+    }
+    return false;
+  }
+
+  function dedupeCart(arr) {
+    if (!Array.isArray(arr)) return [];
+    const map = new Map();
+    for (const it of arr) {
+      if (!it || !it.id) continue;
+      if (map.has(it.id)) {
+        const existing = map.get(it.id);
+        existing.qty = Math.max(Number(existing.qty || 1), Number(it.qty || 1));
+      } else {
+        map.set(it.id, { ...it });
+      }
+    }
+    return [...map.values()];
+  }
+
+  function _mirrorKey(uid) { return CART_MIRROR_PREFIX + uid; }
+  function _saveMirror(uid, items) {
+    if (!uid) return;
+    try {
+      const slim = items.map(({ id, productId, name, image, price, mrp, qty, size, color, sellerId, sellerName, rating, ratingCount, gst, gstIncluded }) =>
+        ({ id, productId, name, image, price, mrp, qty, size, color, sellerId, sellerName, rating, ratingCount, gst, gstIncluded }));
+      localStorage.setItem(_mirrorKey(uid), JSON.stringify(slim));
+    } catch(e) {}
+  }
+  function _loadMirror(uid) {
+    if (!uid) return [];
+    try { return JSON.parse(localStorage.getItem(_mirrorKey(uid)) || '[]'); } catch(e) { return []; }
+  }
+
+  async function loadPaymentSettings() {
+    try {
+      const snap = await db.collection('siteSettings').doc('payment').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('payment').get());
+      if (snap && snap.exists) {
+        const d = snap.data();
+        SETTINGS = {
+          razorpayEnabled: d.razorpayEnabled !== false,
+          razorpayKeyId: d.razorpayKeyId || '',
+          currency: d.currency || 'INR',
+          gstEnabled: d.gstEnabled !== false,
+          gstPercent: Number(d.gstPercent || 18),
+          gstIncludedInPrice: d.gstIncludedInPrice === true,
+          codEnabled: d.codEnabled !== false,
+          freeDeliveryAbove: 0,
+          deliveryCharge: 0
+        };
+      }
+    } catch(e) {}
+    applyPaymentUI();
+    updateTotals();
+  }
+
+  /* ✅ NEW: Live listener for payment settings — no refresh needed */
+  function watchPaymentSettings() {
+    try {
+      db.collection('siteSettings').doc('payment').onSnapshot(snap => {
+        if (!snap.exists) return;
+        const d = snap.data();
+        SETTINGS.razorpayEnabled = d.razorpayEnabled !== false;
+        SETTINGS.razorpayKeyId = d.razorpayKeyId || SETTINGS.razorpayKeyId;
+        SETTINGS.currency = d.currency || 'INR';
+        SETTINGS.gstEnabled = d.gstEnabled !== false;
+        SETTINGS.gstPercent = Number(d.gstPercent || 18);
+        SETTINGS.gstIncludedInPrice = d.gstIncludedInPrice === true;
+        SETTINGS.codEnabled = d.codEnabled !== false;
+        applyPaymentUI();
+        updateTotals();
+      }, err => console.warn('[cart payment listener]', err && err.message));
+    } catch(e) {}
+  }
+
+  function applyPaymentUI() {
+    const gstRow = document.getElementById('tg-price-gst-row');
+    if (gstRow) gstRow.style.display = SETTINGS.gstEnabled ? 'flex' : 'none';
+    const codOpt = document.getElementById('tg-cod-opt');
+    if (codOpt) codOpt.style.display = SETTINGS.codEnabled ? 'flex' : 'none';
+  }
+
+  async function loadSellerGlobal() {
+    try {
+      const snap = await db.collection('siteSettings').doc('seller')
+        .get({ source: 'cache' })
+        .catch(() => db.collection('siteSettings').doc('seller').get());
+      if (snap && snap.exists) {
+        const d = snap.data() || {};
+        SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0);
+      }
+    } catch (e) {
+      console.warn('[Cart] seller settings load failed:', e && e.message);
+    }
+    try { updateTotals(); } catch (e) {}
+  }
+
+  function watchSellerGlobal() {
+    try {
+      db.collection('siteSettings').doc('seller').onSnapshot(snap => {
+        if (snap.exists) {
+          const d = snap.data() || {};
+          SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0);
+          try { updateTotals(); } catch(e) {}
+        }
+      }, () => {});
+    } catch(e) {}
+  }
+
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(primary) {
+    primary = primary || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+  }
+  (function bootCachedColor() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+  })();
+
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:2}); }
+  function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
+
+  let cartItems = [];
+  let selectedIds = new Set();
+  let unsubscribe = null;
+  let currentUser = null;
+  let userProfile = null;
+  let pendingAddress = null;
+  let pendingPayMethod = 'razorpay';
+  let addrListCache = [];
+  let pendingAddrIndex = 0;
+  let pendingAddrType = 'home';
+  let _lastRenderSig = '';
+  let _lastIdsKey = '';
+  let _itemNodeMap = new Map();
+  let _pendingCartDeletes = new Set();
+
+  let availableCoupons = [];
+  let appliedCoupon = null;
+  let unsubCoupons = null;
+  let usedCouponCodes = new Set();
+
+  function makeGuestId(i) {
+    const pid = i.productId || i.id || '';
+    return pid + '|' + (i.size || '') + '|' + (i.color || '');
+  }
+  function getGuestCart() {
+    let raw = [];
+    try { raw = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || '[]'); } catch(e) { raw = []; }
+    const mapped = raw.map(i => ({ ...i, id: makeGuestId(i), productId: i.productId || i.id }));
+    return dedupeCart(mapped);
+  }
+  function setGuestCart(arr) {
+    const clean = dedupeCart(arr).map(i => { const { id, ...rest } = i; return rest; });
+    try { localStorage.setItem(GUEST_CART_KEY, JSON.stringify(clean)); } catch(e) {}
+  }
+
+  function loadSelected() {
+    try { selectedIds = new Set(JSON.parse(localStorage.getItem(SELECTED_KEY) || '[]')); }
+    catch(e) { selectedIds = new Set(); }
+  }
+  function saveSelected() {
+    try { localStorage.setItem(SELECTED_KEY, JSON.stringify([...selectedIds])); } catch(e) {}
+  }
+
+  function loadPin() {
+    try {
+      const pin = localStorage.getItem(PIN_KEY);
+      const city = document.getElementById('tg-pin-city');
+      if (pin && city) city.textContent = pin;
+      if (!pin) {
+        const a = JSON.parse(localStorage.getItem(ADDR_KEY) || '{}');
+        if (a.city && city) city.textContent = a.city + (a.pin ? ' - ' + a.pin : '');
+      }
+    } catch(e) {}
+  }
+  window.tgChangePin = function() {
+    const p = prompt('Enter delivery pincode (6 digits)', '');
+    if (!p) return;
+    if (!/^\d{6}$/.test(p.trim())) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
+    try { localStorage.setItem(PIN_KEY, p.trim()); } catch(e) {}
+    document.getElementById('tg-pin-city').textContent = p.trim();
+    toast('Delivery pincode updated', 'success');
+    renderCart(true);
+  };
+
+  function isKanpurPincode(pin) {
+    if (!pin) return false;
+    const p = String(pin).trim();
+    if (!/^\d{6}$/.test(p)) return false;
+    return /^20[89]\d{3}$/.test(p);
+  }
+
+  function getDeliveryInfo() {
+    let pin = '', city = '';
+    try { pin = localStorage.getItem(PIN_KEY) || ''; } catch(e) {}
+    try {
+      const a = JSON.parse(localStorage.getItem(ADDR_KEY) || '{}');
+      if (a.city) city = a.city;
+      if (!pin && a.pin) pin = a.pin;
+    } catch(e) {}
+    const cityL = String(city || '').toLowerCase().trim();
+    if (cityL.includes('kanpur') || isKanpurPincode(pin)) {
+      return { text: 'Same Day Delivery', cls: 'same-day' };
+    }
+    return { text: 'Delivery in 3-5 days', cls: '' };
+  }
+
+  function getItemCount() { return cartItems.reduce((s, i) => s + Number(i.qty || 1), 0); }
+  function updateHeaderBadge() {
+    const n = getItemCount();
+    const el1 = document.getElementById('tg-bnav-badge');
+    if (el1) { el1.textContent = n; el1.style.display = n > 0 ? 'flex' : 'none'; }
+    const c = document.getElementById('tg-hd-count');
+    if (c) c.textContent = n > 0 ? '(' + n + ')' : '';
+  }
+
+  /* ✅ FIX #2: getItemGstPct uses item.gst first, fallback to SETTINGS only if truly missing */
+  function getItemGstPct(item) {
+    if (!SETTINGS.gstEnabled) return 0;
+    if (item && item.gst != null && !isNaN(Number(item.gst)) && Number(item.gst) >= 0) {
+      return Number(item.gst);
+    }
+    if (item && item.gstPercent != null && !isNaN(Number(item.gstPercent))) {
+      return Number(item.gstPercent);
+    }
+    return Number(SETTINGS.gstPercent || 0);
+  }
+  function isGstIncluded(item) {
+    if (!item) return SETTINGS.gstIncludedInPrice === true;
+    if (item.gstIncluded === true) return true;
+    if (item.gstIncluded === false) return false;
+    return SETTINGS.gstIncludedInPrice === true;
+  }
+
+  function renderCart(force) {
+    const loading = document.getElementById('tg-loading');
+    const itemsWrap = document.getElementById('tg-items');
+    const emptyWrap = document.getElementById('tg-empty');
+    const selectBar = document.getElementById('tg-selectall');
+    const rightCol = document.getElementById('tg-right');
+    const mobileBar = document.getElementById('tg-mobile-order');
+
+    if (Array.isArray(cartItems) && cartItems.length > 1) {
+      const deduped = dedupeCart(cartItems);
+      if (deduped.length !== cartItems.length) cartItems = deduped;
+    }
+
+    if (loading) loading.style.display = 'none';
+
+    if (!cartItems.length) {
+      if (itemsWrap) { itemsWrap.style.display = 'none'; itemsWrap.innerHTML = ''; }
+      if (emptyWrap) emptyWrap.style.display = 'block';
+      if (selectBar) selectBar.style.display = 'none';
+      if (rightCol) rightCol.style.display = 'none';
+      if (mobileBar) mobileBar.style.display = 'none';
+      const mt = document.getElementById('tg-mobile-tags');
+      if (mt) { mt.style.display = 'none'; mt.innerHTML = ''; }
+      updateHeaderBadge();
+      selectedIds = new Set();
+      saveSelected();
+      _lastRenderSig = '';
+      _lastIdsKey = '';
+      _itemNodeMap.clear();
+      return;
+    }
+
+    cartItems.forEach(it => {
+      if (!selectedIds.has(it.id) && !selectedIds.has(NS_MARK + it.id)) {
+        selectedIds.add(it.id);
+      }
+    });
+
+    const itemSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|');
+    const sig = itemSig + '|sel:' + [...selectedIds].sort().join(',');
+
+    if (!force && sig === _lastRenderSig) {
+      updateTotals();
+      updateHeaderBadge();
+      return;
+    }
+
+    const idsKey = cartItems.map(i => i.id).join('§');
+    const structureChanged = force || idsKey !== _lastIdsKey;
+
+    _lastRenderSig = sig;
+    _lastIdsKey = idsKey;
+
+    if (emptyWrap) emptyWrap.style.display = 'none';
+    if (itemsWrap) itemsWrap.style.display = 'flex';
+    if (selectBar) selectBar.style.display = 'flex';
+    if (rightCol) rightCol.style.display = 'block';
+    if (mobileBar) mobileBar.style.display = 'flex';
+
+    if (structureChanged) {
+      _itemNodeMap.clear();
+      let html = '';
+      cartItems.forEach((item, idx) => { html += itemHtml(item, idx === 0); });
+      itemsWrap.innerHTML = html;
+      itemsWrap.querySelectorAll('.tg-item').forEach(node => {
+        const id = node.getAttribute('data-id');
+        if (id) _itemNodeMap.set(id, node);
+      });
+    } else {
+      cartItems.forEach(item => patchItemInPlace(item));
+    }
+
+    updateSelectAllState();
+    updateTotals();
+    updateHeaderBadge();
+    saveSelected();
+  }
+
+  function patchItemInPlace(item) {
+    const node = _itemNodeMap.get(item.id);
+    if (!node) return;
+    const body = node.querySelector('.tg-item-body');
+    if (body) body.innerHTML = itemBodyHtml(item);
+    const cb = node.querySelector('.tg-item-check input');
+    if (cb) cb.checked = selectedIds.has(item.id);
+  }
+
+  function itemBodyHtml(item) {
+    const productId = item.productId || item.id;
+    const name = item.name || 'Product';
+    const price = Number(item.price || 0);
+    const mrp = Number(item.mrp || item.compareAtPrice || item.originalPrice || Math.round(price * 1.6));
+    const off = mrp > price ? Math.round((1 - price/mrp)*100) : 0;
+    const qty = Number(item.qty || 1);
+
+    const hasRating = item.rating != null && Number(item.rating) > 0;
+    const rating = hasRating ? Number(item.rating).toFixed(1) : '';
+    const hasCount = item.ratingCount != null && Number(item.ratingCount) > 0;
+    const ratingCount = hasCount ? Number(item.ratingCount).toLocaleString('en-IN') : '';
+
+    const sizeText = item.size ? 'Size: ' + item.size : '';
+    const colorText = item.color ? 'Color: ' + item.color : '';
+    const sellerName = item.sellerName || item.seller || '';
+    const gstPct = getItemGstPct(item);
+    const gstIncluded = isGstIncluded(item);
+    const gstAmt = gstPct > 0
+      ? (gstIncluded ? (price * qty) - ((price * qty) / (1 + gstPct/100)) : (price * qty) * gstPct/100)
+      : 0;
+    const dInfo = getDeliveryInfo();
+
+    const ratingHtml = hasRating ? `
+      <div class="tg-item-rating">
+        <span class="tg-item-rating-badge">${esc(rating)} <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+        ${hasCount ? `<span class="tg-item-rating-count">(${esc(ratingCount)})</span>` : ''}
+      </div>` : '';
+
+    return `
+      <div class="tg-item-title" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'">${esc(name)}</div>
+      ${sellerName ? `<div class="tg-item-seller">Sold by: <b>${esc(sellerName)}</b></div>` : ''}
+      ${(sizeText || colorText) ? `<div class="tg-item-meta">${sizeText ? `<span>${esc(sizeText)}</span>` : ''}${colorText ? `<span>${esc(colorText)}</span>` : ''}</div>` : ''}
+      ${ratingHtml}
+      <div class="tg-item-price-row"><span class="tg-item-price">${fmtINR(price)}</span>${mrp > price ? `<span class="tg-item-mrp">${fmtINR(mrp)}</span>` : ''}${off > 0 ? `<span class="tg-item-off">${off}% off</span>` : ''}</div>
+      ${gstPct > 0 ? `<div class="tg-item-gst">GST <b>${gstPct}%</b> ${gstIncluded ? '· incl.' : '· ' + fmtINR(gstAmt)}</div>` : ''}
+      <div class="tg-item-delivery ${dInfo.cls}">🚚 <b>${esc(dInfo.text)}</b></div>
+      <div class="tg-qty">
+        <button class="tg-qty-btn" onclick="tgChangeQty('${escapeAttr(item.id)}', -1)" ${qty<=1?'disabled':''}>−</button>
+        <div class="tg-qty-val">${qty}</div>
+        <button class="tg-qty-btn" onclick="tgChangeQty('${escapeAttr(item.id)}', 1)">+</button>
+      </div>
+      <div class="tg-item-actions">
+        <button class="tg-item-action" onclick="tgMoveToWishlist('${escapeAttr(item.id)}')"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>Save for later</button>
+        <button class="tg-item-action danger" onclick="tgRemoveItem('${escapeAttr(item.id)}')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Remove</button>
+      </div>
+    `;
+  }
+
+  function itemHtml(item, isFirst) {
+    const docId = item.id;
+    const productId = item.productId || item.id;
+    const name = item.name || 'Product';
+    const img = item.image || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=TOEGO';
+    const checked = selectedIds.has(docId);
+    const imgAttrs = isFirst ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
+    return `
+      <div class="tg-item" data-id="${esc(docId)}">
+        <div class="tg-item-check"><input type="checkbox" class="tg-checkbox" ${checked?'checked':''} onchange="tgToggleItem('${escapeAttr(docId)}', this.checked)"></div>
+        <div class="tg-item-img" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'"><img src="${esc(img)}" alt="${esc(name)}" ${imgAttrs} draggable="false" /></div>
+        <div class="tg-item-body">${itemBodyHtml(item)}</div>
+        <button class="tg-item-remove" onclick="tgRemoveItem('${escapeAttr(docId)}')" aria-label="Remove"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+    `;
+  }
+
+  function updateSelectAllState() {
+    const all = cartItems.length > 0;
+    const allSelected = all && cartItems.every(it => selectedIds.has(it.id));
+    const cb = document.getElementById('tg-select-all');
+    if (cb) cb.checked = allSelected;
+    const lbl = document.getElementById('tg-selectall-label');
+    if (lbl && allSelected) lbl.textContent = 'All items selected';
+    else if (lbl) lbl.textContent = 'Select All';
+  }
+
+  document.getElementById('tg-select-all').addEventListener('change', function() {
+    if (this.checked) {
+      cartItems.forEach(it => {
+        selectedIds.add(it.id);
+        selectedIds.delete(NS_MARK + it.id);
+      });
+    } else {
+      cartItems.forEach(it => {
+        selectedIds.delete(it.id);
+        selectedIds.add(NS_MARK + it.id);
+      });
+    }
+    _itemNodeMap.forEach((node, id) => {
+      const cb = node.querySelector('.tg-item-check input');
+      if (cb) cb.checked = this.checked;
+    });
+    updateSelectAllState();
+    updateTotals();
+    saveSelected();
+  });
+
+  window.tgToggleItem = function(docId, checked) {
+    if (checked) {
+      selectedIds.add(docId);
+      selectedIds.delete(NS_MARK + docId);
+    } else {
+      selectedIds.delete(docId);
+      selectedIds.add(NS_MARK + docId);
+    }
+    updateSelectAllState();
+    updateTotals();
+    saveSelected();
+  };
+
+  function getSelectedItems() { return cartItems.filter(it => selectedIds.has(it.id)); }
+  function getCouponDiscountBase(finalTotal) { return Number(finalTotal || 0); }
+
+  function calcCouponDiscount(finalTotal) {
+    if (!appliedCoupon) return 0;
+    const base = getCouponDiscountBase(finalTotal);
+    const minOrder = Number(appliedCoupon.minOrder || 0);
+    if (base < minOrder) return 0;
+    const type = String(appliedCoupon.discountType || 'flat').toLowerCase();
+    const val = Number(appliedCoupon.value || 0);
+    let disc = 0;
+    if (type === 'percent') {
+      disc = base * val / 100;
+      const maxD = Number(appliedCoupon.maxDiscount || 0);
+      if (maxD > 0) disc = Math.min(disc, maxD);
+    } else {
+      disc = val;
+    }
+    disc = Math.min(disc, base);
+    return Math.max(0, Math.round(disc));
+  }
+
+  /* ✅ FIX #3: calcTotals tracks per-rate GST breakdown */
+  function calcTotals() {
+    const sel = getSelectedItems();
+    let mrpTotal = 0, finalTotal = 0;
+    let gstIncludedAmt = 0, gstAddedAmt = 0, qtyCount = 0;
+
+    /* ✅ NEW: per-rate breakdown */
+    const gstByRate = {}; // { rate: { added, included, hasAdded, hasIncluded, count } }
+
+    sel.forEach(it => {
+      const q = Number(it.qty || 1);
+      const p = Number(it.price || 0);
+      const m = Number(it.mrp || it.compareAtPrice || it.originalPrice || Math.round(p * 1.6));
+
+      mrpTotal += m * q;
+      finalTotal += p * q;
+      qtyCount += q;
+
+      const gstPct = getItemGstPct(it);
+      if (gstPct > 0) {
+        const rateKey = String(gstPct);
+        if (!gstByRate[rateKey]) {
+          gstByRate[rateKey] = { rate: gstPct, added: 0, included: 0, hasAdded: false, hasIncluded: false, count: 0 };
+        }
+        gstByRate[rateKey].count += q;
+        if (isGstIncluded(it)) {
+          const amt = (p * q) - ((p * q) / (1 + gstPct / 100));
+          gstIncludedAmt += amt;
+          gstByRate[rateKey].included += amt;
+          gstByRate[rateKey].hasIncluded = true;
+        } else {
+          const amt = (p * q) * gstPct / 100;
+          gstAddedAmt += amt;
+          gstByRate[rateKey].added += amt;
+          gstByRate[rateKey].hasAdded = true;
+        }
+      }
+    });
+
+    const discount = mrpTotal - finalTotal;
+    const delivery = 0;
+    const deliverySource = 'seller';
+
+    const commPct = Number(SELLER_GLOBAL.commissionPercent || 0);
+    const cartCommission = commPct !== 0 ? Math.round(finalTotal * commPct / 100) : 0;
+
+    const couponDiscount = calcCouponDiscount(finalTotal);
+
+    const grand = Math.max(0,
+      finalTotal + gstAddedAmt + cartCommission - couponDiscount
+    );
+
+    const gstTotal = gstIncludedAmt + gstAddedAmt;
+
+    return {
+      mrpTotal,
+      finalTotal,
+      discount,
+      gstTotal,
+      gstIncludedAmt,
+      gstAddedAmt,
+      gstPayable: gstAddedAmt,
+      gstByRate,          /* ✅ NEW */
+      delivery,
+      deliverySource,
+      cartCommission,
+      cartCommissionPct: commPct,
+      couponDiscount,
+      appliedCode: appliedCoupon?.code || '',
+      grand,
+      itemCount: qtyCount,
+      count: sel.length,
+      sel
+    };
+  }
+
+  /* ✅ FIX #4: buildChargeTags shows per-rate GST tags */
+  function buildChargeTags(t) {
+    const tags = [];
+
+    /* Commission tag */
+    if (t.cartCommission !== 0) {
+      if (t.cartCommission > 0) {
+        tags.push(`<span class="tg-tag handling">
+          <svg viewBox="0 0 24 24"><path d="M20 7h-4V5a3 3 0 0 0-3-3h-2a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2ZM9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2H9V5Z"/></svg>
+          Handling Fee · +${fmtINR(t.cartCommission)} (${t.cartCommissionPct}%)</span>`);
+      } else {
+        tags.push(`<span class="tg-tag discount">
+          <svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>
+          Special Discount · −${fmtINR(Math.abs(t.cartCommission))} (${t.cartCommissionPct}%)</span>`);
+      }
+    }
+
+    /* ✅ GST tags — one per unique rate */
+    if (SETTINGS.gstEnabled && t.gstByRate) {
+      const rates = Object.keys(t.gstByRate).map(Number).sort((a, b) => a - b);
+      rates.forEach(rate => {
+        const g = t.gstByRate[String(rate)];
+        if (!g) return;
+        if (g.hasAdded && g.added > 0) {
+          tags.push(`<span class="tg-tag gst-rate">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            GST ${rate}% · ${fmtINR(g.added)}</span>`);
+        } else if (g.hasIncluded && g.included > 0) {
+          tags.push(`<span class="tg-tag gst-rate">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            GST ${rate}% Included</span>`);
+        }
+      });
+    }
+
+    if (!tags.length) return '';
+    return tags.join('');
+  }
+
+  /* ✅ FIX #5: Dynamic GST row label */
+  function updateGstLabel(t) {
+    const label = document.getElementById('tg-gst-pct-label');
+    if (!label) return;
+    if (!SETTINGS.gstEnabled) { label.textContent = ''; return; }
+    const rates = Object.keys(t.gstByRate || {}).map(Number).sort((a, b) => a - b);
+    if (!rates.length) { label.textContent = ''; return; }
+    if (rates.length === 1) {
+      const g = t.gstByRate[String(rates[0])];
+      label.textContent = g.hasIncluded && !g.hasAdded
+        ? '(' + rates[0] + '% included)'
+        : '(' + rates[0] + '%)';
+    } else {
+      /* Multiple rates — show range or "mixed" */
+      const minR = rates[0];
+      const maxR = rates[rates.length - 1];
+      const allIncluded = rates.every(r => {
+        const g = t.gstByRate[String(r)];
+        return g.hasIncluded && !g.hasAdded;
+      });
+      if (allIncluded) {
+        label.textContent = '(' + minR + '-' + maxR + '% included)';
+      } else {
+        label.textContent = '(' + minR + '-' + maxR + '%)';
+      }
+    }
+  }
+
+  function updateTotals() {
+    const t = calcTotals();
+
+    if (appliedCoupon) {
+      const base = t.finalTotal;
+      const minOrder = Number(appliedCoupon.minOrder || 0);
+      const stillValid = base >= minOrder && isCouponNotExpired(appliedCoupon);
+      if (!stillValid) {
+        const reason = !isCouponNotExpired(appliedCoupon)
+          ? 'Coupon expired'
+          : ('Min order ' + fmtINR(minOrder) + ' required');
+        appliedCoupon = null;
+        try { localStorage.removeItem(COUPON_KEY); } catch(e) {}
+        updateCouponCard();
+        toast('Coupon removed — ' + reason, 'info');
+        return updateTotals();
+      }
+    }
+
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setText('tg-total-items', t.itemCount);
+    setText('tg-price-total-mrp', fmtINR(t.mrpTotal));
+    setText('tg-price-discount', '− ' + fmtINR(t.discount));
+
+    const cpRow = document.getElementById('tg-price-coupon-row');
+    const cpVal = document.getElementById('tg-price-coupon');
+    const cpLbl = document.getElementById('tg-price-coupon-code-label');
+    if (t.couponDiscount > 0 && appliedCoupon) {
+      if (cpRow) cpRow.style.display = 'flex';
+      if (cpVal) cpVal.textContent = '− ' + fmtINR(t.couponDiscount);
+      if (cpLbl) cpLbl.textContent = '(' + (appliedCoupon.code || '') + ')';
+    } else {
+      if (cpRow) cpRow.style.display = 'none';
+    }
+
+    /* ✅ FIX: Dynamic GST row label + value */
+    updateGstLabel(t);
+    if (!SETTINGS.gstEnabled) {
+      setText('tg-price-gst', fmtINR(0));
+    } else if (t.gstAddedAmt > 0) {
+      setText('tg-price-gst', fmtINR(t.gstAddedAmt));
+    } else if (t.gstIncludedAmt > 0) {
+      setText('tg-price-gst', 'Included');
+    } else {
+      setText('tg-price-gst', fmtINR(0));
+    }
+
+    const ccRow = document.getElementById('tg-price-cartcharge-row');
+    const ccVal = document.getElementById('tg-price-cartcharge');
+    const ccLbl = document.getElementById('tg-cartcharge-pct-label');
+    if (ccRow && ccVal) {
+      if (t.cartCommission !== 0) {
+        ccRow.style.display = 'flex';
+        if (ccLbl) ccLbl.textContent = '(' + t.cartCommissionPct + '%)';
+        if (t.cartCommission > 0) {
+          ccVal.textContent = '+ ' + fmtINR(t.cartCommission);
+          ccVal.style.color = '#d32f2f';
+        } else {
+          ccVal.textContent = '− ' + fmtINR(Math.abs(t.cartCommission));
+          ccVal.style.color = '#388e3c';
+        }
+      } else {
+        ccRow.style.display = 'none';
+      }
+    }
+
+    setText('tg-price-final', fmtINR(t.grand));
+    setText('tg-m-total', fmtINR(t.grand));
+    setText('tg-m-save', t.discount > 0 ? 'You save ' + fmtINR(t.discount) : '');
+
+    const tagsEl = document.getElementById('tg-price-tags');
+    const tagsHtml = buildChargeTags(t);
+    if (tagsEl) {
+      tagsEl.innerHTML = tagsHtml;
+      tagsEl.style.display = tagsHtml ? 'flex' : 'none';
+    }
+
+    const mobileTags = document.getElementById('tg-mobile-tags');
+    if (mobileTags) {
+      if (tagsHtml && t.itemCount > 0) {
+        mobileTags.innerHTML = tagsHtml;
+        mobileTags.classList.add('has-tags');
+      } else {
+        mobileTags.innerHTML = '';
+        mobileTags.classList.remove('has-tags');
+      }
+    }
+
+    const totalSave = t.discount + t.couponDiscount;
+    const saveBox = document.getElementById('tg-price-save-box');
+    const saveAmt = document.getElementById('tg-price-save-amt');
+    if (totalSave > 0) {
+      if (saveBox) saveBox.style.display = 'flex';
+      if (saveAmt) saveAmt.textContent = fmtINR(totalSave);
+    } else {
+      if (saveBox) saveBox.style.display = 'none';
+    }
+
+    const disable = t.itemCount === 0;
+    ['tg-place-order','tg-m-btn'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.disabled = disable;
+    });
+
+    const lbl = document.getElementById('tg-selectall-label');
+    if (lbl && t.count > 0 && t.count !== cartItems.length) {
+      lbl.textContent = t.count + ' of ' + cartItems.length + ' items selected';
+    }
+
+    if (appliedCoupon) updateCouponCard();
+  }
+
+  function _persistCartToMirror() {
+    if (currentUser) _saveMirror(currentUser.uid, cartItems);
+  }
+
+  window.tgChangeQty = async function(docId, delta) {
+    const item = cartItems.find(it => it.id === docId);
+    if (!item) return;
+    const newQty = Number(item.qty || 1) + delta;
+    if (newQty < 1) return;
+    if (newQty > 10) { toast('Max 10 items per product', 'error'); return; }
+    item.qty = newQty;
+
+    const node = _itemNodeMap.get(docId);
+    if (node) {
+      const body = node.querySelector('.tg-item-body');
+      if (body) body.innerHTML = itemBodyHtml(item);
+    }
+
+    _lastRenderSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|') + '|sel:' + [...selectedIds].sort().join(',');
+
+    updateTotals();
+    updateHeaderBadge();
+    _persistCartToMirror();
+
+    if (currentUser) {
+      try {
+        await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId)
+          .update({ qty: newQty, updatedAt: FV.serverTimestamp() });
+      } catch(err) { toast('Could not update quantity', 'error'); }
+    } else {
+      setGuestCart(cartItems);
+    }
+  };
+
+  window.tgRemoveItem = async function(docId) {
+    const item = cartItems.find(it => it.id === docId);
+    if (!item) return;
+    if (!confirm('Remove "' + (item.name || 'this item') + '" from cart?')) return;
+    const node = _itemNodeMap.get(docId);
+    if (node) node.classList.add('removing');
+    _pendingCartDeletes.add(docId);
+    cartItems = cartItems.filter(it => it.id !== docId);
+    selectedIds.delete(docId);
+    selectedIds.delete(NS_MARK + docId);
+    _itemNodeMap.delete(docId);
+    saveSelected();
+    _persistCartToMirror();
+    setTimeout(() => renderCart(true), 200);
+
+    if (currentUser) {
+      try {
+        await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
+        setTimeout(() => _pendingCartDeletes.delete(docId), 3000);
+        toast('Removed from cart', 'success');
+      } catch(err) {
+        _pendingCartDeletes.delete(docId);
+        toast('Could not remove item', 'error');
+        loadCart();
+      }
+    } else {
+      setGuestCart(cartItems);
+      toast('Removed from cart', 'success');
+    }
+  };
+
+  window.tgRemoveSelected = async function() {
+    const sel = getSelectedItems();
+    if (!sel.length) { toast('No items selected', 'info'); return; }
+    if (!confirm('Remove ' + sel.length + ' item(s)?')) return;
+    const idsToRemove = sel.map(it => it.id);
+    idsToRemove.forEach(id => _pendingCartDeletes.add(id));
+    cartItems = cartItems.filter(it => !selectedIds.has(it.id));
+    idsToRemove.forEach(id => {
+      selectedIds.delete(id);
+      selectedIds.delete(NS_MARK + id);
+      _itemNodeMap.delete(id);
+    });
+    saveSelected();
+    _persistCartToMirror();
+    renderCart(true);
+
+    if (currentUser) {
+      try {
+        const batch = db.batch();
+        const col = db.collection('carts').doc(currentUser.uid).collection('items');
+        idsToRemove.forEach(id => batch.delete(col.doc(id)));
+        await batch.commit();
+        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 3000);
+        toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
+      } catch(err) {
+        idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
+        toast('Could not remove items', 'error');
+        loadCart();
+      }
+    } else {
+      setGuestCart(cartItems);
+      toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
+    }
+  };
+
+  window.tgMoveToWishlist = async function(docId) {
+    if (!currentUser) {
+      toast('Please log in to save to wishlist', 'info');
+      setTimeout(() => location.href = 'log-in.html?redirect=cart.html', 1000);
+      return;
+    }
+    const item = cartItems.find(it => it.id === docId);
+    if (!item) return;
+    try {
+      const pid = item.productId || item.id;
+      await db.collection('wishlists').doc(currentUser.uid).set({ items: FV.arrayUnion(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
+      await window.tgRemoveItem(docId);
+      toast('Saved for later ❤', 'success');
+    } catch(err) { toast('Could not save', 'error'); }
+  };
+
+  function isCouponNotExpired(c) {
+    if (!c || !c.expiry) return true;
+    try {
+      const exp = new Date(c.expiry);
+      if (isNaN(exp.getTime())) return true;
+      const endOfDay = new Date(exp.getFullYear(), exp.getMonth(), exp.getDate(), 23, 59, 59, 999);
+      return endOfDay.getTime() >= Date.now();
+    } catch(e) { return true; }
+  }
+
+  function daysLeftCoupon(c) {
+    if (!c || !c.expiry) return null;
+    try {
+      const exp = new Date(c.expiry);
+      if (isNaN(exp.getTime())) return null;
+      const diff = exp.getTime() - Date.now();
+      return Math.ceil(diff / 86400000);
+    } catch(e) { return null; }
+  }
+
+  function fmtCouponExpiry(c) {
+    if (!c || !c.expiry) return '';
+    try {
+      const exp = new Date(c.expiry);
+      if (isNaN(exp.getTime())) return '';
+      return exp.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch(e) { return ''; }
+  }
+
+  function loadAppliedCouponFromStorage() {
+    try {
+      const raw = localStorage.getItem(COUPON_KEY);
+      if (!raw) return;
+      const c = JSON.parse(raw);
+      if (!c || !c.code) return;
+      if (!isCouponNotExpired(c)) { localStorage.removeItem(COUPON_KEY); return; }
+      appliedCoupon = c;
+    } catch(e) {}
+  }
+  function saveAppliedCouponToStorage() {
+    try {
+      if (appliedCoupon) localStorage.setItem(COUPON_KEY, JSON.stringify(appliedCoupon));
+      else localStorage.removeItem(COUPON_KEY);
+    } catch(e) {}
+  }
+
+  function updateCouponCard() {
+    const card = document.getElementById('tg-coupon-card');
+    const lbl = document.getElementById('tg-coupon-label');
+    const sub = document.getElementById('tg-coupon-sub');
+    if (!card || !lbl || !sub) return;
+    if (appliedCoupon) {
+      card.classList.add('applied');
+      lbl.textContent = appliedCoupon.code + ' applied ✓';
+      const t = calcTotals();
+      if (t.couponDiscount > 0) {
+        sub.innerHTML = 'You save <b style="color:#1b8a3a;">' + fmtINR(t.couponDiscount) + '</b> · <span class="remove-link" onclick="event.stopPropagation();tgRemoveCoupon()">Remove</span>';
+      } else {
+        sub.innerHTML = 'Applied · <span class="remove-link" onclick="event.stopPropagation();tgRemoveCoupon()">Remove</span>';
+      }
+    } else {
+      card.classList.remove('applied');
+      lbl.textContent = 'Apply Coupon';
+      sub.textContent = 'Save extra on your order';
+    }
+  }
+
+  window.tgRemoveCoupon = function() {
+    if (!appliedCoupon) return;
+    appliedCoupon = null;
+    saveAppliedCouponToStorage();
+    updateCouponCard();
+    updateTotals();
+    toast('Coupon removed', 'info');
+  };
+
+  function applyCouponObject(c, silent) {
+    if (!c) { toast('Coupon not found', 'error'); return false; }
+    if (!isCouponNotExpired(c)) { toast('This coupon has expired', 'error'); return false; }
+    const t = calcTotals();
+    if (t.finalTotal <= 0) { toast('Cart is empty', 'error'); return false; }
+    const minOrder = Number(c.minOrder || 0);
+    if (t.finalTotal < minOrder) { toast('Minimum order of ' + fmtINR(minOrder) + ' required for this coupon', 'error'); return false; }
+    if (currentUser && usedCouponCodes.has(String(c.code || '').toUpperCase())) {
+      toast('You have already used this coupon', 'error'); return false;
+    }
+    appliedCoupon = {
+      code: String(c.code || c.id || '').toUpperCase(),
+      discountType: String(c.discountType || 'flat').toLowerCase(),
+      value: Number(c.value || 0),
+      minOrder: Number(c.minOrder || 0),
+      maxDiscount: Number(c.maxDiscount || 0),
+      description: c.description || '',
+      expiry: c.expiry || ''
+    };
+    saveAppliedCouponToStorage();
+    updateCouponCard();
+    updateTotals();
+    if (!silent) toast('✓ ' + appliedCoupon.code + ' applied', 'success');
+    return true;
+  }
+
+  window.tgApplyCouponManual = function() {
+    const inp = document.getElementById('tg-coupon-input');
+    if (!inp) return;
+    const code = (inp.value || '').trim().toUpperCase();
+    if (!code) { toast('Please enter a coupon code', 'error'); return; }
+    const found = availableCoupons.find(c => String(c.code || c.id || '').toUpperCase() === code);
+    if (!found) { toast('Invalid coupon code', 'error'); return; }
+    if (applyCouponObject(found)) { inp.value = ''; tgCloseCouponModal(); }
+  };
+
+  window.tgApplyCouponFromList = function(code) {
+    const c = availableCoupons.find(x => String(x.code || x.id || '').toUpperCase() === String(code || '').toUpperCase());
+    if (!c) { toast('Coupon not found', 'error'); return; }
+    if (applyCouponObject(c)) { tgCloseCouponModal(); }
+  };
+
+  function renderCouponList() {
+    const el = document.getElementById('tg-coupon-list');
+    if (!el) return;
+    const active = availableCoupons.filter(c => c.active !== false);
+    if (!active.length) {
+      el.innerHTML = '<div class="tg-coupon-empty"><div class="tg-coupon-empty-icon">🎟️</div><b>No coupons available</b><br><span style="font-size:12px;margin-top:6px;display:inline-block;">Check back later for exclusive deals</span></div>';
+      return;
+    }
+    const enriched = active.map(c => {
+      const expired = !isCouponNotExpired(c);
+      const left = daysLeftCoupon(c);
+      const used = currentUser && usedCouponCodes.has(String(c.code || c.id || '').toUpperCase());
+      const isApplied = appliedCoupon && appliedCoupon.code === String(c.code || c.id || '').toUpperCase();
+      return { c, expired, left, used, isApplied };
+    });
+    enriched.sort((a, b) => {
+      if (a.isApplied !== b.isApplied) return a.isApplied ? -1 : 1;
+      if (a.expired !== b.expired) return a.expired ? 1 : -1;
+      if (a.used !== b.used) return a.used ? 1 : -1;
+      const al = a.left == null ? 9999 : a.left;
+      const bl = b.left == null ? 9999 : b.left;
+      return al - bl;
+    });
+    el.innerHTML = enriched.map(({ c, expired, left, used, isApplied }) => {
+      const code = String(c.code || c.id || '').toUpperCase();
+      const type = String(c.discountType || 'flat').toLowerCase();
+      const val = Number(c.value || 0);
+      let discHtml = type === 'percent'
+        ? '<div class="tg-coupon-ticket-discount">' + val + '<small>%</small></div>'
+        : '<div class="tg-coupon-ticket-discount">₹' + val + '</div>';
+      const labelTxt = type === 'percent' ? 'OFF' : 'FLAT';
+      const terms = [];
+      if (Number(c.minOrder) > 0) terms.push('<span>Min ' + fmtINR(c.minOrder) + '</span>');
+      if (type === 'percent' && Number(c.maxDiscount) > 0) terms.push('<span>Max ' + fmtINR(c.maxDiscount) + '</span>');
+      if (expired) terms.push('<span class="expired-txt">✕ Expired ' + esc(fmtCouponExpiry(c)) + '</span>');
+      else if (left != null && left <= 3 && left >= 0) terms.push('<span class="expiring">⏳ ' + (left === 0 ? 'Expires today' : left + ' day' + (left > 1 ? 's' : '') + ' left') + '</span>');
+      else if (c.expiry) terms.push('<span>Valid till ' + esc(fmtCouponExpiry(c)) + '</span>');
+
+      let actionBtn = '';
+      if (isApplied) actionBtn = '<button type="button" class="tg-coupon-ticket-btn applied-btn" data-coupon-code="' + esc(code) + '">✓ Applied</button>';
+      else if (expired || used) actionBtn = '<button type="button" class="tg-coupon-ticket-btn disabled" disabled>' + (expired ? 'Expired' : 'Used') + '</button>';
+      else actionBtn = '<button type="button" class="tg-coupon-ticket-btn" data-coupon-code="' + esc(code) + '">Apply</button>';
+
+      const cls = 'tg-coupon-ticket' + (expired ? ' expired' : '') + (used && !expired ? ' used' : '') + (isApplied ? ' applied' : '');
+      const clickable = !expired && !used && !isApplied;
+      return '<div class="' + cls + '"' + (clickable ? ' data-coupon-ticket="' + esc(code) + '"' : '') + '>' +
+        '<div class="tg-coupon-ticket-left">' + discHtml + '<div class="tg-coupon-ticket-label">' + labelTxt + '</div></div>' +
+        '<div class="tg-coupon-ticket-body">' +
+          '<div class="tg-coupon-ticket-code">' + esc(code) + '</div>' +
+          (c.description ? '<div class="tg-coupon-ticket-desc">' + esc(c.description) + '</div>' : '') +
+          (terms.length ? '<div class="tg-coupon-ticket-terms">' + terms.join('') + '</div>' : '') +
+        '</div>' +
+        '<div class="tg-coupon-ticket-action">' + actionBtn + '</div></div>';
+    }).join('');
+
+    el.querySelectorAll('[data-coupon-code]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); e.preventDefault();
+        const code = btn.getAttribute('data-coupon-code');
+        if (code) window.tgApplyCouponFromList(code);
+      });
+    });
+    el.querySelectorAll('[data-coupon-ticket]').forEach(ticket => {
+      ticket.style.cursor = 'pointer';
+      ticket.addEventListener('click', (e) => {
+        if (e.target.closest('[data-coupon-code]')) return;
+        const code = ticket.getAttribute('data-coupon-ticket');
+        if (code) window.tgApplyCouponFromList(code);
+      });
+    });
+  }
+
+  window.tgOpenCoupons = function() {
+    if (!cartItems.length) { toast('Add items to cart first', 'info'); return; }
+    const modal = document.getElementById('tg-coupon-modal');
+    if (!modal) return;
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    const inp = document.getElementById('tg-coupon-input');
+    if (inp) inp.value = '';
+    renderCouponList();
+  };
+  window.tgCloseCouponModal = function() {
+    const modal = document.getElementById('tg-coupon-modal');
+    if (!modal) return;
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    const inp = document.getElementById('tg-coupon-input');
+    if (inp) inp.blur();
+  };
+
+  function loadCoupons() {
+    if (unsubCoupons) { try { unsubCoupons(); } catch(e){} unsubCoupons = null; }
+    try {
+      unsubCoupons = db.collection('coupons').onSnapshot(snap => {
+        availableCoupons = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => c.active !== false);
+        const modal = document.getElementById('tg-coupon-modal');
+        if (modal && modal.classList.contains('show')) renderCouponList();
+      }, err => { console.warn('[coupons listener]', err && err.message); });
+    } catch(e) { console.warn('[coupons sync]', e && e.message); }
+  }
+
+  async function loadUsedCoupons(uid) {
+    if (!uid) { usedCouponCodes = new Set(); return; }
+    try {
+      const ordersMap = new Map();
+      try {
+        const s1 = await db.collection('orders').where('customerId', '==', uid).limit(50).get();
+        s1.docs.forEach(d => ordersMap.set(d.id, d.data()));
+      } catch(e) {}
+      try {
+        const s2 = await db.collection('orders').where('userId', '==', uid).limit(50).get();
+        s2.docs.forEach(d => ordersMap.set(d.id, d.data()));
+      } catch(e) {}
+      const set = new Set();
+      ordersMap.forEach(o => {
+        [o.couponCode, o.coupon, o.coupon_code, o.appliedCoupon].forEach(c => {
+          if (c && typeof c === 'string') set.add(c.trim().toUpperCase());
+        });
+      });
+      usedCouponCodes = set;
+    } catch(e) { usedCouponCodes = new Set(); }
+  }
+
+  function loadCart() {
+    document.getElementById('tg-loading').style.display = 'block';
+    document.getElementById('tg-items').style.display = 'none';
+    document.getElementById('tg-empty').style.display = 'none';
+    document.getElementById('tg-selectall').style.display = 'none';
+    document.getElementById('tg-right').style.display = 'none';
+    document.getElementById('tg-mobile-order').style.display = 'none';
+    const mt = document.getElementById('tg-mobile-tags');
+    if (mt) { mt.classList.remove('has-tags'); mt.innerHTML = ''; }
+    _itemNodeMap.clear();
+    _lastRenderSig = '';
+    _lastIdsKey = '';
+
+    try {
+      const validIds = new Set((cartItems || []).map(it => it.id));
+      let changed = false;
+      [...selectedIds].forEach(id => {
+        if (id.startsWith(NS_MARK)) {
+          const realId = id.slice(NS_MARK.length);
+          if (!validIds.has(realId)) { selectedIds.delete(id); changed = true; }
+        } else if (!validIds.has(id)) {
+          selectedIds.delete(id); changed = true;
+        }
+      });
+      if (changed) saveSelected();
+    } catch(e) {}
+
+    if (unsubscribe) { try { unsubscribe(); } catch(e){} unsubscribe = null; }
+
+    if (!currentUser) {
+      const raw = getGuestCart();
+      let buyNowGuest = null;
+      try { buyNowGuest = new URLSearchParams(window.location.search).get('buynow'); } catch(e) {}
+      if (buyNowGuest) {
+        selectedIds.clear();
+        selectedIds.add(buyNowGuest);
+        saveSelected();
+      }
+      cartItems = enrichFromCacheSync(raw);
+      renderCart(true);
+      enrichCartItemsFast(raw).then(enriched => {
+        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
+        else cartItems = enriched;
+      }).catch(() => {});
+      return;
+    }
+
+    const mirror = _loadMirror(currentUser.uid);
+    if (mirror.length) {
+      cartItems = enrichFromCacheSync(dedupeCart(mirror.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
+      renderCart(true);
+    }
+
+    let buyNowFromUrl = null;
+    try { buyNowFromUrl = new URLSearchParams(window.location.search).get('buynow'); } catch(e) {}
+    let buyNowFromSession = null;
+    try { buyNowFromSession = sessionStorage.getItem(BUY_NOW_KEY); } catch(e) {}
+    const buyNowDoc = buyNowFromUrl || buyNowFromSession;
+    if (buyNowDoc) {
+      selectedIds.clear();
+      selectedIds.add(buyNowDoc);
+      saveSelected();
+      try { sessionStorage.removeItem(BUY_NOW_KEY); } catch(e) {}
+      try { window.history.replaceState({}, '', window.location.pathname); } catch(e) {}
+    }
+
+    const cartRef = db.collection('carts').doc(currentUser.uid).collection('items');
+    let firstRenderDone = mirror.length > 0;
+
+    unsubscribe = cartRef.onSnapshot(async snap => {
+      let raw = snap.docs.map(d => {
+        const data = d.data();
+        return { ...data, id: d.id, productId: data.productId || d.id };
+      }).filter(it => !_pendingCartDeletes.has(it.id));
+
+      raw = dedupeCart(raw);
+
+      _saveMirror(currentUser.uid, raw);
+
+      const shouldForce = !firstRenderDone;
+      const fastItems = enrichFromCacheSync(raw);
+      cartItems = fastItems;
+      renderCart(shouldForce);
+      firstRenderDone = true;
+
+      try {
+        const enriched = await enrichCartItemsFast(raw);
+        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
+      } catch(e) {}
+    }, err => {
+      console.warn('cart load error:', err && err.message);
+      if (!cartItems.length) {
+        cartItems = enrichFromCacheSync(getGuestCart());
+        renderCart(true);
+      }
+    });
+  }
+
+  async function loadProfile(u) {
+    try { const snap = await db.collection('users').doc(u.uid).get(); if (snap.exists) userProfile = snap.data(); }
+    catch(e) { userProfile = null; }
+  }
+
+  async function getSavedAddresses() {
+    if (currentUser) {
+      try {
+        const snap = await db.collection('users').doc(currentUser.uid).get();
+        if (snap.exists) {
+          const arr = snap.data().addresses;
+          if (Array.isArray(arr)) return arr;
+        }
+      } catch(e) {}
+      return [];
+    }
+    try { const arr = JSON.parse(localStorage.getItem(ADDR_LIST_KEY) || '[]'); return Array.isArray(arr) ? arr : []; }
+    catch(e) { return []; }
+  }
+  async function setSavedAddresses(list) {
+    if (currentUser) {
+      try { await db.collection('users').doc(currentUser.uid).set({ addresses: list, updatedAt: FV.serverTimestamp() }, { merge: true }); }
+      catch(e) { toast('Could not save address', 'error'); }
+    } else {
+      try { localStorage.setItem(ADDR_LIST_KEY, JSON.stringify(list)); } catch(e) {}
+    }
+  }
+
+  async function addAddressToList(addr) {
+    const list = await getSavedAddresses();
+    const key = (addr.line||'').toLowerCase() + '|' + (addr.pin||'') + '|' + (addr.phone||'');
+    const idx = list.findIndex(a => ((a.line||'').toLowerCase() + '|' + (a.pin||'') + '|' + (a.phone||'')) === key);
+    if (addr.isDefault) list.forEach(a => { a.isDefault = false; });
+    if (idx >= 0) list[idx] = addr;
+    else list.push(addr);
+    if (!list.some(a => a.isDefault) && list.length) list[0].isDefault = true;
+    await setSavedAddresses(list);
+    return list;
+  }
+  async function removeAddressAt(i) {
+    const list = await getSavedAddresses();
+    if (i < 0 || i >= list.length) return list;
+    const wasDefault = list[i].isDefault;
+    list.splice(i, 1);
+    if (wasDefault && list.length) list[0].isDefault = true;
+    await setSavedAddresses(list);
+    return list;
+  }
+
+  window.tgPlaceOrder = async function() {
+    const t = calcTotals();
+    if (t.itemCount === 0) { toast('Please select items to order', 'info'); return; }
+    if (!currentUser) {
+      toast('Please log in to place order', 'info');
+      setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html'), 900);
+      return;
+    }
+    const list = await getSavedAddresses();
+    if (list.length > 0) openAddrList(list);
+    else tgOpenNewAddr();
+  };
+
+  function typeBadge(t) {
+    t = (t || 'home').toLowerCase();
+    const map = {
+      home: { label: 'Home', cls: 'home', icon: '🏠' },
+      work: { label: 'Work', cls: 'work', icon: '🏢' },
+      other: { label: 'Other', cls: 'other', icon: '📍' }
+    };
+    const m = map[t] || map.home;
+    return `<span class="tg-addr-badge ${m.cls}">${m.icon} ${m.label}</span>`;
+  }
+
+  function openAddrList(list) {
+    addrListCache = list;
+    let lastSel = 0;
+    const defIdx = list.findIndex(a => a.isDefault);
+    if (defIdx >= 0) lastSel = defIdx;
+    else {
+      try {
+        const v = parseInt(localStorage.getItem(ADDR_LAST_IDX) || '0', 10);
+        if (!isNaN(v) && v >= 0 && v < list.length) lastSel = v;
+      } catch(e) {}
+    }
+    pendingAddrIndex = lastSel;
+
+    const wrap = document.getElementById('tg-addr-list');
+    if (!wrap) return;
+    if (!list.length) {
+      wrap.innerHTML = '<div class="tg-addr-empty">No saved addresses yet.</div>';
+    } else {
+      wrap.innerHTML = list.map((a, i) => `
+        <div class="tg-addr-item ${i===lastSel?'active':''}" onclick="tgSelectAddr(${i})" data-idx="${i}">
+          <div class="tg-addr-radio"></div>
+          <div class="tg-addr-body">
+            <div class="tg-addr-name">
+              ${esc(a.name)}
+              ${typeBadge(a.type)}
+              ${a.isDefault ? '<span class="tg-addr-badge default">✓ Default</span>' : ''}
+              <span class="tg-addr-phone">📱 ${esc(a.phone)}${a.altPhone ? ' / ' + esc(a.altPhone) : ''}</span>
+            </div>
+            <div class="tg-addr-text">
+              <b>${esc(a.line)}</b>${a.locality ? ', ' + esc(a.locality) : ''}${a.landmark ? ' (Near ' + esc(a.landmark) + ')' : ''}<br>
+              ${esc(a.city)}${a.district ? ', ' + esc(a.district) : ''}, ${esc(a.state)} - ${esc(a.pin)}
+            </div>
+          </div>
+          <button class="tg-addr-del" onclick="event.stopPropagation(); tgDeleteAddr(${i})" title="Delete" aria-label="Delete">✕</button>
+        </div>
+      `).join('') +
+      `<button class="tg-modal-save" onclick="tgContinueWithAddr()" style="margin-top:6px;background:linear-gradient(135deg,#fb641b,#e05515);box-shadow:0 6px 18px rgba(251,100,27,0.3);">Deliver to this Address</button>
+       <button class="tg-modal-save" onclick="tgOpenNewAddr()" style="background:#fff;color:#2874f0;border:1.5px solid #2874f0;box-shadow:none;">+ Add New Address</button>`;
+    }
+    document.getElementById('tg-addr-list-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  window.tgCloseAddrList = function() {
+    document.getElementById('tg-addr-list-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+  window.tgSelectAddr = function(i) {
+    pendingAddrIndex = i;
+    document.querySelectorAll('.tg-addr-item').forEach(el => {
+      el.classList.toggle('active', Number(el.dataset.idx) === i);
+    });
+  };
+  window.tgContinueWithAddr = function() {
+    const addr = addrListCache[pendingAddrIndex];
+    if (!addr) { toast('Please select an address', 'error'); return; }
+    pendingAddress = addr;
+    try { localStorage.setItem(ADDR_KEY, JSON.stringify(addr)); } catch(e) {}
+    try { localStorage.setItem(ADDR_LAST_IDX, String(pendingAddrIndex)); } catch(e) {}
+    try {
+      if (addr.pin) localStorage.setItem(PIN_KEY, addr.pin);
+      const cityEl = document.getElementById('tg-pin-city');
+      if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
+    } catch(e) {}
+    tgCloseAddrList();
+    tgOpenPayModal();
+  };
+  window.tgDeleteAddr = async function(i) {
+    if (!confirm('Delete this address?')) return;
+    const list = await removeAddressAt(i);
+    if (!list.length) {
+      toast('Address removed', 'success');
+      tgCloseAddrList();
+      tgOpenNewAddr();
+    } else {
+      toast('Address removed', 'success');
+      openAddrList(list);
+    }
+  };
+
+  window.tgPickAddrType = function(t, el) {
+    pendingAddrType = t;
+    document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+  };
+
+  window.tgOpenNewAddr = function() {
+    const listModal = document.getElementById('tg-addr-list-modal');
+    if (listModal) listModal.classList.remove('show');
+
+    pendingAddrType = 'home';
+    document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => {
+      b.classList.toggle('active', b.dataset.type === 'home');
+    });
+    document.getElementById('tg-addr-default').checked = false;
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(ADDR_KEY) || '{}');
+      if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
+      if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone;
+      if (saved.altPhone) document.getElementById('tg-addr-alt-phone').value = saved.altPhone;
+    } catch(e) {}
+    if (userProfile) {
+      const nameEl = document.getElementById('tg-addr-name');
+      const phoneEl = document.getElementById('tg-addr-phone');
+      const emailEl = document.getElementById('tg-addr-email');
+      if (!nameEl.value && userProfile.name) nameEl.value = userProfile.name;
+      if (!phoneEl.value && userProfile.phone) phoneEl.value = userProfile.phone;
+      if (!emailEl.value && (userProfile.email || (currentUser && currentUser.email))) emailEl.value = userProfile.email || currentUser.email;
+    } else if (currentUser && currentUser.email) {
+      const emailEl = document.getElementById('tg-addr-email');
+      if (!emailEl.value) emailEl.value = currentUser.email;
+    }
+
+    ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('tg-addr-save-text').textContent = 'Save & Continue';
+    document.getElementById('tg-addr-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgCloseAddr = function() {
+    document.getElementById('tg-addr-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+
+  window.tgSaveAddr = async function() {
+    const name = (document.getElementById('tg-addr-name').value || '').trim();
+    const phone = (document.getElementById('tg-addr-phone').value || '').trim();
+    const altPhone = (document.getElementById('tg-addr-alt-phone').value || '').trim();
+    const line = (document.getElementById('tg-addr-line').value || '').trim();
+    const locality = (document.getElementById('tg-addr-locality').value || '').trim();
+    const landmark = (document.getElementById('tg-addr-landmark').value || '').trim();
+    const city = (document.getElementById('tg-addr-city').value || '').trim();
+    const pin = (document.getElementById('tg-addr-pin').value || '').trim();
+    const district = (document.getElementById('tg-addr-district').value || '').trim();
+    const state = (document.getElementById('tg-addr-state').value || '').trim();
+    const email = (document.getElementById('tg-addr-email').value || '').trim();
+    const isDefault = document.getElementById('tg-addr-default').checked;
+    const type = pendingAddrType || 'home';
+
+    if (!name || name.length < 2) { toast('Please enter full name', 'error'); return; }
+    if (!/^\d{10}$/.test(phone)) { toast('Please enter a valid 10-digit phone', 'error'); return; }
+    if (altPhone && !/^\d{10}$/.test(altPhone)) { toast('Alternate phone must be 10 digits', 'error'); return; }
+    if (!line || line.length < 5) { toast('Please enter full address', 'error'); return; }
+    if (!city) { toast('Please enter city', 'error'); return; }
+    if (!/^\d{6}$/.test(pin)) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
+    if (!state) { toast('Please enter state', 'error'); return; }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); return; }
+
+    pendingAddress = { name, phone, altPhone, line, locality, landmark, city, pin, district, state, email, type, isDefault, country: 'India' };
+    try { localStorage.setItem(ADDR_KEY, JSON.stringify(pendingAddress)); } catch(e) {}
+    try {
+      localStorage.setItem(PIN_KEY, pin);
+      const cityEl = document.getElementById('tg-pin-city');
+      if (cityEl) cityEl.textContent = city + ' - ' + pin;
+    } catch(e) {}
+
+    try {
+      const list = await addAddressToList(pendingAddress);
+      const key = (pendingAddress.line||'').toLowerCase() + '|' + (pendingAddress.pin||'') + '|' + (pendingAddress.phone||'');
+      let idx = list.findIndex(a => ((a.line||'').toLowerCase() + '|' + (a.pin||'') + '|' + (a.phone||'')) === key);
+      if (idx < 0) idx = list.length - 1;
+      pendingAddrIndex = idx;
+      try { localStorage.setItem(ADDR_LAST_IDX, String(idx)); } catch(e) {}
+    } catch(e) {}
+
+    tgCloseAddr();
+    toast('Address saved', 'success');
+    tgOpenPayModal();
+  };
+
+  window.tgOpenPayModal = function() {
+    const t = calcTotals();
+    document.getElementById('tg-pay-amount').textContent = fmtINR(t.grand);
+    if (!SETTINGS.razorpayEnabled && SETTINGS.codEnabled) pendingPayMethod = 'cod';
+    else pendingPayMethod = 'razorpay';
+    document.querySelectorAll('.tg-pay-opt').forEach(el => el.classList.toggle('active', el.dataset.method === pendingPayMethod));
+    document.getElementById('tg-pay-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgClosePay = function() { document.getElementById('tg-pay-modal').classList.remove('show'); document.body.style.overflow = ''; };
+  window.tgPickPay = function(method, el) {
+    pendingPayMethod = method;
+    document.querySelectorAll('.tg-pay-opt').forEach(o => o.classList.remove('active'));
+    if (el) el.classList.add('active');
+  };
+
+  let _razorpayPromise = null;
+  function ensureRazorpay() {
+    if (typeof Razorpay !== 'undefined') return Promise.resolve();
+    if (_razorpayPromise) return _razorpayPromise;
+    _razorpayPromise = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      s.onload = resolve;
+      s.onerror = () => { _razorpayPromise = null; reject(new Error('Razorpay load failed')); };
+      document.head.appendChild(s);
+    });
+    return _razorpayPromise;
+  }
+
+  window.tgConfirmPay = async function() {
+    const t = calcTotals();
+    if (t.itemCount === 0) { toast('Cart is empty', 'error'); return; }
+    if (!pendingAddress) { toast('Please add delivery address', 'error'); tgClosePay(); return; }
+    if (pendingPayMethod === 'razorpay') {
+      if (!SETTINGS.razorpayEnabled) { toast('Online payment unavailable', 'error'); return; }
+      if (!SETTINGS.razorpayKeyId) { toast('Payment gateway not configured', 'error'); return; }
+      try {
+        const btn = document.getElementById('tg-pay-continue-text');
+        if (btn) btn.textContent = 'Loading…';
+        await ensureRazorpay();
+        if (btn) btn.textContent = 'Continue';
+      } catch(e) {
+        toast('Could not load payment gateway', 'error');
+        return;
+      }
+      tgClosePay();
+      tgStartRazorpay(t);
+    } else {
+      tgClosePay();
+      tgCreateOrder(t, { paymentMethod: 'cod', paymentId: null, paymentStatus: 'pending' });
+    }
+  };
+
+  function tgStartRazorpay(t) {
+    const keyId = SETTINGS.razorpayKeyId;
+    const amountPaise = Math.round(t.grand * 100);
+    if (typeof Razorpay === 'undefined') { toast('Payment gateway not loaded. Check internet.', 'error'); return; }
+    const options = {
+      key: keyId, amount: amountPaise, currency: SETTINGS.currency || 'INR',
+      name: 'TOEGO', description: 'Order Payment (' + t.itemCount + ' items)',
+      image: window.location.origin + '/favicon.ico',
+      prefill: {
+        name: pendingAddress.name,
+        contact: '+91' + pendingAddress.phone,
+        email: pendingAddress.email || (currentUser && currentUser.email) || ''
+      },
+      theme: { color: '#2874f0' },
+      notes: {
+        uid: currentUser.uid,
+        items: t.itemCount,
+        gstIncluded: t.gstIncludedAmt.toFixed(2),
+        gstAdded: t.gstAddedAmt.toFixed(2),
+        cartCommission: t.cartCommission.toFixed(2),
+        address: pendingAddress.city + ' ' + pendingAddress.pin,
+        coupon: appliedCoupon?.code || ''
+      },
+      handler: function(response) {
+        tgCreateOrder(t, { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: 'paid' });
+      },
+      modal: { ondismiss: function() { toast('Payment cancelled', 'info'); } }
+    };
+    try {
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function(resp) {
+        const err = (resp && resp.error && resp.error.description) || 'Payment failed';
+        toast(err, 'error');
+      });
+      rzp.open();
+    } catch(err) { toast('Could not open payment gateway', 'error'); }
+  }
+
+  function playSuccessSound() {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const now = ctx.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine'; o.frequency.value = freq;
+        g.gain.setValueAtTime(0, now + i*0.09);
+        g.gain.linearRampToValueAtTime(0.18, now + i*0.09 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, now + i*0.09 + 0.5);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(now + i*0.09); o.stop(now + i*0.09 + 0.6);
+      });
+      setTimeout(() => { try { ctx.close(); } catch(e) {} }, 1200);
+    } catch(e) {}
+  }
+  function vibrate(pattern) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {} }
+
+  function launchConfetti() {
+    const wrap = document.getElementById('tg-confetti-wrap');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const colors = ['#2874f0','#22c55e','#fbbf24','#f43397','#fb641b','#7e57c2','#06b6d4','#e11d48'];
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < 60; i++) {
+      const el = document.createElement('div');
+      el.className = 'tg-confetti';
+      el.style.left = (Math.random() * 100) + '%';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width = (6 + Math.random() * 8) + 'px';
+      el.style.height = (6 + Math.random() * 8) + 'px';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.animationDuration = (2 + Math.random() * 1.8) + 's';
+      el.style.animationDelay = (Math.random() * 0.4) + 's';
+      frag.appendChild(el);
+    }
+    wrap.appendChild(frag);
+    setTimeout(() => { if (wrap) wrap.innerHTML = ''; }, 4200);
+  }
+
+  function showSuccess(orderId) {
+    document.getElementById('tg-success-order').textContent = 'Order ID: #' + String(orderId || '').slice(0, 10).toUpperCase();
+    document.getElementById('tg-success').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    playSuccessSound();
+    vibrate([60, 40, 120, 40, 200]);
+    setTimeout(() => launchConfetti(), 100);
+  }
+
+  async function tgCreateOrder(t, payInfo) {
+    const docsToDelete = t.sel.map(it => it.id);
+    const placeBtns = ['tg-place-order', 'tg-m-btn'].map(id => document.getElementById(id)).filter(Boolean);
+
+    placeBtns.forEach(b => {
+      b.dataset.origText = b.textContent;
+      b.disabled = true;
+      b.textContent = 'Placing...';
+    });
+
+    try {
+      let orderItems = t.sel.map(it => {
+        const q = Number(it.qty || 1);
+        const p = Number(it.price || 0);
+        const m = Number(it.mrp || it.compareAtPrice || it.originalPrice || Math.round(p * 1.6));
+        const gstPct = getItemGstPct(it);
+        const gstIncluded = isGstIncluded(it);
+        const gstAmt = gstPct > 0
+          ? (gstIncluded ? (p*q) - ((p*q)/(1+gstPct/100)) : (p*q)*gstPct/100)
+          : 0;
+        return {
+          productId: it.productId || it.id,
+          name: it.name || '',
+          image: it.image || '',
+          price: p, mrp: m, qty: q,
+          size: it.size || '',
+          color: it.color || '',
+          rating: (it.rating != null) ? Number(it.rating) : null,
+          ratingCount: (it.ratingCount != null) ? Number(it.ratingCount) : null,
+          gst: gstPct,
+          gstIncluded: gstIncluded,
+          gstAmount: Number(gstAmt.toFixed(2)),
+          sellerId: it.sellerId || '',
+          sellerName: it.sellerName || it.seller || ''
+        };
+      });
+
+      try {
+        const enriched = await enrichCartItemsFast(orderItems);
+        orderItems = enriched;
+      } catch(e) {}
+
+      const sellerIds = [...new Set(orderItems.map(i => i.sellerId).filter(Boolean))];
+      const dInfo = getDeliveryInfo();
+      const deliveryType = dInfo.cls === 'same-day' ? 'same_day' : 'standard_3_5_days';
+
+      const orderPayload = {
+        customerId: currentUser.uid,
+        userId: currentUser.uid,
+        uid: currentUser.uid,
+        userName: pendingAddress.name,
+        userEmail: pendingAddress.email || currentUser.email || '',
+        userPhone: pendingAddress.phone,
+        items: orderItems,
+        itemCount: t.itemCount,
+        address: pendingAddress,
+        shippingAddress: pendingAddress,
+        subtotal: Number(t.finalTotal.toFixed(2)),
+        mrpTotal: Number(t.mrpTotal.toFixed(2)),
+        discount: Number(t.discount.toFixed(2)),
+        gst: Number(t.gstTotal.toFixed(2)),
+        gstIncluded: Number(t.gstIncludedAmt.toFixed(2)),
+        gstAdded: Number(t.gstAddedAmt.toFixed(2)),
+        cartCommission: Number(t.cartCommission.toFixed(2)),
+        cartCommissionPct: Number(t.cartCommissionPct || 0),
+        delivery: 0,
+        deliverySource: 'seller',
+        total: Number(t.grand.toFixed(2)),
+        couponCode: appliedCoupon ? appliedCoupon.code : '',
+        couponDiscount: Number(t.couponDiscount || 0),
+        coupon: appliedCoupon ? {
+          code: appliedCoupon.code,
+          type: appliedCoupon.discountType,
+          value: appliedCoupon.value,
+          minOrder: appliedCoupon.minOrder,
+          maxDiscount: appliedCoupon.maxDiscount
+        } : null,
+        paymentMethod: payInfo.paymentMethod,
+        paymentId: payInfo.paymentId || '',
+        paymentStatus: payInfo.paymentStatus,
+        deliveryType: deliveryType,
+        deliveryEstimate: dInfo.text,
+        status: 'pending',
+        sellerIds: sellerIds,
+        createdAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      };
+
+      const orderPromise = db.collection('orders').add(orderPayload);
+
+      docsToDelete.forEach(id => _pendingCartDeletes.add(id));
+      const _delSet = new Set(docsToDelete);
+      cartItems = cartItems.filter(it => !_delSet.has(it.id));
+      docsToDelete.forEach(id => {
+        selectedIds.delete(id);
+        selectedIds.delete(NS_MARK + id);
+        _itemNodeMap.delete(id);
+      });
+      saveSelected();
+      _persistCartToMirror();
+      renderCart(true);
+
+      let cartCleanupPromise = Promise.resolve();
+      if (currentUser) {
+        const batch = db.batch();
+        const col = db.collection('carts').doc(currentUser.uid).collection('items');
+        docsToDelete.forEach(docId => batch.delete(col.doc(docId)));
+        cartCleanupPromise = batch.commit()
+          .then(() => { setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 4000); })
+          .catch(e => {
+            console.warn('Cart cleanup:', e && e.message);
+            docsToDelete.forEach(id => _pendingCartDeletes.delete(id));
+            loadCart();
+          });
+      } else {
+        const newGuest = getGuestCart().filter(i => !docsToDelete.includes(i.id));
+        setGuestCart(newGuest);
+      }
+
+      showSuccess('');
+
+      const [ref] = await Promise.all([orderPromise, cartCleanupPromise]);
+      const orderId = ref.id;
+      document.getElementById('tg-success-order').textContent = 'Order ID: #' + orderId.slice(0, 10).toUpperCase();
+
+      docsToDelete.forEach(id => {
+        selectedIds.delete(id);
+        selectedIds.delete(NS_MARK + id);
+      });
+      saveSelected();
+
+      if (appliedCoupon) {
+        usedCouponCodes.add(appliedCoupon.code);
+        appliedCoupon = null;
+        saveAppliedCouponToStorage();
+        updateCouponCard();
+      }
+
+      if (!currentUser) {
+        cartItems = getGuestCart().filter(it => !_pendingCartDeletes.has(it.id));
+        renderCart(true);
+      }
+    } catch(err) {
+      console.error('Order creation failed:', err);
+      document.getElementById('tg-success').classList.remove('show');
+      document.body.style.overflow = '';
+      toast('Order failed: ' + (err.message || 'Try again'), 'error');
+      placeBtns.forEach(b => { b.disabled = false; b.textContent = b.dataset.origText || 'Place Order'; });
+      docsToDelete.forEach(id => _pendingCartDeletes.delete(id));
+      loadCart();
+    }
+  }
+
+  /* ========== BOOT ========== */
+  loadSelected();
+  loadPin();
+  loadAppliedCouponFromStorage();
+  updateCouponCard();
+
+  loadPaymentSettings();
+  loadCoupons();
+  loadSellerGlobal();
+  watchSellerGlobal();
+  /* ✅ NEW: Live payment listener */
+  watchPaymentSettings();
+
+  document.getElementById('tg-coupon-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); window.tgApplyCouponManual(); }
+  });
+
+  auth.onAuthStateChanged(async (u) => {
+    const prevUser = currentUser;
+    currentUser = u;
+    if (prevUser && !u) { selectedIds = new Set(); saveSelected(); }
+    loadCart();
+    if (u) {
+      loadProfile(u).catch(() => {});
+      loadUsedCoupons(u.uid).then(() => {
+        const modal = document.getElementById('tg-coupon-modal');
+        if (modal && modal.classList.contains('show')) renderCouponList();
+      }).catch(() => {});
+    } else {
+      userProfile = null;
+      usedCouponCodes = new Set();
+    }
+  });
+
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', (e) => {
+      if (e.target === m) { m.classList.remove('show'); document.body.style.overflow = ''; }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

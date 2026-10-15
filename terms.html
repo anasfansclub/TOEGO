@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Terms of Use — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; }
+
+/* HEADER */
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+/* HERO */
+.tg-hero {
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  border-radius: 14px;
+  padding: 28px 24px;
+  color: #fff;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.25);
+}
+.tg-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(255,229,0,0.2), transparent 70%);
+  border-radius: 50%;
+}
+.tg-hero-content { position: relative; z-index: 2; }
+.tg-hero-tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.tg-hero-title { font-size: 26px; font-weight: 900; margin: 0 0 8px; letter-spacing: -0.4px; line-height: 1.15; }
+.tg-hero-sub { font-size: 13.5px; opacity: 0.95; margin: 0; line-height: 1.5; }
+.tg-hero-icon {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 68px;
+  opacity: 0.9;
+  z-index: 2;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+}
+
+/* META STRIP */
+.tg-meta-strip {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  font-size: 12.5px;
+  color: #666;
+  flex-wrap: wrap;
+}
+.tg-meta-strip svg { width: 16px; height: 16px; stroke: #2874f0; fill: none; stroke-width: 2.2; flex-shrink: 0; }
+.tg-meta-strip b { color: #212121; font-weight: 700; }
+
+/* QUICK LINKS */
+.tg-quick-nav {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-quick-nav-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 12px;
+}
+.tg-quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tg-quick-chip {
+  padding: 8px 14px;
+  background: #f5f5f6;
+  border: 1.5px solid #f5f5f6;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #212121;
+  cursor: pointer;
+  transition: all .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tg-quick-chip:hover { background: #e8f0fe; border-color: #2874f0; color: #2874f0; }
+.tg-quick-chip-icon { font-size: 14px; }
+
+/* CONTENT SECTION */
+.tg-section {
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  scroll-margin-top: 72px;
+}
+.tg-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid #f1f3f6;
+}
+.tg-section-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+}
+.tg-section-icon.blue { background: linear-gradient(135deg, #eef3ff, #e0eaff); }
+.tg-section-icon.green { background: linear-gradient(135deg, #e6f7ec, #d1f0dd); }
+.tg-section-icon.orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+.tg-section-icon.pink { background: linear-gradient(135deg, #fce4ec, #f8bbd0); }
+.tg-section-icon.purple { background: linear-gradient(135deg, #ede7f6, #d1c4e9); }
+.tg-section-icon.teal { background: linear-gradient(135deg, #e0f2f1, #b2dfdb); }
+.tg-section-icon.yellow { background: linear-gradient(135deg, #fff8e1, #ffecb3); }
+.tg-section-icon.red { background: linear-gradient(135deg, #ffebee, #ffcdd2); }
+.tg-section-title { font-size: 16px; font-weight: 800; color: #212121; letter-spacing: -0.2px; }
+.tg-section-sub { font-size: 12px; color: #888; margin-top: 2px; }
+.tg-section-body { padding: 16px 20px 20px; font-size: 13.5px; line-height: 1.7; color: #333; }
+.tg-section-body p { margin: 0 0 12px; }
+.tg-section-body p:last-child { margin-bottom: 0; }
+.tg-section-body b { color: #212121; font-weight: 700; }
+.tg-section-body a { color: #2874f0; font-weight: 600; }
+.tg-section-body a:hover { text-decoration: underline; }
+
+.tg-list { list-style: none; padding: 0; margin: 0 0 12px; }
+.tg-list li {
+  padding: 8px 0 8px 26px;
+  position: relative;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+.tg-list li::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 15px;
+  width: 6px;
+  height: 6px;
+  background: #2874f0;
+  border-radius: 50%;
+}
+
+.tg-list.num { counter-reset: tg-num; }
+.tg-list.num li { padding-left: 32px; }
+.tg-list.num li::before {
+  counter-increment: tg-num;
+  content: counter(tg-num);
+  left: 0;
+  top: 7px;
+  width: 22px;
+  height: 22px;
+  background: #2874f0;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* HIGHLIGHT BOX */
+.tg-highlight {
+  background: linear-gradient(135deg, #f0f5ff, #e0eaff);
+  border-left: 4px solid #2874f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1a1d21;
+}
+.tg-highlight b { color: #2874f0; }
+.tg-highlight.green {
+  background: linear-gradient(135deg, #e6f7ec, #d1f0dd);
+  border-left-color: #1b8a3a;
+}
+.tg-highlight.green b { color: #1b8a3a; }
+.tg-highlight.orange {
+  background: linear-gradient(135deg, #fff8e1, #ffecb3);
+  border-left-color: #f57c00;
+}
+.tg-highlight.orange b { color: #e65100; }
+.tg-highlight.red {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  border-left-color: #d32f2f;
+}
+.tg-highlight.red b { color: #c62828; }
+
+/* DATA TABLE */
+.tg-data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 12px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  font-size: 12.5px;
+}
+.tg-data-table th {
+  text-align: left;
+  padding: 12px 14px;
+  background: #f8f9fb;
+  font-weight: 800;
+  color: #444;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.tg-data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f3f6;
+  color: #333;
+  line-height: 1.55;
+  vertical-align: top;
+}
+.tg-data-table tr:last-child td { border-bottom: none; }
+
+/* CONTACT CARD */
+.tg-contact-card {
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  color: #fff;
+  border-radius: 12px;
+  padding: 24px 22px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.25);
+}
+.tg-contact-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,229,0,0.2), transparent 70%);
+  border-radius: 50%;
+}
+.tg-contact-content { position: relative; z-index: 2; }
+.tg-contact-title { font-size: 18px; font-weight: 800; margin: 0 0 6px; }
+.tg-contact-desc { font-size: 13px; opacity: 0.92; margin: 0 0 18px; line-height: 1.5; }
+.tg-contact-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.tg-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  background: #fff;
+  color: #2874f0;
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all .15s;
+}
+.tg-contact-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.tg-contact-btn.ghost {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  box-shadow: none;
+}
+.tg-contact-btn.ghost:hover { background: rgba(255,255,255,0.25); }
+.tg-contact-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+/* ACCEPT STRIP */
+.tg-accept-strip {
+  background: linear-gradient(135deg, #e6f7ec, #d1f0dd);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  text-align: center;
+  border: 1.5px solid #a5d6b7;
+}
+.tg-accept-icon { font-size: 34px; margin-bottom: 10px; }
+.tg-accept-title { font-size: 15px; font-weight: 800; color: #1b8a3a; margin: 0 0 6px; }
+.tg-accept-desc { font-size: 12.5px; color: #4a5568; line-height: 1.55; margin: 0; }
+
+/* VERSION FOOTER */
+.tg-version {
+  text-align: center;
+  padding: 14px 20px 20px;
+  font-size: 11.5px;
+  color: #999;
+  line-height: 1.7;
+}
+.tg-version b { color: #666; }
+
+/* BOTTOM NAV */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* BACK TO TOP */
+.tg-top-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 88px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.4);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all .25s;
+}
+.tg-top-btn.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.tg-top-btn:hover { filter: brightness(1.08); }
+.tg-top-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .tg-container { padding: 8px; }
+  .tg-hero { padding: 22px 18px; }
+  .tg-hero-title { font-size: 21px; }
+  .tg-hero-icon { font-size: 52px; right: 16px; }
+  .tg-section-head { padding: 14px 16px 10px; }
+  .tg-section-icon { width: 36px; height: 36px; font-size: 18px; }
+  .tg-section-title { font-size: 15px; }
+  .tg-section-body { padding: 14px 16px 18px; font-size: 13px; }
+  .tg-list li { font-size: 13px; }
+  .tg-data-table { font-size: 11.5px; }
+  .tg-data-table th, .tg-data-table td { padding: 9px 10px; }
+  .tg-contact-card { padding: 20px 18px; }
+  .tg-contact-btn { font-size: 12px; padding: 10px 16px; }
+  .tg-top-btn { bottom: 82px; right: 12px; width: 40px; height: 40px; }
+  .tg-quick-nav { padding: 14px 16px; }
+  .tg-quick-chip { font-size: 11.5px; padding: 7px 12px; }
+  .tg-accept-strip { padding: 18px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">Terms of Use</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- HERO -->
+    <div class="tg-hero">
+      <div class="tg-hero-content">
+        <div class="tg-hero-tag">📜 Read Before You Shop</div>
+        <h1 class="tg-hero-title">Terms of Use</h1>
+        <p class="tg-hero-sub">The rules, rights and responsibilities that govern your use of TOEGO.</p>
+      </div>
+      <div class="tg-hero-icon">⚖️</div>
+    </div>
+
+    <!-- META -->
+    <div class="tg-meta-strip">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Last updated: <b>12 October 2026</b> · Effective: <b>12 October 2026</b></span>
+    </div>
+
+    <!-- QUICK NAV -->
+    <div class="tg-quick-nav">
+      <div class="tg-quick-nav-title">Jump to Section</div>
+      <div class="tg-quick-chips">
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-accept')"><span class="tg-quick-chip-icon">✅</span>Acceptance</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-account')"><span class="tg-quick-chip-icon">👤</span>Account</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-orders')"><span class="tg-quick-chip-icon">📦</span>Orders</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-pricing')"><span class="tg-quick-chip-icon">💰</span>Pricing</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-returns')"><span class="tg-quick-chip-icon">↩️</span>Returns</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-seller')"><span class="tg-quick-chip-icon">🏪</span>Sellers</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-ip')"><span class="tg-quick-chip-icon">©️</span>IP Rights</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-prohibited')"><span class="tg-quick-chip-icon">🚫</span>Prohibited</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-liability')"><span class="tg-quick-chip-icon">⚠️</span>Liability</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-law')"><span class="tg-quick-chip-icon">🏛️</span>Law</div>
+        <div class="tg-quick-chip" onclick="tgGoTo('sec-contact')"><span class="tg-quick-chip-icon">📞</span>Contact</div>
+      </div>
+    </div>
+
+    <!-- INTRO -->
+    <div class="tg-section">
+      <div class="tg-section-head">
+        <div class="tg-section-icon blue">👋</div>
+        <div>
+          <div class="tg-section-title">Welcome to TOEGO</div>
+          <div class="tg-section-sub">Please read carefully</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>These Terms of Use ("Terms") govern your access to and use of <b>toego.in</b> and the TOEGO services (collectively, the "Platform"). The Platform is owned and operated by TOEGO ("we", "us", "our").</p>
+        <p>By accessing, browsing, registering, or purchasing from TOEGO, you agree to be bound by these Terms, our <a href="privacy.html">Privacy Policy</a>, and any other policies referenced here.</p>
+        <div class="tg-highlight orange">
+          ⚠️ <b>Please read:</b> If you do not agree with any part of these Terms, please do not use TOEGO.
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. ACCEPTANCE -->
+    <div class="tg-section" id="sec-accept">
+      <div class="tg-section-head">
+        <div class="tg-section-icon green">✅</div>
+        <div>
+          <div class="tg-section-title">1. Acceptance of Terms</div>
+          <div class="tg-section-sub">Your agreement with us</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>By using TOEGO in any way, you confirm that:</p>
+        <ul class="tg-list">
+          <li>You are at least <b>18 years old</b> and legally capable of entering into a binding contract.</li>
+          <li>All information you provide to us is accurate, current, and complete.</li>
+          <li>You will use TOEGO only for lawful purposes and in accordance with these Terms.</li>
+          <li>You accept our <a href="privacy.html">Privacy Policy</a> and other applicable policies.</li>
+        </ul>
+        <p>We may update these Terms at any time. Continued use of TOEGO after changes means you accept the updated Terms.</p>
+      </div>
+    </div>
+
+    <!-- 2. ACCOUNT -->
+    <div class="tg-section" id="sec-account">
+      <div class="tg-section-head">
+        <div class="tg-section-icon blue">👤</div>
+        <div>
+          <div class="tg-section-title">2. Your Account</div>
+          <div class="tg-section-sub">Registration and responsibilities</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>To access certain features of TOEGO, you must create an account. When you register:</p>
+
+        <table class="tg-data-table">
+          <thead>
+            <tr>
+              <th>You Must</th>
+              <th>You Must Not</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Provide accurate, current information</td>
+              <td>Impersonate any other person or entity</td>
+            </tr>
+            <tr>
+              <td>Keep your password secure and confidential</td>
+              <td>Share your account with others</td>
+            </tr>
+            <tr>
+              <td>Notify us immediately of unauthorized access</td>
+              <td>Use another person's account without permission</td>
+            </tr>
+            <tr>
+              <td>Use your account only for personal use</td>
+              <td>Create multiple accounts for abuse purposes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tg-highlight">
+          🔐 You are responsible for all activity that occurs under your account. Keep your password strong and never share it with anyone.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ORDERS -->
+    <div class="tg-section" id="sec-orders">
+      <div class="tg-section-head">
+        <div class="tg-section-icon orange">📦</div>
+        <div>
+          <div class="tg-section-title">3. Orders & Purchases</div>
+          <div class="tg-section-sub">How ordering works on TOEGO</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>When you place an order on TOEGO, the following process applies:</p>
+        <ol class="tg-list num">
+          <li>You place an order by adding products to your cart and completing checkout.</li>
+          <li>Your order is sent to the seller for acceptance.</li>
+          <li>Once accepted, the seller prepares and ships the product.</li>
+          <li>Delivery is made to the address provided by you.</li>
+        </ol>
+
+        <p><b>Order Acceptance:</b> All orders are subject to acceptance by the seller. We reserve the right to refuse or cancel any order for reasons including:</p>
+        <ul class="tg-list">
+          <li>Product unavailability or out of stock</li>
+          <li>Pricing errors or inaccuracies</li>
+          <li>Suspected fraud or fraudulent activity</li>
+          <li>Incomplete or incorrect delivery information</li>
+          <li>Violation of these Terms</li>
+        </ul>
+
+        <div class="tg-highlight">
+          📌 <b>Cancellation by You:</b> You may cancel orders before the seller accepts them. Once accepted, cancellation may not be possible.
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. PRICING & PAYMENT -->
+    <div class="tg-section" id="sec-pricing">
+      <div class="tg-section-head">
+        <div class="tg-section-icon yellow">💰</div>
+        <div>
+          <div class="tg-section-title">4. Pricing & Payment</div>
+          <div class="tg-section-sub">Costs, taxes, and payment methods</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>All prices on TOEGO are displayed in <b>Indian Rupees (₹)</b> and inclusive of applicable GST unless stated otherwise.</p>
+
+        <table class="tg-data-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Payment Methods</b></td>
+              <td>Razorpay (UPI, Credit/Debit Cards, Netbanking, Wallets), Cash on Delivery (COD) where available</td>
+            </tr>
+            <tr>
+              <td><b>Delivery Charges</b></td>
+              <td>FREE on orders above ₹499. Below that, delivery fees apply based on weight</td>
+            </tr>
+            <tr>
+              <td><b>GST</b></td>
+              <td>Applicable GST (0%, 5%, 12%, 18%, or 28%) is shown at checkout</td>
+            </tr>
+            <tr>
+              <td><b>Coupons</b></td>
+              <td>Subject to terms of each coupon. One coupon per order unless stated</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tg-highlight red">
+          🚨 <b>Payment Security:</b> We use <b>Razorpay</b> (PCI-DSS Level 1 certified) to process payments. TOEGO never stores your card number, CVV, or UPI PIN.
+        </div>
+
+        <p><b>Price Changes:</b> We reserve the right to change prices at any time without prior notice. Prices at the time of order confirmation apply.</p>
+      </div>
+    </div>
+
+    <!-- 5. RETURNS & REFUNDS -->
+    <div class="tg-section" id="sec-returns">
+      <div class="tg-section-head">
+        <div class="tg-section-icon pink">↩️</div>
+        <div>
+          <div class="tg-section-title">5. Returns & Refunds</div>
+          <div class="tg-section-sub">7-day easy returns policy</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We offer a <b>7-day return policy</b> from the date of delivery on eligible items.</p>
+
+        <p><b>To be eligible for return:</b></p>
+        <ul class="tg-list">
+          <li>Product must be unused, undamaged, and in original packaging</li>
+          <li>All tags, labels, and accessories must be intact</li>
+          <li>Return must be requested within 7 days of delivery</li>
+          <li>Proof of purchase (order ID) required</li>
+        </ul>
+
+        <p><b>Non-returnable items:</b></p>
+        <ul class="tg-list">
+          <li>Innerwear, lingerie, and swimwear</li>
+          <li>Cosmetics and personal care products (once opened)</li>
+          <li>Customized or personalized products</li>
+          <li>Perishable goods</li>
+        </ul>
+
+        <div class="tg-highlight orange">
+          💡 <b>Refund Time:</b> Refunds are processed within <b>5-7 business days</b> after the return is approved and picked up. Amount is credited to original payment method (for COD, refunds are via bank transfer).
+        </div>
+
+        <p><b>Return Process:</b></p>
+        <ol class="tg-list num">
+          <li>Go to <a href="my-orders.html">My Orders</a> and find the delivered order</li>
+          <li>Tap "Return" and select a reason</li>
+          <li>Submit the request — it goes to our admin for approval</li>
+          <li>Once approved, a pickup will be arranged</li>
+          <li>After quality check, refund is initiated</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 6. SELLERS -->
+    <div class="tg-section" id="sec-seller">
+      <div class="tg-section-head">
+        <div class="tg-section-icon purple">🏪</div>
+        <div>
+          <div class="tg-section-title">6. Seller Terms</div>
+          <div class="tg-section-sub">Additional terms for sellers</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>If you register as a seller on TOEGO, the following additional terms apply:</p>
+
+        <table class="tg-data-table">
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Commission</b></td>
+              <td>Commission % as agreed per seller (default 5%) is deducted from every delivered order</td>
+            </tr>
+            <tr>
+              <td><b>Delivery Charge</b></td>
+              <td>Based on weight slabs (auto-calculated at settlement)</td>
+            </tr>
+            <tr>
+              <td><b>Return Cut</b></td>
+              <td>₹150 deducted per approved customer return</td>
+            </tr>
+            <tr>
+              <td><b>Settlement</b></td>
+              <td>After delivery + 7-day return window, earnings become payable</td>
+            </tr>
+            <tr>
+              <td><b>Product Approval</b></td>
+              <td>All products must be approved by admin before going live</td>
+            </tr>
+            <tr>
+              <td><b>Content</b></td>
+              <td>You are responsible for accurate product listings, images, and pricing</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tg-highlight">
+          🏪 <b>Seller Responsibility:</b> Sellers are independent business entities, not employees of TOEGO. All tax, GST, and legal compliance obligations are the seller's responsibility.
+        </div>
+
+        <p>TOEGO reserves the right to suspend or terminate any seller account that violates these Terms or engages in fraudulent activity.</p>
+      </div>
+    </div>
+
+    <!-- 7. IP RIGHTS -->
+    <div class="tg-section" id="sec-ip">
+      <div class="tg-section-head">
+        <div class="tg-section-icon teal">©️</div>
+        <div>
+          <div class="tg-section-title">7. Intellectual Property</div>
+          <div class="tg-section-sub">Who owns what on TOEGO</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>All content on TOEGO — including but not limited to logos, brand names, design, layout, graphics, images, icons, and code — is owned by or licensed to TOEGO and protected by Indian and international copyright laws.</p>
+
+        <p><b>You MAY:</b></p>
+        <ul class="tg-list">
+          <li>Share product links and pages with friends and social media</li>
+          <li>Screenshot and use content for personal, non-commercial purposes</li>
+          <li>Write reviews using our brand name (for honest feedback)</li>
+        </ul>
+
+        <p><b>You MAY NOT:</b></p>
+        <ul class="tg-list">
+          <li>Copy, reproduce, or redistribute our content without written permission</li>
+          <li>Use the TOEGO name, logo, or branding for your own business</li>
+          <li>Scrape, harvest, or extract data from TOEGO</li>
+          <li>Create derivative works based on TOEGO</li>
+          <li>Remove any copyright or trademark notices</li>
+        </ul>
+
+        <div class="tg-highlight">
+          📸 <b>Your Content:</b> When you upload images (product photos, review photos, etc.), you grant TOEGO a worldwide, non-exclusive, royalty-free license to display and use them on the Platform. You confirm you have the right to share them.
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. PROHIBITED ACTIVITIES -->
+    <div class="tg-section" id="sec-prohibited">
+      <div class="tg-section-head">
+        <div class="tg-section-icon red">🚫</div>
+        <div>
+          <div class="tg-section-title">8. Prohibited Activities</div>
+          <div class="tg-section-sub">What you must not do on TOEGO</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>You agree not to engage in any of the following activities on TOEGO:</p>
+
+        <ul class="tg-list">
+          <li><b>Fraudulent Orders:</b> Placing fake orders, refusing delivery repeatedly, or using fake addresses.</li>
+          <li><b>Fake Reviews:</b> Posting paid, biased, or fake reviews to manipulate ratings.</li>
+          <li><b>Harassment:</b> Abusing sellers, delivery partners, or our team in any way.</li>
+          <li><b>Hacking:</b> Attempting to breach, exploit, or harm our systems or data.</li>
+          <li><b>Data Theft:</b> Scraping, crawling, or copying product listings for rival businesses.</li>
+          <li><b>Impersonation:</b> Pretending to be a TOEGO employee, seller, or another user.</li>
+          <li><b>Illegal Activity:</b> Using the platform for money laundering, terrorism, or any illegal purpose.</li>
+          <li><b>Spam:</b> Sending unsolicited messages, ads, or links through any TOEGO feature.</li>
+          <li><b>Abuse of Coupons:</b> Creating multiple accounts to misuse coupons or offers.</li>
+          <li><b>Counterfeit:</b> As a seller, listing counterfeit or stolen products.</li>
+        </ul>
+
+        <div class="tg-highlight red">
+          🚨 <b>Consequences:</b> Violation of these rules may result in immediate account suspension, order cancellation, permanent ban from TOEGO, and/or legal action under applicable Indian laws.
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. LIABILITY -->
+    <div class="tg-section" id="sec-liability">
+      <div class="tg-section-head">
+        <div class="tg-section-icon orange">⚠️</div>
+        <div>
+          <div class="tg-section-title">9. Limitation of Liability</div>
+          <div class="tg-section-sub">Our responsibility to you</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>TOEGO acts as an intermediary between buyers and sellers. We do not manufacture or own the products listed on our platform.</p>
+
+        <p><b>TOEGO is not liable for:</b></p>
+        <ul class="tg-list">
+          <li>Product quality, safety, or accuracy of seller descriptions</li>
+          <li>Delays caused by sellers, courier partners, or events beyond our control</li>
+          <li>Any indirect, incidental, or consequential damages</li>
+          <li>Loss of profit, data, or business opportunities</li>
+          <li>Actions of third parties, including sellers and delivery partners</li>
+        </ul>
+
+        <p>To the maximum extent permitted by law, TOEGO's total liability for any claim shall not exceed the <b>amount you paid for the specific order</b> that caused the claim.</p>
+
+        <div class="tg-highlight">
+          💡 <b>Force Majeure:</b> We are not responsible for delays or failures caused by events beyond our reasonable control (natural disasters, government actions, war, pandemics, etc.).
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. GOVERNING LAW -->
+    <div class="tg-section" id="sec-law">
+      <div class="tg-section-head">
+        <div class="tg-section-icon purple">🏛️</div>
+        <div>
+          <div class="tg-section-title">10. Governing Law & Disputes</div>
+          <div class="tg-section-sub">Legal jurisdiction</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>These Terms are governed by and construed in accordance with the laws of <b>India</b>.</p>
+
+        <p>Any disputes arising out of or in connection with these Terms or your use of TOEGO shall be subject to the exclusive jurisdiction of the courts of <b>India</b>.</p>
+
+        <div class="tg-highlight">
+          🤝 <b>Try Amicable Resolution First:</b> Before pursuing legal action, we encourage you to contact us at <b>support@toego.in</b> to resolve any issue informally.
+        </div>
+
+        <p><b>Grievance Officer:</b> As per the Information Technology Act, 2000 and rules thereunder, the name and contact details of the Grievance Officer are:</p>
+        <ul class="tg-list">
+          <li><b>Name:</b> TOEGO Grievance Officer</li>
+          <li><b>Email:</b> grievance@toego.in</li>
+          <li><b>Response Time:</b> Within 15 days of receipt of complaint</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 11. CHANGES -->
+    <div class="tg-section">
+      <div class="tg-section-head">
+        <div class="tg-section-icon pink">📝</div>
+        <div>
+          <div class="tg-section-title">11. Changes to Terms</div>
+          <div class="tg-section-sub">Staying up to date</div>
+        </div>
+      </div>
+      <div class="tg-section-body">
+        <p>We may modify these Terms at any time. When we do, we will:</p>
+        <ul class="tg-list">
+          <li>Update the "Last updated" date at the top of this page</li>
+          <li>Send a notification for significant changes</li>
+          <li>Post a prominent notice on TOEGO</li>
+        </ul>
+        <p>Your continued use of TOEGO after any change means you accept the updated Terms. If you do not agree, please stop using the Platform.</p>
+      </div>
+    </div>
+
+    <!-- ACCEPT STRIP -->
+    <div class="tg-accept-strip">
+      <div class="tg-accept-icon">✅</div>
+      <div class="tg-accept-title">By Using TOEGO, You Accept These Terms</div>
+      <p class="tg-accept-desc">Thank you for being part of the TOEGO community. We're committed to providing you a safe, fair, and enjoyable shopping experience.</p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="tg-contact-card" id="sec-contact">
+      <div class="tg-contact-content">
+        <div class="tg-contact-title">Have Questions?</div>
+        <p class="tg-contact-desc">Reach out for any question about these Terms, or if you need clarification on any policy.</p>
+        <div class="tg-contact-actions">
+          <a href="mailto:legal@toego.in" class="tg-contact-btn">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            Email Legal
+          </a>
+          <a href="help-center.html" class="tg-contact-btn ghost">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Help Center
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERSION FOOTER -->
+    <div class="tg-version">
+      <b>TOEGO Terms of Use</b><br>
+      Version 2.0 · Effective from 12 October 2026<br>
+      © 2026 TOEGO.com · Made in India 🇮🇳
+    </div>
+
+  </div>
+</div>
+
+<!-- BACK TO TOP -->
+<button class="tg-top-btn" id="tg-top-btn" onclick="tgScrollTop()" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- BOTTOM NAV -->
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const GUEST_CART = 'toego_cart_guest';
+  const THEME_KEY = 'toego_theme_colors';
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function adjustColor(hex, pct) {
+    try {
+      hex = hex.replace('#','');
+      const n = parseInt(hex, 16);
+      const r = Math.max(0, Math.min(255, (n >> 16) + pct));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
+      const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    } catch(e) { return hex; }
+  }
+  function applyTheme(primary, dark) {
+    primary = primary || '#2874f0';
+    dark = dark || adjustColor(primary, -30);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    const hd = document.querySelector('.tg-hd'); if (hd) hd.style.background = primary;
+    const hero = document.querySelector('.tg-hero'); if (hero) hero.style.background = 'linear-gradient(135deg, ' + primary + ', ' + dark + ')';
+    const contactCard = document.querySelector('.tg-contact-card'); if (contactCard) contactCard.style.background = 'linear-gradient(135deg, ' + primary + ', ' + dark + ')';
+    const topBtn = document.getElementById('tg-top-btn'); if (topBtn) topBtn.style.background = 'linear-gradient(135deg, ' + primary + ', ' + dark + ')';
+    try { localStorage.setItem(THEME_KEY, JSON.stringify({ primary, dark })); } catch(e) {}
+  }
+  (function boot() {
+    try { const c = localStorage.getItem(THEME_KEY); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {}
+  })();
+  (async function loadTheme() {
+    try {
+      const s = await db.collection('siteSettings').doc('theme').get();
+      if (s.exists) {
+        const d = s.data();
+        const p = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
+        applyTheme(p, adjustColor(p, -30));
+      }
+    } catch(e) {}
+    db.collection('siteSettings').doc('theme').onSnapshot(snap => {
+      if (!snap.exists) return;
+      const d = snap.data();
+      const p = d.themeColor || '#2874f0';
+      applyTheme(p, adjustColor(p, -30));
+    }, () => {});
+  })();
+
+  /* ========= CART BADGE ========= */
+  function getGuestCart() { try { return JSON.parse(localStorage.getItem(GUEST_CART) || '[]'); } catch(e) { return []; } }
+  function cartCount(items) { return (items||[]).reduce((s,i) => s + Number(i.qty || 1), 0); }
+  async function updateCartBadge() {
+    let count = 0;
+    const u = auth.currentUser;
+    try {
+      if (u) {
+        const snap = await db.collection('carts').doc(u.uid).collection('items').get();
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        count = cartCount(getGuestCart());
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-bnav-badge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ========= SCROLL TO SECTION ========= */
+  window.tgGoTo = function(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.pageYOffset - 72;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  };
+
+  /* ========= BACK TO TOP ========= */
+  const topBtn = document.getElementById('tg-top-btn');
+  function updateTopBtn() {
+    if (!topBtn) return;
+    if (window.pageYOffset > 400) topBtn.classList.add('show');
+    else topBtn.classList.remove('show');
+  }
+  window.tgScrollTop = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  window.addEventListener('scroll', updateTopBtn, { passive: true });
+
+  /* ========= AUTH ========= */
+  auth.onAuthStateChanged(() => {
+    updateCartBadge();
+  });
+
+  /* ========= INIT ========= */
+  updateCartBadge();
+  updateTopBtn();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Seller Dashboard — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#2874f0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;padding:0;width:100%;max-width:100vw;overflow-x:hidden;background:#f1f3f6;font-family:'Roboto',Arial,sans-serif;color:#212121;}
+img{max-width:100%;display:block;}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select,textarea{font:inherit;}
+a{color:inherit;text-decoration:none;}
+header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.breadcrumb,.o_website_edit_toolbar{display:none!important;}
+.tg-hd{background:linear-gradient(135deg,#2874f0,#1a5dc7);position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+.tg-hd-inner{display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:60px;}
+.tg-hd-menu-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;border-radius:50%;flex-shrink:0;}
+.tg-hd-menu-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.2;}
+.tg-hd-logo{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.tg-hd-logo-mark{width:32px;height:32px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#2874f0;font-weight:900;font-style:italic;font-size:17px;}
+.tg-hd-logo-text{color:#fff;font-weight:900;font-style:italic;font-size:17px;}
+.tg-hd-logo-text span{color:#ffe500;}
+.tg-hd-logo-badge{background:#ffe500;color:#212121;font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;margin-left:2px;}
+.tg-hd-spacer{flex:1;}
+.tg-hd-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;border-radius:50%;position:relative;}
+.tg-hd-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;}
+.tg-hd-badge{position:absolute;top:4px;right:4px;background:#ff6161;color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid #2874f0;}
+.tg-ring-hd-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;border-radius:50%;position:relative;transition:background .15s;}
+.tg-ring-hd-btn:hover{background:rgba(255,255,255,0.12);}
+.tg-ring-hd-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;}
+.tg-ring-hd-btn.off{opacity:0.45;}
+.tg-ring-hd-btn.off::after{content:'';position:absolute;top:50%;left:6px;right:6px;height:2.5px;background:#fff;transform:translateY(-50%) rotate(-45deg);border-radius:2px;}
+.tg-ring-hd-btn.on{background:rgba(34,197,94,0.25);}
+.tg-ring-hd-btn.on::before{content:'';position:absolute;top:6px;right:6px;width:9px;height:9px;background:#22c55e;border-radius:50%;border:1.5px solid #fff;animation:tgRingPulse 1.5s infinite;}
+@keyframes tgRingPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.3);opacity:0.6;}}
+/* ✅ NEW: Shop Home button */
+.tg-hd-shop-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.15);}
+.tg-hd-shop-btn:hover{background:rgba(255,255,255,0.25);}
+.tg-hd-shop-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;}
+.tg-store-bar{background:rgba(255,255,255,0.12);padding:8px 14px;display:flex;align-items:center;gap:10px;}
+.tg-store-avatar{width:26px;height:26px;border-radius:50%;background:#fff;color:#2874f0;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tg-store-name{color:#fff;font-size:12.5px;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tg-store-status{display:inline-flex;align-items:center;gap:4px;color:#22c55e;font-size:10.5px;font-weight:700;background:rgba(34,197,94,0.15);padding:3px 8px;border-radius:999px;}
+.tg-store-status::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;animation:tgPulse 1.5s infinite;}
+@keyframes tgPulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.tg-drawer-overlay{position:fixed;inset:0;background:rgba(15,23,41,0.5);z-index:99998;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;}
+.tg-drawer-overlay.show{opacity:1;visibility:visible;}
+.tg-drawer{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:88vw;background:#fff;z-index:99999;transform:translateX(-100%);transition:transform .3s;display:flex;flex-direction:column;}
+.tg-drawer.show{transform:translateX(0);}
+.tg-drawer-head{background:linear-gradient(135deg,#2874f0,#1a5dc7);padding:18px;color:#fff;position:relative;}
+.tg-drawer-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.tg-drawer-head-logo{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.tg-drawer-head-logo-mark{width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#2874f0;font-weight:900;font-style:italic;font-size:20px;}
+.tg-drawer-head-logo-text{font-weight:900;font-style:italic;font-size:20px;}
+.tg-drawer-head-logo-text span{color:#ffe500;}
+.tg-drawer-head-badge{display:inline-block;background:#ffe500;color:#212121;font-size:9px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;margin-bottom:12px;}
+.tg-drawer-admin{display:flex;align-items:center;gap:10px;}
+.tg-drawer-admin-avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.2);border:2px solid rgba(255,255,255,0.4);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tg-drawer-admin-info{flex:1;min-width:0;}
+.tg-drawer-admin-name{font-size:13.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tg-drawer-admin-email{font-size:11px;opacity:0.9;margin-top:2px;}
+.tg-drawer-body{flex:1;overflow-y:auto;padding:8px 0;}
+.tg-drawer-section{padding:10px 20px 4px;font-size:10.5px;color:#999;font-weight:700;text-transform:uppercase;}
+.tg-drawer-item{display:flex;align-items:center;gap:12px;padding:10px 18px;cursor:pointer;font-size:13.5px;position:relative;}
+.tg-drawer-item:hover{background:#f1f3f6;}
+.tg-drawer-item.active{background:#f0f5ff;color:#2874f0;font-weight:700;}
+.tg-drawer-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#2874f0;}
+.tg-drawer-item-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tg-drawer-item-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;}
+.tg-drawer-item-icon.blue{background:linear-gradient(135deg,#eef3ff,#e0eaff);color:#2874f0;}
+.tg-drawer-item-icon.orange{background:linear-gradient(135deg,#fff3e0,#ffe0b2);color:#fb641b;}
+.tg-drawer-item-icon.green{background:linear-gradient(135deg,#e6f7ec,#d1f0dd);color:#1b8a3a;}
+.tg-drawer-item-icon.red{background:linear-gradient(135deg,#ffebee,#ffcdd2);color:#d32f2f;}
+.tg-drawer-item-icon.purple{background:linear-gradient(135deg,#ede7f6,#d1c4e9);color:#7e57c2;}
+.tg-drawer-item-icon.yellow{background:linear-gradient(135deg,#fff8e1,#ffecb3);color:#f57c00;}
+.tg-drawer-item-icon.teal{background:linear-gradient(135deg,#e0f2f1,#b2dfdb);color:#00796b;}
+.tg-drawer-item-icon.pink{background:linear-gradient(135deg,#fce4ec,#f8bbd0);color:#f43397;}
+.tg-drawer-item-label{flex:1;}
+.tg-drawer-item-badge{background:#ff6161;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;}
+.tg-drawer-foot{padding:10px 18px;border-top:1px solid #f1f3f6;font-size:10.5px;color:#999;text-align:center;}
+.tg-wrap{padding-top:96px;padding-bottom:80px;min-height:100vh;}
+.tg-container{max-width:1300px;margin:0 auto;padding:12px;}
+.tg-view{display:none;}
+.tg-view.active{display:block;}
+.tg-sec{background:#fff;border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.tg-sec-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;gap:10px;flex-wrap:wrap;}
+.tg-sec-title{font-size:16px;font-weight:800;}
+.tg-sec-sub{font-size:12px;color:#888;margin-top:2px;}
+.tg-sec-action{font-size:12.5px;color:#2874f0;font-weight:700;padding:6px 12px;border-radius:6px;cursor:pointer;}
+.tg-welcome{background:linear-gradient(135deg,#2874f0,#1a5dc7 50%,#0f1729);color:#fff;border-radius:14px;padding:22px 20px;margin-bottom:14px;position:relative;overflow:hidden;}
+.tg-welcome::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(255,229,0,0.2),transparent 70%);border-radius:50%;}
+.tg-welcome-content{position:relative;z-index:2;}
+.tg-welcome-title{font-size:20px;font-weight:800;margin:0 0 4px;}
+.tg-welcome-sub{font-size:13px;opacity:0.9;margin:0 0 14px;}
+.tg-welcome-stats{display:flex;gap:18px;flex-wrap:wrap;}
+.tg-welcome-stat-num{font-size:18px;font-weight:900;line-height:1;color:#ffe500;}
+.tg-welcome-stat-label{font-size:10.5px;opacity:0.85;margin-top:3px;text-transform:uppercase;}
+.tg-stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;}
+@media(min-width:600px){.tg-stats-grid{grid-template-columns:repeat(4,1fr);}}
+.tg-stat-card{background:#fff;border-radius:12px;padding:16px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.06);cursor:pointer;position:relative;}
+.tg-stat-card-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.tg-stat-card-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;}
+.tg-stat-card-icon.blue{background:linear-gradient(135deg,#eef3ff,#e0eaff);color:#2874f0;}
+.tg-stat-card-icon.orange{background:linear-gradient(135deg,#fff3e0,#ffe0b2);color:#fb641b;}
+.tg-stat-card-icon.green{background:linear-gradient(135deg,#e6f7ec,#d1f0dd);color:#1b8a3a;}
+.tg-stat-card-icon.purple{background:linear-gradient(135deg,#ede7f6,#d1c4e9);color:#7e57c2;}
+.tg-stat-card-icon.red{background:linear-gradient(135deg,#ffebee,#ffcdd2);color:#d32f2f;}
+.tg-stat-card-icon.yellow{background:linear-gradient(135deg,#fff8e1,#ffecb3);color:#f57c00;}
+.tg-stat-card-icon.teal{background:linear-gradient(135deg,#e0f2f1,#b2dfdb);color:#00796b;}
+.tg-stat-card-num{font-size:24px;font-weight:900;line-height:1;margin-bottom:4px;}
+.tg-stat-card-label{font-size:11.5px;color:#666;font-weight:600;text-transform:uppercase;}
+.tg-chips-wrap{overflow-x:auto;scrollbar-width:none;padding:0 14px;margin-bottom:6px;}
+.tg-chips-wrap::-webkit-scrollbar{display:none;}
+.tg-chips{display:flex;gap:8px;width:max-content;padding:4px 0 10px;}
+.tg-chip{padding:8px 14px;background:#fff;border:1.5px solid #e5e7eb;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.tg-chip.active{background:#2874f0;color:#fff;border-color:#2874f0;}
+.tg-chip-count{background:rgba(0,0,0,0.08);padding:2px 6px;border-radius:999px;font-size:10px;font-weight:700;}
+.tg-chip.active .tg-chip-count{background:rgba(255,255,255,0.25);}
+.tg-order-toolbar{padding:10px 14px 0;display:flex;gap:8px;flex-wrap:wrap;}
+.tg-order-toolbar .tg-search{flex:1;min-width:180px;background:#fff;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.tg-order-toolbar .tg-search svg{width:16px;height:16px;stroke:#2874f0;fill:none;stroke-width:2.4;}
+.tg-order-toolbar .tg-search input{flex:1;border:none;outline:none;font-size:13.5px;background:transparent;min-width:0;}
+.tg-order-select-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#f0f5ff;border-radius:10px;margin:10px 12px;border:1.5px solid #d0e2ff;flex-wrap:wrap;}
+.tg-order-select-bar label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2874f0;cursor:pointer;}
+.tg-order-select-bar input[type="checkbox"]{width:18px;height:18px;accent-color:#2874f0;cursor:pointer;}
+.tg-order-select-bar .tg-sel-count{font-size:12px;color:#666;font-weight:600;margin-left:auto;}
+.tg-order-select-bar .tg-bulk-btn{background:#2874f0;color:#fff;font-weight:700;padding:8px 16px;border-radius:8px;font-size:12.5px;margin-left:10px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+.tg-order-select-bar .tg-bulk-btn.suc{background:#1b8a3a;}
+.tg-order-select-bar .tg-bulk-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.tg-order-wrap{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border-bottom:1px solid #f1f3f6;cursor:pointer;position:relative;}
+.tg-order-wrap.selected{background:#e8f0ff;}
+.tg-order-wrap.selected::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#2874f0;}
+.tg-order-cb{width:20px;height:20px;accent-color:#2874f0;cursor:pointer;flex-shrink:0;margin-top:2px;}
+.tg-order-content{flex:1;min-width:0;}
+.tg-order{border-bottom:1px solid #f1f3f6;padding:14px 16px;cursor:pointer;}
+.tg-order:hover{background:#f8f9fb;}
+.tg-order-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+.tg-order-id{font-size:12px;color:#878787;font-family:monospace;}
+.tg-order-id b{color:#212121;}
+.tg-order-date{font-size:11.5px;color:#999;}
+.tg-order-body{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;margin-bottom:10px;}
+.tg-order-img{width:56px;height:56px;border-radius:8px;overflow:hidden;background:#f5f5f6;display:flex;align-items:center;justify-content:center;}
+.tg-order-img img{max-width:100%;max-height:100%;object-fit:contain;padding:3px;}
+.tg-order-info{min-width:0;}
+.tg-order-name{font-size:13.5px;font-weight:600;margin-bottom:3px;}
+.tg-order-meta{font-size:11.5px;color:#888;display:flex;gap:10px;flex-wrap:wrap;}
+.tg-order-price{font-size:14px;font-weight:800;}
+.tg-order-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+.tg-order-status{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px;text-transform:uppercase;}
+.tg-order-status.pending{background:#fff8e1;color:#f57c00;}
+.tg-order-status.seller-accepted{background:#e3f2fd;color:#1565c0;}
+.tg-order-status.admin-approved{background:#e1f5fe;color:#0277bd;}
+.tg-order-status.label-generated{background:#ede7f6;color:#6a1b9a;}
+.tg-order-status.processing{background:#fff3e0;color:#e65100;}
+.tg-order-status.dispatched{background:#e8eaf6;color:#3949ab;}
+.tg-order-status.delivered{background:#e6f7ec;color:#1b8a3a;}
+.tg-order-status.cancelled{background:#ffebee;color:#c62828;}
+.tg-order-status.return-requested{background:#f3e5f5;color:#6a1b9a;}
+.tg-order-status.returned{background:#e0f2f1;color:#00695c;}
+.tg-order-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.tg-order-btn{padding:8px 14px;border-radius:6px;font-size:11.5px;font-weight:700;text-transform:uppercase;display:inline-flex;align-items:center;gap:5px;border:1.5px solid transparent;cursor:pointer;}
+.tg-order-btn.primary{background:#2874f0;color:#fff;}
+.tg-order-btn.outline{background:#fff;color:#2874f0;border-color:#2874f0;}
+.tg-order-btn.danger{background:#fff;color:#d32f2f;border-color:#ffcdd2;}
+.tg-order-btn.ghost{background:#f1f3f6;color:#212121;}
+.tg-order-btn.suc{background:#1b8a3a;color:#fff;}
+.tg-order-btn.label{background:#6a1b9a;color:#fff;}
+.tg-product{border-bottom:1px solid #f1f3f6;padding:14px 16px;cursor:pointer;position:relative;}
+.tg-product:hover{background:#f8f9fb;}
+.tg-product-body{display:grid;grid-template-columns:70px 1fr;gap:12px;}
+.tg-product-img{width:70px;height:70px;border-radius:8px;overflow:hidden;background:#f5f5f6;display:flex;align-items:center;justify-content:center;}
+.tg-product-img img{max-width:100%;max-height:100%;object-fit:contain;padding:3px;}
+.tg-product-info{min-width:0;}
+.tg-product-name{font-size:14px;font-weight:600;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.tg-product-meta{font-size:11.5px;color:#888;margin-bottom:6px;}
+.tg-product-stock{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;}
+.tg-product-stock.ok{background:#e6f7ec;color:#1b8a3a;}
+.tg-product-stock.low{background:#fff8e1;color:#f57c00;}
+.tg-product-stock.out{background:#ffebee;color:#d32f2f;}
+.tg-product-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.tg-empty{text-align:center;padding:50px 20px;}
+.tg-empty-icon{font-size:54px;margin-bottom:12px;opacity:0.35;}
+.tg-empty-title{font-size:16px;font-weight:800;margin:0 0 6px;}
+.tg-empty-desc{font-size:13px;color:#888;margin:0 0 20px;}
+.tg-fab{position:fixed;bottom:90px;right:18px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(40,116,240,0.4);z-index:9998;}
+.tg-fab svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2.6;}
+.tg-bnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e0e0;display:flex;z-index:9999;padding-bottom:env(safe-area-inset-bottom,0);}
+.tg-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px;gap:3px;font-size:10px;color:#666;font-weight:600;position:relative;cursor:pointer;}
+.tg-bnav-item.active{color:#2874f0;}
+.tg-bnav-item.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:#2874f0;border-radius:0 0 3px 3px;}
+.tg-bnav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;}
+.tg-bnav-badge{position:absolute;top:4px;right:calc(50% - 20px);background:#ff6161;color:#fff;font-size:9px;font-weight:700;min-width:15px;height:15px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+.tg-toasts{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 24px);pointer-events:none;}
+.tg-toast{padding:12px 20px;background:#212121;color:#fff;font-size:13px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);pointer-events:auto;font-weight:500;animation:tgToastIn .3s;}
+@keyframes tgToastIn{from{transform:translateY(20px);opacity:0;}to{transform:none;opacity:1;}}
+.tg-toast.success{background:#388e3c;}
+.tg-toast.error{background:#d32f2f;}
+.tg-toast.info{background:#2874f0;}
+.tg-timeline{padding:16px 18px;}
+.tg-timeline-step{display:flex;gap:12px;position:relative;padding-bottom:20px;}
+.tg-timeline-step:last-child{padding-bottom:0;}
+.tg-timeline-step:last-child::before{display:none;}
+.tg-timeline-step::before{content:'';position:absolute;left:11px;top:26px;bottom:0;width:2px;background:#e0e0e0;}
+.tg-timeline-step.done::before{background:#1b8a3a;}
+.tg-timeline-dot{width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #e0e0e0;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#999;}
+.tg-timeline-step.done .tg-timeline-dot{background:#1b8a3a;border-color:#1b8a3a;color:#fff;}
+.tg-timeline-step.current .tg-timeline-dot{background:#2874f0;border-color:#2874f0;color:#fff;}
+.tg-timeline-title{font-size:13.5px;font-weight:700;margin-bottom:2px;}
+.tg-timeline-time{font-size:11.5px;color:#888;}
+.tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.65);z-index:99999;display:none;align-items:flex-end;justify-content:center;}
+.tg-modal.show{display:flex;}
+.tg-modal-card{width:100%;max-width:640px;background:#fff;border-radius:18px 18px 0 0;padding:22px 20px 26px;max-height:92vh;overflow-y:auto;}
+@media(min-width:640px){.tg-modal{align-items:center;}.tg-modal-card{border-radius:16px;max-height:88vh;}}
+.tg-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;}
+.tg-modal-title{font-size:18px;font-weight:800;}
+.tg-modal-close{width:34px;height:34px;border-radius:50%;background:#f1f3f6;color:#666;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.tg-field{margin-bottom:14px;}
+.tg-field label{display:block;font-size:11.5px;color:#666;font-weight:700;margin-bottom:6px;text-transform:uppercase;}
+.tg-field input,.tg-field select,.tg-field textarea{width:100%;border:1.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;font-size:14px;outline:none;background:#fff;color:#212121;}
+.tg-field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:38px;}
+.tg-field select:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
+.tg-field input:focus,.tg-field textarea:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
+.tg-field textarea{min-height:100px;resize:vertical;}
+.tg-img-upload{border:2px dashed #c5cad3;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#f8f9fb;margin-bottom:10px;}
+.tg-img-upload svg{width:36px;height:36px;stroke:#999;fill:none;stroke-width:1.8;margin:0 auto 8px;}
+.tg-img-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.tg-img-preview-item{position:relative;width:74px;height:74px;border-radius:8px;overflow:hidden;border:1.5px solid #e0e0e0;}
+.tg-img-preview-item img{width:100%;height:100%;object-fit:cover;}
+.tg-img-preview-remove{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:#d32f2f;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.tg-modal-actions{display:flex;gap:10px;margin-top:16px;}
+.tg-modal-btn{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.tg-modal-btn.primary{background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;}
+.tg-modal-btn.danger{background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;}
+.tg-modal-btn.ghost{background:#f1f3f6;color:#212121;flex:0 0 40%;}
+.tg-return-alert{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-left:5px solid #d32f2f;border-radius:12px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;}
+.tg-return-alert-icon{width:48px;height:48px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px;}
+.tg-return-alert-info{flex:1;}
+.tg-return-alert-title{font-size:14px;font-weight:800;color:#c62828;margin-bottom:4px;}
+.tg-return-alert-desc{font-size:11.5px;color:#666;line-height:1.4;}
+.tg-return-alert-amount{font-size:20px;font-weight:900;color:#d32f2f;text-align:right;}
+.tg-return-alert-amount small{font-size:10.5px;font-weight:600;color:#888;display:block;margin-top:2px;}
+.tg-promo-card{border-radius:12px;overflow:hidden;margin-bottom:12px;background:#fff;border:1px solid #f1f3f6;}
+.tg-promo-banner{padding:18px 20px;color:#fff;}
+.tg-promo-tag{display:inline-block;background:rgba(255,255,255,0.2);font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;margin-bottom:8px;}
+.tg-promo-title{font-size:16px;font-weight:800;margin:0 0 4px;}
+.tg-promo-desc{font-size:12.5px;opacity:0.92;margin:0;}
+.tg-promo-body{padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.tg-ticket-row{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid #f1f3f6;cursor:pointer;}
+.tg-ticket-row:hover{background:#f8f9fb;}
+.tg-ticket-icon{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#e0f2f1,#b2dfdb);color:#00796b;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.tg-ticket-body{flex:1;min-width:0;}
+.tg-ticket-subject{font-size:13.5px;font-weight:700;margin-bottom:3px;}
+.tg-ticket-meta{font-size:11px;color:#888;display:flex;gap:8px;flex-wrap:wrap;}
+.tg-ticket-status{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:999px;text-transform:uppercase;}
+.tg-ticket-status.open{background:#e3f2fd;color:#1976d2;}
+.tg-ticket-status.resolved{background:#e6f7ec;color:#1b8a3a;}
+.tg-ticket-status.closed{background:#f5f5f5;color:#666;}
+.tg-chat-msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.45;word-wrap:break-word;margin-bottom:8px;}
+.tg-chat-msg.me{align-self:flex-end;background:#2874f0;color:#fff;border-bottom-right-radius:4px;margin-left:auto;}
+.tg-chat-msg.them{align-self:flex-start;background:#fff;color:#212121;border-bottom-left-radius:4px;border:1px solid #e0e0e0;}
+.tg-chat-msg-meta{font-size:10px;opacity:0.75;margin-top:4px;}
+.tg-bi-hero{background:linear-gradient(135deg,#7c3aed 0%,#5b21b6 50%,#3b0764 100%);color:#fff;border-radius:14px;padding:22px 20px;margin-bottom:14px;position:relative;overflow:hidden;}
+.tg-bi-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(255,229,0,0.2),transparent 70%);border-radius:50%;}
+.tg-bi-hero-content{position:relative;z-index:2;}
+.tg-bi-hero-title{font-size:20px;font-weight:800;margin:0 0 4px;}
+.tg-bi-hero-sub{font-size:13px;opacity:0.9;margin:0 0 14px;}
+.tg-bi-hero-stats{display:flex;gap:18px;flex-wrap:wrap;}
+.tg-bi-hero-num{font-size:18px;font-weight:900;line-height:1;color:#ffe500;}
+.tg-bi-hero-lbl{font-size:10.5px;opacity:0.85;margin-top:3px;text-transform:uppercase;}
+.tg-bi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;}
+@media(min-width:600px){.tg-bi-grid{grid-template-columns:repeat(4,1fr);}}
+.tg-bi-card{background:#fff;border-radius:12px;padding:16px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.tg-bi-card-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:18px;}
+.tg-bi-card-icon.purple{background:linear-gradient(135deg,#ede7f6,#d1c4e9);}
+.tg-bi-card-icon.blue{background:linear-gradient(135deg,#eef3ff,#e0eaff);}
+.tg-bi-card-icon.green{background:linear-gradient(135deg,#e6f7ec,#d1f0dd);}
+.tg-bi-card-icon.orange{background:linear-gradient(135deg,#fff3e0,#ffe0b2);}
+.tg-bi-card-num{font-size:24px;font-weight:900;line-height:1;margin-bottom:4px;color:#212121;}
+.tg-bi-card-label{font-size:11.5px;color:#666;font-weight:600;text-transform:uppercase;}
+.tg-bi-card-hint{font-size:10.5px;color:#999;margin-top:4px;}
+.tg-chart-wrap{padding:16px 18px 22px;overflow-x:auto;}
+.tg-bar-chart{display:flex;align-items:flex-end;gap:12px;min-height:220px;padding:20px 0 30px;position:relative;min-width:100%;}
+.tg-bar-chart::before{content:'';position:absolute;left:0;right:0;top:20px;height:1px;background:#f1f3f6;}
+.tg-bar-col{display:flex;flex-direction:column;align-items:center;flex:1;min-width:40px;position:relative;height:100%;}
+.tg-bar{width:100%;max-width:44px;background:linear-gradient(180deg,#7c3aed,#5b21b6);border-radius:6px 6px 0 0;position:relative;transition:all .3s;cursor:pointer;min-height:4px;}
+.tg-bar:hover{filter:brightness(1.15);}
+.tg-bar-value{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:#5b21b6;white-space:nowrap;}
+.tg-bar-label{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:10.5px;color:#666;font-weight:600;white-space:nowrap;max-width:60px;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.tg-chart-empty{text-align:center;padding:40px 20px;color:#999;font-size:13px;}
+.tg-top-prod{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid #f1f3f6;align-items:center;}
+.tg-top-prod-rank{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ede7f6,#d1c4e9);color:#5b21b6;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tg-top-prod-rank.gold{background:linear-gradient(135deg,#fef3c7,#fcd34d);color:#92400e;}
+.tg-top-prod-rank.silver{background:linear-gradient(135deg,#f3f4f6,#d1d5db);color:#374151;}
+.tg-top-prod-rank.bronze{background:linear-gradient(135deg,#fed7aa,#fb923c);color:#7c2d12;}
+.tg-top-prod-img{width:48px;height:48px;border-radius:8px;overflow:hidden;background:#f5f5f6;flex-shrink:0;}
+.tg-top-prod-img img{width:100%;height:100%;object-fit:cover;}
+.tg-top-prod-info{flex:1;min-width:0;}
+.tg-top-prod-name{font-size:13px;font-weight:600;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
+.tg-top-prod-meta{font-size:11px;color:#888;}
+.tg-top-prod-views{font-size:14px;font-weight:800;color:#5b21b6;text-align:right;}
+.tg-top-prod-views small{display:block;font-size:10px;color:#999;font-weight:500;margin-top:1px;}
+.tg-vis-bar{padding:12px 16px;border-bottom:1px solid #f1f3f6;}
+.tg-vis-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;}
+.tg-vis-name{font-size:13px;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tg-vis-num{font-size:12.5px;font-weight:800;color:#5b21b6;white-space:nowrap;}
+.tg-vis-track{height:8px;background:#f1f3f6;border-radius:999px;overflow:hidden;}
+.tg-vis-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#7c3aed,#5b21b6);transition:width .4s;}
+.tg-prod-form-section{background:#fafbfc;border-radius:10px;padding:14px;margin-bottom:12px;border:1.5px solid #eef1f6;}
+.tg-prod-form-section-title{font-size:13px;font-weight:800;margin-bottom:10px;color:#212121;letter-spacing:-0.1px;}
+.tg-prod-img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+@media(max-width:480px){.tg-prod-img-grid{grid-template-columns:repeat(3,1fr);}}
+.tg-prod-img-item{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:1.5px solid #e0e0e0;background:#f8f9fb;}
+.tg-prod-img-item img{width:100%;height:100%;object-fit:cover;}
+.tg-prod-img-remove{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(211,47,47,0.95);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-weight:900;box-shadow:0 2px 6px rgba(0,0,0,0.3);line-height:1;}
+.tg-prod-img-loading{position:absolute;inset:0;background:rgba(255,255,255,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#2874f0;gap:6px;}
+.tg-prod-img-loading::before{content:'';width:22px;height:22px;border:3px solid #d0e2ff;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .7s linear infinite;}
+@keyframes tgSpin{to{transform:rotate(360deg);}}
+.tg-prod-img-add{aspect-ratio:1/1;border-radius:10px;border:2px dashed #c5cad3;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:10.5px;color:#888;font-weight:800;gap:4px;padding:6px;text-align:center;line-height:1.2;}
+.tg-prod-img-add:hover{border-color:#2874f0;background:#f0f5ff;color:#2874f0;}
+.tg-prod-img-add svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.tg-prod-img-hint{font-size:10.5px;color:#888;text-align:center;margin-top:8px;line-height:1.4;}
+.tg-size-stock-row{display:grid;grid-template-columns:1.2fr 1fr 40px;gap:8px;align-items:center;margin-bottom:8px;}
+.tg-size-stock-row input{padding:10px 12px;font-size:13px;border:1.5px solid #e0e0e0;border-radius:8px;outline:none;width:100%;box-sizing:border-box;background:#fff;font-weight:600;}
+.tg-size-stock-row input:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
+.tg-size-stock-rm{width:38px;height:38px;border-radius:8px;background:#ffebee;color:#d32f2f;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;border:none;cursor:pointer;line-height:1;}
+.tg-size-stock-rm:hover{background:#d32f2f;color:#fff;}
+.tg-add-size-btn{width:100%;padding:11px;border-radius:8px;background:#f0f5ff;color:#2874f0;font-size:12.5px;font-weight:800;border:1.5px dashed #d0e2ff;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:0.3px;font-family:inherit;}
+.tg-add-size-btn:hover{background:#e0eaff;border-color:#2874f0;}
+.tg-add-size-btn:active{transform:translateY(1px);}
+.tg-settlement-preview{background:linear-gradient(135deg,#f0fff4,#e6f7ec);border:1.5px solid #a5d6b7;border-radius:12px;padding:14px 16px;margin-bottom:12px;}
+.tg-settlement-title{font-size:11.5px;font-weight:800;color:#1b8a3a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.tg-settlement-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:#333;align-items:center;}
+.tg-settlement-row span:last-child{font-weight:800;}
+.tg-settlement-row.total{border-top:1.5px dashed #1b8a3a;margin-top:6px;padding-top:8px;font-size:14px;}
+.tg-settlement-row.total span:last-child{font-size:16px;font-weight:900;color:#1b8a3a;}
+.tg-del-btn{background:linear-gradient(135deg,#d32f2f,#b71c1c) !important;color:#fff !important;box-shadow:0 4px 12px rgba(211,47,47,0.3) !important;}
+.tg-color-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.tg-color-chip{padding:8px 14px;border:1.5px solid #e0e0e0;border-radius:999px;font-size:12.5px;font-weight:700;background:#fff;cursor:pointer;transition:all .15s;color:#212121;user-select:none;position:relative;}
+.tg-color-chip:hover{border-color:#2874f0;}
+.tg-color-chip.active{background:#2874f0;color:#fff;border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.15);}
+.tg-color-chips-empty{font-size:12px;color:#999;text-align:center;padding:14px;background:#fff;border-radius:8px;border:1.5px dashed #e0e0e0;}
+.tg-pickup-box{background:#fff;border:1.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.6;color:#333;}
+.tg-pickup-box b{color:#212121;font-weight:800;font-size:13px;}
+.tg-pickup-box .ph{color:#666;margin-top:2px;}
+.tg-pickup-hint{font-size:11px;color:#888;margin-top:8px;line-height:1.5;display:flex;gap:6px;align-items:flex-start;}
+.tg-pickup-hint::before{content:'ℹ️';flex-shrink:0;}
+.tg-settle-item{display:flex;gap:14px;padding:14px 18px;border-bottom:1px solid #f1f3f6;align-items:flex-start;}
+.tg-settle-item:last-child{border-bottom:none;}
+.tg-settle-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#e6f7ec,#d1f0dd);border:1.5px solid #a5d6b7;color:#1b8a3a;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;flex-shrink:0;}
+.tg-settle-body{flex:1;min-width:0;}
+.tg-settle-amount{font-size:18px;font-weight:900;color:#1b8a3a;margin-bottom:4px;}
+.tg-settle-date{font-size:12px;color:#666;font-weight:600;}
+.tg-settle-ref{font-size:11px;color:#666;font-family:monospace;background:#f5f5f6;padding:4px 8px;border-radius:6px;display:inline-block;margin-top:6px;}
+.tg-settle-note{font-size:11.5px;color:#888;margin-top:4px;font-style:italic;}
+.tg-settle-tick{background:linear-gradient(135deg,#1b8a3a,#15803d);color:#fff;font-size:10.5px;font-weight:800;padding:5px 12px;border-radius:999px;letter-spacing:0.5px;flex-shrink:0;box-shadow:0 2px 8px rgba(27,138,58,0.4);display:flex;align-items:center;gap:3px;align-self:center;}
+.tg-settle-tick::before{content:'✓';font-weight:900;font-size:12px;}
+.tg-gst-panel{padding:0 18px 18px;}
+.tg-gst-info{background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;color:#1565c0;line-height:1.5;border:1.5px solid #90caf9;}
+.tg-gst-info b{color:#0d47a1;font-weight:800;}
+.tg-gst-info.ready{background:linear-gradient(135deg,#fff8e1,#ffecb3);color:#8a6d00;border-color:#ffe082;}
+.tg-gst-info.ready b{color:#5d4300;}
+.tg-gst-download-btn{background:linear-gradient(135deg,#1b8a3a,#15803d);color:#fff;padding:8px 14px;border-radius:8px;font-weight:800;font-size:12px;margin-top:10px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 4px 12px rgba(27,138,58,0.3);}
+.tg-gst-download-btn:hover{filter:brightness(1.1);}
+.tg-gst-download-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.tg-gst-month-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:12px;}
+.tg-gst-month-row input[type="month"]{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;font-weight:600;color:#212121;background:#fff;}
+.tg-gst-month-row input[type="month"]:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
+.tg-gst-month-row button{padding:12px 18px;border-radius:10px;background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;font-weight:800;font-size:13px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;box-shadow:0 4px 12px rgba(40,116,240,0.3);}
+.tg-gst-month-row button:disabled{opacity:0.5;cursor:not-allowed;}
+.tg-gst-month-row button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;}
+.tg-paid-badge{background:linear-gradient(135deg,#1b8a3a,#15803d);color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:0.4px;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 6px rgba(27,138,58,0.35);}
+.tg-paid-badge::before{content:'✓';font-weight:900;font-size:11px;}
+/* ✅ NEW: Live badge */
+.tg-live-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(34,197,94,0.15);color:#22c55e;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:0.3px;margin-left:6px;}
+.tg-live-badge::before{content:'';width:5px;height:5px;background:#22c55e;border-radius:50%;animation:tgPulse 1.5s infinite;}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <button class="tg-hd-menu-btn" onclick="tgOpenDrawer()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="tg-hd-logo">
+      <div class="tg-hd-logo-mark">T</div>
+      <div class="tg-hd-logo-text">TOE<span>GO</span></div>
+      <span class="tg-hd-logo-badge">Seller</span>
+    </div>
+    <div class="tg-hd-spacer"></div>
+    <button class="tg-ring-hd-btn" id="tg-ring-btn" onclick="tgToggleRing()" title="Order Ring ON/OFF">
+      <svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+    </button>
+    <button class="tg-hd-btn" onclick="tgShowNotifications()">
+      <svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <span class="tg-hd-badge" id="tg-notif-badge" style="display:none;">0</span>
+    </button>
+    <!-- ✅ NEW: Direct Shop Home button -->
+    <button class="tg-hd-shop-btn" onclick="tgGoShopHome()" title="Go to Shop">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </button>
+  </div>
+  <div class="tg-store-bar">
+    <div class="tg-store-avatar" id="tg-store-avatar">T</div>
+    <div class="tg-store-name" id="tg-store-name">Loading…</div>
+    <span class="tg-store-status">Active</span>
+  </div>
+</header>
+
+<div class="tg-drawer-overlay" id="tg-drawer-overlay" onclick="tgCloseDrawer()"></div>
+<aside class="tg-drawer" id="tg-drawer">
+  <div class="tg-drawer-head">
+    <button class="tg-drawer-close" onclick="tgCloseDrawer()">✕</button>
+    <div class="tg-drawer-head-logo"><div class="tg-drawer-head-logo-mark">T</div><div class="tg-drawer-head-logo-text">TOE<span>GO</span></div></div>
+    <div class="tg-drawer-head-badge">Seller Panel</div>
+    <div class="tg-drawer-admin"><div class="tg-drawer-admin-avatar" id="tg-drawer-avatar">T</div><div class="tg-drawer-admin-info"><div class="tg-drawer-admin-name" id="tg-drawer-store-name">Loading…</div><div class="tg-drawer-admin-email" id="tg-drawer-email">—</div></div></div>
+  </div>
+  <div class="tg-drawer-body">
+    <div class="tg-drawer-section">Overview</div>
+    <div class="tg-drawer-item" data-view="dashboard" onclick="tgDrawerNav('dashboard')"><div class="tg-drawer-item-icon blue"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg></div><div class="tg-drawer-item-label">Dashboard</div></div>
+    <div class="tg-drawer-item" data-view="insights" onclick="tgDrawerNav('insights')"><div class="tg-drawer-item-icon purple"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div class="tg-drawer-item-label">Business Insight</div></div>
+    <div class="tg-drawer-section">Sales</div>
+    <div class="tg-drawer-item" data-view="orders" onclick="tgDrawerNav('orders')"><div class="tg-drawer-item-icon orange"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/></svg></div><div class="tg-drawer-item-label">Orders</div><span class="tg-drawer-item-badge" id="tg-drawer-orders-badge" style="display:none;">0</span></div>
+    <div class="tg-drawer-item" data-view="returns" onclick="tgDrawerNav('returns')"><div class="tg-drawer-item-icon red"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><div class="tg-drawer-item-label">Returns</div><span class="tg-drawer-item-badge" id="tg-drawer-returns-badge" style="display:none;">0</span></div>
+    <div class="tg-drawer-item" data-view="earnings" onclick="tgDrawerNav('earnings')"><div class="tg-drawer-item-icon green"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="tg-drawer-item-label">Earnings</div></div>
+    <div class="tg-drawer-section">Catalog</div>
+    <div class="tg-drawer-item" data-view="products" onclick="tgDrawerNav('products')"><div class="tg-drawer-item-icon purple"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/></svg></div><div class="tg-drawer-item-label">Products</div><span class="tg-drawer-item-badge" id="tg-drawer-products-badge" style="display:none;">0</span></div>
+    <div class="tg-drawer-item" data-view="inventory" onclick="tgDrawerNav('inventory')"><div class="tg-drawer-item-icon yellow"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div class="tg-drawer-item-label">Inventory</div></div>
+    <div class="tg-drawer-section">Growth</div>
+    <div class="tg-drawer-item" data-view="promotions" onclick="tgDrawerNav('promotions')"><div class="tg-drawer-item-icon pink"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="tg-drawer-item-label">Promotions</div></div>
+    <div class="tg-drawer-section">Support</div>
+    <div class="tg-drawer-item" data-view="help" onclick="tgDrawerNav('help')"><div class="tg-drawer-item-icon teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="tg-drawer-item-label">Help & Support</div><span class="tg-drawer-item-badge" id="tg-drawer-ticket-badge" style="display:none;">0</span></div>
+  </div>
+  <div class="tg-drawer-foot">TOEGO Seller v24.0 · Made in India 🇮🇳</div>
+</aside>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <div class="tg-view active" id="view-dashboard">
+      <div class="tg-welcome">
+        <div class="tg-welcome-content">
+          <div class="tg-welcome-title" id="tg-welcome-title">Welcome! 👋</div>
+          <div class="tg-welcome-sub">Here's what's happening in your store</div>
+          <div class="tg-welcome-stats">
+            <div><div class="tg-welcome-stat-num" id="tg-w-today-orders">0</div><div class="tg-welcome-stat-label">Today's Orders</div></div>
+            <div><div class="tg-welcome-stat-num" id="tg-w-today-revenue">₹0</div><div class="tg-welcome-stat-label">Today's Sales</div></div>
+            <div><div class="tg-welcome-stat-num" id="tg-w-total-orders">0</div><div class="tg-welcome-stat-label">Total Orders</div></div>
+          </div>
+        </div>
+      </div>
+      <div id="tg-return-alert-box"></div>
+      <div class="tg-stats-grid">
+        <div class="tg-stat-card" onclick="tgDrawerNav('orders');tgFilterOrders('pending')"><div class="tg-stat-card-icon orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-pending">0</div><div class="tg-stat-card-label">New Orders</div></div>
+        <div class="tg-stat-card" onclick="tgDrawerNav('orders');tgFilterOrders('admin_approved')"><div class="tg-stat-card-icon blue"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-ready">0</div><div class="tg-stat-card-label">Ready for Label</div></div>
+        <div class="tg-stat-card" onclick="tgDrawerNav('orders');tgFilterOrders('processing')"><div class="tg-stat-card-icon teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-processing">0</div><div class="tg-stat-card-label">Processing</div></div>
+        <div class="tg-stat-card" onclick="tgDrawerNav('orders');tgFilterOrders('delivered')"><div class="tg-stat-card-icon green"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-delivered">0</div><div class="tg-stat-card-label">Delivered</div></div>
+        <div class="tg-stat-card" onclick="tgDrawerNav('returns')"><div class="tg-stat-card-icon red"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-returns">0</div><div class="tg-stat-card-label">Returns</div></div>
+        <div class="tg-stat-card" onclick="tgDrawerNav('products');tgFilterProducts('pending')"><div class="tg-stat-card-icon yellow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-pending-products">0</div><div class="tg-stat-card-label">Pending Approval</div></div>
+        <div class="tg-stat-card" onclick="tgDrawerNav('inventory');tgFilterInventory('low')"><div class="tg-stat-card-icon yellow"><svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-low">0</div><div class="tg-stat-card-label">Low Stock</div></div>
+        <div class="tg-stat-card" onclick="tgDrawerNav('earnings')"><div class="tg-stat-card-icon blue"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="tg-stat-card-num" id="tg-cnt-revenue">₹0</div><div class="tg-stat-card-label">Net Revenue</div></div>
+      </div>
+      <div class="tg-sec"><div class="tg-sec-head"><div><div class="tg-sec-title">Recent Orders</div></div><button class="tg-sec-action" onclick="tgDrawerNav('orders')">View All →</button></div><div id="tg-recent-orders"></div></div>
+    </div>
+
+    <div class="tg-view" id="view-insights">
+      <div class="tg-bi-hero">
+        <div class="tg-bi-hero-content">
+          <div class="tg-bi-hero-title">📊 Business Insight</div>
+          <div class="tg-bi-hero-sub">Product views from shop home</div>
+          <div class="tg-bi-hero-stats">
+            <div><div class="tg-bi-hero-num" id="tg-bi-total-views">0</div><div class="tg-bi-hero-lbl">Total Views</div></div>
+            <div><div class="tg-bi-hero-num" id="tg-bi-total-products">0</div><div class="tg-bi-hero-lbl">Live Products</div></div>
+            <div><div class="tg-bi-hero-num" id="tg-bi-avg-views">0</div><div class="tg-bi-hero-lbl">Avg Views</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tg-bi-grid">
+        <div class="tg-bi-card"><div class="tg-bi-card-icon purple">👁️</div><div class="tg-bi-card-num" id="tg-bi-views">0</div><div class="tg-bi-card-label">Total Views</div><div class="tg-bi-card-hint">All products</div></div>
+        <div class="tg-bi-card"><div class="tg-bi-card-icon blue">📦</div><div class="tg-bi-card-num" id="tg-bi-products">0</div><div class="tg-bi-card-label">Live Products</div><div class="tg-bi-card-hint">Approved & active</div></div>
+        <div class="tg-bi-card"><div class="tg-bi-card-icon green">🛒</div><div class="tg-bi-card-num" id="tg-bi-orders">0</div><div class="tg-bi-card-label">Total Orders</div><div class="tg-bi-card-hint">All time</div></div>
+        <div class="tg-bi-card"><div class="tg-bi-card-icon orange">📈</div><div class="tg-bi-card-num" id="tg-bi-conv">0%</div><div class="tg-bi-card-label">Conversion</div><div class="tg-bi-card-hint">Orders / Views</div></div>
+      </div>
+      <div class="tg-sec">
+        <div class="tg-sec-head"><div><div class="tg-sec-title">📈 Top Products by Views</div><div class="tg-sec-sub">Shop home se kitne users ne dekha</div></div></div>
+        <div class="tg-chart-wrap"><div class="tg-bar-chart" id="tg-bi-chart"><div class="tg-chart-empty">No views data yet</div></div></div>
+      </div>
+      <div class="tg-sec">
+        <div class="tg-sec-head"><div><div class="tg-sec-title">🏆 Top Viewed Products</div><div class="tg-sec-sub">Ranked by total views</div></div></div>
+        <div id="tg-bi-top-list"><div class="tg-empty"><div class="tg-empty-icon">📊</div><div class="tg-empty-title">No data</div></div></div>
+      </div>
+      <div class="tg-sec">
+        <div class="tg-sec-head"><div><div class="tg-sec-title">All Products Views</div><div class="tg-sec-sub">Complete engagement breakdown</div></div></div>
+        <div id="tg-bi-all-views"><div class="tg-empty"><div class="tg-empty-icon">📊</div><div class="tg-empty-title">No products</div></div></div>
+      </div>
+    </div>
+
+    <div class="tg-view" id="view-orders">
+      <div class="tg-order-toolbar">
+        <div class="tg-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="text" id="tg-order-search" placeholder="Search..." oninput="tgOnOrderSearch()"></div>
+      </div>
+      <div class="tg-chips-wrap"><div class="tg-chips" id="tg-order-chips">
+        <div class="tg-chip active" data-status="all" onclick="tgFilterOrders('all')">All <span class="tg-chip-count" id="tg-oc-all">0</span></div>
+        <div class="tg-chip" data-status="pending" onclick="tgFilterOrders('pending')">New <span class="tg-chip-count" id="tg-oc-pending">0</span></div>
+        <div class="tg-chip" data-status="seller_accepted" onclick="tgFilterOrders('seller_accepted')">Accepted <span class="tg-chip-count" id="tg-oc-accepted">0</span></div>
+        <div class="tg-chip" data-status="admin_approved" onclick="tgFilterOrders('admin_approved')">Ready for Label <span class="tg-chip-count" id="tg-oc-ready">0</span></div>
+        <div class="tg-chip" data-status="label_generated" onclick="tgFilterOrders('label_generated')">Label Generated <span class="tg-chip-count" id="tg-oc-label">0</span></div>
+        <div class="tg-chip" data-status="processing" onclick="tgFilterOrders('processing')">Processing <span class="tg-chip-count" id="tg-oc-processing">0</span></div>
+        <div class="tg-chip" data-status="dispatched" onclick="tgFilterOrders('dispatched')">Dispatched <span class="tg-chip-count" id="tg-oc-dispatched">0</span></div>
+        <div class="tg-chip" data-status="delivered" onclick="tgFilterOrders('delivered')">Delivered <span class="tg-chip-count" id="tg-oc-delivered">0</span></div>
+        <div class="tg-chip" data-status="cancelled" onclick="tgFilterOrders('cancelled')">Cancelled <span class="tg-chip-count" id="tg-oc-cancelled">0</span></div>
+      </div></div>
+      <div class="tg-order-select-bar">
+        <label><input type="checkbox" id="tg-select-all" onchange="tgToggleSelectAll(this.checked)"> Select All</label>
+        <span class="tg-sel-count" id="tg-sel-count">0 selected</span>
+        <button class="tg-bulk-btn" id="tg-bulk-accept" onclick="tgBulkAccept()">✓ Accept</button>
+        <button class="tg-bulk-btn suc" id="tg-bulk-label" onclick="tgBulkGenerateLabels()">📄 Generate Labels</button>
+      </div>
+      <div class="tg-sec"><div id="tg-orders-list"></div></div>
+    </div>
+
+    <div class="tg-view" id="view-products">
+      <div class="tg-chips-wrap"><div class="tg-chips" id="tg-product-chips">
+        <div class="tg-chip active" data-filter="all" onclick="tgFilterProducts('all')">All <span class="tg-chip-count" id="tg-pc-all">0</span></div>
+        <div class="tg-chip" data-filter="pending" onclick="tgFilterProducts('pending')">Pending <span class="tg-chip-count" id="tg-pc-pending">0</span></div>
+        <div class="tg-chip" data-filter="approved" onclick="tgFilterProducts('approved')">Live <span class="tg-chip-count" id="tg-pc-approved">0</span></div>
+      </div></div>
+      <div class="tg-sec"><div id="tg-products-list"></div></div>
+    </div>
+
+    <div class="tg-view" id="view-inventory">
+      <div class="tg-chips-wrap"><div class="tg-chips" id="tg-inventory-chips">
+        <div class="tg-chip active" data-filter="all" onclick="tgFilterInventory('all')">All</div>
+        <div class="tg-chip" data-filter="low" onclick="tgFilterInventory('low')">⚠ Low Stock</div>
+        <div class="tg-chip" data-filter="out" onclick="tgFilterInventory('out')">✕ Out of Stock</div>
+      </div></div>
+      <div class="tg-sec"><div id="tg-inventory-list"></div></div>
+    </div>
+
+    <div class="tg-view" id="view-returns">
+      <div class="tg-sec">
+        <div class="tg-sec-head">
+          <div>
+            <div class="tg-sec-title">Return Requests</div>
+            <div class="tg-sec-sub">Returns approved by Super Admin. ₹150 deducted per approved return.</div>
+          </div>
+        </div>
+        <div id="tg-returns-list"></div>
+      </div>
+    </div>
+
+    <div class="tg-view" id="view-earnings">
+      <div class="tg-welcome" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
+        <div class="tg-welcome-content">
+          <div class="tg-welcome-title">💰 Earnings Overview</div>
+          <div class="tg-welcome-sub">Commission + delivery auto-cut hoke net earning</div>
+          <div class="tg-welcome-stats">
+            <div><div class="tg-welcome-stat-num" id="tg-earn-gross">₹0</div><div class="tg-welcome-stat-label">Gross Sales</div></div>
+            <div><div class="tg-welcome-stat-num" id="tg-earn-deduct">₹0</div><div class="tg-welcome-stat-label">Total Cuts</div></div>
+            <div><div class="tg-welcome-stat-num" id="tg-earn-net">₹0</div><div class="tg-welcome-stat-label">Net Earnings</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="background:#fff;border-radius:12px;padding:16px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-left:4px solid #1b8a3a;">
+          <div style="font-size:11px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;">✓ Total Received</div>
+          <div style="font-size:22px;font-weight:900;color:#1b8a3a;margin-top:6px;" id="tg-earn-settled">₹0</div>
+          <div style="font-size:10.5px;color:#999;margin-top:3px;">Settled by TOEGO</div>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:16px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-left:4px solid #f57c00;">
+          <div style="font-size:11px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;">⏳ Pending Payment</div>
+          <div style="font-size:22px;font-weight:900;color:#f57c00;margin-top:6px;" id="tg-earn-pending-pay">₹0</div>
+          <div style="font-size:10.5px;color:#999;margin-top:3px;">Aa jaayega soon</div>
+        </div>
+      </div>
+
+      <div id="tg-earn-return-card"></div>
+
+      <div class="tg-sec">
+        <div class="tg-sec-head"><div><div class="tg-sec-title">Earnings Breakdown</div></div></div>
+        <div style="padding:0 18px 16px;">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;"><span style="color:#2e7d32;">Gross Sales (Delivered)</span><span style="color:#1b8a3a;font-weight:700;" id="tg-earn-gross2">₹0</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;"><span style="color:#2e7d32;">Commission Cut <span id="tg-earn-comm-pct-lbl" style="font-size:11px;color:#888;"></span></span><span style="color:#d32f2f;font-weight:700;" id="tg-earn-comm">− ₹0</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;"><span style="color:#2e7d32;">Delivery Charges</span><span style="color:#d32f2f;font-weight:700;" id="tg-earn-deliv">− ₹0</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;display:none;" id="tg-earn-return-row"><span style="color:#c62828;font-weight:700;">Return Cuts</span><span style="color:#d32f2f;font-weight:800;" id="tg-earn-return-cut">− ₹0</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;display:none;" id="tg-earn-label-row"><span style="color:#c62828;font-weight:700;">Cancelled Label Cost</span><span style="color:#d32f2f;font-weight:800;" id="tg-earn-label-cut">− ₹0</span></div>
+          <div style="display:flex;justify-content:space-between;padding:12px 0 4px;border-top:1.5px solid #e0e0e0;margin-top:8px;font-size:16px;font-weight:800;color:#1b8a3a;"><span>Net Earnings</span><span id="tg-earn-net2">₹0</span></div>
+        </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sec-head">
+          <div>
+            <div class="tg-sec-title">💳 Settlement History</div>
+            <div class="tg-sec-sub">All payments received from TOEGO (live updates)</div>
+          </div>
+          <span class="tg-order-status delivered" id="tg-settle-count" style="font-weight:800;">0</span>
+        </div>
+        <div id="tg-settle-history-list">
+          <div class="tg-empty"><div class="tg-empty-icon">💳</div><div class="tg-empty-title">No settlements yet</div><div class="tg-empty-desc">Jab TOEGO aapko payment karega, woh yahan date ke saath dikhega</div></div>
+        </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sec-head">
+          <div>
+            <div class="tg-sec-title">📋 GST Reports</div>
+            <div class="tg-sec-sub">Monthly GST report download karo</div>
+          </div>
+        </div>
+        <div class="tg-gst-panel">
+          <div id="tg-gst-banner"></div>
+          <div class="tg-gst-info">
+            📌 <b>Auto-due on 10th:</b> Har month ki 10 tareekh ko previous month ka GST report ready ho jaata hai. Aap kisi bhi month ka report download kar sakte ho.
+          </div>
+          <div class="tg-gst-month-row">
+            <div>
+              <label style="display:block;font-size:11.5px;color:#666;font-weight:700;margin-bottom:6px;text-transform:uppercase;">Select Month</label>
+              <input type="month" id="tg-gst-month">
+            </div>
+            <button onclick="tgDownloadGST()">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sec-head"><div><div class="tg-sec-title">Order-wise Earnings</div><div class="tg-sec-sub">✓ badge matlab woh order settled ho gaya hai</div></div><button class="tg-sec-action" onclick="tgExportEarnings()">📥 Export</button></div>
+        <div id="tg-earnings-list"></div>
+      </div>
+    </div>
+
+    <div class="tg-view" id="view-promotions">
+      <div class="tg-sec">
+        <div class="tg-sec-head"><div><div class="tg-sec-title">🎉 Active Promotions</div><div class="tg-sec-sub">Promotions created by TOEGO team</div></div></div>
+        <div style="padding:12px 18px 18px;" id="tg-promos-list"></div>
+      </div>
+    </div>
+
+    <div class="tg-view" id="view-help">
+      <div class="tg-sec">
+        <div class="tg-sec-head">
+          <div><div class="tg-sec-title">🎫 Help & Support</div><div class="tg-sec-sub">Raise ticket — Super Admin will respond</div></div>
+          <button style="background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;padding:10px 16px;border-radius:8px;font-size:12.5px;font-weight:800;text-transform:uppercase;cursor:pointer;" onclick="tgOpenTicketModal()">+ New Ticket</button>
+        </div>
+        <div style="padding:0 18px 16px;">
+          <div style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;color:#1565c0;line-height:1.5;">
+            <b>📌 Common Issues:</b> Order problem · Payment · Account · Technical<br>
+            <span style="font-size:11.5px;">Screenshot attach karke bhejo — fast resolution</span>
+          </div>
+          <div id="tg-tickets-list"><div class="tg-empty"><div class="tg-empty-icon">🎫</div><div class="tg-empty-title">No tickets yet</div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="tg-fab" id="tg-fab" onclick="tgOpenProductModal()" style="display:none;"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+
+<nav class="tg-bnav">
+  <div class="tg-bnav-item active" data-view="dashboard" onclick="tgSwitchView('dashboard')"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></div>
+  <div class="tg-bnav-item" data-view="insights" onclick="tgSwitchView('insights')"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Insights</span></div>
+  <div class="tg-bnav-item" data-view="orders" onclick="tgSwitchView('orders')"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span><span class="tg-bnav-badge" id="tg-nav-orders-badge" style="display:none;">0</span></div>
+  <div class="tg-bnav-item" data-view="products" onclick="tgSwitchView('products')"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg><span>Products</span></div>
+  <div class="tg-bnav-item" data-view="earnings" onclick="tgSwitchView('earnings')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Earnings</span></div>
+</nav>
+
+<div class="tg-modal" id="tg-order-modal"><div class="tg-modal-card"><div class="tg-modal-head"><div class="tg-modal-title">Order Details</div><button class="tg-modal-close" onclick="tgCloseModal('tg-order-modal')">✕</button></div><div id="tg-order-detail-body"></div></div></div>
+<div class="tg-modal" id="tg-quick-stock-modal"><div class="tg-modal-card" style="max-width:480px;"><div class="tg-modal-head"><div class="tg-modal-title">Stock Update</div><button class="tg-modal-close" onclick="tgCloseModal('tg-quick-stock-modal')">✕</button></div><input type="hidden" id="tg-qs-pid"><div id="tg-qs-body"></div><div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-quick-stock-modal')">Cancel</button><button class="tg-modal-btn primary" onclick="tgSaveQuickStock()">Save</button></div></div></div>
+<div class="tg-modal" id="tg-confirm-modal"><div class="tg-modal-card" style="max-width:420px;"><div class="tg-modal-head"><div class="tg-modal-title" id="tg-confirm-title">Confirm</div><button class="tg-modal-close" onclick="tgCloseModal('tg-confirm-modal')">✕</button></div><p id="tg-confirm-msg" style="font-size:14px;color:#666;line-height:1.6;margin:0 0 18px;"></p><div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-confirm-modal')">Cancel</button><button class="tg-modal-btn danger" id="tg-confirm-btn" onclick="tgDoConfirm()">Confirm</button></div></div></div>
+
+<div class="tg-modal" id="tg-product-modal">
+  <div class="tg-modal-card" style="max-width:680px;">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title" id="tg-prod-modal-title">Add New Product</div>
+      <button class="tg-modal-close" onclick="tgCloseProductModal()">✕</button>
+    </div>
+    <input type="hidden" id="prod-id">
+    <div class="tg-prod-form-section">
+      <div class="tg-prod-form-section-title">📝 Product Info</div>
+      <div class="tg-field"><label>Product Name *</label><input type="text" id="prod-name" maxlength="150" placeholder="e.g., Stylish EVA Slippers"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="tg-field"><label>Brand *</label><select id="prod-brand"><option value="">Select brand</option></select></div>
+        <div class="tg-field"><label>Category *</label><select id="prod-category"><option value="">Select category</option></select></div>
+      </div>
+      <div class="tg-field" style="margin-bottom:0;"><label>Description</label><textarea id="prod-desc" rows="3" maxlength="2000" placeholder="Describe your product..." style="min-height:80px;"></textarea></div>
+    </div>
+    <div class="tg-prod-form-section">
+      <div class="tg-prod-form-section-title">📷 Product Images (max 5) *</div>
+      <div class="tg-prod-img-grid" id="prod-img-grid"></div>
+      <input type="file" id="prod-img-input" accept="image/*" multiple style="display:none;">
+      <div class="tg-prod-img-hint">Auto-compressed to <b>100KB</b> · Uploaded to Cloudinary</div>
+    </div>
+    <div class="tg-prod-form-section">
+      <div class="tg-prod-form-section-title">💰 Pricing & Basic Info</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="tg-field"><label>Selling Price (₹) *</label><input type="number" id="prod-price" min="0" oninput="tgCalcSettlement()" placeholder="0"></div>
+        <div class="tg-field"><label>MRP (₹)</label><input type="number" id="prod-mrp" min="0" placeholder="0"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;">
+        <div class="tg-field"><label>Weight (grams) *</label><input type="number" id="prod-weight" min="0" value="500" oninput="tgCalcSettlement()"></div>
+        <div class="tg-field" style="margin-bottom:0;"><label>GST %</label><select id="prod-gst"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div>
+      </div>
+    </div>
+    <div class="tg-prod-form-section">
+      <div class="tg-prod-form-section-title">📏 Sizes & Stock (Meesho Style) *</div>
+      <div style="font-size:11.5px;color:#888;margin-bottom:10px;line-height:1.5;">Har size ka alag stock daalo. Agar single size ho toh sirf "FREE" ya apna default size daal do.</div>
+      <div id="prod-size-rows"></div>
+      <button type="button" class="tg-add-size-btn" onclick="tgAddSizeRow('','')">+ Add Size Variant</button>
+    </div>
+    <!-- ✅ SIMPLIFIED: Colors — only admin colors, no custom add -->
+    <div class="tg-prod-form-section">
+      <div class="tg-prod-form-section-title">🎨 Colors <span class="tg-live-badge">LIVE</span></div>
+      <div id="prod-colors-wrap" class="tg-color-chips"></div>
+      <div style="font-size:11px;color:#888;margin-top:8px;">Admin ke set kiye colors select karo. Multiple colors select kar sakte ho.</div>
+    </div>
+    <div class="tg-prod-form-section">
+      <div class="tg-prod-form-section-title">📍 Pickup Address</div>
+      <div class="tg-pickup-box" id="prod-pickup-box"><div style="color:#888;font-size:12px;">Loading seller address…</div></div>
+      <div class="tg-pickup-hint">Ye address label pe FROM section me show hoga.</div>
+    </div>
+    <!-- ✅ SETTLEMENT PREVIEW with LIVE badge -->
+    <div class="tg-settlement-preview" id="prod-settlement">
+      <div class="tg-settlement-title">💵 Settlement Preview (per sale) <span class="tg-live-badge">LIVE</span></div>
+      <div class="tg-settlement-row"><span>Selling Price</span><span id="set-price">₹0</span></div>
+      <div class="tg-settlement-row"><span>Commission (<span id="set-comm-pct">5</span>%)</span><span id="set-comm" style="color:#d32f2f;">− ₹0</span></div>
+      <div class="tg-settlement-row"><span>Delivery (weight-based)</span><span id="set-deliv" style="color:#d32f2f;">− ₹0</span></div>
+      <div class="tg-settlement-row total"><span>Net Earning / Order</span><span id="set-net">₹0</span></div>
+    </div>
+    <div class="tg-modal-actions" style="flex-wrap:wrap;">
+      <button class="tg-modal-btn ghost" onclick="tgCloseProductModal()">Cancel</button>
+      <button class="tg-modal-btn danger tg-del-btn" id="prod-del-btn" onclick="tgDeleteProductFromModal()" style="display:none;flex:0 0 auto;padding:14px 16px;min-width:80px;">🗑 Delete</button>
+      <button class="tg-modal-btn primary" id="prod-save-btn" onclick="tgSaveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-label-modal">
+  <div class="tg-modal-card" style="max-width:520px;">
+    <div class="tg-modal-head"><div class="tg-modal-title">Download Labels</div><button class="tg-modal-close" onclick="tgCloseModal('tg-label-modal')">✕</button></div>
+    <p style="font-size:13px;color:#666;margin:0 0 6px;"><b id="tg-label-count">0</b> label(s) ready</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;">
+      <div class="tg-label-opt selected" data-format="a4" onclick="tgSelectFormat('a4', this)" style="background:#e8f0ff;border:2px solid #2874f0;border-radius:12px;padding:18px 14px;cursor:pointer;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">📄</div><div style="font-size:13.5px;font-weight:800;">A4 Sheet</div><div style="font-size:11px;color:#666;margin-top:4px;">4 per page</div></div>
+      <div class="tg-label-opt" data-format="thermal" onclick="tgSelectFormat('thermal', this)" style="background:#f8f9fb;border:2px solid #e0e0e0;border-radius:12px;padding:18px 14px;cursor:pointer;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">🧾</div><div style="font-size:13.5px;font-weight:800;">Thermal 4×6</div><div style="font-size:11px;color:#666;margin-top:4px;">102×152mm</div></div>
+    </div>
+    <div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-label-modal')">Cancel</button><button class="tg-modal-btn primary" onclick="tgPrintLabels()">🖨 Print → Processing</button></div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-ticket-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head"><div class="tg-modal-title">Raise Support Ticket</div><button class="tg-modal-close" onclick="tgCloseModal('tg-ticket-modal')">✕</button></div>
+    <div class="tg-field"><label>Category *</label><div id="tk-cats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div></div>
+    <div class="tg-field"><label>Priority</label><select id="tk-priority"><option value="low">🟢 Low</option><option value="medium" selected>🔵 Medium</option><option value="high">🟠 High</option><option value="urgent">🔴 Urgent</option></select></div>
+    <div class="tg-field"><label>Subject *</label><input type="text" id="tk-subject" maxlength="120"></div>
+    <div class="tg-field"><label>Description *</label><textarea id="tk-desc" rows="4" maxlength="2000"></textarea></div>
+    <div class="tg-field"><label>Screenshots (max 3)</label>
+      <div class="tg-img-upload" onclick="document.getElementById('tk-images').click()"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg><div style="font-size:13px;font-weight:700;">Click to upload</div></div>
+      <input type="file" id="tk-images" accept="image/*" multiple style="display:none;">
+      <div class="tg-img-preview" id="tk-img-preview"></div>
+    </div>
+    <div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-ticket-modal')">Cancel</button><button class="tg-modal-btn primary" id="tk-submit-btn" onclick="tgSubmitTicket()">Submit Ticket</button></div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-ticket-view-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head"><div><div class="tg-modal-title" id="tv-subject">Ticket</div><div style="font-size:11px;color:#888;font-family:monospace;" id="tv-id">#TK</div></div><button class="tg-modal-close" onclick="tgCloseModal('tg-ticket-view-modal')">✕</button></div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <span style="font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;background:#f1f3f6;color:#666;" id="tv-cat">Category</span>
+      <span style="font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px;background:#e3f2fd;color:#1976d2;text-transform:uppercase;" id="tv-priority">Medium</span>
+      <span style="font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px;background:#e3f2fd;color:#1976d2;text-transform:uppercase;" id="tv-status">Open</span>
+    </div>
+    <div style="padding:16px;max-height:44vh;overflow-y:auto;background:#f8f9fb;border-radius:12px;margin-bottom:14px;display:flex;flex-direction:column;" id="tv-chat"></div>
+    <div style="border-top:1px solid #e0e0e0;padding-top:12px;">
+      <div class="tg-field" style="margin-bottom:8px;"><textarea id="tv-reply-input" rows="2" placeholder="Type message..." style="min-height:60px;border-radius:12px;"></textarea></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="document.getElementById('tv-reply-img').click()" style="width:44px;height:44px;border-radius:50%;background:#f1f3f6;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;cursor:pointer;">📎</button>
+        <input type="file" id="tv-reply-img" accept="image/*" multiple style="display:none;">
+        <button class="tg-modal-btn primary" style="flex:1;padding:12px;" onclick="tgSendReply()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function(){
+  'use strict';
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+  const SA = 'anasfansclub@toego.in';
+  const LOW_STOCK = 10;
+  const LABEL_CUT = 30;
+  const RETURN_CUT = 150;
+
+  const DEFAULT_BRANDS = ['Generic', 'No Brand', 'TOEGO', 'Local'];
+  const DEFAULT_COLORS = ['Red','Blue','Black','White','Green','Yellow','Pink','Orange','Purple','Brown','Grey','Maroon','Navy','Beige','Multi'];
+
+  let SETTINGS = { commissionPercent: 5, weightSlabs: [{maxWeight:500,charge:40},{maxWeight:1000,charge:60},{maxWeight:2000,charge:90},{maxWeight:5000,charge:130},{maxWeight:999999,charge:200}] };
+  let CLOUD = { cloudName: '', uploadPreset: '' };
+  let USER = null, SELLER = null;
+  let CUSTOM_COMM = null, MY_SLABS = null;
+  let ORDERS = [], PRODUCTS = [], PROMOS = [], TICKETS = [];
+  let MY_SETTLEMENTS = [];
+  let VIEW = 'dashboard', OFILTER = 'all', OSEARCH = '';
+  let PFILTER = 'all', IFILTER = 'all';
+  let confirmCb = null;
+  let unsubOrders = [], unsubTickets = null, unsubCats = null, unsubSettle = null;
+  let unsubMyPricing = [];  /* ✅ NEW: for live updates */
+  let SELECTED = new Set();
+  let FORMAT = 'a4';
+  let PENDING_LABELS = [];
+  let tkImages = [], tkCat = '', tvImages = [], CURRENT_TICKET = null;
+
+  let ADMIN_CATEGORIES = [];
+  let ADMIN_BRANDS = [];
+  let ADMIN_COLORS = [];
+
+  let _prodImages = [];
+  let _editProdId = null;
+  let _uploadingCount = 0;
+  let _selectedColors = [];
+
+  let _audioCtx = null;
+  let _ringEnabled = true;
+  try { _ringEnabled = localStorage.getItem('toego_seller_ring') !== '0'; } catch(e) {}
+  let _prevPendingCount = -1;
+
+  function normStatus(o) {
+    if (!o) return 'pending';
+    const raw = o.status || o.orderStatus || 'pending';
+    const k = String(raw).toLowerCase().trim().replace(/\s+/g, '_').replace(/-/g, '_');
+    if (!k || k === 'new' || k === 'placed' || k === 'order_placed' || k === 'waiting' || k === 'pending' || k === 'confirmed') return 'pending';
+    if (k.includes('cancel') || k.includes('reject')) return 'cancelled';
+    if (k.includes('return_request') || k === 'return_pending') return 'return_requested';
+    if (k.includes('return') || k.includes('refund') || k === 'rto') return 'returned';
+    if (k.includes('deliver') || k === 'completed') return 'delivered';
+    if (k.includes('dispatch') || k.includes('shipped') || k === 'in_transit' || k === 'ofd' || k === 'out_for_delivery') return 'dispatched';
+    if (k.includes('process') || k.includes('packing') || k === 'packed' || k === 'ready_to_ship' || k === 'preparing') return 'processing';
+    if (k.includes('label_generat') || k === 'label_created') return 'label_generated';
+    if (k.includes('admin_approv') || k === 'approved' || k === 'admin_ok' || k === 'adminok' || k === 'rtd' || k.includes('ready_to_dispatch') || k.includes('ready_for_label') || k === 'admin-accepted') return 'admin_approved';
+    if (k.includes('seller_accept') || k === 'accepted' || k === 'accept' || k.includes('confirm') || k.includes('order_accepted')) return 'seller_accepted';
+    return 'pending';
+  }
+
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts'); if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function inr(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits: 0}); }
+  function fdate(d) { if (!d) return '—'; const dt = d.toDate ? d.toDate() : new Date(d); return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+  function ftime(d) { if (!d) return ''; const dt = d.toDate ? d.toDate() : new Date(d); return dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); }
+  function tago(d) { if (!d) return ''; const dt = d.toDate ? d.toDate() : new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
+  function stLabel(o) { const k = normStatus(o); return { pending:'New Order', seller_accepted:'Accepted', admin_approved:'Ready for Label', label_generated:'Label Generated', processing:'Processing', dispatched:'Dispatched', delivered:'Delivered', cancelled:'Cancelled', return_requested:'Return Pending', returned:'Returned' }[k] || 'New Order'; }
+  function stClass(o) { return normStatus(o).replace(/_/g, '-'); }
+  function isDelivered(o) { return normStatus(o) === 'delivered'; }
+  function totalStock(p) { if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) { let t = 0; Object.values(p.sizeStock).forEach(v => { t += Number(v||0); }); return t; } return Number(p.stock||0); }
+  function sizeList(p) { if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) return Object.entries(p.sizeStock).map(([sz,st]) => ({ size: sz, stock: Number(st||0) })); return null; }
+
+  const SELLER_ID_FIELDS = ['sellerId','seller_id','sid','sellerUid','sellerUID','sellerUserId','mySellerId','vendorId'];
+  function getItemSellerIds(it) {
+    if (!it) return [];
+    const out = new Set();
+    SELLER_ID_FIELDS.forEach(k => {
+      if (it[k] && typeof it[k] !== 'object') out.add(String(it[k]));
+      else if (it[k] && typeof it[k] === 'object') {
+        if (it[k].id) out.add(String(it[k].id));
+        if (it[k].uid) out.add(String(it[k].uid));
+      }
+    });
+    return Array.from(out);
+  }
+  function myItems(o) {
+    if (!o || !USER) return [];
+    const uid = USER.uid;
+    const items = Array.isArray(o.items) ? o.items : [];
+    if (String(o.sellerId||'') === uid || String(o.seller_id||'') === uid || String(o.sellerUid||'') === uid) return items;
+    if (Array.isArray(o.sellerIds) && o.sellerIds.some(sid => String(sid) === uid)) return items;
+    return items.filter(it => getItemSellerIds(it).includes(uid));
+  }
+  function hasMyItems(o) {
+    if (!o || !USER) return false;
+    const uid = USER.uid;
+    if (String(o.sellerId||'') === uid) return true;
+    if (String(o.seller_id||'') === uid) return true;
+    if (String(o.sellerUid||'') === uid) return true;
+    if (Array.isArray(o.sellerIds) && o.sellerIds.some(sid => String(sid) === uid)) return true;
+    return myItems(o).length > 0;
+  }
+  function addrOf(o) {
+    let a = o.address || o.shippingAddress || o.deliveryAddress || {};
+    if (typeof a === 'string') a = { line: a };
+    const c = o.customer || o.user || {};
+    return {
+      name: a.name || a.fullName || c.name || o.userName || o.customerName || '—',
+      phone: a.phone || a.mobile || c.phone || o.userPhone || o.phone || '—',
+      line1: a.line1 || a.line || a.address || a.street || '',
+      line2: a.line2 || a.landmark || '',
+      city: a.city || o.city || '',
+      state: a.state || o.state || '',
+      pincode: a.pincode || a.pin || a.zip || o.pincode || '',
+    };
+  }
+
+  function getSlabs() { if (MY_SLABS && Array.isArray(MY_SLABS) && MY_SLABS.length) return MY_SLABS; return SETTINGS.weightSlabs || []; }
+  function calcDeliveryCharge(items) {
+    const slabs = getSlabs();
+    let totalWeight = 0;
+    items.forEach(it => { totalWeight += Number(it.weight||0) * Number(it.qty||1); });
+    if (!totalWeight) totalWeight = 500;
+    let charge = 200;
+    for (const s of slabs) { if (totalWeight <= Number(s.maxWeight||0)) { charge = Number(s.charge||0); break; } }
+    return charge;
+  }
+  function getCommission() { return CUSTOM_COMM != null ? Number(CUSTOM_COMM) : Number(SETTINGS.commissionPercent || 5); }
+
+  function calcEarnings() {
+    let gross = 0, commission = 0, delivery = 0, returnCut = 0, labelCut = 0;
+    let settled = 0, pending = 0, deliveredCount = 0, returnCount = 0;
+    ORDERS.forEach(o => {
+      const s = normStatus(o);
+      const mi = myItems(o);
+      if (!mi.length) return;
+      if (s === 'cancelled') { if (o.labelGeneratedAt) labelCut += LABEL_CUT; return; }
+      if (s === 'returned') { returnCount++; returnCut += RETURN_CUT; return; }
+      if (s === 'return_requested') return;
+      if (s === 'delivered') {
+        let orderGross = 0;
+        mi.forEach(it => { orderGross += Number(it.price||0) * Number(it.qty||1); });
+        const delivCharge = calcDeliveryCharge(mi);
+        const commCut = Math.round(orderGross * getCommission() / 100);
+        gross += orderGross; commission += commCut; delivery += delivCharge;
+        deliveredCount++;
+        const net = Math.max(0, orderGross - commCut - delivCharge);
+        const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+        if (dd && (Date.now() - dd.getTime()) / 86400000 >= 7) settled += net;
+        else pending += net;
+      }
+    });
+    const totalDeduct = commission + delivery + returnCut + labelCut;
+    const netEarning = Math.max(0, gross - totalDeduct);
+    return { gross, commission, delivery, returnCut, labelCut, totalDeduct, netEarning, settled, pending, deliveredCount, returnCount };
+  }
+
+  function totalSettledReceived() {
+    if (!MY_SETTLEMENTS || !MY_SETTLEMENTS.length) return 0;
+    let total = 0;
+    MY_SETTLEMENTS.forEach(x => {
+      const amt = Number(x.amount || 0);
+      if (!isNaN(amt) && amt > 0) total += amt;
+    });
+    return Math.round(total);
+  }
+
+  function orderNet(o) {
+    const mi = myItems(o);
+    let g = 0; mi.forEach(it => { g += Number(it.price||0)*Number(it.qty||1); });
+    const comm = Math.round(g * getCommission() / 100);
+    const deliv = calcDeliveryCharge(mi);
+    return Math.max(0, g - comm - deliv);
+  }
+
+  function getPaidOrderIds() {
+    const paidIds = new Set();
+    MY_SETTLEMENTS.forEach(s => {
+      if (Array.isArray(s.orderIds)) {
+        s.orderIds.forEach(id => paidIds.add(String(id)));
+      }
+    });
+    if (paidIds.size > 0) return paidIds;
+    const totalSettled = totalSettledReceived();
+    if (totalSettled <= 0) return paidIds;
+    const deliveredOrders = ORDERS
+      .filter(o => normStatus(o) === 'delivered')
+      .map(o => {
+        const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+        return { id: o.id, net: orderNet(o), date: dd ? dd.getTime() : 0 };
+      })
+      .filter(x => x.date > 0 && x.net > 0)
+      .sort((a, b) => a.date - b.date);
+    let cum = 0;
+    for (const o of deliveredOrders) {
+      cum += o.net;
+      if (cum <= totalSettled + 1) paidIds.add(o.id);
+      else {
+        const remaining = totalSettled - (cum - o.net);
+        if (remaining >= o.net * 0.5) paidIds.add(o.id);
+        break;
+      }
+    }
+    return paidIds;
+  }
+
+  function _initAudio() {
+    if (_audioCtx) return;
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  function playOrderRing() {
+    if (!_ringEnabled) return;
+    _initAudio();
+    if (!_audioCtx) return;
+    try {
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+      const now = _audioCtx.currentTime;
+      for (let i = 0; i < 6; i++) {
+        const t = now + i * 0.30;
+        const f1 = i % 2 === 0 ? 1100 : 1500;
+        const f2 = i % 2 === 0 ? 1500 : 1100;
+        const osc1 = _audioCtx.createOscillator();
+        const g1 = _audioCtx.createGain();
+        osc1.type = 'square';
+        osc1.frequency.value = f1;
+        g1.gain.setValueAtTime(0, t);
+        g1.gain.linearRampToValueAtTime(0.6, t + 0.02);
+        g1.gain.setValueAtTime(0.6, t + 0.11);
+        g1.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+        osc1.connect(g1);
+        g1.connect(_audioCtx.destination);
+        osc1.start(t);
+        osc1.stop(t + 0.17);
+        const osc2 = _audioCtx.createOscillator();
+        const g2 = _audioCtx.createGain();
+        osc2.type = 'square';
+        osc2.frequency.value = f2;
+        g2.gain.setValueAtTime(0, t + 0.14);
+        g2.gain.linearRampToValueAtTime(0.6, t + 0.16);
+        g2.gain.setValueAtTime(0.6, t + 0.25);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.30);
+        osc2.connect(g2);
+        g2.connect(_audioCtx.destination);
+        osc2.start(t + 0.14);
+        osc2.stop(t + 0.31);
+      }
+    } catch(e) {}
+  }
+  document.addEventListener('click', function _unlockAudio() {
+    _initAudio();
+    if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+    document.removeEventListener('click', _unlockAudio);
+  }, { once: true });
+
+  function checkNewOrders() {
+    const pendingCount = ORDERS.filter(o => normStatus(o) === 'pending').length;
+    if (_prevPendingCount >= 0 && pendingCount > _prevPendingCount) {
+      playOrderRing();
+      toast('🔔 New order received!', 'success');
+    }
+    _prevPendingCount = pendingCount;
+  }
+  window.tgToggleRing = function() {
+    _ringEnabled = !_ringEnabled;
+    try { localStorage.setItem('toego_seller_ring', _ringEnabled ? '1' : '0'); } catch(e) {}
+    _initAudio();
+    if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+    updateRingBtn();
+    toast(_ringEnabled ? '🔔 Order ring ON (LOUD)' : '🔕 Order ring OFF', _ringEnabled ? 'success' : 'info');
+    if (_ringEnabled) playOrderRing();
+  };
+  function updateRingBtn() {
+    const b = document.getElementById('tg-ring-btn');
+    if (!b) return;
+    b.classList.toggle('on', _ringEnabled);
+    b.classList.toggle('off', !_ringEnabled);
+    b.title = _ringEnabled ? 'Order Ring: ON (tap to turn off)' : 'Order Ring: OFF (tap to turn on)';
+  }
+
+  window.tgOpenDrawer = function() { document.getElementById('tg-drawer').classList.add('show'); document.getElementById('tg-drawer-overlay').classList.add('show'); document.body.style.overflow = 'hidden'; };
+  window.tgCloseDrawer = function() { document.getElementById('tg-drawer').classList.remove('show'); document.getElementById('tg-drawer-overlay').classList.remove('show'); document.body.style.overflow = ''; };
+  window.tgDrawerNav = function(v) { tgCloseDrawer(); setTimeout(() => tgSwitchView(v), 150); };
+
+  /* ✅ NEW: Shop home navigation */
+  window.tgGoShopHome = function() {
+    window.location.href = 'shop-home.html';
+  };
+
+  /* ✅ NEW: View switching with history management */
+  window.tgSwitchView = function(v, skipHistory) {
+    if (!v) v = 'dashboard';
+    if (!skipHistory && v !== VIEW) {
+      try { history.pushState({ sellerView: v, ts: Date.now() }, '', '#' + v); } catch(e) {}
+    }
+    VIEW = v;
+    document.querySelectorAll('.tg-view').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('view-'+v); if (el) el.classList.add('active');
+    document.querySelectorAll('.tg-bnav-item').forEach(i => i.classList.toggle('active', i.dataset.view === v));
+    document.querySelectorAll('.tg-drawer-item').forEach(i => i.classList.toggle('active', i.dataset.view === v));
+    const fab = document.getElementById('tg-fab'); if (fab) fab.style.display = (v === 'products' || v === 'inventory') ? 'flex' : 'none';
+    if (v !== 'orders') tgClearSelection();
+    if (v === 'help') renderTickets();
+    if (v === 'promotions') renderPromos();
+    if (v === 'insights') renderInsights();
+    if (v === 'earnings') { renderEarnings(); renderSettleHistory(); initGSTPanel(); }
+    try { window.scrollTo({top:0,behavior:'smooth'}); } catch(e) { window.scrollTo(0,0); }
+  };
+
+  /* ✅ NEW: Handle browser back button — go through history, not direct home */
+  window.addEventListener('popstate', (e) => {
+    const v = (e.state && e.state.sellerView) ? e.state.sellerView : 'dashboard';
+    tgSwitchView(v, true);
+  });
+
+  window.tgToggleOrderSelect = function(id, c) {
+    if (c) SELECTED.add(id); else SELECTED.delete(id);
+    const cb = document.getElementById('cb-'+id); if (cb) cb.checked = c;
+    const w = document.getElementById('wrap-'+id); if (w) w.classList.toggle('selected', c);
+    updateBulk(); updateSelAll();
+  };
+  window.tgToggleSelectAll = function(c) {
+    const vis = visibleOrders();
+    if (c) vis.forEach(o => SELECTED.add(o.id)); else vis.forEach(o => SELECTED.delete(o.id));
+    renderOrders(); updateBulk();
+  };
+  window.tgClearSelection = function() { SELECTED.clear(); renderOrders(); updateBulk(); updateSelAll(); };
+  window.tgOnOrderSearch = function() {
+    OSEARCH = (document.getElementById('tg-order-search').value||'').toLowerCase().trim();
+    renderOrders(); updateSelAll();
+  };
+  function matchSearch(o) { if (!OSEARCH) return true; const h = [o.id||'',o.userName||'',o.customerName||'',o.userPhone||'',o.phone||''].join(' ').toLowerCase(); return h.includes(OSEARCH); }
+  function visibleOrders() {
+    let o = ORDERS.slice();
+    if (OFILTER !== 'all') o = o.filter(x => normStatus(x) === OFILTER);
+    return o.filter(matchSearch);
+  }
+  function updateSelAll() {
+    const cb = document.getElementById('tg-select-all'); if (!cb) return;
+    const v = visibleOrders();
+    cb.checked = v.length > 0 && v.every(o => SELECTED.has(o.id));
+    cb.indeterminate = !cb.checked && v.some(o => SELECTED.has(o.id));
+  }
+  function updateBulk() {
+    const n = SELECTED.size;
+    document.getElementById('tg-sel-count').textContent = n + ' selected';
+    const acceptBtn = document.getElementById('tg-bulk-accept');
+    const labelBtn = document.getElementById('tg-bulk-label');
+    if (acceptBtn) acceptBtn.disabled = (OFILTER !== 'pending' || n === 0);
+    if (labelBtn) labelBtn.disabled = (OFILTER !== 'admin_approved' || n === 0);
+  }
+  window.tgFilterOrders = function(s) {
+    OFILTER = s;
+    document.querySelectorAll('#tg-order-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.status === s));
+    SELECTED.clear();
+    renderOrders(); updateSelAll(); updateBulk();
+  };
+
+  function renderOrders() {
+    const el = document.getElementById('tg-orders-list');
+    const o = visibleOrders();
+    if (!o.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">📦</div><div class="tg-empty-title">No orders</div></div>'; return; }
+    el.innerHTML = o.map(x => orderCard(x, false)).join('');
+  }
+  function orderCard(o, noSelect) {
+    const mi = myItems(o); const di = mi.length ? mi : (Array.isArray(o.items) ? o.items : []);
+    const f = di[0] || {}; const ex = di.length - 1;
+    const sid = (o.id||'').slice(0,10).toUpperCase();
+    const sk = stClass(o); const sl = stLabel(o);
+    const img = f.image || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T';
+    const a = orderActions(o);
+    let tot = 0; di.forEach(it => { tot += Number(it.price||0)*Number(it.qty||1); });
+    const sel = SELECTED.has(o.id);
+    const cb = noSelect ? '' : '<input type="checkbox" class="tg-order-cb" id="cb-'+o.id+'" '+(sel?'checked':'')+' onclick="event.stopPropagation();tgToggleOrderSelect(\''+o.id+'\', this.checked)" />';
+    const content = '<div class="tg-order-content"><div class="tg-order-head"><div><div class="tg-order-id">Order <b>#'+esc(sid)+'</b></div><div class="tg-order-date">'+esc(fdate(o.createdAt))+' · '+esc(ftime(o.createdAt))+'</div></div><span class="tg-order-status '+sk+'">'+esc(sl)+'</span></div><div class="tg-order-body"><div class="tg-order-img"><img src="'+esc(img)+'" loading="lazy" /></div><div class="tg-order-info"><div class="tg-order-name">'+esc(f.name||'Product')+(ex>0?' +'+ex+' more':'')+'</div><div class="tg-order-meta">'+(f.size?'<span>Size: '+esc(f.size)+'</span>':'')+'<span>Qty: '+Number(f.qty||1)+'</span></div></div><div class="tg-order-price">'+inr(tot)+'</div></div>'+(a.length?'<div class="tg-order-foot"><div></div><div class="tg-order-actions" onclick="event.stopPropagation();">'+a+'</div></div>':'')+'</div>';
+    if (noSelect) return '<div class="tg-order" onclick="tgOpenOrderDetail(\''+esc(o.id)+'\')">'+content+'</div>';
+    return '<div class="tg-order-wrap'+(sel?' selected':'')+'" id="wrap-'+o.id+'" onclick="tgOpenOrderDetail(\''+esc(o.id)+'\')">'+cb+content+'</div>';
+  }
+  function orderActions(o) {
+    const s = normStatus(o); const b = [];
+    if (s === 'pending') {
+      b.push('<button class="tg-order-btn primary" onclick="tgSellerAccept(\''+o.id+'\')">✓ Accept</button>');
+      b.push('<button class="tg-order-btn danger" onclick="tgSellerReject(\''+o.id+'\')">✕ Reject</button>');
+    } else if (s === 'seller_accepted') {
+      b.push('<span style="font-size:11.5px;color:#888;font-weight:600;padding:7px 12px;background:#f1f3f6;border-radius:6px;">⏳ Admin RTD wait</span>');
+    } else if (s === 'admin_approved') {
+      b.push('<button class="tg-order-btn label" onclick="tgGenerateLabel(\''+o.id+'\')">📄 Generate Label</button>');
+    } else if (s === 'label_generated') {
+      b.push('<button class="tg-order-btn primary" onclick="tgDownloadLabel(\''+o.id+'\')">🖨 Print</button>');
+    } else if (s === 'processing') {
+      b.push('<span style="font-size:11.5px;color:#e65100;font-weight:700;padding:7px 12px;background:#fff3e0;border-radius:6px;">📦 Processing</span>');
+    } else if (s === 'dispatched') {
+      b.push('<span style="font-size:11.5px;color:#3949ab;font-weight:700;padding:7px 12px;background:#e8eaf6;border-radius:6px;">🚚 In Transit</span>');
+    } else if (s === 'delivered') {
+      b.push('<span style="font-size:11.5px;color:#1b8a3a;font-weight:700;padding:7px 12px;background:#e6f7ec;border-radius:6px;">✓ Delivered</span>');
+    } else if (s === 'return_requested') {
+      b.push('<span style="font-size:11.5px;color:#6a1b9a;font-weight:700;padding:7px 12px;background:#f3e5f5;border-radius:6px;">⏳ Admin return approval wait</span>');
+    } else if (s === 'returned') {
+      b.push('<span style="font-size:11.5px;color:#c62828;font-weight:700;padding:7px 12px;background:#ffebee;border-radius:6px;">↩ Returned (₹150 cut)</span>');
+    }
+    return b.join('');
+  }
+
+  function listenOrders() {
+    if (!USER) return;
+    unsubOrders.forEach(u => { try { u(); } catch(e) {} });
+    unsubOrders = [];
+    const map = new Map();
+    function updateAll() {
+      ORDERS = Array.from(map.values());
+      ORDERS.sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.()||0; const bt = b.createdAt?.toDate?.()?.getTime?.()||0; return bt-at; });
+      checkNewOrders();
+      renderAll(); updateBulk(); updateSelAll();
+    }
+    try {
+      const u1 = db.collection('orders').where('sellerIds', 'array-contains', USER.uid).limit(300)
+        .onSnapshot(s => { s.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() })); updateAll(); }, () => {});
+      unsubOrders.push(u1);
+    } catch(e) {}
+    try {
+      const u2 = db.collection('orders').orderBy('createdAt', 'desc').limit(300)
+        .onSnapshot(s => {
+          let a = 0;
+          s.docs.forEach(d => { const o = { id: d.id, ...d.data() }; if (hasMyItems(o) && !map.has(d.id)) { map.set(d.id, o); a++; } });
+          if (a > 0) updateAll();
+        }, e => {
+          db.collection('orders').limit(300).get().then(s => {
+            let a = 0;
+            s.docs.forEach(d => { const o = { id: d.id, ...d.data() }; if (hasMyItems(o) && !map.has(d.id)) { map.set(d.id, o); a++; } });
+            if (a > 0) updateAll();
+          }).catch(() => {});
+        });
+      unsubOrders.push(u2);
+    } catch(e) {}
+    try {
+      const u3 = db.collection('orders').where('sellerId', '==', USER.uid).limit(300)
+        .onSnapshot(s => { let a = 0; s.docs.forEach(d => { if (!map.has(d.id)) { map.set(d.id, { id: d.id, ...d.data() }); a++; } }); if (a > 0) updateAll(); }, () => {});
+      unsubOrders.push(u3);
+    } catch(e) {}
+    try {
+      const u5 = db.collection('orders').limit(500).onSnapshot(s => {
+        let a = 0;
+        s.docs.forEach(d => { const o = { id: d.id, ...d.data() }; if (hasMyItems(o) && !map.has(d.id)) { map.set(d.id, o); a++; } });
+        if (a > 0) updateAll();
+      }, () => {});
+      unsubOrders.push(u5);
+    } catch(e) {}
+  }
+
+  function listenSettlements() {
+    if (!USER) return;
+    if (unsubSettle) { try { unsubSettle(); } catch(e){} unsubSettle = null; }
+    const uid = USER.uid;
+    const queryListeners = [];
+    const settleMap = new Map();
+
+    function pushAll() {
+      MY_SETTLEMENTS = Array.from(settleMap.values());
+      MY_SETTLEMENTS.sort((a, b) => {
+        const at = a.settledAt?.toDate?.()?.getTime?.() || a.createdAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.settledAt?.toDate?.()?.getTime?.() || b.createdAt?.toDate?.()?.getTime?.() || 0;
+        return bt - at;
+      });
+      renderSettleHistory();
+      renderEarnings();
+    }
+
+    try {
+      const q1 = db.collection('settlements').where('sellerId', '==', uid).onSnapshot(snap => {
+        snap.docs.forEach(d => settleMap.set(d.id, { id: d.id, ...d.data() }));
+        pushAll();
+      }, err => { console.warn('settle q1 err', err && err.message); });
+      queryListeners.push(q1);
+    } catch(e) {}
+    try {
+      const q2 = db.collection('settlements').where('seller_id', '==', uid).onSnapshot(snap => {
+        snap.docs.forEach(d => settleMap.set(d.id, { id: d.id, ...d.data() }));
+        pushAll();
+      }, err => {});
+      queryListeners.push(q2);
+    } catch(e) {}
+    setTimeout(() => {
+      if (settleMap.size === 0) {
+        db.collection('settlements').limit(500).get().then(snap => {
+          let found = 0;
+          snap.docs.forEach(d => {
+            const data = d.data();
+            const sid = String(data.sellerId || data.seller_id || '');
+            if (sid === uid) {
+              settleMap.set(d.id, { id: d.id, ...data });
+              found++;
+            }
+          });
+          if (found > 0) pushAll();
+        }).catch(err => console.warn('settle fallback err', err && err.message));
+      }
+    }, 1500);
+
+    unsubSettle = () => { queryListeners.forEach(u => { try { u(); } catch(e){} }); };
+  }
+
+  /* ✅ NEW: Live pricing listener — no refresh needed for slab/commission changes */
+  function listenMyPricing() {
+    if (!USER) return;
+    unsubMyPricing.forEach(u => { try { u(); } catch(e) {} });
+    unsubMyPricing = [];
+
+    /* Listen to per-seller commission */
+    try {
+      const u1 = db.collection('siteSettings').doc('sellerCommissions').onSnapshot(s => {
+        if (s.exists) {
+          const r = s.data().rates || {};
+          CUSTOM_COMM = r[USER.uid] != null ? Number(r[USER.uid]) : null;
+        } else {
+          CUSTOM_COMM = null;
+        }
+        refreshPricingUI();
+      }, err => console.warn('[sellerCommissions]', err && err.message));
+      unsubMyPricing.push(u1);
+    } catch(e) {}
+
+    /* Listen to per-seller delivery slabs */
+    try {
+      const u2 = db.collection('siteSettings').doc('sellerDelivery').onSnapshot(s => {
+        if (s.exists) {
+          const slabs = s.data().slabs || {};
+          MY_SLABS = (slabs[USER.uid] && Array.isArray(slabs[USER.uid]) && slabs[USER.uid].length) ? slabs[USER.uid] : null;
+        } else {
+          MY_SLABS = null;
+        }
+        refreshPricingUI();
+      }, err => console.warn('[sellerDelivery]', err && err.message));
+      unsubMyPricing.push(u2);
+    } catch(e) {}
+
+    /* Listen to global seller settings */
+    try {
+      const u3 = db.collection('siteSettings').doc('seller').onSnapshot(s => {
+        if (s.exists) {
+          const d = s.data();
+          if (d.commissionPercent != null) SETTINGS.commissionPercent = Number(d.commissionPercent);
+          if (Array.isArray(d.weightSlabs) && d.weightSlabs.length) SETTINGS.weightSlabs = d.weightSlabs;
+          if (Array.isArray(d.brands) && d.brands.length) {
+            ADMIN_BRANDS = d.brands.slice();
+            if (document.getElementById('tg-product-modal') && document.getElementById('tg-product-modal').classList.contains('show')) {
+              populateBrandDropdown();
+            }
+          }
+          if (Array.isArray(d.colors) && d.colors.length) {
+            ADMIN_COLORS = d.colors.slice();
+            if (document.getElementById('tg-product-modal') && document.getElementById('tg-product-modal').classList.contains('show')) {
+              renderColorChips();
+            }
+          }
+        }
+        refreshPricingUI();
+      }, err => console.warn('[seller settings]', err && err.message));
+      unsubMyPricing.push(u3);
+    } catch(e) {}
+  }
+
+  /* ✅ NEW: Refresh all pricing-dependent UI */
+  function refreshPricingUI() {
+    try { tgCalcSettlement(); } catch(e) {}
+    try { renderEarnings(); } catch(e) {}
+    try { renderStats(); } catch(e) {}
+    /* Silent update — no toast, only UI reflects */
+  }
+
+  function listenProducts() {
+    if (!USER) return;
+    db.collection('products').where('sellerId', '==', USER.uid).limit(300).onSnapshot(s => {
+      PRODUCTS = s.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderAll(); renderInsights();
+    }, () => {
+      db.collection('products').limit(300).get().then(s => {
+        PRODUCTS = s.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => String(p.sellerId||p.seller_id||'') === USER.uid);
+        renderAll(); renderInsights();
+      }).catch(() => {});
+    });
+  }
+
+  function listenCategories() {
+    if (unsubCats) { try { unsubCats(); } catch(e){} unsubCats = null; }
+    try {
+      unsubCats = db.collection('categories').onSnapshot(snap => {
+        ADMIN_CATEGORIES = snap.docs.map(d => {
+          const data = d.data();
+          return { id: d.id, name: data.name || '', order: Number(data.order) || 999 };
+        }).filter(c => c.name).sort((a,b) => a.order - b.order);
+        if (document.getElementById('tg-product-modal') && document.getElementById('tg-product-modal').classList.contains('show')) {
+          populateCategoryDropdown();
+        }
+      }, err => { console.warn('Categories load error:', err && err.message); });
+    } catch(e) {}
+  }
+
+  function listenPromotions() {
+    db.collection('promotions').where('active', '==', true).onSnapshot(s => {
+      PROMOS = s.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderPromos();
+    }, () => {
+      db.collection('promotions').limit(30).get().then(s => { PROMOS = s.docs.map(d => ({ id: d.id, ...d.data() })); renderPromos(); }).catch(() => {});
+    });
+  }
+
+  function listenTickets() {
+    if (!USER) return;
+    if (unsubTickets) { try { unsubTickets(); } catch(e){} }
+    try {
+      unsubTickets = db.collection('supportTickets').where('sellerId', '==', USER.uid).limit(100)
+        .onSnapshot(s => {
+          TICKETS = s.docs.map(d => ({ id: d.id, ...d.data() }));
+          TICKETS.sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.()||0; const bt = b.createdAt?.toDate?.()?.getTime?.()||0; return bt-at; });
+          renderTickets(); updateBadges();
+        }, () => {});
+    } catch(e) {}
+  }
+
+  function renderAll() {
+    renderStats(); renderRecentOrders(); renderOrders(); renderProducts(); renderInventory(); renderReturns(); renderEarnings(); updateBadges(); renderReturnAlert();
+  }
+  function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+  function renderStats() {
+    const c = { pending: 0, accepted: 0, ready: 0, label: 0, processing: 0, dispatched: 0, delivered: 0, returns: 0, low: 0, pp: 0 };
+    ORDERS.forEach(o => {
+      const s = normStatus(o);
+      if (s === 'pending') c.pending++;
+      else if (s === 'seller_accepted') c.accepted++;
+      else if (s === 'admin_approved') c.ready++;
+      else if (s === 'label_generated') c.label++;
+      else if (s === 'processing') c.processing++;
+      else if (s === 'dispatched') c.dispatched++;
+      else if (s === 'delivered') c.delivered++;
+      else if (s === 'return_requested' || s === 'returned') c.returns++;
+    });
+    PRODUCTS.forEach(p => { const st = totalStock(p); if (st < LOW_STOCK) c.low++; if (p.approved === false && p.rejectionStatus !== 'rejected') c.pp++; });
+
+    setText('tg-cnt-pending', c.pending);
+    setText('tg-cnt-ready', c.ready);
+    setText('tg-cnt-processing', c.processing);
+    setText('tg-cnt-delivered', c.delivered);
+    setText('tg-cnt-returns', c.returns);
+    setText('tg-cnt-low', c.low);
+    setText('tg-cnt-pending-products', c.pp);
+    setText('tg-cnt-revenue', inr(calcEarnings().netEarning));
+
+    setText('tg-oc-all', ORDERS.length);
+    setText('tg-oc-pending', c.pending);
+    setText('tg-oc-accepted', c.accepted);
+    setText('tg-oc-ready', c.ready);
+    setText('tg-oc-label', c.label);
+    setText('tg-oc-processing', c.processing);
+    setText('tg-oc-dispatched', c.dispatched);
+    setText('tg-oc-delivered', c.delivered);
+    setText('tg-oc-cancelled', ORDERS.filter(o => normStatus(o) === 'cancelled').length);
+
+    setText('tg-pc-all', PRODUCTS.length);
+    setText('tg-pc-pending', PRODUCTS.filter(p => p.approved === false && p.rejectionStatus !== 'rejected').length);
+    setText('tg-pc-approved', PRODUCTS.filter(p => p.approved !== false).length);
+
+    /* Commission % label in earnings */
+    setText('tg-earn-comm-pct-lbl', '(' + getCommission() + '%)');
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    let tO = 0, tR = 0;
+    ORDERS.forEach(o => {
+      const s = normStatus(o); if (s === 'cancelled' || s === 'returned') return;
+      const t = o.createdAt?.toDate?.()?.getTime?.() || 0; if (t < today.getTime()) return;
+      const mi = myItems(o); let amt = 0; mi.forEach(it => { amt += Number(it.price||0)*Number(it.qty||1); });
+      if (mi.length) { tO++; tR += amt; }
+    });
+    setText('tg-w-today-orders', tO);
+    setText('tg-w-today-revenue', inr(tR));
+    setText('tg-w-total-orders', ORDERS.length);
+  }
+
+  function updateBadges() {
+    const pending = ORDERS.filter(o => normStatus(o) === 'pending').length;
+    const ready = ORDERS.filter(o => normStatus(o) === 'admin_approved').length;
+    const returns = ORDERS.filter(o => normStatus(o) === 'return_requested' || normStatus(o) === 'returned').length;
+    const pp = PRODUCTS.filter(p => p.approved === false && p.rejectionStatus !== 'rejected').length;
+    const unreadTickets = TICKETS.filter(t => Number(t.unreadForSeller||0) > 0).length;
+    const total = pending + ready + returns + pp + unreadTickets;
+    const b1 = document.getElementById('tg-nav-orders-badge'); if (b1) { b1.textContent = pending + ready; b1.style.display = (pending+ready)>0 ? 'flex' : 'none'; }
+    const b2 = document.getElementById('tg-drawer-orders-badge'); if (b2) { b2.textContent = pending + ready; b2.style.display = (pending+ready)>0 ? 'inline-block' : 'none'; }
+    const b3 = document.getElementById('tg-drawer-returns-badge'); if (b3) { b3.textContent = returns; b3.style.display = returns>0 ? 'inline-block' : 'none'; }
+    const b4 = document.getElementById('tg-drawer-products-badge'); if (b4) { b4.textContent = pp; b4.style.display = pp>0 ? 'inline-block' : 'none'; }
+    const b5 = document.getElementById('tg-drawer-ticket-badge'); if (b5) { b5.textContent = unreadTickets; b5.style.display = unreadTickets>0 ? 'inline-block' : 'none'; }
+    const n = document.getElementById('tg-notif-badge');
+    if (n) { n.textContent = total; n.style.display = total>0 ? 'flex' : 'none'; }
+  }
+
+  function renderReturnAlert() {
+    const box = document.getElementById('tg-return-alert-box'); if (!box) return;
+    const pendingReturns = ORDERS.filter(o => normStatus(o) === 'return_requested');
+    const approvedReturns = ORDERS.filter(o => normStatus(o) === 'returned');
+    let html = '';
+    if (pendingReturns.length > 0) {
+      html += '<div class="tg-return-alert" style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-left-color:#1976d2;"><div class="tg-return-alert-icon" style="background:#fff;">⏳</div><div class="tg-return-alert-info"><div class="tg-return-alert-title" style="color:#1565c0;">'+pendingReturns.length+' Return Request pending</div><div class="tg-return-alert-desc">Super Admin approval ka wait. Approve hone pe ₹150 cut jayega.</div></div></div>';
+    }
+    if (approvedReturns.length > 0) {
+      html += '<div class="tg-return-alert"><div class="tg-return-alert-icon">🔄</div><div class="tg-return-alert-info"><div class="tg-return-alert-title">'+approvedReturns.length+' Return'+(approvedReturns.length === 1 ? '' : 's')+' approved</div><div class="tg-return-alert-desc">₹'+RETURN_CUT+' deducted per return</div></div><div class="tg-return-alert-amount">− '+inr(approvedReturns.length * RETURN_CUT)+'<small>Total cut</small></div></div>';
+    }
+    box.innerHTML = html;
+  }
+
+  function renderRecentOrders() {
+    const el = document.getElementById('tg-recent-orders');
+    const r = ORDERS.slice(0, 5);
+    if (!r.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">📦</div><div class="tg-empty-title">No orders yet</div></div>'; return; }
+    el.innerHTML = r.map(o => orderCard(o, true)).join('');
+  }
+
+  function renderInsights() {
+    const liveProducts = PRODUCTS.filter(p => p.approved !== false && p.active !== false);
+    let totalViews = 0;
+    liveProducts.forEach(p => { totalViews += Number(p.views || 0); });
+    const avgViews = liveProducts.length > 0 ? Math.round(totalViews / liveProducts.length) : 0;
+    const totalOrders = ORDERS.length;
+    const conv = totalViews > 0 ? ((totalOrders / totalViews) * 100).toFixed(1) : '0.0';
+    setText('tg-bi-total-views', totalViews.toLocaleString('en-IN'));
+    setText('tg-bi-total-products', liveProducts.length);
+    setText('tg-bi-avg-views', avgViews.toLocaleString('en-IN'));
+    setText('tg-bi-views', totalViews.toLocaleString('en-IN'));
+    setText('tg-bi-products', liveProducts.length);
+    setText('tg-bi-orders', totalOrders);
+    setText('tg-bi-conv', conv + '%');
+    const sorted = liveProducts.slice().sort((a, b) => Number(b.views||0) - Number(a.views||0));
+    const top = sorted.slice(0, 8);
+    const chartEl = document.getElementById('tg-bi-chart');
+    if (!top.length || totalViews === 0) {
+      chartEl.innerHTML = '<div class="tg-chart-empty">📊 No views yet</div>';
+    } else {
+      const maxViews = Math.max(...top.map(p => Number(p.views||0)), 1);
+      chartEl.innerHTML = top.map((p, i) => {
+        const v = Number(p.views||0);
+        const pct = (v / maxViews) * 100;
+        const name = (p.name || 'Product').slice(0, 8);
+        return '<div class="tg-bar-col"><div class="tg-bar" style="height:' + Math.max(4, pct * 1.6) + 'px;"><div class="tg-bar-value">' + v + '</div></div><div class="tg-bar-label">' + esc(name) + '</div></div>';
+      }).join('');
+    }
+    const listEl = document.getElementById('tg-bi-top-list');
+    if (!top.length) {
+      listEl.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">📊</div><div class="tg-empty-title">No products</div></div>';
+    } else {
+      listEl.innerHTML = top.map((p, i) => {
+        const v = Number(p.views||0);
+        const img = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T';
+        const rankCls = i === 0 ? 'gold' : (i === 1 ? 'silver' : (i === 2 ? 'bronze' : ''));
+        return '<div class="tg-top-prod"><div class="tg-top-prod-rank ' + rankCls + '">' + (i + 1) + '</div><div class="tg-top-prod-img"><img src="' + esc(img) + '" /></div><div class="tg-top-prod-info"><div class="tg-top-prod-name">' + esc(p.name || 'Product') + '</div><div class="tg-top-prod-meta">' + inr(p.price) + '</div></div><div class="tg-top-prod-views">' + v.toLocaleString('en-IN') + '<small>views</small></div></div>';
+      }).join('');
+    }
+    const allEl = document.getElementById('tg-bi-all-views');
+    if (!sorted.length) {
+      allEl.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">📊</div><div class="tg-empty-title">No products</div></div>';
+    } else {
+      const maxV = Math.max(...sorted.map(p => Number(p.views||0)), 1);
+      allEl.innerHTML = sorted.slice(0, 20).map(p => {
+        const v = Number(p.views||0);
+        const pct = (v / maxV) * 100;
+        return '<div class="tg-vis-bar"><div class="tg-vis-head"><div class="tg-vis-name">' + esc(p.name || 'Product') + '</div><div class="tg-vis-num">' + v.toLocaleString('en-IN') + ' views</div></div><div class="tg-vis-track"><div class="tg-vis-fill" style="width:' + pct + '%"></div></div></div>';
+      }).join('');
+    }
+  }
+
+  window.tgFilterProducts = function(f) { PFILTER = f; document.querySelectorAll('#tg-product-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f)); renderProducts(); };
+  function renderProducts() {
+    const el = document.getElementById('tg-products-list');
+    let p = PRODUCTS.slice();
+    if (PFILTER === 'pending') p = p.filter(x => x.approved === false && x.rejectionStatus !== 'rejected');
+    else if (PFILTER === 'approved') p = p.filter(x => x.approved !== false);
+    if (!p.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">📦</div><div class="tg-empty-title">No products</div></div>'; return; }
+    el.innerHTML = p.map(productCard).join('');
+  }
+  function productCard(p) {
+    const price = Number(p.price||0); const mrp = Number(p.compareAtPrice||p.mrp||0);
+    const off = mrp > price ? Math.round((1-price/mrp)*100) : 0;
+    const st = totalStock(p);
+    const img = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/150x150/f1f3f6/878787?text=T';
+    const sc = st === 0 ? 'out' : (st < LOW_STOCK ? 'low' : 'ok');
+    const stt = st === 0 ? 'Out' : (st < LOW_STOCK ? st+' left' : 'In Stock');
+    const views = Number(p.views||0);
+    return '<div class="tg-product"><div class="tg-product-body"><div class="tg-product-img"><img src="'+esc(img)+'" /></div><div class="tg-product-info"><div class="tg-product-name">'+esc(p.name||'Product')+'</div><div class="tg-product-meta">'+esc(p.category||'')+(p.brand?' · '+esc(p.brand):'')+' · '+inr(price)+(mrp>price?' <s style="color:#999">'+inr(mrp)+'</s>':'')+(off>0?' <b style="color:#388e3c">'+off+'% off</b>':'')+'</div><div style="font-size:11.5px;color:#7c3aed;font-weight:700;margin-bottom:6px;">👁️ '+views.toLocaleString('en-IN')+' views</div><span class="tg-product-stock '+sc+'">'+esc(stt)+'</span></div></div><div class="tg-product-actions"><button class="tg-order-btn primary" onclick="tgEditProduct(\''+esc(p.id)+'\')">✏️ Edit</button><button class="tg-order-btn ghost" onclick="tgOpenQuickStock(\''+esc(p.id)+'\')">Stock</button></div></div>';
+  }
+
+  window.tgFilterInventory = function(f) { IFILTER = f; document.querySelectorAll('#tg-inventory-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f)); renderInventory(); };
+  function renderInventory() {
+    const el = document.getElementById('tg-inventory-list');
+    let p = PRODUCTS.filter(x => x.approved !== false);
+    if (IFILTER === 'low') p = p.filter(x => { const s = totalStock(x); return s > 0 && s < LOW_STOCK; });
+    else if (IFILTER === 'out') p = p.filter(x => totalStock(x) === 0);
+    if (!p.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">✅</div><div class="tg-empty-title">All good!</div></div>'; return; }
+    el.innerHTML = p.map(x => { const st = totalStock(x); const cl = st === 0 ? 'out' : (st < LOW_STOCK ? 'low' : 'ok'); const tx = st === 0 ? 'Out' : (st < LOW_STOCK ? '⚠ '+st+' left' : '✓ '+st); const img = x.image || (x.images&&x.images[0]) || 'https://via.placeholder.com/150x150/f1f3f6/878787?text=T'; return '<div class="tg-product"><div class="tg-product-body"><div class="tg-product-img"><img src="'+esc(img)+'" /></div><div class="tg-product-info"><div class="tg-product-name">'+esc(x.name||'')+'</div><div class="tg-product-meta">'+esc(x.category||'')+' · '+inr(x.price)+'</div><span class="tg-product-stock '+cl+'">'+esc(tx)+'</span></div></div><div class="tg-product-actions"><button class="tg-order-btn primary" onclick="tgOpenQuickStock(\''+esc(x.id)+'\')">⚡ Update Stock</button></div></div>'; }).join('');
+  }
+
+  function renderReturns() {
+    const el = document.getElementById('tg-returns-list');
+    const r = ORDERS.filter(o => { const s = normStatus(o); return s === 'return_requested' || s === 'returned'; });
+    if (!r.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">✅</div><div class="tg-empty-title">No returns</div></div>'; return; }
+    el.innerHTML = r.map(o => {
+      const s = normStatus(o);
+      const mi = myItems(o); const di = mi.length ? mi : (Array.isArray(o.items) ? o.items : []);
+      const f = di[0] || {};
+      const img = f.image || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T';
+      let tot = 0; di.forEach(it => { tot += Number(it.price||0)*Number(it.qty||1); });
+      const statusBadge = s === 'returned'
+        ? '<span class="tg-order-status returned">Approved · ₹150 Cut</span>'
+        : '<span class="tg-order-status return-requested">Pending Admin Approval</span>';
+      return '<div class="tg-order"><div class="tg-order-head"><div><div class="tg-order-id">Order <b>#'+esc((o.id||'').slice(0,10).toUpperCase())+'</b></div><div class="tg-order-date">'+esc(fdate(o.createdAt))+'</div></div>'+statusBadge+'</div><div class="tg-order-body"><div class="tg-order-img"><img src="'+esc(img)+'" /></div><div class="tg-order-info"><div class="tg-order-name">'+esc(f.name||'Product')+'</div><div class="tg-order-meta"><span>Qty: '+Number(f.qty||1)+'</span></div></div><div class="tg-order-price" style="color:#d32f2f;">− '+inr(tot)+'</div></div></div>';
+    }).join('');
+  }
+
+  function renderEarnings() {
+    const e = calcEarnings();
+    const totalReceived = totalSettledReceived();
+    setText('tg-earn-gross', inr(e.gross));
+    setText('tg-earn-deduct', '− ' + inr(e.totalDeduct));
+    setText('tg-earn-net', inr(e.netEarning));
+    setText('tg-earn-gross2', inr(e.gross));
+    setText('tg-earn-comm', '− ' + inr(e.commission));
+    setText('tg-earn-deliv', '− ' + inr(e.delivery));
+    setText('tg-earn-net2', inr(e.netEarning));
+    setText('tg-earn-settled', inr(totalReceived));
+    setText('tg-earn-comm-pct-lbl', '(' + getCommission() + '%)');
+    const pendingPay = Math.max(0, e.netEarning - totalReceived);
+    setText('tg-earn-pending-pay', inr(pendingPay));
+
+    if (e.returnCount > 0) { document.getElementById('tg-earn-return-row').style.display = 'flex'; setText('tg-earn-return-cut', '− ' + inr(e.returnCut)); }
+    else document.getElementById('tg-earn-return-row').style.display = 'none';
+    if (e.labelCut > 0) { document.getElementById('tg-earn-label-row').style.display = 'flex'; setText('tg-earn-label-cut', '− ' + inr(e.labelCut)); }
+    else document.getElementById('tg-earn-label-row').style.display = 'none';
+
+    const rc = document.getElementById('tg-earn-return-card');
+    if (rc) {
+      if (e.returnCount === 0) rc.innerHTML = '';
+      else rc.innerHTML = '<div class="tg-return-alert"><div class="tg-return-alert-icon">🔄</div><div class="tg-return-alert-info"><div class="tg-return-alert-title">'+e.returnCount+' Return'+(e.returnCount === 1 ? '' : 's')+' Deducted</div><div class="tg-return-alert-desc">₹'+RETURN_CUT+' per return (admin approved)</div></div><div class="tg-return-alert-amount">− '+inr(e.returnCut)+'<small>Deducted</small></div></div>';
+    }
+
+    const el = document.getElementById('tg-earnings-list');
+    const delivered = ORDERS.filter(o => normStatus(o) === 'delivered');
+    if (!delivered.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">💰</div><div class="tg-empty-title">No earnings yet</div></div>'; return; }
+    const paidIds = getPaidOrderIds();
+
+    el.innerHTML = delivered.slice(0, 50).map(o => {
+      const mi = myItems(o); let g = 0; mi.forEach(it => { g += Number(it.price||0)*Number(it.qty||1); });
+      const comm = Math.round(g * getCommission() / 100);
+      const deliv = calcDeliveryCharge(mi);
+      const net = Math.max(0, g - comm - deliv);
+      const isPaid = paidIds.has(o.id);
+      const paidBadge = isPaid ? '<span class="tg-paid-badge">PAID</span>' : '<span style="font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;background:#fff3e0;color:#f57c00;letter-spacing:0.4px;">⏳ PENDING</span>';
+      return '<div class="tg-order" style="cursor:default;"><div class="tg-order-head"><div><div class="tg-order-id">Order <b>#'+esc((o.id||'').slice(0,10).toUpperCase())+'</b></div><div class="tg-order-date">'+esc(fdate(o.deliveredAt||o.updatedAt||o.createdAt))+'</div></div>'+paidBadge+'</div><div style="background:#f8f9fb;border-radius:8px;padding:10px;margin-top:6px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;"><span>Gross</span><b style="color:#212121;">'+inr(g)+'</b></div><div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;"><span>Commission ('+getCommission()+'%)</span><b style="color:#d32f2f;">− '+inr(comm)+'</b></div><div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:6px;"><span>Delivery</span><b style="color:#d32f2f;">− '+inr(deliv)+'</b></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;padding-top:6px;border-top:1px dashed #ddd;color:#1b8a3a;"><span>Net</span><span>'+inr(net)+'</span></div></div></div>';
+    }).join('');
+  }
+
+  function renderSettleHistory() {
+    const el = document.getElementById('tg-settle-history-list'); if (!el) return;
+    setText('tg-settle-count', MY_SETTLEMENTS.length);
+    if (!MY_SETTLEMENTS.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">💳</div><div class="tg-empty-title">No settlements yet</div><div class="tg-empty-desc">Jab TOEGO aapko payment karega, woh yahan date ke saath dikhega</div></div>';
+      return;
+    }
+    el.innerHTML = MY_SETTLEMENTS.map(x => {
+      const dt = x.settledAt?.toDate ? x.settledAt.toDate() : (x.settledAt ? new Date(x.settledAt) : null);
+      const dateStr = dt ? dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+      const timeStr = dt ? dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '';
+      const orderCount = Array.isArray(x.orderIds) ? x.orderIds.length : 0;
+      return '<div class="tg-settle-item">' +
+        '<div class="tg-settle-icon">✓</div>' +
+        '<div class="tg-settle-body">' +
+          '<div class="tg-settle-amount">' + inr(x.amount) + '</div>' +
+          '<div class="tg-settle-date">📅 ' + esc(dateStr) + (timeStr ? ' · ' + esc(timeStr) : '') + '</div>' +
+          (orderCount > 0 ? '<div style="font-size:11.5px;color:#1b8a3a;font-weight:700;margin-top:4px;">✓ ' + orderCount + ' orders settled</div>' : '') +
+          (x.reference ? '<div class="tg-settle-ref">Ref: ' + esc(x.reference) + '</div>' : '') +
+          (x.note ? '<div class="tg-settle-note">📝 ' + esc(x.note) + '</div>' : '') +
+        '</div>' +
+        '<div class="tg-settle-tick">PAID</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function initGSTPanel() {
+    const inp = document.getElementById('tg-gst-month');
+    if (!inp) return;
+    if (!inp.value) {
+      const now = new Date();
+      const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const iso = prev.getFullYear() + '-' + String(prev.getMonth() + 1).padStart(2, '0');
+      inp.value = iso;
+    }
+    const banner = document.getElementById('tg-gst-banner');
+    if (!banner) return;
+    const today = new Date();
+    const day = today.getDate();
+    if (day < 10) { banner.innerHTML = ''; return; }
+    const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const monthStr = prevMonth.getFullYear() + '-' + String(prevMonth.getMonth() + 1).padStart(2, '0');
+    const start = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1);
+    const end = new Date(prevMonth.getFullYear(), prevMonth.getMonth() + 1, 0, 23, 59, 59);
+    const hasOrders = ORDERS.some(o => {
+      if (normStatus(o) !== 'delivered') return false;
+      const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+      return dd && dd >= start && dd <= end;
+    });
+    if (!hasOrders) { banner.innerHTML = ''; return; }
+    const monthName = prevMonth.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+    banner.innerHTML = '<div class="tg-gst-info ready">' +
+      '📋 <b>GST Report Ready:</b> ' + monthName + ' ka GST report download karne ke liye ready hai.' +
+      '<button class="tg-gst-download-btn" onclick="tgQuickGSTDownload(\'' + monthStr + '\')">' +
+        '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+        'Download Now' +
+      '</button>' +
+    '</div>';
+  }
+
+  window.tgQuickGSTDownload = function(monthStr) {
+    const inp = document.getElementById('tg-gst-month');
+    if (inp) inp.value = monthStr;
+    tgDownloadGST();
+  };
+
+  window.tgDownloadGST = function() {
+    const monthInput = (document.getElementById('tg-gst-month').value || '').trim();
+    if (!monthInput) { toast('Please select a month', 'error'); return; }
+    const parts = monthInput.split('-');
+    const year = Number(parts[0]);
+    const month = Number(parts[1]);
+    if (!year || !month) { toast('Invalid month', 'error'); return; }
+    const startDate = new Date(year, month - 1, 1, 0, 0, 0);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+    const orders = ORDERS.filter(o => {
+      if (normStatus(o) !== 'delivered') return false;
+      const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+      return dd && dd >= startDate && dd <= endDate;
+    });
+    if (!orders.length) {
+      toast('No delivered orders in ' + monthInput, 'error');
+      return;
+    }
+    const sellerName = (SELLER && SELLER.shopName) || 'Seller';
+    const sellerGSTIN = (SELLER && SELLER.gst) || 'Not Registered';
+    const sellerState = String((SELLER && SELLER.state) || '').trim();
+    const sellerAddr = sellerAddrString();
+    const monthName = startDate.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    const fyStart = month >= 4 ? year : year - 1;
+    const fyLabel = String(fyStart).slice(-2) + '-' + String(fyStart + 1).slice(-2);
+    const rows = [];
+    let invoiceCounter = 1;
+    let totalBase = 0, totalCGST = 0, totalSGST = 0, totalIGST = 0, totalGST = 0, totalGross = 0;
+
+    orders.forEach(o => {
+      const mi = myItems(o);
+      if (!mi.length) return;
+      const addr = addrOf(o);
+      const buyerState = String(addr.state || '').trim();
+      const isIntraState = !sellerState || !buyerState || sellerState.toLowerCase() === buyerState.toLowerCase();
+      const invoiceNo = 'TG/' + fyLabel + '/' + String(invoiceCounter).padStart(4, '0');
+      const invoiceDate = fdate(o.deliveredAt || o.updatedAt || o.createdAt);
+      invoiceCounter++;
+
+      mi.forEach(it => {
+        const qty = Number(it.qty || 1);
+        const price = Number(it.price || 0);
+        const lineTotal = price * qty;
+        const gstPct = Number(it.gst || 18);
+        const baseAmount = lineTotal / (1 + gstPct / 100);
+        const gstAmount = lineTotal - baseAmount;
+        const cgst = isIntraState ? gstAmount / 2 : 0;
+        const sgst = isIntraState ? gstAmount / 2 : 0;
+        const igst = isIntraState ? 0 : gstAmount;
+        totalBase += baseAmount;
+        totalCGST += cgst;
+        totalSGST += sgst;
+        totalIGST += igst;
+        totalGST += gstAmount;
+        totalGross += lineTotal;
+        const hsn = it.hsn || it.hsnCode || '6404';
+        rows.push({
+          'Invoice No': invoiceNo,
+          'Invoice Date': invoiceDate,
+          'Order ID': (o.id || '').slice(0, 12).toUpperCase(),
+          'Supply Type': isIntraState ? 'Intra-State' : 'Inter-State',
+          'Buyer Name': addr.name || o.userName || o.customerName || '',
+          'Buyer State': buyerState || 'N/A',
+          'Buyer Pincode': addr.pincode || '',
+          'Product Description': it.name || '',
+          'HSN/SAC': hsn,
+          'Size': it.size || '',
+          'Color': it.color || '',
+          'Qty': qty,
+          'Unit Price (₹)': Number(price.toFixed(2)),
+          'Gross Amount (₹)': Number(lineTotal.toFixed(2)),
+          'GST Rate %': gstPct,
+          'Taxable Value (₹)': Number(baseAmount.toFixed(2)),
+          'CGST (₹)': Number(cgst.toFixed(2)),
+          'SGST (₹)': Number(sgst.toFixed(2)),
+          'IGST (₹)': Number(igst.toFixed(2)),
+          'Total Tax (₹)': Number(gstAmount.toFixed(2)),
+          'Total with Tax (₹)': Number(lineTotal.toFixed(2))
+        });
+      });
+    });
+
+    const summary = [
+      { 'Field': 'SELLER DETAILS', 'Value': '' },
+      { 'Field': 'Business Name', 'Value': sellerName },
+      { 'Field': 'Owner Name', 'Value': (SELLER && SELLER.ownerName) || '' },
+      { 'Field': 'GSTIN', 'Value': sellerGSTIN },
+      { 'Field': 'Registered Address', 'Value': sellerAddr },
+      { 'Field': 'State', 'Value': sellerState || 'N/A' },
+      { 'Field': 'Phone', 'Value': (SELLER && SELLER.phone) || '' },
+      { 'Field': 'Email', 'Value': (SELLER && SELLER.email) || '' },
+      { 'Field': '', 'Value': '' },
+      { 'Field': 'REPORT PERIOD', 'Value': '' },
+      { 'Field': 'Month', 'Value': monthName },
+      { 'Field': 'Financial Year', 'Value': fyLabel },
+      { 'Field': 'From Date', 'Value': startDate.toLocaleDateString('en-IN') },
+      { 'Field': 'To Date', 'Value': endDate.toLocaleDateString('en-IN') },
+      { 'Field': 'Generated On', 'Value': new Date().toLocaleString('en-IN') },
+      { 'Field': '', 'Value': '' },
+      { 'Field': 'SALES SUMMARY', 'Value': '' },
+      { 'Field': 'Total Orders', 'Value': orders.length },
+      { 'Field': 'Total Line Items', 'Value': rows.length },
+      { 'Field': '', 'Value': '' },
+      { 'Field': 'GST SUMMARY', 'Value': '' },
+      { 'Field': 'Total Taxable Value (₹)', 'Value': Number(totalBase.toFixed(2)) },
+      { 'Field': 'Total CGST (₹)', 'Value': Number(totalCGST.toFixed(2)) },
+      { 'Field': 'Total SGST (₹)', 'Value': Number(totalSGST.toFixed(2)) },
+      { 'Field': 'Total IGST (₹)', 'Value': Number(totalIGST.toFixed(2)) },
+      { 'Field': 'Total GST (₹)', 'Value': Number(totalGST.toFixed(2)) },
+      { 'Field': 'Total Invoice Value (₹)', 'Value': Number(totalGross.toFixed(2)) },
+      { 'Field': '', 'Value': '' },
+      { 'Field': 'DECLARATION', 'Value': '' },
+      { 'Field': 'Declaration', 'Value': 'I/We certify that the particulars given above are true and correct.' },
+      { 'Field': 'Signature', 'Value': sellerName + ' (Authorized Signatory)' }
+    ];
+
+    const stateMap = {};
+    rows.forEach(r => {
+      const st = r['Buyer State'] || 'N/A';
+      if (!stateMap[st]) stateMap[st] = { state: st, taxable: 0, cgst: 0, sgst: 0, igst: 0, total: 0, count: 0 };
+      stateMap[st].taxable += r['Taxable Value (₹)'];
+      stateMap[st].cgst += r['CGST (₹)'];
+      stateMap[st].sgst += r['SGST (₹)'];
+      stateMap[st].igst += r['IGST (₹)'];
+      stateMap[st].total += r['Total with Tax (₹)'];
+      stateMap[st].count += 1;
+    });
+    const stateBreakup = Object.values(stateMap).map(s => ({
+      'Buyer State': s.state,
+      'Items': s.count,
+      'Taxable Value (₹)': Number(s.taxable.toFixed(2)),
+      'CGST (₹)': Number(s.cgst.toFixed(2)),
+      'SGST (₹)': Number(s.sgst.toFixed(2)),
+      'IGST (₹)': Number(s.igst.toFixed(2)),
+      'Total Invoice Value (₹)': Number(s.total.toFixed(2))
+    })).sort((a, b) => b['Total Invoice Value (₹)'] - a['Total Invoice Value (₹)']);
+
+    const hsnMap = {};
+    rows.forEach(r => {
+      const h = String(r['HSN/SAC'] || '6404');
+      if (!hsnMap[h]) hsnMap[h] = { hsn: h, rate: r['GST Rate %'], qty: 0, taxable: 0, tax: 0, total: 0 };
+      hsnMap[h].qty += r['Qty'];
+      hsnMap[h].taxable += r['Taxable Value (₹)'];
+      hsnMap[h].tax += r['Total Tax (₹)'];
+      hsnMap[h].total += r['Total with Tax (₹)'];
+    });
+    const hsnBreakup = Object.values(hsnMap).map(h => ({
+      'HSN/SAC': h.hsn,
+      'GST Rate %': h.rate,
+      'Total Qty': h.qty,
+      'Taxable Value (₹)': Number(h.taxable.toFixed(2)),
+      'Total Tax (₹)': Number(h.tax.toFixed(2)),
+      'Total Invoice Value (₹)': Number(h.total.toFixed(2))
+    })).sort((a, b) => b['Taxable Value (₹)'] - a['Taxable Value (₹)']);
+
+    try {
+      const wb = XLSX.utils.book_new();
+      const wsSum = XLSX.utils.json_to_sheet(summary);
+      wsSum['!cols'] = [{ wch: 28 }, { wch: 55 }];
+      XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = [
+        { wch: 16 }, { wch: 12 }, { wch: 14 }, { wch: 13 }, { wch: 22 }, { wch: 14 },
+        { wch: 12 }, { wch: 32 }, { wch: 10 }, { wch: 8 }, { wch: 10 }, { wch: 6 },
+        { wch: 12 }, { wch: 14 }, { wch: 10 }, { wch: 14 }, { wch: 10 }, { wch: 10 },
+        { wch: 10 }, { wch: 12 }, { wch: 14 }
+      ];
+      XLSX.utils.book_append_sheet(wb, ws, 'GST Details');
+      const wsState = XLSX.utils.json_to_sheet(stateBreakup);
+      wsState['!cols'] = [{ wch: 18 }, { wch: 8 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 18 }];
+      XLSX.utils.book_append_sheet(wb, wsState, 'State-wise');
+      const wsHSN = XLSX.utils.json_to_sheet(hsnBreakup);
+      wsHSH['!cols'] = [{ wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 16 }, { wch: 14 }, { wch: 18 }];
+      XLSX.utils.book_append_sheet(wb, wsHSN, 'HSN-wise');
+      const fname = 'TOEGO_GST_' + sellerName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + monthInput + '.xlsx';
+      XLSX.writeFile(wb, fname);
+      toast('✓ GST Report downloaded (' + rows.length + ' items)', 'success');
+    } catch(err) {
+      console.error('[GST ERROR]', err);
+      toast('Failed to generate report: ' + (err.message || 'Error'), 'error');
+    }
+  };
+
+  function renderPromos() {
+    const el = document.getElementById('tg-promos-list'); if (!el) return;
+    if (!PROMOS.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">📣</div><div class="tg-empty-title">No active promotions</div></div>'; return; }
+    el.innerHTML = PROMOS.map(p => {
+      const grad = p.gradient || 'linear-gradient(135deg,#f43397,#c2185b)';
+      return '<div class="tg-promo-card"><div class="tg-promo-banner" style="background:'+esc(grad)+';"><div class="tg-promo-tag">'+esc(p.tag||'PROMO')+'</div><div class="tg-promo-title">'+esc(p.title||'')+'</div><div class="tg-promo-desc">'+esc(p.description||'')+'</div></div><div class="tg-promo-body"><div style="font-size:13px;font-weight:800;color:#1b8a3a;">'+(p.benefit?'✓ '+esc(p.benefit):'')+'</div>'+(p.benefitDesc?'<div style="font-size:11px;color:#888;">'+esc(p.benefitDesc)+'</div>':'')+'</div></div>';
+    }).join('');
+  }
+
+  const TICKET_CATS = [
+    { k: 'Order Issue', i: '📦' }, { k: 'Payment', i: '💳' }, { k: 'Product', i: '🏷️' },
+    { k: 'Delivery', i: '🚚' }, { k: 'Account', i: '👤' }, { k: 'Other', i: '❓' }
+  ];
+  function renderTickets() {
+    const el = document.getElementById('tg-tickets-list'); if (!el) return;
+    if (!TICKETS.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">🎫</div><div class="tg-empty-title">No tickets yet</div></div>'; return; }
+    el.innerHTML = TICKETS.map(t => {
+      const st = t.status || 'open';
+      const cat = TICKET_CATS.find(x => x.k === t.category);
+      const unread = Number(t.unreadForSeller||0);
+      return '<div class="tg-ticket-row" onclick="tgOpenTicketView(\''+esc(t.id)+'\')"><div class="tg-ticket-icon">'+(cat?cat.i:'📌')+'</div><div class="tg-ticket-body"><div class="tg-ticket-subject">'+(unread>0?'🔴 ':'')+esc(t.subject||'')+'</div><div class="tg-ticket-meta"><span>#'+esc((t.id||'').slice(0,8).toUpperCase())+'</span><span>'+esc(tago(t.createdAt))+'</span><span>'+esc(t.category||'')+'</span></div></div><span class="tg-ticket-status '+st+'">'+esc(st)+'</span></div>';
+    }).join('');
+  }
+  window.tgOpenTicketModal = function() {
+    tkImages = []; tkCat = '';
+    document.getElementById('tk-subject').value = ''; document.getElementById('tk-desc').value = '';
+    document.getElementById('tk-priority').value = 'medium';
+    document.getElementById('tk-img-preview').innerHTML = '';
+    document.getElementById('tk-cats').innerHTML = TICKET_CATS.map(c => '<button type="button" style="padding:10px 6px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:11.5px;font-weight:600;text-align:center;cursor:pointer;background:#fff;" data-cat="'+esc(c.k)+'" onclick="tgSelectCat(this)">'+c.i+'<br>'+esc(c.k)+'</button>').join('');
+    openModal('tg-ticket-modal');
+  };
+  window.tgSelectCat = function(el) {
+    document.querySelectorAll('#tk-cats button').forEach(b => { b.style.borderColor = '#e0e0e0'; b.style.background = '#fff'; b.style.color = '#212121'; });
+    el.style.borderColor = '#2874f0'; el.style.background = '#e8f0ff'; el.style.color = '#2874f0';
+    tkCat = el.dataset.cat;
+  };
+  document.getElementById('tk-images').addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files || []);
+    if (tkImages.length + files.length > 3) { toast('Max 3', 'error'); return; }
+    for (const f of files) { if (!f.type.startsWith('image/')) continue; try { const u = await processImg(f); tkImages.push(u); renderTkPreviews(); } catch(err) {} }
+    this.value = '';
+  });
+  function renderTkPreviews() { document.getElementById('tk-img-preview').innerHTML = tkImages.map((s, i) => '<div class="tg-img-preview-item"><img src="'+s+'" /><button type="button" class="tg-img-preview-remove" onclick="tgRemoveTkImage('+i+')">✕</button></div>').join(''); }
+  window.tgRemoveTkImage = i => { tkImages.splice(i, 1); renderTkPreviews(); };
+  window.tgSubmitTicket = async function() {
+    const sub = (document.getElementById('tk-subject').value || '').trim();
+    const desc = (document.getElementById('tk-desc').value || '').trim();
+    const pri = document.getElementById('tk-priority').value;
+    if (!tkCat) { toast('Select category', 'error'); return; }
+    if (!sub) { toast('Enter subject', 'error'); return; }
+    if (!desc) { toast('Enter description', 'error'); return; }
+    const btn = document.getElementById('tk-submit-btn'); btn.disabled = true; btn.textContent = 'Submitting...';
+    try {
+      await db.collection('supportTickets').add({
+        sellerId: USER.uid,
+        sellerName: (SELLER && SELLER.shopName) || 'Seller',
+        sellerEmail: USER.email || '',
+        category: tkCat, priority: pri, subject: sub, status: 'open',
+        unreadForSeller: 0, unreadForAdmin: 1,
+        messages: [{ sender: 'seller', senderName: (SELLER && SELLER.shopName) || 'Seller', text: desc, images: tkImages.slice(), createdAt: new Date() }],
+        createdAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
+      });
+      toast('Ticket submitted → Super Admin', 'success');
+      tgCloseModal('tg-ticket-modal');
+    } catch(e) { toast('Failed: ' + e.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Submit Ticket'; }
+  };
+  window.tgOpenTicketView = async function(id) {
+    const t = TICKETS.find(x => x.id === id); if (!t) return;
+    CURRENT_TICKET = t; tvImages = [];
+    document.getElementById('tv-subject').textContent = t.subject || 'Ticket';
+    document.getElementById('tv-id').textContent = '#' + (t.id||'').slice(0,10).toUpperCase();
+    const cat = TICKET_CATS.find(x => x.k === t.category);
+    document.getElementById('tv-cat').textContent = (cat?cat.i:'📌') + ' ' + (t.category || 'Other');
+    document.getElementById('tv-priority').textContent = (t.priority || 'medium').toUpperCase();
+    document.getElementById('tv-status').textContent = (t.status || 'open').toUpperCase();
+    document.getElementById('tv-reply-input').value = '';
+    renderChat(t);
+    if (Number(t.unreadForSeller||0) > 0) try { await db.collection('supportTickets').doc(id).update({ unreadForSeller: 0 }); } catch(e) {}
+    openModal('tg-ticket-view-modal');
+  };
+  function renderChat(t) {
+    const chat = document.getElementById('tv-chat');
+    const msgs = Array.isArray(t.messages) ? t.messages : [];
+    if (!msgs.length) { chat.innerHTML = '<div style="text-align:center;color:#888;font-size:12.5px;padding:20px;">No messages</div>'; return; }
+    chat.innerHTML = msgs.map(m => {
+      const isMe = m.sender === 'seller';
+      const time = m.createdAt ? (typeof m.createdAt.toDate === 'function' ? ftime(m.createdAt) : new Date(m.createdAt).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'})) : '';
+      const imgs = Array.isArray(m.images) && m.images.length ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">' + m.images.map(u => '<img src="'+esc(u)+'" style="width:70px;height:70px;object-fit:cover;border-radius:8px;" />').join('') + '</div>' : '';
+      return '<div class="tg-chat-msg '+(isMe?'me':'them')+'">'+esc(m.text||'')+imgs+'<div class="tg-chat-msg-meta">'+(isMe?'You':'Support')+' · '+esc(time)+'</div></div>';
+    }).join('');
+    chat.scrollTop = chat.scrollHeight;
+  }
+  document.getElementById('tv-reply-img').addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files || []);
+    for (const f of files) { if (!f.type.startsWith('image/')) continue; try { const u = await processImg(f); tvImages.push(u); } catch(err) {} }
+    this.value = '';
+  });
+  window.tgSendReply = async function() {
+    if (!CURRENT_TICKET) return;
+    const text = (document.getElementById('tv-reply-input').value || '').trim();
+    if (!text && !tvImages.length) { toast('Type or attach', 'error'); return; }
+    const existing = Array.isArray(CURRENT_TICKET.messages) ? CURRENT_TICKET.messages : [];
+    const newMsg = { sender: 'seller', senderName: (SELLER && SELLER.shopName) || 'Seller', text, images: tvImages.slice(), createdAt: new Date() };
+    try {
+      await db.collection('supportTickets').doc(CURRENT_TICKET.id).update({
+        messages: [...existing, newMsg],
+        unreadForAdmin: FV.increment(1),
+        status: (CURRENT_TICKET.status === 'resolved' || CURRENT_TICKET.status === 'closed') ? 'open' : CURRENT_TICKET.status,
+        updatedAt: FV.serverTimestamp()
+      });
+      document.getElementById('tv-reply-input').value = '';
+      tvImages = [];
+      CURRENT_TICKET = { ...CURRENT_TICKET, messages: [...existing, newMsg] };
+      renderChat(CURRENT_TICKET);
+      toast('Sent ✓', 'success');
+    } catch(e) { toast('Failed', 'error'); }
+  };
+
+  window.tgSellerAccept = async function(id) {
+    try {
+      await db.collection('orders').doc(id).update({ status: 'seller_accepted', sellerAcceptedAt: FV.serverTimestamp(), sellerAcceptedBy: USER.uid, updatedAt: FV.serverTimestamp() });
+      toast('✓ Order Accepted', 'success');
+    } catch(e) { toast('Failed: ' + e.message, 'error'); }
+  };
+  window.tgBulkAccept = async function() {
+    const ids = Array.from(SELECTED);
+    if (!ids.length) { toast('No orders selected', 'error'); return; }
+    const eligible = ids.map(id => ORDERS.find(o => o.id === id)).filter(o => o && normStatus(o) === 'pending');
+    if (!eligible.length) { toast('No pending orders', 'error'); return; }
+    let ok = 0;
+    for (const o of eligible) {
+      try {
+        await db.collection('orders').doc(o.id).update({ status: 'seller_accepted', sellerAcceptedAt: FV.serverTimestamp(), sellerAcceptedBy: USER.uid, updatedAt: FV.serverTimestamp() });
+        ok++;
+      } catch(e) {}
+    }
+    toast('✓ ' + ok + ' order(s) accepted', 'success');
+    SELECTED.clear(); renderOrders(); updateBulk(); updateSelAll();
+  };
+
+  window.tgSellerReject = function(id) {
+    const r = prompt('Rejection reason:', 'Out of stock') || 'Rejected by seller';
+    confirmCb = async () => {
+      try {
+        await db.collection('orders').doc(id).update({ status: 'cancelled', cancelledBy: 'seller', cancelReason: r, cancelledAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+        toast('Order rejected', 'info');
+        tgCloseModal('tg-confirm-modal');
+      } catch(e) { toast('Failed', 'error'); }
+    };
+    document.getElementById('tg-confirm-title').textContent = 'Reject Order?';
+    document.getElementById('tg-confirm-msg').textContent = 'Reason: ' + r;
+    document.getElementById('tg-confirm-btn').textContent = 'Reject';
+    document.getElementById('tg-confirm-btn').style.background = 'linear-gradient(135deg,#d32f2f,#b71c1c)';
+    openModal('tg-confirm-modal');
+  };
+
+  window.tgGenerateLabel = async function(id) {
+    try {
+      await db.collection('orders').doc(id).update({ status: 'label_generated', labelGeneratedAt: FV.serverTimestamp(), labelGeneratedBy: USER.uid, labelFee: LABEL_CUT, updatedAt: FV.serverTimestamp() });
+      toast('📄 Label Generated', 'success');
+      PENDING_LABELS = [id];
+      setTimeout(() => tgOpenLabelModal(), 400);
+    } catch(e) { toast('Failed: ' + e.message, 'error'); }
+  };
+  window.tgBulkGenerateLabels = async function() {
+    const ids = Array.from(SELECTED);
+    if (!ids.length) { toast('No orders selected', 'error'); return; }
+    const eligible = ids.map(id => ORDERS.find(o => o.id === id)).filter(o => o && normStatus(o) === 'admin_approved');
+    if (!eligible.length) { toast('No ready orders', 'error'); return; }
+    let ok = 0;
+    for (const o of eligible) {
+      try {
+        await db.collection('orders').doc(o.id).update({ status: 'label_generated', labelGeneratedAt: FV.serverTimestamp(), labelGeneratedBy: USER.uid, labelFee: LABEL_CUT, updatedAt: FV.serverTimestamp() });
+        ok++;
+      } catch(e) {}
+    }
+    toast('📄 ' + ok + ' label(s) generated', 'success');
+    SELECTED.clear();
+    setTimeout(() => { PENDING_LABELS = eligible.map(o => o.id); tgOpenLabelModal(); }, 500);
+  };
+  window.tgDownloadLabel = function(id) { PENDING_LABELS = [id]; tgOpenLabelModal(); };
+
+  window.tgOpenLabelModal = function() {
+    let ids = PENDING_LABELS.length ? PENDING_LABELS : Array.from(SELECTED);
+    if (!ids.length) { ids = ORDERS.filter(o => normStatus(o) === 'label_generated').map(o => o.id); }
+    if (!ids.length) { toast('No labels', 'error'); return; }
+    PENDING_LABELS = ids.slice();
+    document.getElementById('tg-label-count').textContent = ids.length;
+    openModal('tg-label-modal');
+  };
+  window.tgSelectFormat = function(f, el) {
+    FORMAT = f;
+    document.querySelectorAll('.tg-label-opt').forEach(o => { o.style.borderColor = '#e0e0e0'; o.style.background = '#f8f9fb'; });
+    el.style.borderColor = '#2874f0'; el.style.background = '#e8f0ff';
+  };
+
+  function code39(text) {
+    const pat = {'0':'nnnwwnwnn','1':'wnnwnnnnw','2':'nnwwnnnnw','3':'wnwwnnnnn','4':'nnnwwnnnw','5':'wnnwwnnnn','6':'nnwwwnnnn','7':'nnnwnnwnw','8':'wnnwnnwnn','9':'nnwwnnwnn','A':'wnnnnwnnw','B':'nnwnnwnnw','C':'wnwnnwnnn','D':'nnnnwwnnw','E':'wnnnwwnnn','F':'nnwnwwnnn','G':'nnnnnwwnw','H':'wnnnnwwnn','I':'nnwnnwwnn','J':'nnnnwwwnn','K':'wnnnnnnww','L':'nnwnnnnww','M':'wnwnnnnwn','N':'nnnnwnnww','O':'wnnnwnnwn','P':'nnwnwnnwn','Q':'nnnnnnwww','R':'wnnnnnwwn','S':'nnwnnnwwn','T':'nnnnwnwwn','U':'wwnnnnnnw','V':'nwwnnnnnw','W':'wwwnnnnnn','X':'nwnnwnnnw','Y':'wwnnwnnnn','Z':'nwwnwnnnn','-':'nwnnnnwnw','.':'wwnnnnwnn',' ':'nwwnnnwnn','*':'nwnnwnwnn'};
+    let t = String(text||'').toUpperCase().replace(/[^0-9A-Z\-\. ]/g,'') || 'ORDER';
+    if (t.length > 20) t = t.slice(0,20);
+    const f = '*' + t + '*'; const n = Math.max(1, Math.floor(260/(f.length*13))); const w = Math.round(n*2.7);
+    let x = 2, bars = '';
+    for (let i = 0; i < f.length; i++) { const p = pat[f[i]] || pat['*']; for (let j = 0; j < p.length; j++) { const bw = p[j] === 'w' ? w : n; if (j%2 === 0) bars += '<rect x="'+x+'" y="2" width="'+bw+'" height="36" fill="#000"/>'; x += bw; } x += n; }
+    const aw = x + 2;
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="'+aw+'" height="52" viewBox="0 0 '+aw+' 52" style="display:block;margin:0 auto;"><rect width="100%" height="100%" fill="#fff"/>'+bars+'<text x="'+(aw/2)+'" y="49" text-anchor="middle" font-family="monospace" font-size="11" font-weight="bold">'+esc(t)+'</text></svg>';
+  }
+
+  function labelHTML(o) {
+    const mi = myItems(o); const di = mi.length ? mi : (Array.isArray(o.items) ? o.items : []);
+    const a = addrOf(o); const sid = (o.id||'').slice(0,12).toUpperCase();
+    let tw = 0; di.forEach(it => { tw += Number(it.weight||0)*Number(it.qty||1); });
+    const items = di.map((it, i) => '<div class="li">'+(i+1)+'. '+esc(it.name||'Item')+(it.size?' ['+esc(it.size)+']':'')+' × '+Number(it.qty||1)+'</div>').join('');
+    const sellerName = (SELLER && SELLER.shopName) || 'Seller';
+    const sellerLine1 = (SELLER && SELLER.address) || '';
+    const sellerCityState = [SELLER && SELLER.city, SELLER && SELLER.state].filter(Boolean).join(', ');
+    const sellerPin = (SELLER && SELLER.pincode) ? ' - ' + SELLER.pincode : '';
+    const sellerPhone = (SELLER && SELLER.phone) ? '📞 ' + SELLER.phone : '';
+    return '<div class="lbl"><div class="lbl-top"><div class="brand">TOE<span>GO</span></div><div class="order-no">#'+esc(sid)+'</div></div><div class="lbl-barcode">'+code39(sid)+'</div>'+
+      '<div class="lbl-section"><div class="lbl-section-h">SHIP TO</div><div class="addr"><b>'+esc(a.name)+'</b><br>'+(a.line1?esc(a.line1)+'<br>':'')+(a.line2?esc(a.line2)+'<br>':'')+esc(a.city)+(a.city&&a.state?', ':'')+esc(a.state)+(a.pincode?' - <b>'+esc(a.pincode)+'</b>':'')+'<br>📞 '+esc(a.phone)+'</div></div>'+
+      '<div class="lbl-section"><div class="lbl-section-h">FROM (SELLER)</div><div class="addr" style="font-size:10px;"><b>'+esc(sellerName)+'</b>'+
+        (sellerLine1?'<br>'+esc(sellerLine1):'')+
+        (sellerCityState?'<br>'+esc(sellerCityState)+esc(sellerPin):'')+
+        (sellerPhone?'<br>'+esc(sellerPhone):'')+
+      '</div></div>'+
+      '<div class="lbl-section"><div class="lbl-section-h">ITEMS · '+tw+'g</div><div class="lbl-items">'+items+'</div></div>'+
+      '<div class="lbl-foot"><div class="lbl-pay">'+esc((o.paymentMethod||'COD').toUpperCase())+'</div><div class="lbl-date">'+esc(fdate(o.labelGeneratedAt||o.createdAt))+'</div></div></div>';
+  }
+
+  window.tgPrintLabels = async function() {
+    const ids = PENDING_LABELS.slice(); if (!ids.length) { toast('No labels', 'error'); return; }
+    const orders = ids.map(id => ORDERS.find(o => o.id === id)).filter(Boolean); if (!orders.length) return;
+    const css = FORMAT === 'a4'
+      ? '@page{size:A4;margin:6mm;}body{margin:0;font-family:Arial;background:#fff;}.page-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;width:198mm;height:285mm;gap:2mm;page-break-after:always;}.page-grid:last-child{page-break-after:auto;}.lbl{border:2px solid #000;border-radius:4px;padding:3mm;box-sizing:border-box;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;font-size:10px;line-height:1.3;}.lbl-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #000;padding-bottom:2mm;margin-bottom:2mm;}.brand{font-weight:900;font-style:italic;font-size:16px;color:#2874f0;}.brand span{color:#f43397;}.order-no{font-family:monospace;font-weight:800;font-size:12px;}.lbl-barcode{text-align:center;margin-bottom:2mm;}.lbl-section{margin-bottom:2mm;}.lbl-section-h{font-size:8.5px;font-weight:800;color:#666;text-transform:uppercase;margin-bottom:1mm;border-bottom:0.5px solid #ddd;padding-bottom:0.5mm;}.addr{font-size:10.5px;line-height:1.35;}.lbl-items .li{font-size:10px;margin-bottom:0.8mm;}.lbl-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:2mm;border-top:1px solid #999;font-size:10px;font-weight:700;}.lbl-pay{background:#000;color:#fff;padding:1mm 3mm;border-radius:2mm;font-size:9px;}.lbl-date{color:#666;font-size:9px;}'
+      : '@page{size:102mm 152mm;margin:0;}body{margin:0;font-family:Arial;background:#fff;}.lbl{width:102mm;height:152mm;box-sizing:border-box;padding:5mm;page-break-after:always;display:flex;flex-direction:column;font-size:12px;line-height:1.35;}.lbl:last-child{page-break-after:auto;}.lbl-top{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:3mm;margin-bottom:3mm;}.brand{font-weight:900;font-style:italic;font-size:24px;color:#2874f0;}.brand span{color:#f43397;}.order-no{font-family:monospace;font-weight:800;font-size:14px;}.lbl-barcode{text-align:center;margin-bottom:3mm;border-bottom:1px dashed #666;padding-bottom:2mm;}.lbl-section{margin-bottom:3mm;}.lbl-section-h{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;margin-bottom:1.5mm;border-bottom:0.5px solid #ddd;padding-bottom:1mm;}.addr{font-size:13px;line-height:1.4;}.lbl-items .li{font-size:12px;margin-bottom:1mm;}.lbl-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:3mm;border-top:1.5px solid #999;font-size:12px;font-weight:700;}.lbl-pay{background:#000;color:#fff;padding:1.5mm 4mm;border-radius:2mm;font-size:11px;}.lbl-date{color:#666;font-size:11px;}';
+    let body = '';
+    if (FORMAT === 'a4') {
+      for (let i = 0; i < orders.length; i += 4) {
+        const c = orders.slice(i, i+4).map(o => labelHTML(o));
+        while (c.length < 4) c.push('<div></div>');
+        body += '<div class="page-grid">'+c.join('')+'</div>';
+      }
+    } else body = orders.map(o => labelHTML(o)).join('');
+    const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Labels</title><style>'+css+'</style></head><body>'+body+'<script>setTimeout(function(){window.print();},700);<\/script></body></html>';
+    const w = window.open('', '_blank'); if (w) { w.document.write(html); w.document.close(); } else toast('Popup blocked!', 'error');
+    tgCloseModal('tg-label-modal');
+    let moved = 0;
+    for (const o of orders) {
+      if (normStatus(o) === 'label_generated') {
+        try {
+          await db.collection('orders').doc(o.id).update({ status: 'processing', processingAt: FV.serverTimestamp(), processingBy: USER.uid, sentToAdminAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+          moved++;
+        } catch(e) {}
+      }
+    }
+    if (moved > 0) toast('📦 ' + moved + ' → Processing', 'success');
+    PENDING_LABELS = []; SELECTED.clear(); updateBulk();
+  };
+
+  window.tgOpenOrderDetail = function(id) {
+    const o = ORDERS.find(x => x.id === id); if (!o) return;
+    const mi = myItems(o); const a = addrOf(o); const s = normStatus(o);
+    const tl = [];
+    tl.push({ t: 'Order Placed', time: o.createdAt });
+    if (o.sellerAcceptedAt) tl.push({ t: 'Seller Accepted', time: o.sellerAcceptedAt });
+    if (o.adminApprovedAt || o.rtdAt) tl.push({ t: 'Admin RTD', time: o.adminApprovedAt || o.rtdAt });
+    if (o.labelGeneratedAt) tl.push({ t: 'Label Generated', time: o.labelGeneratedAt });
+    if (o.processingAt) tl.push({ t: 'Processing', time: o.processingAt });
+    if (o.dispatchedAt) tl.push({ t: 'Dispatched', time: o.dispatchedAt });
+    if (o.deliveredAt) tl.push({ t: 'Delivered', time: o.deliveredAt });
+    if (o.cancelledAt) tl.push({ t: 'Cancelled', time: o.cancelledAt });
+    if (o.returnApprovedAt) tl.push({ t: 'Return Approved (₹150 cut)', time: o.returnApprovedAt });
+    const tlHtml = tl.map((x, i) => { const isC = i === tl.length - 1 && !['delivered','cancelled','returned'].includes(s); return '<div class="tg-timeline-step '+(isC?'current':'done')+'"><div class="tg-timeline-dot">'+(i+1)+'</div><div class="tg-timeline-body"><div class="tg-timeline-title">'+esc(x.t)+'</div><div class="tg-timeline-time">'+esc(fdate(x.time))+' · '+esc(ftime(x.time))+'</div></div></div>'; }).join('');
+    const actions = orderActions(o);
+    const l2 = a.line2 ? '<br>' + esc(a.line2) : '';
+    document.getElementById('tg-order-detail-body').innerHTML = '<div style="background:#f8f9fb;border-radius:10px;padding:14px;margin-bottom:14px;"><div style="font-size:12px;color:#888;margin-bottom:4px;">Order ID</div><div style="font-family:monospace;font-size:14px;font-weight:800;">#'+esc((o.id||'').slice(0,14).toUpperCase())+'</div></div>' + (actions ? '<div style="margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;">'+actions+'</div>' : '') + '<div style="font-size:13px;font-weight:800;margin:14px 0 8px;">Timeline</div><div class="tg-timeline">'+tlHtml+'</div><div style="font-size:13px;font-weight:800;margin:14px 0 8px;">Your Items ('+mi.length+')</div>' + mi.map(it => '<div style="display:grid;grid-template-columns:50px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #f1f3f6;"><div style="width:50px;height:50px;border-radius:6px;overflow:hidden;background:#f5f5f6;"><img src="'+esc(it.image||'')+'" style="width:100%;height:100%;object-fit:contain;padding:3px;" /></div><div><div style="font-size:13px;font-weight:600;">'+esc(it.name||'')+'</div><div style="font-size:11px;color:#888;">'+(it.size?'Size: '+esc(it.size)+' · ':'')+'Qty: '+Number(it.qty||1)+'</div></div><div style="font-size:13px;font-weight:800;">'+inr(Number(it.price||0)*Number(it.qty||1))+'</div></div>').join('') + '<div style="font-size:13px;font-weight:800;margin:14px 0 8px;">Ship To</div><div style="background:#f8f9fb;border-radius:10px;padding:12px;font-size:13px;line-height:1.6;"><b>'+esc(a.name)+'</b><br>'+(a.line1?esc(a.line1)+'<br>':'')+l2+(a.line1||a.line2?'<br>':'')+esc(a.city)+(a.city&&a.state?', ':'')+esc(a.state)+(a.pincode?' - <b>'+esc(a.pincode)+'</b>':'')+'<br>📞 '+esc(a.phone)+'</div>';
+    openModal('tg-order-modal');
+  };
+
+  window.tgOpenQuickStock = function(pid) {
+    const p = PRODUCTS.find(x => x.id === pid); if (!p) return;
+    document.getElementById('tg-qs-pid').value = pid;
+    const sl = sizeList(p); let h = '';
+    if (sl && sl.length) h = sl.map(s => '<div style="display:grid;grid-template-columns:1fr 120px;gap:10px;align-items:center;padding:10px 12px;background:#f8f9fb;border-radius:10px;margin-bottom:8px;"><div style="font-size:14px;font-weight:800;color:#2874f0;text-transform:uppercase;">'+esc(s.size||'—')+'</div><input type="number" data-size="'+esc(s.size||'')+'" value="'+s.stock+'" min="0" style="width:100%;padding:10px;text-align:center;border:1.5px solid #e0e0e0;border-radius:8px;font-weight:700;"></div>').join('');
+    else h = '<div style="display:grid;grid-template-columns:1fr 120px;gap:10px;align-items:center;padding:10px 12px;background:#f8f9fb;border-radius:10px;"><div style="font-size:14px;font-weight:800;color:#2874f0;">Stock</div><input type="number" data-size="" value="'+Number(p.stock||0)+'" min="0" style="width:100%;padding:10px;text-align:center;border:1.5px solid #e0e0e0;border-radius:8px;font-weight:700;"></div>';
+    document.getElementById('tg-qs-body').innerHTML = h;
+    openModal('tg-quick-stock-modal');
+  };
+  window.tgSaveQuickStock = async function() {
+    const pid = document.getElementById('tg-qs-pid').value; if (!pid) return;
+    const ins = document.querySelectorAll('#tg-qs-body input[data-size]');
+    const ss = {}; let t = 0, h = false;
+    ins.forEach(i => { const sz = i.dataset.size; const v = Number(i.value||0); if (sz) { ss[sz] = v; h = true; } t += v; });
+    const u = { updatedAt: FV.serverTimestamp() };
+    if (h) { u.sizeStock = ss; u.stock = t; u.sizes = Object.keys(ss); } else u.stock = t;
+    try { await db.collection('products').doc(pid).update(u); toast('Updated ✓', 'success'); tgCloseModal('tg-quick-stock-modal'); } catch(e) {}
+  };
+
+  window.tgShowNotifications = function() {
+    const pend = ORDERS.filter(o => normStatus(o) === 'pending').length;
+    const ready = ORDERS.filter(o => normStatus(o) === 'admin_approved').length;
+    if (pend > 0) { toast(pend + ' new order(s)!', 'info'); tgDrawerNav('orders'); tgFilterOrders('pending'); }
+    else if (ready > 0) { toast(ready + ' ready for label!', 'success'); tgDrawerNav('orders'); tgFilterOrders('admin_approved'); }
+    else toast('No new notifications', 'info');
+  };
+
+  function openModal(id) { document.getElementById(id).classList.add('show'); document.body.style.overflow = 'hidden'; }
+  window.tgCloseModal = function(id) { document.getElementById(id).classList.remove('show'); document.body.style.overflow = ''; };
+  window.tgDoConfirm = async function() { if (confirmCb) await confirmCb(); };
+
+  window.tgExportEarnings = function() {
+    const delivered = ORDERS.filter(o => normStatus(o) === 'delivered');
+    if (!delivered.length) { toast('No data', 'error'); return; }
+    const paidIds = getPaidOrderIds();
+    const rows = delivered.map(o => {
+      const mi = myItems(o); let g = 0; mi.forEach(it => { g += Number(it.price||0)*Number(it.qty||1); });
+      const comm = Math.round(g * getCommission() / 100);
+      const deliv = calcDeliveryCharge(mi);
+      const net = Math.max(0, g - comm - deliv);
+      return { 'Order ID': o.id, 'Date': fdate(o.deliveredAt||o.createdAt), 'Customer': o.userName || o.customerName || '', 'Items': mi.map(it => it.name+' x'+it.qty).join(', '), 'Gross (₹)': g, 'Commission (₹)': comm, 'Delivery (₹)': deliv, 'Net (₹)': net, 'Payment Status': paidIds.has(o.id) ? 'PAID' : 'PENDING' };
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Earnings');
+    XLSX.writeFile(wb, 'TOEGO_Earnings_' + new Date().toISOString().slice(0,10) + '.xlsx');
+    toast('Exported ✓', 'success');
+  };
+
+  async function uploadCloud(file) {
+    if (!CLOUD.cloudName || !CLOUD.uploadPreset) return null;
+    const fd = new FormData(); fd.append('file', file); fd.append('upload_preset', CLOUD.uploadPreset);
+    try { const r = await fetch('https://api.cloudinary.com/v1_1/'+CLOUD.cloudName+'/image/upload', { method:'POST', body: fd }); if (!r.ok) return null; const d = await r.json(); return d.secure_url; } catch(e) { return null; }
+  }
+  async function compressImg(file) {
+    return new Promise((res) => {
+      const r = new FileReader();
+      r.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          let w = img.width, h = img.height;
+          if (w > 1200) { h = Math.round(h*(1200/w)); w = 1200; }
+          const c = document.createElement('canvas'); c.width = w; c.height = h;
+          const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
+          res(c.toDataURL('image/jpeg', 0.75));
+        };
+        img.src = e.target.result;
+      };
+      r.readAsDataURL(file);
+    });
+  }
+  async function processImg(file) {
+    const c = await compressImg(file);
+    let u = null;
+    try { const b = await (await fetch(c)).blob(); u = await uploadCloud(new File([b], 'p.jpg', { type:'image/jpeg' })); } catch(e) {}
+    return u || c;
+  }
+
+  function populateBrandDropdown() {
+    const sel = document.getElementById('prod-brand');
+    if (!sel) return;
+    const brands = ADMIN_BRANDS.length ? ADMIN_BRANDS : DEFAULT_BRANDS;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">Select brand</option>' + brands.map(b => '<option value="' + esc(b) + '">' + esc(b) + '</option>').join('');
+    if (current && brands.includes(current)) sel.value = current;
+  }
+  function populateCategoryDropdown() {
+    const sel = document.getElementById('prod-category');
+    if (!sel) return;
+    const current = sel.value;
+    let opts = '<option value="">Select category</option>';
+    if (ADMIN_CATEGORIES.length) {
+      opts += ADMIN_CATEGORIES.map(c => '<option value="' + esc(c.name) + '">' + esc(c.name) + '</option>').join('');
+    } else {
+      opts += '<option value="" disabled>No categories yet (admin will add)</option>';
+    }
+    sel.innerHTML = opts;
+    if (current) sel.value = current;
+  }
+
+  /* ✅ SIMPLIFIED: Colors — only admin colors + saved custom colors */
+  function renderColorChips() {
+    const wrap = document.getElementById('prod-colors-wrap');
+    if (!wrap) return;
+    const adminColors = ADMIN_COLORS.length ? ADMIN_COLORS : DEFAULT_COLORS;
+    /* Keep only custom colors that are already selected (from old saved products) */
+    const customSelected = _selectedColors.filter(c => !adminColors.includes(c));
+    const allColors = adminColors.concat(customSelected);
+    if (!allColors.length) {
+      wrap.innerHTML = '<div class="tg-color-chips-empty">No colors set by admin yet</div>';
+      return;
+    }
+    wrap.innerHTML = allColors.map(c => {
+      const active = _selectedColors.includes(c);
+      const isCustom = !adminColors.includes(c);
+      return '<div class="tg-color-chip ' + (active ? 'active' : '') + '" onclick="tgToggleColor(this, \'' + esc(c).replace(/'/g, "\\'") + '\')">' + esc(c) + (isCustom ? ' <span style="font-size:10px;opacity:0.75;">★</span>' : '') + '</div>';
+    }).join('');
+  }
+  window.tgToggleColor = function(el, color) {
+    const idx = _selectedColors.indexOf(color);
+    if (idx >= 0) _selectedColors.splice(idx, 1);
+    else _selectedColors.push(color);
+    el.classList.toggle('active');
+  };
+
+  function renderPickupBox() {
+    const box = document.getElementById('prod-pickup-box');
+    if (!box) return;
+    const n = (SELLER && SELLER.shopName) || 'Your Store';
+    const line1 = (SELLER && SELLER.address) || '';
+    const cs = [SELLER && SELLER.city, SELLER && SELLER.state].filter(Boolean).join(', ');
+    const pin = (SELLER && SELLER.pincode) ? ' - ' + SELLER.pincode : '';
+    const phone = (SELLER && SELLER.phone) || '';
+    if (!line1 && !cs) {
+      box.innerHTML = '<div style="color:#d32f2f;font-size:12px;">⚠ Address missing. Please update your seller profile address.</div>';
+      return;
+    }
+    box.innerHTML = '<b>' + esc(n) + '</b>' + (line1 ? '<div class="ph">' + esc(line1) + '</div>' : '') + (cs ? '<div class="ph">' + esc(cs) + esc(pin) + '</div>' : '') + (phone ? '<div class="ph">📞 ' + esc(phone) + '</div>' : '');
+  }
+
+  function sellerAddrString() {
+    if (!SELLER) return '';
+    const parts = [];
+    if (SELLER.address) parts.push(SELLER.address);
+    const cityState = [SELLER.city, SELLER.state].filter(Boolean).join(', ');
+    if (cityState) parts.push(cityState);
+    if (SELLER.pincode) parts.push('PIN: ' + SELLER.pincode);
+    return parts.join(' · ');
+  }
+
+  window.tgOpenProductModal = function() {
+    if (!USER) { toast('Please log in first', 'error'); return; }
+    _editProdId = null;
+    _prodImages = [];
+    _uploadingCount = 0;
+    _selectedColors = [];
+    document.getElementById('tg-prod-modal-title').textContent = 'Add New Product';
+    document.getElementById('prod-id').value = '';
+    document.getElementById('prod-name').value = '';
+    document.getElementById('prod-desc').value = '';
+    document.getElementById('prod-price').value = '';
+    document.getElementById('prod-mrp').value = '';
+    document.getElementById('prod-weight').value = '500';
+    document.getElementById('prod-gst').value = '18';
+    document.getElementById('prod-size-rows').innerHTML = '';
+    document.getElementById('prod-del-btn').style.display = 'none';
+    populateBrandDropdown();
+    populateCategoryDropdown();
+    renderColorChips();
+    renderPickupBox();
+    tgAddSizeRow('FREE', '');
+    renderProdImages();
+    tgCalcSettlement();
+    openModal('tg-product-modal');
+  };
+
+  window.tgCloseProductModal = function() {
+    tgCloseModal('tg-product-modal');
+    _editProdId = null;
+    _prodImages = [];
+    _uploadingCount = 0;
+    _selectedColors = [];
+  };
+
+  window.tgEditProduct = function(pid) {
+    const p = PRODUCTS.find(x => x.id === pid);
+    if (!p) { toast('Product not found', 'error'); return; }
+    _editProdId = pid;
+    _prodImages = [];
+    _uploadingCount = 0;
+    _selectedColors = Array.isArray(p.colors) ? p.colors.slice() : [];
+    if (Array.isArray(p.images) && p.images.length) _prodImages = p.images.slice();
+    else if (p.image) _prodImages = [p.image];
+
+    document.getElementById('tg-prod-modal-title').textContent = 'Edit Product';
+    document.getElementById('prod-id').value = pid;
+    document.getElementById('prod-name').value = p.name || '';
+    document.getElementById('prod-desc').value = p.description || '';
+    document.getElementById('prod-price').value = p.price || '';
+    document.getElementById('prod-mrp').value = p.compareAtPrice || p.mrp || '';
+    document.getElementById('prod-weight').value = p.weight || 500;
+    document.getElementById('prod-gst').value = String(p.gst || 18);
+    document.getElementById('prod-size-rows').innerHTML = '';
+
+    populateBrandDropdown();
+    populateCategoryDropdown();
+    renderColorChips();
+    renderPickupBox();
+
+    const brandSel = document.getElementById('prod-brand');
+    const catSel = document.getElementById('prod-category');
+    if (p.brand) {
+      const brands = ADMIN_BRANDS.length ? ADMIN_BRANDS : DEFAULT_BRANDS;
+      if (!brands.includes(p.brand)) {
+        const opt = document.createElement('option');
+        opt.value = p.brand; opt.textContent = p.brand;
+        brandSel.appendChild(opt);
+      }
+      brandSel.value = p.brand;
+    }
+    if (p.category) {
+      const cats = ADMIN_CATEGORIES.map(c => c.name);
+      if (!cats.includes(p.category)) {
+        const opt = document.createElement('option');
+        opt.value = p.category; opt.textContent = p.category;
+        catSel.appendChild(opt);
+      }
+      catSel.value = p.category;
+    }
+
+    if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
+      Object.entries(p.sizeStock).forEach(([sz, st]) => tgAddSizeRow(sz, st));
+    } else if (Array.isArray(p.sizes) && p.sizes.length) {
+      p.sizes.forEach(sz => tgAddSizeRow(sz, p.stock || 0));
+    } else {
+      tgAddSizeRow('FREE', p.stock || 0);
+    }
+    document.getElementById('prod-del-btn').style.display = 'block';
+    renderProdImages();
+    tgCalcSettlement();
+    openModal('tg-product-modal');
+  };
+
+  window.tgAddSizeRow = function(size, stock) {
+    const wrap = document.getElementById('prod-size-rows');
+    const row = document.createElement('div');
+    row.className = 'tg-size-stock-row';
+    row.innerHTML =
+      '<input type="text" placeholder="Size (S, M, L, 8, 9)" value="' + esc(size || '') + '" maxlength="20" class="tg-size-name">' +
+      '<input type="number" placeholder="Stock qty" value="' + (stock !== undefined && stock !== null && stock !== '' ? stock : '') + '" min="0" class="tg-size-stock">' +
+      '<button type="button" class="tg-size-stock-rm" onclick="this.parentElement.remove()" title="Remove">✕</button>';
+    wrap.appendChild(row);
+  };
+
+  window.tgRemoveProdImage = function(i) {
+    _prodImages.splice(i, 1);
+    renderProdImages();
+  };
+
+  function renderProdImages() {
+    const grid = document.getElementById('prod-img-grid');
+    if (!grid) return;
+    let html = '';
+    _prodImages.forEach((url, i) => {
+      html += '<div class="tg-prod-img-item"><img src="' + esc(url) + '" alt="" /><button type="button" class="tg-prod-img-remove" onclick="tgRemoveProdImage(' + i + ')">✕</button></div>';
+    });
+    for (let i = 0; i < _uploadingCount; i++) {
+      html += '<div class="tg-prod-img-item"><div class="tg-prod-img-loading">Uploading</div></div>';
+    }
+    const used = _prodImages.length + _uploadingCount;
+    if (used < 5) {
+      html += '<label class="tg-prod-img-add" for="prod-img-input"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Add Photo<br>(' + used + '/5)</span></label>';
+    }
+    grid.innerHTML = html;
+  }
+
+  document.getElementById('prod-img-input').addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const room = 5 - _prodImages.length - _uploadingCount;
+    if (room <= 0) { toast('Max 5 images', 'error'); this.value = ''; return; }
+    const toAdd = files.slice(0, room).filter(f => f.type.startsWith('image/'));
+    this.value = '';
+    if (!toAdd.length) return;
+    for (const f of toAdd) {
+      _uploadingCount++;
+      renderProdImages();
+      try {
+        const url = await compressAndUploadProduct(f);
+        if (url) _prodImages.push(url);
+        else toast('Upload failed', 'error');
+      } catch(err) {
+        console.warn('Upload error:', err);
+        toast('Upload failed for ' + f.name, 'error');
+      }
+      _uploadingCount--;
+      renderProdImages();
+    }
+    toast('✓ Images ready (' + _prodImages.length + '/5)', 'success');
+  });
+
+  async function compressAndUploadProduct(file) {
+    const compressedDataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const TARGET_BYTES = 100 * 1024;
+          const attempts = [
+            { maxW: 1400, q: 0.85 }, { maxW: 1200, q: 0.8 }, { maxW: 1000, q: 0.75 },
+            { maxW: 900, q: 0.7 }, { maxW: 800, q: 0.65 }, { maxW: 700, q: 0.6 },
+            { maxW: 600, q: 0.55 }, { maxW: 500, q: 0.5 }, { maxW: 400, q: 0.45 },
+            { maxW: 350, q: 0.4 }, { maxW: 300, q: 0.35 }, { maxW: 250, q: 0.3 }, { maxW: 200, q: 0.25 }
+          ];
+          let best = null;
+          for (const a of attempts) {
+            let w = img.width, h = img.height;
+            if (w > a.maxW) { h = Math.round(h * (a.maxW / w)); w = a.maxW; }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', a.q);
+            const bytes = Math.round((dataUrl.split(',')[1]?.length || 0) * 0.75);
+            best = { dataUrl, bytes };
+            if (bytes <= TARGET_BYTES) { resolve(dataUrl); return; }
+          }
+          resolve(best ? best.dataUrl : null);
+        };
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('File read failed'));
+      reader.readAsDataURL(file);
+    });
+    if (!compressedDataUrl) throw new Error('Compression failed');
+    let url = compressedDataUrl;
+    if (CLOUD.cloudName && CLOUD.uploadPreset) {
+      try {
+        const blob = await (await fetch(compressedDataUrl)).blob();
+        const fd = new FormData();
+        fd.append('file', new File([blob], 'product.jpg', { type: 'image/jpeg' }));
+        fd.append('upload_preset', CLOUD.uploadPreset);
+        fd.append('folder', 'toego/products');
+        const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD.cloudName + '/image/upload', { method: 'POST', body: fd });
+        if (res.ok) {
+          const d = await res.json();
+          url = d.secure_url.replace('/upload/', '/upload/q_auto:good,w_1000,c_limit/');
+        }
+      } catch(e) { console.warn('Cloudinary upload failed, using dataURL'); }
+    }
+    return url;
+  }
+
+  window.tgCalcSettlement = function() {
+    const priceEl = document.getElementById('prod-price');
+    const weightEl = document.getElementById('prod-weight');
+    if (!priceEl || !weightEl) return;
+    const price = Number(priceEl.value || 0);
+    const weight = Number(weightEl.value || 0) || 500;
+    const commPct = getCommission();
+    const comm = Math.round(price * commPct / 100);
+    const deliv = calcDeliveryCharge([{ weight: weight, qty: 1 }]);
+    const net = Math.max(0, price - comm - deliv);
+    setText('set-price', inr(price));
+    setText('set-comm-pct', commPct);
+    setText('set-comm', '− ' + inr(comm));
+    setText('set-deliv', '− ' + inr(deliv));
+    setText('set-net', inr(net));
+  };
+
+  window.tgSaveProduct = async function() {
+    if (!USER) { toast('Please log in', 'error'); return; }
+    const name = (document.getElementById('prod-name').value || '').trim();
+    const brand = (document.getElementById('prod-brand').value || '').trim();
+    const category = (document.getElementById('prod-category').value || '').trim();
+    const price = Number(document.getElementById('prod-price').value || 0);
+    if (!name) { toast('Enter product name', 'error'); return; }
+    if (!brand) { toast('Select brand', 'error'); return; }
+    if (!category) { toast('Select category', 'error'); return; }
+    if (price <= 0) { toast('Enter valid price', 'error'); return; }
+    if (_uploadingCount > 0) { toast('Wait for images to upload', 'error'); return; }
+    if (_prodImages.length < 1) { toast('Add at least 1 image', 'error'); return; }
+    const sizeRows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
+    const sizeStock = {};
+    let totalStockQty = 0;
+    let hasSizes = false;
+    sizeRows.forEach(row => {
+      const sz = (row.querySelector('.tg-size-name').value || '').trim();
+      const st = Number(row.querySelector('.tg-size-stock').value || 0);
+      if (sz) {
+        sizeStock[sz] = Math.max(0, st);
+        totalStockQty += Math.max(0, st);
+        hasSizes = true;
+      }
+    });
+    if (!hasSizes) { toast('Add at least 1 size variant', 'error'); return; }
+
+    const payload = {
+      name: name, brand: brand, category: category,
+      description: (document.getElementById('prod-desc').value || '').trim(),
+      price: price,
+      compareAtPrice: Number(document.getElementById('prod-mrp').value || 0),
+      mrp: Number(document.getElementById('prod-mrp').value || 0),
+      weight: Number(document.getElementById('prod-weight').value || 0),
+      gst: Number(document.getElementById('prod-gst').value || 18),
+      colors: _selectedColors.slice(),
+      sizeStock: sizeStock,
+      sizes: Object.keys(sizeStock),
+      stock: totalStockQty,
+      images: _prodImages.slice(),
+      image: _prodImages[0] || '',
+      sellerId: USER.uid,
+      sellerName: (SELLER && SELLER.shopName) || 'Seller',
+      shopName: (SELLER && SELLER.shopName) || '',
+      pickupAddress: {
+        name: (SELLER && SELLER.shopName) || '',
+        line1: (SELLER && SELLER.address) || '',
+        city: (SELLER && SELLER.city) || '',
+        state: (SELLER && SELLER.state) || '',
+        pincode: (SELLER && SELLER.pincode) || '',
+        phone: (SELLER && SELLER.phone) || ''
+      },
+      active: true,
+      updatedAt: FV.serverTimestamp()
+    };
+
+    const btn = document.getElementById('prod-save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      if (_editProdId) {
+        const existing = PRODUCTS.find(x => x.id === _editProdId);
+        if (existing && existing.rejectionStatus === 'rejected') {
+          payload.approved = false;
+          payload.rejectionStatus = null;
+          payload.approvalStatus = 'pending';
+        }
+        await db.collection('products').doc(_editProdId).update(payload);
+        toast('✓ Product updated', 'success');
+      } else {
+        payload.approved = false;
+        payload.approvalStatus = 'pending';
+        payload.views = 0;
+        payload.sales = 0;
+        payload.createdAt = FV.serverTimestamp();
+        await db.collection('products').add(payload);
+        toast('✓ Product submitted for approval', 'success');
+      }
+      tgCloseProductModal();
+    } catch(err) {
+      console.error(err);
+      toast('Failed: ' + (err.message || 'Try again'), 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Product';
+    }
+  };
+
+  window.tgDeleteProductFromModal = function() {
+    if (!_editProdId) return;
+    const pid = _editProdId;
+    const p = PRODUCTS.find(x => x.id === pid);
+    const nm = p ? (p.name || 'this product') : 'this product';
+    confirmCb = async () => {
+      try {
+        await db.collection('products').doc(pid).delete();
+        toast('Product deleted', 'success');
+        tgCloseModal('tg-confirm-modal');
+        tgCloseProductModal();
+      } catch(e) { toast('Failed: ' + e.message, 'error'); }
+    };
+    document.getElementById('tg-confirm-title').textContent = 'Delete Product?';
+    document.getElementById('tg-confirm-msg').textContent = '"' + nm + '" will be permanently deleted. This cannot be undone.';
+    document.getElementById('tg-confirm-btn').textContent = 'Delete';
+    document.getElementById('tg-confirm-btn').style.background = 'linear-gradient(135deg,#d32f2f,#b71c1c)';
+    openModal('tg-confirm-modal');
+  };
+
+  async function loadProfile() {
+    try {
+      const s = await db.collection('sellers').doc(USER.uid).get();
+      if (s.exists) SELLER = s.data();
+      const n = (SELLER && SELLER.shopName) || 'My Store';
+      const i = String(n).charAt(0).toUpperCase();
+      setText('tg-store-name', n); setText('tg-store-avatar', i); setText('tg-drawer-store-name', n); setText('tg-drawer-avatar', i);
+      setText('tg-drawer-email', USER.email||'');
+      const fn = (SELLER && SELLER.ownerName || '').split(' ')[0] || 'Seller';
+      setText('tg-welcome-title', 'Welcome back, ' + fn + '! 👋');
+      if (document.getElementById('tg-product-modal') && document.getElementById('tg-product-modal').classList.contains('show')) {
+        renderPickupBox();
+      }
+    } catch(e) {}
+  }
+
+  async function loadSettings() {
+    try {
+      const s = await db.collection('siteSettings').doc('seller').get();
+      if (s.exists) {
+        const d = s.data();
+        if (d.commissionPercent != null) SETTINGS.commissionPercent = Number(d.commissionPercent);
+        if (Array.isArray(d.weightSlabs) && d.weightSlabs.length) SETTINGS.weightSlabs = d.weightSlabs;
+        if (Array.isArray(d.brands) && d.brands.length) ADMIN_BRANDS = d.brands.slice();
+        if (Array.isArray(d.colors) && d.colors.length) ADMIN_COLORS = d.colors.slice();
+      }
+    } catch(e) {}
+    try {
+      const c = await db.collection('siteSettings').doc('cloudinary').get();
+      if (c.exists) { CLOUD.cloudName = c.data().cloudName || ''; CLOUD.uploadPreset = c.data().uploadPreset || ''; }
+    } catch(e) {}
+    if (USER) {
+      try {
+        const s = await db.collection('siteSettings').doc('sellerCommissions').get();
+        if (s.exists) { const r = s.data().rates || {}; if (r[USER.uid] != null) CUSTOM_COMM = Number(r[USER.uid]); }
+      } catch(e) {}
+      try {
+        const sd = await db.collection('siteSettings').doc('sellerDelivery').get();
+        if (sd.exists) { const slabs = sd.data().slabs || {}; if (slabs[USER.uid] && slabs[USER.uid].length) MY_SLABS = slabs[USER.uid]; }
+      } catch(e) {}
+    }
+  }
+
+  /* ✅ NEW: Init history with dashboard state */
+  function initHistory() {
+    try {
+      const hash = (location.hash || '').replace('#', '');
+      const validViews = ['dashboard','insights','orders','products','inventory','returns','earnings','promotions','help'];
+      const initialView = validViews.includes(hash) ? hash : 'dashboard';
+      history.replaceState({ sellerView: initialView }, '', '#' + initialView);
+      if (initialView !== 'dashboard') {
+        tgSwitchView(initialView, true);
+      }
+    } catch(e) {
+      try { history.replaceState({ sellerView: 'dashboard' }, '', '#dashboard'); } catch(e2) {}
+    }
+  }
+
+  auth.onAuthStateChanged(async (u) => {
+    USER = u;
+    if (!u) { window.location.replace('log-in.html?redirect=' + encodeURIComponent('seller.html')); return; }
+    try {
+      const us = await db.collection('users').doc(u.uid).get();
+      const role = us.exists ? (us.data().role || '').toLowerCase() : '';
+      const isAdmin = u.email === SA || ['admin','superadmin'].includes(role);
+      if (role !== 'seller' && !isAdmin) {
+        const sd = await db.collection('sellers').doc(u.uid).get();
+        if (!sd.exists || (sd.data().status || '').toLowerCase() !== 'approved') { toast('Seller access required', 'error'); setTimeout(() => location.href = 'account.html', 1200); return; }
+      }
+      await loadSettings();
+      await loadProfile();
+      updateRingBtn();
+      initHistory();
+      listenCategories();
+      listenOrders();
+      listenProducts();
+      listenTickets();
+      listenPromotions();
+      listenSettlements();
+      listenMyPricing();  /* ✅ NEW: Live pricing updates */
+      setTimeout(initGSTPanel, 800);
+    } catch(e) {
+      await loadSettings();
+      await loadProfile();
+      updateRingBtn();
+      initHistory();
+      listenCategories();
+      listenOrders();
+      listenProducts();
+      listenTickets();
+      listenPromotions();
+      listenSettlements();
+      listenMyPricing();
+      setTimeout(initGSTPanel, 800);
+    }
+  });
+
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) { m.classList.remove('show'); document.body.style.overflow = ''; } });
+  });
+
+})();
+</script>
+</body>
+</html>

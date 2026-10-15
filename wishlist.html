@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Wishlist — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+/* HEADER */
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px; }
+.tg-hd-count { font-size: 12.5px; font-weight: 500; opacity: 0.85; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 1200px; margin: 0 auto; padding: 12px; }
+
+/* TOOLBAR */
+.tg-toolbar { background: #fff; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-wrap: wrap; }
+.tg-toolbar-info { flex: 1; min-width: 0; }
+.tg-toolbar-title { font-size: 15px; font-weight: 800; color: #212121; }
+.tg-toolbar-sub { font-size: 12px; color: #666; margin-top: 2px; }
+.tg-toolbar-btn { padding: 9px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all .15s; border: 1.5px solid transparent; white-space: nowrap; }
+.tg-toolbar-btn.primary { background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; box-shadow: 0 4px 12px rgba(40,116,240,0.3); }
+.tg-toolbar-btn.primary:hover { filter: brightness(1.05); }
+.tg-toolbar-btn.danger { background: #fff; color: #d32f2f; border-color: #ffcdd2; }
+.tg-toolbar-btn.danger:hover { background: #ffebee; }
+.tg-toolbar-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tg-toolbar-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* WISHLIST GRID */
+.tg-wishlist { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media (min-width: 600px) { .tg-wishlist { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 900px) { .tg-wishlist { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1200px) { .tg-wishlist { grid-template-columns: repeat(5, 1fr); } }
+
+.tg-card { background: #fff; border: 1px solid #ececec; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .22s, transform .22s, border-color .22s; box-shadow: 0 1px 2px rgba(15,23,41,0.04); position: relative; }
+.tg-card:hover { box-shadow: 0 10px 24px rgba(15,23,41,0.10); transform: translateY(-3px); border-color: #dfe6f3; }
+.tg-card-img { aspect-ratio: 1/1; position: relative; overflow: hidden; background: linear-gradient(135deg,#fafbfc,#eef1f6); cursor: pointer; }
+.tg-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
+.tg-card:hover .tg-card-img img { transform: scale(1.05); }
+.tg-card-badges { position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; gap: 4px; z-index: 3; max-width: 70%; }
+.tg-card-badge { background: rgba(0,0,0,0.78); color: #fff; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.tg-card-badge.sale { background: linear-gradient(135deg,#ff4d4d,#d32f2f); }
+.tg-card-badge.hot { background: linear-gradient(135deg,#ff6161,#fb641b); }
+.tg-card-badge.new { background: linear-gradient(135deg,#16a34a,#15803d); }
+.tg-card-badge.out { background: linear-gradient(135deg,#616161,#424242); }
+
+.tg-card-remove { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 3; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all .18s; }
+.tg-card-remove:hover { background: #ffebee; transform: scale(1.1); }
+.tg-card-remove svg { width: 15px; height: 15px; stroke: #ff4343; fill: #ff4343; stroke-width: 2; }
+
+.tg-card-body { padding: 10px 10px 12px; display: flex; flex-direction: column; flex: 1; gap: 5px; }
+.tg-card-rating { display: inline-flex; align-items: center; gap: 4px; background: #eaf7ee; padding: 3px 8px; border-radius: 999px; align-self: flex-start; line-height: 1; border: 1px solid #d7f0df; }
+.tg-card-rating-star { color: #167c3b; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 2px; }
+.tg-card-rating-star svg { width: 8px; height: 8px; fill: #167c3b; }
+.tg-card-rating-count { color: #5c7a68; font-size: 9px; font-weight: 600; }
+.tg-card-rating.no-rating { background: #f4f5f7; border-color: #eceef1; }
+.tg-card-rating.no-rating .tg-card-rating-star { color: #8a8f96; }
+.tg-card-rating.no-rating .tg-card-rating-star svg { fill: #8a8f96; }
+
+.tg-card-title { font-size: 12.5px; line-height: 1.4; color: #1a1d21; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 35px; cursor: pointer; letter-spacing: -0.1px; }
+.tg-card-title:hover { color: #2874f0; }
+
+.tg-card-price-row { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
+.tg-card-price { font-size: 15.5px; font-weight: 900; color: #0f1729; line-height: 1; letter-spacing: -0.3px; }
+.tg-card-mrp { font-size: 11px; color: #9aa0a6; text-decoration: line-through; font-weight: 500; }
+.tg-card-off { font-size: 10px; color: #fff; background: linear-gradient(135deg,#16a34a,#15803d); font-weight: 800; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.2px; }
+
+.tg-card-stock { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; }
+.tg-card-stock.ok { background: #e6f7ec; color: #1b8a3a; }
+.tg-card-stock.low { background: #fff8e1; color: #f57c00; }
+.tg-card-stock.out { background: #ffebee; color: #c62828; }
+
+.tg-card-actions { display: flex; gap: 6px; margin-top: auto; padding-top: 8px; }
+.tg-btn-cart { flex: 1; padding: 9px 6px; border-radius: 7px; font-size: 11px; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; gap: 5px; letter-spacing: 0.4px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff !important; border: none; text-transform: uppercase; box-shadow: 0 2px 8px rgba(40,116,240,0.32); transition: all .15s; line-height: 1; min-height: 32px; white-space: nowrap; }
+.tg-btn-cart:hover { filter: brightness(1.08); box-shadow: 0 4px 12px rgba(40,116,240,0.5); }
+.tg-btn-cart:active { transform: translateY(1px); }
+.tg-btn-cart:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.3); }
+.tg-btn-cart svg { width: 12px; height: 12px; stroke: #fff; fill: none; stroke-width: 2.6; flex-shrink: 0; }
+.tg-btn-cart svg circle { fill: #fff; stroke: none; }
+.tg-btn-cart span { color: #fff !important; font-weight: 900 !important; display: inline-block !important; }
+
+.tg-btn-trash { flex: 0 0 34px; max-width: 34px; padding: 9px; border-radius: 7px; background: #f4f6fa; color: #d32f2f; display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid #e4e8ef; min-height: 32px; transition: all .15s; }
+.tg-btn-trash:hover { background: #ffebee; border-color: #ffcdd2; }
+.tg-btn-trash svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* EMPTY STATE */
+.tg-empty { background: #fff; border-radius: 12px; padding: 60px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-top: 12px; }
+.tg-empty-img { width: 160px; height: 160px; margin: 0 auto 20px; background: linear-gradient(135deg,#fce4ec,#f8bbd0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; box-shadow: 0 12px 40px rgba(244,51,151,0.15); }
+.tg-empty-title { font-size: 20px; font-weight: 800; color: #212121; margin: 0 0 8px; }
+.tg-empty-desc { font-size: 14px; color: #666; line-height: 1.55; margin: 0 auto 24px; max-width: 380px; }
+.tg-empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; font-size: 14px; font-weight: 800; border-radius: 8px; letter-spacing: 0.4px; text-transform: uppercase; box-shadow: 0 6px 18px rgba(40,116,240,0.3); transition: all .15s; }
+.tg-empty-cta:hover { filter: brightness(1.06); }
+.tg-empty-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* SKELETON */
+.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
+@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tg-skel-card { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #ebebeb; }
+.tg-skel-img { aspect-ratio: 1/1; }
+.tg-skel-body { padding: 10px; }
+.tg-skel-line { height: 10px; margin-bottom: 6px; border-radius: 4px; }
+
+/* LOGIN PROMPT */
+.tg-login-prompt { background: #fff; border-radius: 12px; padding: 48px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-top: 12px; }
+.tg-login-icon { font-size: 60px; margin-bottom: 16px; }
+.tg-login-title { font-size: 20px; font-weight: 800; margin: 0 0 8px; }
+.tg-login-desc { font-size: 13.5px; color: #666; margin: 0 auto 22px; max-width: 340px; line-height: 1.55; }
+.tg-login-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; font-size: 14px; font-weight: 800; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.4px; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-login-btn:hover { filter: brightness(1.06); }
+.tg-login-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* BOTTOM NAV */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* TOASTS */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: #2874f0; }
+
+/* MODAL */
+.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px; animation: tgFadeIn .2s; }
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card { background: #fff; border-radius: 14px; padding: 24px 22px 22px; max-width: 400px; width: 100%; text-align: center; animation: tgPopIn .3s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tgPopIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.tg-modal-icon { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffe4e4, #ffcdd2); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; color: #212121; margin: 0 0 8px; }
+.tg-modal-desc { font-size: 13.5px; color: #666; line-height: 1.55; margin: 0 0 22px; }
+.tg-modal-actions { display: flex; gap: 10px; }
+.tg-modal-btn { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s; }
+.tg-modal-btn.primary { background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; box-shadow: 0 4px 14px rgba(40,116,240,0.3); }
+.tg-modal-btn.danger { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; box-shadow: 0 4px 14px rgba(211,47,47,0.3); }
+.tg-modal-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
+
+@media (max-width: 600px) {
+  .tg-container { padding: 8px; }
+  .tg-wishlist { gap: 10px; }
+  .tg-card-body { padding: 8px; gap: 4px; }
+  .tg-card-title { font-size: 11.5px; min-height: 32px; }
+  .tg-card-price { font-size: 14px; }
+  .tg-card-mrp { font-size: 10.5px; }
+  .tg-card-off { font-size: 9.5px; padding: 2px 5px; }
+  .tg-card-rating { padding: 2px 6px; }
+  .tg-card-rating-star { font-size: 9.5px; }
+  .tg-card-rating-count { font-size: 8.5px; }
+  .tg-btn-cart { font-size: 10px; padding: 8px 6px; min-height: 30px; }
+  .tg-btn-cart svg { width: 11px; height: 11px; }
+  .tg-btn-trash { flex: 0 0 30px; max-width: 30px; padding: 7px; min-height: 30px; }
+  .tg-btn-trash svg { width: 13px; height: 13px; }
+  .tg-toolbar { padding: 10px 12px; }
+  .tg-toolbar-title { font-size: 14px; }
+  .tg-toolbar-btn { padding: 8px 12px; font-size: 11.5px; }
+  .tg-empty { padding: 44px 18px; }
+  .tg-empty-img { width: 120px; height: 120px; font-size: 54px; }
+  .tg-empty-title { font-size: 17px; }
+  .tg-card-remove { width: 28px; height: 28px; top: 6px; right: 6px; }
+  .tg-card-remove svg { width: 13px; height: 13px; }
+}
+@media (max-width: 380px) {
+  .tg-wishlist { gap: 8px; }
+  .tg-card-title { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="shop-home.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">My Wishlist <span class="tg-hd-count" id="tg-hd-count"></span></div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- LOGIN PROMPT -->
+    <div id="tg-login-prompt" style="display:none;">
+      <div class="tg-login-prompt">
+        <div class="tg-login-icon">🔐</div>
+        <h2 class="tg-login-title">Please Log In</h2>
+        <p class="tg-login-desc">Log in to view and manage your wishlist. Your favorites will sync across all your devices.</p>
+        <a href="log-in.html?redirect=wishlist.html" class="tg-login-btn">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg>
+          Log In
+        </a>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="tg-toolbar" id="tg-toolbar" style="display:none;">
+      <div class="tg-toolbar-info">
+        <div class="tg-toolbar-title" id="tg-toolbar-title">My Wishlist</div>
+        <div class="tg-toolbar-sub" id="tg-toolbar-sub">0 items</div>
+      </div>
+      <button class="tg-toolbar-btn primary" id="tg-move-all-btn" onclick="tgMoveAllToCart()">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
+        Move All to Cart
+      </button>
+      <button class="tg-toolbar-btn danger" id="tg-clear-btn" onclick="tgClearWishlist()">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Clear All
+      </button>
+    </div>
+
+    <!-- WISHLIST GRID -->
+    <div class="tg-wishlist" id="tg-wishlist"></div>
+
+    <!-- SKELETON -->
+    <div class="tg-wishlist" id="tg-loading">
+      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
+      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
+      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
+      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="tg-empty" id="tg-empty" style="display:none;">
+      <div class="tg-empty-img">💖</div>
+      <h2 class="tg-empty-title">Your wishlist is empty</h2>
+      <p class="tg-empty-desc">Save your favorite products here by tapping the heart icon on any product. Shop now and find something you love!</p>
+      <a href="shop-home.html" class="tg-empty-cta">
+        <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+        Start Shopping
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="tg-modal" id="tg-confirm-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-icon">🗑️</div>
+    <h3 class="tg-modal-title" id="tg-confirm-title">Remove from wishlist?</h3>
+    <p class="tg-modal-desc" id="tg-confirm-desc">Are you sure you want to remove this item from your wishlist?</p>
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseConfirm()">Cancel</button>
+      <button class="tg-modal-btn danger" id="tg-confirm-btn" onclick="tgDoConfirm()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  // ⚠ IMPORTANT: Agar koi cached user pehle se login hai toh use clear karo
+  // BUT: Hum sirf tab clear karenge jab user explicitly wishlist.html pe aaye
+  // aur logout na karna ho. Ye line hatai gayi hai kyunki redirect issues thi.
+  // Cached admin login ke wajah se yahan aa raha tha issue.
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  const GUEST_CART = 'toego_cart_guest';
+  const WISHLIST_CACHE_PREFIX = 'toego_wishlist_cache_';
+
+  let USER = null;
+  let WISHLIST_IDS = [];
+  let PRODUCTS = {};
+  let cartItems = [];
+  let unsubWishlist = null;
+  let unsubCart = null;
+  let confirmCb = null;
+
+  // ========= THEME =========
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(primary) {
+    primary = primary || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    const hd = document.querySelector('.tg-hd'); if (hd) hd.style.background = primary;
+    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
+  }
+  (function boot() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+  })();
+  (async function loadTheme() {
+    try {
+      const s = await db.collection('siteSettings').doc('theme').get();
+      if (s.exists) {
+        const d = s.data();
+        applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
+      }
+    } catch(e) {}
+  })();
+
+  // ========= HELPERS =========
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+  function getProductRating(p) {
+    const rating = Number(p.rating || 0);
+    const count = Number(p.ratingCount || 0);
+    if (rating > 0 && count > 0) return { avg: rating, count, hasRating: true };
+    return { avg: 0, count: 0, hasRating: false };
+  }
+  function isOutOfStock(p) {
+    if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
+      let total = 0;
+      Object.values(p.sizeStock).forEach(v => { total += Number(v||0); });
+      return total <= 0;
+    }
+    return Number(p.stock || 0) <= 0;
+  }
+  function isLowStock(p) {
+    if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
+      let total = 0;
+      Object.values(p.sizeStock).forEach(v => { total += Number(v||0); });
+      return total > 0 && total < 10;
+    }
+    const s = Number(p.stock || 0);
+    return s > 0 && s < 10;
+  }
+  function hasVariants(p) {
+    if (!p || typeof p !== 'object') return false;
+    const hasArr = (v) => {
+      if (Array.isArray(v)) return v.length > 0;
+      if (v && typeof v === 'object') return Object.keys(v).length > 0;
+      return false;
+    };
+    return hasArr(p.sizes) || hasArr(p.colors) || hasArr(p.variants) || hasArr(p.sizeStock);
+  }
+  function getSaleTag(p) {
+    if (!p.saleTag || !String(p.saleTag).trim()) return null;
+    const tag = String(p.saleTag).trim();
+    const lower = tag.toLowerCase();
+    let cls = 'custom';
+    if (lower.includes('sale') || lower.includes('off') || lower.includes('deal')) cls = 'sale';
+    else if (lower.includes('hot') || lower.includes('trending')) cls = 'hot';
+    else if (lower.includes('new')) cls = 'new';
+    return { text: tag, cls };
+  }
+
+  // ========= WISHLIST CACHE =========
+  function getCacheKey() { return WISHLIST_CACHE_PREFIX + (USER ? USER.uid : 'guest'); }
+  function saveWishlistCache(products) {
+    try {
+      const arr = Object.values(products || {});
+      localStorage.setItem(getCacheKey(), JSON.stringify({ data: arr, time: Date.now() }));
+    } catch(e) {}
+  }
+  function loadWishlistCache() {
+    try {
+      const raw = localStorage.getItem(getCacheKey());
+      if (!raw) return null;
+      const c = JSON.parse(raw);
+      if (!c || !Array.isArray(c.data)) return null;
+      if (Date.now() - (c.time || 0) > 5 * 60 * 1000) return null;
+      return c.data;
+    } catch(e) { return null; }
+  }
+
+  // ========= CART =========
+  function getGuestCart() { try { return JSON.parse(localStorage.getItem(GUEST_CART) || '[]'); } catch(e) { return []; } }
+  function cartCount(items) { return (items||[]).reduce((s,i) => s + Number(i.qty || 1), 0); }
+  function updateCartBadge() {
+    const n = cartCount(cartItems);
+    ['tg-cart-badge','tg-bnav-badge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = n;
+      el.style.display = n > 0 ? 'flex' : 'none';
+    });
+  }
+  function watchCart(uid) {
+    if (unsubCart) { try { unsubCart(); } catch(e){} unsubCart = null; }
+    if (!uid) { cartItems = getGuestCart(); updateCartBadge(); return; }
+    unsubCart = db.collection('carts').doc(uid).collection('items').onSnapshot(snap => {
+      cartItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      updateCartBadge();
+    }, () => {});
+  }
+
+  // ========= RENDER =========
+  function render() {
+    const loading = document.getElementById('tg-loading');
+    const toolbar = document.getElementById('tg-toolbar');
+    const empty = document.getElementById('tg-empty');
+    const grid = document.getElementById('tg-wishlist');
+    const loginPrompt = document.getElementById('tg-login-prompt');
+
+    if (loading) loading.style.display = 'none';
+    if (loginPrompt) loginPrompt.style.display = 'none';
+    if (grid) grid.style.display = 'grid';
+
+    const ids = WISHLIST_IDS || [];
+    const products = ids.map(id => PRODUCTS[id]).filter(Boolean);
+
+    const cnt = document.getElementById('tg-hd-count');
+    if (cnt) cnt.textContent = products.length > 0 ? '(' + products.length + ')' : '';
+
+    if (!products.length) {
+      toolbar.style.display = 'none';
+      empty.style.display = 'block';
+      grid.innerHTML = '';
+      return;
+    }
+
+    empty.style.display = 'none';
+    toolbar.style.display = 'flex';
+    document.getElementById('tg-toolbar-title').textContent = 'My Wishlist';
+    document.getElementById('tg-toolbar-sub').textContent = products.length + ' item' + (products.length === 1 ? '' : 's') + ' saved';
+
+    grid.innerHTML = products.map(productCard).join('');
+  }
+
+  function productCard(p) {
+    const price = Number(p.price || 0);
+    const mrp = Number(p.compareAtPrice || p.mrp || 0);
+    const disc = mrp > price ? Math.round((1 - price/mrp) * 100) : 0;
+    const img = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/300x300/f1f3f6/878787?text=TOEGO';
+
+    const rating = getProductRating(p);
+    let ratingHtml = '';
+    if (rating.hasRating) {
+      ratingHtml = '<div class="tg-card-rating"><span class="tg-card-rating-star">' + rating.avg.toFixed(1) + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-card-rating-count">(' + rating.count + ')</span></div>';
+    } else {
+      ratingHtml = '<div class="tg-card-rating no-rating"><span class="tg-card-rating-star">New <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span></div>';
+    }
+
+    const oos = isOutOfStock(p);
+    const lowStock = isLowStock(p);
+    let stockHtml = '';
+    if (oos) stockHtml = '<span class="tg-card-stock out">✕ Out of Stock</span>';
+    else if (lowStock) stockHtml = '<span class="tg-card-stock low">⚠ Low Stock</span>';
+    else stockHtml = '<span class="tg-card-stock ok">✓ In Stock</span>';
+
+    const saleTag = getSaleTag(p);
+    let badges = '';
+    if (saleTag) badges += '<span class="tg-card-badge ' + saleTag.cls + '">' + esc(saleTag.text) + '</span>';
+    if (oos) badges += '<span class="tg-card-badge out">SOLD OUT</span>';
+
+    return `
+      <div class="tg-card" data-pid="${esc(p.id)}">
+        <div class="tg-card-img" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">
+          ${badges ? '<div class="tg-card-badges">' + badges + '</div>' : ''}
+          <img src="${esc(img)}" alt="${esc(p.name || '')}" loading="lazy" />
+          <button class="tg-card-remove" onclick="event.stopPropagation();tgRemoveFromWishlist('${esc(p.id)}')" title="Remove from wishlist">
+            <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+          </button>
+        </div>
+        <div class="tg-card-body">
+          ${ratingHtml}
+          <div class="tg-card-title" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">${esc(p.name || 'Product')}</div>
+          <div class="tg-card-price-row">
+            <span class="tg-card-price">${fmtINR(price)}</span>
+            ${mrp > price ? '<span class="tg-card-mrp">' + fmtINR(mrp) + '</span>' : ''}
+            ${disc > 0 ? '<span class="tg-card-off">' + disc + '% off</span>' : ''}
+          </div>
+          ${stockHtml}
+          <div class="tg-card-actions">
+            <button class="tg-btn-cart" onclick="tgMoveToCart('${esc(p.id)}')" ${oos ? 'disabled' : ''}>
+              <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
+              <span>${oos ? 'Sold Out' : 'Add to Cart'}</span>
+            </button>
+            <button class="tg-btn-trash" onclick="tgRemoveFromWishlist('${esc(p.id)}')" title="Remove">
+              <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ========= LOAD WISHLIST =========
+  function loadWishlist() {
+    if (unsubWishlist) { try { unsubWishlist(); } catch(e) {} unsubWishlist = null; }
+
+    // ⭐ If NOT logged in — show login prompt only
+    if (!USER) {
+      WISHLIST_IDS = [];
+      PRODUCTS = {};
+      document.getElementById('tg-wishlist').style.display = 'none';
+      document.getElementById('tg-loading').style.display = 'none';
+      document.getElementById('tg-toolbar').style.display = 'none';
+      document.getElementById('tg-empty').style.display = 'none';
+      document.getElementById('tg-login-prompt').style.display = 'block';
+      const cnt = document.getElementById('tg-hd-count'); if (cnt) cnt.textContent = '';
+      return;
+    }
+
+    // ⭐ Show skeleton while loading (if no cache)
+    const cached = loadWishlistCache();
+    if (cached && cached.length) {
+      const map = {};
+      cached.forEach(p => { if (p && p.id) map[p.id] = p; });
+      PRODUCTS = map;
+      WISHLIST_IDS = cached.map(p => p.id).filter(Boolean);
+      render();
+    } else {
+      // show skeleton
+      document.getElementById('tg-loading').style.display = 'grid';
+      document.getElementById('tg-wishlist').style.display = 'none';
+    }
+
+    // ⭐ Subscribe to wishlist doc (real-time)
+    unsubWishlist = db.collection('wishlists').doc(USER.uid).onSnapshot(async snap => {
+      const items = snap.exists && Array.isArray(snap.data().items) ? snap.data().items : [];
+      const ids = items.filter(Boolean).map(String);
+      WISHLIST_IDS = ids;
+
+      if (!ids.length) {
+        PRODUCTS = {};
+        saveWishlistCache({});
+        render();
+        return;
+      }
+
+      // Fetch products we don't have
+      const missing = ids.filter(id => !PRODUCTS[id]);
+      if (missing.length) {
+        try {
+          const fetched = {};
+          const chunks = [];
+          for (let i = 0; i < missing.length; i += 10) chunks.push(missing.slice(i, i + 10));
+          await Promise.all(chunks.map(async chunk => {
+            try {
+              const s = await db.collection('products').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+              s.docs.forEach(d => { fetched[d.id] = { id: d.id, ...d.data() }; });
+            } catch(e) {
+              await Promise.all(chunk.map(async id => {
+                try {
+                  const d = await db.collection('products').doc(id).get();
+                  if (d.exists) fetched[id] = { id: d.id, ...d.data() };
+                } catch(e2) {}
+              }));
+            }
+          }));
+          Object.assign(PRODUCTS, fetched);
+          const currentSet = new Set(ids);
+          Object.keys(PRODUCTS).forEach(k => { if (!currentSet.has(k)) delete PRODUCTS[k]; });
+          saveWishlistCache(PRODUCTS);
+        } catch(e) {
+          console.warn('Product fetch failed:', e && e.message);
+        }
+      }
+
+      render();
+    }, err => {
+      console.warn('Wishlist subscribe err:', err && err.message);
+      render();
+    });
+  }
+
+  // ========= ACTIONS =========
+  window.tgRemoveFromWishlist = function(pid) {
+    if (!USER) { toast('Please log in first', 'info'); return; }
+    const p = PRODUCTS[pid];
+    const name = p ? (p.name || 'this item') : 'this item';
+    confirmCb = async () => {
+      try {
+        await db.collection('wishlists').doc(USER.uid).set({
+          items: FV.arrayRemove(pid),
+          updatedAt: FV.serverTimestamp()
+        }, { merge: true });
+        delete PRODUCTS[pid];
+        WISHLIST_IDS = WISHLIST_IDS.filter(x => x !== pid);
+        saveWishlistCache(PRODUCTS);
+        render();
+        toast('Removed from wishlist', 'success');
+      } catch(e) {
+        toast('Failed: ' + (e.message || 'Try again'), 'error');
+      }
+      tgCloseConfirm();
+    };
+    document.getElementById('tg-confirm-title').textContent = 'Remove from wishlist?';
+    document.getElementById('tg-confirm-desc').textContent = '"' + name + '" will be removed from your wishlist.';
+    document.getElementById('tg-confirm-btn').textContent = 'Remove';
+    document.getElementById('tg-confirm-modal').classList.add('show');
+  };
+
+  window.tgMoveToCart = async function(pid) {
+    if (!USER) { toast('Please log in first', 'info'); return; }
+    const p = PRODUCTS[pid];
+    if (!p) { toast('Product not found', 'error'); return; }
+    if (isOutOfStock(p)) { toast('Out of stock', 'error'); return; }
+
+    if (hasVariants(p)) {
+      toast('Select size & color first', 'info');
+      setTimeout(() => location.href = 'product.html?id=' + encodeURIComponent(pid), 600);
+      return;
+    }
+
+    const sellerId = p.sellerId || p.seller_id || p.sid || p.sellerUid || '';
+    const sellerName = p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '';
+    const docId = pid + '||';
+    const item = {
+      productId: pid,
+      name: p.name || 'Product',
+      price: Number(p.price || 0),
+      mrp: Number(p.compareAtPrice || p.mrp || 0),
+      image: (p.images && p.images[0]) || p.image || '',
+      qty: 1, size: '', color: '',
+      weight: Number(p.weight || 0),
+      gst: Number(p.gst || 0),
+      sellerId: sellerId, sellerName: sellerName
+    };
+
+    try {
+      const ref = db.collection('carts').doc(USER.uid).collection('items').doc(docId);
+      const snap = await ref.get();
+      if (snap.exists) await ref.update({ qty: FV.increment(1), updatedAt: FV.serverTimestamp() });
+      else await ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+
+      await db.collection('wishlists').doc(USER.uid).set({ items: FV.arrayRemove(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
+      delete PRODUCTS[pid];
+      WISHLIST_IDS = WISHLIST_IDS.filter(x => x !== pid);
+      saveWishlistCache(PRODUCTS);
+      render();
+      toast('✓ Added to cart', 'success');
+    } catch(e) {
+      toast('Failed: ' + (e.message || 'Try again'), 'error');
+    }
+  };
+
+  window.tgMoveAllToCart = async function() {
+    if (!USER) { toast('Please log in first', 'info'); return; }
+    const available = WISHLIST_IDS.map(id => PRODUCTS[id]).filter(p => p && !isOutOfStock(p));
+    if (!available.length) { toast('No items available to add', 'error'); return; }
+
+    const btn = document.getElementById('tg-move-all-btn');
+    btn.disabled = true;
+    const orig = btn.textContent;
+    btn.textContent = 'Moving…';
+
+    let ok = 0, variantSkips = [];
+    const movedIds = [];
+
+    for (const p of available) {
+      try {
+        if (hasVariants(p)) { variantSkips.push(p); continue; }
+        const sellerId = p.sellerId || p.seller_id || p.sid || p.sellerUid || '';
+        const sellerName = p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '';
+        const docId = p.id + '||';
+        const ref = db.collection('carts').doc(USER.uid).collection('items').doc(docId);
+        const snap = await ref.get();
+        if (snap.exists) await ref.update({ qty: FV.increment(1), updatedAt: FV.serverTimestamp() });
+        else await ref.set({
+          productId: p.id, name: p.name || 'Product',
+          price: Number(p.price || 0),
+          mrp: Number(p.compareAtPrice || p.mrp || 0),
+          image: (p.images && p.images[0]) || p.image || '',
+          qty: 1, size: '', color: '',
+          weight: Number(p.weight || 0), gst: Number(p.gst || 0),
+          sellerId: sellerId, sellerName: sellerName,
+          addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
+        });
+        movedIds.push(p.id);
+        ok++;
+      } catch(e) { console.warn('Move failed for', p.id, e); }
+    }
+
+    if (movedIds.length) {
+      try {
+        await db.collection('wishlists').doc(USER.uid).set({
+          items: FV.arrayRemove(...movedIds),
+          updatedAt: FV.serverTimestamp()
+        }, { merge: true });
+        movedIds.forEach(id => { delete PRODUCTS[id]; });
+        WISHLIST_IDS = WISHLIST_IDS.filter(x => !movedIds.includes(x));
+        saveWishlistCache(PRODUCTS);
+      } catch(e) {}
+    }
+
+    btn.disabled = false;
+    btn.textContent = orig;
+
+    if (ok > 0) toast('✓ ' + ok + ' item' + (ok === 1 ? '' : 's') + ' added to cart', 'success');
+    if (variantSkips.length) toast(variantSkips.length + ' item(s) need size/color selection', 'info');
+
+    render();
+  };
+
+  window.tgClearWishlist = function() {
+    if (!USER) { toast('Please log in first', 'info'); return; }
+    if (!WISHLIST_IDS.length) { toast('Wishlist already empty', 'info'); return; }
+    confirmCb = async () => {
+      try {
+        await db.collection('wishlists').doc(USER.uid).set({ items: [], updatedAt: FV.serverTimestamp() }, { merge: true });
+        PRODUCTS = {};
+        WISHLIST_IDS = [];
+        saveWishlistCache({});
+        render();
+        toast('Wishlist cleared', 'success');
+      } catch(e) {
+        toast('Failed: ' + (e.message || 'Try again'), 'error');
+      }
+      tgCloseConfirm();
+    };
+    document.getElementById('tg-confirm-title').textContent = 'Clear entire wishlist?';
+    document.getElementById('tg-confirm-desc').textContent = 'All ' + WISHLIST_IDS.length + ' item(s) will be removed from your wishlist. This cannot be undone.';
+    document.getElementById('tg-confirm-btn').textContent = 'Clear All';
+    document.getElementById('tg-confirm-modal').classList.add('show');
+  };
+
+  // ========= CONFIRM MODAL =========
+  window.tgCloseConfirm = function() {
+    document.getElementById('tg-confirm-modal').classList.remove('show');
+    confirmCb = null;
+  };
+  window.tgDoConfirm = async function() {
+    if (confirmCb) await confirmCb();
+  };
+  document.getElementById('tg-confirm-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'tg-confirm-modal') tgCloseConfirm();
+  });
+
+  // ========= AUTH =========
+  auth.onAuthStateChanged((u) => {
+    // ⚠ IMPORTANT: Ye line ensure karti hai ki hum wishlist.html pe redirect na karein
+    // Bas user state update karo, kuch aur mat karo
+    USER = u;
+    if (u) {
+      console.log('[TOEGO Wishlist] User logged in:', u.email);
+      watchCart(u.uid);
+      loadWishlist();
+    } else {
+      console.log('[TOEGO Wishlist] No user logged in — showing login prompt');
+      watchCart(null);
+      loadWishlist();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

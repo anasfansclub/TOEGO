@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Orders — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 1000px; margin: 0 auto; padding: 12px; }
+
+.tg-search-wrap { background: #fff; border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-search-icon { color: #2874f0; flex-shrink: 0; display: flex; }
+.tg-search-wrap input { flex: 1; border: none; outline: none; font-size: 14px; color: #212121; background: transparent; min-width: 0; }
+.tg-search-wrap input::placeholder { color: #878787; }
+.tg-search-clear { color: #878787; font-size: 16px; padding: 4px 8px; display: none; }
+.tg-search-clear.show { display: block; }
+
+.tg-tabs-wrap { background: #fff; border-radius: 10px; margin-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; box-shadow: 0 1px 3px rgba(0,0,0,0.06); position: sticky; top: 58px; z-index: 50; }
+.tg-tabs-wrap::-webkit-scrollbar { display: none; }
+.tg-tabs { display: flex; padding: 0 4px; width: max-content; min-width: 100%; }
+.tg-tab { padding: 14px 16px 12px; font-size: 13.5px; font-weight: 600; color: #666; white-space: nowrap; cursor: pointer; position: relative; transition: color .2s; display: flex; align-items: center; gap: 6px; }
+.tg-tab.active { color: #2874f0; font-weight: 700; }
+.tg-tab::after { content: ''; position: absolute; bottom: 0; left: 8px; right: 8px; height: 3px; background: #2874f0; border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform .25s cubic-bezier(.4,0,.2,1); }
+.tg-tab.active::after { transform: scaleX(1); }
+.tg-tab-count { background: #f1f3f6; color: #666; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 8px; min-width: 18px; text-align: center; }
+.tg-tab.active .tg-tab-count { background: #2874f0; color: #fff; }
+
+.tg-orders { display: flex; flex-direction: column; gap: 12px; }
+.tg-order { background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; transition: box-shadow .18s; }
+.tg-order:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+
+.tg-order-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #f1f3f6; gap: 12px; flex-wrap: wrap; }
+.tg-order-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; flex: 1; min-width: 0; }
+.tg-order-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.tg-order-meta-label { font-size: 10.5px; color: #878787; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
+.tg-order-meta-value { font-size: 12.5px; color: #212121; font-weight: 600; }
+.tg-order-meta-value.mono { font-family: monospace; font-size: 12px; }
+
+.tg-order-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; position: relative; }
+.tg-order-status.pending { background: #fff8e1; color: #f57c00; }
+.tg-order-status.seller-accepted { background: #e3f2fd; color: #1565c0; }
+.tg-order-status.admin-approved { background: #e1f5fe; color: #0277bd; }
+.tg-order-status.label-generated { background: #ede7f6; color: #6a1b9a; }
+.tg-order-status.processing { background: #fff3e0; color: #e65100; }
+.tg-order-status.dispatched { background: #e8eaf6; color: #3949ab; }
+.tg-order-status.delivered { background: #e6f7ec; color: #1b8a3a; }
+.tg-order-status.cancelled { background: #ffebee; color: #c62828; }
+.tg-order-status.return-requested { background: #f3e5f5; color: #6a1b9a; }
+.tg-order-status.returned { background: #e0f2f1; color: #00695c; }
+
+.tg-order-status.pending::before,
+.tg-order-status.seller-accepted::before,
+.tg-order-status.admin-approved::before,
+.tg-order-status.label-generated::before,
+.tg-order-status.processing::before,
+.tg-order-status.dispatched::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor;
+  animation: tgLiveDot 1.5s ease-in-out infinite;
+}
+@keyframes tgLiveDot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+.tg-order-total { font-size: 15px; font-weight: 800; color: #212121; white-space: nowrap; }
+.tg-order-total-label { font-size: 10.5px; color: #878787; text-transform: uppercase; font-weight: 600; letter-spacing: 0.4px; }
+
+.tg-order-items { padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; }
+.tg-order-item { display: grid; grid-template-columns: 70px 1fr; gap: 12px; cursor: pointer; }
+.tg-order-item-img { width: 70px; height: 70px; border-radius: 8px; overflow: hidden; background: #f5f5f6; flex-shrink: 0; }
+.tg-order-item-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.tg-order-item:hover .tg-order-item-img img { transform: scale(1.05); }
+.tg-order-item-body { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+.tg-order-item-name { font-size: 13.5px; font-weight: 500; color: #212121; line-height: 1.35; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tg-order-item-name:hover { color: #2874f0; }
+.tg-order-item-meta { font-size: 11.5px; color: #878787; margin-bottom: 3px; }
+.tg-order-item-price { font-size: 13px; color: #212121; font-weight: 600; }
+.tg-order-more { font-size: 12px; color: #2874f0; font-weight: 600; padding: 0 16px 12px; cursor: pointer; }
+
+.tg-order-track { padding: 16px; background: #f8f9fb; border-top: 1px solid #f1f3f6; border-bottom: 1px solid #f1f3f6; }
+.tg-track-steps { display: flex; align-items: center; justify-content: space-between; position: relative; margin-bottom: 12px; }
+.tg-track-step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; position: relative; z-index: 2; }
+.tg-track-dot { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 2px solid #d4d5d9; display: flex; align-items: center; justify-content: center; transition: all .3s; position: relative; }
+.tg-track-dot svg { width: 14px; height: 14px; stroke: #999; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; transition: all .3s; }
+.tg-track-step.done .tg-track-dot { background: #388e3c; border-color: #388e3c; }
+.tg-track-step.done .tg-track-dot svg { stroke: #fff; }
+.tg-track-step.active .tg-track-dot { background: #2874f0; border-color: #2874f0; box-shadow: 0 0 0 5px rgba(40,116,240,0.15); animation: tgPulseDot 1.6s ease-in-out infinite; }
+.tg-track-step.active .tg-track-dot svg { stroke: #fff; }
+@keyframes tgPulseDot { 0%,100% { box-shadow: 0 0 0 5px rgba(40,116,240,0.15); } 50% { box-shadow: 0 0 0 9px rgba(40,116,240,0.05); } }
+.tg-track-label { font-size: 10.5px; font-weight: 600; color: #999; text-align: center; line-height: 1.2; max-width: 80px; }
+.tg-track-step.done .tg-track-label, .tg-track-step.active .tg-track-label { color: #212121; font-weight: 700; }
+.tg-track-line { position: absolute; top: 13px; left: 12.5%; right: 12.5%; height: 2px; background: #e0e0e0; z-index: 1; }
+.tg-track-line-fill { height: 100%; background: #388e3c; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.tg-track-info { font-size: 12.5px; color: #212121; text-align: center; padding-top: 8px; line-height: 1.5; }
+.tg-track-info b { color: #2874f0; font-weight: 700; }
+
+.tg-order-foot { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 12px 16px; flex-wrap: wrap; }
+.tg-order-btn { padding: 9px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; transition: all .15s; border: 1.5px solid transparent; }
+.tg-order-btn:active { transform: translateY(1px); }
+.tg-order-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-order-btn.primary { background: #2874f0; color: #fff; box-shadow: 0 2px 6px rgba(40,116,240,0.3); }
+.tg-order-btn.primary:hover { filter: brightness(1.05); box-shadow: 0 4px 12px rgba(40,116,240,0.4); }
+.tg-order-btn.outline { background: #fff; color: #2874f0; border-color: #2874f0; }
+.tg-order-btn.outline:hover { background: #f0f5ff; }
+.tg-order-btn.danger { background: #fff; color: #d32f2f; border-color: #ffcdd2; }
+.tg-order-btn.danger:hover { background: #ffebee; border-color: #ef5350; }
+.tg-order-btn.ghost { background: transparent; color: #666; padding: 8px 10px; }
+.tg-order-btn.ghost:hover { background: #f1f3f6; }
+.tg-order-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.tg-empty { background: #fff; border-radius: 10px; padding: 50px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-top: 12px; }
+.tg-empty-icon { width: 120px; height: 120px; margin: 0 auto 20px; background: linear-gradient(135deg,#eef3ff,#e0eaff); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56px; }
+.tg-empty-title { font-size: 20px; font-weight: 800; color: #212121; margin: 0 0 8px; }
+.tg-empty-desc { font-size: 13.5px; color: #666; line-height: 1.55; margin: 0 auto 22px; max-width: 340px; }
+.tg-empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; font-size: 13.5px; font-weight: 800; border-radius: 8px; letter-spacing: 0.4px; text-transform: uppercase; box-shadow: 0 6px 18px rgba(40,116,240,0.3); transition: all .15s; }
+.tg-empty-cta:hover { filter: brightness(1.06); }
+.tg-empty-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 6px; }
+@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tg-skel-order { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: #2874f0; }
+
+.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s ease; }
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card { width: 100%; max-width: 520px; background: #fff; border-radius: 18px 18px 0 0; padding: 22px 20px 26px; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); max-height: 90vh; overflow-y: auto; }
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; color: #212121; }
+.tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.tg-modal-close:hover { background: #e0e0e0; }
+.tg-modal-body { font-size: 14px; color: #212121; line-height: 1.55; }
+.tg-modal-body p { margin: 0 0 12px; }
+
+.tg-reasons { display: flex; flex-direction: column; gap: 8px; margin: 12px 0 18px; }
+.tg-reason { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1.5px solid #e0e0e0; border-radius: 10px; cursor: pointer; transition: all .15s; font-size: 13.5px; }
+.tg-reason:hover { border-color: #2874f0; background: #f8fbff; }
+.tg-reason.active { border-color: #2874f0; background: #f0f5ff; }
+.tg-reason-radio { width: 18px; height: 18px; border: 2px solid #c5cad3; border-radius: 50%; position: relative; flex-shrink: 0; }
+.tg-reason.active .tg-reason-radio { border-color: #2874f0; }
+.tg-reason.active .tg-reason-radio::after { content: ''; position: absolute; inset: 3px; background: #2874f0; border-radius: 50%; }
+
+.tg-modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+.tg-modal-btn { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+.tg-modal-btn.primary { background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-modal-btn.danger { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; box-shadow: 0 6px 18px rgba(211,47,47,0.3); }
+.tg-modal-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
+.tg-modal-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.tg-detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f3f6; font-size: 13.5px; gap: 12px; }
+.tg-detail-row:last-child { border-bottom: none; }
+.tg-detail-key { color: #878787; flex-shrink: 0; }
+.tg-detail-val { text-align: right; color: #212121; font-weight: 500; word-break: break-word; }
+.tg-detail-section-title { font-size: 12px; color: #878787; text-transform: uppercase; letter-spacing: 0.7px; font-weight: 700; margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0; }
+.tg-detail-section-title:first-child { margin-top: 0; }
+.tg-detail-items-list { display: flex; flex-direction: column; gap: 10px; }
+.tg-detail-item { display: grid; grid-template-columns: 50px 1fr auto; gap: 10px; align-items: center; }
+.tg-detail-item-img { width: 50px; height: 50px; border-radius: 6px; overflow: hidden; background: #f5f5f6; }
+.tg-detail-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.tg-detail-item-body { min-width: 0; }
+.tg-detail-item-name { font-size: 12.5px; font-weight: 500; color: #212121; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tg-detail-item-meta { font-size: 11px; color: #878787; margin-top: 2px; }
+.tg-detail-item-price { font-size: 13px; font-weight: 700; color: #212121; white-space: nowrap; }
+
+.tg-track-hero {
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  color: #fff;
+  border-radius: 14px;
+  padding: 20px 18px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.tg-track-hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 140px; height: 140px;
+  background: radial-gradient(circle, rgba(255,229,0,0.2), transparent 70%);
+  border-radius: 50%;
+}
+.tg-track-hero-content { position: relative; z-index: 2; }
+.tg-track-hero-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.2);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+.tg-track-hero-status::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: tgLiveDot 1.5s infinite;
+}
+.tg-track-hero-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+.tg-track-hero-sub {
+  font-size: 12.5px;
+  opacity: 0.9;
+  margin: 0;
+}
+.tg-track-hero-eta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  font-size: 13px;
+  font-weight: 600;
+}
+.tg-track-hero-eta b { color: #ffe500; }
+
+.tg-live-timeline {
+  padding: 16px 4px;
+  position: relative;
+}
+.tg-live-item {
+  display: flex;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 22px;
+}
+.tg-live-item:last-child { padding-bottom: 0; }
+.tg-live-item:last-child::before { display: none; }
+.tg-live-item::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -4px;
+  width: 2px;
+  background: #e0e0e0;
+}
+.tg-live-item.done::before { background: #1b8a3a; }
+.tg-live-item.current::before { background: linear-gradient(180deg, #2874f0 50%, #e0e0e0 50%); }
+.tg-live-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  transition: all .3s;
+}
+.tg-live-dot svg {
+  width: 15px;
+  height: 15px;
+  stroke: #999;
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tg-live-item.done .tg-live-dot {
+  background: #1b8a3a;
+  border-color: #1b8a3a;
+}
+.tg-live-item.done .tg-live-dot svg { stroke: #fff; }
+.tg-live-item.current .tg-live-dot {
+  background: #2874f0;
+  border-color: #2874f0;
+  box-shadow: 0 0 0 6px rgba(40,116,240,0.15);
+  animation: tgPulseDot 1.6s ease-in-out infinite;
+}
+.tg-live-item.current .tg-live-dot svg { stroke: #fff; }
+.tg-live-body { flex: 1; padding-top: 4px; min-width: 0; }
+.tg-live-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #212121;
+  margin-bottom: 3px;
+}
+.tg-live-item.current .tg-live-title { color: #2874f0; }
+.tg-live-item.pending .tg-live-title { color: #999; font-weight: 500; }
+.tg-live-time {
+  font-size: 11.5px;
+  color: #888;
+}
+.tg-live-note {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  line-height: 1.5;
+  background: #f8f9fb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 3px solid #2874f0;
+}
+
+.tg-track-order-info {
+  background: #f8f9fb;
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 16px;
+}
+.tg-track-order-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 6px 0;
+  gap: 10px;
+}
+.tg-track-order-info-row:not(:last-child) { border-bottom: 1px solid #e8eaec; }
+.tg-track-order-info-row .k { color: #666; }
+.tg-track-order-info-row .v { font-weight: 700; color: #212121; text-align: right; }
+
+.tg-star-pick { display: flex; gap: 8px; margin-bottom: 16px; justify-content: center; }
+.tg-star-pick svg {
+  width: 40px !important;
+  height: 40px !important;
+  max-width: 40px !important;
+  max-height: 40px !important;
+  fill: #e0e0e0 !important;
+  stroke: none !important;
+  cursor: pointer;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.tg-star-pick svg.active { fill: #ffc107 !important; transform: scale(1.1); }
+.tg-star-pick svg:hover { transform: scale(1.15); }
+
+.tg-review-title-input {
+  width: 100%;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.tg-review-title-input:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
+
+.tg-review-input {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+.tg-review-input:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
+
+.tg-rv-field-label {
+  display: block;
+  font-size: 11.5px;
+  color: #666;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.tg-rv-upload {
+  border: 2px dashed #c5cad3;
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8f9fb;
+  transition: all .15s;
+  margin-bottom: 10px;
+}
+.tg-rv-upload:hover { border-color: #2874f0; background: #f0f5ff; }
+.tg-rv-upload svg { width: 32px; height: 32px; stroke: #999; fill: none; stroke-width: 1.8; margin: 0 auto 8px; }
+.tg-rv-upload-title { font-size: 13px; font-weight: 700; }
+.tg-rv-upload-desc { font-size: 11px; color: #888; margin-top: 3px; }
+
+.tg-rv-img-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.tg-rv-img-preview-item {
+  position: relative;
+  width: 74px; height: 74px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid #e0e0e0;
+  background: #f5f5f6;
+}
+.tg-rv-img-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.tg-rv-img-preview-remove {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  border: none;
+}
+
+.tg-rv-upload-progress {
+  font-size: 12px;
+  color: #2874f0;
+  font-weight: 600;
+  margin-top: 6px;
+  display: none;
+  text-align: center;
+}
+.tg-rv-upload-progress.show { display: block; }
+
+@media (max-width: 600px) {
+  .tg-container { padding: 8px; }
+  .tg-order-head { padding: 10px 12px; }
+  .tg-order-meta { gap: 10px; }
+  .tg-order-meta-label { font-size: 10px; }
+  .tg-order-meta-value { font-size: 12px; }
+  .tg-order-items { padding: 10px 12px; }
+  .tg-order-item { grid-template-columns: 60px 1fr; }
+  .tg-order-item-img { width: 60px; height: 60px; }
+  .tg-order-item-name { font-size: 12.5px; }
+  .tg-order-foot { padding: 10px 12px; gap: 8px; }
+  .tg-order-btn { padding: 8px 12px; font-size: 11.5px; }
+  .tg-track-label { font-size: 9.5px; }
+  .tg-track-dot { width: 22px; height: 22px; }
+  .tg-track-dot svg { width: 12px; height: 12px; }
+  .tg-track-line { top: 11px; }
+  .tg-order-total { font-size: 14px; }
+  .tg-empty { padding: 40px 18px; }
+  .tg-empty-icon { width: 100px; height: 100px; font-size: 46px; }
+  .tg-empty-title { font-size: 17px; }
+  .tg-star-pick svg { width: 36px !important; height: 36px !important; max-width: 36px !important; max-height: 36px !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="shop-home.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">My Orders</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <div class="tg-search-wrap">
+      <span class="tg-search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+      <input type="text" id="tg-search" placeholder="Search your orders" autocomplete="off">
+      <button class="tg-search-clear" id="tg-search-clear" onclick="tgClearSearch()">✕</button>
+    </div>
+
+    <div class="tg-tabs-wrap">
+      <div class="tg-tabs" id="tg-tabs">
+        <div class="tg-tab active" data-tab="all" onclick="tgPickTab('all')">All <span class="tg-tab-count" id="tg-count-all">0</span></div>
+        <div class="tg-tab" data-tab="pending" onclick="tgPickTab('pending')">Pending <span class="tg-tab-count" id="tg-count-pending">0</span></div>
+        <div class="tg-tab" data-tab="processing" onclick="tgPickTab('processing')">Processing <span class="tg-tab-count" id="tg-count-processing">0</span></div>
+        <div class="tg-tab" data-tab="shipped" onclick="tgPickTab('shipped')">Shipped <span class="tg-tab-count" id="tg-count-shipped">0</span></div>
+        <div class="tg-tab" data-tab="delivered" onclick="tgPickTab('delivered')">Delivered <span class="tg-tab-count" id="tg-count-delivered">0</span></div>
+        <div class="tg-tab" data-tab="cancelled" onclick="tgPickTab('cancelled')">Cancelled <span class="tg-tab-count" id="tg-count-cancelled">0</span></div>
+        <div class="tg-tab" data-tab="returns" onclick="tgPickTab('returns')">Returns <span class="tg-tab-count" id="tg-count-returns">0</span></div>
+      </div>
+    </div>
+
+    <div class="tg-orders" id="tg-orders"></div>
+
+    <div id="tg-loading">
+      <div class="tg-skel-order">
+        <div class="tg-skel" style="width:40%;height:12px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <div class="tg-skel" style="width:70px;height:70px;border-radius:8px;"></div>
+          <div style="flex:1;">
+            <div class="tg-skel" style="width:80%;height:12px;margin-bottom:8px;"></div>
+            <div class="tg-skel" style="width:50%;height:12px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tg-skel-order">
+        <div class="tg-skel" style="width:40%;height:12px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="tg-skel" style="width:70px;height:70px;border-radius:8px;"></div>
+          <div style="flex:1;">
+            <div class="tg-skel" style="width:80%;height:12px;margin-bottom:8px;"></div>
+            <div class="tg-skel" style="width:50%;height:12px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-empty" id="tg-empty" style="display:none;">
+      <div class="tg-empty-icon">📦</div>
+      <h2 class="tg-empty-title" id="tg-empty-title">No orders yet</h2>
+      <p class="tg-empty-desc" id="tg-empty-desc">Looks like you haven't placed any orders. Start shopping and get exclusive deals!</p>
+      <a href="shop-home.html" class="tg-empty-cta">
+        <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+        Start Shopping
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-cart-badge-m" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-modal" id="tg-track-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Live Tracking</div>
+      <button class="tg-modal-close" onclick="tgCloseTrack()">✕</button>
+    </div>
+    <div id="tg-track-body"></div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-cancel-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Cancel Order</div>
+      <button class="tg-modal-close" onclick="tgCloseCancel()">✕</button>
+    </div>
+    <div class="tg-modal-body">
+      <p style="color:#666;font-size:13.5px;">Why do you want to cancel this order? Please select a reason.</p>
+      <div class="tg-reasons" id="tg-reasons">
+        <div class="tg-reason" data-reason="Ordered by mistake" onclick="tgPickReason(this)"><div class="tg-reason-radio"></div><span>Ordered by mistake</span></div>
+        <div class="tg-reason" data-reason="Found cheaper elsewhere" onclick="tgPickReason(this)"><div class="tg-reason-radio"></div><span>Found cheaper elsewhere</span></div>
+        <div class="tg-reason" data-reason="Delivery time is too long" onclick="tgPickReason(this)"><div class="tg-reason-radio"></div><span>Delivery time is too long</span></div>
+        <div class="tg-reason" data-reason="Changed my mind" onclick="tgPickReason(this)"><div class="tg-reason-radio"></div><span>Changed my mind</span></div>
+        <div class="tg-reason" data-reason="Other reason" onclick="tgPickReason(this)"><div class="tg-reason-radio"></div><span>Other reason</span></div>
+      </div>
+      <div class="tg-modal-actions">
+        <button class="tg-modal-btn ghost" onclick="tgCloseCancel()">Keep Order</button>
+        <button class="tg-modal-btn danger" id="tg-cancel-confirm" onclick="tgConfirmCancel()" disabled>Cancel Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-detail-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Order Details</div>
+      <button class="tg-modal-close" onclick="tgCloseDetail()">✕</button>
+    </div>
+    <div class="tg-modal-body" id="tg-detail-body"></div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-review-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Write a Review</div>
+      <button class="tg-modal-close" onclick="tgCloseReview()">✕</button>
+    </div>
+    <div class="tg-modal-body">
+      <input type="hidden" id="tg-review-pid">
+      <div id="tg-review-product-name" style="font-size:13px;color:#666;margin-bottom:14px;text-align:center;font-weight:600;"></div>
+
+      <div class="tg-star-pick" id="tg-star-pick">
+        <svg viewBox="0 0 24 24" data-star="1" onclick="tgPickStar(1)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24" data-star="2" onclick="tgPickStar(2)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24" data-star="3" onclick="tgPickStar(3)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24" data-star="4" onclick="tgPickStar(4)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <svg viewBox="0 0 24 24" data-star="5" onclick="tgPickStar(5)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <label class="tg-rv-field-label">Review Title (optional)</label>
+        <input type="text" class="tg-review-title-input" id="tg-review-title" placeholder="Summarize your experience" maxlength="80">
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <label class="tg-rv-field-label">Your Review *</label>
+        <textarea class="tg-review-input" id="tg-review-text" placeholder="Share your experience with this product..." maxlength="1000"></textarea>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <label class="tg-rv-field-label">Add Photos (max 3)</label>
+        <div class="tg-rv-upload" onclick="document.getElementById('tg-rv-img-file').click()">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+          <div class="tg-rv-upload-title">Click to upload</div>
+          <div class="tg-rv-upload-desc">Auto-compressed to 50KB · Cloudinary</div>
+        </div>
+        <input type="file" id="tg-rv-img-file" accept="image/*" multiple style="display:none;">
+        <div class="tg-rv-upload-progress" id="tg-rv-upload-progress">Compressing & uploading…</div>
+        <div class="tg-rv-img-preview" id="tg-rv-img-preview"></div>
+      </div>
+
+      <div class="tg-modal-actions" style="margin-top:16px;">
+        <button class="tg-modal-btn ghost" onclick="tgCloseReview()">Cancel</button>
+        <button class="tg-modal-btn primary" id="tg-review-submit" onclick="tgSubmitReview()">Submit Review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tg-modal" id="tg-return-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Return / Replace</div>
+      <button class="tg-modal-close" onclick="tgCloseReturn()">✕</button>
+    </div>
+    <div class="tg-modal-body">
+      <p style="color:#666;font-size:13.5px;">Why do you want to return this order?</p>
+      <div class="tg-reasons" id="tg-return-reasons">
+        <div class="tg-reason" data-reason="Product is damaged" onclick="tgPickReturnReason(this)"><div class="tg-reason-radio"></div><span>Product is damaged</span></div>
+        <div class="tg-reason" data-reason="Wrong item delivered" onclick="tgPickReturnReason(this)"><div class="tg-reason-radio"></div><span>Wrong item delivered</span></div>
+        <div class="tg-reason" data-reason="Size doesn't fit" onclick="tgPickReturnReason(this)"><div class="tg-reason-radio"></div><span>Size doesn't fit</span></div>
+        <div class="tg-reason" data-reason="Product not as described" onclick="tgPickReturnReason(this)"><div class="tg-reason-radio"></div><span>Product not as described</span></div>
+        <div class="tg-reason" data-reason="Quality not as expected" onclick="tgPickReturnReason(this)"><div class="tg-reason-radio"></div><span>Quality not as expected</span></div>
+      </div>
+      <div class="tg-modal-actions">
+        <button class="tg-modal-btn ghost" onclick="tgCloseReturn()">Cancel</button>
+        <button class="tg-modal-btn primary" id="tg-return-confirm" onclick="tgConfirmReturn()" disabled>Submit Return</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  const ORDERS_CACHE_KEY = 'toego_orders_cache_v1';
+
+  let CLOUD = { cloudName: '', uploadPreset: '' };
+  let rvImages = [];
+
+  (async function loadCloudinary() {
+    try {
+      const s = await db.collection('siteSettings').doc('cloudinary').get();
+      if (s.exists) {
+        CLOUD = {
+          cloudName: s.data().cloudName || '',
+          uploadPreset: s.data().uploadPreset || ''
+        };
+      }
+    } catch(e) {}
+  })();
+
+  async function compressTo50KB(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const targetBytes = 50 * 1024;
+          const atts = [
+            {maxW:1000,q:.85},{maxW:900,q:.75},{maxW:800,q:.7},{maxW:700,q:.65},
+            {maxW:600,q:.6},{maxW:500,q:.55},{maxW:450,q:.5},{maxW:400,q:.45},
+            {maxW:350,q:.4},{maxW:300,q:.35},{maxW:250,q:.3},{maxW:200,q:.25}
+          ];
+          let best = null;
+          for (const a of atts) {
+            let w = img.width, h = img.height;
+            if (w > a.maxW) { h = Math.round(h * (a.maxW / w)); w = a.maxW; }
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = c.toDataURL('image/jpeg', a.q);
+            const bytes = Math.round((dataUrl.split(',')[1]?.length || 0) * 0.75);
+            best = { dataUrl, bytes };
+            if (bytes <= targetBytes) { resolve(best); return; }
+          }
+          resolve(best);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function dataURLtoBlob(dataUrl) {
+    const parts = dataUrl.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const bin = atob(parts[1]);
+    const u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return new Blob([u8], { type: mime });
+  }
+
+  async function uploadToCloudinary(blob, folder) {
+    if (!CLOUD.cloudName || !CLOUD.uploadPreset) return null;
+    try {
+      const fd = new FormData();
+      fd.append('file', blob, 'review.jpg');
+      fd.append('upload_preset', CLOUD.uploadPreset);
+      if (folder) fd.append('folder', folder);
+      const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD.cloudName + '/image/upload', {
+        method: 'POST', body: fd
+      });
+      if (!res.ok) return null;
+      const d = await res.json();
+      return d.secure_url.replace('/upload/', '/upload/q_auto:good,w_800,c_limit/');
+    } catch(e) { return null; }
+  }
+
+  async function processReviewImage(file) {
+    const compressed = await compressTo50KB(file);
+    const blob = dataURLtoBlob(compressed.dataUrl);
+    const cloudUrl = await uploadToCloudinary(blob, 'toego/reviews');
+    return {
+      url: cloudUrl || compressed.dataUrl,
+      bytes: compressed.bytes,
+      cloud: !!cloudUrl
+    };
+  }
+
+  document.getElementById('tg-rv-img-file').addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (rvImages.length + files.length > 3) { toast('Max 3 images allowed', 'error'); this.value = ''; return; }
+
+    const prog = document.getElementById('tg-rv-upload-progress');
+    prog.classList.add('show');
+
+    for (const f of files) {
+      if (!f.type.startsWith('image/')) continue;
+      try {
+        prog.textContent = 'Compressing & uploading…';
+        const result = await processReviewImage(f);
+        rvImages.push(result.url);
+        renderRvPreviews();
+        const sizeKB = (result.bytes / 1024).toFixed(1);
+        const via = result.cloud ? 'Cloudinary' : 'Local';
+        toast('✓ ' + sizeKB + 'KB uploaded via ' + via, 'success');
+      } catch(err) {
+        console.warn('Image upload failed:', err);
+        toast('Failed to process image', 'error');
+      }
+    }
+
+    prog.classList.remove('show');
+    this.value = '';
+  });
+
+  function renderRvPreviews() {
+    document.getElementById('tg-rv-img-preview').innerHTML = rvImages.map((url, i) =>
+      '<div class="tg-rv-img-preview-item"><img src="' + esc(url) + '" /><button type="button" class="tg-rv-img-preview-remove" onclick="tgRemoveRvImg(' + i + ')">✕</button></div>'
+    ).join('');
+  }
+  window.tgRemoveRvImg = function(i) {
+    rvImages.splice(i, 1);
+    renderRvPreviews();
+  };
+
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(p) {
+    p = p || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', p);
+    document.documentElement.style.setProperty('--tg-primary', p);
+  }
+  (function boot() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+  })();
+  (async function loadTheme() {
+    try {
+      const s = await db.collection('siteSettings').doc('theme').get();
+      if (s.exists) {
+        const d = s.data();
+        applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
+      }
+    } catch(e) {}
+  })();
+
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+  function fmtDate(date) {
+    if (!date) return '—';
+    const d = date.toDate ? date.toDate() : new Date(date);
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function fmtTime(date) {
+    if (!date) return '';
+    const d = date.toDate ? date.toDate() : new Date(date);
+    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function normStatus(o) {
+    if (!o) return 'pending';
+    const raw = o.status || o.orderStatus || 'pending';
+    const k = String(raw).toLowerCase().trim().replace(/\s+/g, '_').replace(/-/g, '_');
+    if (!k || k === 'new' || k === 'placed' || k === 'order_placed' || k === 'waiting' || k === 'pending' || k === 'confirmed') return 'pending';
+    if (k.includes('cancel') || k.includes('reject')) return 'cancelled';
+    if (k.includes('return_request') || k === 'return_pending') return 'return_requested';
+    if (k.includes('return') || k.includes('refund') || k === 'rto') return 'returned';
+    if (k.includes('deliver') || k === 'completed') return 'delivered';
+    if (k.includes('dispatch') || k.includes('shipped') || k === 'in_transit' || k === 'ofd' || k === 'out_for_delivery') return 'dispatched';
+    if (k.includes('process') || k.includes('packing') || k === 'packed' || k === 'ready_to_ship' || k === 'preparing') return 'processing';
+    if (k.includes('label_generat') || k === 'label_created') return 'label_generated';
+    if (k.includes('admin_approv') || k === 'approved' || k === 'admin_ok' || k === 'adminok' || k === 'rtd' || k.includes('ready_to_dispatch') || k.includes('ready_for_label') || k === 'admin-accepted') return 'admin_approved';
+    if (k.includes('seller_accept') || k === 'accepted' || k === 'accept' || k.includes('order_accepted')) return 'seller_accepted';
+    return 'pending';
+  }
+
+  function getStatusKey(o) { return normStatus(o).replace(/_/g, '-'); }
+  function getStatusLabel(o) {
+    const k = normStatus(o);
+    return {
+      pending: 'New Order', seller_accepted: 'Accepted', admin_approved: 'Ready for Label',
+      label_generated: 'Label Created', processing: 'Processing', dispatched: 'Shipped',
+      delivered: 'Delivered', cancelled: 'Cancelled', return_requested: 'Return Requested',
+      returned: 'Returned'
+    }[k] || 'New Order';
+  }
+  function getStatusIcon(o) {
+    const k = normStatus(o);
+    return {
+      pending: '⏳', seller_accepted: '✓', admin_approved: '📋',
+      label_generated: '🏷️', processing: '📦', dispatched: '🚚', delivered: '✅',
+      cancelled: '✕', return_requested: '↩', returned: '↩'
+    }[k] || '📦';
+  }
+
+  function saveOrdersCache(uid, orders) {
+    try {
+      const clean = orders.slice(0, 40).map(o => {
+        const copy = { ...o };
+        ['createdAt','updatedAt','deliveredAt','dispatchedAt','cancelledAt',
+         'sellerAcceptedAt','acceptedAt','returnRequestedAt','returnApprovedAt',
+         'rtdAt','adminApprovedAt','labelGeneratedAt','packedAt','processingAt'].forEach(k => {
+          if (copy[k] && typeof copy[k] === 'object') {
+            if (typeof copy[k].toDate === 'function') {
+              try { copy[k] = copy[k].toDate().toISOString(); } catch(e) { delete copy[k]; }
+            } else if (copy[k].seconds != null) {
+              try { copy[k] = new Date(copy[k].seconds * 1000).toISOString(); } catch(e) { delete copy[k]; }
+            } else {
+              delete copy[k];
+            }
+          }
+        });
+        return copy;
+      });
+      localStorage.setItem(ORDERS_CACHE_KEY + '_' + uid, JSON.stringify(clean));
+    } catch(e) {}
+  }
+  function loadOrdersCache(uid) {
+    try {
+      const raw = localStorage.getItem(ORDERS_CACHE_KEY + '_' + uid);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed) || !parsed.length) return null;
+      return parsed;
+    } catch(e) { return null; }
+  }
+  function clearOrdersCache(uid) {
+    try { localStorage.removeItem(ORDERS_CACHE_KEY + '_' + uid); } catch(e) {}
+  }
+
+  let USER = null;
+  let ALL_ORDERS = [];
+  let CURRENT_TAB = 'all';
+  let SEARCH_QUERY = '';
+  let cancelTargetId = null, cancelReason = '';
+  let returnTargetId = null, returnReason = '';
+  let reviewTargetPid = null, reviewTargetName = '', reviewRating = 0;
+  let unsubOrders = [];
+  let unsubTrack = null;
+  let TRACK_ID = null;
+
+  window.tgPickTab = function(tab) {
+    CURRENT_TAB = tab;
+    document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    renderOrders();
+  };
+
+  document.getElementById('tg-search').addEventListener('input', function() {
+    SEARCH_QUERY = this.value.trim().toLowerCase();
+    document.getElementById('tg-search-clear').classList.toggle('show', !!SEARCH_QUERY);
+    renderOrders();
+  });
+  window.tgClearSearch = function() {
+    document.getElementById('tg-search').value = '';
+    SEARCH_QUERY = '';
+    document.getElementById('tg-search-clear').classList.remove('show');
+    renderOrders();
+  };
+
+  function filterByTab(orders) {
+    if (CURRENT_TAB === 'all') return orders;
+    return orders.filter(o => {
+      const s = normStatus(o);
+      if (CURRENT_TAB === 'pending') return s === 'pending';
+      if (CURRENT_TAB === 'processing') return ['seller_accepted', 'admin_approved', 'label_generated', 'processing'].includes(s);
+      if (CURRENT_TAB === 'shipped') return s === 'dispatched';
+      if (CURRENT_TAB === 'delivered') return s === 'delivered';
+      if (CURRENT_TAB === 'cancelled') return s === 'cancelled';
+      if (CURRENT_TAB === 'returns') return ['return_requested', 'returned'].includes(s);
+      return true;
+    });
+  }
+
+  function filterBySearch(orders) {
+    if (!SEARCH_QUERY) return orders;
+    return orders.filter(o => {
+      const hay = [o.id || o.orderId || '', ...(o.items || []).map(i => i.name || ''), normStatus(o), o.paymentMethod || ''].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(SEARCH_QUERY);
+    });
+  }
+
+  function renderOrders() {
+    const wrap = document.getElementById('tg-orders');
+    const loading = document.getElementById('tg-loading');
+    const empty = document.getElementById('tg-empty');
+    if (!wrap) return;
+    if (loading) loading.style.display = 'none';
+
+    updateTabCounts();
+
+    let orders = filterByTab(ALL_ORDERS);
+    orders = filterBySearch(orders);
+
+    if (!ALL_ORDERS.length) {
+      wrap.innerHTML = '';
+      empty.style.display = 'block';
+      document.getElementById('tg-empty-title').textContent = 'No orders yet';
+      document.getElementById('tg-empty-desc').textContent = "Looks like you haven't placed any orders. Start shopping and get exclusive deals!";
+      return;
+    }
+
+    if (!orders.length) {
+      wrap.innerHTML = '';
+      empty.style.display = 'block';
+      document.getElementById('tg-empty-title').textContent = 'No orders found';
+      document.getElementById('tg-empty-desc').textContent = SEARCH_QUERY ? 'Try a different search term' : 'No orders in this category';
+      return;
+    }
+
+    empty.style.display = 'none';
+    wrap.innerHTML = orders.map(orderHtml).join('');
+  }
+
+  function updateTabCounts() {
+    const counts = { all: ALL_ORDERS.length, pending: 0, processing: 0, shipped: 0, delivered: 0, cancelled: 0, returns: 0 };
+    ALL_ORDERS.forEach(o => {
+      const s = normStatus(o);
+      if (s === 'pending') counts.pending++;
+      else if (['seller_accepted', 'admin_approved', 'label_generated', 'processing'].includes(s)) counts.processing++;
+      else if (s === 'dispatched') counts.shipped++;
+      else if (s === 'delivered') counts.delivered++;
+      else if (s === 'cancelled') counts.cancelled++;
+      else if (s === 'return_requested' || s === 'returned') counts.returns++;
+    });
+    Object.keys(counts).forEach(k => {
+      const el = document.getElementById('tg-count-' + k);
+      if (el) el.textContent = counts[k];
+    });
+  }
+
+  function orderHtml(o) {
+    const orderId = o.id || o.orderId || '';
+    const shortId = orderId.slice(0, 10).toUpperCase();
+    const status = normStatus(o);
+    const statusKey = getStatusKey(o);
+    const statusLabel = getStatusLabel(o);
+    const items = Array.isArray(o.items) ? o.items : [];
+    const extraCount = items.length - 1;
+    const total = Number(o.total || 0);
+    const itemTotalQty = items.reduce((s,i) => s + Number(i.qty || 1), 0);
+
+    const steps = ['Placed', 'Confirmed', 'Packed', 'Shipped', 'Delivered'];
+    let stepIdx = 0;
+    if (status === 'pending') stepIdx = 0;
+    else if (status === 'seller_accepted') stepIdx = 1;
+    else if (['admin_approved', 'label_generated', 'processing'].includes(status)) stepIdx = 2;
+    else if (status === 'dispatched') stepIdx = 3;
+    else if (status === 'delivered') stepIdx = 4;
+
+    const isCancelled = ['cancelled', 'returned', 'return_requested'].includes(status);
+    const canCancel = ['pending', 'seller_accepted'].includes(status);
+    const canReturn = status === 'delivered';
+    const canReview = status === 'delivered';
+    const canTrack = !['cancelled'].includes(status);
+
+    let progressHtml = '';
+    if (!isCancelled) {
+      const lineWidth = (stepIdx / (steps.length - 1)) * 100;
+      progressHtml = `
+        <div class="tg-order-track">
+          <div class="tg-track-steps">
+            <div class="tg-track-line"><div class="tg-track-line-fill" style="width: ${lineWidth}%;"></div></div>
+            ${steps.map((label, i) => {
+              const cls = i < stepIdx ? 'done' : (i === stepIdx ? 'active' : '');
+              return `<div class="tg-track-step ${cls}">
+                <div class="tg-track-dot"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+                <div class="tg-track-label">${esc(label)}</div>
+              </div>`;
+            }).join('')}
+          </div>
+          ${status === 'pending' ? '<div class="tg-track-info">Waiting for seller to accept</div>' : ''}
+          ${status === 'seller_accepted' ? '<div class="tg-track-info">Seller accepted your order</div>' : ''}
+          ${status === 'admin_approved' ? '<div class="tg-track-info"><b>Ready for Label</b> · Preparing your order</div>' : ''}
+          ${status === 'label_generated' ? '<div class="tg-track-info">Label generated · Soon to be packed</div>' : ''}
+          ${status === 'processing' ? '<div class="tg-track-info">Your order is <b>being packed</b></div>' : ''}
+          ${status === 'dispatched' ? '<div class="tg-track-info"><b>Shipped</b> · On the way' + (o.trackingId ? ' · ' + esc(o.trackingId) : '') + '</div>' : ''}
+          ${status === 'delivered' && o.deliveredAt ? '<div class="tg-track-info">Delivered on <b>' + esc(fmtDate(o.deliveredAt)) + '</b></div>' : ''}
+        </div>
+      `;
+    } else {
+      const color = status === 'cancelled' ? '#d32f2f' : '#6a1b9a';
+      let msg = '';
+      if (status === 'cancelled') msg = 'Order Cancelled' + (o.cancelReason ? ' · ' + esc(o.cancelReason) : '');
+      else if (status === 'return_requested') msg = 'Return requested · Pending admin approval';
+      else if (status === 'returned') msg = 'Return approved · Refund processing';
+      progressHtml = `<div class="tg-order-track" style="text-align:center;padding:14px;"><div class="tg-track-info" style="color:${color};"><b>${msg}</b></div></div>`;
+    }
+
+    return `
+      <div class="tg-order" data-id="${esc(orderId)}">
+        <div class="tg-order-head">
+          <div class="tg-order-meta">
+            <div class="tg-order-meta-item">
+              <div class="tg-order-meta-label">Order ID</div>
+              <div class="tg-order-meta-value mono">#${esc(shortId)}</div>
+            </div>
+            <div class="tg-order-meta-item">
+              <div class="tg-order-meta-label">Placed On</div>
+              <div class="tg-order-meta-value">${esc(fmtDate(o.createdAt))}</div>
+            </div>
+            <div class="tg-order-meta-item">
+              <div class="tg-order-meta-label">Items</div>
+              <div class="tg-order-meta-value">${itemTotalQty}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span class="tg-order-status ${statusKey}">${getStatusIcon(o)} ${esc(statusLabel)}</span>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;">
+              <div class="tg-order-total-label">Total</div>
+              <div class="tg-order-total">${fmtINR(total)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tg-order-items">
+          ${items.slice(0, 2).map(it => `
+            <div class="tg-order-item" onclick="location.href='product.html?id=${encodeURIComponent(it.productId || '')}'">
+              <div class="tg-order-item-img"><img src="${esc(it.image || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=TOEGO')}" alt="${esc(it.name || '')}" loading="lazy" /></div>
+              <div class="tg-order-item-body">
+                <div class="tg-order-item-name">${esc(it.name || 'Product')}</div>
+                <div class="tg-order-item-meta">${it.size ? 'Size: ' + esc(it.size) + ' · ' : ''}${it.color ? 'Color: ' + esc(it.color) + ' · ' : ''}Qty: ${Number(it.qty || 1)}</div>
+                <div class="tg-order-item-price">${fmtINR(it.price)}</div>
+              </div>
+            </div>
+          `).join('')}
+          ${extraCount > 0 ? `<div class="tg-order-more">+ ${extraCount} more item${extraCount > 1 ? 's' : ''}</div>` : ''}
+        </div>
+
+        ${progressHtml}
+
+        <div class="tg-order-foot">
+          <button class="tg-order-btn ghost" onclick="tgOpenDetail('${esc(orderId)}')">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Details
+          </button>
+          ${canTrack ? `<button class="tg-order-btn outline" onclick="tgOpenTrack('${esc(orderId)}')">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Track
+          </button>` : ''}
+          ${canReview && items[0] ? `<button class="tg-order-btn primary" onclick="tgOpenReview('${esc(items[0].productId || '')}', '${esc((items[0].name || '').replace(/'/g, "&#39;"))}')">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Review
+          </button>` : ''}
+          ${canReturn ? `<button class="tg-order-btn outline" onclick="tgOpenReturn('${esc(orderId)}')">
+            <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Return
+          </button>` : ''}
+          ${canCancel ? `<button class="tg-order-btn danger" onclick="tgOpenCancel('${esc(orderId)}')">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+            Cancel
+          </button>` : ''}
+          ${status === 'delivered' ? `<button class="tg-order-btn outline" onclick="tgDownloadInvoice('${esc(orderId)}')">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Invoice
+          </button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  window.tgOpenTrack = function(id) {
+    TRACK_ID = id;
+    const o = ALL_ORDERS.find(x => (x.id || x.orderId) === id);
+    if (!o) { toast('Order not found', 'error'); return; }
+    renderTrackBody(o);
+    document.getElementById('tg-track-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+
+    if (unsubTrack) { try { unsubTrack(); } catch(e) {} unsubTrack = null; }
+    try {
+      unsubTrack = db.collection('orders').doc(id).onSnapshot(snap => {
+        if (snap.exists) {
+          const updated = { id: snap.id, ...snap.data() };
+          const idx = ALL_ORDERS.findIndex(x => (x.id || x.orderId) === id);
+          if (idx >= 0) ALL_ORDERS[idx] = updated;
+          renderTrackBody(updated);
+          renderOrders();
+        } else {
+          tgCloseTrack();
+          toast('Order no longer available', 'info');
+        }
+      });
+    } catch(e) {}
+  };
+  window.tgCloseTrack = function() {
+    document.getElementById('tg-track-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    if (unsubTrack) { try { unsubTrack(); } catch(e) {} unsubTrack = null; }
+    TRACK_ID = null;
+  };
+
+  function renderTrackBody(o) {
+    const body = document.getElementById('tg-track-body');
+    const status = normStatus(o);
+    const statusLabel = getStatusLabel(o);
+    const orderId = o.id || o.orderId || '';
+    const shortId = orderId.slice(0, 12).toUpperCase();
+    const items = Array.isArray(o.items) ? o.items : [];
+
+    let heroTitle = statusLabel;
+    let heroSub = '';
+    let etaHtml = '';
+
+    if (status === 'pending') {
+      heroTitle = 'Order Placed';
+      heroSub = 'Waiting for seller to accept';
+      etaHtml = '<div class="tg-track-hero-eta">🕐 Seller will accept shortly</div>';
+    } else if (status === 'seller_accepted') {
+      heroTitle = 'Seller Accepted';
+      heroSub = 'Order confirmed · Preparing for dispatch';
+      etaHtml = '<div class="tg-track-hero-eta">🕐 Admin approval pending</div>';
+    } else if (status === 'admin_approved' || status === 'label_generated') {
+      heroTitle = 'Ready for Dispatch';
+      heroSub = 'Getting ready to ship';
+      etaHtml = '<div class="tg-track-hero-eta">📦 Packing in progress</div>';
+    } else if (status === 'processing') {
+      heroTitle = 'Processing';
+      heroSub = 'Your order is being packed';
+      etaHtml = '<div class="tg-track-hero-eta">📦 Will ship soon</div>';
+    } else if (status === 'dispatched') {
+      heroTitle = 'Shipped';
+      heroSub = o.trackingId ? 'Tracking: ' + esc(o.trackingId) : 'On the way to you';
+      etaHtml = '<div class="tg-track-hero-eta">🚚 Expected delivery soon</div>';
+    } else if (status === 'delivered') {
+      heroTitle = 'Delivered';
+      heroSub = o.deliveredAt ? 'Delivered on ' + esc(fmtDate(o.deliveredAt)) : 'Order delivered';
+      etaHtml = '<div class="tg-track-hero-eta">✅ Thank you for shopping!</div>';
+    } else if (status === 'cancelled') {
+      heroTitle = 'Order Cancelled';
+      heroSub = o.cancelReason || 'Order was cancelled';
+    } else if (status === 'return_requested') {
+      heroTitle = 'Return Requested';
+      heroSub = 'Waiting for admin approval';
+    } else if (status === 'returned') {
+      heroTitle = 'Return Processed';
+      heroSub = 'Refund will be credited soon';
+    }
+
+    const tl = [];
+    tl.push({ t: 'Order Placed', time: o.createdAt, done: true, icon: '✓' });
+    tl.push({ t: 'Seller Accepted', time: o.sellerAcceptedAt || o.acceptedAt, done: ['seller_accepted', 'admin_approved', 'label_generated', 'processing', 'dispatched', 'delivered'].includes(status) });
+    tl.push({ t: 'Ready for Label', time: o.adminApprovedAt || o.rtdAt, done: ['admin_approved', 'label_generated', 'processing', 'dispatched', 'delivered'].includes(status) });
+    tl.push({ t: 'Packed & Label Printed', time: o.processingAt || o.labelGeneratedAt, done: ['processing', 'dispatched', 'delivered'].includes(status) });
+    tl.push({ t: 'Shipped', time: o.dispatchedAt, done: ['dispatched', 'delivered'].includes(status), note: o.trackingId ? 'Tracking ID: ' + o.trackingId : '' });
+    tl.push({ t: 'Out for Delivery', time: o.outForDeliveryAt, done: false });
+    tl.push({ t: 'Delivered', time: o.deliveredAt, done: status === 'delivered' });
+
+    if (status === 'cancelled') {
+      tl.push({ t: 'Cancelled', time: o.cancelledAt, done: true, note: o.cancelReason || '' });
+    }
+    if (status === 'return_requested') {
+      tl.push({ t: 'Return Requested', time: o.returnRequestedAt, done: true, note: o.returnReason || '' });
+    }
+    if (status === 'returned') {
+      tl.push({ t: 'Return Requested', time: o.returnRequestedAt, done: true });
+      tl.push({ t: 'Return Approved', time: o.returnApprovedAt, done: true });
+    }
+
+    let currentIdx = -1;
+    for (let i = 0; i < tl.length; i++) {
+      if (!tl[i].done) { currentIdx = i; break; }
+    }
+
+    const tlHtml = tl.map((x, i) => {
+      const isDone = x.done;
+      const isCurrent = i === currentIdx;
+      const cls = isDone ? 'done' : (isCurrent ? 'current' : 'pending');
+      const timeStr = x.time ? fmtDate(x.time) + ' · ' + fmtTime(x.time) : (isCurrent ? 'In progress...' : 'Pending');
+      return `<div class="tg-live-item ${cls}">
+        <div class="tg-live-dot">
+          ${isDone ? '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'}
+        </div>
+        <div class="tg-live-body">
+          <div class="tg-live-title">${esc(x.t)}</div>
+          <div class="tg-live-time">${esc(timeStr)}</div>
+          ${x.note ? '<div class="tg-live-note">' + esc(x.note) + '</div>' : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    const addr = o.address || o.shippingAddress || {};
+    const addrShort = [addr.city, addr.state].filter(Boolean).join(', ');
+
+    body.innerHTML = `
+      <div class="tg-track-hero">
+        <div class="tg-track-hero-content">
+          <div class="tg-track-hero-status">Live</div>
+          <div class="tg-track-hero-title">${esc(heroTitle)}</div>
+          <div class="tg-track-hero-sub">${esc(heroSub)}</div>
+          ${etaHtml}
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:#878787;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;margin:20px 0 6px;">Order Timeline</div>
+      <div class="tg-live-timeline">${tlHtml}</div>
+
+      <div class="tg-track-order-info">
+        <div class="tg-track-order-info-row"><span class="k">Order ID</span><span class="v" style="font-family:monospace;">#${esc(shortId)}</span></div>
+        <div class="tg-track-order-info-row"><span class="k">Items</span><span class="v">${items.length} item${items.length > 1 ? 's' : ''}</span></div>
+        <div class="tg-track-order-info-row"><span class="k">Total</span><span class="v">${fmtINR(o.total)}</span></div>
+        <div class="tg-track-order-info-row"><span class="k">Payment</span><span class="v">${esc((o.paymentMethod || 'COD').toUpperCase())}</span></div>
+        <div class="tg-track-order-info-row"><span class="k">Deliver to</span><span class="v">${esc(addrShort || '—')}</span></div>
+        ${o.trackingId ? '<div class="tg-track-order-info-row"><span class="k">Tracking ID</span><span class="v" style="font-family:monospace;">' + esc(o.trackingId) + '</span></div>' : ''}
+      </div>
+    `;
+  }
+
+  window.tgOpenCancel = function(id) {
+    cancelTargetId = id; cancelReason = '';
+    document.querySelectorAll('#tg-reasons .tg-reason').forEach(r => r.classList.remove('active'));
+    document.getElementById('tg-cancel-confirm').disabled = true;
+    document.getElementById('tg-cancel-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgCloseCancel = function() {
+    document.getElementById('tg-cancel-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    cancelTargetId = null;
+  };
+  window.tgPickReason = function(el) {
+    document.querySelectorAll('#tg-reasons .tg-reason').forEach(r => r.classList.remove('active'));
+    el.classList.add('active');
+    cancelReason = el.dataset.reason || '';
+    document.getElementById('tg-cancel-confirm').disabled = !cancelReason;
+  };
+  window.tgConfirmCancel = async function() {
+    if (!cancelTargetId || !cancelReason) return;
+    const btn = document.getElementById('tg-cancel-confirm');
+    btn.disabled = true; btn.textContent = 'Cancelling…';
+    try {
+      const o = ALL_ORDERS.find(x => (x.id || x.orderId) === cancelTargetId);
+      const update = {
+        status: 'cancelled',
+        cancelReason: cancelReason,
+        cancelledAt: FV.serverTimestamp(),
+        cancelledBy: 'customer',
+        cancelledByUid: USER.uid,
+        updatedAt: FV.serverTimestamp()
+      };
+      if (o) {
+        const sellerIds = new Set();
+        const items = Array.isArray(o.items) ? o.items : [];
+        items.forEach(it => {
+          const sid = it.sellerId || it.seller_id || it.sid;
+          if (sid) sellerIds.add(String(sid));
+        });
+        if (o.sellerId) sellerIds.add(String(o.sellerId));
+        if (Array.isArray(o.sellerIds)) o.sellerIds.forEach(s => sellerIds.add(String(s)));
+        if (sellerIds.size) update.sellerIds = Array.from(sellerIds);
+      }
+      await db.collection('orders').doc(cancelTargetId).update(update);
+      toast('Order cancelled ✓', 'success');
+      tgCloseCancel();
+    } catch(err) {
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false; btn.textContent = 'Cancel Order';
+    }
+  };
+
+  window.tgOpenReturn = function(id) {
+    returnTargetId = id; returnReason = '';
+    document.querySelectorAll('#tg-return-reasons .tg-reason').forEach(r => r.classList.remove('active'));
+    document.getElementById('tg-return-confirm').disabled = true;
+    document.getElementById('tg-return-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgCloseReturn = function() {
+    document.getElementById('tg-return-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    returnTargetId = null;
+  };
+  window.tgPickReturnReason = function(el) {
+    document.querySelectorAll('#tg-return-reasons .tg-reason').forEach(r => r.classList.remove('active'));
+    el.classList.add('active');
+    returnReason = el.dataset.reason || '';
+    document.getElementById('tg-return-confirm').disabled = !returnReason;
+  };
+  window.tgConfirmReturn = async function() {
+    if (!returnTargetId || !returnReason) return;
+    const btn = document.getElementById('tg-return-confirm');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    try {
+      const o = ALL_ORDERS.find(x => (x.id || x.orderId) === returnTargetId);
+      const update = {
+        status: 'return_requested',
+        returnReason: returnReason,
+        returnRequestedAt: FV.serverTimestamp(),
+        returnRequestedBy: 'customer',
+        returnRequestedByUid: USER.uid,
+        returnCut: 150,
+        updatedAt: FV.serverTimestamp()
+      };
+      if (o) {
+        const sellerIds = new Set();
+        const items = Array.isArray(o.items) ? o.items : [];
+        items.forEach(it => {
+          const sid = it.sellerId || it.seller_id || it.sid;
+          if (sid) sellerIds.add(String(sid));
+        });
+        if (o.sellerId) sellerIds.add(String(o.sellerId));
+        if (Array.isArray(o.sellerIds)) o.sellerIds.forEach(s => sellerIds.add(String(s)));
+        if (sellerIds.size) update.sellerIds = Array.from(sellerIds);
+        update.returnOrderSnapshot = {
+          total: o.total || 0,
+          itemCount: items.length,
+          items: items.map(it => ({ name: it.name || '', qty: it.qty || 1, price: it.price || 0 }))
+        };
+      }
+      await db.collection('orders').doc(returnTargetId).update(update);
+      toast('Return request submitted ✓ Admin will review', 'success');
+      tgCloseReturn();
+    } catch(err) {
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false; btn.textContent = 'Submit Return';
+    }
+  };
+
+  window.tgOpenDetail = function(id) {
+    const o = ALL_ORDERS.find(x => (x.id || x.orderId) === id);
+    if (!o) return;
+    const items = Array.isArray(o.items) ? o.items : [];
+    const addr = o.address || o.shippingAddress || {};
+    const body = document.getElementById('tg-detail-body');
+    const orderId = o.id || o.orderId || '';
+    const shortId = orderId.slice(0, 12).toUpperCase();
+    const status = normStatus(o);
+
+    const tl = [];
+    tl.push({ t: 'Order Placed', time: o.createdAt, done: true });
+    if (o.sellerAcceptedAt || o.acceptedAt || ['seller_accepted', 'admin_approved', 'label_generated', 'processing', 'dispatched', 'delivered'].includes(status))
+      tl.push({ t: 'Seller Accepted', time: o.sellerAcceptedAt || o.acceptedAt, done: true });
+    if (o.adminApprovedAt || o.rtdAt || ['admin_approved', 'label_generated', 'processing', 'dispatched', 'delivered'].includes(status))
+      tl.push({ t: 'Ready for Label', time: o.adminApprovedAt || o.rtdAt, done: true });
+    if (o.labelGeneratedAt || ['label_generated', 'processing', 'dispatched', 'delivered'].includes(status))
+      tl.push({ t: 'Label Generated', time: o.labelGeneratedAt, done: true });
+    if (o.processingAt || ['processing', 'dispatched', 'delivered'].includes(status))
+      tl.push({ t: 'Processing', time: o.processingAt, done: true });
+    if (o.dispatchedAt || ['dispatched', 'delivered'].includes(status))
+      tl.push({ t: 'Shipped', time: o.dispatchedAt, done: true });
+    if (o.deliveredAt || status === 'delivered')
+      tl.push({ t: 'Delivered', time: o.deliveredAt, done: true });
+    if (o.cancelledAt || status === 'cancelled')
+      tl.push({ t: 'Cancelled', time: o.cancelledAt, done: true });
+    if (o.returnRequestedAt || status === 'return_requested')
+      tl.push({ t: 'Return Requested', time: o.returnRequestedAt, done: true });
+    if (o.returnApprovedAt || status === 'returned')
+      tl.push({ t: 'Return Approved', time: o.returnApprovedAt, done: true });
+
+    const tlHtml = tl.map((x, i) => {
+      const isLast = i === tl.length - 1;
+      const isCurrent = isLast && !['delivered', 'cancelled', 'returned'].includes(status);
+      const cls = isCurrent ? 'current' : (x.done ? 'done' : '');
+      return `<div class="tg-live-item ${cls}">
+        <div class="tg-live-dot">${x.done ? '<svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>'}</div>
+        <div class="tg-live-body">
+          <div class="tg-live-title">${esc(x.t)}</div>
+          <div class="tg-live-time">${x.time ? esc(fmtDate(x.time)) + ' · ' + esc(fmtTime(x.time)) : '—'}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div class="tg-detail-section-title">Order Info</div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Order ID</span><span class="tg-detail-val" style="font-family:monospace;">#${esc(shortId)}</span></div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Placed On</span><span class="tg-detail-val">${esc(fmtDate(o.createdAt))}</span></div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Status</span><span class="tg-detail-val">${esc(getStatusLabel(o))}</span></div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Payment</span><span class="tg-detail-val">${esc((o.paymentMethod || 'COD').toUpperCase())} · ${esc((o.paymentStatus || 'pending').toUpperCase())}</span></div>
+      ${o.trackingId ? `<div class="tg-detail-row"><span class="tg-detail-key">Tracking ID</span><span class="tg-detail-val" style="font-family:monospace;">${esc(o.trackingId)}</span></div>` : ''}
+
+      <div class="tg-detail-section-title">Timeline</div>
+      <div class="tg-live-timeline">${tlHtml}</div>
+
+      <div class="tg-detail-section-title">Items (${items.length})</div>
+      <div class="tg-detail-items-list">
+        ${items.map(it => `
+          <div class="tg-detail-item">
+            <div class="tg-detail-item-img"><img src="${esc(it.image || '')}" alt="" loading="lazy" /></div>
+            <div class="tg-detail-item-body">
+              <div class="tg-detail-item-name">${esc(it.name || 'Product')}</div>
+              <div class="tg-detail-item-meta">${it.size ? 'Size: ' + esc(it.size) + ' · ' : ''}${it.color ? 'Color: ' + esc(it.color) + ' · ' : ''}Qty: ${Number(it.qty || 1)}</div>
+            </div>
+            <div class="tg-detail-item-price">${fmtINR(Number(it.price) * Number(it.qty || 1))}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="tg-detail-section-title">Delivery Address</div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Name</span><span class="tg-detail-val">${esc(addr.name || o.userName || '—')}</span></div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Phone</span><span class="tg-detail-val">${esc(addr.phone || o.userPhone || '—')}</span></div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Address</span><span class="tg-detail-val">${esc(addr.line || '—')}</span></div>
+      <div class="tg-detail-row"><span class="tg-detail-key">City</span><span class="tg-detail-val">${esc(addr.city || '—')}, ${esc(addr.state || '')} - ${esc(addr.pin || '')}</span></div>
+
+      <div class="tg-detail-section-title">Price Details</div>
+      <div class="tg-detail-row"><span class="tg-detail-key">Subtotal</span><span class="tg-detail-val">${fmtINR(o.subtotal || o.mrpTotal || 0)}</span></div>
+      ${Number(o.discount) > 0 ? `<div class="tg-detail-row"><span class="tg-detail-key">Discount</span><span class="tg-detail-val" style="color:#388e3c;">− ${fmtINR(o.discount)}</span></div>` : ''}
+      ${Number(o.gst) > 0 ? `<div class="tg-detail-row"><span class="tg-detail-key">GST</span><span class="tg-detail-val">${fmtINR(o.gst)}</span></div>` : ''}
+      <div class="tg-detail-row"><span class="tg-detail-key">Delivery</span><span class="tg-detail-val">${Number(o.delivery) > 0 ? fmtINR(o.delivery) : '<span style="color:#388e3c;">FREE</span>'}</span></div>
+      <div class="tg-detail-row" style="border-top:2px solid #e0e0e0;padding-top:12px;margin-top:8px;"><span class="tg-detail-key" style="font-weight:800;color:#212121;font-size:15px;">Total Paid</span><span class="tg-detail-val" style="font-weight:800;font-size:16px;">${fmtINR(o.total)}</span></div>
+
+      ${o.cancelReason ? `<div class="tg-detail-section-title">Cancellation</div><div class="tg-detail-row"><span class="tg-detail-key">Reason</span><span class="tg-detail-val" style="color:#d32f2f;">${esc(o.cancelReason)}</span></div>` : ''}
+      ${o.returnReason ? `<div class="tg-detail-section-title">Return</div><div class="tg-detail-row"><span class="tg-detail-key">Reason</span><span class="tg-detail-val" style="color:#6a1b9a;">${esc(o.returnReason)}</span></div>` : ''}
+    `;
+    document.getElementById('tg-detail-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgCloseDetail = function() {
+    document.getElementById('tg-detail-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+
+  window.tgDownloadInvoice = function(id) {
+    const o = ALL_ORDERS.find(x => (x.id || x.orderId) === id);
+    if (!o) return;
+    const items = Array.isArray(o.items) ? o.items : [];
+    const addr = o.address || o.shippingAddress || {};
+    const orderId = (o.id || o.orderId || '').slice(0, 12).toUpperCase();
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice ${esc(orderId)}</title>
+<style>body{font-family:Arial,sans-serif;padding:30px;color:#212121;max-width:800px;margin:0 auto;}
+.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2874f0;padding-bottom:14px;margin-bottom:20px;}
+.brand{font-style:italic;font-weight:900;font-size:32px;color:#2874f0;}.brand span{color:#f43397;}
+.meta{text-align:right;font-size:12.5px;line-height:1.6;color:#666;}
+h2{font-size:14px;text-transform:uppercase;color:#666;letter-spacing:1px;margin:20px 0 10px;border-bottom:1px solid #eee;padding-bottom:6px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{padding:10px;text-align:left;border-bottom:1px solid #eee;}
+th{background:#f8f9fb;font-weight:700;font-size:11.5px;text-transform:uppercase;color:#666;}
+.total-row{font-weight:800;font-size:16px;}.total-row td{padding-top:14px;border-top:2px solid #333;border-bottom:none;}
+.addr{font-size:13px;line-height:1.6;}
+.footer{text-align:center;margin-top:40px;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:14px;}</style></head><body>
+<div class="header"><div><div class="brand">TOE<span>GO</span></div><div style="font-size:12px;color:#666;margin-top:4px;">Tax Invoice</div></div>
+<div class="meta"><b style="color:#212121;font-size:14px;">Invoice #${esc(orderId)}</b><br>Date: ${esc(fmtDate(o.createdAt))}<br>Payment: ${esc((o.paymentMethod || 'COD').toUpperCase())}${o.paymentId ? '<br>Payment ID: ' + esc(o.paymentId) : ''}</div></div>
+<h2>Billing / Delivery Address</h2>
+<div class="addr"><b>${esc(addr.name || o.userName || '—')}</b><br>${esc(addr.line || '')}<br>${esc(addr.city || '')}, ${esc(addr.state || '')} - ${esc(addr.pin || '')}<br>Phone: ${esc(addr.phone || o.userPhone || '—')}${o.userEmail ? '<br>Email: ' + esc(o.userEmail) : ''}</div>
+<h2>Items</h2><table><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>
+${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); return `<tr><td>${i+1}</td><td>${esc(it.name||'Product')}${it.size?' ('+esc(it.size)+')':''}${it.color?' '+esc(it.color):''}</td><td>${q}</td><td>₹${p.toLocaleString('en-IN')}</td><td>₹${(p*q).toLocaleString('en-IN')}</td></tr>`; }).join('')}
+<tr class="total-row"><td colspan="3"></td><td>Grand Total</td><td>₹${Number(o.total||0).toLocaleString('en-IN')}</td></tr>
+</tbody></table>
+<div class="footer">Computer-generated invoice · © 2025 TOEGO.com · Made in India 🇮🇳</div></body></html>`;
+
+    const w = window.open('', '_blank');
+    if (w) { w.document.write(html); w.document.close(); setTimeout(() => { try { w.print(); } catch(e) {} }, 500); }
+    else toast('Please allow popups', 'error');
+  };
+
+  window.tgOpenReview = function(pid, name) {
+    if (!pid) { toast('Product not available for review', 'error'); return; }
+    reviewTargetPid = pid;
+    reviewTargetName = name || '';
+    reviewRating = 0;
+    rvImages = [];
+
+    document.getElementById('tg-review-pid').value = pid;
+    document.getElementById('tg-review-product-name').textContent = name || '';
+    document.getElementById('tg-review-title').value = '';
+    document.getElementById('tg-review-text').value = '';
+    document.querySelectorAll('#tg-star-pick svg').forEach(s => s.classList.remove('active'));
+    document.getElementById('tg-rv-img-preview').innerHTML = '';
+    document.getElementById('tg-rv-upload-progress').classList.remove('show');
+    document.getElementById('tg-rv-img-file').value = '';
+
+    document.getElementById('tg-review-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgCloseReview = function() {
+    document.getElementById('tg-review-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    reviewTargetPid = null;
+    reviewTargetName = '';
+    rvImages = [];
+  };
+  window.tgPickStar = function(n) {
+    reviewRating = n;
+    document.querySelectorAll('#tg-star-pick svg').forEach(s => { s.classList.toggle('active', Number(s.dataset.star) <= n); });
+  };
+
+  window.tgSubmitReview = async function() {
+    if (!USER) { toast('Please log in', 'error'); return; }
+    if (!reviewTargetPid) return;
+    if (reviewRating < 1) { toast('Please select a rating', 'error'); return; }
+    const title = (document.getElementById('tg-review-title').value || '').trim();
+    const text = (document.getElementById('tg-review-text').value || '').trim();
+
+    const btn = document.getElementById('tg-review-submit');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+
+    try {
+      const userName = USER.displayName || (USER.email || '').split('@')[0] || 'Customer';
+      const payload = {
+        productId: reviewTargetPid,
+        productName: reviewTargetName || '',
+        userId: USER.uid,
+        userName: userName,
+        userEmail: USER.email || '',
+        rating: reviewRating,
+        title: title,
+        text: text,
+        images: rvImages.slice(),
+        verified: true,
+        active: true,
+        createdAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      };
+
+      await db.collection('reviews').add(payload);
+
+      try {
+        const prodRef = db.collection('products').doc(reviewTargetPid);
+        const prodSnap = await prodRef.get();
+        if (prodSnap.exists) {
+          const p = prodSnap.data();
+          const curRating = Number(p.rating || 0);
+          const curCount = Number(p.ratingCount || 0);
+          const newCount = curCount + 1;
+          const newRating = curCount > 0
+            ? ((curRating * curCount) + reviewRating) / newCount
+            : reviewRating;
+          await prodRef.update({
+            rating: Number(newRating.toFixed(2)),
+            ratingCount: newCount,
+            updatedAt: FV.serverTimestamp()
+          });
+        }
+      } catch(e) { console.warn('Product rating update failed:', e && e.message); }
+
+      toast('Review submitted ✓ Thank you!', 'success');
+      tgCloseReview();
+    } catch(err) {
+      console.error('Review submit failed:', err);
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false; btn.textContent = 'Submit Review';
+    }
+  };
+
+  function userMatchesOrder(o, uid, email, phone) {
+    const cands = [
+      o.customerId, o.userId, o.uid, o.user_id, o.customer_id,
+      o.customer && o.customer.id, o.user && o.user.id, o.user && o.user.uid,
+      o.buyerId, o.buyer && o.buyer.id,
+      o.userEmail, o.email, o.customerEmail,
+      o.userPhone, o.phone, o.customerPhone
+    ].filter(Boolean).map(x => String(x).toLowerCase());
+    if (cands.includes(uid.toLowerCase())) return true;
+    if (email && cands.includes(email)) return true;
+    if (phone && cands.some(c => c.replace(/\D/g,'') === phone)) return true;
+    return false;
+  }
+
+  /* ⭐⭐⭐ LOAD ORDERS — BULLETPROOF WITH ERROR TRACKING ⭐⭐⭐ */
+  function loadOrders() {
+    if (!USER) {
+      const wrap = document.getElementById('tg-orders');
+      const loading = document.getElementById('tg-loading');
+      const empty = document.getElementById('tg-empty');
+      if (loading) loading.style.display = 'none';
+      if (wrap) wrap.innerHTML = '';
+      if (empty) {
+        empty.style.display = 'block';
+        document.getElementById('tg-empty-title').textContent = 'Please log in';
+        document.getElementById('tg-empty-desc').textContent = 'Log in to view your orders';
+      }
+      return;
+    }
+
+    // Cleanup old listeners
+    unsubOrders.forEach(u => { try { u(); } catch(e) {} });
+    unsubOrders = [];
+
+    const uid = USER.uid;
+    const email = (USER.email || '').toLowerCase();
+    const phone = (USER.phoneNumber || '').replace(/\D/g, '');
+    const col = db.collection('orders');
+
+    // Load cached orders
+    const cachedArr = loadOrdersCache(uid) || [];
+    const cachedMap = new Map();
+    cachedArr.forEach(o => { if (o.id) cachedMap.set(o.id, o); });
+
+    // Paint cache instantly
+    if (cachedArr.length) {
+      ALL_ORDERS = cachedArr.slice().sort((a, b) => {
+        const at = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bt = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bt - at;
+      });
+      renderOrders();
+    }
+
+    // Three independent listener maps
+    const l1Map = new Map();  // customerId
+    const l2Map = new Map();  // userId
+    const l3Map = new Map();  // fallback
+    let f1 = false, f2 = false, f3 = false;
+    let e1 = false, e2 = false, e3 = false;
+
+    function rebuild() {
+      // Union of all listener maps
+      const fresh = new Map();
+      l3Map.forEach((v, k) => fresh.set(k, v));
+      l1Map.forEach((v, k) => fresh.set(k, v));
+      l2Map.forEach((v, k) => fresh.set(k, v));
+
+      // Only if ALL listeners succeeded with no errors → trust fresh data 100%
+      const allSuccess = f1 && f2 && f3 && !e1 && !e2 && !e3;
+      if (!allSuccess) {
+        // Merge cached orders that aren't already in fresh
+        cachedMap.forEach((v, k) => {
+          if (!fresh.has(k)) fresh.set(k, v);
+        });
+      }
+
+      ALL_ORDERS = Array.from(fresh.values()).sort((a, b) => {
+        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+        return bt - at;
+      });
+
+      renderOrders();
+
+      // Save/clear cache ONLY after full successful cycle
+      if (allSuccess) {
+        if (ALL_ORDERS.length > 0) {
+          saveOrdersCache(uid, ALL_ORDERS);
+        } else {
+          // All listeners succeeded with 0 orders → admin cleared all
+          clearOrdersCache(uid);
+        }
+      }
+    }
+
+    // ⭐ Listener 1: customerId
+    try {
+      const u1 = col.where('customerId', '==', uid).limit(100).onSnapshot(snap => {
+        l1Map.clear();
+        snap.docs.forEach(d => l1Map.set(d.id, { id: d.id, ...d.data() }));
+        f1 = true;
+        rebuild();
+      }, () => { e1 = true; f1 = true; rebuild(); });
+      unsubOrders.push(u1);
+    } catch(e) { e1 = true; f1 = true; }
+
+    // ⭐ Listener 2: userId
+    try {
+      const u2 = col.where('userId', '==', uid).limit(100).onSnapshot(snap => {
+        l2Map.clear();
+        snap.docs.forEach(d => l2Map.set(d.id, { id: d.id, ...d.data() }));
+        f2 = true;
+        rebuild();
+      }, () => { e2 = true; f2 = true; rebuild(); });
+      unsubOrders.push(u2);
+    } catch(e) { e2 = true; f2 = true; }
+
+    // ⭐ Listener 3: fallback (recent 200 + client filter)
+    try {
+      const u3 = col.orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => {
+        l3Map.clear();
+        snap.docs.forEach(d => {
+          const o = { id: d.id, ...d.data() };
+          if (userMatchesOrder(o, uid, email, phone)) l3Map.set(d.id, o);
+        });
+        f3 = true;
+        rebuild();
+      }, () => {
+        // Fallback: no orderBy
+        col.limit(200).get().then(snap => {
+          l3Map.clear();
+          snap.docs.forEach(d => {
+            const o = { id: d.id, ...d.data() };
+            if (userMatchesOrder(o, uid, email, phone)) l3Map.set(d.id, o);
+          });
+          f3 = true;
+          rebuild();
+        }).catch(() => { e3 = true; f3 = true; rebuild(); });
+      });
+      unsubOrders.push(u3);
+    } catch(e) { e3 = true; f3 = true; }
+
+    // ⭐ Safety net: force fire after 4s (WITHOUT marking as error)
+    setTimeout(() => {
+      if (!f1) { f1 = true; }
+      if (!f2) { f2 = true; }
+      if (!f3) { f3 = true; }
+      rebuild();
+    }, 4000);
+  }
+
+  async function updateCartBadge() {
+    let count = 0;
+    try {
+      if (USER) {
+        const snap = await db.collection('carts').doc(USER.uid).collection('items').get();
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+        gc.forEach(i => { count += Number(i.qty || 1); });
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', e => {
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+        if (m.id === 'tg-track-modal') {
+          if (unsubTrack) { try { unsubTrack(); } catch(e) {} unsubTrack = null; }
+          TRACK_ID = null;
+        }
+      }
+    });
+  });
+
+  auth.onAuthStateChanged(u => {
+    USER = u;
+    if (!u) {
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('my-orders.html'));
+      return;
+    }
+    loadOrders();
+    updateCartBadge();
+  });
+
+})();
+</script>
+</body>
+</html>

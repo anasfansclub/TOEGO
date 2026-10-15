@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Reviews — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+/* HEADER */
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px; }
+.tg-hd-count { font-size: 12.5px; font-weight: 500; opacity: 0.85; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+/* SUMMARY CARD */
+.tg-summary {
+  background: linear-gradient(135deg, #2874f0 0%, #1a5dc7 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(40,116,240,0.25);
+}
+.tg-summary::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(255,229,0,0.20), transparent 70%);
+  border-radius: 50%;
+}
+.tg-summary-left {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+.tg-summary-avg {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tg-summary-avg svg { width: 26px; height: 26px; fill: #ffe500; }
+.tg-summary-stars { font-size: 16px; color: #ffe500; margin-top: 4px; letter-spacing: 2px; }
+.tg-summary-body {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+.tg-summary-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.tg-summary-sub { font-size: 12.5px; opacity: 0.85; }
+
+.tg-summary-stats {
+  display: flex;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+}
+.tg-summary-stat {
+  text-align: center;
+}
+.tg-summary-stat-num { font-size: 20px; font-weight: 800; line-height: 1; }
+.tg-summary-stat-label { font-size: 10.5px; opacity: 0.85; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* TABS */
+.tg-tabs-wrap {
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-tabs-wrap::-webkit-scrollbar { display: none; }
+.tg-tabs {
+  display: flex;
+  padding: 0 4px;
+  width: max-content;
+  min-width: 100%;
+}
+.tg-tab {
+  padding: 14px 16px 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #666;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+  transition: color .2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tg-tab.active { color: #2874f0; font-weight: 700; }
+.tg-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 8px; right: 8px;
+  height: 3px;
+  background: #2874f0;
+  border-radius: 3px 3px 0 0;
+  transform: scaleX(0);
+  transition: transform .25s cubic-bezier(.4,0,.2,1);
+}
+.tg-tab.active::after { transform: scaleX(1); }
+.tg-tab-count {
+  background: #f1f3f6;
+  color: #666;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+  min-width: 18px;
+  text-align: center;
+}
+.tg-tab.active .tg-tab-count {
+  background: #2874f0;
+  color: #fff;
+}
+
+/* SORT */
+.tg-sort {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  flex-wrap: wrap;
+}
+.tg-sort-label {
+  font-size: 12px;
+  color: #878787;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.tg-sort-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #212121;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tg-sort-btn:hover { border-color: #2874f0; color: #2874f0; }
+.tg-sort-btn.active { background: #2874f0; color: #fff; border-color: #2874f0; }
+.tg-sort-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* REVIEW CARDS */
+.tg-reviews { display: flex; flex-direction: column; gap: 12px; }
+
+.tg-review-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: box-shadow .18s;
+}
+.tg-review-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+
+.tg-review-product {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f1f3f6;
+}
+.tg-review-product-img {
+  width: 60px; height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f5f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.tg-review-product-img img { max-width: 100%; max-height: 100%; object-fit: contain; padding: 3px; }
+.tg-review-product-body { min-width: 0; }
+.tg-review-product-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #212121;
+  line-height: 1.35;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tg-review-product-name:hover { color: #2874f0; }
+.tg-review-product-date { font-size: 11.5px; color: #878787; margin-top: 3px; }
+.tg-review-product-go {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: #f1f3f6;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.tg-review-product-go:hover { background: #2874f0; color: #fff; }
+.tg-review-product-go svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-review-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.tg-review-star-badge {
+  background: #388e3c;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.tg-review-star-badge svg { width: 10px; height: 10px; fill: #fff; }
+.tg-review-star-count { color: #878787; font-size: 11.5px; }
+
+.tg-review-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #212121;
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+.tg-review-text {
+  font-size: 13.5px;
+  color: #212121;
+  line-height: 1.55;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+}
+
+.tg-review-img-wrap { margin: 8px 0 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tg-review-img { width: 76px; height: 76px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; background: #f5f5f6; cursor: zoom-in; }
+.tg-review-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.tg-review-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid #f1f3f6;
+}
+.tg-review-helpful {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #878787;
+}
+.tg-review-helpful-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #212121;
+  transition: all .15s;
+}
+.tg-review-helpful-btn:hover { border-color: #2874f0; color: #2874f0; }
+.tg-review-helpful-btn.active { background: #e6f7ec; border-color: #388e3c; color: #1b8a3a; }
+.tg-review-helpful-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-review-actions {
+  display: flex;
+  gap: 8px;
+}
+.tg-review-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transition: all .15s;
+}
+.tg-review-action-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tg-review-action-btn.edit { background: #eef3ff; color: #2874f0; }
+.tg-review-action-btn.edit:hover { background: #2874f0; color: #fff; }
+.tg-review-action-btn.delete { background: #ffebee; color: #d32f2f; }
+.tg-review-action-btn.delete:hover { background: #d32f2f; color: #fff; }
+
+/* EMPTY */
+.tg-empty {
+  background: #fff;
+  border-radius: 12px;
+  padding: 50px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-empty-img {
+  width: 140px; height: 140px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg,#fff8e1,#ffe082);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+}
+.tg-empty-title { font-size: 20px; font-weight: 800; color: #212121; margin: 0 0 8px; }
+.tg-empty-desc { font-size: 13.5px; color: #666; line-height: 1.55; margin: 0 auto 22px; max-width: 340px; }
+.tg-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  border-radius: 8px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  box-shadow: 0 6px 18px rgba(40,116,240,0.3);
+}
+.tg-empty-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* SKELETON */
+.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
+@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tg-skel-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+
+/* BOTTOM NAV */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* TOASTS */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: #2874f0; }
+
+/* MODAL */
+.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s ease; }
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card { width: 100%; max-width: 520px; background: #fff; border-radius: 18px 18px 0 0; padding: 22px 20px 26px; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); max-height: 92vh; overflow-y: auto; }
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; color: #212121; }
+.tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.tg-modal-close:hover { background: #e0e0e0; }
+
+.tg-star-pick { display: flex; gap: 8px; margin-bottom: 16px; justify-content: center; }
+.tg-star-pick svg { width: 38px; height: 38px; fill: #e0e0e0; cursor: pointer; transition: all .15s; }
+.tg-star-pick svg.active { fill: #ffc107; transform: scale(1.1); }
+
+.tg-review-input, .tg-review-title-input { width: 100%; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 14px; font-family: inherit; outline: none; color: #212121; transition: border-color .15s, box-shadow .15s; }
+.tg-review-input { min-height: 100px; resize: vertical; margin-bottom: 12px; }
+.tg-review-title-input { margin-bottom: 10px; }
+.tg-review-input:focus, .tg-review-title-input:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
+
+.tg-upload-wrap { margin-bottom: 12px; }
+.tg-upload-label { display: block; font-size: 12px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+.tg-upload-box { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border: 1.5px dashed #c5cad3; border-radius: 10px; background: #f8f9fb; cursor: pointer; transition: all .15s; font-size: 13px; color: #666; font-weight: 600; }
+.tg-upload-box:hover { border-color: #2874f0; background: #f0f5ff; color: #2874f0; }
+.tg-upload-box svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-upload-preview { position: relative; display: inline-block; margin-top: 10px; }
+.tg-upload-preview img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; border: 1.5px solid #e0e0e0; }
+.tg-upload-preview-remove { position: absolute; top: -6px; right: -6px; width: 24px; height: 24px; border-radius: 50%; background: #d32f2f; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.tg-upload-progress { font-size: 12px; color: #2874f0; margin-top: 6px; font-weight: 600; display: none; }
+.tg-upload-progress.show { display: block; }
+
+.tg-modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+.tg-modal-btn { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+.tg-modal-btn.primary { background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-modal-btn.danger { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; box-shadow: 0 6px 18px rgba(211,47,47,0.3); }
+.tg-modal-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
+.tg-modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.tg-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 999999; display: none; align-items: center; justify-content: center; padding: 20px; }
+.tg-lightbox.show { display: flex; }
+.tg-lightbox-img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+.tg-lightbox-close { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+
+@media (max-width: 600px) {
+  .tg-container { padding: 8px; }
+  .tg-summary { padding: 16px; gap: 14px; flex-wrap: wrap; }
+  .tg-summary-avg { font-size: 34px; }
+  .tg-summary-avg svg { width: 22px; height: 22px; }
+  .tg-summary-stats { gap: 14px; width: 100%; justify-content: space-around; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.15); }
+  .tg-summary-stat-num { font-size: 17px; }
+  .tg-review-card { padding: 14px; border-radius: 8px; }
+  .tg-review-product { grid-template-columns: 52px 1fr auto; gap: 10px; }
+  .tg-review-product-img { width: 52px; height: 52px; }
+  .tg-review-product-name { font-size: 13px; }
+  .tg-review-actions { gap: 6px; width: 100%; }
+  .tg-review-action-btn { flex: 1; justify-content: center; }
+  .tg-empty { padding: 40px 18px; }
+  .tg-empty-img { width: 110px; height: 110px; font-size: 48px; }
+  .tg-empty-title { font-size: 17px; }
+  .tg-modal-card { padding: 20px 16px 22px; }
+  .tg-star-pick svg { width: 34px; height: 34px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">My Reviews <span class="tg-hd-count" id="tg-hd-count"></span></div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- Summary -->
+    <div class="tg-summary" id="tg-summary" style="display:none;">
+      <div class="tg-summary-left">
+        <div class="tg-summary-avg" id="tg-summary-avg">
+          0.0 <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="tg-summary-stars" id="tg-summary-stars">☆☆☆☆☆</div>
+      </div>
+      <div class="tg-summary-body">
+        <div class="tg-summary-title">Your Reviews</div>
+        <div class="tg-summary-sub" id="tg-summary-sub">0 reviews submitted</div>
+      </div>
+      <div class="tg-summary-stats">
+        <div class="tg-summary-stat">
+          <div class="tg-summary-stat-num" id="tg-stat-total">0</div>
+          <div class="tg-summary-stat-label">Total</div>
+        </div>
+        <div class="tg-summary-stat">
+          <div class="tg-summary-stat-num" id="tg-stat-5">0</div>
+          <div class="tg-summary-stat-label">5 ★</div>
+        </div>
+        <div class="tg-summary-stat">
+          <div class="tg-summary-stat-num" id="tg-stat-low">0</div>
+          <div class="tg-summary-stat-label">Low</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tg-tabs-wrap" id="tg-tabs-wrap" style="display:none;">
+      <div class="tg-tabs" id="tg-tabs">
+        <div class="tg-tab active" data-tab="all" onclick="tgPickTab('all')">All <span class="tg-tab-count" id="tg-count-all">0</span></div>
+        <div class="tg-tab" data-tab="5" onclick="tgPickTab('5')">5 ★ <span class="tg-tab-count" id="tg-count-5">0</span></div>
+        <div class="tg-tab" data-tab="4" onclick="tgPickTab('4')">4 ★ <span class="tg-tab-count" id="tg-count-4">0</span></div>
+        <div class="tg-tab" data-tab="3" onclick="tgPickTab('3')">3 ★ <span class="tg-tab-count" id="tg-count-3">0</span></div>
+        <div class="tg-tab" data-tab="low" onclick="tgPickTab('low')">1-2 ★ <span class="tg-tab-count" id="tg-count-low">0</span></div>
+        <div class="tg-tab" data-tab="with-image" onclick="tgPickTab('with-image')">With Photo <span class="tg-tab-count" id="tg-count-img">0</span></div>
+      </div>
+    </div>
+
+    <!-- Sort -->
+    <div class="tg-sort" id="tg-sort" style="display:none;">
+      <span class="tg-sort-label">Sort:</span>
+      <button class="tg-sort-btn active" data-sort="newest" onclick="tgPickSort('newest', this)">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
+        Newest
+      </button>
+      <button class="tg-sort-btn" data-sort="oldest" onclick="tgPickSort('oldest', this)">
+        <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7 7 7-7"/></svg>
+        Oldest
+      </button>
+      <button class="tg-sort-btn" data-sort="highest" onclick="tgPickSort('highest', this)">
+        Highest ★
+      </button>
+      <button class="tg-sort-btn" data-sort="lowest" onclick="tgPickSort('lowest', this)">
+        Lowest ★
+      </button>
+    </div>
+
+    <!-- Reviews -->
+    <div class="tg-reviews" id="tg-reviews"></div>
+
+    <!-- Skeleton -->
+    <div id="tg-loading">
+      <div class="tg-skel-card">
+        <div class="tg-skel" style="width:40%;height:14px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+          <div class="tg-skel" style="width:60px;height:60px;"></div>
+          <div style="flex:1;">
+            <div class="tg-skel" style="width:80%;height:12px;margin-bottom:8px;"></div>
+            <div class="tg-skel" style="width:50%;height:12px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tg-skel-card">
+        <div class="tg-skel" style="width:40%;height:14px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="tg-skel" style="width:60px;height:60px;"></div>
+          <div style="flex:1;">
+            <div class="tg-skel" style="width:80%;height:12px;margin-bottom:8px;"></div>
+            <div class="tg-skel" style="width:50%;height:12px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div class="tg-empty" id="tg-empty" style="display:none;">
+      <div class="tg-empty-img">⭐</div>
+      <h2 class="tg-empty-title" id="tg-empty-title">No reviews yet</h2>
+      <p class="tg-empty-desc" id="tg-empty-desc">You haven't reviewed any products yet. Share your experience to help other shoppers!</p>
+      <a href="my-orders.html" class="tg-empty-cta">
+        <svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg>
+        View My Orders
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<!-- EDIT REVIEW MODAL -->
+<div class="tg-modal" id="tg-edit-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Edit Review</div>
+      <button class="tg-modal-close" onclick="tgCloseEdit()">✕</button>
+    </div>
+    <div id="tg-edit-prod-name" style="font-size:13px;color:#666;margin-bottom:14px;text-align:center;"></div>
+
+    <div class="tg-star-pick" id="tg-edit-star-pick">
+      <svg viewBox="0 0 24 24" data-star="1" onclick="tgEditStar(1)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" data-star="2" onclick="tgEditStar(2)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" data-star="3" onclick="tgEditStar(3)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" data-star="4" onclick="tgEditStar(4)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" data-star="5" onclick="tgEditStar(5)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </div>
+
+    <input type="text" class="tg-review-title-input" id="tg-edit-title" placeholder="Review title (optional)" maxlength="60">
+    <textarea class="tg-review-input" id="tg-edit-text" placeholder="Share your experience with this product..." maxlength="500"></textarea>
+
+    <div class="tg-upload-wrap">
+      <label class="tg-upload-label">Photo (optional)</label>
+      <label class="tg-upload-box" for="tg-edit-image">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        <span id="tg-edit-upload-text">Click to upload image</span>
+      </label>
+      <input type="file" id="tg-edit-image" accept="image/*" style="display:none;">
+      <div class="tg-upload-progress" id="tg-edit-upload-progress">Compressing image…</div>
+      <div class="tg-upload-preview" id="tg-edit-upload-preview" style="display:none;">
+        <img id="tg-edit-upload-preview-img" src="" alt="Preview">
+        <button class="tg-upload-preview-remove" type="button" onclick="tgRemoveEditImage()">✕</button>
+      </div>
+    </div>
+
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseEdit()">Cancel</button>
+      <button class="tg-modal-btn primary" id="tg-edit-submit" onclick="tgSubmitEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="tg-modal" id="tg-del-modal">
+  <div class="tg-modal-card" style="max-width:420px;">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Delete Review?</div>
+      <button class="tg-modal-close" onclick="tgCloseDel()">✕</button>
+    </div>
+    <p style="font-size:14px;color:#666;line-height:1.5;margin:0 0 18px;">
+      Are you sure you want to delete this review? This action cannot be undone.
+    </p>
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseDel()">Cancel</button>
+      <button class="tg-modal-btn danger" id="tg-del-btn" onclick="tgConfirmDel()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="tg-lightbox" id="tg-lightbox">
+  <button class="tg-lightbox-close" onclick="tgCloseLightbox()">✕</button>
+  <img class="tg-lightbox-img" id="tg-lightbox-img" src="" alt="" />
+</div>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(p) {
+    p = p || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', p);
+    document.documentElement.style.setProperty('--tg-primary', p);
+  }
+  (function boot() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+  })();
+  (async function loadTheme() {
+    try {
+      const s = await db.collection('siteSettings').doc('theme').get();
+      if (s.exists) {
+        const d = s.data();
+        applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
+      }
+    } catch(e) {}
+  })();
+
+  /* ========= HELPERS ========= */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtDate(date) {
+    if (!date) return '—';
+    const d = date.toDate ? date.toDate() : new Date(date);
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function starText(n) {
+    const k = Math.round(Number(n || 0));
+    return '★'.repeat(Math.max(0, Math.min(5, k))) + '☆'.repeat(Math.max(0, 5 - k));
+  }
+
+  /* ========= STATE ========= */
+  let USER = null;
+  let ALL_REVIEWS = [];
+  let CURRENT_TAB = 'all';
+  let CURRENT_SORT = 'newest';
+  let editTarget = null;
+  let deleteTarget = null;
+  let editRating = 0;
+  let editImageData = null;
+  let editOriginalImage = '';
+  let PRODUCT_CACHE = {};
+
+  /* ========= TABS ========= */
+  window.tgPickTab = function(tab) {
+    CURRENT_TAB = tab;
+    document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    renderReviews();
+  };
+
+  /* ========= SORT ========= */
+  window.tgPickSort = function(sort, el) {
+    CURRENT_SORT = sort;
+    document.querySelectorAll('.tg-sort-btn').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    renderReviews();
+  };
+
+  /* ========= FILTER + SORT ========= */
+  function filterByTab(reviews) {
+    if (CURRENT_TAB === 'all') return reviews;
+    if (CURRENT_TAB === '5') return reviews.filter(r => Math.round(r.rating) === 5);
+    if (CURRENT_TAB === '4') return reviews.filter(r => Math.round(r.rating) === 4);
+    if (CURRENT_TAB === '3') return reviews.filter(r => Math.round(r.rating) === 3);
+    if (CURRENT_TAB === 'low') return reviews.filter(r => Math.round(r.rating) <= 2);
+    if (CURRENT_TAB === 'with-image') return reviews.filter(r => r.image && r.image.trim());
+    return reviews;
+  }
+
+  function sortReviews(reviews) {
+    const arr = reviews.slice();
+    if (CURRENT_SORT === 'newest') {
+      arr.sort((a, b) => {
+        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
+        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
+        return bt - at;
+      });
+    } else if (CURRENT_SORT === 'oldest') {
+      arr.sort((a, b) => {
+        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
+        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
+        return at - bt;
+      });
+    } else if (CURRENT_SORT === 'highest') {
+      arr.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
+    } else if (CURRENT_SORT === 'lowest') {
+      arr.sort((a, b) => Number(a.rating || 0) - Number(b.rating || 0));
+    }
+    return arr;
+  }
+
+  /* ========= UPDATE TAB COUNTS ========= */
+  function updateTabCounts() {
+    const c = {
+      all: ALL_REVIEWS.length,
+      '5': ALL_REVIEWS.filter(r => Math.round(r.rating) === 5).length,
+      '4': ALL_REVIEWS.filter(r => Math.round(r.rating) === 4).length,
+      '3': ALL_REVIEWS.filter(r => Math.round(r.rating) === 3).length,
+      low: ALL_REVIEWS.filter(r => Math.round(r.rating) <= 2).length,
+      img: ALL_REVIEWS.filter(r => r.image && r.image.trim()).length
+    };
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('tg-count-all', c.all);
+    set('tg-count-5', c['5']);
+    set('tg-count-4', c['4']);
+    set('tg-count-3', c['3']);
+    set('tg-count-low', c.low);
+    set('tg-count-img', c.img);
+    const hd = document.getElementById('tg-hd-count');
+    if (hd) hd.textContent = ALL_REVIEWS.length > 0 ? '(' + ALL_REVIEWS.length + ')' : '';
+  }
+
+  /* ========= UPDATE SUMMARY ========= */
+  function updateSummary() {
+    const summary = document.getElementById('tg-summary');
+    const tabs = document.getElementById('tg-tabs-wrap');
+    const sort = document.getElementById('tg-sort');
+    if (!ALL_REVIEWS.length) {
+      if (summary) summary.style.display = 'none';
+      if (tabs) tabs.style.display = 'none';
+      if (sort) sort.style.display = 'none';
+      return;
+    }
+    if (summary) summary.style.display = 'flex';
+    if (tabs) tabs.style.display = 'block';
+    if (sort) sort.style.display = 'flex';
+
+    const count = ALL_REVIEWS.length;
+    const sum = ALL_REVIEWS.reduce((s, r) => s + Number(r.rating || 0), 0);
+    const avg = (sum / count).toFixed(1);
+
+    const avgEl = document.getElementById('tg-summary-avg');
+    if (avgEl) avgEl.innerHTML = avg + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+
+    const stars = document.getElementById('tg-summary-stars');
+    if (stars) stars.textContent = starText(avg);
+
+    const sub = document.getElementById('tg-summary-sub');
+    if (sub) sub.textContent = count + ' review' + (count > 1 ? 's' : '') + ' submitted';
+
+    document.getElementById('tg-stat-total').textContent = count;
+    document.getElementById('tg-stat-5').textContent = ALL_REVIEWS.filter(r => Math.round(r.rating) === 5).length;
+    document.getElementById('tg-stat-low').textContent = ALL_REVIEWS.filter(r => Math.round(r.rating) <= 2).length;
+  }
+
+  /* ========= RENDER REVIEWS ========= */
+  function renderReviews() {
+    const wrap = document.getElementById('tg-reviews');
+    const loading = document.getElementById('tg-loading');
+    const empty = document.getElementById('tg-empty');
+    if (!wrap) return;
+
+    if (loading) loading.style.display = 'none';
+
+    updateTabCounts();
+    updateSummary();
+
+    if (!ALL_REVIEWS.length) {
+      wrap.innerHTML = '';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+
+    let reviews = filterByTab(ALL_REVIEWS);
+    reviews = sortReviews(reviews);
+
+    if (empty) empty.style.display = 'none';
+
+    if (!reviews.length) {
+      wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#999;font-size:13.5px;background:#fff;border-radius:10px;">No reviews in this filter</div>';
+      return;
+    }
+
+    wrap.innerHTML = reviews.map(reviewCardHtml).join('');
+  }
+
+  function reviewCardHtml(r) {
+    const id = r.id;
+    const pid = r.productId || '';
+    const rating = Math.round(Number(r.rating || 0));
+    const title = r.title || '';
+    const text = r.text || r.review || r.comment || '';
+    const dateStr = fmtDate(r.createdAt);
+    const imgUrl = r.image || r.imageUrl || '';
+
+    // Product from cache or fallback
+    const p = PRODUCT_CACHE[pid] || {};
+    const pName = r.productName || p.name || 'Product';
+    const pImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/120x120/f1f3f6/878787?text=TOEGO';
+
+    const imgHtml = imgUrl
+      ? '<div class="tg-review-img-wrap"><div class="tg-review-img" onclick="tgOpenLightbox(\'' + esc(imgUrl) + '\')"><img src="' + esc(imgUrl) + '" alt="review" loading="lazy" /></div></div>'
+      : '';
+
+    return `
+      <div class="tg-review-card" data-id="${esc(id)}">
+        <div class="tg-review-product">
+          <div class="tg-review-product-img" onclick="location.href='product.html?id=${encodeURIComponent(pid)}'">
+            <img src="${esc(pImg)}" alt="${esc(pName)}" loading="lazy" />
+          </div>
+          <div class="tg-review-product-body">
+            <div class="tg-review-product-name" onclick="location.href='product.html?id=${encodeURIComponent(pid)}'">${esc(pName)}</div>
+            <div class="tg-review-product-date">Reviewed on ${esc(dateStr)}</div>
+          </div>
+          <a class="tg-review-product-go" href="product.html?id=${encodeURIComponent(pid)}" title="View Product">
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </a>
+        </div>
+
+        <div class="tg-review-stars-row">
+          <span class="tg-review-star-badge">${esc(rating)} <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+          <span class="tg-review-star-count">${starText(rating)}</span>
+        </div>
+
+        ${title ? `<div class="tg-review-title">${esc(title)}</div>` : ''}
+        ${text ? `<div class="tg-review-text">${esc(text)}</div>` : ''}
+        ${imgHtml}
+
+        <div class="tg-review-footer">
+          <div class="tg-review-actions">
+            <button class="tg-review-action-btn edit" onclick="tgOpenEdit('${esc(id)}')">
+              <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Edit
+            </button>
+            <button class="tg-review-action-btn delete" onclick="tgOpenDel('${esc(id)}')">
+              <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ========= LOAD REVIEWS ========= */
+  async function loadReviews() {
+    if (!USER) return;
+    try {
+      let snap;
+      try {
+        snap = await db.collection('reviews')
+          .where('userId', '==', USER.uid)
+          .orderBy('createdAt', 'desc')
+          .limit(100).get();
+      } catch(e) {
+        snap = await db.collection('reviews').where('userId', '==', USER.uid).limit(100).get();
+      }
+      ALL_REVIEWS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Sort newest first
+      ALL_REVIEWS.sort((a, b) => {
+        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
+        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
+        return bt - at;
+      });
+
+      // Preload products for names/images
+      await preloadProducts();
+      renderReviews();
+    } catch(e) {
+      console.error(e);
+      toast('Could not load reviews', 'error');
+      renderReviews();
+    }
+  }
+
+  async function preloadProducts() {
+    const pids = [...new Set(ALL_REVIEWS.map(r => r.productId).filter(Boolean))];
+    if (!pids.length) return;
+    try {
+      const batch = pids.slice(0, 20);
+      const snap = await db.collection('products').where(firebase.firestore.FieldPath.documentId(), 'in', batch).get();
+      snap.forEach(d => { PRODUCT_CACHE[d.id] = { id: d.id, ...d.data() }; });
+    } catch(e) {}
+  }
+
+  /* ========= EDIT ========= */
+  window.tgOpenEdit = function(id) {
+    const r = ALL_REVIEWS.find(x => x.id === id);
+    if (!r) return;
+    editTarget = id;
+    editRating = Math.round(Number(r.rating || 0));
+    editOriginalImage = r.image || r.imageUrl || '';
+    editImageData = null;
+
+    const p = PRODUCT_CACHE[r.productId] || {};
+    const pName = r.productName || p.name || 'Product';
+    document.getElementById('tg-edit-prod-name').textContent = pName.slice(0, 70);
+    document.getElementById('tg-edit-title').value = r.title || '';
+    document.getElementById('tg-edit-text').value = r.text || r.review || '';
+
+    document.querySelectorAll('#tg-edit-star-pick svg').forEach(s => {
+      s.classList.toggle('active', Number(s.dataset.star) <= editRating);
+    });
+
+    // Existing image
+    if (editOriginalImage) {
+      document.getElementById('tg-edit-upload-preview-img').src = editOriginalImage;
+      document.getElementById('tg-edit-upload-preview').style.display = 'inline-block';
+      document.getElementById('tg-edit-upload-text').textContent = 'Keep existing or replace';
+    } else {
+      document.getElementById('tg-edit-upload-preview').style.display = 'none';
+      document.getElementById('tg-edit-upload-text').textContent = 'Click to upload image';
+    }
+    document.getElementById('tg-edit-upload-progress').classList.remove('show');
+    document.getElementById('tg-edit-image').value = '';
+
+    document.getElementById('tg-edit-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgCloseEdit = function() {
+    document.getElementById('tg-edit-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    editTarget = null;
+    editImageData = null;
+    editOriginalImage = '';
+  };
+
+  window.tgEditStar = function(n) {
+    editRating = n;
+    document.querySelectorAll('#tg-edit-star-pick svg').forEach(s => {
+      s.classList.toggle('active', Number(s.dataset.star) <= n);
+    });
+  };
+
+  async function compressImageTo10KB(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const attempts = [
+            { maxW: 500, q: 0.7 },
+            { maxW: 400, q: 0.65 },
+            { maxW: 320, q: 0.6 },
+            { maxW: 280, q: 0.55 },
+            { maxW: 220, q: 0.5 },
+            { maxW: 180, q: 0.45 },
+            { maxW: 150, q: 0.4 },
+            { maxW: 120, q: 0.35 }
+          ];
+          const TARGET_BYTES = 10 * 1024;
+          let bestDataUrl = null;
+          for (const attempt of attempts) {
+            let w = img.width, h = img.height;
+            if (w > attempt.maxW) {
+              h = Math.round(h * (attempt.maxW / w));
+              w = attempt.maxW;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', attempt.q);
+            const base64Len = dataUrl.split(',')[1]?.length || 0;
+            const bytes = Math.round(base64Len * 0.75);
+            bestDataUrl = dataUrl;
+            if (bytes <= TARGET_BYTES) {
+              resolve({ dataUrl, bytes });
+              return;
+            }
+          }
+          if (bestDataUrl) {
+            const base64Len = bestDataUrl.split(',')[1]?.length || 0;
+            const bytes = Math.round(base64Len * 0.75);
+            resolve({ dataUrl: bestDataUrl, bytes });
+          } else {
+            reject(new Error('Compression failed'));
+          }
+        };
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('File read failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('tg-edit-image')?.addEventListener('change', async function(e) {
+    const f = this.files && this.files[0];
+    if (!f) return;
+    if (!f.type.startsWith('image/')) { toast('Please select an image file', 'error'); return; }
+    const prog = document.getElementById('tg-edit-upload-progress');
+    prog.textContent = 'Compressing image…';
+    prog.classList.add('show');
+    try {
+      const result = await compressImageTo10KB(f);
+      editImageData = result.dataUrl;
+      document.getElementById('tg-edit-upload-preview-img').src = result.dataUrl;
+      document.getElementById('tg-edit-upload-preview').style.display = 'inline-block';
+      document.getElementById('tg-edit-upload-text').textContent = 'Image attached (' + (result.bytes / 1024).toFixed(1) + ' KB)';
+      prog.classList.remove('show');
+      toast('Image compressed ✓', 'success');
+    } catch(err) {
+      prog.classList.remove('show');
+      toast('Could not process image', 'error');
+      editImageData = null;
+    }
+  });
+
+  window.tgRemoveEditImage = function() {
+    editImageData = null;
+    editOriginalImage = '';
+    document.getElementById('tg-edit-upload-preview').style.display = 'none';
+    document.getElementById('tg-edit-upload-text').textContent = 'Click to upload image';
+    document.getElementById('tg-edit-image').value = '';
+  };
+
+  window.tgSubmitEdit = async function() {
+    if (!editTarget) return;
+    if (editRating < 1) { toast('Please select a star rating', 'error'); return; }
+    const title = (document.getElementById('tg-edit-title').value || '').trim();
+    const text = (document.getElementById('tg-edit-text').value || '').trim();
+    const btn = document.getElementById('tg-edit-submit');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    // Determine final image
+    let finalImage = editOriginalImage;
+    if (editImageData) finalImage = editImageData;
+
+    try {
+      await db.collection('reviews').doc(editTarget).update({
+        rating: editRating,
+        title: title,
+        text: text,
+        image: finalImage || '',
+        updatedAt: FV.serverTimestamp()
+      });
+      toast('Review updated ✓', 'success');
+      tgCloseEdit();
+      setTimeout(loadReviews, 400);
+    } catch(err) {
+      console.error(err);
+      toast('Failed: ' + (err.message || 'Try again'), 'error');
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    }
+  };
+
+  /* ========= DELETE ========= */
+  window.tgOpenDel = function(id) {
+    deleteTarget = id;
+    document.getElementById('tg-del-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgCloseDel = function() {
+    document.getElementById('tg-del-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    deleteTarget = null;
+  };
+  window.tgConfirmDel = async function() {
+    if (!deleteTarget) return;
+    const btn = document.getElementById('tg-del-btn');
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+    try {
+      await db.collection('reviews').doc(deleteTarget).delete();
+      ALL_REVIEWS = ALL_REVIEWS.filter(r => r.id !== deleteTarget);
+      toast('Review deleted', 'success');
+      tgCloseDel();
+      renderReviews();
+    } catch(err) {
+      console.error(err);
+      toast('Failed: ' + (err.message || 'Try again'), 'error');
+      btn.disabled = false;
+      btn.textContent = 'Delete';
+    }
+  };
+
+  /* ========= LIGHTBOX ========= */
+  window.tgOpenLightbox = function(src) {
+    const lb = document.getElementById('tg-lightbox');
+    const img = document.getElementById('tg-lightbox-img');
+    if (!lb || !img) return;
+    img.src = src;
+    lb.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+  window.tgCloseLightbox = function() {
+    const lb = document.getElementById('tg-lightbox');
+    if (lb) lb.classList.remove('show');
+    document.body.style.overflow = '';
+  };
+  document.getElementById('tg-lightbox')?.addEventListener('click', e => {
+    if (e.target.id === 'tg-lightbox') window.tgCloseLightbox();
+  });
+
+  /* ========= CART BADGE ========= */
+  async function updateCartBadge() {
+    if (!USER) return;
+    let count = 0;
+    try {
+      const snap = await db.collection('carts').doc(USER.uid).collection('items').get();
+      snap.forEach(d => { count += Number(d.data().qty || 1); });
+    } catch(e) {}
+    ['tg-cart-badge','tg-bnav-badge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ========= MODAL OUTSIDE CLICK ========= */
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', e => {
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  /* ========= INIT ========= */
+  auth.onAuthStateChanged(u => {
+    USER = u;
+    if (!u) {
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('my-reviews.html'));
+      return;
+    }
+    loadReviews();
+    updateCartBadge();
+  });
+
+})();
+</script>
+</body>
+</html>

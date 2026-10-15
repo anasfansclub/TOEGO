@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Help Center — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+:root { --tg-primary: #2874f0; --tg-primary-dark: #1a5dc7; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; }
+
+.tg-hd { background: var(--tg-primary); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+/* Hero */
+.tg-hero {
+  background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark));
+  border-radius: 14px;
+  padding: 26px 22px;
+  color: #fff;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.25);
+}
+.tg-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(255,229,0,0.2), transparent 70%);
+  border-radius: 50%;
+}
+.tg-hero-content { position: relative; z-index: 2; }
+.tg-hero-title { font-size: 22px; font-weight: 900; margin: 0 0 6px; letter-spacing: -0.3px; }
+.tg-hero-sub { font-size: 13.5px; opacity: 0.9; margin: 0 0 18px; }
+.tg-hero-search {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.98);
+  border-radius: 10px;
+  padding: 0 14px;
+  height: 48px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+.tg-hero-search svg { width: 18px; height: 18px; stroke: #888; fill: none; stroke-width: 2.4; margin-right: 10px; }
+.tg-hero-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14.5px;
+  color: #212121;
+  min-width: 0;
+}
+.tg-hero-search input::placeholder { color: #999; }
+
+/* Quick help cards */
+.tg-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+@media (min-width: 600px) { .tg-quick-grid { grid-template-columns: repeat(4, 1fr); } }
+.tg-quick-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all .18s;
+  text-align: center;
+}
+.tg-quick-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+.tg-quick-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 22px;
+}
+.tg-quick-icon.blue { background: linear-gradient(135deg, #eef3ff, #e0eaff); color: var(--tg-primary); }
+.tg-quick-icon.orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #fb641b; }
+.tg-quick-icon.green { background: linear-gradient(135deg, #e6f7ec, #d1f0dd); color: #1b8a3a; }
+.tg-quick-icon.pink { background: linear-gradient(135deg, #fce4ec, #f8bbd0); color: #f43397; }
+.tg-quick-icon.purple { background: linear-gradient(135deg, #ede7f6, #d1c4e9); color: #7e57c2; }
+.tg-quick-icon.teal { background: linear-gradient(135deg, #e0f2f1, #b2dfdb); color: #00796b; }
+.tg-quick-icon.red { background: linear-gradient(135deg, #ffebee, #ffcdd2); color: #d32f2f; }
+.tg-quick-icon.yellow { background: linear-gradient(135deg, #fff8e1, #ffecb3); color: #f57c00; }
+.tg-quick-card svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-quick-label { font-size: 12.5px; font-weight: 700; color: #212121; line-height: 1.3; }
+
+/* Section */
+.tg-sec { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-sec-title { padding: 16px 18px 8px; font-size: 16px; font-weight: 800; }
+
+/* FAQ */
+.tg-faq { padding: 0 0 6px; }
+.tg-faq-item { border-bottom: 1px solid #f1f3f6; }
+.tg-faq-item:last-child { border-bottom: none; }
+.tg-faq-q {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background .15s;
+  font-size: 14px;
+  font-weight: 600;
+  color: #212121;
+  line-height: 1.4;
+}
+.tg-faq-q:hover { background: #f8f9fb; }
+.tg-faq-q-icon {
+  flex-shrink: 0;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: #f0f5ff;
+  color: var(--tg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+}
+.tg-faq-q-text { flex: 1; min-width: 0; }
+.tg-faq-arrow {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  stroke: #999;
+  fill: none;
+  stroke-width: 2.4;
+  transition: transform .25s;
+}
+.tg-faq-item.open .tg-faq-arrow { transform: rotate(180deg); }
+.tg-faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease;
+  padding: 0 18px;
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.65;
+}
+.tg-faq-item.open .tg-faq-a {
+  max-height: 600px;
+  padding: 0 18px 16px 56px;
+}
+.tg-faq-a b { color: #212121; font-weight: 700; }
+
+/* Contact channels */
+.tg-contact-list { padding: 4px 0 10px; }
+.tg-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.tg-contact-item:hover { background: #f8f9fb; }
+.tg-contact-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.tg-contact-icon.blue { background: linear-gradient(135deg, #eef3ff, #e0eaff); color: var(--tg-primary); }
+.tg-contact-icon.green { background: linear-gradient(135deg, #e6f7ec, #d1f0dd); color: #1b8a3a; }
+.tg-contact-icon.orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #fb641b; }
+.tg-contact-icon.pink { background: linear-gradient(135deg, #fce4ec, #f8bbd0); color: #f43397; }
+.tg-contact-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-contact-body { flex: 1; min-width: 0; }
+.tg-contact-title { font-size: 14.5px; font-weight: 700; color: #212121; margin-bottom: 2px; }
+.tg-contact-desc { font-size: 12px; color: #888; line-height: 1.4; }
+.tg-contact-arrow { flex-shrink: 0; width: 16px; height: 16px; stroke: #c5cad3; fill: none; stroke-width: 2.4; }
+
+/* FAB for raising ticket */
+.tg-fab {
+  position: fixed;
+  bottom: 90px;
+  right: 18px;
+  padding: 14px 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark));
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(40,116,240,0.45);
+  z-index: 9998;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  transition: all .15s;
+}
+.tg-fab:hover { filter: brightness(1.05); transform: translateY(-2px); }
+.tg-fab svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Bottom nav */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: var(--tg-primary); }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* Modal */
+.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.65); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s; }
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card { width: 100%; max-width: 580px; background: #fff; border-radius: 18px 18px 0 0; padding: 22px 20px 26px; max-height: 92vh; overflow-y: auto; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); }
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@media (min-width: 640px) { .tg-modal { align-items: center; } .tg-modal-card { border-radius: 16px; max-height: 88vh; } }
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 10px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; }
+.tg-modal-close { width: 34px; height: 34px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.tg-modal-close:hover { background: #e0e0e0; }
+
+/* Form fields */
+.tg-field { margin-bottom: 14px; }
+.tg-field label { display: block; font-size: 12px; color: #666; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.tg-field label .req { color: #d32f2f; }
+.tg-field input, .tg-field select, .tg-field textarea {
+  width: 100%;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  font-family: inherit;
+}
+.tg-field input:focus, .tg-field select:focus, .tg-field textarea:focus { border-color: var(--tg-primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
+.tg-field textarea { min-height: 100px; resize: vertical; }
+
+/* Category grid */
+.tg-cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+@media (max-width: 400px) { .tg-cat-grid { grid-template-columns: repeat(2, 1fr); } }
+.tg-cat-chip {
+  padding: 12px 8px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .15s;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #212121;
+  line-height: 1.35;
+}
+.tg-cat-chip:hover { border-color: var(--tg-primary); background: #f8fbff; }
+.tg-cat-chip.active { border-color: var(--tg-primary); background: #f0f5ff; color: var(--tg-primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.08); }
+.tg-cat-chip-emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+
+/* Screenshot upload */
+.tg-upload {
+  border: 2px dashed #c5cad3;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8f9fb;
+  transition: all .15s;
+}
+.tg-upload:hover { border-color: var(--tg-primary); background: #f0f5ff; }
+.tg-upload svg { width: 32px; height: 32px; stroke: #999; fill: none; stroke-width: 1.8; margin: 0 auto 8px; }
+.tg-upload-title { font-size: 13px; font-weight: 700; }
+.tg-upload-desc { font-size: 11px; color: #888; margin-top: 3px; }
+.tg-img-preview { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.tg-img-preview-item { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; border: 1.5px solid #e0e0e0; }
+.tg-img-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.tg-img-preview-remove { position: absolute; top: -4px; right: -4px; width: 22px; height: 22px; border-radius: 50%; background: #d32f2f; color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+/* Modal actions */
+.tg-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.tg-modal-btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+.tg-modal-btn.primary { background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-modal-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
+.tg-modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* My tickets */
+.tg-ticket-row {
+  display: flex;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f3f6;
+  cursor: pointer;
+  transition: background .15s;
+}
+.tg-ticket-row:last-child { border-bottom: none; }
+.tg-ticket-row:hover { background: #f8f9fb; }
+.tg-ticket-icon { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #e0f2f1, #b2dfdb); color: #00796b; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.tg-ticket-body { flex: 1; min-width: 0; }
+.tg-ticket-subject { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; line-height: 1.3; }
+.tg-ticket-meta { font-size: 11px; color: #888; display: flex; gap: 8px; flex-wrap: wrap; }
+.tg-ticket-status { font-size: 9.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; text-transform: uppercase; align-self: flex-start; }
+.tg-ticket-status.open { background: #e3f2fd; color: #1976d2; }
+.tg-ticket-status.resolved { background: #e6f7ec; color: #1b8a3a; }
+.tg-ticket-status.closed { background: #f5f5f5; color: #666; }
+.tg-ticket-status.pending { background: #fff8e1; color: #f57c00; }
+
+/* Empty */
+.tg-empty { text-align: center; padding: 40px 20px; }
+.tg-empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+.tg-empty-title { font-size: 15px; font-weight: 800; margin: 0 0 6px; }
+.tg-empty-desc { font-size: 12.5px; color: #888; margin: 0; }
+
+/* Chat */
+.tg-chat { padding: 16px; max-height: 44vh; overflow-y: auto; background: #f8f9fb; border-radius: 12px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px; }
+.tg-chat-msg { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.45; word-wrap: break-word; }
+.tg-chat-msg.me { align-self: flex-end; background: var(--tg-primary); color: #fff; border-bottom-right-radius: 4px; margin-left: auto; }
+.tg-chat-msg.them { align-self: flex-start; background: #fff; color: #212121; border: 1px solid #e0e0e0; border-bottom-left-radius: 4px; }
+.tg-chat-msg-meta { font-size: 10px; opacity: 0.75; margin-top: 4px; }
+
+/* Toasts */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 999999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: var(--tg-primary); }
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">Help Center</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- Hero -->
+    <div class="tg-hero">
+      <div class="tg-hero-content">
+        <h1 class="tg-hero-title">Hi, how can we help? 👋</h1>
+        <p class="tg-hero-sub">Search our FAQs or raise a ticket — we're here 24/7</p>
+        <div class="tg-hero-search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="text" id="tg-faq-search" placeholder="Search help topics..." oninput="tgFilterFaq()" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick cards -->
+    <div class="tg-quick-grid">
+      <div class="tg-quick-card" onclick="tgScrollToFaq('order')">
+        <div class="tg-quick-icon blue"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg></div>
+        <div class="tg-quick-label">Order Issues</div>
+      </div>
+      <div class="tg-quick-card" onclick="tgScrollToFaq('payment')">
+        <div class="tg-quick-icon green"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+        <div class="tg-quick-label">Payment</div>
+      </div>
+      <div class="tg-quick-card" onclick="tgScrollToFaq('delivery')">
+        <div class="tg-quick-icon orange"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <div class="tg-quick-label">Delivery</div>
+      </div>
+      <div class="tg-quick-card" onclick="tgScrollToFaq('return')">
+        <div class="tg-quick-icon pink"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div>
+        <div class="tg-quick-label">Returns</div>
+      </div>
+      <div class="tg-quick-card" onclick="tgScrollToFaq('account')">
+        <div class="tg-quick-icon purple"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg></div>
+        <div class="tg-quick-label">Account</div>
+      </div>
+      <div class="tg-quick-card" onclick="tgScrollToFaq('seller')">
+        <div class="tg-quick-icon yellow"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+        <div class="tg-quick-label">Sell on TOEGO</div>
+      </div>
+      <div class="tg-quick-card" onclick="tgScrollToFaq('offer')">
+        <div class="tg-quick-icon red"><svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+        <div class="tg-quick-label">Offers & Coupons</div>
+      </div>
+      <div class="tg-quick-card" onclick="tgScrollToFaq('other')">
+        <div class="tg-quick-icon teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div class="tg-quick-label">Other</div>
+      </div>
+    </div>
+
+    <!-- My tickets -->
+    <div class="tg-sec" id="tg-tickets-sec" style="display:none;">
+      <div class="tg-sec-title">🎫 My Support Tickets</div>
+      <div id="tg-tickets-list"></div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="tg-sec">
+      <div class="tg-sec-title">🔥 Frequently Asked Questions</div>
+      <div class="tg-faq" id="tg-faq"></div>
+    </div>
+
+    <!-- Contact -->
+    <div class="tg-sec">
+      <div class="tg-sec-title">📞 Still need help? Contact Us</div>
+      <div class="tg-contact-list">
+        <div class="tg-contact-item" onclick="tgOpenTicket()">
+          <div class="tg-contact-icon blue"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="tg-contact-body">
+            <div class="tg-contact-title">Raise a Support Ticket</div>
+            <div class="tg-contact-desc">Fastest — usually replies within 24 hours</div>
+          </div>
+          <svg class="tg-contact-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+
+        <a href="mailto:support@toego.in" class="tg-contact-item">
+          <div class="tg-contact-icon green"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+          <div class="tg-contact-body">
+            <div class="tg-contact-title">Email Us</div>
+            <div class="tg-contact-desc">support@toego.in</div>
+          </div>
+          <svg class="tg-contact-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+
+        <a href="tel:+919999999999" class="tg-contact-item">
+          <div class="tg-contact-icon orange"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div class="tg-contact-body">
+            <div class="tg-contact-title">Call Us</div>
+            <div class="tg-contact-desc">Mon-Sat · 9 AM to 6 PM</div>
+          </div>
+          <svg class="tg-contact-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+
+        <a href="https://wa.me/919999999999" target="_blank" class="tg-contact-item">
+          <div class="tg-contact-icon pink"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="tg-contact-body">
+            <div class="tg-contact-title">WhatsApp Support</div>
+            <div class="tg-contact-desc">Chat with us instantly</div>
+          </div>
+          <svg class="tg-contact-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="tg-fab" onclick="tgOpenTicket()">
+  <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+  Raise Ticket
+</button>
+
+<!-- Ticket modal -->
+<div class="tg-modal" id="tg-ticket-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Raise Support Ticket</div>
+      <button class="tg-modal-close" onclick="tgCloseTicket()">✕</button>
+    </div>
+
+    <div class="tg-field">
+      <label>Category <span class="req">*</span></label>
+      <div class="tg-cat-grid" id="tg-cat-grid">
+        <div class="tg-cat-chip" data-cat="Order Issue" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">📦</span>Order Issue</div>
+        <div class="tg-cat-chip" data-cat="Payment" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">💳</span>Payment</div>
+        <div class="tg-cat-chip" data-cat="Delivery" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">🚚</span>Delivery</div>
+        <div class="tg-cat-chip" data-cat="Return / Refund" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">↩️</span>Return</div>
+        <div class="tg-cat-chip" data-cat="Product" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">🏷️</span>Product</div>
+        <div class="tg-cat-chip" data-cat="Account" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">👤</span>Account</div>
+        <div class="tg-cat-chip" data-cat="Seller" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">🏪</span>Seller</div>
+        <div class="tg-cat-chip" data-cat="Offer / Coupon" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">🎟️</span>Offer</div>
+        <div class="tg-cat-chip" data-cat="Other" onclick="tgPickCat(this)"><span class="tg-cat-chip-emoji">❓</span>Other</div>
+      </div>
+    </div>
+
+    <div class="tg-field">
+      <label>Priority</label>
+      <select id="tg-tk-priority">
+        <option value="low">🟢 Low — General query</option>
+        <option value="medium" selected>🔵 Medium — Need help soon</option>
+        <option value="high">🟠 High — Urgent issue</option>
+        <option value="urgent">🔴 Urgent — Critical / fraud</option>
+      </select>
+    </div>
+
+    <div class="tg-field">
+      <label>Subject <span class="req">*</span></label>
+      <input type="text" id="tg-tk-subject" placeholder="Brief summary of your issue" maxlength="120">
+    </div>
+
+    <div class="tg-field">
+      <label>Description <span class="req">*</span></label>
+      <textarea id="tg-tk-desc" placeholder="Describe your issue in detail. Order ID, product name, screenshots etc." maxlength="2000"></textarea>
+    </div>
+
+    <div class="tg-field">
+      <label>Screenshots (max 3)</label>
+      <div class="tg-upload" onclick="document.getElementById('tg-tk-images').click()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        <div class="tg-upload-title">Click to upload</div>
+        <div class="tg-upload-desc">Auto-compressed to 50KB · Cloudinary</div>
+      </div>
+      <input type="file" id="tg-tk-images" accept="image/*" multiple style="display:none;">
+      <div class="tg-img-preview" id="tg-tk-preview"></div>
+    </div>
+
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseTicket()">Cancel</button>
+      <button class="tg-modal-btn primary" id="tg-tk-submit" onclick="tgSubmitTicket()">Submit Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ticket view modal -->
+<div class="tg-modal" id="tg-tv-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div>
+        <div class="tg-modal-title" id="tg-tv-subject">Ticket</div>
+        <div style="font-size:11px;color:#888;font-family:monospace;" id="tg-tv-id">#TK</div>
+      </div>
+      <button class="tg-modal-close" onclick="tgCloseTv()">✕</button>
+    </div>
+
+    <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+      <span class="tg-ticket-status open" id="tg-tv-cat">—</span>
+      <span class="tg-ticket-status pending" id="tg-tv-pri">—</span>
+      <span class="tg-ticket-status open" id="tg-tv-status">—</span>
+    </div>
+
+    <div class="tg-chat" id="tg-tv-chat"></div>
+
+    <div style="border-top:1px solid #e0e0e0;padding-top:12px;">
+      <div class="tg-field" style="margin-bottom:8px;">
+        <textarea id="tg-tv-reply" rows="2" placeholder="Type your message..." style="min-height:60px;"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="tg-modal-btn ghost" onclick="tgCloseTv()" style="flex:0 0 40%;">Close</button>
+        <button class="tg-modal-btn primary" onclick="tgSendReply()">Send Reply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  let USER = null;
+  let CLOUD = { cloudName: '', uploadPreset: '' };
+  let tkImages = [];
+  let tkCat = '';
+  let unsubTickets = null;
+  let TICKETS = [];
+  let CURRENT_TICKET = null;
+
+  /* ========= FAQ DATA ========= */
+  const FAQ = [
+    // Order
+    { cat: 'order', q: 'How do I track my order?', a: 'Go to <b>My Orders</b> page from bottom nav or account page. Tap on any order → see live tracking with 5-step timeline. You can also tap <b>Track</b> button on any active order.' },
+    { cat: 'order', q: 'How can I cancel my order?', a: 'Open <b>My Orders</b> → Find your order → tap <b>Cancel</b> button (only visible if order is not yet accepted by seller). Select a reason and confirm. Refund will be processed automatically.' },
+    { cat: 'order', q: 'Order is showing "Waiting for seller" — what to do?', a: 'Seller usually accepts within a few hours. If not accepted within <b>24 hours</b>, the order may auto-cancel. You can also raise a support ticket if urgent.' },
+    { cat: 'order', q: 'I received a wrong / damaged product', a: 'Raise a return from <b>My Orders</b> within 7 days of delivery. Select <b>"Product is damaged"</b> or <b>"Wrong item delivered"</b> as the reason and upload photos.' },
+    { cat: 'order', q: 'Can I modify my order after placing it?', a: 'No — once an order is placed, it cannot be modified. However, you can cancel it (before seller accepts) and place a new one.' },
+
+    // Payment
+    { cat: 'payment', q: 'What payment methods are accepted?', a: '<b>Razorpay</b> (UPI, Credit/Debit cards, Netbanking, Wallets) and <b>Cash on Delivery (COD)</b>. All online payments are 100% secure.' },
+    { cat: 'payment', q: 'My payment failed but money was deducted', a: 'Don\'t worry — such amounts are <b>auto-refunded within 5-7 business days</b>. If not received, raise a ticket with payment ID and screenshot.' },
+    { cat: 'payment', q: 'Is Cash on Delivery available?', a: 'Yes, COD is available on most products. The COD option appears at checkout if available for your pincode.' },
+    { cat: 'payment', q: 'When will I get my refund?', a: 'Refunds are processed within <b>5-7 business days</b> after return approval. It goes back to the original payment method (for COD, refund is via bank transfer).' },
+
+    // Delivery
+    { cat: 'delivery', q: 'How long does delivery take?', a: 'Typically <b>3-7 business days</b> depending on your location. You can see expected delivery date in the order tracking page.' },
+    { cat: 'delivery', q: 'Do you deliver to my pincode?', a: 'Enter your pincode on any product page to check delivery availability. We deliver to 20,000+ pincodes across India.' },
+    { cat: 'delivery', q: 'What if I miss the delivery?', a: 'The delivery partner will attempt 2-3 times. If all attempts fail, the order will be returned to seller and refund initiated.' },
+    { cat: 'delivery', q: 'Are there any delivery charges?', a: 'Delivery is <b>FREE</b> on orders above ₹499. Below that, a small delivery fee applies depending on weight.' },
+
+    // Return
+    { cat: 'return', q: 'What is the return policy?', a: '<b>7-day easy return</b> from delivery date. Product must be unused with original packaging and tags. Some categories (innerwear, cosmetics, etc.) are non-returnable.' },
+    { cat: 'return', q: 'How do I raise a return?', a: 'Go to <b>My Orders</b> or <b>Returns & Refunds</b> page → tap <b>Raise Return</b> on eligible order → select reason → submit. Pickup will be arranged after admin approval.' },
+    { cat: 'return', q: 'When will I get my refund after return?', a: 'After return pickup and quality check, refund is processed within <b>5-7 business days</b>. You\'ll get updates in <b>My Orders</b>.' },
+    { cat: 'return', q: 'Can I exchange instead of return?', a: 'Currently we only offer returns with full refund. You can place a fresh order for the size/color you want.' },
+
+    // Account
+    { cat: 'account', q: 'How do I update my profile?', a: 'Go to <b>Account</b> → tap <b>Edit</b> on your profile card → update name, phone, gender, DOB → Save.' },
+    { cat: 'account', q: 'How do I change my email?', a: 'Email cannot be changed directly for security reasons. Please raise a support ticket with your old and new email.' },
+    { cat: 'account', q: 'How do I delete my account?', a: 'Account page → scroll down → tap <b>"Delete my account"</b> at the bottom. Note: this action is <b>permanent</b> and cannot be undone.' },
+    { cat: 'account', q: 'I forgot my password', a: 'On the login page, tap <b>"Forgot Password"</b>. A reset link will be sent to your registered email.' },
+
+    // Seller
+    { cat: 'seller', q: 'How do I become a seller on TOEGO?', a: 'Go to <b>Account</b> page → tap <b>"Become a Seller"</b> banner → fill the application form. Verification usually takes <b>24-48 hours</b>.' },
+    { cat: 'seller', q: 'What documents are required for selling?', a: 'GST number, PAN card, bank account details, and shop name. All details are securely stored and verified.' },
+    { cat: 'seller', q: 'How and when do I get paid?', a: 'Seller payouts are settled after <b>delivery + 7 day return window</b>. Amount = Gross − Commission − Delivery charges.' },
+
+    // Offers
+    { cat: 'offer', q: 'How do I apply a coupon?', a: 'On the <b>Cart</b> page, tap <b>"Apply Coupon"</b> → enter the code → tap Apply. Discount will be reflected in the total.' },
+    { cat: 'offer', q: 'My coupon is not working', a: 'Check: (1) Is it expired? (2) Minimum order value met? (3) Applicable on your cart items? Some coupons are product/category specific.' },
+    { cat: 'offer', q: 'How does Refer & Earn work?', a: 'Go to <b>Account → Refer & Earn</b>. Share your referral code. When your friend places their first order, you get <b>₹100</b> cashback.' },
+
+    // Other
+    { cat: 'other', q: 'How do I contact customer support?', a: 'Use the <b>Raise Ticket</b> button on this page (fastest). Or email us at <b>support@toego.in</b>. WhatsApp support also available.' },
+    { cat: 'other', q: 'Is TOEGO safe for online payments?', a: 'Yes. All payments are processed by <b>Razorpay</b> with PCI-DSS compliance. We never store your card details.' }
+  ];
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function adjustColor(hex, pct) {
+    try { hex = hex.replace('#',''); const n = parseInt(hex, 16);
+      const r = Math.max(0, Math.min(255, (n >> 16) + pct));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
+      const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    } catch(e) { return hex; }
+  }
+  function applyTheme(p, d) {
+    p = p || '#2874f0';
+    d = d || adjustColor(p, -30);
+    document.documentElement.style.setProperty('--tg-primary', p);
+    document.documentElement.style.setProperty('--tg-primary-dark', d);
+    if (themeMeta) themeMeta.setAttribute('content', p);
+    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary: p, dark: d })); } catch(e) {}
+  }
+  (function() { try { const c = localStorage.getItem('toego_theme_colors'); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {} })();
+  (async () => {
+    try { const s = await db.collection('siteSettings').doc('theme').get(); if (s.exists) { const d = s.data(); const p = d.themeColor || '#2874f0'; applyTheme(p, adjustColor(p, -30)); } } catch(e) {}
+    db.collection('siteSettings').doc('theme').onSnapshot(snap => { if (!snap.exists) return; const d = snap.data(); const p = d.themeColor || '#2874f0'; applyTheme(p, adjustColor(p, -30)); }, () => {});
+    try { const c = await db.collection('siteSettings').doc('cloudinary').get(); if (c.exists) { CLOUD = { cloudName: c.data().cloudName || '', uploadPreset: c.data().uploadPreset || '' }; } } catch(e) {}
+  })();
+
+  /* ========= HELPERS ========= */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts'); if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fdate(d) { if (!d) return '—'; const dt = d.toDate ? d.toDate() : new Date(d); return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+  function ftime(d) { if (!d) return ''; const dt = d.toDate ? d.toDate() : new Date(d); return dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); }
+  function tago(d) { if (!d) return ''; const dt = d.toDate ? d.toDate() : new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
+
+  /* ========= IMAGE ========= */
+  async function uploadToCloudinary(blob) {
+    if (!CLOUD.cloudName || !CLOUD.uploadPreset) return null;
+    try {
+      const fd = new FormData();
+      fd.append('file', blob, 'ticket.jpg');
+      fd.append('upload_preset', CLOUD.uploadPreset);
+      fd.append('folder', 'toego/tickets');
+      const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD.cloudName + '/image/upload', { method: 'POST', body: fd });
+      if (!res.ok) return null;
+      const d = await res.json();
+      return d.secure_url.replace('/upload/', '/upload/q_auto:good,w_800,c_limit/');
+    } catch(e) { return null; }
+  }
+
+  async function compressTo50KB(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const target = 50 * 1024;
+          const atts = [
+            {maxW:1000,q:.85},{maxW:900,q:.75},{maxW:800,q:.7},{maxW:700,q:.65},
+            {maxW:600,q:.6},{maxW:500,q:.55},{maxW:450,q:.5},{maxW:400,q:.45},
+            {maxW:350,q:.4},{maxW:300,q:.35},{maxW:250,q:.3}
+          ];
+          let best = null;
+          for (const a of atts) {
+            let w = img.width, h = img.height;
+            if (w > a.maxW) { h = Math.round(h*(a.maxW/w)); w = a.maxW; }
+            const c = document.createElement('canvas'); c.width = w; c.height = h;
+            const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
+            const dataUrl = c.toDataURL('image/jpeg', a.q);
+            const bytes = Math.round((dataUrl.split(',')[1]?.length || 0) * 0.75);
+            best = { dataUrl, bytes };
+            if (bytes <= target) { resolve(best); return; }
+          }
+          resolve(best);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  function dataURLtoBlob(dataUrl) {
+    const parts = dataUrl.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const bin = atob(parts[1]);
+    const u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return new Blob([u8], { type: mime });
+  }
+
+  async function processImage(file) {
+    const compressed = await compressTo50KB(file);
+    const blob = dataURLtoBlob(compressed.dataUrl);
+    const cloudUrl = await uploadToCloudinary(blob);
+    return cloudUrl || compressed.dataUrl;
+  }
+
+  /* ========= FAQ RENDER ========= */
+  function renderFaq(filter) {
+    const el = document.getElementById('tg-faq'); if (!el) return;
+    const list = filter ? FAQ.filter(f => (f.q + ' ' + f.a).toLowerCase().includes(filter.toLowerCase())) : FAQ;
+    if (!list.length) {
+      el.innerHTML = '<div style="padding:30px;text-align:center;color:#888;font-size:13px;">No matching FAQs found.<br>Try a different keyword or <b>raise a ticket</b>.</div>';
+      return;
+    }
+    el.innerHTML = list.map((f, i) =>
+      '<div class="tg-faq-item" data-cat="' + f.cat + '" data-idx="' + i + '">' +
+        '<div class="tg-faq-q" onclick="tgToggleFaq(this)">' +
+          '<div class="tg-faq-q-icon">?</div>' +
+          '<div class="tg-faq-q-text">' + esc(f.q) + '</div>' +
+          '<svg class="tg-faq-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>' +
+        '</div>' +
+        '<div class="tg-faq-a">' + f.a + '</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  window.tgToggleFaq = function(qEl) {
+    const item = qEl.closest('.tg-faq-item');
+    if (!item) return;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.tg-faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  };
+
+  window.tgFilterFaq = function() {
+    const q = (document.getElementById('tg-faq-search').value || '').trim();
+    renderFaq(q);
+  };
+
+  window.tgScrollToFaq = function(cat) {
+    // Clear filter and scroll
+    document.getElementById('tg-faq-search').value = '';
+    renderFaq('');
+    // Open first item of that category
+    const first = document.querySelector('.tg-faq-item[data-cat="' + cat + '"]');
+    if (first) {
+      setTimeout(() => {
+        document.querySelectorAll('.tg-faq-item.open').forEach(i => i.classList.remove('open'));
+        first.classList.add('open');
+        first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  };
+
+  /* ========= TICKET MODAL ========= */
+  window.tgOpenTicket = function() {
+    if (!USER) {
+      toast('Please log in to raise a ticket', 'info');
+      setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('help-center.html'), 1000);
+      return;
+    }
+    tkImages = []; tkCat = '';
+    document.getElementById('tg-tk-subject').value = '';
+    document.getElementById('tg-tk-desc').value = '';
+    document.getElementById('tg-tk-priority').value = 'medium';
+    document.getElementById('tg-tk-preview').innerHTML = '';
+    document.querySelectorAll('#tg-cat-grid .tg-cat-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('tg-ticket-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgCloseTicket = function() {
+    document.getElementById('tg-ticket-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+
+  window.tgPickCat = function(el) {
+    document.querySelectorAll('#tg-cat-grid .tg-cat-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    tkCat = el.dataset.cat || '';
+  };
+
+  document.getElementById('tg-tk-images').addEventListener('change', async function(e) {
+    const files = Array.from(e.target.files || []);
+    if (tkImages.length + files.length > 3) { toast('Max 3 images', 'error'); return; }
+    for (const f of files) {
+      if (!f.type.startsWith('image/')) continue;
+      try {
+        toast('Uploading...', 'info');
+        const url = await processImage(f);
+        tkImages.push(url);
+        renderTkPreviews();
+      } catch(err) { toast('Upload failed', 'error'); }
+    }
+    this.value = '';
+  });
+
+  function renderTkPreviews() {
+    document.getElementById('tg-tk-preview').innerHTML = tkImages.map((url, i) =>
+      '<div class="tg-img-preview-item"><img src="' + esc(url) + '" /><button class="tg-img-preview-remove" onclick="tgRemoveTkImg(' + i + ')">✕</button></div>'
+    ).join('');
+  }
+  window.tgRemoveTkImg = function(i) { tkImages.splice(i, 1); renderTkPreviews(); };
+
+  window.tgSubmitTicket = async function() {
+    if (!USER) { toast('Please log in', 'error'); return; }
+    if (!tkCat) { toast('Please select category', 'error'); return; }
+    const subject = (document.getElementById('tg-tk-subject').value || '').trim();
+    const desc = (document.getElementById('tg-tk-desc').value || '').trim();
+    const priority = document.getElementById('tg-tk-priority').value || 'medium';
+    if (!subject) { toast('Enter subject', 'error'); return; }
+    if (desc.length < 10) { toast('Description must be at least 10 characters', 'error'); return; }
+
+    const btn = document.getElementById('tg-tk-submit');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+
+    try {
+      const userName = USER.displayName || (USER.email || '').split('@')[0] || 'Customer';
+      await db.collection('supportTickets').add({
+        userId: USER.uid,
+        userName: userName,
+        userEmail: USER.email || '',
+        customerId: USER.uid,
+        category: tkCat,
+        priority: priority,
+        subject: subject,
+        status: 'open',
+        unreadForUser: 0,
+        unreadForAdmin: 1,
+        messages: [{
+          sender: 'user',
+          senderName: userName,
+          text: desc,
+          images: tkImages.slice(),
+          createdAt: new Date()
+        }],
+        createdAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      });
+      toast('✓ Ticket submitted — Admin will respond soon', 'success');
+      tgCloseTicket();
+      loadMyTickets();
+    } catch(err) {
+      console.error('Submit ticket failed:', err);
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false; btn.textContent = 'Submit Ticket';
+    }
+  };
+
+  /* ========= MY TICKETS ========= */
+  function renderTickets() {
+    const sec = document.getElementById('tg-tickets-sec');
+    const list = document.getElementById('tg-tickets-list');
+    if (!sec || !list) return;
+    if (!TICKETS.length) { sec.style.display = 'none'; return; }
+    sec.style.display = 'block';
+    list.innerHTML = TICKETS.slice(0, 10).map(t => {
+      const st = (t.status || 'open').toLowerCase();
+      const cls = st === 'resolved' ? 'resolved' : st === 'closed' ? 'closed' : st === 'pending' ? 'pending' : 'open';
+      const unread = Number(t.unreadForUser || 0);
+      return '<div class="tg-ticket-row" onclick="tgOpenTv(\'' + esc(t.id) + '\')">' +
+        '<div class="tg-ticket-icon">🎫</div>' +
+        '<div class="tg-ticket-body">' +
+          '<div class="tg-ticket-subject">' + (unread > 0 ? '🔴 ' : '') + esc(t.subject || 'Ticket') + '</div>' +
+          '<div class="tg-ticket-meta">' +
+            '<span>#' + esc((t.id || '').slice(0, 8).toUpperCase()) + '</span>' +
+            '<span>' + esc(tago(t.createdAt)) + '</span>' +
+            '<span>' + esc(t.category || 'Other') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<span class="tg-ticket-status ' + cls + '">' + esc(st) + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  function loadMyTickets() {
+    if (!USER) return;
+    if (unsubTickets) { try { unsubTickets(); } catch(e) {} unsubTickets = null; }
+    try {
+      unsubTickets = db.collection('supportTickets')
+        .where('userId', '==', USER.uid)
+        .limit(50)
+        .onSnapshot(snap => {
+          TICKETS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          TICKETS.sort((a, b) => {
+            const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+            const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+            return bt - at;
+          });
+          renderTickets();
+        }, err => console.warn('Tickets load err:', err.message));
+    } catch(e) {}
+  }
+
+  window.tgOpenTv = async function(id) {
+    const t = TICKETS.find(x => x.id === id); if (!t) return;
+    CURRENT_TICKET = t;
+    document.getElementById('tg-tv-subject').textContent = t.subject || 'Ticket';
+    document.getElementById('tg-tv-id').textContent = '#' + (t.id || '').slice(0, 10).toUpperCase();
+    document.getElementById('tg-tv-cat').textContent = t.category || 'Other';
+    document.getElementById('tg-tv-pri').textContent = (t.priority || 'medium').toUpperCase();
+    document.getElementById('tg-tv-status').textContent = (t.status || 'open').toUpperCase();
+    document.getElementById('tg-tv-reply').value = '';
+    renderChat(t);
+    if (Number(t.unreadForUser || 0) > 0) {
+      try { await db.collection('supportTickets').doc(id).update({ unreadForUser: 0 }); } catch(e) {}
+    }
+    document.getElementById('tg-tv-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgCloseTv = function() {
+    document.getElementById('tg-tv-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    CURRENT_TICKET = null;
+  };
+
+  function renderChat(t) {
+    const chat = document.getElementById('tg-tv-chat');
+    const msgs = Array.isArray(t.messages) ? t.messages : [];
+    if (!msgs.length) {
+      chat.innerHTML = '<div style="text-align:center;color:#888;font-size:12.5px;padding:20px;">No messages yet</div>';
+      return;
+    }
+    chat.innerHTML = msgs.map(m => {
+      const isMe = m.sender === 'user' || m.sender === 'seller';
+      const time = m.createdAt ? (typeof m.createdAt.toDate === 'function' ? ftime(m.createdAt) : new Date(m.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })) : '';
+      const imgs = Array.isArray(m.images) && m.images.length
+        ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">' + m.images.map(u => '<img src="' + esc(u) + '" onclick="window.open(this.src)" style="width:70px;height:70px;object-fit:cover;border-radius:8px;cursor:pointer;" />').join('') + '</div>'
+        : '';
+      return '<div class="tg-chat-msg ' + (isMe ? 'me' : 'them') + '">' +
+        esc(m.text || '') + imgs +
+        '<div class="tg-chat-msg-meta">' + (isMe ? 'You' : 'Support') + ' · ' + esc(time) + '</div>' +
+      '</div>';
+    }).join('');
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  window.tgSendReply = async function() {
+    if (!CURRENT_TICKET) return;
+    const text = (document.getElementById('tg-tv-reply').value || '').trim();
+    if (!text) { toast('Type a message', 'error'); return; }
+    const existing = Array.isArray(CURRENT_TICKET.messages) ? CURRENT_TICKET.messages : [];
+    const userName = USER.displayName || (USER.email || '').split('@')[0] || 'Customer';
+    const newMsg = {
+      sender: 'user',
+      senderName: userName,
+      text: text,
+      images: [],
+      createdAt: new Date()
+    };
+    try {
+      await db.collection('supportTickets').doc(CURRENT_TICKET.id).update({
+        messages: [...existing, newMsg],
+        unreadForAdmin: FV.increment(1),
+        status: (CURRENT_TICKET.status === 'resolved' || CURRENT_TICKET.status === 'closed') ? 'open' : CURRENT_TICKET.status,
+        updatedAt: FV.serverTimestamp()
+      });
+      document.getElementById('tg-tv-reply').value = '';
+      CURRENT_TICKET = { ...CURRENT_TICKET, messages: [...existing, newMsg] };
+      renderChat(CURRENT_TICKET);
+      toast('Sent ✓', 'success');
+    } catch(err) {
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+    }
+  };
+
+  /* ========= CART BADGE ========= */
+  async function updateCartBadge() {
+    let count = 0;
+    try {
+      if (USER) {
+        const snap = await db.collection('carts').doc(USER.uid).collection('items').get();
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+        gc.forEach(i => { count += Number(i.qty || 1); });
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ========= MODAL CLOSE OUTSIDE ========= */
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', e => {
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  /* ========= INIT ========= */
+  renderFaq('');
+
+  auth.onAuthStateChanged(u => {
+    USER = u;
+    if (u) {
+      loadMyTickets();
+    } else {
+      if (unsubTickets) { try { unsubTickets(); } catch(e) {} unsubTickets = null; }
+      document.getElementById('tg-tickets-sec').style.display = 'none';
+    }
+    updateCartBadge();
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Categories — TOEGO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://firestore.googleapis.com">
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" crossorigin>
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" crossorigin>
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f5f5f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea, select { font: inherit; }
+a { color: inherit; text-decoration: none; }
+
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+/* ============ HEADER ============ */
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-hd-search { flex: 1; height: 40px; background: #fff; border-radius: 6px; display: flex; align-items: center; overflow: hidden; max-width: 620px; margin: 0 auto; }
+.tg-hd-search-icon { padding: 0 12px; color: #2874f0; flex-shrink: 0; display: flex; align-items: center; }
+.tg-hd-search input { flex: 1; height: 100%; border: none; outline: none; font-size: 14px; padding: 0 6px; background: transparent; color: #212121; min-width: 0; }
+.tg-hd-search input::placeholder { color: #878787; }
+
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
+
+/* ============ ADMIN BAR ============ */
+.tg-admin-bar {
+  display: none;
+  background: linear-gradient(135deg, #0f1729, #1a5dc7);
+  color: #fff;
+  padding: 10px 14px;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.tg-admin-bar.show { display: flex; }
+.tg-admin-bar-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: #ffe500;
+  color: #0f1729;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.tg-admin-bar-info { flex: 1; min-width: 0; }
+.tg-admin-bar-title { font-size: 12.5px; font-weight: 800; letter-spacing: 0.2px; }
+.tg-admin-bar-sub { font-size: 11px; opacity: 0.75; margin-top: 1px; }
+.tg-admin-bar-btn {
+  background: #fff;
+  color: #0f1729;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 7px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: transform .12s, filter .15s;
+}
+.tg-admin-bar-btn:hover { filter: brightness(1.05); }
+.tg-admin-bar-btn:active { transform: scale(0.95); }
+.tg-admin-bar-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ============ MAIN ============ */
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+
+/* ============ HERO ============ */
+.tg-hero {
+  margin: 10px 10px 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #2874f0 0%, #1a5dc7 50%, #0f1729 100%);
+  color: #fff;
+  padding: 24px 20px;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(40,116,240,0.20);
+}
+.tg-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(255,229,0,0.22), transparent 70%);
+  border-radius: 50%;
+  animation: tgHeroFloat 6s ease-in-out infinite;
+}
+.tg-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -70px; left: -50px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(255,255,255,0.10), transparent 70%);
+  border-radius: 50%;
+  animation: tgHeroFloat 8s ease-in-out infinite reverse;
+}
+@keyframes tgHeroFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(15px,-15px) scale(1.08); }
+}
+.tg-hero-content { position: relative; z-index: 2; max-width: 70%; }
+.tg-hero-tag { display: inline-block; background: #ffe500; color: #212121; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 999px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.tg-hero-title { font-size: clamp(20px, 3vw, 30px); font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin: 0 0 6px; }
+.tg-hero-sub { font-size: 13px; opacity: 0.9; margin: 0; font-weight: 500; }
+.tg-hero-badge { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 2; font-size: 60px; line-height: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); animation: tgHeroBounce 2s ease-in-out infinite; }
+@keyframes tgHeroBounce { 0%,100% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(calc(-50% - 8px)) scale(1.05); } }
+
+/* ============ TABS ============ */
+.tg-tabs-wrap { background: #fff; border-bottom: 1px solid #eee; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; position: sticky; top: 58px; z-index: 100; }
+.tg-tabs-wrap::-webkit-scrollbar { display: none; }
+.tg-tabs { display: flex; padding: 0 8px; gap: 2px; width: max-content; min-width: 100%; }
+.tg-tab { padding: 14px 14px 12px; font-size: 13.5px; font-weight: 600; color: #666; white-space: nowrap; position: relative; cursor: pointer; transition: color .2s; }
+.tg-tab.active { color: #2874f0; font-weight: 700; }
+.tg-tab::after { content: ''; position: absolute; bottom: 0; left: 14px; right: 14px; height: 3px; background: #2874f0; border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform .25s cubic-bezier(.4,0,.2,1); transform-origin: center; }
+.tg-tab.active::after { transform: scaleX(1); }
+
+/* ============ SECTIONS ============ */
+.tg-sec { margin: 12px 10px; }
+.tg-sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 4px; gap: 8px; }
+.tg-sec-title { font-size: 17px; font-weight: 800; color: #212121; letter-spacing: -0.3px; }
+.tg-sec-title em { font-style: normal; color: #2874f0; }
+.tg-sec-sub { font-size: 12px; color: #888; margin-top: 2px; font-weight: 500; }
+.tg-sec-link { font-size: 12.5px; font-weight: 700; color: #2874f0; display: flex; align-items: center; gap: 4px; transition: gap .2s; }
+.tg-sec-link:hover { gap: 8px; }
+.tg-sec-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ============ CATEGORY GRID ============ */
+.tg-cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tg-cat-card {
+  background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer;
+  transition: transform .15s, box-shadow .18s; position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column;
+  aspect-ratio: 3/4;
+}
+.tg-cat-card:active { transform: scale(0.97); }
+.tg-cat-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.10); transform: translateY(-2px); }
+.tg-cat-img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform .35s ease; }
+.tg-cat-card:hover .tg-cat-img { transform: scale(1.08); }
+.tg-cat-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.15) 45%, transparent 70%); z-index: 2; }
+.tg-cat-body { position: relative; z-index: 3; margin-top: auto; padding: 10px 10px 12px; color: #fff; }
+.tg-cat-name { font-size: 13px; font-weight: 800; line-height: 1.2; margin-bottom: 3px; letter-spacing: -0.2px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.tg-cat-off { font-size: 10.5px; font-weight: 700; color: #ffe500; letter-spacing: 0.2px; }
+.tg-cat-badge { position: absolute; top: 8px; left: 8px; background: #ffe500; color: #212121; font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase; z-index: 4; }
+.tg-cat-emoji { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 60px; background: linear-gradient(135deg,#eef3ff,#e0eaff); z-index: 1; }
+
+.tg-cat-admin { position: absolute; top: 6px; right: 6px; z-index: 5; display: none; gap: 4px; }
+.tg-admin-mode .tg-cat-admin { display: flex; }
+.tg-cat-admin-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.95);
+  color: #212121;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  transition: transform .12s, background .15s;
+}
+.tg-cat-admin-btn:hover { background: #fff; }
+.tg-cat-admin-btn:active { transform: scale(0.9); }
+.tg-cat-admin-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tg-cat-admin-btn.danger { color: #d32f2f; }
+
+/* ============ CHIPS ============ */
+.tg-chips-wrap { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -10px; padding: 0 10px; }
+.tg-chips-wrap::-webkit-scrollbar { display: none; }
+.tg-chips { display: flex; gap: 8px; width: max-content; padding: 2px 0 6px; }
+.tg-chip { padding: 8px 14px; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: #212121; white-space: nowrap; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px; }
+.tg-chip:hover { border-color: #2874f0; color: #2874f0; }
+.tg-chip.active { background: #2874f0; color: #fff; border-color: #2874f0; }
+.tg-chip.active:hover { color: #fff; }
+.tg-chip-emoji { font-size: 14px; }
+
+/* ============ FEATURED QUICK ACCESS ============ */
+.tg-feat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #fff; border-radius: 12px; padding: 14px 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-feat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 4px; cursor: pointer; border-radius: 10px; transition: background .15s, transform .15s; text-align: center; }
+.tg-feat-item:active { transform: scale(0.94); }
+.tg-feat-item:hover { background: #f1f3f6; }
+.tg-feat-icon { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: linear-gradient(135deg,#eef3ff,#e0eaff); overflow: hidden; position: relative; transition: transform .2s; }
+.tg-feat-item:hover .tg-feat-icon { transform: scale(1.06); }
+.tg-feat-icon img { width: 100%; height: 100%; object-fit: cover; }
+.tg-feat-icon.orange { background: linear-gradient(135deg,#fff3e0,#ffe0b2); }
+.tg-feat-icon.pink { background: linear-gradient(135deg,#fce4ec,#f8bbd0); }
+.tg-feat-icon.green { background: linear-gradient(135deg,#e6f7ec,#d1f0dd); }
+.tg-feat-icon.purple { background: linear-gradient(135deg,#ede7f6,#d1c4e9); }
+.tg-feat-label { font-size: 11px; font-weight: 600; color: #212121; line-height: 1.25; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ============ PRODUCTS SCROLL ============ */
+.tg-prod-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -10px; padding: 0 10px; }
+.tg-prod-scroll::-webkit-scrollbar { display: none; }
+.tg-prod-row { display: flex; gap: 10px; padding: 4px 0 8px; width: max-content; }
+.tg-pcard { flex: 0 0 155px; background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: transform .15s, box-shadow .18s; display: flex; flex-direction: column; }
+.tg-pcard:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.10); }
+.tg-pcard-img { aspect-ratio: 1/1; background: #f8f8f8; position: relative; overflow: hidden; }
+.tg-pcard-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.tg-pcard:hover .tg-pcard-img img { transform: scale(1.05); }
+.tg-pcard-body { padding: 8px 10px 10px; }
+.tg-pcard-title { font-size: 12px; font-weight: 500; line-height: 1.3; color: #212121; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px; min-height: 30px; }
+.tg-pcard-price-row { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
+.tg-pcard-price { font-size: 14px; font-weight: 700; color: #212121; }
+.tg-pcard-mrp { font-size: 11px; color: #878787; text-decoration: line-through; }
+.tg-pcard-off { font-size: 11px; color: #f43397; font-weight: 700; }
+
+/* ============ SKELETON ============ */
+.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
+@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tg-skel-cat { aspect-ratio: 3/4; border-radius: 10px; }
+.tg-skel-feat { width: 52px; height: 52px; border-radius: 50%; }
+.tg-skel-prod { flex: 0 0 155px; aspect-ratio: 1/1.3; border-radius: 10px; }
+
+/* ============ EMPTY ============ */
+.tg-empty { text-align: center; padding: 40px 20px; color: #878787; background: #fff; border-radius: 12px; margin: 12px 10px; }
+.tg-empty-icon { font-size: 48px; margin-bottom: 10px; opacity: 0.4; }
+.tg-empty h3 { margin: 0 0 4px; color: #212121; font-size: 15px; font-weight: 700; }
+.tg-empty p { margin: 0; font-size: 13px; }
+
+/* ============ FAB ============ */
+.tg-fab {
+  position: fixed;
+  bottom: 90px;
+  right: 16px;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe500 0%, #ffc400 100%);
+  color: #0f1729;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(255,229,0,0.4), 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 9998;
+  transition: transform .15s, filter .15s;
+  animation: tgFabIn .35s cubic-bezier(.34,1.56,.64,1);
+}
+.tg-fab.show { display: flex; }
+.tg-fab:hover { filter: brightness(1.05); }
+.tg-fab:active { transform: scale(0.9); }
+.tg-fab svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes tgFabIn { from { transform: scale(0.3) rotate(-90deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+
+/* ============ MODAL ============ */
+.tg-modal {
+  position: fixed; inset: 0;
+  background: rgba(15,23,41,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  animation: tgFadeIn .2s ease;
+}
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  padding: 22px 20px 26px;
+  animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; color: #212121; }
+.tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.tg-modal-close:hover { background: #e0e0e0; }
+.tg-modal-field { margin-bottom: 14px; }
+.tg-modal-field label {
+  display: block;
+  font-size: 11.5px;
+  color: #666;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.tg-modal-field input, .tg-modal-field textarea, .tg-modal-field select {
+  width: 100%;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #212121;
+  outline: none;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  font-family: inherit;
+}
+.tg-modal-field input:focus, .tg-modal-field textarea:focus, .tg-modal-field select:focus {
+  border-color: #2874f0;
+  box-shadow: 0 0 0 3px rgba(40,116,240,0.10);
+}
+.tg-modal-field textarea { min-height: 70px; resize: vertical; font-size: 13.5px; }
+.tg-modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tg-modal-hint { font-size: 11px; color: #999; margin-top: 5px; line-height: 1.4; }
+.tg-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.tg-modal-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform .1s, filter .15s;
+}
+.tg-modal-btn:active { transform: translateY(1px); }
+.tg-modal-btn.primary {
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(40,116,240,0.3);
+}
+.tg-modal-btn.danger {
+  background: linear-gradient(135deg, #d32f2f, #b71c1c);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(211,47,47,0.3);
+}
+.tg-modal-btn.ghost {
+  background: #f1f3f6;
+  color: #212121;
+  flex: 0 0 40%;
+}
+.tg-modal-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.tg-sub-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  min-height: 20px;
+}
+.tg-sub-pill {
+  background: #eef3ff;
+  color: #2874f0;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.tg-sub-pill button { color: #2874f0; font-size: 13px; line-height: 1; margin-left: 2px; }
+
+/* ============ BOTTOM NAV ============ */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* ============ TOASTS ============ */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+
+/* ============ RESPONSIVE ============ */
+@media (min-width: 768px) {
+  .tg-cat-grid { grid-template-columns: repeat(4, 1fr); }
+  .tg-feat-grid { grid-template-columns: repeat(6, 1fr); }
+  .tg-wrap { padding-left: 20px; padding-right: 20px; }
+  .tg-sec, .tg-hero { max-width: 1200px; margin-left: auto; margin-right: auto; }
+  .tg-tabs-wrap { padding-left: 20px; padding-right: 20px; }
+  .tg-modal { align-items: center; }
+  .tg-modal-card { border-radius: 18px; max-height: 85vh; }
+}
+@media (min-width: 1024px) {
+  .tg-cat-grid { grid-template-columns: repeat(5, 1fr); }
+  .tg-feat-grid { grid-template-columns: repeat(8, 1fr); }
+}
+@media (max-width: 480px) {
+  .tg-cat-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .tg-hero { padding: 20px 16px; min-height: 120px; margin: 8px; }
+  .tg-hero-title { font-size: 20px; }
+  .tg-hero-badge { font-size: 48px; right: 14px; }
+  .tg-feat-icon { width: 46px; height: 46px; font-size: 22px; }
+  .tg-feat-label { font-size: 10px; }
+  .tg-sec { margin: 10px 8px; }
+  .tg-modal-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="tg-hd" id="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="shop-home.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <form class="tg-hd-search" onsubmit="event.preventDefault(); tgSearch();">
+      <span class="tg-hd-search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+      <input id="tg-search-input" type="text" placeholder="Search for products, brands and more" autocomplete="off">
+    </form>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="tg-admin-bar" id="tg-admin-bar">
+    <div class="tg-admin-bar-icon">🛡️</div>
+    <div class="tg-admin-bar-info">
+      <div class="tg-admin-bar-title">Admin Mode</div>
+      <div class="tg-admin-bar-sub" id="tg-admin-bar-sub">Tap any category to edit or delete</div>
+    </div>
+    <button class="tg-admin-bar-btn" onclick="tgOpenAddModal()">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Add
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="tg-wrap" id="tg-wrap">
+
+  <div class="tg-hero">
+    <div class="tg-hero-content">
+      <div class="tg-hero-tag">SHOP BY CATEGORY</div>
+      <h1 class="tg-hero-title">Everything you need,<br>all in one place.</h1>
+      <p class="tg-hero-sub">Explore 1000+ categories with exclusive deals</p>
+    </div>
+    <div class="tg-hero-badge">🛍️</div>
+  </div>
+
+  <div class="tg-tabs-wrap">
+    <div class="tg-tabs" id="tg-tabs">
+      <div class="tg-tab active" data-cat="all">All</div>
+    </div>
+  </div>
+
+  <div class="tg-sec">
+    <div class="tg-feat-grid" id="tg-feat-grid">
+      <div class="tg-skel tg-skel-feat" style="margin: 8px auto;"></div>
+      <div class="tg-skel tg-skel-feat" style="margin: 8px auto;"></div>
+      <div class="tg-skel tg-skel-feat" style="margin: 8px auto;"></div>
+      <div class="tg-skel tg-skel-feat" style="margin: 8px auto;"></div>
+    </div>
+  </div>
+
+  <div class="tg-sec" id="tg-chips-sec" style="display:none;">
+    <div class="tg-sec-head">
+      <div>
+        <div class="tg-sec-title">Refine <em>by</em></div>
+        <div class="tg-sec-sub" id="tg-chips-sub">Pick a sub-category</div>
+      </div>
+    </div>
+    <div class="tg-chips-wrap">
+      <div class="tg-chips" id="tg-chips"></div>
+    </div>
+  </div>
+
+  <div class="tg-sec">
+    <div class="tg-sec-head">
+      <div>
+        <div class="tg-sec-title">Shop by <em>Category</em></div>
+        <div class="tg-sec-sub" id="tg-cat-sub">Browse all categories</div>
+      </div>
+      <a href="products.html" class="tg-sec-link">
+        View All
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="tg-cat-grid" id="tg-cat-grid">
+      <div class="tg-skel tg-skel-cat"></div>
+      <div class="tg-skel tg-skel-cat"></div>
+      <div class="tg-skel tg-skel-cat"></div>
+      <div class="tg-skel tg-skel-cat"></div>
+      <div class="tg-skel tg-skel-cat"></div>
+      <div class="tg-skel tg-skel-cat"></div>
+    </div>
+  </div>
+
+  <div class="tg-sec" id="tg-trending-sec" style="display:none;">
+    <div class="tg-sec-head">
+      <div>
+        <div class="tg-sec-title">Trending in <em id="tg-trending-cat">this category</em></div>
+        <div class="tg-sec-sub">Top picks this week</div>
+      </div>
+      <a href="#" class="tg-sec-link" id="tg-trending-link">
+        View All
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="tg-prod-scroll">
+      <div class="tg-prod-row" id="tg-trending-row">
+        <div class="tg-skel tg-skel-prod"></div>
+        <div class="tg-skel tg-skel-prod"></div>
+        <div class="tg-skel tg-skel-prod"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-sec" id="tg-new-sec" style="display:none;">
+    <div class="tg-sec-head">
+      <div>
+        <div class="tg-sec-title">New <em>Arrivals</em></div>
+        <div class="tg-sec-sub">Fresh styles just dropped</div>
+      </div>
+      <a href="products.html?sort=newest" class="tg-sec-link">
+        View All
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="tg-prod-scroll">
+      <div class="tg-prod-row" id="tg-new-row">
+        <div class="tg-skel tg-skel-prod"></div>
+        <div class="tg-skel tg-skel-prod"></div>
+        <div class="tg-skel tg-skel-prod"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tg-sec" id="tg-best-sec" style="display:none;">
+    <div class="tg-sec-head">
+      <div>
+        <div class="tg-sec-title">Best<em>sellers</em></div>
+        <div class="tg-sec-sub">Loved by thousands</div>
+      </div>
+      <a href="products.html?sort=best" class="tg-sec-link">
+        View All
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="tg-prod-scroll">
+      <div class="tg-prod-row" id="tg-best-row">
+        <div class="tg-skel tg-skel-prod"></div>
+        <div class="tg-skel tg-skel-prod"></div>
+        <div class="tg-skel tg-skel-prod"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FAB -->
+<button class="tg-fab" id="tg-fab" onclick="tgOpenAddModal()" aria-label="Add Category">
+  <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+
+<!-- MODAL — Add/Edit -->
+<div class="tg-modal" id="tg-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title" id="tg-modal-title">Add Category</div>
+      <button class="tg-modal-close" onclick="tgCloseModal()">✕</button>
+    </div>
+
+    <input type="hidden" id="tg-cat-id">
+
+    <div class="tg-modal-field">
+      <label>Category Name *</label>
+      <input type="text" id="tg-cat-name" placeholder="e.g., Slippers" maxlength="50">
+    </div>
+
+    <div class="tg-modal-row">
+      <div class="tg-modal-field">
+        <label>Emoji Icon</label>
+        <input type="text" id="tg-cat-icon" placeholder="🩴" maxlength="4">
+      </div>
+      <div class="tg-modal-field">
+        <label>Order (smaller first)</label>
+        <input type="number" id="tg-cat-order" placeholder="1" value="10">
+      </div>
+    </div>
+
+    <div class="tg-modal-field">
+      <label>Image URL (optional)</label>
+      <input type="url" id="tg-cat-image" placeholder="https://res.cloudinary.com/...">
+      <div class="tg-modal-hint">Agar image URL daal do, to icon ki jagah image dikhegi.</div>
+    </div>
+
+    <div class="tg-modal-row">
+      <div class="tg-modal-field">
+        <label>Discount Text</label>
+        <input type="text" id="tg-cat-discount" placeholder="Up to 60% Off" maxlength="40">
+      </div>
+      <div class="tg-modal-field">
+        <label>Badge Text</label>
+        <input type="text" id="tg-cat-badge" placeholder="NEW / HOT" maxlength="12">
+      </div>
+    </div>
+
+    <div class="tg-modal-field">
+      <label>Sub-categories</label>
+      <input type="text" id="tg-cat-subs-input" placeholder="Type name and press Enter or comma" autocomplete="off">
+      <div class="tg-modal-hint">Enter ya comma se add karo. Example: Flip Flops, Slides, House Slippers</div>
+      <div class="tg-sub-preview" id="tg-sub-preview"></div>
+    </div>
+
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0 4px;cursor:pointer;">
+      <input type="checkbox" id="tg-cat-featured" style="width:16px;height:16px;accent-color:#2874f0;">
+      <span style="font-weight:600;color:#212121;">Show in Quick Access (Featured)</span>
+    </label>
+
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseModal()">Cancel</button>
+      <button class="tg-modal-btn primary" id="tg-modal-save" onclick="tgSaveCategory()">
+        <span id="tg-modal-save-text">Save Category</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL — Delete confirm -->
+<div class="tg-modal" id="tg-del-modal">
+  <div class="tg-modal-card" style="max-width:420px;">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Delete Category?</div>
+      <button class="tg-modal-close" onclick="tgCloseDelModal()">✕</button>
+    </div>
+    <p style="font-size:14px;color:#666;line-height:1.5;margin:0 0 6px;">
+      Are you sure you want to delete <b id="tg-del-name" style="color:#212121;">this category</b>?
+    </p>
+    <p style="font-size:12.5px;color:#d32f2f;margin:0 0 18px;">
+      ⚠ This action cannot be undone.
+    </p>
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseDelModal()">Cancel</button>
+      <button class="tg-modal-btn danger" id="tg-del-btn" onclick="tgConfirmDelete()">
+        <span id="tg-del-btn-text">Delete</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-cart-badge-m" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  const SUPER_ADMIN_EMAIL = 'anasfansclub@toego.in';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  /* ========= CACHE KEYS (lightning-fast repeat visits) ========= */
+  const CACHE_THEME = 'toego_cat_theme_v1';
+  const CACHE_CATS  = 'toego_cat_cats_v1';
+  const CACHE_PRODS = 'toego_cat_prods_v1';
+  const CACHE_TTL = 10 * 60 * 1000; // 10 min
+
+  function readCache(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const c = JSON.parse(raw);
+      if (!c || !c.data) return null;
+      if ((Date.now() - (c.time || 0)) > CACHE_TTL) return null;
+      return c.data;
+    } catch(e) { return null; }
+  }
+  function writeCache(key, data) {
+    try { localStorage.setItem(key, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
+  }
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(primary) {
+    primary = primary || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    writeCache(CACHE_THEME, primary);
+  }
+  // Instant: localStorage theme
+  try {
+    const cachedTheme = readCache(CACHE_THEME);
+    if (cachedTheme) applyTheme(cachedTheme);
+  } catch(e) {}
+
+  /* ========= HELPERS ========= */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2400);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN'); }
+  function slugify(s) { return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  function tsToMs(ts) {
+    if (!ts) return 0;
+    if (typeof ts.toDate === 'function') { try { return ts.toDate().getTime(); } catch(e) { return 0; } }
+    if (typeof ts === 'number') return ts;
+    if (ts.seconds) return ts.seconds * 1000;
+    if (ts._seconds) return ts._seconds * 1000;
+    return 0;
+  }
+
+  /* ========= STATE ========= */
+  let IS_ADMIN = false;
+  let ALL_CATEGORIES = [];
+  let ALL_FEATURED = [];
+  let currentCat = 'all';
+  let currentSub = 'all';
+  let allProducts = [];
+  let pendingSubs = [];
+  let deleteTarget = null;
+  let unsubscribeCategories = null;
+  let _productsFetchedOnce = false;
+
+  /* ========= DEFAULT CATEGORIES ========= */
+  const DEFAULT_CATEGORIES = [
+    { name:'Slippers', icon:'🩴', discount:'Up to 60% Off', image:'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400' },
+    { name:'Sandals',  icon:'👡', discount:'Up to 70% Off', image:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=400' },
+    { name:'Shoes',    icon:'👟', discount:'Up to 55% Off', image:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400' },
+    { name:'Sports',   icon:'⚽', discount:'Up to 50% Off', image:'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400' },
+    { name:'Casual',   icon:'👞', discount:'Up to 65% Off', image:'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=400' },
+    { name:'Formal',   icon:'👔', discount:'Up to 45% Off', image:'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400' },
+    { name:'Kids',     icon:'🧒', discount:'Up to 70% Off', image:'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=400' },
+    { name:'Winter',   icon:'❄️', discount:'Up to 55% Off', image:'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=400' },
+    { name:'Ethnic',   icon:'🪔', discount:'Up to 60% Off', image:'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400' },
+    { name:'Accessories', icon:'👜', discount:'Up to 65% Off', image:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400' },
+    { name:'Electronics', icon:'🎧', discount:'Up to 40% Off', image:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' },
+    { name:'Watches',  icon:'⌚', discount:'Up to 45% Off', image:'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=400' },
+    { name:'Beauty',   icon:'💄', discount:'Up to 70% Off', image:'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400' },
+    { name:'Home Decor', icon:'🏠', discount:'Up to 60% Off', image:'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400' },
+    { name:'Kitchen',  icon:'🍳', discount:'Up to 55% Off', image:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400' },
+    { name:'Toys',     icon:'🧸', discount:'Up to 50% Off', image:'https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=400' },
+    { name:'Bags',     icon:'🎒', discount:'Up to 60% Off', image:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400' }
+  ];
+
+  /* ========= ADMIN CHECK ========= */
+  async function checkAdmin(user) {
+    if (!user) { setAdmin(false); return; }
+    if (user.email === SUPER_ADMIN_EMAIL) { setAdmin(true); return; }
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      if (snap.exists) {
+        const role = (snap.data().role || '').toLowerCase();
+        setAdmin(role === 'admin' || role === 'superadmin');
+      } else {
+        setAdmin(false);
+      }
+    } catch(e) { setAdmin(false); }
+  }
+
+  function setAdmin(on) {
+    IS_ADMIN = on;
+    document.body.classList.toggle('tg-admin-mode', on);
+    const bar = document.getElementById('tg-admin-bar');
+    const fab = document.getElementById('tg-fab');
+    const sub = document.getElementById('tg-admin-bar-sub');
+    if (bar) bar.classList.toggle('show', on);
+    if (fab) fab.classList.toggle('show', on);
+    if (sub) sub.textContent = 'Tap any category to edit or delete';
+    if (on) {
+      document.querySelector('.tg-wrap').style.paddingTop = '58px';
+    }
+    // Re-render grid to inject/remove admin buttons
+    renderCategoryGrid();
+  }
+
+  /* ========= RENDER TABS ========= */
+  function renderTabs() {
+    const el = document.getElementById('tg-tabs');
+    if (!el) return;
+    const cats = ALL_CATEGORIES.slice(0, 12);
+    let html = '<div class="tg-tab ' + (currentCat==='all'?'active':'') + '" data-cat="all" onclick="tgPickTab(\'all\', this)">All</div>';
+    cats.forEach(c => {
+      const slug = slugify(c.name);
+      html += '<div class="tg-tab ' + (currentCat===slug?'active':'') + '" data-cat="' + slug + '" onclick="tgPickTab(\'' + slug + '\', this)">' + esc(c.name) + '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  /* ========= RENDER FEATURED ========= */
+  function renderFeatured() {
+    const el = document.getElementById('tg-feat-grid');
+    if (!el) return;
+    const items = ALL_FEATURED.slice(0, 8);
+    if (!items.length) { el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:14px;color:#999;font-size:13px;">No featured categories</div>'; return; }
+    el.innerHTML = items.map(f => {
+      const slug = slugify(f.name);
+      const imgTag = f.image ? '<img src="' + esc(f.image) + '" alt="' + esc(f.name) + '" loading="lazy" decoding="async" />' : esc(f.icon || '📦');
+      return '<div class="tg-feat-item" onclick="tgPickTab(\'' + slug + '\')">' +
+        '<div class="tg-feat-icon">' + imgTag + '</div>' +
+        '<div class="tg-feat-label">' + esc(f.name) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ========= RENDER CHIPS ========= */
+  function renderChips() {
+    const sec = document.getElementById('tg-chips-sec');
+    const el = document.getElementById('tg-chips');
+    const sub = document.getElementById('tg-chips-sub');
+    if (!sec || !el) return;
+
+    if (currentCat === 'all') { sec.style.display = 'none'; return; }
+
+    const catObj = ALL_CATEGORIES.find(c => slugify(c.name) === currentCat);
+    if (!catObj) { sec.style.display = 'none'; return; }
+
+    const subcats = catObj.subcategories || [];
+    if (!subcats.length) { sec.style.display = 'none'; return; }
+
+    sec.style.display = 'block';
+    sub.textContent = 'Browse ' + catObj.name + ' sub-categories';
+
+    let html = '<div class="tg-chip ' + (currentSub==='all'?'active':'') + '" onclick="tgPickSub(\'all\', this)">All ' + esc(catObj.name) + '</div>';
+    subcats.forEach(s => {
+      const name = typeof s === 'string' ? s : (s.name || '');
+      const icon = typeof s === 'object' ? (s.icon || '') : '';
+      const slug = slugify(name);
+      html += '<div class="tg-chip ' + (currentSub===slug?'active':'') + '" data-sub="' + slug + '" onclick="tgPickSub(\'' + slug + '\', this)">' +
+        (icon ? '<span class="tg-chip-emoji">' + icon + '</span>' : '') +
+        esc(name) +
+      '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  /* ========= RENDER CATEGORY GRID ========= */
+  function renderCategoryGrid() {
+    const el = document.getElementById('tg-cat-grid');
+    const sub = document.getElementById('tg-cat-sub');
+    if (!el) return;
+
+    let cats = ALL_CATEGORIES;
+
+    if (currentCat !== 'all') {
+      const catObj = ALL_CATEGORIES.find(c => slugify(c.name) === currentCat);
+      if (catObj) {
+        const subcats = catObj.subcategories || [];
+        if (subcats.length) {
+          sub.textContent = catObj.name + ' — pick a sub-category';
+          el.innerHTML = subcats.map(s => {
+            const name = typeof s === 'string' ? s : (s.name || '');
+            const icon = typeof s === 'object' ? (s.icon || '📦') : '📦';
+            const image = typeof s === 'object' ? s.image : '';
+            const disc = typeof s === 'object' ? s.discount : '';
+            const slug = slugify(name);
+            const catLink = 'products.html?category=' + encodeURIComponent(slug);
+            return '<div class="tg-cat-card" onclick="location.href=\'' + catLink + '\'">' +
+              (image
+                ? '<div class="tg-cat-img" style="background-image:url(\'' + esc(image) + '\')"></div>'
+                : '<div class="tg-cat-emoji">' + esc(icon) + '</div>') +
+              '<div class="tg-cat-overlay"></div>' +
+              '<div class="tg-cat-body">' +
+                '<div class="tg-cat-name">' + esc(name) + '</div>' +
+                (disc ? '<div class="tg-cat-off">' + esc(disc) + '</div>' : '') +
+              '</div>' +
+            '</div>';
+          }).join('');
+          return;
+        }
+        cats = [catObj];
+      }
+    }
+
+    if (!cats.length) {
+      sub.textContent = 'No categories yet';
+      el.innerHTML = '<div class="tg-empty" style="grid-column:1/-1;margin:0;"><div class="tg-empty-icon">📦</div><h3>No categories</h3><p>' + (IS_ADMIN ? 'Tap the yellow + button to add one' : 'Check back later') + '</p></div>';
+      return;
+    }
+
+    sub.textContent = 'Browse all ' + cats.length + ' categories';
+
+    el.innerHTML = cats.map(c => {
+      const slug = slugify(c.name);
+      const catLink = 'products.html?category=' + encodeURIComponent(slug);
+      const image = c.image || '';
+      const icon = c.icon || '📦';
+      const disc = c.discount || '';
+      const badge = c.badge || '';
+      const id = c.id || '';
+      const adminBtns = IS_ADMIN ? (
+        '<div class="tg-cat-admin">' +
+          '<button class="tg-cat-admin-btn" onclick="event.stopPropagation();event.preventDefault();tgOpenEditModal(\'' + esc(id) + '\')" title="Edit">' +
+            '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+          '</button>' +
+          '<button class="tg-cat-admin-btn danger" onclick="event.stopPropagation();event.preventDefault();tgOpenDelModal(\'' + esc(id) + '\',\'' + esc(c.name).replace(/'/g,"&#39;") + '\')" title="Delete">' +
+            '<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>' +
+          '</button>' +
+        '</div>'
+      ) : '';
+      return '<div class="tg-cat-card" onclick="location.href=\'' + catLink + '\'">' +
+        adminBtns +
+        (badge ? '<div class="tg-cat-badge">' + esc(badge) + '</div>' : '') +
+        (image
+          ? '<div class="tg-cat-img" style="background-image:url(\'' + esc(image) + '\')"></div>'
+          : '<div class="tg-cat-emoji">' + esc(icon) + '</div>') +
+        '<div class="tg-cat-overlay"></div>' +
+        '<div class="tg-cat-body">' +
+          '<div class="tg-cat-name">' + esc(c.name) + '</div>' +
+          (disc ? '<div class="tg-cat-off">' + esc(disc) + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ========= LOAD PRODUCTS (with cache + reduced limit) ========= */
+  async function loadProducts() {
+    if (_productsFetchedOnce) return;
+    _productsFetchedOnce = true;
+    try {
+      let snap;
+      try {
+        snap = await db.collection('products').where('active','==',true).where('approved','==',true).limit(60).get();
+      } catch(e) {
+        try {
+          snap = await db.collection('products').where('active','==',true).limit(60).get();
+        } catch(e2) {
+          snap = await db.collection('products').limit(60).get();
+        }
+      }
+      allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      writeCache(CACHE_PRODS, allProducts);
+      renderProductSections();
+    } catch(e) { allProducts = allProducts || []; }
+  }
+
+  function productCardHtml(p) {
+    const price = Number(p.price || 0);
+    const old = Number(p.compareAtPrice || p.mrp || 0);
+    const disc = old > price ? Math.round((1 - price/old)*100) : 0;
+    const img = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/300x300/f1f3f6/878787?text=TOEGO';
+    return '<div class="tg-pcard" onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'">' +
+      '<div class="tg-pcard-img"><img src="' + esc(img) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" /></div>' +
+      '<div class="tg-pcard-body">' +
+        '<div class="tg-pcard-title">' + esc(p.name || 'Product') + '</div>' +
+        '<div class="tg-pcard-price-row">' +
+          '<span class="tg-pcard-price">' + fmtINR(price) + '</span>' +
+          (old > price ? '<span class="tg-pcard-mrp">' + fmtINR(old) + '</span>' : '') +
+          (disc > 0 ? '<span class="tg-pcard-off">' + disc + '% off</span>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ========= RENDER PRODUCT SECTIONS ========= */
+  function renderProductSections() {
+    const trendingSec = document.getElementById('tg-trending-sec');
+    const newSec = document.getElementById('tg-new-sec');
+    const bestSec = document.getElementById('tg-best-sec');
+    const trendingRow = document.getElementById('tg-trending-row');
+    const newRow = document.getElementById('tg-new-row');
+    const bestRow = document.getElementById('tg-best-row');
+    const trendingCatEl = document.getElementById('tg-trending-cat');
+    const trendingLink = document.getElementById('tg-trending-link');
+
+    let products = allProducts;
+    if (currentCat !== 'all') {
+      products = products.filter(p => {
+        const pc = slugify(p.category || '');
+        const ps = slugify(p.subCategory || p.subcategory || '');
+        if (currentSub !== 'all') return ps === currentSub;
+        return pc === currentCat || ps === currentCat;
+      });
+      const catObj = ALL_CATEGORIES.find(c => slugify(c.name) === currentCat);
+      if (catObj && trendingCatEl) trendingCatEl.textContent = catObj.name;
+      if (trendingLink) trendingLink.href = 'products.html?category=' + encodeURIComponent(currentCat);
+      if (products.length) {
+        if (trendingSec) trendingSec.style.display = 'block';
+        if (newSec) newSec.style.display = 'block';
+        if (bestSec) bestSec.style.display = 'block';
+      } else {
+        if (trendingSec) trendingSec.style.display = 'none';
+        if (newSec) newSec.style.display = 'none';
+        if (bestSec) bestSec.style.display = 'none';
+      }
+    } else {
+      if (trendingCatEl) trendingCatEl.textContent = 'this season';
+      if (allProducts.length >= 3) {
+        if (trendingSec) trendingSec.style.display = 'block';
+        if (newSec) newSec.style.display = 'block';
+        if (bestSec) bestSec.style.display = 'block';
+      }
+    }
+
+    if (!products.length) return;
+
+    const trending = [...products].sort((a,b) => (b.views||0)-(a.views||0)).slice(0,8);
+    const newArr = [...products].sort((a,b) => tsToMs(b.createdAt) - tsToMs(a.createdAt)).slice(0,8);
+    const best = [...products].sort((a,b) => (b.sales||0)-(a.sales||0)).slice(0,8);
+
+    if (trendingRow) trendingRow.innerHTML = trending.map(productCardHtml).join('');
+    if (newRow) newRow.innerHTML = newArr.map(productCardHtml).join('');
+    if (bestRow) bestRow.innerHTML = best.map(productCardHtml).join('');
+  }
+
+  /* ========= LOAD CATEGORIES — cache-first, then realtime ========= */
+  function loadCategoriesRealtime() {
+    if (unsubscribeCategories) { try { unsubscribeCategories(); } catch(e){} }
+    unsubscribeCategories = db.collection('categories').onSnapshot(snap => {
+      let cats;
+      if (snap.empty) {
+        cats = DEFAULT_CATEGORIES.map((c,i) => ({ id: 'default-' + i, ...c }));
+      } else {
+        cats = snap.docs.map(d => {
+          const data = d.data();
+          return {
+            id: d.id,
+            name: data.name || d.id,
+            icon: data.icon || '📦',
+            image: data.image || '',
+            discount: data.discount || data.offer || '',
+            badge: data.badge || '',
+            order: data.order || 9999,
+            subcategories: data.subcategories || data.subs || [],
+            featured: data.featured === true
+          };
+        });
+        cats.sort((a,b) => (a.order||0) - (b.order||0));
+      }
+      ALL_CATEGORIES = cats;
+      writeCache(CACHE_CATS, cats);
+      ALL_FEATURED = ALL_CATEGORIES.filter(c => c.featured);
+      if (ALL_FEATURED.length < 4) ALL_FEATURED = ALL_CATEGORIES.slice(0, 8);
+
+      renderTabs();
+      renderFeatured();
+      renderChips();
+      renderCategoryGrid();
+    }, err => {
+      console.warn('categories onSnapshot error:', err && err.message);
+      if (!ALL_CATEGORIES.length) {
+        ALL_CATEGORIES = DEFAULT_CATEGORIES.map((c,i) => ({ id: 'default-' + i, ...c }));
+        ALL_FEATURED = ALL_CATEGORIES.slice(0, 8);
+        renderTabs();
+        renderFeatured();
+        renderChips();
+        renderCategoryGrid();
+      }
+    });
+  }
+
+  /* ========= TAB / CHIP PICKERS ========= */
+  window.tgPickTab = function(slug, el) {
+    currentCat = slug;
+    currentSub = 'all';
+    document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === slug));
+    renderChips();
+    renderCategoryGrid();
+    renderProductSections();
+    const grid = document.getElementById('tg-cat-grid');
+    if (grid) {
+      const top = grid.getBoundingClientRect().top + window.pageYOffset - 130;
+      try { window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' }); } catch(e) {}
+    }
+  };
+
+  window.tgPickSub = function(slug, el) {
+    currentSub = slug;
+    document.querySelectorAll('#tg-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.sub === slug || (slug==='all' && !c.dataset.sub)));
+    renderProductSections();
+  };
+
+  /* ========= SEARCH ========= */
+  window.tgSearch = function() {
+    const q = (document.getElementById('tg-search-input').value || '').trim();
+    if (!q) { toast('Type something to search'); return; }
+    location.href = 'products.html?q=' + encodeURIComponent(q);
+  };
+
+  /* ========= ADMIN MODAL ========= */
+  function resetModal() {
+    document.getElementById('tg-cat-id').value = '';
+    document.getElementById('tg-cat-name').value = '';
+    document.getElementById('tg-cat-icon').value = '';
+    document.getElementById('tg-cat-order').value = '10';
+    document.getElementById('tg-cat-image').value = '';
+    document.getElementById('tg-cat-discount').value = '';
+    document.getElementById('tg-cat-badge').value = '';
+    document.getElementById('tg-cat-subs-input').value = '';
+    document.getElementById('tg-cat-featured').checked = false;
+    pendingSubs = [];
+    renderSubPreview();
+  }
+
+  function renderSubPreview() {
+    const el = document.getElementById('tg-sub-preview');
+    if (!el) return;
+    if (!pendingSubs.length) { el.innerHTML = ''; return; }
+    el.innerHTML = pendingSubs.map((s, i) => {
+      const name = typeof s === 'string' ? s : (s.name || '');
+      const icon = typeof s === 'object' && s.icon ? s.icon : '';
+      return '<span class="tg-sub-pill">' + (icon ? icon + ' ' : '') + esc(name) +
+        '<button type="button" onclick="tgRemoveSub(' + i + ')">✕</button></span>';
+    }).join('');
+  }
+
+  window.tgRemoveSub = function(i) {
+    pendingSubs.splice(i, 1);
+    renderSubPreview();
+  };
+
+  window.tgOpenAddModal = function() {
+    if (!IS_ADMIN) return;
+    resetModal();
+    document.getElementById('tg-modal-title').textContent = 'Add Category';
+    document.getElementById('tg-modal-save-text').textContent = 'Save Category';
+    document.getElementById('tg-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('tg-cat-name').focus(), 200);
+  };
+
+  window.tgOpenEditModal = function(id) {
+    if (!IS_ADMIN) return;
+    const cat = ALL_CATEGORIES.find(c => c.id === id);
+    if (!cat) { toast('Category not found', 'error'); return; }
+
+    resetModal();
+    document.getElementById('tg-modal-title').textContent = 'Edit Category';
+    document.getElementById('tg-modal-save-text').textContent = 'Update Category';
+    document.getElementById('tg-cat-id').value = id;
+    document.getElementById('tg-cat-name').value = cat.name || '';
+    document.getElementById('tg-cat-icon').value = cat.icon || '';
+    document.getElementById('tg-cat-order').value = cat.order || 10;
+    document.getElementById('tg-cat-image').value = cat.image || '';
+    document.getElementById('tg-cat-discount').value = cat.discount || '';
+    document.getElementById('tg-cat-badge').value = cat.badge || '';
+    document.getElementById('tg-cat-featured').checked = cat.featured === true;
+    pendingSubs = (cat.subcategories || []).slice();
+    renderSubPreview();
+
+    document.getElementById('tg-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('tg-cat-name').focus(), 200);
+  };
+
+  window.tgCloseModal = function() {
+    document.getElementById('tg-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+
+  (function subInputHandler() {
+    const inp = document.getElementById('tg-cat-subs-input');
+    if (!inp) return;
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const v = inp.value.trim().replace(/,+$/, '');
+        if (v) {
+          const m = v.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})\s*(.+)$/u);
+          if (m) {
+            pendingSubs.push({ name: m[2].trim(), icon: m[1] });
+          } else {
+            pendingSubs.push(v);
+          }
+          inp.value = '';
+          renderSubPreview();
+        }
+      } else if (e.key === 'Backspace' && !inp.value && pendingSubs.length) {
+        pendingSubs.pop();
+        renderSubPreview();
+      }
+    });
+    inp.addEventListener('blur', () => {
+      const v = inp.value.trim().replace(/,+$/, '');
+      if (v) {
+        const m = v.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})\s*(.+)$/u);
+        if (m) pendingSubs.push({ name: m[2].trim(), icon: m[1] });
+        else pendingSubs.push(v);
+        inp.value = '';
+        renderSubPreview();
+      }
+    });
+  })();
+
+  /* ========= SAVE CATEGORY ========= */
+  window.tgSaveCategory = async function() {
+    if (!IS_ADMIN) { toast('Admin only', 'error'); return; }
+    const name = (document.getElementById('tg-cat-name').value || '').trim();
+    if (!name) { toast('Category name required', 'error'); document.getElementById('tg-cat-name').focus(); return; }
+
+    const id = document.getElementById('tg-cat-id').value;
+    const icon = (document.getElementById('tg-cat-icon').value || '').trim() || '📦';
+    const order = Number(document.getElementById('tg-cat-order').value) || 10;
+    const image = (document.getElementById('tg-cat-image').value || '').trim();
+    const discount = (document.getElementById('tg-cat-discount').value || '').trim();
+    const badge = (document.getElementById('tg-cat-badge').value || '').trim();
+    const featured = document.getElementById('tg-cat-featured').checked;
+
+    const subInp = document.getElementById('tg-cat-subs-input');
+    if (subInp && subInp.value.trim()) {
+      const v = subInp.value.trim().replace(/,+$/, '');
+      const m = v.match(/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})\s*(.+)$/u);
+      if (m) pendingSubs.push({ name: m[2].trim(), icon: m[1] });
+      else pendingSubs.push(v);
+      subInp.value = '';
+    }
+
+    const payload = {
+      name,
+      icon,
+      image,
+      discount,
+      badge,
+      order,
+      featured,
+      subcategories: pendingSubs.slice(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    const btn = document.getElementById('tg-modal-save');
+    const txt = document.getElementById('tg-modal-save-text');
+    btn.disabled = true;
+    const origText = txt.textContent;
+    txt.textContent = id ? 'Updating…' : 'Saving…';
+
+    try {
+      if (id && !id.startsWith('default-')) {
+        await db.collection('categories').doc(id).set(payload, { merge: true });
+        toast('Category updated ✓', 'success');
+      } else {
+        payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection('categories').add(payload);
+        toast('Category added ✓', 'success');
+      }
+      tgCloseModal();
+    } catch (err) {
+      console.error(err);
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false;
+      txt.textContent = origText;
+    }
+  };
+
+  /* ========= DELETE CATEGORY ========= */
+  window.tgOpenDelModal = function(id, name) {
+    if (!IS_ADMIN) return;
+    deleteTarget = id;
+    document.getElementById('tg-del-name').textContent = name || 'this category';
+    document.getElementById('tg-del-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgCloseDelModal = function() {
+    document.getElementById('tg-del-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    deleteTarget = null;
+  };
+
+  window.tgConfirmDelete = async function() {
+    if (!IS_ADMIN || !deleteTarget) return;
+    const id = deleteTarget;
+    const btn = document.getElementById('tg-del-btn');
+    const txt = document.getElementById('tg-del-btn-text');
+    btn.disabled = true;
+    txt.textContent = 'Deleting…';
+
+    try {
+      if (id.startsWith('default-')) {
+        toast('This is a default category and cannot be deleted', 'error');
+        btn.disabled = false;
+        txt.textContent = 'Delete';
+        return;
+      }
+      await db.collection('categories').doc(id).delete();
+      toast('Category deleted ✓', 'success');
+      tgCloseDelModal();
+    } catch (err) {
+      console.error(err);
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+      btn.disabled = false;
+      txt.textContent = 'Delete';
+    }
+  };
+
+  /* ========= CART BADGE ========= */
+  async function updateCartBadge() {
+    let count = 0;
+    const u = auth.currentUser;
+    try {
+      if (u) {
+        const snap = await db.collection('carts').doc(u.uid).collection('items').get({ source: 'cache' })
+          .catch(() => db.collection('carts').doc(u.uid).collection('items').get());
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+        gc.forEach(i => { count += Number(i.qty || 1); });
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ========= BOOT: instant render from cache ========= */
+  function bootFromCache() {
+    // Categories — instant
+    const cachedCats = readCache(CACHE_CATS);
+    if (cachedCats && cachedCats.length) {
+      ALL_CATEGORIES = cachedCats;
+      ALL_FEATURED = ALL_CATEGORIES.filter(c => c.featured);
+      if (ALL_FEATURED.length < 4) ALL_FEATURED = ALL_CATEGORIES.slice(0, 8);
+      renderTabs();
+      renderFeatured();
+      renderChips();
+      renderCategoryGrid();
+    } else {
+      // No cache: show defaults immediately, don't wait for network
+      ALL_CATEGORIES = DEFAULT_CATEGORIES.map((c,i) => ({ id: 'default-' + i, ...c }));
+      ALL_FEATURED = ALL_CATEGORIES.slice(0, 8);
+      renderTabs();
+      renderFeatured();
+      renderChips();
+      renderCategoryGrid();
+    }
+    // Products — instant
+    const cachedProds = readCache(CACHE_PRODS);
+    if (cachedProds && cachedProds.length) {
+      allProducts = cachedProds;
+      renderProductSections();
+    }
+  }
+
+  /* ========= INIT ========= */
+  bootFromCache();
+
+  // Background: theme (non-blocking)
+  db.collection('siteSettings').doc('theme').get().then(snap => {
+    if (!snap.exists) return;
+    const d = snap.data();
+    const c = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '';
+    if (c) applyTheme(c);
+  }).catch(() => {});
+
+  // Background: categories realtime listener
+  loadCategoriesRealtime();
+
+  // Background: products via idle callback (non-blocking)
+  const scheduleProducts = () => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => loadProducts(), { timeout: 2000 });
+    } else {
+      setTimeout(() => loadProducts(), 400);
+    }
+  };
+  scheduleProducts();
+
+  // Cart badge
+  updateCartBadge();
+
+  // Auth
+  auth.onAuthStateChanged((u) => {
+    checkAdmin(u);
+    updateCartBadge();
+  });
+
+  // click outside modal to close
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', (e) => {
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

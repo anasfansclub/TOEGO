@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Coupons — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+/* ⭐ HEADER ⭐ */
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
+
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+/* ⭐ HERO ⭐ */
+.tg-hero {
+  background: linear-gradient(135deg, #7e57c2 0%, #5e35b1 100%);
+  color: #fff;
+  border-radius: 14px;
+  padding: 22px 20px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(126,87,194,0.28);
+}
+.tg-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,229,0,0.22), transparent 70%);
+  border-radius: 50%;
+  animation: tgHeroFloat 6s ease-in-out infinite;
+}
+@keyframes tgHeroFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(12px,-12px) scale(1.08); }
+}
+.tg-hero-content { position: relative; z-index: 2; }
+.tg-hero-tag {
+  display: inline-block;
+  background: #ffe500;
+  color: #212121;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.tg-hero-title { font-size: 22px; font-weight: 900; margin: 0 0 6px; letter-spacing: -0.3px; }
+.tg-hero-sub { font-size: 13px; opacity: 0.95; margin: 0; font-weight: 500; }
+.tg-hero-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  flex-wrap: wrap;
+}
+.tg-hero-stat-num { font-size: 18px; font-weight: 900; line-height: 1; }
+.tg-hero-stat-label { font-size: 10.5px; opacity: 0.85; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* ⭐ TABS ⭐ */
+.tg-tabs-wrap { background: #fff; border-radius: 10px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; box-shadow: 0 1px 3px rgba(0,0,0,0.06); position: sticky; top: 58px; z-index: 50; }
+.tg-tabs-wrap::-webkit-scrollbar { display: none; }
+.tg-tabs { display: flex; padding: 0 4px; width: max-content; min-width: 100%; }
+.tg-tab { padding: 14px 16px 12px; font-size: 13.5px; font-weight: 600; color: #666; white-space: nowrap; cursor: pointer; position: relative; transition: color .2s; display: flex; align-items: center; gap: 6px; }
+.tg-tab.active { color: #7e57c2; font-weight: 700; }
+.tg-tab::after { content: ''; position: absolute; bottom: 0; left: 8px; right: 8px; height: 3px; background: #7e57c2; border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform .25s cubic-bezier(.4,0,.2,1); }
+.tg-tab.active::after { transform: scaleX(1); }
+.tg-tab-count { background: #f1f3f6; color: #666; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 8px; min-width: 18px; text-align: center; }
+.tg-tab.active .tg-tab-count { background: #7e57c2; color: #fff; }
+
+/* ⭐ COUPON CARD — TICKET STYLE ⭐ */
+.tg-coupons { display: flex; flex-direction: column; gap: 14px; }
+.tg-coupon {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  position: relative;
+  transition: transform .15s, box-shadow .2s;
+  min-height: 130px;
+}
+.tg-coupon:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.10); }
+.tg-coupon.expired { opacity: 0.55; filter: grayscale(0.4); }
+.tg-coupon.used { opacity: 0.7; }
+
+.tg-coupon-left {
+  flex: 0 0 130px;
+  background: linear-gradient(135deg, #7e57c2, #5e35b1);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 12px;
+  position: relative;
+  text-align: center;
+}
+.tg-coupon.expired .tg-coupon-left { background: linear-gradient(135deg, #9e9e9e, #616161); }
+.tg-coupon.used .tg-coupon-left { background: linear-gradient(135deg, #1b8a3a, #0d5c22); }
+.tg-coupon-discount {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1px;
+  margin-bottom: 4px;
+}
+.tg-coupon-discount-unit { font-size: 14px; font-weight: 800; }
+.tg-coupon-discount-label {
+  font-size: 10.5px;
+  opacity: 0.9;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.tg-coupon-right {
+  flex: 1;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+}
+.tg-coupon-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #212121;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  letter-spacing: -0.2px;
+}
+.tg-coupon-desc {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tg-coupon-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 10.5px;
+  color: #888;
+  margin-top: 2px;
+}
+.tg-coupon-term { display: inline-flex; align-items: center; gap: 3px; }
+.tg-coupon-term svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+/* Perforated edge circles */
+.tg-coupon::before,
+.tg-coupon::after {
+  content: '';
+  position: absolute;
+  left: 116px;
+  width: 14px;
+  height: 14px;
+  background: #f1f3f6;
+  border-radius: 50%;
+  z-index: 2;
+}
+.tg-coupon::before { top: -7px; }
+.tg-coupon::after { bottom: -7px; }
+
+.tg-coupon-dashed {
+  position: absolute;
+  left: 122px;
+  top: 8px;
+  bottom: 8px;
+  width: 0;
+  border-left: 2px dashed #e0e0e0;
+  z-index: 1;
+}
+
+/* Code strip */
+.tg-coupon-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed #e0e0e0;
+}
+.tg-coupon-code {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: 900;
+  color: #7e57c2;
+  letter-spacing: 1.5px;
+  background: #f3eefb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1.5px dashed #7e57c2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+.tg-coupon.used .tg-coupon-code { color: #1b8a3a; background: #e6f7ec; border-color: #1b8a3a; }
+.tg-coupon.expired .tg-coupon-code { color: #666; background: #f5f5f5; border-color: #999; }
+
+.tg-coupon-copy-btn {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #7e57c2, #5e35b1);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(126,87,194,0.35);
+  transition: transform .12s, box-shadow .15s, filter .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.tg-coupon-copy-btn:hover { filter: brightness(1.08); box-shadow: 0 4px 12px rgba(126,87,194,0.5); }
+.tg-coupon-copy-btn:active { transform: translateY(1px); }
+.tg-coupon-copy-btn.copied { background: linear-gradient(135deg, #1b8a3a, #0d5c22); box-shadow: 0 2px 8px rgba(27,138,58,0.35); }
+.tg-coupon-copy-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+/* Status pill */
+.tg-coupon-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3;
+}
+.tg-coupon-status.used { background: #e6f7ec; color: #1b8a3a; }
+.tg-coupon-status.expired { background: #ffebee; color: #d32f2f; }
+.tg-coupon-status.expiring { background: #fff8e1; color: #f57c00; }
+
+@media (max-width: 480px) {
+  .tg-coupon-left { flex: 0 0 108px; padding: 14px 8px; }
+  .tg-coupon-discount { font-size: 22px; }
+  .tg-coupon-discount-unit { font-size: 12px; }
+  .tg-coupon-discount-label { font-size: 9.5px; }
+  .tg-coupon::before, .tg-coupon::after { left: 96px; }
+  .tg-coupon-dashed { left: 102px; }
+  .tg-coupon-right { padding: 12px 12px; }
+  .tg-coupon-code { font-size: 12px; padding: 3px 8px; max-width: 130px; }
+  .tg-coupon-copy-btn { padding: 6px 10px; font-size: 10.5px; }
+}
+
+/* ⭐ EMPTY / SKELETON ⭐ */
+.tg-empty { background: #fff; border-radius: 12px; padding: 50px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-empty-icon {
+  width: 120px; height: 120px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg,#f3eefb,#e0d4f5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+}
+.tg-empty-title { font-size: 19px; font-weight: 800; margin: 0 0 8px; }
+.tg-empty-desc { font-size: 13.5px; color: #666; line-height: 1.55; margin: 0 auto 22px; max-width: 340px; }
+.tg-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  background: linear-gradient(135deg, #7e57c2, #5e35b1);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  border-radius: 8px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  box-shadow: 0 6px 18px rgba(126,87,194,0.3);
+  transition: all .15s;
+}
+.tg-empty-cta:hover { filter: brightness(1.06); }
+.tg-empty-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 10px; }
+@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tg-skel-coupon { height: 130px; margin-bottom: 14px; }
+
+/* ⭐ BOTTOM NAV ⭐ */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* ⭐ TOASTS ⭐ */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: #7e57c2; }
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">My Coupons</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <div class="tg-hero">
+      <div class="tg-hero-content">
+        <div class="tg-hero-tag">🎟️ COUPONS</div>
+        <h1 class="tg-hero-title">Save More with Coupons!</h1>
+        <p class="tg-hero-sub">Copy code and apply at cart to get instant discount</p>
+        <div class="tg-hero-stats">
+          <div>
+            <div class="tg-hero-stat-num" id="tg-stat-available">0</div>
+            <div class="tg-hero-stat-label">Available</div>
+          </div>
+          <div>
+            <div class="tg-hero-stat-num" id="tg-stat-expiring">0</div>
+            <div class="tg-hero-stat-label">Expiring Soon</div>
+          </div>
+          <div>
+            <div class="tg-hero-stat-num" id="tg-stat-used">0</div>
+            <div class="tg-hero-stat-label">Used</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tg-tabs-wrap">
+      <div class="tg-tabs" id="tg-tabs">
+        <div class="tg-tab active" data-tab="available" onclick="tgPickTab('available')">Available <span class="tg-tab-count" id="tg-count-available">0</span></div>
+        <div class="tg-tab" data-tab="expiring" onclick="tgPickTab('expiring')">Expiring Soon <span class="tg-tab-count" id="tg-count-expiring">0</span></div>
+        <div class="tg-tab" data-tab="used" onclick="tgPickTab('used')">Used <span class="tg-tab-count" id="tg-count-used">0</span></div>
+        <div class="tg-tab" data-tab="expired" onclick="tgPickTab('expired')">Expired <span class="tg-tab-count" id="tg-count-expired">0</span></div>
+      </div>
+    </div>
+
+    <div class="tg-coupons" id="tg-coupons"></div>
+
+    <div id="tg-loading">
+      <div class="tg-skel tg-skel-coupon"></div>
+      <div class="tg-skel tg-skel-coupon"></div>
+      <div class="tg-skel tg-skel-coupon"></div>
+    </div>
+
+    <div class="tg-empty" id="tg-empty" style="display:none;">
+      <div class="tg-empty-icon">🎟️</div>
+      <h2 class="tg-empty-title" id="tg-empty-title">No coupons here</h2>
+      <p class="tg-empty-desc" id="tg-empty-desc">Check back later for exclusive deals and discounts.</p>
+      <a href="shop-home.html" class="tg-empty-cta">
+        <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+        Start Shopping
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-cart-badge-m" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  /* ⭐ THEME ⭐ */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(p) {
+    p = p || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', p);
+    document.documentElement.style.setProperty('--tg-primary', p);
+  }
+  (function boot() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+  })();
+  (async function loadTheme() {
+    try {
+      const s = await db.collection('siteSettings').doc('theme').get();
+      if (s.exists) {
+        const d = s.data();
+        applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
+      }
+    } catch(e) {}
+  })();
+
+  /* ⭐ HELPERS ⭐ */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function parseDate(d) {
+    if (!d) return null;
+    try {
+      // Firestore Timestamp
+      if (typeof d.toDate === 'function') return d.toDate();
+      // {seconds, nanoseconds}
+      if (typeof d === 'object' && d.seconds != null) return new Date(d.seconds * 1000);
+      // ISO string or date string
+      return new Date(d);
+    } catch(e) { return null; }
+  }
+
+  function fmtDate(d) {
+    const dt = parseDate(d);
+    if (!dt) return '—';
+    return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function daysLeft(d) {
+    const dt = parseDate(d);
+    if (!dt) return null;
+    const diff = dt.getTime() - Date.now();
+    return Math.ceil(diff / 86400000);
+  }
+
+  /* ⭐ STATE ⭐ */
+  let USER = null;
+  let ALL_COUPONS = [];
+  let USED_CODES = new Set();  // codes used by this user
+  let CURRENT_TAB = 'available';
+  let unsubCoupons = null;
+  let unsubOrders = null;
+
+  /* ⭐ TAB PICKER ⭐ */
+  window.tgPickTab = function(tab) {
+    CURRENT_TAB = tab;
+    document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    renderCoupons();
+  };
+
+  /* ⭐ CLASSIFY COUPON ⭐ */
+  function classifyCoupon(c) {
+    const code = String(c.code || c.id || '').toUpperCase();
+    if (USED_CODES.has(code)) return 'used';
+    const left = daysLeft(c.expiry);
+    if (left !== null && left < 0) return 'expired';
+    if (left !== null && left <= 3) return 'expiring';
+    return 'available';
+  }
+
+  /* ⭐ RENDER COUPONS ⭐ */
+  function renderCoupons() {
+    const wrap = document.getElementById('tg-coupons');
+    const loading = document.getElementById('tg-loading');
+    const empty = document.getElementById('tg-empty');
+    if (!wrap) return;
+    if (loading) loading.style.display = 'none';
+
+    // Filter
+    let list = ALL_COUPONS.slice();
+    if (CURRENT_TAB === 'available') {
+      list = list.filter(c => {
+        const s = classifyCoupon(c);
+        return s === 'available' || s === 'expiring';
+      });
+    } else if (CURRENT_TAB === 'expiring') {
+      list = list.filter(c => classifyCoupon(c) === 'expiring');
+    } else if (CURRENT_TAB === 'used') {
+      list = list.filter(c => classifyCoupon(c) === 'used');
+    } else if (CURRENT_TAB === 'expired') {
+      list = list.filter(c => classifyCoupon(c) === 'expired');
+    }
+
+    // Update tab counts
+    updateTabCounts();
+
+    if (!ALL_COUPONS.length) {
+      wrap.innerHTML = '';
+      if (empty) {
+        empty.style.display = 'block';
+        document.getElementById('tg-empty-title').textContent = 'No coupons yet';
+        document.getElementById('tg-empty-desc').textContent = 'Check back later for exclusive deals and discounts.';
+      }
+      return;
+    }
+
+    if (!list.length) {
+      wrap.innerHTML = '';
+      if (empty) {
+        empty.style.display = 'block';
+        document.getElementById('tg-empty-title').textContent = 'No coupons here';
+        document.getElementById('tg-empty-desc').textContent = 'Try a different filter above.';
+      }
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+    wrap.innerHTML = list.map(c => couponHtml(c)).join('');
+  }
+
+  /* ⭐ UPDATE TAB COUNTS ⭐ */
+  function updateTabCounts() {
+    const c = { available: 0, expiring: 0, used: 0, expired: 0 };
+    ALL_COUPONS.forEach(cp => {
+      const s = classifyCoupon(cp);
+      if (s === 'available' || s === 'expiring') c.available++;
+      if (s === 'expiring') c.expiring++;
+      if (s === 'used') c.used++;
+      if (s === 'expired') c.expired++;
+    });
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('tg-count-available', c.available);
+    set('tg-count-expiring', c.expiring);
+    set('tg-count-used', c.used);
+    set('tg-count-expired', c.expired);
+    // Hero stats
+    set('tg-stat-available', c.available);
+    set('tg-stat-expiring', c.expiring);
+    set('tg-stat-used', c.used);
+  }
+
+  /* ⭐ SINGLE COUPON CARD ⭐ */
+  function couponHtml(c) {
+    const code = String(c.code || c.id || '').toUpperCase();
+    const state = classifyCoupon(c);
+    const desc = c.description || '';
+    const type = String(c.discountType || 'flat').toLowerCase();
+    const val = Number(c.value || 0);
+    const minOrder = Number(c.minOrder || 0);
+    const maxDiscount = Number(c.maxDiscount || 0);
+    const expiry = c.expiry;
+    const left = daysLeft(expiry);
+
+    // Discount text
+    let discHtml = '';
+    if (type === 'percent') {
+      discHtml = `<div class="tg-coupon-discount">${val}<span class="tg-coupon-discount-unit">%</span></div>`;
+    } else {
+      discHtml = `<div class="tg-coupon-discount">₹${val}</div>`;
+    }
+
+    // Terms
+    const terms = [];
+    if (minOrder > 0) terms.push(`<span class="tg-coupon-term"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Min ₹${minOrder}</span>`);
+    if (maxDiscount > 0 && type === 'percent') terms.push(`<span class="tg-coupon-term"><svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg>Max ₹${maxDiscount}</span>`);
+    if (left !== null) {
+      if (left < 0) terms.push(`<span class="tg-coupon-term" style="color:#d32f2f;font-weight:700;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>Expired ${esc(fmtDate(expiry))}</span>`);
+      else if (left === 0) terms.push(`<span class="tg-coupon-term" style="color:#f57c00;font-weight:700;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Expires today</span>`);
+      else if (left <= 3) terms.push(`<span class="tg-coupon-term" style="color:#f57c00;font-weight:700;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${left} day${left > 1 ? 's' : ''} left</span>`);
+      else terms.push(`<span class="tg-coupon-term"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Valid till ${esc(fmtDate(expiry))}</span>`);
+    }
+
+    // Status pill
+    let statusHtml = '';
+    if (state === 'used') statusHtml = '<span class="tg-coupon-status used">✓ Used</span>';
+    else if (state === 'expired') statusHtml = '<span class="tg-coupon-status expired">Expired</span>';
+    else if (state === 'expiring') statusHtml = '<span class="tg-coupon-status expiring">⏳ Expiring</span>';
+
+    const canCopy = state !== 'expired';
+
+    // Copy button
+    let copyBtn = '';
+    if (canCopy) {
+      copyBtn = `<button class="tg-coupon-copy-btn" id="tg-copy-${esc(code)}" onclick="tgCopyCode('${esc(code)}', this)">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>`;
+    } else {
+      copyBtn = `<button class="tg-coupon-copy-btn" style="background:#e0e0e0;color:#888;box-shadow:none;cursor:not-allowed;" disabled>Expired</button>`;
+    }
+
+    return `
+      <div class="tg-coupon ${state}" data-code="${esc(code)}">
+        ${statusHtml}
+        <div class="tg-coupon-left">
+          ${discHtml}
+          <div class="tg-coupon-discount-label">${type === 'percent' ? 'OFF' : 'FLAT'}</div>
+        </div>
+        <div class="tg-coupon-dashed"></div>
+        <div class="tg-coupon-right">
+          <div class="tg-coupon-title">${esc(code)}</div>
+          ${desc ? `<div class="tg-coupon-desc">${esc(desc)}</div>` : ''}
+          ${terms.length ? `<div class="tg-coupon-terms">${terms.join('')}</div>` : ''}
+          <div class="tg-coupon-code-row">
+            <div class="tg-coupon-code" title="${esc(code)}">${esc(code)}</div>
+            ${copyBtn}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ⭐ COPY CODE ⭐ */
+  window.tgCopyCode = async function(code, btn) {
+    if (!code) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = code;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = orig;
+        }, 1800);
+      }
+      toast('✓ Code copied: ' + code, 'success');
+    } catch(e) {
+      toast('Copy failed — long press the code', 'error');
+    }
+  };
+
+  /* ⭐ LOAD USED CODES (from user's orders) ⭐ */
+  async function loadUsedCoupons(uid, email, phone) {
+    USED_CODES = new Set();
+    try {
+      const col = db.collection('orders');
+      const map = new Map();
+      // Try customerId query
+      try {
+        const s1 = await col.where('customerId', '==', uid).limit(100).get();
+        s1.docs.forEach(d => map.set(d.id, d.data()));
+      } catch(e) {}
+      // Try userId query
+      try {
+        const s2 = await col.where('userId', '==', uid).limit(100).get();
+        s2.docs.forEach(d => map.set(d.id, d.data()));
+      } catch(e) {}
+      // Fallback: recent + client filter
+      if (map.size === 0) {
+        try {
+          const s3 = await col.orderBy('createdAt', 'desc').limit(100).get();
+          s3.docs.forEach(d => {
+            const o = d.data();
+            const cands = [o.customerId, o.userId, o.uid, o.userEmail, o.email, o.userPhone, o.phone].filter(Boolean).map(x => String(x).toLowerCase());
+            if (cands.includes(String(uid).toLowerCase())) map.set(d.id, o);
+            else if (email && cands.includes(email)) map.set(d.id, o);
+            else if (phone && cands.some(c => c.replace(/\D/g,'') === phone)) map.set(d.id, o);
+          });
+        } catch(e) {}
+      }
+      // Extract coupon codes from used orders
+      map.forEach(o => {
+        const candidates = [o.couponCode, o.coupon, o.coupon_code, o.appliedCoupon, o.discountCode];
+        candidates.forEach(c => {
+          if (c && typeof c === 'string') USED_CODES.add(c.trim().toUpperCase());
+        });
+      });
+    } catch(e) {
+      console.warn('Used coupons load failed:', e.message);
+    }
+    renderCoupons();
+  }
+
+  /* ⭐ LOAD COUPONS (realtime) ⭐ */
+  function loadCoupons() {
+    if (unsubCoupons) { try { unsubCoupons(); } catch(e) {} unsubCoupons = null; }
+    try {
+      unsubCoupons = db.collection('coupons').onSnapshot(snap => {
+        ALL_COUPONS = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(c => c.active !== false)  // skip inactive
+          .sort((a, b) => {
+            // Sort: available first, then expiring, then expired
+            const sa = classifyCoupon(a);
+            const sb = classifyCoupon(b);
+            const order = { expiring: 0, available: 1, used: 2, expired: 3 };
+            const oa = order[sa] != null ? order[sa] : 9;
+            const ob = order[sb] != null ? order[sb] : 9;
+            if (oa !== ob) return oa - ob;
+            // Within same group: by value desc
+            return Number(b.value || 0) - Number(a.value || 0);
+          });
+        renderCoupons();
+      }, err => {
+        console.warn('Coupons listener err:', err.message);
+        // Fallback
+        db.collection('coupons').limit(50).get().then(snap => {
+          ALL_COUPONS = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(c => c.active !== false);
+          renderCoupons();
+        }).catch(() => {});
+      });
+    } catch(e) {
+      db.collection('coupons').limit(50).get().then(snap => {
+        ALL_COUPONS = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(c => c.active !== false);
+        renderCoupons();
+      }).catch(() => {});
+    }
+  }
+
+  /* ⭐ CART BADGE ⭐ */
+  async function updateCartBadge() {
+    let count = 0;
+    try {
+      if (USER) {
+        const snap = await db.collection('carts').doc(USER.uid).collection('items').get();
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+        gc.forEach(i => { count += Number(i.qty || 1); });
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ⭐ INIT ⭐ */
+  loadCoupons();
+
+  auth.onAuthStateChanged(u => {
+    USER = u;
+    if (u) {
+      const email = (u.email || '').toLowerCase();
+      const phone = (u.phoneNumber || '').replace(/\D/g, '');
+      loadUsedCoupons(u.uid, email, phone);
+    } else {
+      USED_CODES = new Set();
+      renderCoupons();
+    }
+    updateCartBadge();
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Payment Methods — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+:root { --tg-primary: #2874f0; --tg-primary-dark: #1a5dc7; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+/* HEADER */
+.tg-hd { background: var(--tg-primary); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 56px; }
+.tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--tg-primary); }
+
+.tg-wrap { padding-top: 56px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 720px; margin: 0 auto; padding: 12px; }
+
+/* HERO BANNER */
+.tg-hero {
+  background: linear-gradient(135deg, var(--tg-primary) 0%, var(--tg-primary-dark) 100%);
+  border-radius: 14px;
+  padding: 22px 20px;
+  color: #fff;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(40,116,240,0.25);
+}
+.tg-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,229,0,0.2), transparent 70%);
+  border-radius: 50%;
+}
+.tg-hero-icon {
+  width: 54px; height: 54px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.tg-hero-icon svg { width: 26px; height: 26px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hero-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
+.tg-hero-title { font-size: 17px; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.2px; }
+.tg-hero-sub { font-size: 12.5px; opacity: 0.92; margin: 0; line-height: 1.4; }
+
+/* SECURITY BANNER */
+.tg-secure-banner {
+  background: linear-gradient(135deg, #e6f7ec, #d1f0dd);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid #a5d6b7;
+}
+.tg-secure-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #fff;
+  color: #1b8a3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tg-secure-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tg-secure-body { flex: 1; min-width: 0; }
+.tg-secure-title { font-size: 13px; font-weight: 800; color: #1b8a3a; margin-bottom: 2px; }
+.tg-secure-desc { font-size: 11.5px; color: #4a5568; line-height: 1.45; }
+
+/* SECTION */
+.tg-sec { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  gap: 10px;
+  border-bottom: 1px solid #f1f3f6;
+}
+.tg-sec-title { font-size: 15px; font-weight: 800; color: #212121; letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px; }
+.tg-sec-title svg { width: 18px; height: 18px; stroke: var(--tg-primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-sec-count { font-size: 11.5px; font-weight: 700; color: #888; background: #f1f3f6; padding: 3px 9px; border-radius: 999px; }
+
+.tg-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark));
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  box-shadow: 0 3px 10px rgba(40,116,240,0.3);
+  transition: all .15s;
+}
+.tg-add-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.tg-add-btn:active { transform: translateY(0); }
+.tg-add-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-sec-body { padding: 4px 0 10px; }
+
+/* EMPTY STATE */
+.tg-empty-mini {
+  text-align: center;
+  padding: 30px 20px;
+  color: #888;
+}
+.tg-empty-mini-icon { font-size: 40px; margin-bottom: 8px; opacity: 0.4; }
+.tg-empty-mini-title { font-size: 14px; font-weight: 700; color: #555; margin: 0 0 4px; }
+.tg-empty-mini-desc { font-size: 12px; color: #999; margin: 0; line-height: 1.5; }
+
+/* SAVED CARD */
+.tg-pay-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background .15s;
+  position: relative;
+}
+.tg-pay-item:hover { background: #f8f9fb; }
+.tg-pay-item + .tg-pay-item { border-top: 1px solid #f5f5f5; }
+
+.tg-pay-icon {
+  width: 46px; height: 46px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  font-size: 20px;
+  font-weight: 900;
+}
+.tg-pay-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.tg-pay-icon.card { background: linear-gradient(135deg, #eef3ff, #e0eaff); color: var(--tg-primary); }
+.tg-pay-icon.upi { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #fb641b; }
+.tg-pay-icon.wallet { background: linear-gradient(135deg, #e6f7ec, #d1f0dd); color: #1b8a3a; }
+.tg-pay-icon.netbanking { background: linear-gradient(135deg, #ede7f6, #d1c4e9); color: #7e57c2; }
+
+.tg-pay-icon.visa { background: linear-gradient(135deg, #1434CB, #0e2593); color: #fff; font-family: Georgia, serif; font-style: italic; font-size: 14px; letter-spacing: 0.5px; }
+.tg-pay-icon.mastercard { background: linear-gradient(135deg, #1a1a1a, #333); color: #fff; position: relative; overflow: hidden; }
+.tg-pay-icon.mastercard::before, .tg-pay-icon.mastercard::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px; height: 18px;
+  border-radius: 50%;
+}
+.tg-pay-icon.mastercard::before { left: 8px; background: #EB001B; }
+.tg-pay-icon.mastercard::after { right: 8px; background: #F79E1B; opacity: 0.85; }
+.tg-pay-icon.rupay { background: linear-gradient(135deg, #00A651, #006B32); color: #fff; font-size: 11px; font-weight: 900; }
+.tg-pay-icon.amex { background: linear-gradient(135deg, #006FCF, #005BB5); color: #fff; font-size: 10px; font-weight: 900; letter-spacing: 0.5px; }
+.tg-pay-icon.gpay { background: linear-gradient(135deg, #fff, #f1f3f6); color: #212121; font-size: 15px; font-weight: 900; }
+.tg-pay-icon.phonepe { background: linear-gradient(135deg, #5f259f, #4a1d7a); color: #fff; font-size: 15px; font-weight: 900; }
+.tg-pay-icon.paytm { background: linear-gradient(135deg, #002970, #00BAF2); color: #fff; font-size: 15px; font-weight: 900; }
+.tg-pay-icon.default-card { background: linear-gradient(135deg, #4a5568, #2d3748); color: #fff; }
+
+.tg-pay-body { flex: 1; min-width: 0; }
+.tg-pay-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #212121;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tg-pay-title .default-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.tg-pay-meta { font-size: 12px; color: #888; display: flex; gap: 10px; flex-wrap: wrap; }
+.tg-pay-meta .expired { color: #d32f2f; font-weight: 700; }
+
+.tg-pay-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.tg-pay-action-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #f1f3f6;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+.tg-pay-action-btn:hover { background: #e8eefb; color: var(--tg-primary); }
+.tg-pay-action-btn.danger:hover { background: #ffebee; color: #d32f2f; }
+.tg-pay-action-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* OFFER STRIP */
+.tg-offer-strip {
+  background: linear-gradient(135deg, #fff8e1, #ffecb3);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #ffe082;
+}
+.tg-offer-icon { font-size: 26px; flex-shrink: 0; }
+.tg-offer-body { flex: 1; min-width: 0; }
+.tg-offer-title { font-size: 13px; font-weight: 800; color: #e65100; margin-bottom: 2px; }
+.tg-offer-desc { font-size: 11.5px; color: #8a6d3b; line-height: 1.45; }
+
+/* MODAL */
+.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.55); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s; }
+.tg-modal.show { display: flex; }
+@keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.tg-modal-card { width: 100%; max-width: 520px; background: #fff; border-radius: 20px 20px 0 0; padding: 22px 20px 26px; max-height: 92vh; overflow-y: auto; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); }
+@media (min-width: 640px) { .tg-modal { align-items: center; } .tg-modal-card { border-radius: 16px; max-height: 88vh; } }
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; }
+.tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.tg-modal-close:hover { background: #e0e0e0; }
+
+.tg-modal-tabs { display: flex; gap: 6px; background: #f1f3f6; border-radius: 10px; padding: 4px; margin-bottom: 18px; overflow-x: auto; scrollbar-width: none; }
+.tg-modal-tabs::-webkit-scrollbar { display: none; }
+.tg-modal-tab { flex: 1; padding: 9px 10px; font-size: 12px; font-weight: 700; color: #666; border-radius: 8px; text-align: center; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.tg-modal-tab.active { background: #fff; color: var(--tg-primary); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+.tg-modal-panel { display: none; }
+.tg-modal-panel.active { display: block; }
+
+.tg-field { margin-bottom: 14px; position: relative; }
+.tg-field label { display: block; font-size: 11.5px; color: #666; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+.tg-field input, .tg-field select {
+  width: 100%;
+  height: 46px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 14.5px;
+  color: #212121;
+  outline: none;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  font-family: inherit;
+}
+.tg-field input:focus, .tg-field select:focus { border-color: var(--tg-primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
+.tg-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 400px) { .tg-field-row { grid-template-columns: 1fr; } }
+
+.tg-field-hint { font-size: 11px; color: #999; margin-top: 5px; line-height: 1.4; }
+
+/* Card preview */
+.tg-card-preview {
+  background: linear-gradient(135deg, #1a1d21 0%, #2d3748 50%, #4a5568 100%);
+  border-radius: 14px;
+  padding: 20px 22px;
+  color: #fff;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.tg-card-preview::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+  border-radius: 50%;
+}
+.tg-card-preview::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -80px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(255,229,0,0.1), transparent 70%);
+  border-radius: 50%;
+}
+.tg-card-preview-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2; }
+.tg-card-chip {
+  width: 42px; height: 32px;
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #b8860b 100%);
+  border-radius: 6px;
+  position: relative;
+}
+.tg-card-chip::before {
+  content: '';
+  position: absolute;
+  inset: 6px 8px;
+  border: 1.5px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+.tg-card-logo { font-size: 22px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; }
+.tg-card-number {
+  font-size: 18px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 3px;
+  font-weight: 700;
+  text-align: center;
+  margin: 16px 0;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+.tg-card-preview-bottom { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 2; }
+.tg-card-label { font-size: 9px; opacity: 0.65; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+.tg-card-value { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+
+.tg-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.tg-modal-btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .15s; }
+.tg-modal-btn.primary { background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
+.tg-modal-btn.primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.tg-modal-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
+.tg-modal-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.4; }
+
+/* BOTTOM NAV */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
+.tg-bnav-item.active { color: var(--tg-primary); }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* TOASTS */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: var(--tg-primary); }
+
+/* CONFIRM MODAL (small) */
+.tg-confirm-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: center; justify-content: center; padding: 20px; }
+.tg-confirm-modal.show { display: flex; }
+.tg-confirm-card { background: #fff; border-radius: 14px; padding: 24px 22px 22px; max-width: 400px; width: 100%; text-align: center; animation: tgPopIn .3s cubic-bezier(.34,1.56,.64,1); }
+@keyframes tgPopIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.tg-confirm-icon { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffe4e4, #ffcdd2); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; }
+.tg-confirm-title { font-size: 18px; font-weight: 800; color: #212121; margin: 0 0 8px; }
+.tg-confirm-desc { font-size: 13.5px; color: #666; line-height: 1.55; margin: 0 0 22px; }
+.tg-confirm-actions { display: flex; gap: 10px; }
+.tg-confirm-btn { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.tg-confirm-btn.primary { background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; box-shadow: 0 4px 14px rgba(40,116,240,0.3); }
+.tg-confirm-btn.danger { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; box-shadow: 0 4px 14px rgba(211,47,47,0.3); }
+.tg-confirm-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
+
+/* MOBILE */
+@media (max-width: 520px) {
+  .tg-container { padding: 10px; }
+  .tg-hero { padding: 18px 16px; gap: 12px; }
+  .tg-hero-icon { width: 46px; height: 46px; }
+  .tg-hero-icon svg { width: 22px; height: 22px; }
+  .tg-hero-title { font-size: 15px; }
+  .tg-hero-sub { font-size: 11.5px; }
+  .tg-sec-head { padding: 12px 14px 8px; }
+  .tg-sec-title { font-size: 14px; }
+  .tg-add-btn { padding: 7px 12px; font-size: 11px; }
+  .tg-pay-item { padding: 12px 14px; gap: 12px; }
+  .tg-pay-icon { width: 42px; height: 42px; }
+  .tg-pay-title { font-size: 13px; }
+  .tg-pay-meta { font-size: 11.5px; }
+  .tg-pay-action-btn { width: 30px; height: 30px; }
+  .tg-modal-card { padding: 20px 16px 22px; }
+  .tg-card-preview { padding: 18px 20px; min-height: 160px; }
+  .tg-card-number { font-size: 16px; letter-spacing: 2px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">Payment Methods</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
+        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- HERO -->
+    <div class="tg-hero">
+      <div class="tg-hero-icon">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="tg-hero-body">
+        <div class="tg-hero-title">Your Payment Methods</div>
+        <p class="tg-hero-sub">Manage cards, UPI, wallets for faster checkout</p>
+      </div>
+    </div>
+
+    <!-- SECURITY BANNER -->
+    <div class="tg-secure-banner">
+      <div class="tg-secure-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="tg-secure-body">
+        <div class="tg-secure-title">100% Secure Payments</div>
+        <div class="tg-secure-desc">Powered by <b>Razorpay</b> (PCI-DSS Level 1). We never store your full card number, CVV, or UPI PIN.</div>
+      </div>
+    </div>
+
+    <!-- OFFER STRIP -->
+    <div class="tg-offer-strip">
+      <div class="tg-offer-icon">🎁</div>
+      <div class="tg-offer-body">
+        <div class="tg-offer-title">Flat ₹50 Off on UPI</div>
+        <div class="tg-offer-desc">Save your UPI for faster checkout and get ₹50 off on your next order</div>
+      </div>
+    </div>
+
+    <!-- SAVED CARDS -->
+    <div class="tg-sec">
+      <div class="tg-sec-head">
+        <div class="tg-sec-title">
+          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Credit & Debit Cards
+          <span class="tg-sec-count" id="tg-cards-count">0</span>
+        </div>
+        <button class="tg-add-btn" onclick="tgOpenAdd('card')">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Add Card
+        </button>
+      </div>
+      <div class="tg-sec-body" id="tg-cards-list"></div>
+    </div>
+
+    <!-- SAVED UPI -->
+    <div class="tg-sec">
+      <div class="tg-sec-head">
+        <div class="tg-sec-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="10"/></svg>
+          UPI IDs
+          <span class="tg-sec-count" id="tg-upi-count">0</span>
+        </div>
+        <button class="tg-add-btn" onclick="tgOpenAdd('upi')">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Add UPI
+        </button>
+      </div>
+      <div class="tg-sec-body" id="tg-upi-list"></div>
+    </div>
+
+    <!-- SAVED WALLETS -->
+    <div class="tg-sec">
+      <div class="tg-sec-head">
+        <div class="tg-sec-title">
+          <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          Wallets
+          <span class="tg-sec-count" id="tg-wallet-count">0</span>
+        </div>
+        <button class="tg-add-btn" onclick="tgOpenAdd('wallet')">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Add Wallet
+        </button>
+      </div>
+      <div class="tg-sec-body" id="tg-wallet-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD PAYMENT MODAL -->
+<div class="tg-modal" id="tg-add-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title" id="tg-add-title">Add New Card</div>
+      <button class="tg-modal-close" onclick="tgCloseAdd()">✕</button>
+    </div>
+
+    <!-- Card preview (only for card type) -->
+    <div class="tg-card-preview" id="tg-card-preview">
+      <div class="tg-card-preview-top">
+        <div class="tg-card-chip"></div>
+        <div class="tg-card-logo" id="tg-card-logo">CARD</div>
+      </div>
+      <div class="tg-card-number" id="tg-card-preview-number">•••• •••• •••• ••••</div>
+      <div class="tg-card-preview-bottom">
+        <div>
+          <div class="tg-card-label">Card Holder</div>
+          <div class="tg-card-value" id="tg-card-preview-name">YOUR NAME</div>
+        </div>
+        <div>
+          <div class="tg-card-label">Expires</div>
+          <div class="tg-card-value" id="tg-card-preview-exp">MM/YY</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tg-modal-tabs">
+      <div class="tg-modal-tab active" data-tab="card" onclick="tgSwitchTab('card')">💳 Card</div>
+      <div class="tg-modal-tab" data-tab="upi" onclick="tgSwitchTab('upi')">📱 UPI</div>
+      <div class="tg-modal-tab" data-tab="wallet" onclick="tgSwitchTab('wallet')">👛 Wallet</div>
+    </div>
+
+    <!-- CARD PANEL -->
+    <div class="tg-modal-panel active" id="tg-panel-card">
+      <div class="tg-field">
+        <label>Card Number *</label>
+        <input type="text" id="tg-card-num" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" oninput="tgFormatCardNum(this)">
+        <div class="tg-field-hint">We do NOT store the full card number. Only last 4 digits are saved for your reference.</div>
+      </div>
+      <div class="tg-field">
+        <label>Card Holder Name *</label>
+        <input type="text" id="tg-card-name" placeholder="As printed on card" maxlength="60" oninput="tgUpdatePreview()">
+      </div>
+      <div class="tg-field-row">
+        <div class="tg-field">
+          <label>Expiry (MM/YY) *</label>
+          <input type="text" id="tg-card-exp" placeholder="MM/YY" maxlength="5" inputmode="numeric" oninput="tgFormatExp(this); tgUpdatePreview()">
+        </div>
+        <div class="tg-field">
+          <label>CVV *</label>
+          <input type="password" id="tg-card-cvv" placeholder="•••" maxlength="4" inputmode="numeric">
+        </div>
+      </div>
+      <div class="tg-field">
+        <label>Card Type</label>
+        <select id="tg-card-type" onchange="tgUpdatePreview()">
+          <option value="visa">Visa</option>
+          <option value="mastercard">Mastercard</option>
+          <option value="rupay">RuPay</option>
+          <option value="amex">American Express</option>
+          <option value="default-card">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- UPI PANEL -->
+    <div class="tg-modal-panel" id="tg-panel-upi">
+      <div class="tg-field">
+        <label>UPI ID *</label>
+        <input type="text" id="tg-upi-id" placeholder="yourname@upi" maxlength="60" autocapitalize="off" autocorrect="off">
+        <div class="tg-field-hint">Example: 9876543210@paytm, name@okhdfcbank, user@ybl</div>
+      </div>
+      <div class="tg-field">
+        <label>UPI Provider</label>
+        <select id="tg-upi-provider">
+          <option value="gpay">Google Pay</option>
+          <option value="phonepe">PhonePe</option>
+          <option value="paytm">Paytm</option>
+          <option value="bhim">BHIM</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- WALLET PANEL -->
+    <div class="tg-modal-panel" id="tg-panel-wallet">
+      <div class="tg-field">
+        <label>Wallet *</label>
+        <select id="tg-wallet-provider">
+          <option value="paytm">Paytm Wallet</option>
+          <option value="phonepe">PhonePe Wallet</option>
+          <option value="amazonpay">Amazon Pay</option>
+          <option value="mobikwik">MobiKwik</option>
+          <option value="freecharge">Freecharge</option>
+        </select>
+      </div>
+      <div class="tg-field">
+        <label>Registered Mobile (optional)</label>
+        <input type="tel" id="tg-wallet-phone" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric">
+        <div class="tg-field-hint">Auto-fill helps during checkout for faster wallet selection</div>
+      </div>
+    </div>
+
+    <div class="tg-modal-actions">
+      <button class="tg-modal-btn ghost" onclick="tgCloseAdd()">Cancel</button>
+      <button class="tg-modal-btn primary" id="tg-save-btn" onclick="tgSavePayment()">
+        <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE MODAL -->
+<div class="tg-confirm-modal" id="tg-confirm-modal">
+  <div class="tg-confirm-card">
+    <div class="tg-confirm-icon">🗑️</div>
+    <h3 class="tg-confirm-title" id="tg-confirm-title">Remove this payment method?</h3>
+    <p class="tg-confirm-desc" id="tg-confirm-desc">It will be removed from your saved payment methods. You can add it again anytime.</p>
+    <div class="tg-confirm-actions">
+      <button class="tg-confirm-btn ghost" onclick="tgCloseConfirm()">Cancel</button>
+      <button class="tg-confirm-btn danger" id="tg-confirm-btn" onclick="tgDoConfirm()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge" style="display:none;">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  const GUEST_CART = 'toego_cart_guest';
+  const THEME_KEY = 'toego_theme_colors';
+  const PAYMENTS_CACHE_PREFIX = 'toego_payments_v1_';
+
+  let USER = null;
+  let PAYMENTS = []; // array of payment methods
+  let unsubPay = null;
+  let confirmCb = null;
+  let currentTab = 'card';
+
+  /* ========= THEME ========= */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function adjustColor(hex, pct) {
+    try {
+      hex = hex.replace('#','');
+      const n = parseInt(hex, 16);
+      const r = Math.max(0, Math.min(255, (n >> 16) + pct));
+      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
+      const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
+      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+    } catch(e) { return hex; }
+  }
+  function applyTheme(primary, dark) {
+    primary = primary || '#2874f0';
+    dark = dark || adjustColor(primary, -30);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    document.documentElement.style.setProperty('--tg-primary-dark', dark);
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    const hd = document.querySelector('.tg-hd'); if (hd) hd.style.background = primary;
+    const hero = document.querySelector('.tg-hero'); if (hero) hero.style.background = 'linear-gradient(135deg, ' + primary + ', ' + dark + ')';
+    try { localStorage.setItem(THEME_KEY, JSON.stringify({ primary, dark })); } catch(e) {}
+  }
+  (function boot() {
+    try { const c = localStorage.getItem(THEME_KEY); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {}
+  })();
+  (async function loadTheme() {
+    try {
+      const s = await db.collection('siteSettings').doc('theme').get();
+      if (s.exists) {
+        const d = s.data();
+        const p = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
+        applyTheme(p, adjustColor(p, -30));
+      }
+    } catch(e) {}
+    db.collection('siteSettings').doc('theme').onSnapshot(snap => {
+      if (!snap.exists) return;
+      const d = snap.data();
+      const p = d.themeColor || '#2874f0';
+      applyTheme(p, adjustColor(p, -30));
+    }, () => {});
+  })();
+
+  /* ========= HELPERS ========= */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function cacheSet(key, data) { try { localStorage.setItem(key, JSON.stringify({ data, time: Date.now() })); } catch(e) {} }
+  function cacheGet(key) {
+    try {
+      const r = localStorage.getItem(key);
+      if (!r) return null;
+      const c = JSON.parse(r);
+      if (!c || !c.data) return null;
+      if (Date.now() - (c.time || 0) > 5*60*1000) return null;
+      return c.data;
+    } catch(e) { return null; }
+  }
+
+  /* ========= CART BADGE ========= */
+  function getGuestCart() { try { return JSON.parse(localStorage.getItem(GUEST_CART) || '[]'); } catch(e) { return []; } }
+  function cartCount(items) { return (items||[]).reduce((s,i) => s + Number(i.qty || 1), 0); }
+  async function updateCartBadge() {
+    let count = 0;
+    try {
+      if (USER) {
+        const snap = await db.collection('carts').doc(USER.uid).collection('items').get();
+        snap.forEach(d => { count += Number(d.data().qty || 1); });
+      } else {
+        count = cartCount(getGuestCart());
+      }
+    } catch(e) {}
+    ['tg-cart-badge','tg-bnav-badge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
+
+  /* ========= ICON HELPERS ========= */
+  function getCardLogoClass(type) {
+    return type || 'default-card';
+  }
+  function getCardLogoText(type) {
+    const map = {
+      visa: 'VISA',
+      mastercard: '',
+      rupay: 'RuPay',
+      amex: 'AMEX',
+      'default-card': 'CARD'
+    };
+    return map[type] || 'CARD';
+  }
+  function getUPILogoClass(provider) {
+    const map = { gpay: 'gpay', phonepe: 'phonepe', paytm: 'paytm', bhim: 'default-card', other: 'upi' };
+    return map[provider] || 'upi';
+  }
+  function getUPILogoText(provider) {
+    const map = { gpay: 'GPay', phonepe: 'Pe', paytm: 'Paytm', bhim: 'BHIM', other: 'UPI' };
+    return map[provider] || 'UPI';
+  }
+  function getWalletLogoText(provider) {
+    const map = { paytm: 'Paytm', phonepe: 'PhonePe', amazonpay: 'APay', mobikwik: 'MK', freecharge: 'FC' };
+    return map[provider] || 'W';
+  }
+
+  /* ========= RENDER ========= */
+  function renderAll() {
+    const cards = PAYMENTS.filter(p => p.type === 'card');
+    const upis = PAYMENTS.filter(p => p.type === 'upi');
+    const wallets = PAYMENTS.filter(p => p.type === 'wallet');
+
+    document.getElementById('tg-cards-count').textContent = cards.length;
+    document.getElementById('tg-upi-count').textContent = upis.length;
+    document.getElementById('tg-wallet-count').textContent = wallets.length;
+
+    // CARDS
+    const cardsEl = document.getElementById('tg-cards-list');
+    if (!cards.length) {
+      cardsEl.innerHTML = emptyMiniHTML('💳', 'No saved cards', 'Add a card for faster checkout');
+    } else {
+      cardsEl.innerHTML = cards.map(paymentItemHTML).join('');
+    }
+
+    // UPI
+    const upiEl = document.getElementById('tg-upi-list');
+    if (!upis.length) {
+      upiEl.innerHTML = emptyMiniHTML('📱', 'No saved UPI IDs', 'Add your UPI ID for 1-tap payments');
+    } else {
+      upiEl.innerHTML = upis.map(paymentItemHTML).join('');
+    }
+
+    // WALLETS
+    const walletEl = document.getElementById('tg-wallet-list');
+    if (!wallets.length) {
+      walletEl.innerHTML = emptyMiniHTML('👛', 'No saved wallets', 'Save your wallet for faster checkout');
+    } else {
+      walletEl.innerHTML = wallets.map(paymentItemHTML).join('');
+    }
+  }
+
+  function emptyMiniHTML(icon, title, desc) {
+    return '<div class="tg-empty-mini">' +
+      '<div class="tg-empty-mini-icon">' + icon + '</div>' +
+      '<div class="tg-empty-mini-title">' + esc(title) + '</div>' +
+      '<p class="tg-empty-mini-desc">' + esc(desc) + '</p>' +
+    '</div>';
+  }
+
+  function paymentItemHTML(p) {
+    if (p.type === 'card') {
+      const logoClass = getCardLogoClass(p.cardType);
+      const logoText = getCardLogoText(p.cardType);
+      const isExpired = p.expiry && isCardExpired(p.expiry);
+      return '<div class="tg-pay-item">' +
+        '<div class="tg-pay-icon ' + logoClass + '">' + esc(logoText) + '</div>' +
+        '<div class="tg-pay-body">' +
+          '<div class="tg-pay-title">' +
+            '•••• ' + esc(p.last4 || '••••') +
+            (p.isDefault ? '<span class="default-badge">Default</span>' : '') +
+          '</div>' +
+          '<div class="tg-pay-meta">' +
+            '<span>' + esc(p.holderName || 'Card Holder') + '</span>' +
+            '<span' + (isExpired ? ' class="expired"' : '') + '>' + (isExpired ? 'Expired' : 'Expires') + ' ' + esc(p.expiry || 'MM/YY') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tg-pay-actions">' +
+          '<button class="tg-pay-action-btn" onclick="event.stopPropagation();tgSetDefault(\'' + esc(p.id) + '\')" title="Set default">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' +
+          '</button>' +
+          '<button class="tg-pay-action-btn danger" onclick="event.stopPropagation();tgRemovePayment(\'' + esc(p.id) + '\')" title="Remove">' +
+            '<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    } else if (p.type === 'upi') {
+      const logoClass = getUPILogoClass(p.provider);
+      const logoText = getUPILogoText(p.provider);
+      return '<div class="tg-pay-item">' +
+        '<div class="tg-pay-icon ' + logoClass + '">' + esc(logoText) + '</div>' +
+        '<div class="tg-pay-body">' +
+          '<div class="tg-pay-title">' +
+            esc(p.upiId || '') +
+            (p.isDefault ? '<span class="default-badge">Default</span>' : '') +
+          '</div>' +
+          '<div class="tg-pay-meta">' +
+            '<span>' + esc((p.provider || '').toUpperCase()) + '</span>' +
+            '<span>UPI</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tg-pay-actions">' +
+          '<button class="tg-pay-action-btn" onclick="event.stopPropagation();tgSetDefault(\'' + esc(p.id) + '\')" title="Set default">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' +
+          '</button>' +
+          '<button class="tg-pay-action-btn danger" onclick="event.stopPropagation();tgRemovePayment(\'' + esc(p.id) + '\')" title="Remove">' +
+            '<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    } else {
+      const logoText = getWalletLogoText(p.provider);
+      return '<div class="tg-pay-item">' +
+        '<div class="tg-pay-icon wallet" style="font-size:12px;font-weight:900;">' + esc(logoText) + '</div>' +
+        '<div class="tg-pay-body">' +
+          '<div class="tg-pay-title">' +
+            esc(capitalize(p.provider || 'Wallet')) +
+            (p.isDefault ? '<span class="default-badge">Default</span>' : '') +
+          '</div>' +
+          '<div class="tg-pay-meta">' +
+            '<span>Wallet</span>' +
+            (p.phone ? '<span>' + esc(p.phone) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="tg-pay-actions">' +
+          '<button class="tg-pay-action-btn" onclick="event.stopPropagation();tgSetDefault(\'' + esc(p.id) + '\')" title="Set default">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' +
+          '</button>' +
+          '<button class="tg-pay-action-btn danger" onclick="event.stopPropagation();tgRemovePayment(\'' + esc(p.id) + '\')" title="Remove">' +
+            '<svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    }
+  }
+
+  function capitalize(s) { return String(s||'').charAt(0).toUpperCase() + String(s||'').slice(1); }
+
+  function isCardExpired(mmYY) {
+    if (!mmYY) return false;
+    try {
+      const parts = mmYY.split('/');
+      if (parts.length !== 2) return false;
+      const m = parseInt(parts[0], 10);
+      const y = 2000 + parseInt(parts[1], 10);
+      if (isNaN(m) || isNaN(y)) return false;
+      const now = new Date();
+      const exp = new Date(y, m, 0, 23, 59, 59);
+      return exp < now;
+    } catch(e) { return false; }
+  }
+
+  /* ========= LOAD PAYMENTS ========= */
+  function loadPayments() {
+    if (unsubPay) { try { unsubPay(); } catch(e) {} unsubPay = null; }
+
+    if (!USER) {
+      PAYMENTS = [];
+      renderAll();
+      return;
+    }
+
+    // ⚡ Cache first
+    const cached = cacheGet(PAYMENTS_CACHE_PREFIX + USER.uid);
+    if (cached && Array.isArray(cached)) {
+      PAYMENTS = cached;
+      renderAll();
+    }
+
+    // Real-time listen
+    unsubPay = db.collection('users').doc(USER.uid).collection('paymentMethods')
+      .onSnapshot(snap => {
+        PAYMENTS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Sort: default first
+        PAYMENTS.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+        cacheSet(PAYMENTS_CACHE_PREFIX + USER.uid, PAYMENTS);
+        renderAll();
+      }, err => {
+        console.warn('Payments load err:', err && err.message);
+        renderAll();
+      });
+  }
+
+  /* ========= ADD MODAL ========= */
+  window.tgOpenAdd = function(tab) {
+    if (!USER) { toast('Please log in first', 'info'); return; }
+    document.getElementById('tg-add-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    tgSwitchTab(tab || 'card');
+    tgResetForm();
+  };
+  window.tgCloseAdd = function() {
+    document.getElementById('tg-add-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+  document.getElementById('tg-add-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'tg-add-modal') tgCloseAdd();
+  });
+
+  window.tgSwitchTab = function(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tg-modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.tg-modal-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tg-panel-' + tab).classList.add('active');
+    document.getElementById('tg-card-preview').style.display = (tab === 'card') ? 'flex' : 'none';
+    document.getElementById('tg-add-title').textContent = tab === 'card' ? 'Add New Card' : (tab === 'upi' ? 'Add UPI ID' : 'Add Wallet');
+  };
+
+  function tgResetForm() {
+    document.getElementById('tg-card-num').value = '';
+    document.getElementById('tg-card-name').value = '';
+    document.getElementById('tg-card-exp').value = '';
+    document.getElementById('tg-card-cvv').value = '';
+    document.getElementById('tg-card-type').value = 'visa';
+    document.getElementById('tg-upi-id').value = '';
+    document.getElementById('tg-upi-provider').value = 'gpay';
+    document.getElementById('tg-wallet-provider').value = 'paytm';
+    document.getElementById('tg-wallet-phone').value = '';
+    tgUpdatePreview();
+  }
+
+  /* ========= CARD FORMAT ========= */
+  window.tgFormatCardNum = function(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 16);
+    let formatted = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+    input.value = formatted;
+    tgUpdatePreview();
+  };
+  window.tgFormatExp = function(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 4);
+    if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+    input.value = v;
+  };
+
+  window.tgUpdatePreview = function() {
+    const numInput = document.getElementById('tg-card-num');
+    const nameInput = document.getElementById('tg-card-name');
+    const expInput = document.getElementById('tg-card-exp');
+    const typeInput = document.getElementById('tg-card-type');
+
+    const numVal = (numInput && numInput.value) || '';
+    const nameVal = (nameInput && nameInput.value) || '';
+    const expVal = (expInput && expInput.value) || '';
+    const typeVal = (typeInput && typeInput.value) || 'visa';
+
+    // Format number preview with dots
+    const raw = numVal.replace(/\s/g, '');
+    let masked = '';
+    for (let i = 0; i < 16; i++) {
+      if (i > 0 && i % 4 === 0) masked += ' ';
+      masked += raw[i] || '•';
+    }
+    const previewNum = document.getElementById('tg-card-preview-number');
+    if (previewNum) previewNum.textContent = masked;
+    const previewName = document.getElementById('tg-card-preview-name');
+    if (previewName) previewName.textContent = (nameVal || 'YOUR NAME').toUpperCase();
+    const previewExp = document.getElementById('tg-card-preview-exp');
+    if (previewExp) previewExp.textContent = expVal || 'MM/YY';
+
+    const logoEl = document.getElementById('tg-card-logo');
+    if (logoEl) {
+      logoEl.textContent = typeVal === 'visa' ? 'VISA' : (typeVal === 'mastercard' ? '' : (typeVal === 'rupay' ? 'RuPay' : (typeVal === 'amex' ? 'AMEX' : 'CARD')));
+    }
+  };
+
+  /* ========= SAVE PAYMENT ========= */
+  window.tgSavePayment = async function() {
+    if (!USER) { toast('Please log in first', 'error'); return; }
+
+    const btn = document.getElementById('tg-save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      let payload = null;
+
+      if (currentTab === 'card') {
+        const num = document.getElementById('tg-card-num').value.replace(/\s/g, '');
+        const name = (document.getElementById('tg-card-name').value || '').trim();
+        const exp = (document.getElementById('tg-card-exp').value || '').trim();
+        const cvv = (document.getElementById('tg-card-cvv').value || '').trim();
+        const type = document.getElementById('tg-card-type').value;
+
+        if (num.length < 13) { toast('Enter a valid card number', 'error'); btn.disabled = false; btn.textContent = 'Save'; return; }
+        if (!name) { toast('Enter card holder name', 'error'); btn.disabled = false; btn.textContent = 'Save'; return; }
+        if (!/^\d{2}\/\d{2}$/.test(exp)) { toast('Enter expiry as MM/YY', 'error'); btn.disabled = false; btn.textContent = 'Save'; return; }
+        if (cvv.length < 3) { toast('Enter valid CVV', 'error'); btn.disabled = false; btn.textContent = 'Save'; return; }
+
+        const mm = parseInt(exp.split('/')[0], 10);
+        if (mm < 1 || mm > 12) { toast('Invalid month', 'error'); btn.disabled = false; btn.textContent = 'Save'; return; }
+
+        // ⚠ SECURITY: We only store last 4 digits, NOT the full number or CVV
+        payload = {
+          type: 'card',
+          last4: num.slice(-4),
+          holderName: name,
+          expiry: exp,
+          cardType: type,
+          isDefault: PAYMENTS.filter(p => p.type === 'card').length === 0,
+          createdAt: FV.serverTimestamp(),
+          updatedAt: FV.serverTimestamp()
+        };
+      } else if (currentTab === 'upi') {
+        const upiId = (document.getElementById('tg-upi-id').value || '').trim().toLowerCase();
+        const provider = document.getElementById('tg-upi-provider').value;
+
+        if (!/^[a-z0-9._-]{2,}@[a-z]{2,}$/.test(upiId)) {
+          toast('Enter a valid UPI ID (e.g. name@upi)', 'error');
+          btn.disabled = false; btn.textContent = 'Save'; return;
+        }
+        if (PAYMENTS.some(p => p.type === 'upi' && p.upiId === upiId)) {
+          toast('This UPI ID is already saved', 'error');
+          btn.disabled = false; btn.textContent = 'Save'; return;
+        }
+
+        payload = {
+          type: 'upi',
+          upiId: upiId,
+          provider: provider,
+          isDefault: PAYMENTS.filter(p => p.type === 'upi').length === 0,
+          createdAt: FV.serverTimestamp(),
+          updatedAt: FV.serverTimestamp()
+        };
+      } else if (currentTab === 'wallet') {
+        const provider = document.getElementById('tg-wallet-provider').value;
+        const phone = (document.getElementById('tg-wallet-phone').value || '').trim();
+
+        if (phone && !/^\d{10}$/.test(phone)) {
+          toast('Enter a valid 10-digit phone', 'error');
+          btn.disabled = false; btn.textContent = 'Save'; return;
+        }
+
+        payload = {
+          type: 'wallet',
+          provider: provider,
+          phone: phone,
+          isDefault: PAYMENTS.filter(p => p.type === 'wallet').length === 0,
+          createdAt: FV.serverTimestamp(),
+          updatedAt: FV.serverTimestamp()
+        };
+      }
+
+      await db.collection('users').doc(USER.uid).collection('paymentMethods').add(payload);
+      toast('Payment method saved ✓', 'success');
+      tgCloseAdd();
+    } catch (err) {
+      console.error('Save payment error:', err);
+      toast('Failed: ' + (err.message || 'Try again'), 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save';
+    }
+  };
+
+  /* ========= SET DEFAULT ========= */
+  window.tgSetDefault = async function(id) {
+    if (!USER) return;
+    const target = PAYMENTS.find(p => p.id === id);
+    if (!target) return;
+    if (target.isDefault) { toast('Already default', 'info'); return; }
+
+    try {
+      const batch = db.batch();
+      // Unset all defaults in same category
+      PAYMENTS.filter(p => p.type === target.type && p.isDefault).forEach(p => {
+        batch.update(db.collection('users').doc(USER.uid).collection('paymentMethods').doc(p.id), { isDefault: false });
+      });
+      // Set new default
+      batch.update(db.collection('users').doc(USER.uid).collection('paymentMethods').doc(id), { isDefault: true });
+      await batch.commit();
+      toast('Default updated ✓', 'success');
+    } catch(e) {
+      toast('Failed: ' + (e.message || 'Try again'), 'error');
+    }
+  };
+
+  /* ========= REMOVE PAYMENT ========= */
+  window.tgRemovePayment = function(id) {
+    if (!USER) return;
+    const target = PAYMENTS.find(p => p.id === id);
+    if (!target) return;
+
+    let desc = '';
+    if (target.type === 'card') desc = 'Card •••• ' + (target.last4 || '') + ' will be removed.';
+    else if (target.type === 'upi') desc = target.upiId + ' will be removed.';
+    else desc = capitalize(target.provider || 'Wallet') + ' will be removed.';
+
+    confirmCb = async () => {
+      try {
+        await db.collection('users').doc(USER.uid).collection('paymentMethods').doc(id).delete();
+        toast('Removed', 'success');
+        tgCloseConfirm();
+      } catch(e) {
+        toast('Failed: ' + (e.message || 'Try again'), 'error');
+      }
+    };
+    document.getElementById('tg-confirm-title').textContent = 'Remove payment method?';
+    document.getElementById('tg-confirm-desc').textContent = desc;
+    document.getElementById('tg-confirm-btn').textContent = 'Remove';
+    document.getElementById('tg-confirm-modal').classList.add('show');
+  };
+
+  window.tgCloseConfirm = function() {
+    document.getElementById('tg-confirm-modal').classList.remove('show');
+    confirmCb = null;
+  };
+  window.tgDoConfirm = async function() {
+    if (confirmCb) await confirmCb();
+  };
+  document.getElementById('tg-confirm-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'tg-confirm-modal') tgCloseConfirm();
+  });
+
+  /* ========= AUTH ========= */
+  auth.onAuthStateChanged(u => {
+    USER = u;
+    if (u) {
+      loadPayments();
+    } else {
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('payments.html'));
+    }
+    updateCartBadge();
+  });
+
+  /* ========= INIT ========= */
+  tgUpdatePreview();
+
+})();
+</script>
+</body>
+</html>

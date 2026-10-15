@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Become a Pickup Partner — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#0a0e1a" id="tg-theme-meta">
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0!important;padding:0!important;width:100%!important;max-width:100vw;overflow-x:hidden;background:#0a0e1a;font-family:'Roboto',Arial,sans-serif;color:#e2e8f0;-webkit-font-smoothing:antialiased;min-height:100vh;}
+img{max-width:100%;display:block;}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select,textarea{font:inherit;}
+a{color:inherit;text-decoration:none;}
+header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb,.breadcrumb{display:none!important;}
+
+/* HEADER */
+.tg-hd{background:linear-gradient(135deg,#0f1729 0%,#1a2238 100%);position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:1px solid rgba(0,212,255,0.15);box-shadow:0 4px 20px rgba(0,0,0,0.4);}
+.tg-hd-i{display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:60px;}
+.tg-hd-back{width:42px;height:42px;display:flex;align-items:center;justify-content:center;color:#fff;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);transition:all .15s;flex-shrink:0;}
+.tg-hd-back:hover{background:rgba(0,212,255,0.12);border-color:rgba(0,212,255,0.3);}
+.tg-hd-back svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.tg-hd-l{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+.tg-hd-lm{width:34px;height:34px;background:linear-gradient(135deg,#00d4ff,#2874f0);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#0a0e1a;font-weight:900;font-style:italic;font-size:18px;box-shadow:0 4px 12px rgba(0,212,255,0.4);flex-shrink:0;}
+.tg-hd-lt{color:#fff;font-weight:900;font-style:italic;font-size:17px;letter-spacing:-0.3px;}
+.tg-hd-lt span{color:#00d4ff;}
+.tg-hd-lb{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;font-size:8.5px;font-weight:900;padding:3px 8px;border-radius:5px;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 2px 6px rgba(0,212,255,0.4);}
+.tg-hd-sp{flex:1;}
+.tg-hd-live{display:flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;color:#4ade80;letter-spacing:0.4px;text-transform:uppercase;flex-shrink:0;}
+.tg-hd-live::before{content:'';width:6px;height:6px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px #22c55e;animation:tgLivePulse 1.5s infinite;}
+@keyframes tgLivePulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+
+.tg-wrap{padding-top:72px;padding-bottom:60px;min-height:100vh;background:radial-gradient(ellipse at top,rgba(0,212,255,0.06) 0%,#0a0e1a 50%);}
+.tg-co{max-width:720px;margin:0 auto;padding:14px;}
+
+/* HERO */
+.tg-hero{background:linear-gradient(135deg,rgba(0,212,255,0.15) 0%,rgba(40,116,240,0.12) 50%,rgba(0,212,255,0.08) 100%);border:1px solid rgba(0,212,255,0.25);border-radius:18px;padding:26px 22px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);}
+.tg-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(0,212,255,0.25),transparent 70%);border-radius:50%;animation:tgFloat 8s ease-in-out infinite;}
+.tg-hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:250px;height:250px;background:radial-gradient(circle,rgba(255,229,0,0.15),transparent 70%);border-radius:50%;animation:tgFloat 10s ease-in-out infinite reverse;}
+@keyframes tgFloat{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(30px,-30px) scale(1.1);}}
+.tg-hero-c{position:relative;z-index:2;}
+.tg-hero-tag{display:inline-block;background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;font-size:10px;font-weight:900;padding:5px 12px;border-radius:999px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px;box-shadow:0 4px 12px rgba(0,212,255,0.4);}
+.tg-hero-title{font-size:24px;font-weight:900;line-height:1.15;letter-spacing:-0.4px;margin:0 0 8px;color:#fff;}
+.tg-hero-title span{color:#00d4ff;}
+.tg-hero-sub{font-size:13.5px;color:#8892a6;margin:0;font-weight:500;line-height:1.5;}
+.tg-hero-stats{display:flex;gap:22px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;}
+.tg-hero-stat-num{font-size:20px;font-weight:900;line-height:1;color:#00d4ff;font-family:'JetBrains Mono',monospace;letter-spacing:-0.5px;}
+.tg-hero-stat-label{font-size:10.5px;color:#8892a6;margin-top:4px;text-transform:uppercase;letter-spacing:0.6px;font-weight:700;}
+
+/* PROGRESS */
+.tg-progress{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px 18px;margin-bottom:14px;backdrop-filter:blur(8px);}
+.tg-progress-steps{display:flex;justify-content:space-between;position:relative;}
+.tg-progress-line{position:absolute;top:15px;left:12%;right:12%;height:2px;background:rgba(255,255,255,0.08);z-index:1;border-radius:2px;}
+.tg-progress-line-fill{height:100%;background:linear-gradient(90deg,#00d4ff,#0090c4);transition:width .4s ease;width:0%;border-radius:2px;box-shadow:0 0 12px #00d4ff;}
+.tg-progress-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;z-index:2;}
+.tg-progress-dot{width:32px;height:32px;border-radius:50%;background:#0a0e1a;border:2px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:900;color:#64748b;transition:all .3s;font-family:'JetBrains Mono',monospace;}
+.tg-progress-step.active .tg-progress-dot{background:linear-gradient(135deg,#00d4ff,#0090c4);border-color:transparent;color:#0a0e1a;box-shadow:0 0 0 5px rgba(0,212,255,0.15),0 0 20px rgba(0,212,255,0.4);}
+.tg-progress-step.done .tg-progress-dot{background:linear-gradient(135deg,#22c55e,#16a34a);border-color:transparent;color:#fff;box-shadow:0 0 12px rgba(34,197,94,0.5);}
+.tg-progress-label{font-size:10px;font-weight:800;color:#64748b;text-align:center;line-height:1.2;text-transform:uppercase;letter-spacing:0.4px;}
+.tg-progress-step.active .tg-progress-label,.tg-progress-step.done .tg-progress-label{color:#fff;}
+
+/* FORM SECTION */
+.tg-form-section{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:20px 18px;margin-bottom:14px;backdrop-filter:blur(8px);animation:tgFadeIn .3s ease;}
+@keyframes tgFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.tg-form-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.tg-form-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(40,116,240,0.15));color:#00d4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(0,212,255,0.2);}
+.tg-form-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.tg-form-title{font-size:16px;font-weight:900;color:#fff;letter-spacing:-0.2px;}
+.tg-form-sub{font-size:11.5px;color:#8892a6;margin-top:3px;font-weight:500;}
+
+/* FIELDS */
+.tg-fld{margin-bottom:14px;}
+.tg-fld label{display:block;font-size:11px;color:#8892a6;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.6px;}
+.tg-fld label .rq{color:#ef4444;margin-left:2px;}
+.tg-fld input,.tg-fld select,.tg-fld textarea{width:100%;border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:14px;color:#fff;outline:none;background:rgba(255,255,255,0.04);transition:all .15s;font-family:inherit;height:46px;}
+.tg-fld textarea{height:auto;min-height:80px;resize:vertical;}
+.tg-fld input::placeholder,.tg-fld textarea::placeholder{color:#4b5563;}
+.tg-fld select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d4ff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 14px center;background-size:16px;padding-right:42px;}
+.tg-fld select option{background:#0f1729;color:#fff;}
+.tg-fld input:focus,.tg-fld select:focus,.tg-fld textarea:focus{border-color:#00d4ff;background:rgba(0,212,255,0.06);box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
+.tg-fld input.error,.tg-fld select.error,.tg-fld textarea.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,0.12);}
+.tg-fld-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media (max-width:480px){.tg-fld-row{grid-template-columns:1fr;gap:0;}}
+.tg-fld-h{font-size:11px;color:#64748b;margin-top:5px;line-height:1.4;}
+.tg-fld-error{font-size:11px;color:#f87171;font-weight:700;margin-top:5px;display:none;}
+.tg-fld-error.show{display:block;}
+
+/* BUTTONS */
+.tg-actions{display:flex;gap:10px;margin-top:6px;}
+.tg-btn{padding:14px 20px;border-radius:12px;font-size:14px;font-weight:800;letter-spacing:0.4px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;flex:1;text-transform:uppercase;}
+.tg-btn.pri{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;box-shadow:0 6px 20px rgba(0,212,255,0.4);}
+.tg-btn.pri:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.tg-btn.pri:active{transform:translateY(1px);}
+.tg-btn.pri:disabled{opacity:0.6;cursor:not-allowed;filter:grayscale(0.3);}
+.tg-btn.gho{background:rgba(255,255,255,0.06);color:#cbd5e1;flex:0 0 40%;border:1px solid rgba(255,255,255,0.08);}
+.tg-btn.gho:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.tg-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+
+/* PAYMENT METHOD SELECTOR */
+.tg-pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+@media (max-width:400px){.tg-pay-methods{grid-template-columns:1fr;}}
+.tg-pay-method{padding:16px 14px;border:2px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;text-align:center;transition:all .15s;background:rgba(255,255,255,0.02);position:relative;}
+.tg-pay-method:hover{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.04);}
+.tg-pay-method.active{border-color:#00d4ff;background:rgba(0,212,255,0.08);box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
+.tg-pay-method-ic{font-size:32px;margin-bottom:8px;line-height:1;}
+.tg-pay-method-t{font-size:13.5px;font-weight:900;color:#fff;margin-bottom:3px;}
+.tg-pay-method-s{font-size:11px;color:#8892a6;}
+.tg-pay-method-check{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.tg-pay-method.active .tg-pay-method-check{background:linear-gradient(135deg,#00d4ff,#0090c4);border-color:transparent;color:#0a0e1a;}
+.tg-pay-method.active .tg-pay-method-check::after{content:'✓';font-weight:900;font-size:13px;color:#0a0e1a;}
+
+/* INFO BOX */
+.tg-info-box{background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(40,116,240,0.06));border:1.5px solid rgba(0,212,255,0.25);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:12.5px;color:#cbd5e1;line-height:1.6;}
+.tg-info-box b{color:#00d4ff;font-weight:800;}
+.tg-info-box.warn{background:linear-gradient(135deg,rgba(250,204,21,0.1),rgba(245,158,11,0.06));border-color:rgba(250,204,21,0.3);}
+.tg-info-box.warn b{color:#facc15;}
+.tg-info-box.success{background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(22,163,74,0.06));border-color:rgba(34,197,94,0.3);}
+.tg-info-box.success b{color:#4ade80;}
+.tg-info-box .ic{font-size:16px;margin-right:6px;}
+
+/* CHECKBOX */
+.tg-chk{display:flex;align-items:flex-start;gap:10px;padding:10px 0;cursor:pointer;user-select:none;}
+.tg-chk input{appearance:none;width:20px;height:20px;border:1.5px solid rgba(255,255,255,0.2);border-radius:5px;flex-shrink:0;cursor:pointer;margin-top:2px;position:relative;transition:all .15s;background:transparent;}
+.tg-chk input:checked{background:linear-gradient(135deg,#00d4ff,#0090c4);border-color:transparent;box-shadow:0 0 12px rgba(0,212,255,0.4);}
+.tg-chk input:checked::after{content:'';position:absolute;left:5px;top:1px;width:6px;height:11px;border:solid #0a0e1a;border-width:0 2.2px 2.2px 0;transform:rotate(45deg);}
+.tg-chk span{font-size:12.5px;color:#cbd5e1;line-height:1.55;}
+.tg-chk a{color:#00d4ff;font-weight:700;}
+
+/* STATUS SCREENS */
+.tg-status{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:36px 24px;text-align:center;backdrop-filter:blur(8px);animation:tgStatusIn .5s cubic-bezier(.34,1.2,.64,1);}
+@keyframes tgStatusIn{from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);}}
+.tg-status-icon{width:96px;height:96px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;}
+.tg-status-icon.pending{background:linear-gradient(135deg,rgba(250,204,21,0.15),rgba(245,158,11,0.1));border:2px solid rgba(250,204,21,0.4);color:#facc15;animation:tgPulseIcon 2s infinite;}
+.tg-status-icon.approved{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(22,163,74,0.1));border:2px solid rgba(34,197,94,0.4);color:#4ade80;}
+.tg-status-icon.rejected{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(185,28,28,0.1));border:2px solid rgba(239,68,68,0.4);color:#f87171;}
+@keyframes tgPulseIcon{0%,100%{box-shadow:0 0 0 0 rgba(250,204,21,0.4);}50%{box-shadow:0 0 0 20px rgba(250,204,21,0);}}
+.tg-status-icon svg{width:44px;height:44px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;}
+.tg-status-title{font-size:22px;font-weight:900;color:#fff;margin:0 0 8px;letter-spacing:-0.4px;}
+.tg-status-desc{font-size:13.5px;color:#8892a6;line-height:1.6;margin:0 auto 22px;max-width:420px;}
+.tg-status-info{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin:20px 0;text-align:left;}
+.tg-status-info-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12.5px;gap:12px;}
+.tg-status-info-row:last-child{border-bottom:none;}
+.tg-status-info-key{color:#8892a6;font-weight:700;flex-shrink:0;}
+.tg-status-info-val{color:#fff;font-weight:800;text-align:right;word-break:break-word;font-family:'JetBrains Mono',monospace;}
+.tg-status-info-val.green{color:#4ade80;}
+.tg-status-info-val.yellow{color:#facc15;}
+.tg-status-info-val.red{color:#f87171;}
+.tg-status-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+.tg-status-actions .tg-btn{flex:0 1 auto;min-width:180px;}
+
+/* LOADING */
+.tg-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:16px;}
+.tg-spinner{width:44px;height:44px;border:4px solid rgba(0,212,255,0.15);border-top-color:#00d4ff;border-radius:50%;animation:tgSpin .8s linear infinite;}
+@keyframes tgSpin{to{transform:rotate(360deg);}}
+.tg-loading-text{font-size:13px;color:#8892a6;font-weight:600;}
+
+/* TOASTS */
+.tg-toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;gap:10px;max-width:calc(100vw - 24px);pointer-events:none;}
+.tg-toast{padding:13px 18px;background:linear-gradient(135deg,rgba(20,27,45,0.98),rgba(15,23,41,0.98));backdrop-filter:blur(14px);color:#fff;font-size:13px;border-radius:12px;box-shadow:0 20px 44px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08);pointer-events:auto;font-weight:600;animation:tgToastIn .3s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;min-width:280px;max-width:400px;position:relative;overflow:hidden;}
+.tg-toast::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#00d4ff,#0090c4);box-shadow:0 0 12px #00d4ff;}
+.tg-toast.suc::before{background:linear-gradient(180deg,#22c55e,#16a34a);box-shadow:0 0 12px #22c55e;}
+.tg-toast.err::before{background:linear-gradient(180deg,#ef4444,#b91c1c);box-shadow:0 0 12px #ef4444;}
+.tg-toast-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;background:rgba(0,212,255,0.15);color:#00d4ff;}
+.tg-toast.suc .tg-toast-icon{background:rgba(34,197,94,0.15);color:#4ade80;}
+.tg-toast.err .tg-toast-icon{background:rgba(239,68,68,0.15);color:#f87171;}
+@keyframes tgToastIn{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* PICKUP CARD PREVIEW */
+.tg-card-preview{background:linear-gradient(135deg,#1a1d21 0%,#2d3748 50%,#4a5568 100%);border-radius:14px;padding:20px 22px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden;min-height:130px;box-shadow:0 8px 24px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);}
+.tg-card-preview::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,212,255,0.15),transparent 70%);border-radius:50%;}
+.tg-card-preview-label{font-size:9.5px;opacity:0.6;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;position:relative;z-index:2;}
+.tg-card-preview-name{font-size:15px;font-weight:800;letter-spacing:0.5px;position:relative;z-index:2;margin-bottom:4px;}
+.tg-card-preview-value{font-size:19px;font-family:'JetBrains Mono',monospace;letter-spacing:1.5px;font-weight:700;position:relative;z-index:2;margin-top:10px;text-shadow:0 2px 8px rgba(0,0,0,0.5);}
+.tg-card-preview-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px;position:relative;z-index:2;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,212,255,0.5);}
+
+@media (max-width:600px){
+  .tg-co{padding:10px;}
+  .tg-hero{padding:22px 18px;}
+  .tg-hero-title{font-size:20px;}
+  .tg-hero-stats{gap:16px;}
+  .tg-hero-stat-num{font-size:17px;}
+  .tg-form-section{padding:18px 14px;}
+  .tg-progress{padding:14px 12px;}
+  .tg-progress-label{font-size:9px;}
+  .tg-status{padding:28px 18px;}
+  .tg-status-icon{width:80px;height:80px;font-size:38px;}
+  .tg-status-icon svg{width:38px;height:38px;}
+  .tg-status-title{font-size:19px;}
+  .tg-status-actions .tg-btn{min-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="tg-hd">
+  <div class="tg-hd-i">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-l">
+      <div class="tg-hd-lm">T</div>
+      <div class="tg-hd-lt">TOE<span>GO</span></div>
+      <span class="tg-hd-lb">Pickup Partner</span>
+    </div>
+    <div class="tg-hd-sp"></div>
+    <div class="tg-hd-live">LIVE</div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-co" id="tg-container">
+
+    <!-- LOADING -->
+    <div class="tg-loading" id="tg-loading" style="display:none;">
+      <div class="tg-spinner"></div>
+      <div class="tg-loading-text">Loading application…</div>
+    </div>
+
+    <!-- FORM VIEW -->
+    <div id="tg-form-view" style="display:none;">
+
+      <!-- HERO -->
+      <div class="tg-hero">
+        <div class="tg-hero-c">
+          <div class="tg-hero-tag">🚀 PICKUP PARTNER</div>
+          <h1 class="tg-hero-title">Earn <span>₹10–₹25</span> per packet.<br>No investment, no risk.</h1>
+          <p class="tg-hero-sub">Sellers se packets uthao, admin ko deliver karo — bas.</p>
+          <div class="tg-hero-stats">
+            <div><div class="tg-hero-stat-num">10K+</div><div class="tg-hero-stat-label">Partners</div></div>
+            <div><div class="tg-hero-stat-num">₹800+</div><div class="tg-hero-stat-label">Daily Earn</div></div>
+            <div><div class="tg-hero-stat-num">Weekly</div><div class="tg-hero-stat-label">Payouts</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="tg-progress">
+        <div class="tg-progress-steps">
+          <div class="tg-progress-line"><div class="tg-progress-line-fill" id="tg-progress-fill"></div></div>
+          <div class="tg-progress-step active" data-step="1">
+            <div class="tg-progress-dot">1</div>
+            <div class="tg-progress-label">Personal</div>
+          </div>
+          <div class="tg-progress-step" data-step="2">
+            <div class="tg-progress-dot">2</div>
+            <div class="tg-progress-label">Vehicle</div>
+          </div>
+          <div class="tg-progress-step" data-step="3">
+            <div class="tg-progress-dot">3</div>
+            <div class="tg-progress-label">Payment</div>
+          </div>
+          <div class="tg-progress-step" data-step="4">
+            <div class="tg-progress-dot">4</div>
+            <div class="tg-progress-label">Review</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: PERSONAL -->
+      <div class="tg-form-section" id="tg-step-1">
+        <div class="tg-form-head">
+          <div class="tg-form-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg></div>
+          <div>
+            <div class="tg-form-title">Personal Details</div>
+            <div class="tg-form-sub">Tumhari basic info</div>
+          </div>
+        </div>
+
+        <div class="tg-fld">
+          <label>Full Name <span class="rq">*</span></label>
+          <input type="text" id="pf-name" placeholder="e.g. Rahul Kumar" maxlength="60">
+          <div class="tg-fld-error" id="err-name">Please enter your full name</div>
+        </div>
+
+        <div class="tg-fld-row">
+          <div class="tg-fld">
+            <label>Phone <span class="rq">*</span></label>
+            <input type="tel" id="pf-phone" placeholder="10-digit" maxlength="10" inputmode="numeric">
+            <div class="tg-fld-error" id="err-phone">Enter valid 10-digit number</div>
+          </div>
+          <div class="tg-fld">
+            <label>Email <span class="rq">*</span></label>
+            <input type="email" id="pf-email" placeholder="you@example.com" maxlength="80">
+            <div class="tg-fld-error" id="err-email">Enter valid email</div>
+          </div>
+        </div>
+
+        <div class="tg-fld">
+          <label>Zone / Area <span class="rq">*</span></label>
+          <input type="text" id="pf-zone" placeholder="e.g. Kanpur Central, Civil Lines" maxlength="60">
+          <div class="tg-fld-h">Yahan aap packets pickup karoge</div>
+          <div class="tg-fld-error" id="err-zone">Please enter your zone</div>
+        </div>
+
+        <div class="tg-fld">
+          <label>Full Address <span class="rq">*</span></label>
+          <textarea id="pf-address" placeholder="House no., street, area, landmark" maxlength="200"></textarea>
+          <div class="tg-fld-error" id="err-address">Please enter your address</div>
+        </div>
+
+        <div class="tg-fld-row">
+          <div class="tg-fld">
+            <label>City <span class="rq">*</span></label>
+            <input type="text" id="pf-city" placeholder="City" maxlength="40">
+            <div class="tg-fld-error" id="err-city">Please enter city</div>
+          </div>
+          <div class="tg-fld">
+            <label>Pincode <span class="rq">*</span></label>
+            <input type="text" id="pf-pincode" placeholder="6-digit" maxlength="6" inputmode="numeric">
+            <div class="tg-fld-error" id="err-pincode">Enter valid 6-digit pincode</div>
+          </div>
+        </div>
+
+        <div class="tg-actions" style="justify-content:flex-end;">
+          <button class="tg-btn pri" style="flex:0 1 auto;min-width:180px;" onclick="tgNextStep(2)">
+            Continue
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: VEHICLE -->
+      <div class="tg-form-section" id="tg-step-2" style="display:none;">
+        <div class="tg-form-head">
+          <div class="tg-form-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <div>
+            <div class="tg-form-title">Vehicle Details</div>
+            <div class="tg-form-sub">Kaise packets uthaoge?</div>
+          </div>
+        </div>
+
+        <div class="tg-fld">
+          <label>Vehicle Type <span class="rq">*</span></label>
+          <select id="pf-vehicle-type">
+            <option value="">Select vehicle</option>
+            <option value="bicycle">🚲 Bicycle</option>
+            <option value="bike">🏍️ Motorcycle / Scooter</option>
+            <option value="auto">🛺 Auto Rickshaw</option>
+            <option value="car">🚗 Car</option>
+            <option value="cycle_rickshaw">🛺 Cycle Rickshaw</option>
+            <option value="other">🚶 Other / Walking</option>
+          </select>
+          <div class="tg-fld-error" id="err-vehicle-type">Please select vehicle type</div>
+        </div>
+
+        <div class="tg-fld">
+          <label>Vehicle Number (optional)</label>
+          <input type="text" id="pf-vehicle-number" placeholder="e.g. UP78 AB 1234" maxlength="20" style="text-transform:uppercase;">
+          <div class="tg-fld-h">Agar vehicle nahi hai toh khali chhod do</div>
+        </div>
+
+        <div class="tg-fld">
+          <label>Driving License (optional)</label>
+          <input type="text" id="pf-dl" placeholder="DL number" maxlength="20" style="text-transform:uppercase;">
+        </div>
+
+        <div class="tg-info-box">
+          <span class="ic">💡</span><b>Tip:</b> Bike / scooter ho toh zyada packets utha sakte ho — daily earning badh jayegi!
+        </div>
+
+        <div class="tg-actions">
+          <button class="tg-btn gho" onclick="tgPrevStep(1)">
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            Back
+          </button>
+          <button class="tg-btn pri" onclick="tgNextStep(3)">
+            Continue
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: PAYMENT -->
+      <div class="tg-form-section" id="tg-step-3" style="display:none;">
+        <div class="tg-form-head">
+          <div class="tg-form-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div>
+            <div class="tg-form-title">Payment Details</div>
+            <div class="tg-form-sub">Admin yahan payment karega</div>
+          </div>
+        </div>
+
+        <div class="tg-info-box success">
+          <span class="ic">✅</span><b>Important:</b> Ye payment details sirf Admin ko dikhengi. Tumhari earning isi account me credit hogi — <b>safe & secure</b>.
+        </div>
+
+        <div class="tg-fld">
+          <label>Choose Payment Method <span class="rq">*</span></label>
+          <div class="tg-pay-methods">
+            <div class="tg-pay-method" data-method="upi" onclick="tgPickPayMethod('upi')">
+              <div class="tg-pay-method-check"></div>
+              <div class="tg-pay-method-ic">📱</div>
+              <div class="tg-pay-method-t">UPI</div>
+              <div class="tg-pay-method-s">Instant transfer</div>
+            </div>
+            <div class="tg-pay-method" data-method="bank" onclick="tgPickPayMethod('bank')">
+              <div class="tg-pay-method-check"></div>
+              <div class="tg-pay-method-ic">🏦</div>
+              <div class="tg-pay-method-t">Bank Account</div>
+              <div class="tg-pay-method-s">NEFT / IMPS</div>
+            </div>
+          </div>
+          <div class="tg-fld-error" id="err-pay-method">Please select a payment method</div>
+        </div>
+
+        <!-- UPI FIELDS -->
+        <div id="tg-upi-fields" style="display:none;">
+          <div class="tg-fld">
+            <label>UPI ID <span class="rq">*</span></label>
+            <input type="text" id="pf-upi" placeholder="yourname@paytm / 9876543210@ybl" maxlength="60" autocapitalize="off" autocorrect="off" spellcheck="false" oninput="tgUpdateUpiPreview()">
+            <div class="tg-fld-h">Google Pay, PhonePe, Paytm, BHIM — koi bhi UPI ID</div>
+            <div class="tg-fld-error" id="err-upi">Enter valid UPI ID (e.g. name@upi)</div>
+          </div>
+
+          <div class="tg-fld">
+            <label>UPI App (optional)</label>
+            <select id="pf-upi-provider">
+              <option value="gpay">Google Pay</option>
+              <option value="phonepe">PhonePe</option>
+              <option value="paytm">Paytm</option>
+              <option value="bhim">BHIM</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="tg-card-preview" id="tg-upi-preview" style="display:none;">
+            <div class="tg-card-preview-label">UPI ID</div>
+            <div class="tg-card-preview-name" id="pv-upi-name">YOUR NAME</div>
+            <div class="tg-card-preview-value" id="pv-upi-id">—</div>
+            <div class="tg-card-preview-footer">
+              <div style="font-size:11px;opacity:0.75;">Powered by <b style="color:#00d4ff;">UPI</b></div>
+              <div style="font-size:11px;opacity:0.75;">🇮🇳 India</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BANK FIELDS -->
+        <div id="tg-bank-fields" style="display:none;">
+          <div class="tg-fld">
+            <label>Account Holder Name <span class="rq">*</span></label>
+            <input type="text" id="pf-bank-name" placeholder="As per bank records" maxlength="60">
+            <div class="tg-fld-error" id="err-bank-name">Please enter account holder name</div>
+          </div>
+
+          <div class="tg-fld">
+            <label>Account Number <span class="rq">*</span></label>
+            <input type="text" id="pf-bank-acc" placeholder="Bank account number" maxlength="20" inputmode="numeric">
+            <div class="tg-fld-error" id="err-bank-acc">Enter valid account number (min 8 digits)</div>
+          </div>
+
+          <div class="tg-fld">
+            <label>Confirm Account Number <span class="rq">*</span></label>
+            <input type="text" id="pf-bank-acc2" placeholder="Re-enter account number" maxlength="20" inputmode="numeric">
+            <div class="tg-fld-error" id="err-bank-acc2">Account numbers do not match</div>
+          </div>
+
+          <div class="tg-fld">
+            <label>IFSC Code <span class="rq">*</span></label>
+            <input type="text" id="pf-ifsc" placeholder="e.g. HDFC0001234" maxlength="11" style="text-transform:uppercase;">
+            <div class="tg-fld-h">11-character code, apne bank ke passbook / cheque pe milega</div>
+            <div class="tg-fld-error" id="err-ifsc">Enter valid IFSC code</div>
+          </div>
+
+          <div class="tg-fld">
+            <label>Bank Name (optional)</label>
+            <input type="text" id="pf-bank-brand" placeholder="e.g. HDFC Bank, SBI" maxlength="40">
+          </div>
+
+          <div class="tg-card-preview" id="tg-bank-preview" style="display:none;">
+            <div class="tg-card-preview-label">BANK ACCOUNT</div>
+            <div class="tg-card-preview-name" id="pv-bank-name">ACCOUNT HOLDER</div>
+            <div class="tg-card-preview-value" id="pv-bank-acc">•••• •••• ••••</div>
+            <div class="tg-card-preview-footer">
+              <div>
+                <div style="font-size:9px;opacity:0.6;letter-spacing:1.5px;">IFSC</div>
+                <div style="font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;margin-top:2px;" id="pv-bank-ifsc">—</div>
+              </div>
+              <div style="font-size:11px;opacity:0.75;">🇮🇳 India</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tg-actions">
+          <button class="tg-btn gho" onclick="tgPrevStep(2)">
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            Back
+          </button>
+          <button class="tg-btn pri" onclick="tgNextStep(4)">
+            Continue
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 4: REVIEW -->
+      <div class="tg-form-section" id="tg-step-4" style="display:none;">
+        <div class="tg-form-head">
+          <div class="tg-form-icon"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div>
+            <div class="tg-form-title">Review & Submit</div>
+            <div class="tg-form-sub">Ek baar check karo phir submit</div>
+          </div>
+        </div>
+
+        <div id="tg-review-content"></div>
+
+        <div class="tg-info-box warn">
+          <span class="ic">⚠️</span><b>Note:</b> Application submit karne ke baad Admin review karega (24-48 hrs). Approval ke baad tum pickup-admin dashboard me dikhne lagega.
+        </div>
+
+        <label class="tg-chk" onclick="event.stopPropagation();">
+          <input type="checkbox" id="pf-agree">
+          <span>Main confirm karta/karti hoon ki sabhi details <b>sahi aur meri hi hain</b>. Main TOEGO ke <a href="terms.html" target="_blank">Terms</a> aur <a href="privacy.html" target="_blank">Privacy Policy</a> se agree karta/karti hoon.</span>
+        </label>
+        <div class="tg-fld-error" id="err-agree" style="margin-bottom:10px;">Please agree to continue</div>
+
+        <div class="tg-actions">
+          <button class="tg-btn gho" onclick="tgPrevStep(3)">
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            Back
+          </button>
+          <button class="tg-btn pri" id="pf-submit-btn" onclick="tgSubmitApplication()">
+            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            Submit Application
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PENDING VIEW -->
+    <div id="tg-pending-view" style="display:none;">
+      <div class="tg-status">
+        <div class="tg-status-icon pending">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h2 class="tg-status-title">Application Under Review</h2>
+        <p class="tg-status-desc">Tumhara pickup partner application mil gaya! <b>24-48 hours</b> me Admin review karega. Approval ke baad dashboard access milega.</p>
+        <div class="tg-status-info" id="tg-pending-info"></div>
+        <div class="tg-status-actions">
+          <a href="account.html" class="tg-btn pri">
+            <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+            Back to Account
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPROVED VIEW -->
+    <div id="tg-approved-view" style="display:none;">
+      <div class="tg-status">
+        <div class="tg-status-icon approved">
+          <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h2 class="tg-status-title">🎉 You're a Pickup Partner!</h2>
+        <p class="tg-status-desc">Congratulations! Tumhara pickup partner account approve ho gaya. Ab tum seller se packets pickup karke admin ko deliver kar sakte ho.</p>
+        <div class="tg-status-info" id="tg-approved-info"></div>
+        <div class="tg-status-actions">
+          <a href="pickup.html" class="tg-btn pri">
+            <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+            Open Pickup Dashboard
+          </a>
+          <a href="account.html" class="tg-btn gho" style="flex:0 1 auto;min-width:120px;">Back</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- REJECTED VIEW -->
+    <div id="tg-rejected-view" style="display:none;">
+      <div class="tg-status">
+        <div class="tg-status-icon rejected">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+        </div>
+        <h2 class="tg-status-title">Application Not Approved</h2>
+        <p class="tg-status-desc">Unfortunately tumhara pickup partner application approve nahi hua. Updated info ke saath dobara apply kar sakte ho.</p>
+        <div class="tg-status-info" id="tg-rejected-info"></div>
+        <div class="tg-status-actions">
+          <button class="tg-btn pri" onclick="tgReapply()">
+            <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Apply Again
+          </button>
+          <a href="account.html" class="tg-btn gho" style="flex:0 1 auto;min-width:120px;">Back</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  let USER = null;
+  let CURRENT_STEP = 1;
+  let PAY_METHOD = '';
+  let EXISTING_APP = null;
+
+  // ============ TOAST ============
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const icons = { info:'ℹ', suc:'✓', err:'✕' };
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + (type === 'success' ? 'suc' : type === 'error' ? 'err' : '');
+    el.innerHTML = '<div class="tg-toast-icon">' + (icons[type]||icons.info) + '</div><div>' + msg + '</div>';
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2800);
+  }
+
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function show(id) {
+    ['tg-loading','tg-form-view','tg-pending-view','tg-approved-view','tg-rejected-view'].forEach(x => {
+      const el = document.getElementById(x);
+      if (el) el.style.display = 'none';
+    });
+    const el = document.getElementById(id);
+    if (el) el.style.display = (id === 'tg-loading' ? 'flex' : 'block');
+  }
+
+  // ============ STEP NAV ============
+  window.tgNextStep = function(step) {
+    if (!validateStep(CURRENT_STEP)) return;
+    goToStep(step);
+  };
+  window.tgPrevStep = function(step) { goToStep(step); };
+
+  function goToStep(step) {
+    CURRENT_STEP = step;
+    for (let i = 1; i <= 4; i++) {
+      const s = document.getElementById('tg-step-' + i);
+      if (s) s.style.display = (i === step) ? 'block' : 'none';
+    }
+    document.querySelectorAll('.tg-progress-step').forEach(el => {
+      const n = Number(el.dataset.step);
+      el.classList.toggle('active', n === step);
+      el.classList.toggle('done', n < step);
+    });
+    const fill = document.getElementById('tg-progress-fill');
+    if (fill) fill.style.width = ((step - 1) / 3) * 100 + '%';
+    if (step === 4) renderReview();
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
+  }
+
+  // ============ FIELD ERROR HELPERS ============
+  function setErr(id, show) {
+    const e = document.getElementById('err-' + id);
+    if (e) e.classList.toggle('show', show);
+    const inp = document.getElementById('pf-' + id);
+    if (inp) inp.classList.toggle('error', show);
+  }
+
+  // ============ VALIDATE STEP ============
+  function validateStep(step) {
+    let ok = true;
+    if (step === 1) {
+      const name = (document.getElementById('pf-name').value || '').trim();
+      const phone = (document.getElementById('pf-phone').value || '').trim();
+      const email = (document.getElementById('pf-email').value || '').trim();
+      const zone = (document.getElementById('pf-zone').value || '').trim();
+      const addr = (document.getElementById('pf-address').value || '').trim();
+      const city = (document.getElementById('pf-city').value || '').trim();
+      const pin = (document.getElementById('pf-pincode').value || '').trim();
+      if (!name || name.length < 2) { setErr('name', true); ok = false; } else setErr('name', false);
+      if (!/^\d{10}$/.test(phone)) { setErr('phone', true); ok = false; } else setErr('phone', false);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('email', true); ok = false; } else setErr('email', false);
+      if (!zone) { setErr('zone', true); ok = false; } else setErr('zone', false);
+      if (!addr || addr.length < 5) { setErr('address', true); ok = false; } else setErr('address', false);
+      if (!city) { setErr('city', true); ok = false; } else setErr('city', false);
+      if (!/^\d{6}$/.test(pin)) { setErr('pincode', true); ok = false; } else setErr('pincode', false);
+    } else if (step === 2) {
+      const vt = document.getElementById('pf-vehicle-type').value;
+      if (!vt) { setErr('vehicle-type', true); ok = false; } else setErr('vehicle-type', false);
+    } else if (step === 3) {
+      if (!PAY_METHOD) {
+        document.getElementById('err-pay-method').classList.add('show');
+        ok = false;
+      } else {
+        document.getElementById('err-pay-method').classList.remove('show');
+      }
+      if (PAY_METHOD === 'upi') {
+        const upi = (document.getElementById('pf-upi').value || '').trim().toLowerCase();
+        if (!/^[a-z0-9._-]{2,}@[a-z]{2,}$/.test(upi)) { setErr('upi', true); ok = false; } else setErr('upi', false);
+      } else if (PAY_METHOD === 'bank') {
+        const bname = (document.getElementById('pf-bank-name').value || '').trim();
+        const bacc = (document.getElementById('pf-bank-acc').value || '').trim();
+        const bacc2 = (document.getElementById('pf-bank-acc2').value || '').trim();
+        const ifsc = (document.getElementById('pf-ifsc').value || '').trim().toUpperCase();
+        if (!bname) { setErr('bank-name', true); ok = false; } else setErr('bank-name', false);
+        if (bacc.length < 8) { setErr('bank-acc', true); ok = false; } else setErr('bank-acc', false);
+        if (bacc2 !== bacc) { setErr('bank-acc2', true); ok = false; } else setErr('bank-acc2', false);
+        if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) { setErr('ifsc', true); ok = false; } else setErr('ifsc', false);
+      }
+    }
+    if (!ok) toast('Please fix highlighted fields', 'error');
+    return ok;
+  }
+
+  // ============ PAYMENT METHOD ============
+  window.tgPickPayMethod = function(m) {
+    PAY_METHOD = m;
+    document.querySelectorAll('.tg-pay-method').forEach(el => el.classList.toggle('active', el.dataset.method === m));
+    document.getElementById('err-pay-method').classList.remove('show');
+    document.getElementById('tg-upi-fields').style.display = (m === 'upi') ? 'block' : 'none';
+    document.getElementById('tg-bank-fields').style.display = (m === 'bank') ? 'block' : 'none';
+    if (m === 'upi') tgUpdateUpiPreview();
+    if (m === 'bank') tgUpdateBankPreview();
+  };
+
+  window.tgUpdateUpiPreview = function() {
+    const upi = (document.getElementById('pf-upi').value || '').trim().toLowerCase();
+    const name = (document.getElementById('pf-name').value || '').trim();
+    const preview = document.getElementById('tg-upi-preview');
+    if (upi && /@/.test(upi)) {
+      document.getElementById('pv-upi-name').textContent = (name || 'YOUR NAME').toUpperCase();
+      document.getElementById('pv-upi-id').textContent = upi;
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+  };
+
+  window.tgUpdateBankPreview = function() {
+    const name = (document.getElementById('pf-bank-name').value || '').trim();
+    const acc = (document.getElementById('pf-bank-acc').value || '').trim();
+    const ifsc = (document.getElementById('pf-ifsc').value || '').trim().toUpperCase();
+    const preview = document.getElementById('tg-bank-preview');
+    if (acc || name || ifsc) {
+      document.getElementById('pv-bank-name').textContent = (name || 'ACCOUNT HOLDER').toUpperCase();
+      if (acc.length >= 4) {
+        const masked = '•'.repeat(Math.max(0, acc.length - 4)) + acc.slice(-4);
+        document.getElementById('pv-bank-acc').textContent = masked.match(/.{1,4}/g)?.join(' ') || masked;
+      } else {
+        document.getElementById('pv-bank-acc').textContent = '•••• •••• ••••';
+      }
+      document.getElementById('pv-bank-ifsc').textContent = ifsc || '—';
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+  };
+
+  // Live preview listeners
+  document.getElementById('pf-upi').addEventListener('input', tgUpdateUpiPreview);
+  document.getElementById('pf-name').addEventListener('input', () => { tgUpdateUpiPreview(); });
+  document.getElementById('pf-bank-name').addEventListener('input', tgUpdateBankPreview);
+  document.getElementById('pf-bank-acc').addEventListener('input', tgUpdateBankPreview);
+  document.getElementById('pf-ifsc').addEventListener('input', tgUpdateBankPreview);
+
+  // ============ REVIEW ============
+  function collectData() {
+    const d = {
+      name: (document.getElementById('pf-name').value || '').trim(),
+      phone: (document.getElementById('pf-phone').value || '').trim(),
+      email: (document.getElementById('pf-email').value || '').trim(),
+      zone: (document.getElementById('pf-zone').value || '').trim(),
+      address: (document.getElementById('pf-address').value || '').trim(),
+      city: (document.getElementById('pf-city').value || '').trim(),
+      pincode: (document.getElementById('pf-pincode').value || '').trim(),
+      vehicleType: document.getElementById('pf-vehicle-type').value,
+      vehicleNumber: (document.getElementById('pf-vehicle-number').value || '').trim().toUpperCase(),
+      dl: (document.getElementById('pf-dl').value || '').trim().toUpperCase(),
+      payMethod: PAY_METHOD
+    };
+    if (PAY_METHOD === 'upi') {
+      d.upiId = (document.getElementById('pf-upi').value || '').trim().toLowerCase();
+      d.upiProvider = document.getElementById('pf-upi-provider').value;
+    } else if (PAY_METHOD === 'bank') {
+      d.bankName = (document.getElementById('pf-bank-name').value || '').trim();
+      d.bankAcc = (document.getElementById('pf-bank-acc').value || '').trim();
+      d.ifsc = (document.getElementById('pf-ifsc').value || '').trim().toUpperCase();
+      d.bankBrand = (document.getElementById('pf-bank-brand').value || '').trim();
+    }
+    return d;
+  }
+
+  function renderReview() {
+    const d = collectData();
+    const vMap = { bicycle:'🚲 Bicycle', bike:'🏍️ Motorcycle / Scooter', auto:'🛺 Auto Rickshaw', car:'🚗 Car', cycle_rickshaw:'🛺 Cycle Rickshaw', other:'🚶 Other / Walking' };
+    let payHtml = '';
+    if (d.payMethod === 'upi') {
+      payHtml = 
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Method</span><span class="tg-status-info-val green">📱 UPI</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">UPI ID</span><span class="tg-status-info-val">' + esc(d.upiId) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">App</span><span class="tg-status-info-val">' + esc(d.upiProvider || '—') + '</span></div>';
+    } else {
+      const masked = d.bankAcc.length >= 4 ? '•'.repeat(Math.max(0, d.bankAcc.length - 4)) + d.bankAcc.slice(-4) : d.bankAcc;
+      payHtml = 
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Method</span><span class="tg-status-info-val green">🏦 Bank</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Holder</span><span class="tg-status-info-val">' + esc(d.bankName) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Account</span><span class="tg-status-info-val">' + esc(masked) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">IFSC</span><span class="tg-status-info-val">' + esc(d.ifsc) + '</span></div>' +
+        (d.bankBrand ? '<div class="tg-status-info-row"><span class="tg-status-info-key">Bank</span><span class="tg-status-info-val">' + esc(d.bankBrand) + '</span></div>' : '');
+    }
+
+    document.getElementById('tg-review-content').innerHTML =
+      '<div class="tg-status-info">' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Name</span><span class="tg-status-info-val">' + esc(d.name) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Phone</span><span class="tg-status-info-val">' + esc(d.phone) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Email</span><span class="tg-status-info-val">' + esc(d.email) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Zone</span><span class="tg-status-info-val">' + esc(d.zone) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">City</span><span class="tg-status-info-val">' + esc(d.city) + ' · ' + esc(d.pincode) + '</span></div>' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Address</span><span class="tg-status-info-val" style="font-family:Roboto;font-weight:600;font-size:12px;">' + esc(d.address) + '</span></div>' +
+      '</div>' +
+      '<div class="tg-status-info">' +
+        '<div class="tg-status-info-row"><span class="tg-status-info-key">Vehicle</span><span class="tg-status-info-val">' + esc(vMap[d.vehicleType] || d.vehicleType) + '</span></div>' +
+        (d.vehicleNumber ? '<div class="tg-status-info-row"><span class="tg-status-info-key">Vehicle No</span><span class="tg-status-info-val">' + esc(d.vehicleNumber) + '</span></div>' : '') +
+        (d.dl ? '<div class="tg-status-info-row"><span class="tg-status-info-key">DL</span><span class="tg-status-info-val">' + esc(d.dl) + '</span></div>' : '') +
+      '</div>' +
+      '<div class="tg-status-info" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);">' +
+        '<div style="font-size:11px;font-weight:900;color:#4ade80;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px;">💳 Payment</div>' +
+        payHtml +
+      '</div>';
+  }
+
+  // ============ SUBMIT ============
+  window.tgSubmitApplication = async function() {
+    if (!USER) { toast('Please log in first', 'error'); return; }
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) return;
+
+    const agree = document.getElementById('pf-agree').checked;
+    if (!agree) {
+      document.getElementById('err-agree').classList.add('show');
+      toast('Please agree to the terms', 'error');
+      return;
+    }
+    document.getElementById('err-agree').classList.remove('show');
+
+    const btn = document.getElementById('pf-submit-btn');
+    btn.disabled = true;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:#0a0e1a;border-radius:50%;animation:tgSpin .7s linear infinite;"></span> Submitting…';
+
+    const d = collectData();
+
+    try {
+      // Check existing role
+      const userSnap = await db.collection('users').doc(USER.uid).get();
+      const role = userSnap.exists ? (userSnap.data().role || 'customer').toLowerCase() : 'customer';
+      if (['pickup_partner','delivery_partner','admin','superadmin'].includes(role)) {
+        toast('You are already a partner', 'info');
+        setTimeout(() => location.href = 'pickup.html', 800);
+        return;
+      }
+
+      // Build payload
+      const payload = {
+        uid: USER.uid,
+        name: d.name,
+        phone: d.phone,
+        email: d.email,
+        zone: d.zone,
+        address: d.address,
+        city: d.city,
+        pincode: d.pincode,
+        vehicleType: d.vehicleType,
+        vehicleNumber: d.vehicleNumber,
+        dl: d.dl,
+        role: 'pickup_partner',
+        partnerType: 'pickup',
+        status: 'pending',
+        approved: false,
+        appliedAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      };
+
+      // Payment details (secure)
+      if (d.payMethod === 'upi') {
+        payload.payMethod = 'upi';
+        payload.upiId = d.upiId;
+        payload.upiProvider = d.upiProvider;
+      } else {
+        payload.payMethod = 'bank';
+        payload.bankName = d.bankName;
+        payload.bankAcc = d.bankAcc;
+        payload.ifsc = d.ifsc;
+        payload.bankBrand = d.bankBrand;
+      }
+
+      await db.collection('deliveryPartners').doc(USER.uid).set(payload, { merge: true });
+
+      // Also update user doc for quick access
+      try {
+        await db.collection('users').doc(USER.uid).set({
+          pickupApplicationStatus: 'pending',
+          updatedAt: FV.serverTimestamp()
+        }, { merge: true });
+      } catch(e) {}
+
+      toast('Application submitted ✓', 'success');
+      setTimeout(() => {
+        EXISTING_APP = payload;
+        show('tg-pending-view');
+        renderPendingInfo(payload);
+      }, 800);
+
+    } catch(err) {
+      console.error(err);
+      toast('Failed: ' + (err.message || 'Try again'), 'error');
+      btn.disabled = false;
+      btn.innerHTML = orig;
+    }
+  };
+
+  // ============ REAPPLY ============
+  window.tgReapply = function() {
+    if (EXISTING_APP) fillForm(EXISTING_APP);
+    goToStep(1);
+    show('tg-form-view');
+  };
+
+  function fillForm(d) {
+    const set = (id, v) => { const el = document.getElementById('pf-' + id); if (el && v) el.value = v; };
+    set('name', d.name);
+    set('phone', d.phone);
+    set('email', d.email);
+    set('zone', d.zone);
+    set('address', d.address);
+    set('city', d.city);
+    set('pincode', d.pincode);
+    set('vehicle-number', d.vehicleNumber);
+    set('dl', d.dl);
+    const vt = document.getElementById('pf-vehicle-type');
+    if (vt && d.vehicleType) vt.value = d.vehicleType;
+    if (d.payMethod === 'upi' || d.upiId) {
+      tgPickPayMethod('upi');
+      set('upi', d.upiId);
+      const up = document.getElementById('pf-upi-provider');
+      if (up && d.upiProvider) up.value = d.upiProvider;
+      tgUpdateUpiPreview();
+    } else if (d.payMethod === 'bank' || d.bankAcc) {
+      tgPickPayMethod('bank');
+      set('bank-name', d.bankName);
+      set('bank-acc', d.bankAcc);
+      set('bank-acc2', d.bankAcc);
+      set('ifsc', d.ifsc);
+      set('bank-brand', d.bankBrand);
+      tgUpdateBankPreview();
+    }
+  }
+
+  // ============ STATUS INFO ============
+  function renderPendingInfo(d) {
+    const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    let payRow = '';
+    if (d.upiId) payRow = '<div class="tg-status-info-row"><span class="tg-status-info-key">Payment</span><span class="tg-status-info-val">📱 ' + esc(d.upiId) + '</span></div>';
+    else if (d.bankAcc) payRow = '<div class="tg-status-info-row"><span class="tg-status-info-key">Payment</span><span class="tg-status-info-val">🏦 ••••' + esc(d.bankAcc.slice(-4)) + '</span></div>';
+    document.getElementById('tg-pending-info').innerHTML =
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Name</span><span class="tg-status-info-val">' + esc(d.name || '') + '</span></div>' +
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Zone</span><span class="tg-status-info-val">' + esc(d.zone || '—') + '</span></div>' +
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Applied On</span><span class="tg-status-info-val">' + dateStr + '</span></div>' +
+      payRow +
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Status</span><span class="tg-status-info-val yellow">⏳ Pending Review</span></div>';
+  }
+
+  function renderApprovedInfo(d) {
+    let payRow = '';
+    if (d.upiId) payRow = '<div class="tg-status-info-row"><span class="tg-status-info-key">Payment</span><span class="tg-status-info-val">📱 ' + esc(d.upiId) + '</span></div>';
+    else if (d.bankAcc) payRow = '<div class="tg-status-info-row"><span class="tg-status-info-key">Payment</span><span class="tg-status-info-val">🏦 ••••' + esc(d.bankAcc.slice(-4)) + '</span></div>';
+    document.getElementById('tg-approved-info').innerHTML =
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Name</span><span class="tg-status-info-val">' + esc(d.name || '') + '</span></div>' +
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Zone</span><span class="tg-status-info-val">' + esc(d.zone || '—') + '</span></div>' +
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Rate</span><span class="tg-status-info-val green">' + (d.ratePerPacket ? '₹' + d.ratePerPacket + '/packet' : 'Assigned by admin') + '</span></div>' +
+      payRow +
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Status</span><span class="tg-status-info-val green">✓ Approved Partner</span></div>';
+  }
+
+  function renderRejectedInfo(d) {
+    let rows =
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Name</span><span class="tg-status-info-val">' + esc(d.name || '') + '</span></div>' +
+      '<div class="tg-status-info-row"><span class="tg-status-info-key">Status</span><span class="tg-status-info-val red">✕ Rejected</span></div>';
+    if (d.rejectionReason) {
+      rows += '<div class="tg-status-info-row"><span class="tg-status-info-key">Reason</span><span class="tg-status-info-val red" style="font-size:12px;">' + esc(d.rejectionReason) + '</span></div>';
+    }
+    document.getElementById('tg-rejected-info').innerHTML = rows;
+  }
+
+  // ============ LOAD STATE ============
+  async function loadState() {
+    if (!USER) { show('tg-form-view'); goToStep(1); prefillFromUser(); return; }
+    show('tg-loading');
+
+    try {
+      // Check role
+      const userSnap = await db.collection('users').doc(USER.uid).get();
+      const userData = userSnap.exists ? userSnap.data() : {};
+      const role = (userData.role || 'customer').toLowerCase();
+
+      if (['pickup_partner','delivery_partner'].includes(role)) {
+        show('tg-approved-view');
+        let appData = userData;
+        try {
+          const ap = await db.collection('deliveryPartners').doc(USER.uid).get();
+          if (ap.exists) appData = { ...userData, ...ap.data() };
+        } catch(e) {}
+        renderApprovedInfo(appData);
+        return;
+      }
+      if (['admin','superadmin'].includes(role)) {
+        show('tg-approved-view');
+        renderApprovedInfo({ name: userData.name || 'Admin', zone: 'Full Access' });
+        return;
+      }
+
+      // Check application
+      let appSnap = null;
+      try { appSnap = await db.collection('deliveryPartners').doc(USER.uid).get(); } catch(e) {}
+
+      if (appSnap && appSnap.exists) {
+        const d = appSnap.data();
+        EXISTING_APP = d;
+        const status = (d.status || '').toLowerCase();
+        if (status === 'approved' || d.approved === true) {
+          show('tg-approved-view');
+          renderApprovedInfo(d);
+          return;
+        }
+        if (status === 'rejected') {
+          show('tg-rejected-view');
+          renderRejectedInfo(d);
+          return;
+        }
+        show('tg-pending-view');
+        renderPendingInfo(d);
+        return;
+      }
+
+      show('tg-form-view');
+      goToStep(1);
+      prefillFromUser(userData);
+    } catch(e) {
+      console.warn('loadState err:', e);
+      show('tg-form-view');
+      goToStep(1);
+      prefillFromUser();
+    }
+  }
+
+  function prefillFromUser(d) {
+    d = d || {};
+    const set = (id, v) => { const el = document.getElementById('pf-' + id); if (el && v) el.value = v; };
+    set('email', USER.email || d.email || '');
+    set('name', d.name || USER.displayName || '');
+    set('phone', d.phone || USER.phoneNumber || '');
+    set('city', d.city || '');
+    set('pincode', d.pincode || '');
+  }
+
+  // ============ AUTH ============
+  auth.onAuthStateChanged(u => {
+    USER = u;
+    if (!u) {
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('pickup-apply.html'));
+      return;
+    }
+    loadState();
+  });
+
+})();
+</script>
+</body>
+</html>
