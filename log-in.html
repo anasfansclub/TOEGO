@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
 <link rel="preconnect" href="https://accounts.google.com">
+<link rel="dns-prefetch" href="https://apis.google.com">
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 <style>
 *,*::before,*::after{box-sizing:border-box;}
@@ -18,35 +19,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 input{font:inherit;}
 a{color:inherit;text-decoration:none;}
 header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#footer,.o_footer_copyright,.o_breadcrumb,.breadcrumb,.o_website_edit_toolbar,.o_notification_manager{display:none!important;}
-
-/* ═══ DEBUG PANEL — page pe error dikhayega ═══ */
-#tg-debug{
-  position:fixed;top:0;left:0;right:0;z-index:9999999;
-  background:#d32f2f;color:#fff;
-  padding:14px 16px;
-  font-family:monospace;font-size:13px;line-height:1.5;
-  display:none;box-shadow:0 4px 20px rgba(0,0,0,0.4);
-  max-height:60vh;overflow-y:auto;
-}
-#tg-debug.show{display:block;}
-#tg-debug-title{font-weight:900;font-size:15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
-#tg-debug-close{background:rgba(255,255,255,0.25);color:#fff;width:28px;height:28px;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
-#tg-debug-body{white-space:pre-wrap;word-break:break-word;background:rgba(0,0,0,0.2);padding:10px;border-radius:6px;margin-top:6px;font-size:12px;}
-#tg-debug-info{margin-top:8px;font-size:11px;opacity:0.9;}
-
-/* ═══ DOMAIN WARNING BANNER ═══ */
-#tg-domain-warn{
-  position:fixed;top:0;left:0;right:0;z-index:999998;
-  background:#ff6b00;color:#fff;
-  padding:10px 16px;font-size:13px;font-weight:600;
-  display:none;text-align:center;line-height:1.4;
-  box-shadow:0 2px 12px rgba(0,0,0,0.2);
-}
-#tg-domain-warn.show{display:block;}
-
 .tg-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:#f1f3f6;}
-.tg-card{width:100%;max-width:720px;background:#fff;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,0.10);display:flex;overflow:hidden;animation:tgCardIn .4s cubic-bezier(.34,1.2,.64,1);}
-@keyframes tgCardIn{from{transform:translateY(12px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.tg-card{width:100%;max-width:720px;background:#fff;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,0.10);display:flex;overflow:hidden;}
 .tg-left{flex:0 0 40%;max-width:40%;background:#2874f0;color:#fff;padding:34px 30px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:background .3s;}
 .tg-left::after{content:'';position:absolute;bottom:-80px;left:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(255,255,255,0.08),transparent 70%);border-radius:50%;}
 .tg-left-logo{font-weight:900;font-style:italic;font-size:24px;letter-spacing:-0.4px;position:relative;z-index:2;}
@@ -87,8 +61,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-field-name{display:none;}
 .tg-card.signup .tg-field-name{display:block;}
 .tg-card.signup .tg-forgot-row{display:none;}
-.tg-toasts{position:fixed;top:80px;right:20px;z-index:999999;display:flex;flex-direction:column;gap:10px;max-width:calc(100vw - 40px);pointer-events:none;}
-.tg-toast{padding:13px 18px;border-radius:4px;background:#212121;color:#fff;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);pointer-events:auto;display:flex;align-items:center;gap:10px;animation:tgToastIn .3s cubic-bezier(.34,1.56,.64,1);max-width:380px;}
+.tg-toasts{position:fixed;top:20px;right:20px;z-index:999999;display:flex;flex-direction:column;gap:10px;max-width:calc(100vw - 40px);pointer-events:none;}
+.tg-toast{padding:13px 18px;border-radius:4px;background:#212121;color:#fff;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);pointer-events:auto;display:flex;align-items:center;gap:10px;animation:tgToastIn .25s;max-width:380px;line-height:1.4;}
 @keyframes tgToastIn{from{transform:translateX(130%);opacity:0;}to{transform:translateX(0);opacity:1;}}
 .tg-toast.success{background:#388e3c;}
 .tg-toast.error{background:#d32f2f;}
@@ -96,28 +70,55 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-overlay{position:fixed;inset:0;background:rgba(241,243,246,0.96);backdrop-filter:blur(4px);z-index:999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
 .tg-overlay.show{display:flex;}
 .tg-overlay-spinner{width:42px;height:42px;border:4px solid #d4d5d9;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
-.tg-overlay-text{font-size:14px;color:#212121;font-weight:500;text-align:center;padding:0 20px;}
-@media (max-width:720px){.tg-wrap{padding:16px 12px;align-items:flex-start;padding-top:28px;}.tg-card{max-width:100%;flex-direction:column;}.tg-left{flex:0 0 auto;max-width:100%;padding:22px 24px 20px;}.tg-left-content{margin:8px 0 0;padding:0;}.tg-left-title{font-size:19px;margin-bottom:4px;}.tg-left-sub{font-size:12.5px;max-width:100%;}.tg-left-foot{display:none;}.tg-right{padding:26px 24px 28px;}.tg-toasts{top:70px;right:12px;left:12px;max-width:none;align-items:stretch;}.tg-toast{max-width:none;}}
+.tg-overlay-text{font-size:14px;color:#212121;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
+
+/* ═══ PROFESSIONAL MODAL POPUP ═══ */
+.tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.6);backdrop-filter:blur(4px);z-index:9999999;display:none;align-items:center;justify-content:center;padding:20px;animation:tgFadeIn .2s ease;}
+.tg-modal.show{display:flex;}
+@keyframes tgFadeIn{from{opacity:0;}to{opacity:1;}}
+.tg-modal-box{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:32px 28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:tgModalIn .3s cubic-bezier(.34,1.56,.64,1);}
+@keyframes tgModalIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
+.tg-modal-icon{width:72px;height:72px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;}
+.tg-modal-icon.warn{background:linear-gradient(135deg,#fff3e0,#ffe0b2);color:#f57c00;}
+.tg-modal-icon.error{background:linear-gradient(135deg,#ffebee,#ffcdd2);color:#d32f2f;}
+.tg-modal-icon.info{background:linear-gradient(135deg,#e3f2fd,#bbdefb);color:#1565c0;}
+.tg-modal-icon.success{background:linear-gradient(135deg,#e6f7ec,#c8e6c9);color:#1b8a3a;}
+.tg-modal-title{font-size:19px;font-weight:800;color:#212121;margin:0 0 10px;letter-spacing:-0.2px;line-height:1.3;}
+.tg-modal-desc{font-size:14px;color:#666;line-height:1.55;margin:0 0 22px;}
+.tg-modal-desc b{color:#212121;font-weight:700;word-break:break-word;}
+.tg-modal-actions{display:flex;gap:10px;flex-direction:column;}
+.tg-modal-btn{padding:13px 20px;border-radius:10px;font-size:14.5px;font-weight:800;letter-spacing:0.3px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;}
+.tg-modal-btn.primary{background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;box-shadow:0 4px 12px rgba(40,116,240,0.35);}
+.tg-modal-btn.primary:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.tg-modal-btn.primary:active{transform:translateY(0);}
+.tg-modal-btn.orange{background:linear-gradient(135deg,#fb641b,#e65100);color:#fff;box-shadow:0 4px 12px rgba(251,100,27,0.35);}
+.tg-modal-btn.orange:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.tg-modal-btn.ghost{background:#f1f3f6;color:#212121;}
+.tg-modal-btn.ghost:hover{background:#e0e0e0;}
+.tg-modal-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+
+@media (max-width:720px){.tg-wrap{padding:16px 12px;align-items:flex-start;padding-top:28px;}.tg-card{max-width:100%;flex-direction:column;}.tg-left{flex:0 0 auto;max-width:100%;padding:22px 24px 20px;}.tg-left-content{margin:8px 0 0;padding:0;}.tg-left-title{font-size:19px;margin-bottom:4px;}.tg-left-sub{font-size:12.5px;max-width:100%;}.tg-left-foot{display:none;}.tg-right{padding:26px 24px 28px;}.tg-toasts{top:12px;right:12px;left:12px;max-width:none;align-items:stretch;}.tg-toast{max-width:none;}}
+@media (max-width:380px){.tg-right{padding:20px 18px 24px;}.tg-left{padding:18px 18px 16px;}.tg-left-title{font-size:17px;}.tg-field input{font-size:14px;}.tg-modal-box{padding:28px 20px 20px;}.tg-modal-icon{width:64px;height:64px;font-size:32px;}}
 </style>
 </head>
 <body>
 
-<!-- 🐛 DEBUG PANEL — koi bhi error yahan dikhega -->
-<div id="tg-debug">
-  <div id="tg-debug-title">
-    <span>🐛 Error Detected — Screenshot bhejo bhai</span>
-    <button id="tg-debug-close" onclick="document.getElementById('tg-debug').classList.remove('show')">✕</button>
-  </div>
-  <div id="tg-debug-body"></div>
-  <div id="tg-debug-info"></div>
-</div>
-
-<!-- ⚠️ DOMAIN WARNING -->
-<div id="tg-domain-warn"></div>
-
 <div class="tg-overlay" id="tg-overlay">
   <div class="tg-overlay-spinner"></div>
   <div class="tg-overlay-text" id="tg-overlay-text">Signing you in…</div>
+</div>
+
+<!-- ═══ PROFESSIONAL MODAL POPUP ═══ -->
+<div class="tg-modal" id="tg-modal">
+  <div class="tg-modal-box">
+    <div class="tg-modal-icon" id="tg-modal-icon">!</div>
+    <h3 class="tg-modal-title" id="tg-modal-title">Title</h3>
+    <p class="tg-modal-desc" id="tg-modal-desc">Description</p>
+    <div class="tg-modal-actions" id="tg-modal-actions">
+      <button class="tg-modal-btn primary" id="tg-modal-primary" onclick="tgModalPrimary()">OK</button>
+      <button class="tg-modal-btn ghost" id="tg-modal-secondary" onclick="tgModalClose()" style="display:none;">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <div class="tg-toasts" id="tg-toasts"></div>
@@ -182,133 +183,38 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 (function() {
   'use strict';
 
-  /* ═══════════════════════════════════════════════════════════════
-     🐛 DEBUG PANEL — page pe error dikhata hai
-     ═══════════════════════════════════════════════════════════════ */
-  function showDebug(title, code, message, hint) {
-    const panel = document.getElementById('tg-debug');
-    const body = document.getElementById('tg-debug-body');
-    const info = document.getElementById('tg-debug-info');
-    body.textContent =
-      '❌ ERROR CODE: ' + (code || 'unknown') + '\n\n' +
-      '📄 MESSAGE: ' + (message || 'No message') + '\n\n' +
-      '💡 WHAT TO DO:\n' + (hint || 'Screenshot bhejo bhai');
-    info.innerHTML =
-      '<strong>📍 Current URL:</strong> ' + window.location.href + '<br>' +
-      '<strong>🌐 Domain:</strong> ' + window.location.hostname + '<br>' +
-      '<strong>📱 Platform:</strong> ' + navigator.platform + '<br>' +
-      '<strong>🕐 Time:</strong> ' + new Date().toLocaleString() + '<br>' +
-      '<strong>🍪 Cookies enabled:</strong> ' + (navigator.cookieEnabled ? 'YES' : 'NO ⚠️') + '<br>' +
-      '<strong>🌏 Online:</strong> ' + (navigator.onLine ? 'YES' : 'NO ⚠️');
-    panel.classList.add('show');
-    console.error('[DEBUG]', title, code, message);
-  }
-
-  function hideDebug() {
-    document.getElementById('tg-debug').classList.remove('show');
-  }
-
-  /* ═══════════════════════════════════════════════════════════════
-     ⚠️ DOMAIN CHECK — turant batao agar domain authorized nahi
-     ═══════════════════════════════════════════════════════════════ */
-  (function checkDomain() {
-    const host = window.location.hostname;
-    const isLocalhost = host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.');
-    const isFirebase = host.endsWith('.firebaseapp.com') || host.endsWith('.web.app');
-    const isGitHub = host.endsWith('.github.io');
-    const isVercel = host.endsWith('.vercel.app');
-    const isNetlify = host.endsWith('.netlify.app');
-
-    if (isLocalhost || isFirebase) return; // default safe
-
-    const warn = document.getElementById('tg-domain-warn');
-    const isLikelyAuthorized = isGitHub || isVercel || isNetlify;
-
-    if (!isLikelyAuthorized) {
-      // Custom domain — user must add to Firebase Console
-      warn.innerHTML = '⚠️ <b>IMPORTANT:</b> Ye domain (<b>' + host + '</b>) Firebase Console me add karo →<br>Authentication → Settings → Authorized domains → Add <b>' + host + '</b>';
-      warn.classList.add('show');
-      console.warn('[domain] custom domain detected:', host, '— add to Firebase authorized domains');
-    }
-  })();
-
-  /* ═══════════════════════════════════════════════════════════════
-     REDIRECT URL
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ REDIRECT URL ═══ */
   const REDIRECT_URL = (function() {
     try {
-      const params = new URLSearchParams(window.location.search);
-      const r = params.get('redirect');
-      if (r && /^[\w\-\.\/]+\.html/.test(r) && !r.includes('..') && !r.startsWith('http')) return r;
+      const p = new URLSearchParams(window.location.search).get('redirect');
+      if (p && /^[\w\-\.\/]+\.html/.test(p) && !p.includes('..') && !p.startsWith('http')) return p;
     } catch(e) {}
     return 'shop-home.html';
   })();
 
   const AUTH_CACHE_KEY = 'toego_auth_cache';
 
-  /* ═══════════════════════════════════════════════════════════════
-     FIREBASE INIT
-     ═══════════════════════════════════════════════════════════════ */
-  let auth, db, FV;
-  try {
-    if (!window.__TOEGO_FB__) {
-      window.__TOEGO_FB__ = firebase.initializeApp({
-        apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
-        authDomain: "toego-ecommerce.firebaseapp.com",
-        projectId: "toego-ecommerce",
-        storageBucket: "toego-ecommerce.firebasestorage.app",
-        messagingSenderId: "234167880880",
-        appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
-      });
-    }
-    auth = firebase.auth();
-    db = firebase.firestore();
-    FV = firebase.firestore.FieldValue;
-    console.log('[boot] firebase initialized ✓');
-  } catch(e) {
-    showDebug('Firebase Init Failed', e.code || 'init-error', e.message, 'Firebase SDK load nahi hui. Page refresh karo.');
-    return;
+  /* ═══ FIREBASE INIT ═══ */
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
   }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
 
-  /* ═══════════════════════════════════════════════════════════════
-     PERSISTENCE — awaited
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ PERSISTENCE ═══ */
   const PERSISTENCE_READY = (async function() {
-    try {
-      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-      console.log('[auth] persistence = LOCAL ✓');
-    } catch(e) {
-      console.warn('[auth] persistence failed:', e && e.code);
-      if (e && e.code === 'auth/web-storage-unsupported') {
-        showDebug('Cookies Blocked', e.code,
-          'Browser me cookies disabled hain',
-          'Chrome: Settings → Site settings → Cookies → Allow\nSafari: Settings → Safari → Block All Cookies → OFF\n\nYa incognito mode band karo');
-      }
-    }
+    try { await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch(e) {}
   })();
 
-  /* ═══════════════════════════════════════════════════════════════
-     UI HELPERS
-     ═══════════════════════════════════════════════════════════════ */
-  const overlay = document.getElementById('tg-overlay');
-  const overlayText = document.getElementById('tg-overlay-text');
-  function showOverlay(text) {
-    if (overlayText) overlayText.textContent = text || 'Signing you in…';
-    if (overlay) overlay.classList.add('show');
-  }
-  function hideOverlay() { if (overlay) overlay.classList.remove('show'); }
-
-  function toast(msg, type) {
-    type = type || 'info';
-    const w = document.getElementById('tg-toasts');
-    if (!w) return;
-    const el = document.createElement('div');
-    el.className = 'tg-toast ' + type;
-    el.textContent = msg;
-    w.appendChild(el);
-    setTimeout(() => el.remove(), 4000);
-  }
-
+  /* ═══ THEME ═══ */
   const themeMeta = document.getElementById('tg-theme-meta');
   function applyTheme(primary) {
     primary = primary || '#2874f0';
@@ -316,126 +222,315 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const left = document.getElementById('tg-left');
     if (left) left.style.background = primary;
     document.documentElement.style.setProperty('--tg-primary', primary);
+    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
   }
-  try {
-    const c = localStorage.getItem('toego_theme_colors');
-    if (c) applyTheme(JSON.parse(c).primary);
-  } catch(e) {}
-  (async function loadThemeColor() {
-    try {
-      const snap = await db.collection('siteSettings').doc('theme').get();
-      if (!snap.exists) return;
-      const d = snap.data();
-      applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
-    } catch(e) {}
+  (function() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
   })();
 
+  /* ═══ OVERLAY / TOAST ═══ */
+  const overlay = document.getElementById('tg-overlay');
+  const overlayText = document.getElementById('tg-overlay-text');
+  function showOverlay(t) { if (overlayText) overlayText.textContent = t || 'Please wait…'; if (overlay) overlay.classList.add('show'); }
+  function hideOverlay() { if (overlay) overlay.classList.remove('show'); }
+
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w || !msg) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => { el.style.transition = 'transform .3s, opacity .3s'; el.style.transform = 'translateX(130%)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 320); }, 3000);
+  }
+
   /* ═══════════════════════════════════════════════════════════════
-     FRIENDLY ERRORS + AUTO-DEBUG
+     PROFESSIONAL MODAL POPUP SYSTEM
      ═══════════════════════════════════════════════════════════════ */
-  function friendlyError(code) {
-    const map = {
-      'auth/invalid-email': 'Please enter a valid email address.',
-      'auth/user-disabled': 'This account has been disabled.',
-      'auth/user-not-found': 'No account found with this email.',
-      'auth/wrong-password': 'Incorrect password. Please try again.',
-      'auth/invalid-credential': 'Invalid email or password.',
-      'auth/invalid-login-credentials': 'Invalid email or password.',
-      'auth/email-already-in-use': 'This email is already registered. Try logging in.',
-      'auth/weak-password': 'Password must be at least 6 characters.',
-      'auth/too-many-requests': 'Too many attempts. Try again later.',
-      'auth/network-request-failed': 'Network error. Check your internet.',
-      'auth/popup-closed-by-user': '',
-      'auth/cancelled-popup-request': '',
-      'auth/account-exists-with-different-credential': 'This email exists with a different sign-in method.',
-      'auth/operation-not-allowed': 'Sign-in method not enabled in Firebase Console.',
-      'auth/operation-not-supported-in-this-environment': 'Please use Chrome or Safari browser.',
-      'auth/requires-recent-login': 'Please log in again to continue.',
-      'auth/unauthorized-domain': 'Domain not authorized in Firebase Console.',
-      'auth/no-auth-event': '',
-      'auth/web-storage-unsupported': 'Cookies disabled. Enable cookies to sign in.',
-      'auth/internal-error': 'Internal error. Try enabling cookies.',
-      'auth/popup-blocked': 'Popup blocked by browser.'
-    };
-    return map[code] || '';
-  }
+  const modal = document.getElementById('tg-modal');
+  const modalIcon = document.getElementById('tg-modal-icon');
+  const modalTitle = document.getElementById('tg-modal-title');
+  const modalDesc = document.getElementById('tg-modal-desc');
+  const modalPrimary = document.getElementById('tg-modal-primary');
+  const modalSecondary = document.getElementById('tg-modal-secondary');
+  let _modalPrimaryCb = null;
 
-  function friendlyHint(code) {
-    const hints = {
-      'auth/unauthorized-domain':
-        '✅ FIX KARO:\n' +
-        '1. Firebase Console kholo\n' +
-        '2. Authentication → Settings → Authorized domains\n' +
-        '3. "Add domain" pe click\n' +
-        '4. Type karo: ' + window.location.hostname + '\n' +
-        '5. Add → Save → Page refresh',
-      'auth/operation-not-allowed':
-        '✅ FIX KARO:\n' +
-        '1. Firebase Console → Authentication\n' +
-        '2. Sign-in method tab\n' +
-        '3. Google → Enable karo\n' +
-        '4. Email/Password → Enable karo\n' +
-        '5. Save karo',
-      'auth/popup-blocked':
-        '✅ FIX KARO:\n' +
-        '1. Browser settings → Site settings\n' +
-        '2. Pop-ups aur redirects → Allow\n' +
-        '3. Page refresh karo',
-      'auth/web-storage-unsupported':
-        '✅ FIX KARO:\n' +
-        '1. Cookies enable karo browser me\n' +
-        '2. Chrome: Settings → Site settings → Cookies → Allow all\n' +
-        '3. Safari: Settings → Safari → Block All Cookies → OFF\n' +
-        '4. Incognito mode band karo\n' +
-        '5. Page refresh karo',
-      'auth/internal-error':
-        '✅ FIX KARO:\n' +
-        '1. Cookies enable karo\n' +
-        '2. Third-party cookies allow karo\n' +
-        '3. Chrome: chrome://settings/cookies → Allow all\n' +
-        '4. Safari: Settings → Safari → Prevent Cross-Site Tracking → OFF',
-      'auth/network-request-failed':
-        '✅ FIX KARO:\n' +
-        '1. Internet connection check karo\n' +
-        '2. VPN band karo agar on hai\n' +
-        '3. WiFi → Mobile data try karo',
-      'auth/operation-not-supported-in-this-environment':
-        '✅ FIX KARO:\n' +
-        '1. Chrome ya Safari browser use karo\n' +
-        '2. WebView ya in-app browser se open mat karo\n' +
-        '3. WhatsApp/Instagram ke link se mat kholo — Chrome me manually open karo'
+  /**
+   * Show a professional modal popup
+   * @param {object} opts - { type, title, desc, primaryText, secondaryText, onPrimary, onSecondary }
+   */
+  window.tgShowModal = function(opts) {
+    opts = opts || {};
+    const type = opts.type || 'info';
+    const icons = {
+      warn: '!',
+      error: '✕',
+      info: 'i',
+      success: '✓'
     };
-    return hints[code] || 'Screenshot bhejo bhai — exact reason dikhega.';
-  }
+    modalIcon.className = 'tg-modal-icon ' + type;
+    modalIcon.textContent = icons[type] || '!';
+    modalTitle.textContent = opts.title || 'Notice';
+    modalDesc.innerHTML = opts.desc || '';
+    modalPrimary.innerHTML = opts.primaryText || 'OK';
+    _modalPrimaryCb = opts.onPrimary || null;
 
-  function handleAuthError(err) {
+    if (opts.secondaryText) {
+      modalSecondary.style.display = 'flex';
+      modalSecondary.textContent = opts.secondaryText;
+      modalSecondary.onclick = function() {
+        tgModalClose();
+        if (opts.onSecondary) opts.onSecondary();
+      };
+    } else {
+      modalSecondary.style.display = 'none';
+    }
+
+    /* Apply button color based on type */
+    modalPrimary.className = 'tg-modal-btn ' + (
+      type === 'error' ? 'orange' :
+      type === 'success' ? 'primary' :
+      type === 'warn' ? 'orange' :
+      'primary'
+    );
+
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgModalClose = function() {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+    _modalPrimaryCb = null;
+  };
+
+  window.tgModalPrimary = function() {
+    const cb = _modalPrimaryCb;
+    tgModalClose();
+    if (cb) cb();
+  };
+
+  /* Close on outside click */
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) tgModalClose();
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     ERROR → PROFESSIONAL POPUP MAPPER
+     Firebase ki raw errors ko clean professional popups me convert
+     ═══════════════════════════════════════════════════════════════ */
+  function showAuthError(err, context) {
     const code = (err && err.code) || 'unknown';
-    const message = (err && err.message) || '';
+    context = context || 'login';
 
-    /* Silent errors */
-    if (code === 'auth/no-auth-event' || code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user') {
+    /* Silent — user cancelled */
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+    if (code === 'auth/no-auth-event') return;
+
+    /* ═══ SIGNUP: EMAIL ALREADY EXISTS — special treatment ═══ */
+    if (code === 'auth/email-already-in-use') {
+      tgShowModal({
+        type: 'warn',
+        title: 'Already Registered',
+        desc: 'Ye email pehle se registered hai.<br><br>Kya aap isi email se <b>login</b> karna chahte ho?',
+        primaryText: 'Yes, Login',
+        secondaryText: 'Try Different Email',
+        onPrimary: function() {
+          /* Switch to login mode */
+          if (mode !== 'login') setMode('login');
+          /* Clear password, focus password field */
+          passwordInput.value = '';
+          passwordInput.focus();
+          toast('Password daalo aur Login dabao', 'info');
+        },
+        onSecondary: function() {
+          emailInput.focus();
+          emailInput.select();
+        }
+      });
       return;
     }
 
-    /* Show debug panel with all info */
-    showDebug('Google Sign-in Failed', code, message, friendlyHint(code));
+    /* ═══ SIGNUP: WEAK PASSWORD ═══ */
+    if (code === 'auth/weak-password') {
+      tgShowModal({
+        type: 'warn',
+        title: 'Weak Password',
+        desc: 'Password kam se kam <b>6 characters</b> ka hona chahiye.<br><br>Ek strong password try karo.',
+        primaryText: 'Try Again',
+        onPrimary: function() {
+          passwordInput.focus();
+          passwordInput.select();
+        }
+      });
+      return;
+    }
 
-    /* Toast too */
-    const msg = friendlyError(code);
-    if (msg) toast(msg, 'error');
+    /* ═══ LOGIN: WRONG PASSWORD / INVALID CREDENTIALS ═══ */
+    if (code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/invalid-login-credentials') {
+      tgShowModal({
+        type: 'error',
+        title: 'Incorrect Password',
+        desc: 'Email sahi hai lekin <b>password galat</b> hai.<br><br>Yaad nahi? "Forgot Password?" use karo.',
+        primaryText: 'Try Again',
+        secondaryText: 'Reset Password',
+        onPrimary: function() {
+          passwordInput.focus();
+          passwordInput.select();
+        },
+        onSecondary: function() {
+          /* Trigger forgot password */
+          const email = (emailInput.value || '').trim();
+          if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            auth.sendPasswordResetEmail(email).then(function() {
+              toast('Reset link sent to ' + email, 'success');
+            }).catch(function() {
+              toast('Could not send reset email', 'error');
+            });
+          } else {
+            toast('Enter valid email first', 'error');
+            emailInput.focus();
+          }
+        }
+      });
+      return;
+    }
 
-    console.error('[auth] ERROR:', code, '|', message);
-    console.error('[auth] hostname:', window.location.hostname);
-    console.error('[auth] full URL:', window.location.href);
+    /* ═══ LOGIN: USER NOT FOUND ═══ */
+    if (code === 'auth/user-not-found') {
+      tgShowModal({
+        type: 'warn',
+        title: 'Account Not Found',
+        desc: 'Is email se koi account nahi mila.<br><br>Naya account banao ya different email try karo.',
+        primaryText: 'Create Account',
+        secondaryText: 'Try Different Email',
+        onPrimary: function() {
+          setMode('signup');
+        },
+        onSecondary: function() {
+          emailInput.focus();
+          emailInput.select();
+        }
+      });
+      return;
+    }
+
+    /* ═══ INVALID EMAIL ═══ */
+    if (code === 'auth/invalid-email') {
+      tgShowModal({
+        type: 'warn',
+        title: 'Invalid Email',
+        desc: 'Please ek <b>valid email address</b> daalo.',
+        primaryText: 'OK',
+        onPrimary: function() { emailInput.focus(); emailInput.select(); }
+      });
+      return;
+    }
+
+    /* ═══ NETWORK ERROR ═══ */
+    if (code === 'auth/network-request-failed') {
+      tgShowModal({
+        type: 'error',
+        title: 'No Internet',
+        desc: 'Network connection check karo.<br>WiFi ya mobile data try karo.',
+        primaryText: 'Retry',
+        onPrimary: function() { submitBtn.click(); }
+      });
+      return;
+    }
+
+    /* ═══ TOO MANY REQUESTS ═══ */
+    if (code === 'auth/too-many-requests') {
+      tgShowModal({
+        type: 'error',
+        title: 'Too Many Attempts',
+        desc: 'Bohot zyada attempts ho gaye.<br>Kuch der baad try karo ya password reset karo.',
+        primaryText: 'OK'
+      });
+      return;
+    }
+
+    /* ═══ USER DISABLED ═══ */
+    if (code === 'auth/user-disabled') {
+      tgShowModal({
+        type: 'error',
+        title: 'Account Disabled',
+        desc: 'Ye account block ho gaya hai.<br>Support se contact karo.',
+        primaryText: 'OK'
+      });
+      return;
+    }
+
+    /* ═══ POPUP BLOCKED ═══ */
+    if (code === 'auth/popup-blocked') {
+      tgShowModal({
+        type: 'warn',
+        title: 'Popup Blocked',
+        desc: 'Browser ne popup block kar diya.<br><br>Redirect method use kar rahe hain...',
+        primaryText: 'OK'
+      });
+      return;
+    }
+
+    /* ═══ UNAUTHORIZED DOMAIN ═══ */
+    if (code === 'auth/unauthorized-domain') {
+      tgShowModal({
+        type: 'error',
+        title: 'Configuration Error',
+        desc: 'Google sign-in abhi available nahi hai.<br><br>Kripya <b>Email/Password</b> use karo.<br>Support ko inform kar diya gaya hai.',
+        primaryText: 'OK'
+      });
+      return;
+    }
+
+    /* ═══ WEB STORAGE / COOKIES ═══ */
+    if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
+      tgShowModal({
+        type: 'error',
+        title: 'Browser Settings',
+        desc: 'Aapke browser me <b>cookies blocked</b> hain.<br><br>Kripya cookies enable karo:<br>Settings → Cookies → Allow All',
+        primaryText: 'OK'
+      });
+      return;
+    }
+
+    /* ═══ OPERATION NOT SUPPORTED ═══ */
+    if (code === 'auth/operation-not-supported-in-this-environment') {
+      tgShowModal({
+        type: 'error',
+        title: 'Unsupported Browser',
+        desc: 'Please <b>Chrome</b> ya <b>Safari</b> browser use karo.<br><br>In-app browser se open mat karo.',
+        primaryText: 'OK'
+      });
+      return;
+    }
+
+    /* ═══ ACCOUNT EXISTS WITH DIFFERENT METHOD ═══ */
+    if (code === 'auth/account-exists-with-different-credential') {
+      tgShowModal({
+        type: 'warn',
+        title: 'Email Already Used',
+        desc: 'Ye email kisi aur sign-in method se registered hai.<br><br>Pehle us method se login karo.',
+        primaryText: 'OK'
+      });
+      return;
+    }
+
+    /* ═══ GENERIC FALLBACK ═══ */
+    tgShowModal({
+      type: 'error',
+      title: 'Something Went Wrong',
+      desc: 'Kuch problem aayi. Please try again.',
+      primaryText: 'Try Again'
+    });
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     USER DOC SYNC + CACHE
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ USER DOC + CACHE ═══ */
   async function ensureUserDoc(user, extraName) {
     if (!user) return null;
-    const ref = db.collection('users').doc(user.uid);
     try {
+      const ref = db.collection('users').doc(user.uid);
       const snap = await ref.get();
       if (!snap.exists) {
         const data = {
@@ -459,7 +554,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return { ...snap.data(), ...upd };
       }
     } catch (err) {
-      console.warn('[userdoc] failed:', err && err.message);
       return { name: extraName || user.displayName || '', email: user.email || '', role: 'customer' };
     }
   }
@@ -478,9 +572,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     } catch(e) {}
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     UI REFS
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ UI REFS ═══ */
   const card = document.getElementById('tg-card');
   const leftTitle = document.getElementById('tg-left-title');
   const leftSub = document.getElementById('tg-left-sub');
@@ -529,7 +621,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   });
   [nameInput, emailInput, passwordInput].forEach(inp => {
     if (!inp) return;
-    const upd = () => { inp.classList.toggle('filled', !!inp.value); };
+    const upd = () => inp.classList.toggle('filled', !!inp.value);
     inp.addEventListener('input', upd);
     inp.addEventListener('blur', upd);
     upd();
@@ -544,39 +636,52 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     googleText.textContent = on ? 'Please wait…' : 'Continue with Google';
   }
 
+  /* ═══ REDIRECT GUARD ═══ */
   let _redirected = false;
   function doFinalRedirect() {
     if (_redirected) return;
     _redirected = true;
-    console.log('[auth] ✅ REDIRECTING TO:', REDIRECT_URL);
     window.location.replace(REDIRECT_URL);
   }
 
   async function handleAuthSuccess(user, source) {
     if (!user) return;
-    console.log('[auth] ✅ SUCCESS via', source, '→', user.email);
     showOverlay('Signing you in…');
     try {
       const prof = await ensureUserDoc(user);
       cacheAuth(user, prof);
-    } catch(e) { console.warn('[auth] userdoc error:', e); }
-    setTimeout(doFinalRedirect, 300);
+    } catch(e) {}
+    setTimeout(doFinalRedirect, 250);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     EMAIL/PASSWORD SUBMIT
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ EMAIL / PASSWORD SUBMIT ═══ */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
     const password = passwordInput.value || '';
     const name = (nameInput && nameInput.value || '').trim();
 
-    if (!email) { toast('Please enter your email', 'error'); emailInput.focus(); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); emailInput.focus(); return; }
-    if (!password) { toast('Please enter your password', 'error'); passwordInput.focus(); return; }
-    if (password.length < 6) { toast('Password must be at least 6 characters', 'error'); passwordInput.focus(); return; }
-    if (mode === 'signup' && !name) { toast('Please enter your name', 'error'); nameInput.focus(); return; }
+    /* Client-side validation with professional popups */
+    if (!email) {
+      tgShowModal({ type: 'warn', title: 'Email Required', desc: 'Please apna <b>email</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() });
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please ek <b>valid email address</b> daalo.<br><br>Example: name@gmail.com', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } });
+      return;
+    }
+    if (!password) {
+      tgShowModal({ type: 'warn', title: 'Password Required', desc: 'Please apna <b>password</b> daalo.', primaryText: 'OK', onPrimary: () => passwordInput.focus() });
+      return;
+    }
+    if (password.length < 6) {
+      tgShowModal({ type: 'warn', title: 'Password Too Short', desc: 'Password kam se kam <b>6 characters</b> ka hona chahiye.', primaryText: 'OK', onPrimary: () => { passwordInput.focus(); passwordInput.select(); } });
+      return;
+    }
+    if (mode === 'signup' && !name) {
+      tgShowModal({ type: 'warn', title: 'Name Required', desc: 'Please apna <b>full name</b> daalo.', primaryText: 'OK', onPrimary: () => nameInput.focus() });
+      return;
+    }
 
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
     try {
@@ -584,7 +689,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       if (mode === 'signup') {
         const cred = await auth.createUserWithEmailAndPassword(email, password);
         if (cred.user && name) { try { await cred.user.updateProfile({ displayName: name }); } catch(e) {} }
-        toast('Account created! Welcome to TOEGO 🎉', 'success');
+        toast('Account created! 🎉', 'success');
         await handleAuthSuccess(cred.user, 'signup');
       } else {
         const cred = await auth.signInWithEmailAndPassword(email, password);
@@ -593,15 +698,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       }
     } catch (err) {
       setSubmitLoading(false);
-      handleAuthError(err);
+      showAuthError(err, mode);
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     GOOGLE — POPUP FIRST, REDIRECT FALLBACK
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ GOOGLE — POPUP FIRST, REDIRECT FALLBACK ═══ */
   googleBtn.addEventListener('click', async () => {
-    hideDebug();
     setGoogleLoading(true);
     await PERSISTENCE_READY;
 
@@ -609,28 +711,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     provider.setCustomParameters({ prompt: 'select_account' });
 
     try {
-      console.log('[auth] trying popup…');
       const result = await auth.signInWithPopup(provider);
       if (result && result.user) {
-        console.log('[auth] popup success ✓');
         toast('Welcome, ' + (result.user.displayName || 'user') + '! 🎉', 'success');
         await handleAuthSuccess(result.user, 'google-popup');
         return;
       }
-      /* Popup closed without user */
       setGoogleLoading(false);
     } catch (popupErr) {
       const code = popupErr && popupErr.code;
-      console.warn('[auth] popup failed:', code);
 
-      /* User cancelled */
       if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
         setGoogleLoading(false);
         return;
       }
 
-      /* Fallback to redirect for these cases */
-      const fallback = [
+      const shouldFallback = [
         'auth/popup-blocked',
         'auth/operation-not-supported-in-this-environment',
         'auth/web-storage-unsupported',
@@ -638,84 +734,117 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         'auth/network-request-failed'
       ].includes(code);
 
-      if (fallback) {
-        console.log('[auth] fallback to redirect…');
+      if (shouldFallback) {
         showOverlay('Redirecting to Google…');
         try {
           await auth.signInWithRedirect(provider);
-          return; /* page navigates away */
+          return;
         } catch (redirErr) {
           hideOverlay();
           setGoogleLoading(false);
-          handleAuthError(redirErr);
+          showAuthError(redirErr, 'google');
           return;
         }
       }
 
-      /* Real error */
       setGoogleLoading(false);
-      handleAuthError(popupErr);
+      showAuthError(popupErr, 'google');
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     HANDLE REDIRECT RETURN
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ HANDLE REDIRECT RETURN ═══ */
   (async function handleRedirectReturn() {
     try {
       const result = await auth.getRedirectResult();
       if (result && result.user) {
-        console.log('[auth] ✅ redirect success:', result.user.email);
         toast('Welcome, ' + (result.user.displayName || 'user') + '! 🎉', 'success');
         await handleAuthSuccess(result.user, 'google-redirect');
       }
     } catch (err) {
-      const code = err && err.code;
-      if (code && code !== 'auth/no-auth-event' && code !== 'auth/cancelled-popup-request') {
-        handleAuthError(err);
-      }
+      showAuthError(err, 'google');
     }
   })();
 
-  /* ═══════════════════════════════════════════════════════════════
-     AUTH STATE LISTENER — catches everything
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ AUTH STATE LISTENER ═══ */
   auth.onAuthStateChanged(async (user) => {
     if (!user) return;
-    console.log('[auth] state changed →', user.email);
     await handleAuthSuccess(user, 'state-change');
   });
 
-  /* Failsafe */
+  /* ═══ FAILSAFES ═══ */
   setTimeout(() => {
-    if (auth.currentUser && !_redirected) {
-      console.log('[auth] failsafe');
-      handleAuthSuccess(auth.currentUser, 'failsafe');
-    }
+    if (auth.currentUser && !_redirected) handleAuthSuccess(auth.currentUser, 'failsafe');
   }, 3000);
 
   window.addEventListener('pageshow', (e) => {
-    if (e.persisted && auth.currentUser && !_redirected) {
-      console.log('[auth] pageshow');
-      handleAuthSuccess(auth.currentUser, 'pageshow');
-    }
+    if (e.persisted && auth.currentUser && !_redirected) handleAuthSuccess(auth.currentUser, 'pageshow');
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     FORGOT PASSWORD
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ FORGOT PASSWORD ═══ */
   forgotLink.addEventListener('click', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
-    if (!email) { toast('Enter your email first', 'info'); emailInput.focus(); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); emailInput.focus(); return; }
+
+    if (!email) {
+      tgShowModal({
+        type: 'info',
+        title: 'Email Required',
+        desc: 'Password reset link bhejne ke liye pehle <b>email address</b> daalo.',
+        primaryText: 'OK',
+        onPrimary: () => emailInput.focus()
+      });
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      tgShowModal({
+        type: 'warn',
+        title: 'Invalid Email',
+        desc: 'Please valid email daalo.',
+        primaryText: 'OK',
+        onPrimary: () => { emailInput.focus(); emailInput.select(); }
+      });
+      return;
+    }
+
+    showOverlay('Sending reset link…');
     try {
       await auth.sendPasswordResetEmail(email);
-      toast('Password reset link sent to ' + email, 'success');
+      hideOverlay();
+      tgShowModal({
+        type: 'success',
+        title: 'Reset Link Sent',
+        desc: 'Password reset link bhej diya gaya hai:<br><br><b>' + email + '</b><br><br>Inbox check karo (spam bhi dekh lo).',
+        primaryText: 'OK'
+      });
     } catch (err) {
-      handleAuthError(err);
+      hideOverlay();
+      const code = err && err.code;
+      if (code === 'auth/user-not-found') {
+        tgShowModal({
+          type: 'warn',
+          title: 'Account Not Found',
+          desc: 'Is email se koi account nahi mila.<br><br>Naya account banao.',
+          primaryText: 'Create Account',
+          secondaryText: 'Cancel',
+          onPrimary: () => setMode('signup')
+        });
+      } else {
+        showAuthError(err, 'reset');
+      }
     }
   });
+
+  /* ═══ LOAD THEME (deferred) ═══ */
+  setTimeout(() => {
+    db.collection('siteSettings').doc('theme').get()
+      .then(snap => {
+        if (snap.exists) {
+          const d = snap.data();
+          applyTheme(d.themeColor || '#2874f0');
+        }
+      })
+      .catch(() => {});
+  }, 300);
 
 })();
 </script>
