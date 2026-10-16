@@ -67,7 +67,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-toast.success{background:#388e3c;}
 .tg-toast.error{background:#d32f2f;}
 .tg-toast.info{background:#2874f0;}
-.tg-toast.warn{background:#f57c00;}
 
 .tg-auth-loading{position:fixed;inset:0;background:#fff;z-index:99999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
 .tg-auth-loading.show{display:flex;}
@@ -205,7 +204,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   /* ═══════════════════════════════════════════════════════════════
      ✅ SAFE STORAGE — works even when cookies/storage blocked
-     Fallback to in-memory Map when localStorage/sessionStorage fail
      ═══════════════════════════════════════════════════════════════ */
   const _memLocal = new Map();
   const _memSession = new Map();
@@ -223,6 +221,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   const HAS_LOCAL = _testStorage('localStorage');
   const HAS_SESSION = _testStorage('sessionStorage');
+  console.log('[storage] localStorage:', HAS_LOCAL, '| sessionStorage:', HAS_SESSION);
 
   const SafeStore = {
     local: {
@@ -282,7 +281,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }));
   }
 
-  /* ═══ HIDE LOGIN IF PENDING ═══ */
   if (isPendingGoogle()) {
     document.getElementById('tg-auth-loading').classList.add('show');
     document.getElementById('tg-wrap').style.display = 'none';
@@ -310,9 +308,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.body.style.overflow = '';
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     FIREBASE INIT — wrapped in try/catch for storage block
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ FIREBASE INIT ═══ */
   let auth, db, FV;
   try {
     if (!window.__TOEGO_FB__) {
@@ -333,8 +329,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     ✅ MULTI-TIER PERSISTENCE — works even when cookies blocked
-     Order: LOCAL → SESSION → NONE (in-memory)
+     ✅ SILENT MULTI-TIER PERSISTENCE
+     LOCAL → SESSION → NONE — NO ALERTS at all
      ═══════════════════════════════════════════════════════════════ */
   let PERSISTENCE_MODE = 'NONE';
   const PERSISTENCE_READY = (async function() {
@@ -345,23 +341,19 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       PERSISTENCE_MODE = 'LOCAL';
       console.log('[auth] persistence = LOCAL ✓');
       return;
-    } catch(e) {
-      console.warn('[auth] LOCAL failed:', e && e.code);
-    }
+    } catch(e) {}
     /* Try SESSION */
     try {
       await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
       PERSISTENCE_MODE = 'SESSION';
       console.log('[auth] persistence = SESSION ✓');
       return;
-    } catch(e) {
-      console.warn('[auth] SESSION failed:', e && e.code);
-    }
-    /* Fallback to NONE (in-memory — user logs in but won't persist after refresh) */
+    } catch(e) {}
+    /* Fallback NONE — in-memory, works even with cookies blocked */
     try {
       await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
       PERSISTENCE_MODE = 'NONE';
-      console.log('[auth] persistence = NONE (in-memory) ⚠');
+      console.log('[auth] persistence = NONE (in-memory) ✓');
     } catch(e) {
       console.warn('[auth] all persistence failed:', e && e.code);
     }
@@ -435,11 +427,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   modalPrimary.addEventListener('click', function() { const cb = _modalPrimaryCb; tgModalClose(); if (cb) cb(); });
   modal.addEventListener('click', function(e) { if (e.target === modal) tgModalClose(); });
 
-  /* ═══ ERROR HANDLER ═══ */
+  /* ═══════════════════════════════════════════════════════════════
+     ERROR HANDLER — NO STORAGE ERRORS SHOWN
+     Storage-related errors are silently ignored (handled by fallback)
+     ═══════════════════════════════════════════════════════════════ */
   function showAuthError(err, context) {
     const code = (err && err.code) || 'unknown';
+
+    /* Silent */
     if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
     if (code === 'auth/no-auth-event') return;
+
+    /* ═══ SILENT: Storage errors — no alert, fallback already handled ═══ */
+    if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
+      console.log('[auth] silent storage error (handled by fallback):', code);
+      return;
+    }
 
     if (code === 'auth/email-already-in-use') {
       tgShowModal({ type: 'warn', title: 'Already Registered', desc: 'Ye email pehle se registered hai.<br><br>Kya aap isi email se <b>login</b> karna chahte ho?', primaryText: 'Yes, Login', secondaryText: 'Try Different Email', onPrimary: function() { if (mode !== 'login') setMode('login'); passwordInput.value = ''; passwordInput.focus(); }, onSecondary: function() { emailInput.focus(); emailInput.select(); } });
@@ -477,11 +480,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       tgShowModal({ type: 'error', title: 'Configuration Error', desc: 'Google sign-in abhi available nahi hai.<br><br>Kripya <b>Email aur Password</b> use karo.', primaryText: 'OK' });
       return;
     }
-    /* ✅ Web storage error — try fallback login */
-    if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
-      tgShowModal({ type: 'warn', title: 'Browser Restriction', desc: 'Aapke browser me cookies blocked hain.<br><br>Login try karte hain alternative method se…<br><br>Agar login nahi ho paya to:<br>Settings → Cookies → Allow All karo', primaryText: 'Try Anyway', onPrimary: function() { setTimeout(() => submitBtn.click(), 200); } });
-      return;
-    }
     if (code === 'auth/operation-not-supported-in-this-environment') {
       tgShowModal({ type: 'error', title: 'Unsupported Browser', desc: 'Please <b>Chrome</b> ya <b>Safari</b> browser use karo.<br><br>In-app browser se open mat karo.', primaryText: 'OK' });
       return;
@@ -494,7 +492,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       tgShowModal({ type: 'warn', title: 'Re-login Required', desc: 'Security ke liye please <b>dobara login</b> karo.', primaryText: 'OK' });
       return;
     }
-    tgShowModal({ type: 'error', title: 'Something Went Wrong', desc: 'Kuch problem aayi. Please try again.<br><br>Error: <b>' + code + '</b>', primaryText: 'Try Again' });
+
+    /* Generic */
+    tgShowModal({ type: 'error', title: 'Something Went Wrong', desc: 'Kuch problem aayi. Please try again.', primaryText: 'Try Again' });
   }
 
   /* ═══ USER DOC + CACHE ═══ */
@@ -521,7 +521,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return { ...snap.data(), ...upd };
       }
     } catch (err) {
-      console.warn('[userdoc] failed:', err && err.code);
       return { name: extraName || user.displayName || '', email: user.email || '', role: 'customer' };
     }
   }
@@ -626,7 +625,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setTimeout(doFinalRedirect, 700);
   }
 
-  /* ═══ EMAIL / PASSWORD SUBMIT ═══ */
+  /* ═══════════════════════════════════════════════════════════════
+     EMAIL / PASSWORD SUBMIT — retry with NONE persistence on storage error
+     ═══════════════════════════════════════════════════════════════ */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
@@ -655,27 +656,51 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
 
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
+    await PERSISTENCE_READY;
+
+    /* ═══ Main attempt ═══ */
     try {
-      await PERSISTENCE_READY;
+      let cred;
       if (mode === 'signup') {
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        cred = await auth.createUserWithEmailAndPassword(email, password);
         if (cred.user && name) { try { await cred.user.updateProfile({ displayName: name }); } catch(e) {} }
-        await handleAuthSuccess(cred.user, 'signup');
       } else {
-        const cred = await auth.signInWithEmailAndPassword(email, password);
-        await handleAuthSuccess(cred.user, 'login');
+        cred = await auth.signInWithEmailAndPassword(email, password);
       }
+      await handleAuthSuccess(cred.user, mode);
+      return;
     } catch (err) {
+      const code = err && err.code;
+
+      /* ═══ SILENT RETRY: If storage error, retry with NONE persistence ═══ */
+      if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
+        console.log('[auth] storage error — retrying with NONE persistence…');
+        try {
+          await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+          let cred2;
+          if (mode === 'signup') {
+            cred2 = await auth.createUserWithEmailAndPassword(email, password);
+            if (cred2.user && name) { try { await cred2.user.updateProfile({ displayName: name }); } catch(e) {} }
+          } else {
+            cred2 = await auth.signInWithEmailAndPassword(email, password);
+          }
+          await handleAuthSuccess(cred2.user, mode + '-nostorage');
+          return;
+        } catch (retryErr) {
+          console.warn('[auth] NONE retry failed:', retryErr && retryErr.code);
+          setSubmitLoading(false);
+          showAuthError(retryErr, mode);
+          return;
+        }
+      }
+
       setSubmitLoading(false);
       showAuthError(err, mode);
     }
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     GOOGLE LOGIN — 3-tier fallback for cookies-blocked case
-     1. POPUP (works even when cookies blocked)
-     2. REDIRECT (if popup blocked)
-     3. Retry with NONE persistence
+     GOOGLE LOGIN — 3-tier with SILENT retry on storage errors
      ═══════════════════════════════════════════════════════════════ */
   googleBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
@@ -684,7 +709,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    /* Strategy 1: POPUP first — works without cookies on most browsers */
+    /* Strategy 1: POPUP — works even without cookies on most browsers */
     try {
       console.log('[auth] trying popup (persistence=' + PERSISTENCE_MODE + ')…');
       const result = await auth.signInWithPopup(provider);
@@ -696,28 +721,29 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       setGoogleLoading(false);
     } catch (popupErr) {
       const code = popupErr && popupErr.code;
-      console.warn('[auth] popup failed:', code);
+      console.log('[auth] popup failed:', code);
 
-      /* User cancelled */
-      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
-        setGoogleLoading(false);
-        return;
-      }
-
-      /* If web-storage-unsupported, try setting NONE persistence and retry popup */
+      /* Silent retry on storage errors */
       if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
-        console.log('[auth] storage blocked, retrying with NONE persistence…');
+        console.log('[auth] storage error — retrying popup with NONE…');
         try {
           await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
           const result = await auth.signInWithPopup(provider);
           if (result && result.user) {
-            console.log('[auth] popup success with NONE persistence ✓');
+            console.log('[auth] popup success with NONE ✓');
             await handleAuthSuccess(result.user, 'google-popup-nostorage');
             return;
           }
         } catch (retryErr) {
           console.warn('[auth] NONE retry failed:', retryErr && retryErr.code);
+          /* Fall through to redirect */
         }
+      }
+
+      /* User cancelled */
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        setGoogleLoading(false);
+        return;
       }
 
       /* Fallback to redirect */
@@ -766,6 +792,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     } catch (err) {
       const code = err && err.code;
       if (code && code !== 'auth/no-auth-event' && code !== 'auth/cancelled-popup-request') {
+        /* Silent for storage errors */
+        if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
+          console.log('[auth] silent storage error in redirect');
+          clearPendingGoogle();
+          hideAuthLoading();
+          return;
+        }
         clearPendingGoogle();
         hideAuthLoading();
         showAuthError(err, 'google');
@@ -833,7 +866,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
-  /* ═══ LOAD THEME (deferred, safe) ═══ */
+  /* ═══ LOAD THEME ═══ */
   setTimeout(() => {
     try {
       db.collection('siteSettings').doc('theme').get()
