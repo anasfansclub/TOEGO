@@ -68,7 +68,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-toast.error{background:#d32f2f;}
 .tg-toast.info{background:#2874f0;}
 
-/* ═══ FULL-SCREEN AUTH LOADING (covers login form during Google redirect) ═══ */
+/* ═══ FULL-SCREEN AUTH LOADING ═══ */
 .tg-auth-loading{position:fixed;inset:0;background:#fff;z-index:99999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
 .tg-auth-loading.show{display:flex;}
 .tg-auth-loading-logo{font-weight:900;font-style:italic;font-size:32px;color:#2874f0;letter-spacing:-0.5px;margin-bottom:8px;}
@@ -76,13 +76,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-auth-loading-spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
 .tg-auth-loading-text{font-size:15px;color:#666;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
 
-/* ═══ OVERLAY (small inline loading) ═══ */
+/* ═══ SUCCESS ANIMATION (small green check) ═══ */
+.tg-auth-loading-check{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;margin-bottom:6px;animation:tgCheckPop .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 40px rgba(34,197,94,0.4);}
+@keyframes tgCheckPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.tg-auth-loading-check svg{width:38px;height:38px;stroke:#fff;fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:tgCheckDraw .4s .15s ease forwards;}
+@keyframes tgCheckDraw{to{stroke-dashoffset:0;}}
+
 .tg-overlay{position:fixed;inset:0;background:rgba(241,243,246,0.96);backdrop-filter:blur(4px);z-index:999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
 .tg-overlay.show{display:flex;}
 .tg-overlay-spinner{width:42px;height:42px;border:4px solid #d4d5d9;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
 .tg-overlay-text{font-size:14px;color:#212121;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
 
-/* ═══ PROFESSIONAL MODAL POPUP ═══ */
+/* ═══ PROFESSIONAL MODAL ═══ */
 .tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.6);backdrop-filter:blur(4px);z-index:9999999;display:none;align-items:center;justify-content:center;padding:20px;animation:tgFadeIn .2s ease;}
 .tg-modal.show{display:flex;}
 @keyframes tgFadeIn{from{opacity:0;}to{opacity:1;}}
@@ -113,20 +118,23 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 </head>
 <body>
 
-<!-- ═══ FULL SCREEN AUTH LOADING — shown during Google redirect ═══ -->
+<!-- ═══ FULL SCREEN AUTH LOADING ═══ -->
 <div class="tg-auth-loading" id="tg-auth-loading">
   <div class="tg-auth-loading-logo">TOE<span>GO</span></div>
-  <div class="tg-auth-loading-spinner"></div>
+  <div class="tg-auth-loading-spinner" id="tg-auth-loading-spinner"></div>
+  <div class="tg-auth-loading-check" id="tg-auth-loading-check" style="display:none;">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
   <div class="tg-auth-loading-text" id="tg-auth-loading-text">Signing you in…</div>
 </div>
 
-<!-- ═══ SMALL OVERLAY (for inline operations) ═══ -->
+<!-- ═══ SMALL OVERLAY ═══ -->
 <div class="tg-overlay" id="tg-overlay">
   <div class="tg-overlay-spinner"></div>
   <div class="tg-overlay-text" id="tg-overlay-text">Please wait…</div>
 </div>
 
-<!-- ═══ PROFESSIONAL MODAL POPUP ═══ -->
+<!-- ═══ PROFESSIONAL MODAL ═══ -->
 <div class="tg-modal" id="tg-modal">
   <div class="tg-modal-box">
     <div class="tg-modal-icon" id="tg-modal-icon">!</div>
@@ -203,52 +211,57 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   /* ═══════════════════════════════════════════════════════════════
      STEP 0: CONSTANTS
+     ✅ FIX: Always redirect to shop-home.html after login
      ═══════════════════════════════════════════════════════════════ */
-  const REDIRECT_URL = (function() {
-    try {
-      const p = new URLSearchParams(window.location.search).get('redirect');
-      if (p && /^[\w\-\.\/]+\.html/.test(p) && !p.includes('..') && !p.startsWith('http')) return p;
-    } catch(e) {}
-    return 'shop-home.html';
-  })();
-
+  const REDIRECT_URL = 'shop-home.html';
   const AUTH_CACHE_KEY = 'toego_auth_cache';
   const GOOGLE_PENDING_KEY = 'tg_google_pending';
-  const GOOGLE_PENDING_TTL = 5 * 60 * 1000; /* 5 minutes */
+  const LOGIN_SUCCESS_KEY = 'tg_login_success';
+  const GOOGLE_PENDING_TTL = 5 * 60 * 1000;
 
-  /* ═══════════════════════════════════════════════════════════════
-     STEP 1: GOOGLE PENDING DETECTION — HIDE LOGIN FORM IMMEDIATELY
-     Ye sabse important hai! Agar user Google se wapas aa raha hai,
-     login form dikhna hi nahi chahiye.
-     ═══════════════════════════════════════════════════════════════ */
-  function setPendingGoogle() {
-    try { localStorage.setItem(GOOGLE_PENDING_KEY, String(Date.now())); } catch(e) {}
-  }
-  function clearPendingGoogle() {
-    try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {}
-  }
+  /* ═══ GOOGLE PENDING DETECTION ═══ */
+  function setPendingGoogle() { try { localStorage.setItem(GOOGLE_PENDING_KEY, String(Date.now())); } catch(e) {} }
+  function clearPendingGoogle() { try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {} }
   function isPendingGoogle() {
     try {
       const v = localStorage.getItem(GOOGLE_PENDING_KEY);
       if (!v) return false;
       const ts = Number(v);
-      if (!ts || isNaN(ts)) { clearPendingGoogle(); return false; }
-      if (Date.now() - ts > GOOGLE_PENDING_TTL) { clearPendingGoogle(); return false; }
+      if (!ts || isNaN(ts) || Date.now() - ts > GOOGLE_PENDING_TTL) { clearPendingGoogle(); return false; }
       return true;
     } catch(e) { return false; }
   }
 
-  /* ✅ CRITICAL: Immediately show loading + hide login form if pending */
+  /* ═══ SAVE LOGIN SUCCESS FLAG (shop-home reads this) ═══ */
+  function markLoginSuccess(name) {
+    try {
+      sessionStorage.setItem(LOGIN_SUCCESS_KEY, JSON.stringify({
+        name: name || 'User',
+        ts: Date.now()
+      }));
+    } catch(e) {}
+  }
+
+  /* ✅ CRITICAL: Hide login form instantly if pending */
   if (isPendingGoogle()) {
     document.getElementById('tg-auth-loading').classList.add('show');
     document.getElementById('tg-wrap').style.display = 'none';
     document.body.style.overflow = 'hidden';
   }
 
-  function showAuthLoading(text) {
+  function showAuthLoading(text, showCheck) {
     const el = document.getElementById('tg-auth-loading');
     const txt = document.getElementById('tg-auth-loading-text');
+    const spinner = document.getElementById('tg-auth-loading-spinner');
+    const check = document.getElementById('tg-auth-loading-check');
     if (txt) txt.textContent = text || 'Signing you in…';
+    if (showCheck) {
+      if (spinner) spinner.style.display = 'none';
+      if (check) check.style.display = 'flex';
+    } else {
+      if (spinner) spinner.style.display = 'block';
+      if (check) check.style.display = 'none';
+    }
     if (el) el.classList.add('show');
     const wrap = document.getElementById('tg-wrap');
     if (wrap) wrap.style.display = 'none';
@@ -263,9 +276,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.body.style.overflow = '';
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     FIREBASE INIT
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ FIREBASE INIT ═══ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -280,7 +291,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  /* ═══ PERSISTENCE ═══ */
   const PERSISTENCE_READY = (async function() {
     try { await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch(e) {}
   })();
@@ -299,13 +309,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
   })();
 
-  /* ═══ SMALL OVERLAY (inline) ═══ */
+  /* ═══ OVERLAY / TOAST ═══ */
   const overlay = document.getElementById('tg-overlay');
   const overlayText = document.getElementById('tg-overlay-text');
   function showOverlay(t) { if (overlayText) overlayText.textContent = t || 'Please wait…'; if (overlay) overlay.classList.add('show'); }
   function hideOverlay() { if (overlay) overlay.classList.remove('show'); }
 
-  /* ═══ TOAST ═══ */
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -317,9 +326,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setTimeout(() => { el.style.transition = 'transform .3s, opacity .3s'; el.style.transform = 'translateX(130%)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 320); }, 3000);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     PROFESSIONAL MODAL POPUP SYSTEM
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ PROFESSIONAL MODAL ═══ */
   const modal = document.getElementById('tg-modal');
   const modalIcon = document.getElementById('tg-modal-icon');
   const modalTitle = document.getElementById('tg-modal-title');
@@ -338,245 +345,80 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     modalDesc.innerHTML = opts.desc || '';
     modalPrimary.innerHTML = opts.primaryText || 'OK';
     _modalPrimaryCb = opts.onPrimary || null;
-
     if (opts.secondaryText) {
       modalSecondary.style.display = 'flex';
       modalSecondary.textContent = opts.secondaryText;
-      modalSecondary.onclick = function() {
-        tgModalClose();
-        if (opts.onSecondary) opts.onSecondary();
-      };
+      modalSecondary.onclick = function() { tgModalClose(); if (opts.onSecondary) opts.onSecondary(); };
     } else {
       modalSecondary.style.display = 'none';
     }
-
-    modalPrimary.className = 'tg-modal-btn ' + (
-      type === 'error' ? 'danger' :
-      type === 'warn' ? 'orange' :
-      'primary'
-    );
-
+    modalPrimary.className = 'tg-modal-btn ' + (type === 'error' ? 'danger' : type === 'warn' ? 'orange' : 'primary');
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
   };
+  window.tgModalClose = function() { modal.classList.remove('show'); document.body.style.overflow = ''; _modalPrimaryCb = null; };
+  modalPrimary.addEventListener('click', function() { const cb = _modalPrimaryCb; tgModalClose(); if (cb) cb(); });
+  modal.addEventListener('click', function(e) { if (e.target === modal) tgModalClose(); });
 
-  window.tgModalClose = function() {
-    modal.classList.remove('show');
-    document.body.style.overflow = '';
-    _modalPrimaryCb = null;
-  };
-
-  modalPrimary.addEventListener('click', function() {
-    const cb = _modalPrimaryCb;
-    tgModalClose();
-    if (cb) cb();
-  });
-
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) tgModalClose();
-  });
-
-  /* ═══════════════════════════════════════════════════════════════
-     ERROR HANDLER — PROFESSIONAL POPUPS
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ ERROR HANDLER ═══ */
   function showAuthError(err, context) {
     const code = (err && err.code) || 'unknown';
-
-    /* Silent */
     if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
     if (code === 'auth/no-auth-event') return;
 
-    /* EMAIL ALREADY IN USE — SIGNUP */
     if (code === 'auth/email-already-in-use') {
-      tgShowModal({
-        type: 'warn',
-        title: 'Already Registered',
-        desc: 'Ye email pehle se registered hai.<br><br>Kya aap isi email se <b>login</b> karna chahte ho?',
-        primaryText: 'Yes, Login',
-        secondaryText: 'Try Different Email',
-        onPrimary: function() {
-          if (mode !== 'login') setMode('login');
-          passwordInput.value = '';
-          passwordInput.focus();
-          toast('Password daalo aur Login dabao', 'info');
-        },
-        onSecondary: function() {
-          emailInput.focus();
-          emailInput.select();
-        }
-      });
+      tgShowModal({ type: 'warn', title: 'Already Registered', desc: 'Ye email pehle se registered hai.<br><br>Kya aap isi email se <b>login</b> karna chahte ho?', primaryText: 'Yes, Login', secondaryText: 'Try Different Email', onPrimary: function() { if (mode !== 'login') setMode('login'); passwordInput.value = ''; passwordInput.focus(); }, onSecondary: function() { emailInput.focus(); emailInput.select(); } });
       return;
     }
-
-    /* WEAK PASSWORD */
     if (code === 'auth/weak-password') {
-      tgShowModal({
-        type: 'warn',
-        title: 'Weak Password',
-        desc: 'Password kam se kam <b>6 characters</b> ka hona chahiye.',
-        primaryText: 'Try Again',
-        onPrimary: function() { passwordInput.focus(); passwordInput.select(); }
-      });
+      tgShowModal({ type: 'warn', title: 'Weak Password', desc: 'Password kam se kam <b>6 characters</b> ka hona chahiye.', primaryText: 'Try Again', onPrimary: function() { passwordInput.focus(); passwordInput.select(); } });
       return;
     }
-
-    /* WRONG PASSWORD / INVALID CREDENTIALS */
     if (code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/invalid-login-credentials') {
-      tgShowModal({
-        type: 'error',
-        title: 'Incorrect Password',
-        desc: 'Email sahi hai lekin <b>password galat</b> hai.<br><br>Yaad nahi? "Reset Password" use karo.',
-        primaryText: 'Try Again',
-        secondaryText: 'Reset Password',
-        onPrimary: function() { passwordInput.focus(); passwordInput.select(); },
-        onSecondary: function() {
-          const email = (emailInput.value || '').trim();
-          if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            auth.sendPasswordResetEmail(email).then(function() {
-              toast('Reset link sent to ' + email, 'success');
-            }).catch(function() { toast('Could not send reset email', 'error'); });
-          } else {
-            toast('Enter valid email first', 'error');
-            emailInput.focus();
-          }
-        }
-      });
+      tgShowModal({ type: 'error', title: 'Incorrect Password', desc: 'Email sahi hai lekin <b>password galat</b> hai.<br><br>Yaad nahi? "Reset Password" use karo.', primaryText: 'Try Again', secondaryText: 'Reset Password', onPrimary: function() { passwordInput.focus(); passwordInput.select(); }, onSecondary: function() { const email = (emailInput.value || '').trim(); if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { auth.sendPasswordResetEmail(email).then(function() { toast('Reset link sent to ' + email, 'success'); }).catch(function() { toast('Could not send reset email', 'error'); }); } else { toast('Enter valid email first', 'error'); emailInput.focus(); } } });
       return;
     }
-
-    /* USER NOT FOUND */
     if (code === 'auth/user-not-found') {
-      tgShowModal({
-        type: 'warn',
-        title: 'Account Not Found',
-        desc: 'Is email se koi account nahi mila.<br><br>Naya account banao ya different email try karo.',
-        primaryText: 'Create Account',
-        secondaryText: 'Try Different Email',
-        onPrimary: function() { setMode('signup'); },
-        onSecondary: function() { emailInput.focus(); emailInput.select(); }
-      });
+      tgShowModal({ type: 'warn', title: 'Account Not Found', desc: 'Is email se koi account nahi mila.<br><br>Naya account banao ya different email try karo.', primaryText: 'Create Account', secondaryText: 'Try Different Email', onPrimary: function() { setMode('signup'); }, onSecondary: function() { emailInput.focus(); emailInput.select(); } });
       return;
     }
-
-    /* INVALID EMAIL */
     if (code === 'auth/invalid-email') {
-      tgShowModal({
-        type: 'warn',
-        title: 'Invalid Email',
-        desc: 'Please ek <b>valid email address</b> daalo.<br><br>Example: name@gmail.com',
-        primaryText: 'OK',
-        onPrimary: function() { emailInput.focus(); emailInput.select(); }
-      });
+      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please ek <b>valid email address</b> daalo.<br><br>Example: name@gmail.com', primaryText: 'OK', onPrimary: function() { emailInput.focus(); emailInput.select(); } });
       return;
     }
-
-    /* NETWORK ERROR */
     if (code === 'auth/network-request-failed') {
-      tgShowModal({
-        type: 'error',
-        title: 'No Internet',
-        desc: 'Network connection check karo.<br>WiFi ya mobile data try karo.',
-        primaryText: 'Retry',
-        onPrimary: function() { submitBtn.click(); }
-      });
+      tgShowModal({ type: 'error', title: 'No Internet', desc: 'Network connection check karo.<br>WiFi ya mobile data try karo.', primaryText: 'Retry', onPrimary: function() { submitBtn.click(); } });
       return;
     }
-
-    /* TOO MANY REQUESTS */
     if (code === 'auth/too-many-requests') {
-      tgShowModal({
-        type: 'error',
-        title: 'Too Many Attempts',
-        desc: 'Bohot zyada attempts ho gaye.<br>Kuch der baad try karo ya password reset karo.',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'error', title: 'Too Many Attempts', desc: 'Bohot zyada attempts ho gaye.<br>Kuch der baad try karo ya password reset karo.', primaryText: 'OK' });
       return;
     }
-
-    /* USER DISABLED */
     if (code === 'auth/user-disabled') {
-      tgShowModal({
-        type: 'error',
-        title: 'Account Disabled',
-        desc: 'Ye account block ho gaya hai.<br>Support se contact karo.',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'error', title: 'Account Disabled', desc: 'Ye account block ho gaya hai.<br>Support se contact karo.', primaryText: 'OK' });
       return;
     }
-
-    /* POPUP BLOCKED */
-    if (code === 'auth/popup-blocked') {
-      tgShowModal({
-        type: 'warn',
-        title: 'Popup Blocked',
-        desc: 'Browser ne popup block kar diya.<br><br>Redirect method try kar rahe hain…',
-        primaryText: 'OK'
-      });
-      return;
-    }
-
-    /* UNAUTHORIZED DOMAIN */
     if (code === 'auth/unauthorized-domain') {
-      tgShowModal({
-        type: 'error',
-        title: 'Configuration Error',
-        desc: 'Google sign-in abhi available nahi hai.<br><br>Kripya <b>Email aur Password</b> use karo.',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'error', title: 'Configuration Error', desc: 'Google sign-in abhi available nahi hai.<br><br>Kripya <b>Email aur Password</b> use karo.', primaryText: 'OK' });
       return;
     }
-
-    /* WEB STORAGE / COOKIES */
     if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
-      tgShowModal({
-        type: 'error',
-        title: 'Browser Settings',
-        desc: 'Aapke browser me <b>cookies blocked</b> hain.<br><br>Kripya cookies enable karo:<br>Settings → Cookies → Allow All',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'error', title: 'Browser Settings', desc: 'Aapke browser me <b>cookies blocked</b> hain.<br><br>Kripya cookies enable karo:<br>Settings → Cookies → Allow All', primaryText: 'OK' });
       return;
     }
-
-    /* UNSUPPORTED BROWSER */
     if (code === 'auth/operation-not-supported-in-this-environment') {
-      tgShowModal({
-        type: 'error',
-        title: 'Unsupported Browser',
-        desc: 'Please <b>Chrome</b> ya <b>Safari</b> browser use karo.<br><br>In-app browser se open mat karo.',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'error', title: 'Unsupported Browser', desc: 'Please <b>Chrome</b> ya <b>Safari</b> browser use karo.<br><br>In-app browser se open mat karo.', primaryText: 'OK' });
       return;
     }
-
-    /* ACCOUNT EXISTS WITH DIFFERENT METHOD */
     if (code === 'auth/account-exists-with-different-credential') {
-      tgShowModal({
-        type: 'warn',
-        title: 'Email Already Used',
-        desc: 'Ye email kisi aur sign-in method se registered hai.<br><br>Pehle us method se login karo.',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'warn', title: 'Email Already Used', desc: 'Ye email kisi aur sign-in method se registered hai.<br><br>Pehle us method se login karo.', primaryText: 'OK' });
       return;
     }
-
-    /* RECENT LOGIN REQUIRED (account delete case) */
     if (code === 'auth/requires-recent-login') {
-      tgShowModal({
-        type: 'warn',
-        title: 'Re-login Required',
-        desc: 'Security ke liye please <b>dobara login</b> karo.',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'warn', title: 'Re-login Required', desc: 'Security ke liye please <b>dobara login</b> karo.', primaryText: 'OK' });
       return;
     }
-
-    /* GENERIC FALLBACK */
-    tgShowModal({
-      type: 'error',
-      title: 'Something Went Wrong',
-      desc: 'Kuch problem aayi. Please try again.',
-      primaryText: 'Try Again'
-    });
+    tgShowModal({ type: 'error', title: 'Something Went Wrong', desc: 'Kuch problem aayi. Please try again.', primaryText: 'Try Again' });
   }
 
   /* ═══ USER DOC + CACHE ═══ */
@@ -587,14 +429,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const snap = await ref.get();
       if (!snap.exists) {
         const data = {
-          uid: user.uid,
-          email: user.email || '',
+          uid: user.uid, email: user.email || '',
           name: extraName || user.displayName || (user.email ? user.email.split('@')[0] : 'Guest'),
-          phone: user.phoneNumber || '',
-          photoURL: user.photoURL || '',
-          role: 'customer',
-          createdAt: FV.serverTimestamp(),
-          lastLogin: FV.serverTimestamp(),
+          phone: user.phoneNumber || '', photoURL: user.photoURL || '',
+          role: 'customer', createdAt: FV.serverTimestamp(), lastLogin: FV.serverTimestamp(),
           provider: (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password'
         };
         await ref.set(data);
@@ -615,8 +453,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!user) { try { localStorage.removeItem(AUTH_CACHE_KEY); } catch(e) {} return; }
     try {
       localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify({
-        uid: user.uid,
-        email: user.email || '',
+        uid: user.uid, email: user.email || '',
         name: (profile && profile.name) || user.displayName || '',
         photoURL: user.photoURL || '',
         role: (profile && profile.role) || 'customer',
@@ -698,14 +535,29 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     window.location.replace(REDIRECT_URL);
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     HANDLE SUCCESS
+     ✅ FIX: Save login success flag + show green check + redirect to shop-home
+     ═══════════════════════════════════════════════════════════════ */
   async function handleAuthSuccess(user, source) {
     if (!user) return;
-    showAuthLoading('Signing you in…');
+
+    /* Show green check + "Login successful" text */
+    showAuthLoading('Login successful! Redirecting…', true);
+
     try {
       const prof = await ensureUserDoc(user);
       cacheAuth(user, prof);
-    } catch(e) {}
-    setTimeout(doFinalRedirect, 200);
+
+      /* Save name for shop-home toast */
+      const name = (prof && prof.name) || user.displayName || 'User';
+      markLoginSuccess(name);
+    } catch(e) {
+      markLoginSuccess(user.displayName || 'User');
+    }
+
+    /* Short delay so user sees the green tick */
+    setTimeout(doFinalRedirect, 700);
   }
 
   /* ═══ EMAIL / PASSWORD SUBMIT ═══ */
@@ -742,11 +594,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       if (mode === 'signup') {
         const cred = await auth.createUserWithEmailAndPassword(email, password);
         if (cred.user && name) { try { await cred.user.updateProfile({ displayName: name }); } catch(e) {} }
-        toast('Account created! 🎉', 'success');
         await handleAuthSuccess(cred.user, 'signup');
       } else {
         const cred = await auth.signInWithEmailAndPassword(email, password);
-        toast('Logged in successfully!', 'success');
         await handleAuthSuccess(cred.user, 'login');
       }
     } catch (err) {
@@ -755,10 +605,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     GOOGLE — POPUP FIRST, REDIRECT FALLBACK
-     FIX: Login form is hidden immediately during redirect
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ GOOGLE — POPUP FIRST, REDIRECT FALLBACK ═══ */
   googleBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
     await PERSISTENCE_READY;
@@ -767,24 +614,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     provider.setCustomParameters({ prompt: 'select_account' });
 
     try {
-      console.log('[auth] trying popup…');
       const result = await auth.signInWithPopup(provider);
       if (result && result.user) {
-        console.log('[auth] popup success');
-        toast('Welcome, ' + (result.user.displayName || 'user') + '! 🎉', 'success');
         await handleAuthSuccess(result.user, 'google-popup');
         return;
       }
       setGoogleLoading(false);
     } catch (popupErr) {
       const code = popupErr && popupErr.code;
-      console.warn('[auth] popup failed:', code);
-
       if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
         setGoogleLoading(false);
         return;
       }
-
       const shouldFallback = [
         'auth/popup-blocked',
         'auth/operation-not-supported-in-this-environment',
@@ -792,16 +633,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         'auth/internal-error',
         'auth/network-request-failed'
       ].includes(code);
-
       if (shouldFallback) {
-        console.log('[auth] fallback → redirect');
-        /* ✅ CRITICAL: Set pending flag BEFORE redirect */
         setPendingGoogle();
-        /* ✅ Show full-screen loading IMMEDIATELY */
-        showAuthLoading('Redirecting to Google…');
+        showAuthLoading('Redirecting to Google…', false);
         try {
           await auth.signInWithRedirect(provider);
-          /* Page navigates away */
           return;
         } catch (redirErr) {
           clearPendingGoogle();
@@ -811,31 +647,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           return;
         }
       }
-
       setGoogleLoading(false);
       showAuthError(popupErr, 'google');
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     HANDLE REDIRECT RETURN
-     Ye tab chalta hai jab user Google se wapas aata hai
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ HANDLE REDIRECT RETURN ═══ */
   (async function handleRedirectReturn() {
-    /* If pending flag was set, we already hid the login form */
     try {
       const result = await auth.getRedirectResult();
       if (result && result.user) {
-        console.log('[auth] redirect success');
-        toast('Welcome, ' + (result.user.displayName || 'user') + '! 🎉', 'success');
         await handleAuthSuccess(result.user, 'google-redirect');
         return;
       }
-      /* No redirect result — if we were pending but got nothing, restore login */
       if (isPendingGoogle()) {
         setTimeout(() => {
           if (!auth.currentUser) {
-            console.warn('[auth] pending but no user — restoring login');
             clearPendingGoogle();
             hideAuthLoading();
           }
@@ -848,7 +675,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         hideAuthLoading();
         showAuthError(err, 'google');
       } else {
-        /* Silent — clear pending and restore */
         if (isPendingGoogle() && !auth.currentUser) {
           clearPendingGoogle();
           hideAuthLoading();
@@ -857,23 +683,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   })();
 
-  /* ═══════════════════════════════════════════════════════════════
-     AUTH STATE LISTENER — catches everything
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══ AUTH STATE LISTENER ═══ */
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      /* If we were pending and got null, wait a bit then restore */
       if (isPendingGoogle()) {
         setTimeout(() => {
-          if (!auth.currentUser) {
-            clearPendingGoogle();
-            hideAuthLoading();
-          }
+          if (!auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); }
         }, 3000);
       }
       return;
     }
-    console.log('[auth] state changed →', user.email);
     clearPendingGoogle();
     await handleAuthSuccess(user, 'state-change');
   });
@@ -883,8 +702,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (auth.currentUser && !_redirected) {
       handleAuthSuccess(auth.currentUser, 'failsafe');
     } else if (isPendingGoogle() && !auth.currentUser) {
-      /* After 8s, if pending but no user — restore login form */
-      console.warn('[auth] failsafe restore');
       clearPendingGoogle();
       hideAuthLoading();
     }
@@ -900,50 +717,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   forgotLink.addEventListener('click', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
-
     if (!email) {
-      tgShowModal({
-        type: 'info',
-        title: 'Email Required',
-        desc: 'Password reset link bhejne ke liye pehle <b>email address</b> daalo.',
-        primaryText: 'OK',
-        onPrimary: () => emailInput.focus()
-      });
+      tgShowModal({ type: 'info', title: 'Email Required', desc: 'Password reset link bhejne ke liye pehle <b>email address</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() });
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      tgShowModal({
-        type: 'warn',
-        title: 'Invalid Email',
-        desc: 'Please valid email daalo.',
-        primaryText: 'OK',
-        onPrimary: () => { emailInput.focus(); emailInput.select(); }
-      });
+      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please valid email daalo.', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } });
       return;
     }
-
     showOverlay('Sending reset link…');
     try {
       await auth.sendPasswordResetEmail(email);
       hideOverlay();
-      tgShowModal({
-        type: 'success',
-        title: 'Reset Link Sent',
-        desc: 'Password reset link bhej diya gaya hai:<br><br><b>' + email + '</b><br><br>Inbox check karo (spam bhi dekh lo).',
-        primaryText: 'OK'
-      });
+      tgShowModal({ type: 'success', title: 'Reset Link Sent', desc: 'Password reset link bhej diya gaya hai:<br><br><b>' + email + '</b><br><br>Inbox check karo (spam bhi dekh lo).', primaryText: 'OK' });
     } catch (err) {
       hideOverlay();
       const code = err && err.code;
       if (code === 'auth/user-not-found') {
-        tgShowModal({
-          type: 'warn',
-          title: 'Account Not Found',
-          desc: 'Is email se koi account nahi mila.<br><br>Naya account banao.',
-          primaryText: 'Create Account',
-          secondaryText: 'Cancel',
-          onPrimary: () => setMode('signup')
-        });
+        tgShowModal({ type: 'warn', title: 'Account Not Found', desc: 'Is email se koi account nahi mila.<br><br>Naya account banao.', primaryText: 'Create Account', secondaryText: 'Cancel', onPrimary: () => setMode('signup') });
       } else {
         showAuthError(err, 'reset');
       }
@@ -953,12 +744,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   /* ═══ LOAD THEME (deferred) ═══ */
   setTimeout(() => {
     db.collection('siteSettings').doc('theme').get()
-      .then(snap => {
-        if (snap.exists) {
-          const d = snap.data();
-          applyTheme(d.themeColor || '#2874f0');
-        }
-      })
+      .then(snap => { if (snap.exists) applyTheme(snap.data().themeColor || '#2874f0'); })
       .catch(() => {});
   }, 300);
 
