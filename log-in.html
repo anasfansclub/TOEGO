@@ -67,16 +67,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-toast.success{background:#388e3c;}
 .tg-toast.error{background:#d32f2f;}
 .tg-toast.info{background:#2874f0;}
+.tg-toast.warn{background:#f57c00;}
 
-/* ═══ FULL-SCREEN AUTH LOADING ═══ */
 .tg-auth-loading{position:fixed;inset:0;background:#fff;z-index:99999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
 .tg-auth-loading.show{display:flex;}
 .tg-auth-loading-logo{font-weight:900;font-style:italic;font-size:32px;color:#2874f0;letter-spacing:-0.5px;margin-bottom:8px;}
 .tg-auth-loading-logo span{color:#ffe500;}
 .tg-auth-loading-spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
 .tg-auth-loading-text{font-size:15px;color:#666;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
-
-/* ═══ SUCCESS ANIMATION (small green check) ═══ */
 .tg-auth-loading-check{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;margin-bottom:6px;animation:tgCheckPop .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 40px rgba(34,197,94,0.4);}
 @keyframes tgCheckPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
 .tg-auth-loading-check svg{width:38px;height:38px;stroke:#fff;fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:tgCheckDraw .4s .15s ease forwards;}
@@ -87,7 +85,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-overlay-spinner{width:42px;height:42px;border:4px solid #d4d5d9;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
 .tg-overlay-text{font-size:14px;color:#212121;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
 
-/* ═══ PROFESSIONAL MODAL ═══ */
 .tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.6);backdrop-filter:blur(4px);z-index:9999999;display:none;align-items:center;justify-content:center;padding:20px;animation:tgFadeIn .2s ease;}
 .tg-modal.show{display:flex;}
 @keyframes tgFadeIn{from{opacity:0;}to{opacity:1;}}
@@ -118,7 +115,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 </head>
 <body>
 
-<!-- ═══ FULL SCREEN AUTH LOADING ═══ -->
 <div class="tg-auth-loading" id="tg-auth-loading">
   <div class="tg-auth-loading-logo">TOE<span>GO</span></div>
   <div class="tg-auth-loading-spinner" id="tg-auth-loading-spinner"></div>
@@ -128,13 +124,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   <div class="tg-auth-loading-text" id="tg-auth-loading-text">Signing you in…</div>
 </div>
 
-<!-- ═══ SMALL OVERLAY ═══ -->
 <div class="tg-overlay" id="tg-overlay">
   <div class="tg-overlay-spinner"></div>
   <div class="tg-overlay-text" id="tg-overlay-text">Please wait…</div>
 </div>
 
-<!-- ═══ PROFESSIONAL MODAL ═══ -->
 <div class="tg-modal" id="tg-modal">
   <div class="tg-modal-box">
     <div class="tg-modal-icon" id="tg-modal-icon">!</div>
@@ -210,21 +204,70 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   'use strict';
 
   /* ═══════════════════════════════════════════════════════════════
-     STEP 0: CONSTANTS
-     ✅ FIX: Always redirect to shop-home.html after login
+     ✅ SAFE STORAGE — works even when cookies/storage blocked
+     Fallback to in-memory Map when localStorage/sessionStorage fail
      ═══════════════════════════════════════════════════════════════ */
+  const _memLocal = new Map();
+  const _memSession = new Map();
+
+  function _testStorage(type) {
+    try {
+      const s = window[type];
+      if (!s) return false;
+      const k = '__tg_test_' + Math.random();
+      s.setItem(k, '1');
+      s.removeItem(k);
+      return true;
+    } catch(e) { return false; }
+  }
+
+  const HAS_LOCAL = _testStorage('localStorage');
+  const HAS_SESSION = _testStorage('sessionStorage');
+
+  const SafeStore = {
+    local: {
+      get(k) {
+        try { if (HAS_LOCAL) return localStorage.getItem(k); } catch(e) {}
+        return _memLocal.has(k) ? _memLocal.get(k) : null;
+      },
+      set(k, v) {
+        try { if (HAS_LOCAL) { localStorage.setItem(k, v); return; } } catch(e) {}
+        _memLocal.set(k, v);
+      },
+      remove(k) {
+        try { if (HAS_LOCAL) localStorage.removeItem(k); } catch(e) {}
+        _memLocal.delete(k);
+      }
+    },
+    session: {
+      get(k) {
+        try { if (HAS_SESSION) return sessionStorage.getItem(k); } catch(e) {}
+        return _memSession.has(k) ? _memSession.get(k) : null;
+      },
+      set(k, v) {
+        try { if (HAS_SESSION) { sessionStorage.setItem(k, v); return; } } catch(e) {}
+        _memSession.set(k, v);
+      },
+      remove(k) {
+        try { if (HAS_SESSION) sessionStorage.removeItem(k); } catch(e) {}
+        _memSession.delete(k);
+      }
+    }
+  };
+
+  /* ═══ CONSTANTS ═══ */
   const REDIRECT_URL = 'shop-home.html';
   const AUTH_CACHE_KEY = 'toego_auth_cache';
   const GOOGLE_PENDING_KEY = 'tg_google_pending';
   const LOGIN_SUCCESS_KEY = 'tg_login_success';
   const GOOGLE_PENDING_TTL = 5 * 60 * 1000;
 
-  /* ═══ GOOGLE PENDING DETECTION ═══ */
-  function setPendingGoogle() { try { localStorage.setItem(GOOGLE_PENDING_KEY, String(Date.now())); } catch(e) {} }
-  function clearPendingGoogle() { try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {} }
+  /* ═══ GOOGLE PENDING HELPERS ═══ */
+  function setPendingGoogle() { SafeStore.local.set(GOOGLE_PENDING_KEY, String(Date.now())); }
+  function clearPendingGoogle() { SafeStore.local.remove(GOOGLE_PENDING_KEY); }
   function isPendingGoogle() {
     try {
-      const v = localStorage.getItem(GOOGLE_PENDING_KEY);
+      const v = SafeStore.local.get(GOOGLE_PENDING_KEY);
       if (!v) return false;
       const ts = Number(v);
       if (!ts || isNaN(ts) || Date.now() - ts > GOOGLE_PENDING_TTL) { clearPendingGoogle(); return false; }
@@ -232,17 +275,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     } catch(e) { return false; }
   }
 
-  /* ═══ SAVE LOGIN SUCCESS FLAG (shop-home reads this) ═══ */
   function markLoginSuccess(name) {
-    try {
-      sessionStorage.setItem(LOGIN_SUCCESS_KEY, JSON.stringify({
-        name: name || 'User',
-        ts: Date.now()
-      }));
-    } catch(e) {}
+    SafeStore.session.set(LOGIN_SUCCESS_KEY, JSON.stringify({
+      name: name || 'User',
+      ts: Date.now()
+    }));
   }
 
-  /* ✅ CRITICAL: Hide login form instantly if pending */
+  /* ═══ HIDE LOGIN IF PENDING ═══ */
   if (isPendingGoogle()) {
     document.getElementById('tg-auth-loading').classList.add('show');
     document.getElementById('tg-wrap').style.display = 'none';
@@ -255,19 +295,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const spinner = document.getElementById('tg-auth-loading-spinner');
     const check = document.getElementById('tg-auth-loading-check');
     if (txt) txt.textContent = text || 'Signing you in…';
-    if (showCheck) {
-      if (spinner) spinner.style.display = 'none';
-      if (check) check.style.display = 'flex';
-    } else {
-      if (spinner) spinner.style.display = 'block';
-      if (check) check.style.display = 'none';
-    }
+    if (showCheck) { if (spinner) spinner.style.display = 'none'; if (check) check.style.display = 'flex'; }
+    else { if (spinner) spinner.style.display = 'block'; if (check) check.style.display = 'none'; }
     if (el) el.classList.add('show');
     const wrap = document.getElementById('tg-wrap');
     if (wrap) wrap.style.display = 'none';
     document.body.style.overflow = 'hidden';
   }
-
   function hideAuthLoading() {
     const el = document.getElementById('tg-auth-loading');
     if (el) el.classList.remove('show');
@@ -276,23 +310,61 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.body.style.overflow = '';
   }
 
-  /* ═══ FIREBASE INIT ═══ */
-  if (!window.__TOEGO_FB__) {
-    window.__TOEGO_FB__ = firebase.initializeApp({
-      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
-      authDomain: "toego-ecommerce.firebaseapp.com",
-      projectId: "toego-ecommerce",
-      storageBucket: "toego-ecommerce.firebasestorage.app",
-      messagingSenderId: "234167880880",
-      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
-    });
+  /* ═══════════════════════════════════════════════════════════════
+     FIREBASE INIT — wrapped in try/catch for storage block
+     ═══════════════════════════════════════════════════════════════ */
+  let auth, db, FV;
+  try {
+    if (!window.__TOEGO_FB__) {
+      window.__TOEGO_FB__ = firebase.initializeApp({
+        apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+        authDomain: "toego-ecommerce.firebaseapp.com",
+        projectId: "toego-ecommerce",
+        storageBucket: "toego-ecommerce.firebasestorage.app",
+        messagingSenderId: "234167880880",
+        appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+      });
+    }
+    auth = firebase.auth();
+    db = firebase.firestore();
+    FV = firebase.firestore.FieldValue;
+  } catch(e) {
+    console.error('[init] firebase failed:', e);
   }
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const FV = firebase.firestore.FieldValue;
 
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ MULTI-TIER PERSISTENCE — works even when cookies blocked
+     Order: LOCAL → SESSION → NONE (in-memory)
+     ═══════════════════════════════════════════════════════════════ */
+  let PERSISTENCE_MODE = 'NONE';
   const PERSISTENCE_READY = (async function() {
-    try { await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch(e) {}
+    if (!auth) return;
+    /* Try LOCAL first */
+    try {
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+      PERSISTENCE_MODE = 'LOCAL';
+      console.log('[auth] persistence = LOCAL ✓');
+      return;
+    } catch(e) {
+      console.warn('[auth] LOCAL failed:', e && e.code);
+    }
+    /* Try SESSION */
+    try {
+      await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+      PERSISTENCE_MODE = 'SESSION';
+      console.log('[auth] persistence = SESSION ✓');
+      return;
+    } catch(e) {
+      console.warn('[auth] SESSION failed:', e && e.code);
+    }
+    /* Fallback to NONE (in-memory — user logs in but won't persist after refresh) */
+    try {
+      await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+      PERSISTENCE_MODE = 'NONE';
+      console.log('[auth] persistence = NONE (in-memory) ⚠');
+    } catch(e) {
+      console.warn('[auth] all persistence failed:', e && e.code);
+    }
   })();
 
   /* ═══ THEME ═══ */
@@ -303,10 +375,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const left = document.getElementById('tg-left');
     if (left) left.style.background = primary;
     document.documentElement.style.setProperty('--tg-primary', primary);
-    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
+    SafeStore.local.set('toego_theme_colors', JSON.stringify({ primary }));
   }
   (function() {
-    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+    try {
+      const c = SafeStore.local.get('toego_theme_colors');
+      if (c) applyTheme(JSON.parse(c).primary);
+    } catch(e) {}
   })();
 
   /* ═══ OVERLAY / TOAST ═══ */
@@ -326,7 +401,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setTimeout(() => { el.style.transition = 'transform .3s, opacity .3s'; el.style.transform = 'translateX(130%)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 320); }, 3000);
   }
 
-  /* ═══ PROFESSIONAL MODAL ═══ */
+  /* ═══ MODAL SYSTEM ═══ */
   const modal = document.getElementById('tg-modal');
   const modalIcon = document.getElementById('tg-modal-icon');
   const modalTitle = document.getElementById('tg-modal-title');
@@ -402,8 +477,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       tgShowModal({ type: 'error', title: 'Configuration Error', desc: 'Google sign-in abhi available nahi hai.<br><br>Kripya <b>Email aur Password</b> use karo.', primaryText: 'OK' });
       return;
     }
+    /* ✅ Web storage error — try fallback login */
     if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
-      tgShowModal({ type: 'error', title: 'Browser Settings', desc: 'Aapke browser me <b>cookies blocked</b> hain.<br><br>Kripya cookies enable karo:<br>Settings → Cookies → Allow All', primaryText: 'OK' });
+      tgShowModal({ type: 'warn', title: 'Browser Restriction', desc: 'Aapke browser me cookies blocked hain.<br><br>Login try karte hain alternative method se…<br><br>Agar login nahi ho paya to:<br>Settings → Cookies → Allow All karo', primaryText: 'Try Anyway', onPrimary: function() { setTimeout(() => submitBtn.click(), 200); } });
       return;
     }
     if (code === 'auth/operation-not-supported-in-this-environment') {
@@ -418,7 +494,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       tgShowModal({ type: 'warn', title: 'Re-login Required', desc: 'Security ke liye please <b>dobara login</b> karo.', primaryText: 'OK' });
       return;
     }
-    tgShowModal({ type: 'error', title: 'Something Went Wrong', desc: 'Kuch problem aayi. Please try again.', primaryText: 'Try Again' });
+    tgShowModal({ type: 'error', title: 'Something Went Wrong', desc: 'Kuch problem aayi. Please try again.<br><br>Error: <b>' + code + '</b>', primaryText: 'Try Again' });
   }
 
   /* ═══ USER DOC + CACHE ═══ */
@@ -445,14 +521,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return { ...snap.data(), ...upd };
       }
     } catch (err) {
+      console.warn('[userdoc] failed:', err && err.code);
       return { name: extraName || user.displayName || '', email: user.email || '', role: 'customer' };
     }
   }
 
   function cacheAuth(user, profile) {
-    if (!user) { try { localStorage.removeItem(AUTH_CACHE_KEY); } catch(e) {} return; }
+    if (!user) { SafeStore.local.remove(AUTH_CACHE_KEY); return; }
     try {
-      localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify({
+      SafeStore.local.set(AUTH_CACHE_KEY, JSON.stringify({
         uid: user.uid, email: user.email || '',
         name: (profile && profile.name) || user.displayName || '',
         photoURL: user.photoURL || '',
@@ -526,7 +603,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     googleText.textContent = on ? 'Please wait…' : 'Continue with Google';
   }
 
-  /* ═══ REDIRECT GUARD ═══ */
+  /* ═══ REDIRECT ═══ */
   let _redirected = false;
   function doFinalRedirect() {
     if (_redirected) return;
@@ -535,28 +612,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     window.location.replace(REDIRECT_URL);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     HANDLE SUCCESS
-     ✅ FIX: Save login success flag + show green check + redirect to shop-home
-     ═══════════════════════════════════════════════════════════════ */
   async function handleAuthSuccess(user, source) {
     if (!user) return;
-
-    /* Show green check + "Login successful" text */
     showAuthLoading('Login successful! Redirecting…', true);
-
     try {
       const prof = await ensureUserDoc(user);
       cacheAuth(user, prof);
-
-      /* Save name for shop-home toast */
       const name = (prof && prof.name) || user.displayName || 'User';
       markLoginSuccess(name);
     } catch(e) {
       markLoginSuccess(user.displayName || 'User');
     }
-
-    /* Short delay so user sees the green tick */
     setTimeout(doFinalRedirect, 700);
   }
 
@@ -605,7 +671,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
-  /* ═══ GOOGLE — POPUP FIRST, REDIRECT FALLBACK ═══ */
+  /* ═══════════════════════════════════════════════════════════════
+     GOOGLE LOGIN — 3-tier fallback for cookies-blocked case
+     1. POPUP (works even when cookies blocked)
+     2. REDIRECT (if popup blocked)
+     3. Retry with NONE persistence
+     ═══════════════════════════════════════════════════════════════ */
   googleBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
     await PERSISTENCE_READY;
@@ -613,19 +684,43 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
+    /* Strategy 1: POPUP first — works without cookies on most browsers */
     try {
+      console.log('[auth] trying popup (persistence=' + PERSISTENCE_MODE + ')…');
       const result = await auth.signInWithPopup(provider);
       if (result && result.user) {
+        console.log('[auth] popup success ✓');
         await handleAuthSuccess(result.user, 'google-popup');
         return;
       }
       setGoogleLoading(false);
     } catch (popupErr) {
       const code = popupErr && popupErr.code;
+      console.warn('[auth] popup failed:', code);
+
+      /* User cancelled */
       if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
         setGoogleLoading(false);
         return;
       }
+
+      /* If web-storage-unsupported, try setting NONE persistence and retry popup */
+      if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
+        console.log('[auth] storage blocked, retrying with NONE persistence…');
+        try {
+          await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+          const result = await auth.signInWithPopup(provider);
+          if (result && result.user) {
+            console.log('[auth] popup success with NONE persistence ✓');
+            await handleAuthSuccess(result.user, 'google-popup-nostorage');
+            return;
+          }
+        } catch (retryErr) {
+          console.warn('[auth] NONE retry failed:', retryErr && retryErr.code);
+        }
+      }
+
+      /* Fallback to redirect */
       const shouldFallback = [
         'auth/popup-blocked',
         'auth/operation-not-supported-in-this-environment',
@@ -633,7 +728,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         'auth/internal-error',
         'auth/network-request-failed'
       ].includes(code);
+
       if (shouldFallback) {
+        console.log('[auth] fallback → redirect');
         setPendingGoogle();
         showAuthLoading('Redirecting to Google…', false);
         try {
@@ -647,6 +744,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           return;
         }
       }
+
       setGoogleLoading(false);
       showAuthError(popupErr, 'google');
     }
@@ -662,10 +760,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       }
       if (isPendingGoogle()) {
         setTimeout(() => {
-          if (!auth.currentUser) {
-            clearPendingGoogle();
-            hideAuthLoading();
-          }
+          if (!auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); }
         }, 4000);
       }
     } catch (err) {
@@ -675,10 +770,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         hideAuthLoading();
         showAuthError(err, 'google');
       } else {
-        if (isPendingGoogle() && !auth.currentUser) {
-          clearPendingGoogle();
-          hideAuthLoading();
-        }
+        if (isPendingGoogle() && !auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); }
       }
     }
   })();
@@ -741,11 +833,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
-  /* ═══ LOAD THEME (deferred) ═══ */
+  /* ═══ LOAD THEME (deferred, safe) ═══ */
   setTimeout(() => {
-    db.collection('siteSettings').doc('theme').get()
-      .then(snap => { if (snap.exists) applyTheme(snap.data().themeColor || '#2874f0'); })
-      .catch(() => {});
+    try {
+      db.collection('siteSettings').doc('theme').get()
+        .then(snap => { if (snap.exists) applyTheme(snap.data().themeColor || '#2874f0'); })
+        .catch(() => {});
+    } catch(e) {}
   }, 300);
 
 })();
