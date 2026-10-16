@@ -6,6 +6,10 @@
 <title>Login — TOEGO</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+<link rel="preconnect" href="https://accounts.google.com">
+<link rel="dns-prefetch" href="https://apis.google.com">
 
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 
@@ -305,7 +309,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-toast.info    { background: #2874f0; }
 .tg-toast-icon { font-size: 16px; flex-shrink: 0; }
 
-/* Full-page loading overlay (used during Google redirect) */
 .tg-overlay {
   position: fixed;
   inset: 0;
@@ -356,7 +359,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 </head>
 <body>
 
-<!-- Full page loading overlay (Google redirect ke time) -->
 <div class="tg-overlay" id="tg-overlay">
   <div class="tg-overlay-spinner"></div>
   <div class="tg-overlay-text" id="tg-overlay-text">Signing you in…</div>
@@ -439,8 +441,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 (function() {
   'use strict';
 
-  const REDIRECT_URL = 'shop-home.html';
+  /* ========= REDIRECT URL — respects ?redirect= query param ========= */
+  const REDIRECT_URL = (function() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const r = params.get('redirect');
+      if (r && /^[\w\-\.\/]+\.html/.test(r) && !r.includes('..') && !r.startsWith('http')) {
+        return r;
+      }
+    } catch(e) {}
+    return 'shop-home.html';
+  })();
 
+  /* ========= FIREBASE INIT ========= */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -455,8 +468,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  // IMPORTANT: tell Firebase to keep login state local (persists across redirect)
-  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){});
+  /* ========= SET PERSISTENCE (awaited — mobile safe) ========= */
+  (async function initPersistence() {
+    try {
+      await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    } catch(e) {
+      console.warn('[auth] persistence set failed:', e && e.code);
+    }
+  })();
 
   /* ========= THEME ========= */
   const themeMeta = document.getElementById('tg-theme-meta');
@@ -512,7 +531,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }, 2800);
   }
 
-  /* ========= ERRORS ========= */
+  /* ========= FRIENDLY ERRORS ========= */
   function friendlyError(code) {
     const map = {
       'auth/invalid-email': 'Please enter a valid email address.',
@@ -531,12 +550,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       'auth/account-exists-with-different-credential': 'This email exists with a different sign-in method.',
       'auth/operation-not-allowed': 'This sign-in method is not enabled.',
       'auth/requires-recent-login': 'Please log in again to continue.',
-      'auth/unauthorized-domain': 'This domain is not authorized for Google sign-in. Please contact support.'
+      'auth/unauthorized-domain': 'This domain is not authorized for Google sign-in. Please contact support.',
+      'auth/no-auth-event': ''
     };
     return map[code] || 'Something went wrong. Please try again.';
   }
 
-  /* ========= USER DOC ========= */
+  /* ========= USER DOC SYNC ========= */
   async function ensureUserDoc(user, extraName) {
     if (!user) return;
     const ref = db.collection('users').doc(user.uid);
@@ -667,29 +687,23 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         await ensureUserDoc(cred.user);
         toast('Logged in successfully!', 'success');
       }
-      setTimeout(() => { window.location.replace(REDIRECT_URL); }, 600);
+      setTimeout(() => { window.location.replace(REDIRECT_URL); }, 500);
     } catch (err) {
       toast(friendlyError(err && err.code) || 'Login failed', 'error');
       setSubmitLoading(false);
     }
   });
 
-  /* ========= GOOGLE — use REDIRECT (no popup, 100% reliable) =========
-     Popup method GitHub Pages pe COOP header ki wajah se fail hota hai.
-     Redirect method se Google page pe jaata hai, login karke wapas aata hai.
-  ==================================================================== */
+  /* ========= GOOGLE — REDIRECT (mobile + desktop safe) ========= */
   googleBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
     try {
-      // Show overlay so user knows something is happening
       showOverlay('Redirecting to Google…');
-      // Small delay so overlay paints before redirect
-      await new Promise(r => setTimeout(r, 150));
       await auth.signInWithRedirect(provider);
-      // Page will navigate away now — no further code runs
+      // Page will navigate away — no further code runs
     } catch (err) {
       hideOverlay();
       setGoogleLoading(false);
@@ -697,25 +711,62 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   });
 
-  /* ========= HANDLE REDIRECT RESULT (after coming back from Google) ========= */
-  (async function handleRedirectResult() {
+  /* ========= UNIFIED REDIRECT + AUTH HANDLER =========
+     ✅ FIX: removed firstCheck flag which broke mobile redirect
+     ✅ Now every auth state change → redirect if user exists
+  ==================================================== */
+  let _redirected = false;
+  function doFinalRedirect() {
+    if (_redirected) return;
+    _redirected = true;
+    window.location.replace(REDIRECT_URL);
+  }
+
+  // 1. Resolve Google redirect result (primary path)
+  (async function resolveRedirect() {
     try {
       const r = await auth.getRedirectResult();
       if (r && r.user) {
-        // Successfully signed in via redirect
         showOverlay('Signing you in…');
         await ensureUserDoc(r.user);
         toast('Welcome, ' + (r.user.displayName || 'shopper') + '! 🎉', 'success');
-        setTimeout(() => { window.location.replace(REDIRECT_URL); }, 400);
+        setTimeout(doFinalRedirect, 250);
       }
     } catch (err) {
-      hideOverlay();
-      if (err && err.code) {
-        const m = friendlyError(err.code);
-        if (m) toast(m, 'error');
+      const code = err && err.code;
+      // Silent: no-auth-event (no pending redirect), cancelled-popup-request
+      if (code && code !== 'auth/no-auth-event' && code !== 'auth/cancelled-popup-request') {
+        console.warn('[auth] redirect result error:', code);
+        const m = friendlyError(code);
+        if (m && m !== 'Something went wrong. Please try again.') toast(m, 'error');
       }
     }
   })();
+
+  // 2. Auth state listener — catches everything (mobile + desktop)
+  //    No firstCheck gating — fires every time user is present
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) return;
+    await ensureUserDoc(user);
+    // Small delay so any pending redirect-result handler can run first
+    setTimeout(doFinalRedirect, 100);
+  });
+
+  // 3. Failsafe — if user already authed but nothing fired (iOS bfcache)
+  setTimeout(() => {
+    if (auth.currentUser && !_redirected) {
+      console.log('[auth] failsafe redirect');
+      doFinalRedirect();
+    }
+  }, 2500);
+
+  // 4. bfcache restore handler (Safari back button from Google)
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted && auth.currentUser && !_redirected) {
+      console.log('[auth] pageshow redirect');
+      doFinalRedirect();
+    }
+  });
 
   /* ========= FORGOT PASSWORD ========= */
   forgotLink.addEventListener('click', async (e) => {
@@ -728,18 +779,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       toast('Password reset link sent to ' + email, 'success');
     } catch (err) {
       toast(friendlyError(err && err.code) || 'Could not send reset email', 'error');
-    }
-  });
-
-  /* ========= AUTO REDIRECT if already logged in ========= */
-  let firstCheck = true;
-  auth.onAuthStateChanged(async (user) => {
-    // Don't auto-redirect while a redirect result is being processed
-    if (!firstCheck) return;
-    firstCheck = false;
-    if (user) {
-      await ensureUserDoc(user);
-      window.location.replace(REDIRECT_URL);
     }
   });
 
