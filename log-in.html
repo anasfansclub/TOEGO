@@ -6,151 +6,367 @@
 <title>Login — TOEGO</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://firestore.googleapis.com">
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://identitytoolkit.googleapis.com">
-<link rel="preconnect" href="https://accounts.google.com">
-<link rel="dns-prefetch" href="https://apis.google.com">
+
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+
 <style>
-*,*::before,*::after{box-sizing:border-box;}
-html,body{margin:0!important;padding:0!important;width:100%!important;max-width:100vw;overflow-x:hidden;min-height:100vh;font-family:'Roboto',Arial,sans-serif;color:#212121;background:#f1f3f6;-webkit-font-smoothing:antialiased;}
-img{max-width:100%;display:block;}
-button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
-input{font:inherit;}
-a{color:inherit;text-decoration:none;}
-header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#footer,.o_footer_copyright,.o_breadcrumb,.breadcrumb,.o_website_edit_toolbar,.o_notification_manager{display:none!important;}
-.tg-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:#f1f3f6;}
-.tg-card{width:100%;max-width:720px;background:#fff;border-radius:6px;box-shadow:0 4px 20px rgba(0,0,0,0.10);display:flex;overflow:hidden;}
-.tg-left{flex:0 0 40%;max-width:40%;background:#2874f0;color:#fff;padding:34px 30px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:background .3s;}
-.tg-left::after{content:'';position:absolute;bottom:-80px;left:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(255,255,255,0.08),transparent 70%);border-radius:50%;}
-.tg-left-logo{font-weight:900;font-style:italic;font-size:24px;letter-spacing:-0.4px;position:relative;z-index:2;}
-.tg-left-logo span{color:#ffe500;}
-.tg-left-content{position:relative;z-index:2;margin-top:auto;margin-bottom:auto;padding:24px 0;}
-.tg-left-title{font-size:26px;font-weight:500;line-height:1.15;margin:0 0 12px;letter-spacing:-0.2px;}
-.tg-left-sub{font-size:14px;line-height:1.5;opacity:0.88;margin:0;max-width:260px;}
-.tg-left-foot{font-size:11px;opacity:0.7;position:relative;z-index:2;letter-spacing:0.2px;}
-.tg-right{flex:1 1 auto;padding:36px 42px 32px;display:flex;flex-direction:column;justify-content:center;}
-.tg-field{position:relative;margin-bottom:24px;}
-.tg-field input{width:100%;height:42px;border:none;border-bottom:1px solid #d4d5d9;background:transparent;font-size:15px;color:#212121;padding:6px 0 8px;outline:none;transition:border-color .2s;border-radius:0;}
-.tg-field input:focus{border-bottom-color:#2874f0;}
-.tg-field label{position:absolute;left:0;top:12px;font-size:15px;color:#878787;pointer-events:none;transition:all .18s cubic-bezier(.4,0,.2,1);background:#fff;padding:0 4px;margin-left:-4px;}
-.tg-field input:focus+label,.tg-field input:not(:placeholder-shown)+label,.tg-field input.filled+label{top:-7px;font-size:12px;color:#2874f0;}
-.tg-field input:not(:focus):not(:placeholder-shown)+label{color:#878787;}
-.tg-field-pass{position:relative;}
-.tg-pass-toggle{position:absolute;right:0;top:10px;font-size:12.5px;color:#2874f0;font-weight:600;padding:4px 0;letter-spacing:0.2px;}
-.tg-pass-toggle:hover{text-decoration:underline;}
-.tg-terms{font-size:11.5px;color:#878787;line-height:1.55;margin:4px 0 20px;}
-.tg-terms a{color:#2874f0;font-weight:500;}
-.tg-submit{width:100%;padding:14px 16px;border-radius:3px;font-size:15px;font-weight:700;color:#fff;background:#fb641b;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:10px;transition:box-shadow .18s,transform .1s,filter .15s;box-shadow:0 1px 2px rgba(0,0,0,0.15);position:relative;}
-.tg-submit:hover{filter:brightness(1.05);box-shadow:0 4px 12px rgba(251,100,27,0.35);}
-.tg-submit:disabled{opacity:0.75;cursor:not-allowed;}
-.tg-submit.loading{pointer-events:none;}
-.tg-spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:tgSpin .7s linear infinite;display:none;}
-@keyframes tgSpin{to{transform:rotate(360deg);}}
-.tg-submit.loading .tg-spinner{display:block;}
-.tg-div{display:flex;align-items:center;gap:12px;margin:18px 0 14px;color:#999;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;font-weight:500;}
-.tg-div::before,.tg-div::after{content:'';flex:1;height:1px;background:#e5e7eb;}
-.tg-alt-btn{width:100%;padding:12px 16px;border-radius:3px;background:#fff;border:1px solid #d4d5d9;font-size:14px;font-weight:600;color:#2874f0;display:flex;align-items:center;justify-content:center;gap:10px;transition:box-shadow .18s,background .15s;letter-spacing:0.3px;}
-.tg-alt-btn:hover{box-shadow:0 2px 8px rgba(0,0,0,0.10);background:#f8fbff;}
-.tg-alt-btn svg{width:18px;height:18px;flex-shrink:0;}
-.tg-alt-btn.loading{pointer-events:none;opacity:0.75;}
-.tg-forgot-row{text-align:right;margin:-12px 0 18px;}
-.tg-forgot{font-size:13px;color:#2874f0;font-weight:600;}
-.tg-mode{text-align:center;margin-top:20px;font-size:13.5px;color:#878787;}
-.tg-mode button{color:#2874f0;font-weight:700;margin-left:4px;letter-spacing:0.2px;}
-.tg-field-name{display:none;}
-.tg-card.signup .tg-field-name{display:block;}
-.tg-card.signup .tg-forgot-row{display:none;}
-.tg-toasts{position:fixed;top:20px;right:20px;z-index:999999;display:flex;flex-direction:column;gap:10px;max-width:calc(100vw - 40px);pointer-events:none;}
-.tg-toast{padding:13px 18px;border-radius:4px;background:#212121;color:#fff;font-size:13.5px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.25);pointer-events:auto;display:flex;align-items:center;gap:10px;animation:tgToastIn .25s;max-width:380px;line-height:1.4;}
-@keyframes tgToastIn{from{transform:translateX(130%);opacity:0;}to{transform:translateX(0);opacity:1;}}
-.tg-toast.success{background:#388e3c;}
-.tg-toast.error{background:#d32f2f;}
-.tg-toast.info{background:#2874f0;}
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0 !important; padding: 0 !important;
+  width: 100% !important; max-width: 100vw;
+  overflow-x: hidden; min-height: 100vh;
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #212121;
+  background: #f1f3f6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input { font: inherit; }
+a { color: inherit; text-decoration: none; }
 
-/* ═══ FULL-SCREEN AUTH LOADING ═══ */
-.tg-auth-loading{position:fixed;inset:0;background:#fff;z-index:99999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
-.tg-auth-loading.show{display:flex;}
-.tg-auth-loading-logo{font-weight:900;font-style:italic;font-size:32px;color:#2874f0;letter-spacing:-0.5px;margin-bottom:8px;}
-.tg-auth-loading-logo span{color:#ffe500;}
-.tg-auth-loading-spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
-.tg-auth-loading-text{font-size:15px;color:#666;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
 
-/* ═══ SUCCESS ANIMATION (small green check) ═══ */
-.tg-auth-loading-check{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;margin-bottom:6px;animation:tgCheckPop .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 12px 40px rgba(34,197,94,0.4);}
-@keyframes tgCheckPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
-.tg-auth-loading-check svg{width:38px;height:38px;stroke:#fff;fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:tgCheckDraw .4s .15s ease forwards;}
-@keyframes tgCheckDraw{to{stroke-dashoffset:0;}}
+.tg-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: #f1f3f6;
+}
 
-.tg-overlay{position:fixed;inset:0;background:rgba(241,243,246,0.96);backdrop-filter:blur(4px);z-index:999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
-.tg-overlay.show{display:flex;}
-.tg-overlay-spinner{width:42px;height:42px;border:4px solid #d4d5d9;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
-.tg-overlay-text{font-size:14px;color:#212121;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
+.tg-card {
+  width: 100%;
+  max-width: 720px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  display: flex;
+  overflow: hidden;
+  animation: tgCardIn .4s cubic-bezier(.34,1.2,.64,1);
+}
+@keyframes tgCardIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* ═══ PROFESSIONAL MODAL ═══ */
-.tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.6);backdrop-filter:blur(4px);z-index:9999999;display:none;align-items:center;justify-content:center;padding:20px;animation:tgFadeIn .2s ease;}
-.tg-modal.show{display:flex;}
-@keyframes tgFadeIn{from{opacity:0;}to{opacity:1;}}
-.tg-modal-box{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:32px 28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:tgModalIn .3s cubic-bezier(.34,1.56,.64,1);}
-@keyframes tgModalIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
-.tg-modal-icon{width:72px;height:72px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;}
-.tg-modal-icon.warn{background:linear-gradient(135deg,#fff3e0,#ffe0b2);color:#f57c00;}
-.tg-modal-icon.error{background:linear-gradient(135deg,#ffebee,#ffcdd2);color:#d32f2f;}
-.tg-modal-icon.info{background:linear-gradient(135deg,#e3f2fd,#bbdefb);color:#1565c0;}
-.tg-modal-icon.success{background:linear-gradient(135deg,#e6f7ec,#c8e6c9);color:#1b8a3a;}
-.tg-modal-title{font-size:19px;font-weight:800;color:#212121;margin:0 0 10px;letter-spacing:-0.2px;line-height:1.3;}
-.tg-modal-desc{font-size:14px;color:#666;line-height:1.55;margin:0 0 22px;}
-.tg-modal-desc b{color:#212121;font-weight:700;word-break:break-word;}
-.tg-modal-actions{display:flex;gap:10px;flex-direction:column;}
-.tg-modal-btn{padding:13px 20px;border-radius:10px;font-size:14.5px;font-weight:800;letter-spacing:0.3px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;}
-.tg-modal-btn.primary{background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;box-shadow:0 4px 12px rgba(40,116,240,0.35);}
-.tg-modal-btn.primary:hover{filter:brightness(1.08);transform:translateY(-1px);}
-.tg-modal-btn.orange{background:linear-gradient(135deg,#fb641b,#e65100);color:#fff;box-shadow:0 4px 12px rgba(251,100,27,0.35);}
-.tg-modal-btn.orange:hover{filter:brightness(1.08);transform:translateY(-1px);}
-.tg-modal-btn.danger{background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;box-shadow:0 4px 12px rgba(211,47,47,0.35);}
-.tg-modal-btn.danger:hover{filter:brightness(1.08);transform:translateY(-1px);}
-.tg-modal-btn.ghost{background:#f1f3f6;color:#212121;}
-.tg-modal-btn.ghost:hover{background:#e0e0e0;}
+.tg-left {
+  flex: 0 0 40%;
+  max-width: 40%;
+  background: #2874f0;
+  color: #fff;
+  padding: 34px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: background .3s;
+}
+.tg-left::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+  border-radius: 50%;
+}
 
-@media (max-width:720px){.tg-wrap{padding:16px 12px;align-items:flex-start;padding-top:28px;}.tg-card{max-width:100%;flex-direction:column;}.tg-left{flex:0 0 auto;max-width:100%;padding:22px 24px 20px;}.tg-left-content{margin:8px 0 0;padding:0;}.tg-left-title{font-size:19px;margin-bottom:4px;}.tg-left-sub{font-size:12.5px;max-width:100%;}.tg-left-foot{display:none;}.tg-right{padding:26px 24px 28px;}.tg-toasts{top:12px;right:12px;left:12px;max-width:none;align-items:stretch;}.tg-toast{max-width:none;}.tg-auth-loading-logo{font-size:26px;}.tg-auth-loading-spinner{width:42px;height:42px;}}
-@media (max-width:380px){.tg-right{padding:20px 18px 24px;}.tg-left{padding:18px 18px 16px;}.tg-left-title{font-size:17px;}.tg-field input{font-size:14px;}.tg-modal-box{padding:28px 20px 20px;}.tg-modal-icon{width:64px;height:64px;font-size:32px;}}
+.tg-left-logo {
+  font-weight: 900;
+  font-style: italic;
+  font-size: 24px;
+  letter-spacing: -0.4px;
+  position: relative;
+  z-index: 2;
+}
+.tg-left-logo span { color: #ffe500; }
+
+.tg-left-content {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 24px 0;
+}
+.tg-left-title {
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 0 0 12px;
+  letter-spacing: -0.2px;
+}
+.tg-left-sub {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.88;
+  margin: 0;
+  max-width: 260px;
+}
+
+.tg-left-foot {
+  font-size: 11px;
+  opacity: 0.7;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.2px;
+}
+
+.tg-right {
+  flex: 1 1 auto;
+  padding: 36px 42px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tg-field {
+  position: relative;
+  margin-bottom: 24px;
+}
+.tg-field input {
+  width: 100%;
+  height: 42px;
+  border: none;
+  border-bottom: 1px solid #d4d5d9;
+  background: transparent;
+  font-size: 15px;
+  color: #212121;
+  padding: 6px 0 8px;
+  outline: none;
+  transition: border-color .2s;
+  border-radius: 0;
+}
+.tg-field input:focus { border-bottom-color: #2874f0; }
+.tg-field label {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  font-size: 15px;
+  color: #878787;
+  pointer-events: none;
+  transition: all .18s cubic-bezier(.4,0,.2,1);
+  background: #fff;
+  padding: 0 4px;
+  margin-left: -4px;
+}
+.tg-field input:focus + label,
+.tg-field input:not(:placeholder-shown) + label,
+.tg-field input.filled + label {
+  top: -7px;
+  font-size: 12px;
+  color: #2874f0;
+}
+.tg-field input:not(:focus):not(:placeholder-shown) + label { color: #878787; }
+
+.tg-field-pass { position: relative; }
+.tg-pass-toggle {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  font-size: 12.5px;
+  color: #2874f0;
+  font-weight: 600;
+  padding: 4px 0;
+  letter-spacing: 0.2px;
+}
+.tg-pass-toggle:hover { text-decoration: underline; }
+
+.tg-terms {
+  font-size: 11.5px;
+  color: #878787;
+  line-height: 1.55;
+  margin: 4px 0 20px;
+}
+.tg-terms a { color: #2874f0; font-weight: 500; }
+.tg-terms a:hover { text-decoration: underline; }
+
+.tg-submit {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 3px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: #fb641b;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: box-shadow .18s, transform .1s, filter .15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  position: relative;
+}
+.tg-submit:hover { filter: brightness(1.05); box-shadow: 0 4px 12px rgba(251,100,27,0.35); }
+.tg-submit:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+.tg-submit:disabled { opacity: 0.75; cursor: not-allowed; }
+.tg-submit.loading { pointer-events: none; }
+
+.tg-spinner {
+  width: 15px; height: 15px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: tgSpin .7s linear infinite;
+  display: none;
+}
+@keyframes tgSpin { to { transform: rotate(360deg); } }
+.tg-submit.loading .tg-spinner { display: block; }
+.tg-submit.loading .tg-btn-text { opacity: 0.85; }
+
+.tg-div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 14px;
+  color: #999;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.tg-div::before, .tg-div::after {
+  content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+
+.tg-alt-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 3px;
+  background: #fff;
+  border: 1px solid #d4d5d9;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2874f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: box-shadow .18s, background .15s;
+  letter-spacing: 0.3px;
+}
+.tg-alt-btn:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.10); background: #f8fbff; }
+.tg-alt-btn:active { transform: translateY(1px); }
+.tg-alt-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.tg-alt-btn.loading { pointer-events: none; opacity: 0.75; }
+
+.tg-forgot-row {
+  text-align: right;
+  margin: -12px 0 18px;
+}
+.tg-forgot {
+  font-size: 13px;
+  color: #2874f0;
+  font-weight: 600;
+}
+.tg-forgot:hover { text-decoration: underline; }
+
+.tg-mode {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13.5px;
+  color: #878787;
+}
+.tg-mode button {
+  color: #2874f0;
+  font-weight: 700;
+  margin-left: 4px;
+  letter-spacing: 0.2px;
+}
+.tg-mode button:hover { text-decoration: underline; }
+
+.tg-field-name { display: none; }
+.tg-card.signup .tg-field-name { display: block; }
+.tg-card.signup .tg-forgot-row { display: none; }
+
+.tg-toasts {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 999999;
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: calc(100vw - 40px);
+  pointer-events: none;
+}
+.tg-toast {
+  padding: 13px 18px;
+  border-radius: 4px;
+  background: #212121;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  pointer-events: auto;
+  display: flex; align-items: center; gap: 10px;
+  animation: tgToastIn .3s cubic-bezier(.34,1.56,.64,1);
+  max-width: 380px;
+}
+@keyframes tgToastIn { from { transform: translateX(130%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error   { background: #d32f2f; }
+.tg-toast.info    { background: #2874f0; }
+.tg-toast-icon { font-size: 16px; flex-shrink: 0; }
+
+/* Full-page loading overlay (used during Google redirect) */
+.tg-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(241,243,246,0.92);
+  backdrop-filter: blur(4px);
+  z-index: 999998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+.tg-overlay.show { display: flex; }
+.tg-overlay-spinner {
+  width: 42px; height: 42px;
+  border: 4px solid #d4d5d9;
+  border-top-color: #2874f0;
+  border-radius: 50%;
+  animation: tgSpin .8s linear infinite;
+}
+.tg-overlay-text {
+  font-size: 14px;
+  color: #212121;
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .tg-wrap { padding: 16px 12px; align-items: flex-start; padding-top: 28px; }
+  .tg-card { max-width: 100%; flex-direction: column; }
+  .tg-left { flex: 0 0 auto; max-width: 100%; padding: 22px 24px 20px; }
+  .tg-left-content { margin: 8px 0 0; padding: 0; }
+  .tg-left-title { font-size: 19px; margin-bottom: 4px; }
+  .tg-left-sub { font-size: 12.5px; max-width: 100%; }
+  .tg-left-foot { display: none; }
+  .tg-right { padding: 26px 24px 28px; }
+  .tg-mode { margin-top: 18px; }
+  .tg-toasts { top: 12px; right: 12px; left: 12px; max-width: none; align-items: stretch; }
+  .tg-toast { max-width: none; }
+}
+
+@media (max-width: 380px) {
+  .tg-right { padding: 20px 18px 24px; }
+  .tg-left { padding: 18px 18px 16px; }
+  .tg-left-title { font-size: 17px; }
+  .tg-field input { font-size: 14px; }
+}
 </style>
 </head>
 <body>
 
-<!-- ═══ FULL SCREEN AUTH LOADING ═══ -->
-<div class="tg-auth-loading" id="tg-auth-loading">
-  <div class="tg-auth-loading-logo">TOE<span>GO</span></div>
-  <div class="tg-auth-loading-spinner" id="tg-auth-loading-spinner"></div>
-  <div class="tg-auth-loading-check" id="tg-auth-loading-check" style="display:none;">
-    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-  </div>
-  <div class="tg-auth-loading-text" id="tg-auth-loading-text">Signing you in…</div>
-</div>
-
-<!-- ═══ SMALL OVERLAY ═══ -->
+<!-- Full page loading overlay (Google redirect ke time) -->
 <div class="tg-overlay" id="tg-overlay">
   <div class="tg-overlay-spinner"></div>
-  <div class="tg-overlay-text" id="tg-overlay-text">Please wait…</div>
-</div>
-
-<!-- ═══ PROFESSIONAL MODAL ═══ -->
-<div class="tg-modal" id="tg-modal">
-  <div class="tg-modal-box">
-    <div class="tg-modal-icon" id="tg-modal-icon">!</div>
-    <h3 class="tg-modal-title" id="tg-modal-title">Title</h3>
-    <p class="tg-modal-desc" id="tg-modal-desc">Description</p>
-    <div class="tg-modal-actions" id="tg-modal-actions">
-      <button class="tg-modal-btn primary" id="tg-modal-primary">OK</button>
-      <button class="tg-modal-btn ghost" id="tg-modal-secondary" style="display:none;">Cancel</button>
-    </div>
-  </div>
+  <div class="tg-overlay-text" id="tg-overlay-text">Signing you in…</div>
 </div>
 
 <div class="tg-toasts" id="tg-toasts"></div>
 
-<div class="tg-wrap" id="tg-wrap">
+<div class="tg-wrap">
   <div class="tg-card" id="tg-card">
+
     <aside class="tg-left" id="tg-left">
       <div class="tg-left-logo">TOE<span>GO</span></div>
       <div class="tg-left-content">
@@ -159,30 +375,41 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       </div>
       <div class="tg-left-foot">© 2025 TOEGO.com</div>
     </aside>
+
     <main class="tg-right">
       <form id="tg-form" autocomplete="on" novalidate>
+
         <div class="tg-field tg-field-name">
           <input type="text" name="name" id="tg-name" placeholder=" " autocomplete="name" maxlength="60">
           <label for="tg-name">Enter Full Name</label>
         </div>
+
         <div class="tg-field">
           <input type="email" name="email" id="tg-email" placeholder=" " autocomplete="email" required>
           <label for="tg-email">Enter Email/Mobile number</label>
         </div>
+
         <div class="tg-field tg-field-pass">
           <input type="password" name="password" id="tg-password" placeholder=" " autocomplete="current-password" required minlength="6">
           <label for="tg-password">Enter Password</label>
           <button type="button" class="tg-pass-toggle" id="tg-toggle-pass">Show</button>
         </div>
+
         <div class="tg-forgot-row" id="tg-forgot-row">
           <a href="#" class="tg-forgot" id="tg-forgot">Forgot Password?</a>
         </div>
-        <div class="tg-terms">By continuing, you agree to TOEGO's <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>.</div>
+
+        <div class="tg-terms">
+          By continuing, you agree to TOEGO's <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>.
+        </div>
+
         <button type="submit" class="tg-submit" id="tg-submit">
           <span class="tg-spinner"></span>
           <span class="tg-btn-text" id="tg-submit-text">Login</span>
         </button>
+
         <div class="tg-div">or</div>
+
         <button type="button" class="tg-alt-btn" id="tg-google">
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
@@ -192,12 +419,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           </svg>
           <span id="tg-google-text">Continue with Google</span>
         </button>
+
         <div class="tg-mode">
           <span id="tg-mode-label">New to TOEGO?</span>
           <button type="button" id="tg-mode-switch">Create an account</button>
         </div>
+
       </form>
     </main>
+
   </div>
 </div>
 
@@ -209,74 +439,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 (function() {
   'use strict';
 
-  /* ═══════════════════════════════════════════════════════════════
-     STEP 0: CONSTANTS
-     ✅ FIX: Always redirect to shop-home.html after login
-     ═══════════════════════════════════════════════════════════════ */
   const REDIRECT_URL = 'shop-home.html';
-  const AUTH_CACHE_KEY = 'toego_auth_cache';
-  const GOOGLE_PENDING_KEY = 'tg_google_pending';
-  const LOGIN_SUCCESS_KEY = 'tg_login_success';
-  const GOOGLE_PENDING_TTL = 5 * 60 * 1000;
 
-  /* ═══ GOOGLE PENDING DETECTION ═══ */
-  function setPendingGoogle() { try { localStorage.setItem(GOOGLE_PENDING_KEY, String(Date.now())); } catch(e) {} }
-  function clearPendingGoogle() { try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {} }
-  function isPendingGoogle() {
-    try {
-      const v = localStorage.getItem(GOOGLE_PENDING_KEY);
-      if (!v) return false;
-      const ts = Number(v);
-      if (!ts || isNaN(ts) || Date.now() - ts > GOOGLE_PENDING_TTL) { clearPendingGoogle(); return false; }
-      return true;
-    } catch(e) { return false; }
-  }
-
-  /* ═══ SAVE LOGIN SUCCESS FLAG (shop-home reads this) ═══ */
-  function markLoginSuccess(name) {
-    try {
-      sessionStorage.setItem(LOGIN_SUCCESS_KEY, JSON.stringify({
-        name: name || 'User',
-        ts: Date.now()
-      }));
-    } catch(e) {}
-  }
-
-  /* ✅ CRITICAL: Hide login form instantly if pending */
-  if (isPendingGoogle()) {
-    document.getElementById('tg-auth-loading').classList.add('show');
-    document.getElementById('tg-wrap').style.display = 'none';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function showAuthLoading(text, showCheck) {
-    const el = document.getElementById('tg-auth-loading');
-    const txt = document.getElementById('tg-auth-loading-text');
-    const spinner = document.getElementById('tg-auth-loading-spinner');
-    const check = document.getElementById('tg-auth-loading-check');
-    if (txt) txt.textContent = text || 'Signing you in…';
-    if (showCheck) {
-      if (spinner) spinner.style.display = 'none';
-      if (check) check.style.display = 'flex';
-    } else {
-      if (spinner) spinner.style.display = 'block';
-      if (check) check.style.display = 'none';
-    }
-    if (el) el.classList.add('show');
-    const wrap = document.getElementById('tg-wrap');
-    if (wrap) wrap.style.display = 'none';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function hideAuthLoading() {
-    const el = document.getElementById('tg-auth-loading');
-    if (el) el.classList.remove('show');
-    const wrap = document.getElementById('tg-wrap');
-    if (wrap) wrap.style.display = '';
-    document.body.style.overflow = '';
-  }
-
-  /* ═══ FIREBASE INIT ═══ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -291,11 +455,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  const PERSISTENCE_READY = (async function() {
-    try { await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch(e) {}
-  })();
+  // IMPORTANT: tell Firebase to keep login state local (persists across redirect)
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){});
 
-  /* ═══ THEME ═══ */
+  /* ========= THEME ========= */
   const themeMeta = document.getElementById('tg-theme-meta');
   function applyTheme(primary) {
     primary = primary || '#2874f0';
@@ -305,164 +468,104 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.documentElement.style.setProperty('--tg-primary', primary);
     try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
   }
-  (function() {
-    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+  (function bootCachedColor() {
+    try {
+      const c = localStorage.getItem('toego_theme_colors');
+      if (c) { const p = JSON.parse(c); applyTheme(p.primary); }
+    } catch(e) {}
   })();
-
-  /* ═══ OVERLAY / TOAST ═══ */
-  const overlay = document.getElementById('tg-overlay');
-  const overlayText = document.getElementById('tg-overlay-text');
-  function showOverlay(t) { if (overlayText) overlayText.textContent = t || 'Please wait…'; if (overlay) overlay.classList.add('show'); }
-  function hideOverlay() { if (overlay) overlay.classList.remove('show'); }
-
-  function toast(msg, type) {
-    type = type || 'info';
-    const w = document.getElementById('tg-toasts');
-    if (!w || !msg) return;
-    const el = document.createElement('div');
-    el.className = 'tg-toast ' + type;
-    el.textContent = msg;
-    w.appendChild(el);
-    setTimeout(() => { el.style.transition = 'transform .3s, opacity .3s'; el.style.transform = 'translateX(130%)'; el.style.opacity = '0'; setTimeout(() => el.remove(), 320); }, 3000);
-  }
-
-  /* ═══ PROFESSIONAL MODAL ═══ */
-  const modal = document.getElementById('tg-modal');
-  const modalIcon = document.getElementById('tg-modal-icon');
-  const modalTitle = document.getElementById('tg-modal-title');
-  const modalDesc = document.getElementById('tg-modal-desc');
-  const modalPrimary = document.getElementById('tg-modal-primary');
-  const modalSecondary = document.getElementById('tg-modal-secondary');
-  let _modalPrimaryCb = null;
-
-  window.tgShowModal = function(opts) {
-    opts = opts || {};
-    const type = opts.type || 'info';
-    const icons = { warn: '!', error: '✕', info: 'i', success: '✓' };
-    modalIcon.className = 'tg-modal-icon ' + type;
-    modalIcon.textContent = icons[type] || '!';
-    modalTitle.textContent = opts.title || 'Notice';
-    modalDesc.innerHTML = opts.desc || '';
-    modalPrimary.innerHTML = opts.primaryText || 'OK';
-    _modalPrimaryCb = opts.onPrimary || null;
-    if (opts.secondaryText) {
-      modalSecondary.style.display = 'flex';
-      modalSecondary.textContent = opts.secondaryText;
-      modalSecondary.onclick = function() { tgModalClose(); if (opts.onSecondary) opts.onSecondary(); };
-    } else {
-      modalSecondary.style.display = 'none';
-    }
-    modalPrimary.className = 'tg-modal-btn ' + (type === 'error' ? 'danger' : type === 'warn' ? 'orange' : 'primary');
-    modal.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  };
-  window.tgModalClose = function() { modal.classList.remove('show'); document.body.style.overflow = ''; _modalPrimaryCb = null; };
-  modalPrimary.addEventListener('click', function() { const cb = _modalPrimaryCb; tgModalClose(); if (cb) cb(); });
-  modal.addEventListener('click', function(e) { if (e.target === modal) tgModalClose(); });
-
-  /* ═══ ERROR HANDLER ═══ */
-  function showAuthError(err, context) {
-    const code = (err && err.code) || 'unknown';
-    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
-    if (code === 'auth/no-auth-event') return;
-
-    if (code === 'auth/email-already-in-use') {
-      tgShowModal({ type: 'warn', title: 'Already Registered', desc: 'Ye email pehle se registered hai.<br><br>Kya aap isi email se <b>login</b> karna chahte ho?', primaryText: 'Yes, Login', secondaryText: 'Try Different Email', onPrimary: function() { if (mode !== 'login') setMode('login'); passwordInput.value = ''; passwordInput.focus(); }, onSecondary: function() { emailInput.focus(); emailInput.select(); } });
-      return;
-    }
-    if (code === 'auth/weak-password') {
-      tgShowModal({ type: 'warn', title: 'Weak Password', desc: 'Password kam se kam <b>6 characters</b> ka hona chahiye.', primaryText: 'Try Again', onPrimary: function() { passwordInput.focus(); passwordInput.select(); } });
-      return;
-    }
-    if (code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/invalid-login-credentials') {
-      tgShowModal({ type: 'error', title: 'Incorrect Password', desc: 'Email sahi hai lekin <b>password galat</b> hai.<br><br>Yaad nahi? "Reset Password" use karo.', primaryText: 'Try Again', secondaryText: 'Reset Password', onPrimary: function() { passwordInput.focus(); passwordInput.select(); }, onSecondary: function() { const email = (emailInput.value || '').trim(); if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { auth.sendPasswordResetEmail(email).then(function() { toast('Reset link sent to ' + email, 'success'); }).catch(function() { toast('Could not send reset email', 'error'); }); } else { toast('Enter valid email first', 'error'); emailInput.focus(); } } });
-      return;
-    }
-    if (code === 'auth/user-not-found') {
-      tgShowModal({ type: 'warn', title: 'Account Not Found', desc: 'Is email se koi account nahi mila.<br><br>Naya account banao ya different email try karo.', primaryText: 'Create Account', secondaryText: 'Try Different Email', onPrimary: function() { setMode('signup'); }, onSecondary: function() { emailInput.focus(); emailInput.select(); } });
-      return;
-    }
-    if (code === 'auth/invalid-email') {
-      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please ek <b>valid email address</b> daalo.<br><br>Example: name@gmail.com', primaryText: 'OK', onPrimary: function() { emailInput.focus(); emailInput.select(); } });
-      return;
-    }
-    if (code === 'auth/network-request-failed') {
-      tgShowModal({ type: 'error', title: 'No Internet', desc: 'Network connection check karo.<br>WiFi ya mobile data try karo.', primaryText: 'Retry', onPrimary: function() { submitBtn.click(); } });
-      return;
-    }
-    if (code === 'auth/too-many-requests') {
-      tgShowModal({ type: 'error', title: 'Too Many Attempts', desc: 'Bohot zyada attempts ho gaye.<br>Kuch der baad try karo ya password reset karo.', primaryText: 'OK' });
-      return;
-    }
-    if (code === 'auth/user-disabled') {
-      tgShowModal({ type: 'error', title: 'Account Disabled', desc: 'Ye account block ho gaya hai.<br>Support se contact karo.', primaryText: 'OK' });
-      return;
-    }
-    if (code === 'auth/unauthorized-domain') {
-      tgShowModal({ type: 'error', title: 'Configuration Error', desc: 'Google sign-in abhi available nahi hai.<br><br>Kripya <b>Email aur Password</b> use karo.', primaryText: 'OK' });
-      return;
-    }
-    if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
-      tgShowModal({ type: 'error', title: 'Browser Settings', desc: 'Aapke browser me <b>cookies blocked</b> hain.<br><br>Kripya cookies enable karo:<br>Settings → Cookies → Allow All', primaryText: 'OK' });
-      return;
-    }
-    if (code === 'auth/operation-not-supported-in-this-environment') {
-      tgShowModal({ type: 'error', title: 'Unsupported Browser', desc: 'Please <b>Chrome</b> ya <b>Safari</b> browser use karo.<br><br>In-app browser se open mat karo.', primaryText: 'OK' });
-      return;
-    }
-    if (code === 'auth/account-exists-with-different-credential') {
-      tgShowModal({ type: 'warn', title: 'Email Already Used', desc: 'Ye email kisi aur sign-in method se registered hai.<br><br>Pehle us method se login karo.', primaryText: 'OK' });
-      return;
-    }
-    if (code === 'auth/requires-recent-login') {
-      tgShowModal({ type: 'warn', title: 'Re-login Required', desc: 'Security ke liye please <b>dobara login</b> karo.', primaryText: 'OK' });
-      return;
-    }
-    tgShowModal({ type: 'error', title: 'Something Went Wrong', desc: 'Kuch problem aayi. Please try again.', primaryText: 'Try Again' });
-  }
-
-  /* ═══ USER DOC + CACHE ═══ */
-  async function ensureUserDoc(user, extraName) {
-    if (!user) return null;
+  async function loadThemeColor() {
     try {
-      const ref = db.collection('users').doc(user.uid);
-      const snap = await ref.get();
-      if (!snap.exists) {
-        const data = {
-          uid: user.uid, email: user.email || '',
-          name: extraName || user.displayName || (user.email ? user.email.split('@')[0] : 'Guest'),
-          phone: user.phoneNumber || '', photoURL: user.photoURL || '',
-          role: 'customer', createdAt: FV.serverTimestamp(), lastLogin: FV.serverTimestamp(),
-          provider: (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password'
-        };
-        await ref.set(data);
-        return data;
-      } else {
-        const upd = { lastLogin: FV.serverTimestamp() };
-        if (user.photoURL) upd.photoURL = user.photoURL;
-        if (user.displayName) upd.name = user.displayName;
-        await ref.update(upd);
-        return { ...snap.data(), ...upd };
-      }
-    } catch (err) {
-      return { name: extraName || user.displayName || '', email: user.email || '', role: 'customer' };
-    }
-  }
-
-  function cacheAuth(user, profile) {
-    if (!user) { try { localStorage.removeItem(AUTH_CACHE_KEY); } catch(e) {} return; }
-    try {
-      localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify({
-        uid: user.uid, email: user.email || '',
-        name: (profile && profile.name) || user.displayName || '',
-        photoURL: user.photoURL || '',
-        role: (profile && profile.role) || 'customer',
-        ts: Date.now()
-      }));
+      const snap = await db.collection('siteSettings').doc('theme').get();
+      if (!snap.exists) return;
+      const d = snap.data();
+      applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
     } catch(e) {}
   }
 
-  /* ═══ UI REFS ═══ */
+  /* ========= OVERLAY ========= */
+  const overlay = document.getElementById('tg-overlay');
+  const overlayText = document.getElementById('tg-overlay-text');
+  function showOverlay(text) {
+    if (overlayText) overlayText.textContent = text || 'Signing you in…';
+    if (overlay) overlay.classList.add('show');
+  }
+  function hideOverlay() {
+    if (overlay) overlay.classList.remove('show');
+  }
+
+  /* ========= TOAST ========= */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const icons = { success: '✓', error: '⚠', info: 'ℹ' };
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.innerHTML = '<span class="tg-toast-icon">' + (icons[type] || 'ℹ') + '</span><span>' + msg + '</span>';
+    w.appendChild(el);
+    setTimeout(() => {
+      el.style.transition = 'transform .3s, opacity .3s';
+      el.style.transform = 'translateX(130%)';
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 320);
+    }, 2800);
+  }
+
+  /* ========= ERRORS ========= */
+  function friendlyError(code) {
+    const map = {
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/user-disabled': 'This account has been disabled.',
+      'auth/user-not-found': 'No account found with this email.',
+      'auth/wrong-password': 'Incorrect password. Please try again.',
+      'auth/invalid-credential': 'Invalid email or password.',
+      'auth/invalid-login-credentials': 'Invalid email or password.',
+      'auth/email-already-in-use': 'This email is already registered. Try logging in.',
+      'auth/weak-password': 'Password must be at least 6 characters.',
+      'auth/too-many-requests': 'Too many attempts. Try again later.',
+      'auth/network-request-failed': 'Network error. Check your internet.',
+      'auth/popup-closed-by-user': 'Sign-in was cancelled.',
+      'auth/popup-blocked': 'Popup blocked. Please allow popups.',
+      'auth/cancelled-popup-request': '',
+      'auth/account-exists-with-different-credential': 'This email exists with a different sign-in method.',
+      'auth/operation-not-allowed': 'This sign-in method is not enabled.',
+      'auth/requires-recent-login': 'Please log in again to continue.',
+      'auth/unauthorized-domain': 'This domain is not authorized for Google sign-in. Please contact support.'
+    };
+    return map[code] || 'Something went wrong. Please try again.';
+  }
+
+  /* ========= USER DOC ========= */
+  async function ensureUserDoc(user, extraName) {
+    if (!user) return;
+    const ref = db.collection('users').doc(user.uid);
+    try {
+      const snap = await ref.get();
+      if (!snap.exists) {
+        await ref.set({
+          uid: user.uid,
+          email: user.email || '',
+          name: extraName || user.displayName || (user.email ? user.email.split('@')[0] : 'Guest'),
+          phone: user.phoneNumber || '',
+          photoURL: user.photoURL || '',
+          role: 'customer',
+          createdAt: FV.serverTimestamp(),
+          lastLogin: FV.serverTimestamp(),
+          provider: (user.providerData && user.providerData[0] && user.providerData[0].providerId) || 'password'
+        });
+      } else {
+        await ref.update({
+          lastLogin: FV.serverTimestamp(),
+          ...(user.photoURL ? { photoURL: user.photoURL } : {})
+        });
+      }
+    } catch (err) {
+      console.warn('User doc sync failed:', err && err.message);
+    }
+  }
+
+  /* ========= UI REFS ========= */
   const card = document.getElementById('tg-card');
   const leftTitle = document.getElementById('tg-left-title');
   const leftSub = document.getElementById('tg-left-sub');
@@ -481,6 +584,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   const forgotRow = document.getElementById('tg-forgot-row');
 
   let mode = 'login';
+
   function setMode(m) {
     mode = m;
     if (m === 'signup') {
@@ -504,298 +608,144 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   }
   modeSwitch.addEventListener('click', () => setMode(mode === 'login' ? 'signup' : 'login'));
+
   passToggle.addEventListener('click', () => {
     const isPass = passwordInput.type === 'password';
     passwordInput.type = isPass ? 'text' : 'password';
     passToggle.textContent = isPass ? 'Hide' : 'Show';
   });
+
   [nameInput, emailInput, passwordInput].forEach(inp => {
     if (!inp) return;
-    const upd = () => inp.classList.toggle('filled', !!inp.value);
-    inp.addEventListener('input', upd);
-    inp.addEventListener('blur', upd);
-    upd();
+    const update = () => { inp.classList.toggle('filled', !!inp.value); };
+    inp.addEventListener('input', update);
+    inp.addEventListener('blur', update);
+    update();
   });
 
   function setSubmitLoading(on, txt) {
-    if (on) { submitBtn.classList.add('loading'); submitBtn.disabled = true; if (txt) submitText.textContent = txt; }
-    else { submitBtn.classList.remove('loading'); submitBtn.disabled = false; submitText.textContent = mode === 'signup' ? 'Sign Up' : 'Login'; }
+    if (on) {
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+      if (txt) submitText.textContent = txt;
+    } else {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+      submitText.textContent = mode === 'signup' ? 'Sign Up' : 'Login';
+    }
   }
   function setGoogleLoading(on) {
     googleBtn.classList.toggle('loading', on);
-    googleText.textContent = on ? 'Please wait…' : 'Continue with Google';
+    googleText.textContent = on ? 'Redirecting…' : 'Continue with Google';
   }
 
-  /* ═══ REDIRECT GUARD ═══ */
-  let _redirected = false;
-  function doFinalRedirect() {
-    if (_redirected) return;
-    _redirected = true;
-    clearPendingGoogle();
-    window.location.replace(REDIRECT_URL);
-  }
-
-  /* ═══════════════════════════════════════════════════════════════
-     HANDLE SUCCESS
-     ✅ FIX: Save login success flag + show green check + redirect to shop-home
-     ═══════════════════════════════════════════════════════════════ */
-  async function handleAuthSuccess(user, source) {
-    if (!user) return;
-
-    /* Show green check + "Login successful" text */
-    showAuthLoading('Login successful! Redirecting…', true);
-
-    try {
-      const prof = await ensureUserDoc(user);
-      cacheAuth(user, prof);
-
-      /* Save name for shop-home toast */
-      const name = (prof && prof.name) || user.displayName || 'User';
-      markLoginSuccess(name);
-    } catch(e) {
-      markLoginSuccess(user.displayName || 'User');
-    }
-
-    /* Short delay so user sees the green tick */
-    setTimeout(doFinalRedirect, 700);
-  }
-
-  /* ═══ EMAIL / PASSWORD SUBMIT ═══ */
+  /* ========= EMAIL / PASSWORD SUBMIT ========= */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
     const password = passwordInput.value || '';
     const name = (nameInput && nameInput.value || '').trim();
 
-    if (!email) {
-      tgShowModal({ type: 'warn', title: 'Email Required', desc: 'Please apna <b>email</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() });
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please ek <b>valid email address</b> daalo.<br><br>Example: name@gmail.com', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } });
-      return;
-    }
-    if (!password) {
-      tgShowModal({ type: 'warn', title: 'Password Required', desc: 'Please apna <b>password</b> daalo.', primaryText: 'OK', onPrimary: () => passwordInput.focus() });
-      return;
-    }
-    if (password.length < 6) {
-      tgShowModal({ type: 'warn', title: 'Password Too Short', desc: 'Password kam se kam <b>6 characters</b> ka hona chahiye.', primaryText: 'OK', onPrimary: () => { passwordInput.focus(); passwordInput.select(); } });
-      return;
-    }
-    if (mode === 'signup' && !name) {
-      tgShowModal({ type: 'warn', title: 'Name Required', desc: 'Please apna <b>full name</b> daalo.', primaryText: 'OK', onPrimary: () => nameInput.focus() });
-      return;
-    }
+    if (!email) { toast('Please enter your email', 'error'); emailInput.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); emailInput.focus(); return; }
+    if (!password) { toast('Please enter your password', 'error'); passwordInput.focus(); return; }
+    if (password.length < 6) { toast('Password must be at least 6 characters', 'error'); passwordInput.focus(); return; }
+    if (mode === 'signup' && !name) { toast('Please enter your name', 'error'); nameInput.focus(); return; }
 
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
+
     try {
-      await PERSISTENCE_READY;
       if (mode === 'signup') {
         const cred = await auth.createUserWithEmailAndPassword(email, password);
-        if (cred.user && name) { try { await cred.user.updateProfile({ displayName: name }); } catch(e) {} }
-        await handleAuthSuccess(cred.user, 'signup');
+        if (cred.user && name) {
+          try { await cred.user.updateProfile({ displayName: name }); } catch(e) {}
+        }
+        await ensureUserDoc(cred.user, name);
+        toast('Account created! Welcome to TOEGO 🎉', 'success');
       } else {
         const cred = await auth.signInWithEmailAndPassword(email, password);
-        await handleAuthSuccess(cred.user, 'login');
+        await ensureUserDoc(cred.user);
+        toast('Logged in successfully!', 'success');
       }
+      setTimeout(() => { window.location.replace(REDIRECT_URL); }, 600);
     } catch (err) {
+      toast(friendlyError(err && err.code) || 'Login failed', 'error');
       setSubmitLoading(false);
-      showAuthError(err, mode);
     }
   });
 
-  /* ═══ GOOGLE — POPUP FIRST, REDIRECT FALLBACK ═══ */
+  /* ========= GOOGLE — use REDIRECT (no popup, 100% reliable) =========
+     Popup method GitHub Pages pe COOP header ki wajah se fail hota hai.
+     Redirect method se Google page pe jaata hai, login karke wapas aata hai.
+  ==================================================================== */
   googleBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
-    await PERSISTENCE_READY;
-
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
     try {
-      const result = await auth.signInWithPopup(provider);
-      if (result && result.user) {
-        await handleAuthSuccess(result.user, 'google-popup');
-        return;
-      }
+      // Show overlay so user knows something is happening
+      showOverlay('Redirecting to Google…');
+      // Small delay so overlay paints before redirect
+      await new Promise(r => setTimeout(r, 150));
+      await auth.signInWithRedirect(provider);
+      // Page will navigate away now — no further code runs
+    } catch (err) {
+      hideOverlay();
       setGoogleLoading(false);
-    } catch (popupErr) {
-      const code = popupErr && popupErr.code;
-      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
-        setGoogleLoading(false);
-        return;
-      }
-      const shouldFallback = [
-        'auth/popup-blocked',
-        'auth/operation-not-supported-in-this-environment',
-        'auth/web-storage-unsupported',
-        'auth/internal-error',
-        'auth/network-request-failed'
-      ].includes(code);
-      if (shouldFallback) {
-        setPendingGoogle();
-        showAuthLoading('Redirecting to Google…', false);
-        try {
-          await auth.signInWithRedirect(provider);
-          return;
-        } catch (redirErr) {
-          clearPendingGoogle();
-          hideAuthLoading();
-          setGoogleLoading(false);
-          showAuthError(redirErr, 'google');
-          return;
-        }
-      }
-      setGoogleLoading(false);
-      showAuthError(popupErr, 'google');
+      toast(friendlyError(err && err.code) || 'Google sign-in failed', 'error');
     }
   });
 
-  /* ═══ HANDLE REDIRECT RETURN ═══ */
-  (async function handleRedirectReturn() {
+  /* ========= HANDLE REDIRECT RESULT (after coming back from Google) ========= */
+  (async function handleRedirectResult() {
     try {
-      const result = await auth.getRedirectResult();
-      if (result && result.user) {
-        await handleAuthSuccess(result.user, 'google-redirect');
-        return;
-      }
-      if (isPendingGoogle()) {
-        setTimeout(() => {
-          if (!auth.currentUser) {
-            clearPendingGoogle();
-            hideAuthLoading();
-          }
-        }, 4000);
+      const r = await auth.getRedirectResult();
+      if (r && r.user) {
+        // Successfully signed in via redirect
+        showOverlay('Signing you in…');
+        await ensureUserDoc(r.user);
+        toast('Welcome, ' + (r.user.displayName || 'shopper') + '! 🎉', 'success');
+        setTimeout(() => { window.location.replace(REDIRECT_URL); }, 400);
       }
     } catch (err) {
-      const code = err && err.code;
-      if (code && code !== 'auth/no-auth-event' && code !== 'auth/cancelled-popup-request') {
-        clearPendingGoogle();
-        hideAuthLoading();
-        showAuthError(err, 'google');
-      } else {
-        if (isPendingGoogle() && !auth.currentUser) {
-          clearPendingGoogle();
-          hideAuthLoading();
-        }
+      hideOverlay();
+      if (err && err.code) {
+        const m = friendlyError(err.code);
+        if (m) toast(m, 'error');
       }
     }
   })();
 
-  /* ═══ AUTH STATE LISTENER ═══ */
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-      if (isPendingGoogle()) {
-        setTimeout(() => {
-          if (!auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); }
-        }, 3000);
-      }
-      return;
-    }
-    clearPendingGoogle();
-    await handleAuthSuccess(user, 'state-change');
-  });
-
-  /* ═══ FAILSAFES ═══ */
-  setTimeout(() => {
-    if (auth.currentUser && !_redirected) {
-      handleAuthSuccess(auth.currentUser, 'failsafe');
-    } else if (isPendingGoogle() && !auth.currentUser) {
-      clearPendingGoogle();
-      hideAuthLoading();
-    }
-  }, 8000);
-
-  window.addEventListener('pageshow', (e) => {
-    if (e.persisted && auth.currentUser && !_redirected) {
-      handleAuthSuccess(auth.currentUser, 'pageshow');
-    }
-  });
-
-  /* ═══ FORGOT PASSWORD ═══ */
+  /* ========= FORGOT PASSWORD ========= */
   forgotLink.addEventListener('click', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
-    if (!email) {
-      tgShowModal({ type: 'info', title: 'Email Required', desc: 'Password reset link bhejne ke liye pehle <b>email address</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() });
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please valid email daalo.', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } });
-      return;
-    }
-    showOverlay('Sending reset link…');
+    if (!email) { toast('Enter your email above first, then click "Forgot Password?"', 'info'); emailInput.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); emailInput.focus(); return; }
     try {
       await auth.sendPasswordResetEmail(email);
-      hideOverlay();
-      tgShowModal({ type: 'success', title: 'Reset Link Sent', desc: 'Password reset link bhej diya gaya hai:<br><br><b>' + email + '</b><br><br>Inbox check karo (spam bhi dekh lo).', primaryText: 'OK' });
+      toast('Password reset link sent to ' + email, 'success');
     } catch (err) {
-      hideOverlay();
-      const code = err && err.code;
-      if (code === 'auth/user-not-found') {
-        tgShowModal({ type: 'warn', title: 'Account Not Found', desc: 'Is email se koi account nahi mila.<br><br>Naya account banao.', primaryText: 'Create Account', secondaryText: 'Cancel', onPrimary: () => setMode('signup') });
-      } else {
-        showAuthError(err, 'reset');
-      }
+      toast(friendlyError(err && err.code) || 'Could not send reset email', 'error');
     }
   });
 
-  /* ═══ LOAD THEME (deferred) ═══ */
-  setTimeout(() => {
-    db.collection('siteSettings').doc('theme').get()
-      .then(snap => { if (snap.exists) applyTheme(snap.data().themeColor || '#2874f0'); })
-      .catch(() => {});
-  }, 300);
+  /* ========= AUTO REDIRECT if already logged in ========= */
+  let firstCheck = true;
+  auth.onAuthStateChanged(async (user) => {
+    // Don't auto-redirect while a redirect result is being processed
+    if (!firstCheck) return;
+    firstCheck = false;
+    if (user) {
+      await ensureUserDoc(user);
+      window.location.replace(REDIRECT_URL);
+    }
+  });
+
+  loadThemeColor();
 
 })();
 </script>
 </body>
 </html>
-🔧 Ab shop-home.html me ye chhota snippet add karo
-Apne shop-home.html me <script> tag ke andar sabse upar (ya (function() { 'use strict'; ke turant baad) ye code paste karo:
-
-javascript
-/* ═══════════════════════════════════════════════════════════════
-   SHOW "LOGIN SUCCESSFUL" TOAST after redirect from log-in.html
-   ═══════════════════════════════════════════════════════════════ */
-(function showLoginSuccessToast() {
-  try {
-    const raw = sessionStorage.getItem('tg_login_success');
-    if (!raw) return;
-    sessionStorage.removeItem('tg_login_success');
-    const data = JSON.parse(raw);
-    if (!data || !data.ts) return;
-    /* Only show if recent (within 30 seconds) */
-    if (Date.now() - data.ts > 30000) return;
-
-    /* Wait for DOM to be ready */
-    function show() {
-      let w = document.getElementById('tg-mtoasts');
-      if (!w) {
-        w = document.createElement('div');
-        w.id = 'tg-mtoasts';
-        w.style.cssText = 'position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
-        document.body.appendChild(w);
-      }
-      const el = document.createElement('div');
-      el.style.cssText = 'padding:12px 22px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:13.5px;font-weight:700;border-radius:10px;box-shadow:0 8px 24px rgba(34,197,94,0.4);pointer-events:auto;display:flex;align-items:center;gap:8px;animation:tgToastIn .3s cubic-bezier(.34,1.56,.64,1);';
-      el.innerHTML = '<span style="font-size:16px;">✓</span><span>Welcome, ' + (data.name || 'User') + '!</span>';
-      w.appendChild(el);
-
-      /* Auto-hide after 2.5s */
-      setTimeout(() => {
-        el.style.transition = 'transform .3s, opacity .3s';
-        el.style.transform = 'translateY(20px)';
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 320);
-      }, 2500);
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => setTimeout(show, 400));
-    } else {
-      setTimeout(show, 400);
-    }
-  } catch(e) {}
-})();
