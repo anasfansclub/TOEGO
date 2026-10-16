@@ -80,7 +80,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-overlay.show{display:flex;}
 .tg-overlay-spinner{width:42px;height:42px;border:4px solid #d4d5d9;border-top-color:#2874f0;border-radius:50%;animation:tgSpin .8s linear infinite;}
 .tg-overlay-text{font-size:14px;color:#212121;font-weight:500;text-align:center;padding:0 20px;line-height:1.5;}
-.tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.6);backdrop-filter:blur(4px);z-index:9999999;display:none;align-items:center;justify-content:center;padding:20px;animation:tgFadeIn .2s ease;}
+.tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.6);backdrop-filter:blur(4px);z-index:999999999;display:none;align-items:center;justify-content:center;padding:20px;animation:tgFadeIn .2s ease;}
 .tg-modal.show{display:flex;}
 @keyframes tgFadeIn{from{opacity:0;}to{opacity:1;}}
 .tg-modal-box{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:32px 28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:tgModalIn .25s cubic-bezier(.34,1.56,.64,1);}
@@ -102,123 +102,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 @media (max-width:720px){.tg-wrap{padding:16px 12px;align-items:flex-start;padding-top:28px;}.tg-card{max-width:100%;flex-direction:column;}.tg-left{flex:0 0 auto;max-width:100%;padding:22px 24px 20px;}.tg-left-content{margin:8px 0 0;padding:0;}.tg-left-title{font-size:19px;margin-bottom:4px;}.tg-left-sub{font-size:12.5px;max-width:100%;}.tg-left-foot{display:none;}.tg-right{padding:26px 24px 28px;}.tg-toasts{top:12px;right:12px;left:12px;max-width:none;align-items:stretch;}.tg-toast{max-width:none;}.tg-auth-loading-logo{font-size:26px;}.tg-auth-loading-spinner{width:42px;height:42px;}}
 @media (max-width:380px){.tg-right{padding:20px 18px 24px;}.tg-left{padding:18px 18px 16px;}.tg-left-title{font-size:17px;}.tg-field input{font-size:14px;}.tg-modal-box{padding:28px 20px 20px;}.tg-modal-icon{width:64px;height:64px;font-size:32px;}}
 </style>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     🔥 CRITICAL: STORAGE POLYFILL — RUNS BEFORE ANY SCRIPT
-     If cookies/storage blocked, replace with in-memory fake
-     This makes Firebase think storage works → NO ERRORS
-     ═══════════════════════════════════════════════════════════════ -->
-<script>
-(function() {
-  'use strict';
-  
-  /* In-memory storage factory */
-  function makeFakeStorage() {
-    const mem = {};
-    const keys = () => Object.keys(mem);
-    return {
-      getItem(k) { k = String(k); return mem.hasOwnProperty(k) ? mem[k] : null; },
-      setItem(k, v) { k = String(k); mem[k] = String(v); },
-      removeItem(k) { delete mem[String(k)]; },
-      clear() { keys().forEach(k => delete mem[k]); },
-      key(i) { return keys()[i] || null; },
-      get length() { return keys().length; }
-    };
-  }
-  
-  /* Test if storage actually works */
-  function storageWorks(type) {
-    try {
-      const s = window[type];
-      if (!s) return false;
-      const k = '__t_' + Math.random();
-      s.setItem(k, '1');
-      const v = s.getItem(k);
-      s.removeItem(k);
-      return v === '1';
-    } catch(e) { return false; }
-  }
-  
-  /* Override localStorage if broken */
-  if (!storageWorks('localStorage')) {
-    try {
-      const fake = makeFakeStorage();
-      Object.defineProperty(window, 'localStorage', {
-        value: fake,
-        configurable: true,
-        writable: true
-      });
-      console.log('[polyfill] localStorage → in-memory');
-    } catch(e) {
-      console.warn('[polyfill] localStorage override failed:', e);
-    }
-  }
-  
-  /* Override sessionStorage if broken */
-  if (!storageWorks('sessionStorage')) {
-    try {
-      const fake = makeFakeStorage();
-      Object.defineProperty(window, 'sessionStorage', {
-        value: fake,
-        configurable: true,
-        writable: true
-      });
-      console.log('[polyfill] sessionStorage → in-memory');
-    } catch(e) {
-      console.warn('[polyfill] sessionStorage override failed:', e);
-    }
-  }
-  
-  /* Override navigator.cookieEnabled if false */
-  try {
-    if (navigator.cookieEnabled === false) {
-      Object.defineProperty(navigator, 'cookieEnabled', {
-        value: true,
-        configurable: true,
-        writable: true
-      });
-      console.log('[polyfill] navigator.cookieEnabled → true');
-    }
-  } catch(e) {}
-  
-  /* Override document.cookie if blocked */
-  try {
-    let _fakeCookies = {};
-    const originalCookieDesc = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie');
-    if (originalCookieDesc) {
-      try {
-        document.cookie = '__t=1';
-        if (document.cookie.indexOf('__t=1') === -1) throw 'blocked';
-        document.cookie = '__t=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      } catch(e) {
-        /* Cookie blocked — override */
-        Object.defineProperty(document, 'cookie', {
-          get() {
-            return Object.entries(_fakeCookies).map(([k, v]) => k + '=' + v).join('; ');
-          },
-          set(val) {
-            try {
-              const parts = String(val).split(';');
-              const [pair] = parts;
-              const eq = pair.indexOf('=');
-              if (eq > 0) {
-                const k = pair.slice(0, eq).trim();
-                const v = pair.slice(eq + 1).trim();
-                const expires = String(val).toLowerCase().indexOf('expires=') !== -1;
-                if (expires) delete _fakeCookies[k];
-                else _fakeCookies[k] = v;
-              }
-            } catch(e) {}
-          },
-          configurable: true
-        });
-        console.log('[polyfill] document.cookie → in-memory');
-      }
-    }
-  } catch(e) {}
-  
-})();
-</script>
 </head>
 <body>
 
@@ -310,18 +193,50 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 (function() {
   'use strict';
 
-  /* ═══ CONSTANTS ═══ */
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ SAFE STORAGE WRAPPER
+     ═══════════════════════════════════════════════════════════════ */
+  const _memLocal = new Map();
+  const _memSession = new Map();
+  function _testStorage(type) {
+    try {
+      const s = window[type];
+      if (!s) return false;
+      const k = '__tg_test_' + Math.random();
+      s.setItem(k, '1');
+      const v = s.getItem(k);
+      s.removeItem(k);
+      return v === '1';
+    } catch(e) { return false; }
+  }
+  const HAS_LOCAL = _testStorage('localStorage');
+  const HAS_SESSION = _testStorage('sessionStorage');
+  console.log('[boot] localStorage:', HAS_LOCAL, '| sessionStorage:', HAS_SESSION);
+
+  const SafeStore = {
+    local: {
+      get(k) { try { if (HAS_LOCAL) return localStorage.getItem(k); } catch(e) {} return _memLocal.get(k) ?? null; },
+      set(k, v) { try { if (HAS_LOCAL) { localStorage.setItem(k, v); return; } } catch(e) {} _memLocal.set(k, v); },
+      remove(k) { try { if (HAS_LOCAL) localStorage.removeItem(k); } catch(e) {} _memLocal.delete(k); }
+    },
+    session: {
+      get(k) { try { if (HAS_SESSION) return sessionStorage.getItem(k); } catch(e) {} return _memSession.get(k) ?? null; },
+      set(k, v) { try { if (HAS_SESSION) { sessionStorage.setItem(k, v); return; } } catch(e) {} _memSession.set(k, v); },
+      remove(k) { try { if (HAS_SESSION) sessionStorage.removeItem(k); } catch(e) {} _memSession.delete(k); }
+    }
+  };
+
   const REDIRECT_URL = 'shop-home.html';
   const AUTH_CACHE_KEY = 'toego_auth_cache';
   const GOOGLE_PENDING_KEY = 'tg_google_pending';
   const LOGIN_SUCCESS_KEY = 'tg_login_success';
   const GOOGLE_PENDING_TTL = 5 * 60 * 1000;
 
-  function setPendingGoogle() { try { localStorage.setItem(GOOGLE_PENDING_KEY, String(Date.now())); } catch(e) {} }
-  function clearPendingGoogle() { try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {} }
+  function setPendingGoogle() { SafeStore.local.set(GOOGLE_PENDING_KEY, String(Date.now())); }
+  function clearPendingGoogle() { SafeStore.local.remove(GOOGLE_PENDING_KEY); }
   function isPendingGoogle() {
     try {
-      const v = localStorage.getItem(GOOGLE_PENDING_KEY);
+      const v = SafeStore.local.get(GOOGLE_PENDING_KEY);
       if (!v) return false;
       const ts = Number(v);
       if (!ts || isNaN(ts) || Date.now() - ts > GOOGLE_PENDING_TTL) { clearPendingGoogle(); return false; }
@@ -330,9 +245,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
 
   function markLoginSuccess(name) {
-    try {
-      sessionStorage.setItem(LOGIN_SUCCESS_KEY, JSON.stringify({ name: name || 'User', ts: Date.now() }));
-    } catch(e) {}
+    SafeStore.session.set(LOGIN_SUCCESS_KEY, JSON.stringify({ name: name || 'User', ts: Date.now() }));
   }
 
   if (isPendingGoogle()) {
@@ -382,12 +295,23 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     console.error('[init] firebase failed:', e);
   }
 
-  /* ═══ PERSISTENCE — polyfill already makes storage work ═══ */
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ FIXED PERSISTENCE — NONE if storage blocked
+     Firebase v8 uses IndexedDB for LOCAL — we use NONE to avoid errors
+     ═══════════════════════════════════════════════════════════════ */
   let PERSISTENCE_READY = Promise.resolve();
   if (auth) {
-    PERSISTENCE_READY = auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .catch(() => auth.setPersistence(firebase.auth.Auth.Persistence.NONE))
-      .catch(() => {});
+    const useNone = !HAS_LOCAL && !HAS_SESSION;
+    const targetMode = useNone
+      ? firebase.auth.Auth.Persistence.NONE
+      : (HAS_LOCAL ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
+
+    PERSISTENCE_READY = auth.setPersistence(targetMode)
+      .then(() => console.log('[auth] persistence =', useNone ? 'NONE' : (HAS_LOCAL ? 'LOCAL' : 'SESSION'), '✓'))
+      .catch((e) => {
+        console.warn('[auth] persistence fallback:', e && e.code);
+        return auth.setPersistence(firebase.auth.Auth.Persistence.NONE).catch(() => {});
+      });
   }
 
   /* ═══ THEME ═══ */
@@ -398,13 +322,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const left = document.getElementById('tg-left');
     if (left) left.style.background = primary;
     document.documentElement.style.setProperty('--tg-primary', primary);
-    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
+    SafeStore.local.set('toego_theme_colors', JSON.stringify({ primary }));
   }
   (function() {
-    try {
-      const c = localStorage.getItem('toego_theme_colors');
-      if (c) applyTheme(JSON.parse(c).primary);
-    } catch(e) {}
+    try { const c = SafeStore.local.get('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
   })();
 
   /* ═══ OVERLAY / TOAST ═══ */
@@ -459,12 +380,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   modal.addEventListener('click', function(e) { if (e.target === modal) tgModalClose(); });
 
   /* ═══════════════════════════════════════════════════════════════
-     ERROR HANDLER — Storage errors SILENT (polyfill makes them rare)
+     ERROR HANDLER — Shows REAL error for debugging
      ═══════════════════════════════════════════════════════════════ */
   function showAuthError(err, context) {
     const code = (err && err.code) || 'unknown';
+    console.error('[auth-error]', code, err && err.message, '| context:', context);
 
-    /* SILENT — storage/cookie errors should not happen now */
+    /* Storage errors — mostly silent */
     if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
       console.log('[auth] silent storage error:', code);
       return;
@@ -481,11 +403,34 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       return;
     }
     if (code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/invalid-login-credentials') {
-      tgShowModal({ type: 'error', title: 'Incorrect Password', desc: 'Email sahi hai lekin <b>password galat</b> hai.<br><br>Yaad nahi? "Reset Password" use karo.', primaryText: 'Try Again', secondaryText: 'Reset Password', onPrimary: function() { passwordInput.focus(); passwordInput.select(); }, onSecondary: function() { const email = (emailInput.value || '').trim(); if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { auth.sendPasswordResetEmail(email).then(function() { toast('Reset link sent to ' + email, 'success'); }).catch(function() { toast('Could not send reset email', 'error'); }); } else { toast('Enter valid email first', 'error'); emailInput.focus(); } } });
+      tgShowModal({
+        type: 'error',
+        title: 'Incorrect Email or Password',
+        desc: 'Aapne jo email ya password daala hai woh <b>galat</b> hai.<br><br>✓ Email sahi hai?<br>✓ Password yaad hai?<br><br>Password bhool gaye? <b>"Reset Password"</b> use karo.',
+        primaryText: 'Try Again',
+        secondaryText: 'Reset Password',
+        onPrimary: function() { passwordInput.focus(); passwordInput.select(); },
+        onSecondary: function() {
+          const email = (emailInput.value || '').trim();
+          if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showOverlay('Sending reset link…');
+            auth.sendPasswordResetEmail(email).then(function() {
+              hideOverlay();
+              tgShowModal({ type: 'success', title: 'Reset Link Sent', desc: 'Reset link bhej diya gaya hai:<br><br><b>' + email + '</b><br><br>Inbox check karo (spam bhi dekh lo).', primaryText: 'OK' });
+            }).catch(function() {
+              hideOverlay();
+              toast('Could not send reset email', 'error');
+            });
+          } else {
+            toast('Enter valid email first', 'error');
+            emailInput.focus();
+          }
+        }
+      });
       return;
     }
     if (code === 'auth/user-not-found') {
-      tgShowModal({ type: 'warn', title: 'Account Not Found', desc: 'Is email se koi account nahi mila.<br><br>Naya account banao ya different email try karo.', primaryText: 'Create Account', secondaryText: 'Try Different Email', onPrimary: function() { setMode('signup'); }, onSecondary: function() { emailInput.focus(); emailInput.select(); } });
+      tgShowModal({ type: 'warn', title: 'Account Not Found', desc: 'Is email se koi account nahi mila.<br><br>Check karo:<br>✓ Email sahi likha hai?<br>✓ Ya pehle signup karo?', primaryText: 'Create Account', secondaryText: 'Try Different Email', onPrimary: function() { setMode('signup'); }, onSecondary: function() { emailInput.focus(); emailInput.select(); } });
       return;
     }
     if (code === 'auth/invalid-email') {
@@ -520,11 +465,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       tgShowModal({ type: 'warn', title: 'Re-login Required', desc: 'Security ke liye please <b>dobara login</b> karo.', primaryText: 'OK' });
       return;
     }
-    console.warn('[auth] unhandled:', code, err && err.message);
-    tgShowModal({ type: 'error', title: 'Something Went Wrong', desc: 'Kuch problem aayi. Please try again.', primaryText: 'Try Again' });
+
+    /* Generic — show actual code for debugging */
+    console.warn('[auth] unhandled:', code);
+    tgShowModal({
+      type: 'error',
+      title: 'Login Failed',
+      desc: 'Kuch problem aayi. Please try again.<br><br><small style="color:#999;font-size:11px;">Error: ' + code + '</small>',
+      primaryText: 'Try Again'
+    });
   }
 
-  /* ═══ USER DOC (background, fire-and-forget) ═══ */
   function syncUserDocAsync(user, extraName) {
     if (!user) return;
     try {
@@ -549,9 +500,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
 
   function cacheAuth(user, extraName) {
-    if (!user) { try { localStorage.removeItem(AUTH_CACHE_KEY); } catch(e) {} return; }
+    if (!user) { SafeStore.local.remove(AUTH_CACHE_KEY); return; }
     try {
-      localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify({
+      SafeStore.local.set(AUTH_CACHE_KEY, JSON.stringify({
         uid: user.uid, email: user.email || '',
         name: extraName || user.displayName || (user.email ? user.email.split('@')[0] : ''),
         photoURL: user.photoURL || '',
@@ -635,119 +586,88 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   function handleAuthSuccess(user, source) {
     if (!user) return;
+    console.log('[auth] success via', source, '-', user.email);
     showAuthLoading('Login successful! Redirecting…', true);
     cacheAuth(user);
     const name = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
     markLoginSuccess(name);
     syncUserDocAsync(user);
-    setTimeout(doFinalRedirect, 300);
+    setTimeout(doFinalRedirect, 350);
   }
 
-  /* ═══ EMAIL / PASSWORD ═══ */
+  /* ═══════════════════════════════════════════════════════════════
+     EMAIL / PASSWORD SUBMIT — AWAITS PERSISTENCE FIRST
+     ═══════════════════════════════════════════════════════════════ */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
     const password = passwordInput.value || '';
     const name = (nameInput && nameInput.value || '').trim();
 
-    if (!email) {
-      tgShowModal({ type: 'warn', title: 'Email Required', desc: 'Please apna <b>email</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() });
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please ek <b>valid email address</b> daalo.', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } });
-      return;
-    }
-    if (!password) {
-      tgShowModal({ type: 'warn', title: 'Password Required', desc: 'Please apna <b>password</b> daalo.', primaryText: 'OK', onPrimary: () => passwordInput.focus() });
-      return;
-    }
-    if (password.length < 6) {
-      tgShowModal({ type: 'warn', title: 'Password Too Short', desc: 'Password kam se kam <b>6 characters</b> ka hona chahiye.', primaryText: 'OK', onPrimary: () => { passwordInput.focus(); passwordInput.select(); } });
-      return;
-    }
-    if (mode === 'signup' && !name) {
-      tgShowModal({ type: 'warn', title: 'Name Required', desc: 'Please apna <b>full name</b> daalo.', primaryText: 'OK', onPrimary: () => nameInput.focus() });
-      return;
-    }
+    if (!email) { tgShowModal({ type: 'warn', title: 'Email Required', desc: 'Please apna <b>email</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() }); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please ek <b>valid email</b> daalo.', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } }); return; }
+    if (!password) { tgShowModal({ type: 'warn', title: 'Password Required', desc: 'Please apna <b>password</b> daalo.', primaryText: 'OK', onPrimary: () => passwordInput.focus() }); return; }
+    if (password.length < 6) { tgShowModal({ type: 'warn', title: 'Password Too Short', desc: 'Password kam se kam <b>6 characters</b>.', primaryText: 'OK', onPrimary: () => { passwordInput.focus(); passwordInput.select(); } }); return; }
+    if (mode === 'signup' && !name) { tgShowModal({ type: 'warn', title: 'Name Required', desc: 'Please apna <b>full name</b> daalo.', primaryText: 'OK', onPrimary: () => nameInput.focus() }); return; }
 
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
 
     try {
+      /* ✅ CRITICAL: Await persistence BEFORE sign-in */
+      await PERSISTENCE_READY;
+      console.log('[auth] attempting', mode, 'for', email);
+
       let cred;
       if (mode === 'signup') {
         cred = await auth.createUserWithEmailAndPassword(email, password);
-        if (cred.user && name) { try { await cred.user.updateProfile({ displayName: name }); } catch(e) {} }
+        console.log('[auth] signup success:', cred.user.uid);
+        if (cred.user && name) {
+          try { await cred.user.updateProfile({ displayName: name }); } catch(e) {}
+        }
       } else {
         cred = await auth.signInWithEmailAndPassword(email, password);
+        console.log('[auth] login success:', cred.user.uid);
       }
       handleAuthSuccess(cred.user, mode);
     } catch (err) {
+      console.error('[auth]', mode, 'error:', err && err.code, err && err.message);
       setSubmitLoading(false);
       showAuthError(err, mode);
     }
   });
 
-  /* ═══ GOOGLE — popup direct ═══ */
+  /* ═══ GOOGLE ═══ */
   googleBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
-
+    await PERSISTENCE_READY;
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
     try {
       const result = await auth.signInWithPopup(provider);
-      if (result && result.user) {
-        handleAuthSuccess(result.user, 'google-popup');
-        return;
-      }
+      if (result && result.user) { handleAuthSuccess(result.user, 'google-popup'); return; }
       setGoogleLoading(false);
     } catch (popupErr) {
       const code = popupErr && popupErr.code;
-
-      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
-        setGoogleLoading(false);
-        return;
-      }
-
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') { setGoogleLoading(false); return; }
       if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
         setPendingGoogle();
         showAuthLoading('Redirecting to Google…', false);
-        try {
-          await auth.signInWithRedirect(provider);
-          return;
-        } catch (redirErr) {
-          clearPendingGoogle();
-          hideAuthLoading();
-          setGoogleLoading(false);
-          showAuthError(redirErr, 'google');
-          return;
-        }
+        try { await auth.signInWithRedirect(provider); return; }
+        catch (redirErr) { clearPendingGoogle(); hideAuthLoading(); setGoogleLoading(false); showAuthError(redirErr, 'google'); return; }
       }
-
-      if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
-        console.log('[auth] silent storage error in google');
-        setGoogleLoading(false);
-        return;
-      }
-
+      if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') { setGoogleLoading(false); return; }
       setGoogleLoading(false);
       showAuthError(popupErr, 'google');
     }
   });
 
-  /* ═══ REDIRECT RETURN ═══ */
   (async function handleRedirectReturn() {
     try {
       const result = await auth.getRedirectResult();
-      if (result && result.user) {
-        handleAuthSuccess(result.user, 'google-redirect');
-        return;
-      }
+      if (result && result.user) { handleAuthSuccess(result.user, 'google-redirect'); return; }
       if (isPendingGoogle()) {
-        setTimeout(() => {
-          if (!auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); }
-        }, 3500);
+        setTimeout(() => { if (!auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); } }, 3500);
       }
     } catch (err) {
       const code = err && err.code;
@@ -761,53 +681,37 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   })();
 
-  /* ═══ AUTH STATE ═══ */
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
       if (isPendingGoogle()) {
-        setTimeout(() => {
-          if (!auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); }
-        }, 2500);
+        setTimeout(() => { if (!auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); } }, 2500);
       }
       return;
     }
+    console.log('[auth] state-change →', user.email);
     clearPendingGoogle();
     handleAuthSuccess(user, 'state-change');
   });
 
-  /* ═══ FAILSAFES ═══ */
   setTimeout(() => {
-    if (auth.currentUser && !_redirected) {
-      handleAuthSuccess(auth.currentUser, 'failsafe');
-    } else if (isPendingGoogle() && !auth.currentUser) {
-      clearPendingGoogle();
-      hideAuthLoading();
-    }
+    if (auth.currentUser && !_redirected) { handleAuthSuccess(auth.currentUser, 'failsafe'); }
+    else if (isPendingGoogle() && !auth.currentUser) { clearPendingGoogle(); hideAuthLoading(); }
   }, 6000);
 
   window.addEventListener('pageshow', (e) => {
-    if (e.persisted && auth.currentUser && !_redirected) {
-      handleAuthSuccess(auth.currentUser, 'pageshow');
-    }
+    if (e.persisted && auth.currentUser && !_redirected) { handleAuthSuccess(auth.currentUser, 'pageshow'); }
   });
 
-  /* ═══ FORGOT ═══ */
   forgotLink.addEventListener('click', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
-    if (!email) {
-      tgShowModal({ type: 'info', title: 'Email Required', desc: 'Password reset link ke liye pehle <b>email</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() });
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please valid email daalo.', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } });
-      return;
-    }
+    if (!email) { tgShowModal({ type: 'info', title: 'Email Required', desc: 'Password reset ke liye pehle <b>email</b> daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() }); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { tgShowModal({ type: 'warn', title: 'Invalid Email', desc: 'Please valid email daalo.', primaryText: 'OK', onPrimary: () => { emailInput.focus(); emailInput.select(); } }); return; }
     showOverlay('Sending reset link…');
     try {
       await auth.sendPasswordResetEmail(email);
       hideOverlay();
-      tgShowModal({ type: 'success', title: 'Reset Link Sent', desc: 'Password reset link bhej diya gaya hai:<br><br><b>' + email + '</b>', primaryText: 'OK' });
+      tgShowModal({ type: 'success', title: 'Reset Link Sent', desc: 'Reset link bhej diya gaya hai:<br><br><b>' + email + '</b><br><br>Inbox check karo (spam bhi dekh lo).', primaryText: 'OK' });
     } catch (err) {
       hideOverlay();
       const code = err && err.code;
@@ -819,7 +723,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
-  /* ═══ THEME LOAD ═══ */
   setTimeout(() => {
     try {
       db.collection('siteSettings').doc('theme').get()
