@@ -10,351 +10,76 @@
 <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
 <link rel="preconnect" href="https://accounts.google.com">
 <link rel="dns-prefetch" href="https://apis.google.com">
-
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
-
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-html, body {
-  margin: 0 !important; padding: 0 !important;
-  width: 100% !important; max-width: 100vw;
-  overflow-x: hidden; min-height: 100vh;
-  font-family: 'Roboto', Arial, sans-serif;
-  color: #212121;
-  background: #f1f3f6;
-  -webkit-font-smoothing: antialiased;
-}
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; min-height: 100vh; font-family: 'Roboto', Arial, sans-serif; color: #212121; background: #f1f3f6; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; display: block; }
 button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 input { font: inherit; }
 a { color: inherit; text-decoration: none; }
-
 header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
-
-.tg-wrap {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
-  background: #f1f3f6;
-}
-
-.tg-card {
-  width: 100%;
-  max-width: 720px;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
-  display: flex;
-  overflow: hidden;
-  animation: tgCardIn .4s cubic-bezier(.34,1.2,.64,1);
-}
+.tg-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; background: #f1f3f6; }
+.tg-card { width: 100%; max-width: 720px; background: #fff; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.10); display: flex; overflow: hidden; animation: tgCardIn .4s cubic-bezier(.34,1.2,.64,1); }
 @keyframes tgCardIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-.tg-left {
-  flex: 0 0 40%;
-  max-width: 40%;
-  background: #2874f0;
-  color: #fff;
-  padding: 34px 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  overflow: hidden;
-  transition: background .3s;
-}
-.tg-left::after {
-  content: '';
-  position: absolute;
-  bottom: -80px; left: -60px;
-  width: 220px; height: 220px;
-  background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
-  border-radius: 50%;
-}
-
-.tg-left-logo {
-  font-weight: 900;
-  font-style: italic;
-  font-size: 24px;
-  letter-spacing: -0.4px;
-  position: relative;
-  z-index: 2;
-}
+.tg-left { flex: 0 0 40%; max-width: 40%; background: #2874f0; color: #fff; padding: 34px 30px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; transition: background .3s; }
+.tg-left::after { content: ''; position: absolute; bottom: -80px; left: -60px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%); border-radius: 50%; }
+.tg-left-logo { font-weight: 900; font-style: italic; font-size: 24px; letter-spacing: -0.4px; position: relative; z-index: 2; }
 .tg-left-logo span { color: #ffe500; }
-
-.tg-left-content {
-  position: relative;
-  z-index: 2;
-  margin-top: auto;
-  margin-bottom: auto;
-  padding: 24px 0;
-}
-.tg-left-title {
-  font-size: 26px;
-  font-weight: 500;
-  line-height: 1.15;
-  margin: 0 0 12px;
-  letter-spacing: -0.2px;
-}
-.tg-left-sub {
-  font-size: 14px;
-  line-height: 1.5;
-  opacity: 0.88;
-  margin: 0;
-  max-width: 260px;
-}
-
-.tg-left-foot {
-  font-size: 11px;
-  opacity: 0.7;
-  position: relative;
-  z-index: 2;
-  letter-spacing: 0.2px;
-}
-
-.tg-right {
-  flex: 1 1 auto;
-  padding: 36px 42px 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.tg-field {
-  position: relative;
-  margin-bottom: 24px;
-}
-.tg-field input {
-  width: 100%;
-  height: 42px;
-  border: none;
-  border-bottom: 1px solid #d4d5d9;
-  background: transparent;
-  font-size: 15px;
-  color: #212121;
-  padding: 6px 0 8px;
-  outline: none;
-  transition: border-color .2s;
-  border-radius: 0;
-}
+.tg-left-content { position: relative; z-index: 2; margin-top: auto; margin-bottom: auto; padding: 24px 0; }
+.tg-left-title { font-size: 26px; font-weight: 500; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.2px; }
+.tg-left-sub { font-size: 14px; line-height: 1.5; opacity: 0.88; margin: 0; max-width: 260px; }
+.tg-left-foot { font-size: 11px; opacity: 0.7; position: relative; z-index: 2; letter-spacing: 0.2px; }
+.tg-right { flex: 1 1 auto; padding: 36px 42px 32px; display: flex; flex-direction: column; justify-content: center; }
+.tg-field { position: relative; margin-bottom: 24px; }
+.tg-field input { width: 100%; height: 42px; border: none; border-bottom: 1px solid #d4d5d9; background: transparent; font-size: 15px; color: #212121; padding: 6px 0 8px; outline: none; transition: border-color .2s; border-radius: 0; }
 .tg-field input:focus { border-bottom-color: #2874f0; }
-.tg-field label {
-  position: absolute;
-  left: 0;
-  top: 12px;
-  font-size: 15px;
-  color: #878787;
-  pointer-events: none;
-  transition: all .18s cubic-bezier(.4,0,.2,1);
-  background: #fff;
-  padding: 0 4px;
-  margin-left: -4px;
-}
-.tg-field input:focus + label,
-.tg-field input:not(:placeholder-shown) + label,
-.tg-field input.filled + label {
-  top: -7px;
-  font-size: 12px;
-  color: #2874f0;
-}
+.tg-field label { position: absolute; left: 0; top: 12px; font-size: 15px; color: #878787; pointer-events: none; transition: all .18s cubic-bezier(.4,0,.2,1); background: #fff; padding: 0 4px; margin-left: -4px; }
+.tg-field input:focus + label, .tg-field input:not(:placeholder-shown) + label, .tg-field input.filled + label { top: -7px; font-size: 12px; color: #2874f0; }
 .tg-field input:not(:focus):not(:placeholder-shown) + label { color: #878787; }
-
 .tg-field-pass { position: relative; }
-.tg-pass-toggle {
-  position: absolute;
-  right: 0;
-  top: 10px;
-  font-size: 12.5px;
-  color: #2874f0;
-  font-weight: 600;
-  padding: 4px 0;
-  letter-spacing: 0.2px;
-}
+.tg-pass-toggle { position: absolute; right: 0; top: 10px; font-size: 12.5px; color: #2874f0; font-weight: 600; padding: 4px 0; letter-spacing: 0.2px; }
 .tg-pass-toggle:hover { text-decoration: underline; }
-
-.tg-terms {
-  font-size: 11.5px;
-  color: #878787;
-  line-height: 1.55;
-  margin: 4px 0 20px;
-}
+.tg-terms { font-size: 11.5px; color: #878787; line-height: 1.55; margin: 4px 0 20px; }
 .tg-terms a { color: #2874f0; font-weight: 500; }
-.tg-terms a:hover { text-decoration: underline; }
-
-.tg-submit {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: 3px;
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  background: #fb641b;
-  letter-spacing: 0.3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: box-shadow .18s, transform .1s, filter .15s;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
-  position: relative;
-}
+.tg-submit { width: 100%; padding: 14px 16px; border-radius: 3px; font-size: 15px; font-weight: 700; color: #fff; background: #fb641b; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: box-shadow .18s, transform .1s, filter .15s; box-shadow: 0 1px 2px rgba(0,0,0,0.15); position: relative; }
 .tg-submit:hover { filter: brightness(1.05); box-shadow: 0 4px 12px rgba(251,100,27,0.35); }
 .tg-submit:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 .tg-submit:disabled { opacity: 0.75; cursor: not-allowed; }
 .tg-submit.loading { pointer-events: none; }
-
-.tg-spinner {
-  width: 15px; height: 15px;
-  border: 2px solid rgba(255,255,255,0.35);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: tgSpin .7s linear infinite;
-  display: none;
-}
+.tg-spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: tgSpin .7s linear infinite; display: none; }
 @keyframes tgSpin { to { transform: rotate(360deg); } }
 .tg-submit.loading .tg-spinner { display: block; }
 .tg-submit.loading .tg-btn-text { opacity: 0.85; }
-
-.tg-div {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 18px 0 14px;
-  color: #999;
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-.tg-div::before, .tg-div::after {
-  content: ''; flex: 1; height: 1px; background: #e5e7eb;
-}
-
-.tg-alt-btn {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 3px;
-  background: #fff;
-  border: 1px solid #d4d5d9;
-  font-size: 14px;
-  font-weight: 600;
-  color: #2874f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: box-shadow .18s, background .15s;
-  letter-spacing: 0.3px;
-}
+.tg-div { display: flex; align-items: center; gap: 12px; margin: 18px 0 14px; color: #999; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 500; }
+.tg-div::before, .tg-div::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+.tg-alt-btn { width: 100%; padding: 12px 16px; border-radius: 3px; background: #fff; border: 1px solid #d4d5d9; font-size: 14px; font-weight: 600; color: #2874f0; display: flex; align-items: center; justify-content: center; gap: 10px; transition: box-shadow .18s, background .15s; letter-spacing: 0.3px; }
 .tg-alt-btn:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.10); background: #f8fbff; }
 .tg-alt-btn:active { transform: translateY(1px); }
 .tg-alt-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 .tg-alt-btn.loading { pointer-events: none; opacity: 0.75; }
-
-.tg-forgot-row {
-  text-align: right;
-  margin: -12px 0 18px;
-}
-.tg-forgot {
-  font-size: 13px;
-  color: #2874f0;
-  font-weight: 600;
-}
+.tg-forgot-row { text-align: right; margin: -12px 0 18px; }
+.tg-forgot { font-size: 13px; color: #2874f0; font-weight: 600; }
 .tg-forgot:hover { text-decoration: underline; }
-
-.tg-mode {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 13.5px;
-  color: #878787;
-}
-.tg-mode button {
-  color: #2874f0;
-  font-weight: 700;
-  margin-left: 4px;
-  letter-spacing: 0.2px;
-}
+.tg-mode { text-align: center; margin-top: 20px; font-size: 13.5px; color: #878787; }
+.tg-mode button { color: #2874f0; font-weight: 700; margin-left: 4px; letter-spacing: 0.2px; }
 .tg-mode button:hover { text-decoration: underline; }
-
 .tg-field-name { display: none; }
 .tg-card.signup .tg-field-name { display: block; }
 .tg-card.signup .tg-forgot-row { display: none; }
-
-.tg-toasts {
-  position: fixed;
-  top: 20px; right: 20px;
-  z-index: 999999;
-  display: flex; flex-direction: column; gap: 10px;
-  max-width: calc(100vw - 40px);
-  pointer-events: none;
-}
-.tg-toast {
-  padding: 13px 18px;
-  border-radius: 4px;
-  background: #212121;
-  color: #fff;
-  font-size: 13.5px;
-  font-weight: 500;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  pointer-events: auto;
-  display: flex; align-items: center; gap: 10px;
-  animation: tgToastIn .3s cubic-bezier(.34,1.56,.64,1);
-  max-width: 380px;
-}
+.tg-toasts { position: fixed; top: 20px; right: 20px; z-index: 999999; display: flex; flex-direction: column; gap: 10px; max-width: calc(100vw - 40px); pointer-events: none; }
+.tg-toast { padding: 13px 18px; border-radius: 4px; background: #212121; color: #fff; font-size: 13.5px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.25); pointer-events: auto; display: flex; align-items: center; gap: 10px; animation: tgToastIn .3s cubic-bezier(.34,1.56,.64,1); max-width: 380px; }
 @keyframes tgToastIn { from { transform: translateX(130%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .tg-toast.success { background: #388e3c; }
 .tg-toast.error   { background: #d32f2f; }
 .tg-toast.info    { background: #2874f0; }
 .tg-toast-icon { font-size: 16px; flex-shrink: 0; }
-
-.tg-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(241,243,246,0.96);
-  backdrop-filter: blur(4px);
-  z-index: 999998;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-}
+.tg-overlay { position: fixed; inset: 0; background: rgba(241,243,246,0.96); backdrop-filter: blur(4px); z-index: 999998; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
 .tg-overlay.show { display: flex; }
-.tg-overlay-spinner {
-  width: 42px; height: 42px;
-  border: 4px solid #d4d5d9;
-  border-top-color: #2874f0;
-  border-radius: 50%;
-  animation: tgSpin .8s linear infinite;
-}
-.tg-overlay-text {
-  font-size: 14px;
-  color: #212121;
-  font-weight: 500;
-}
-
-@media (max-width: 720px) {
-  .tg-wrap { padding: 16px 12px; align-items: flex-start; padding-top: 28px; }
-  .tg-card { max-width: 100%; flex-direction: column; }
-  .tg-left { flex: 0 0 auto; max-width: 100%; padding: 22px 24px 20px; }
-  .tg-left-content { margin: 8px 0 0; padding: 0; }
-  .tg-left-title { font-size: 19px; margin-bottom: 4px; }
-  .tg-left-sub { font-size: 12.5px; max-width: 100%; }
-  .tg-left-foot { display: none; }
-  .tg-right { padding: 26px 24px 28px; }
-  .tg-mode { margin-top: 18px; }
-  .tg-toasts { top: 12px; right: 12px; left: 12px; max-width: none; align-items: stretch; }
-  .tg-toast { max-width: none; }
-}
-
-@media (max-width: 380px) {
-  .tg-right { padding: 20px 18px 24px; }
-  .tg-left { padding: 18px 18px 16px; }
-  .tg-left-title { font-size: 17px; }
-  .tg-field input { font-size: 14px; }
-}
+.tg-overlay-spinner { width: 42px; height: 42px; border: 4px solid #d4d5d9; border-top-color: #2874f0; border-radius: 50%; animation: tgSpin .8s linear infinite; }
+.tg-overlay-text { font-size: 14px; color: #212121; font-weight: 500; text-align: center; padding: 0 20px; }
+@media (max-width: 720px) { .tg-wrap { padding: 16px 12px; align-items: flex-start; padding-top: 28px; } .tg-card { max-width: 100%; flex-direction: column; } .tg-left { flex: 0 0 auto; max-width: 100%; padding: 22px 24px 20px; } .tg-left-content { margin: 8px 0 0; padding: 0; } .tg-left-title { font-size: 19px; margin-bottom: 4px; } .tg-left-sub { font-size: 12.5px; max-width: 100%; } .tg-left-foot { display: none; } .tg-right { padding: 26px 24px 28px; } .tg-mode { margin-top: 18px; } .tg-toasts { top: 12px; right: 12px; left: 12px; max-width: none; align-items: stretch; } .tg-toast { max-width: none; } }
+@media (max-width: 380px) { .tg-right { padding: 20px 18px 24px; } .tg-left { padding: 18px 18px 16px; } .tg-left-title { font-size: 17px; } .tg-field input { font-size: 14px; } }
 </style>
 </head>
 <body>
@@ -368,7 +93,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 <div class="tg-wrap">
   <div class="tg-card" id="tg-card">
-
     <aside class="tg-left" id="tg-left">
       <div class="tg-left-logo">TOE<span>GO</span></div>
       <div class="tg-left-content">
@@ -377,41 +101,30 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </div>
       <div class="tg-left-foot">© 2025 TOEGO.com</div>
     </aside>
-
     <main class="tg-right">
       <form id="tg-form" autocomplete="on" novalidate>
-
         <div class="tg-field tg-field-name">
           <input type="text" name="name" id="tg-name" placeholder=" " autocomplete="name" maxlength="60">
           <label for="tg-name">Enter Full Name</label>
         </div>
-
         <div class="tg-field">
           <input type="email" name="email" id="tg-email" placeholder=" " autocomplete="email" required>
           <label for="tg-email">Enter Email/Mobile number</label>
         </div>
-
         <div class="tg-field tg-field-pass">
           <input type="password" name="password" id="tg-password" placeholder=" " autocomplete="current-password" required minlength="6">
           <label for="tg-password">Enter Password</label>
           <button type="button" class="tg-pass-toggle" id="tg-toggle-pass">Show</button>
         </div>
-
         <div class="tg-forgot-row" id="tg-forgot-row">
           <a href="#" class="tg-forgot" id="tg-forgot">Forgot Password?</a>
         </div>
-
-        <div class="tg-terms">
-          By continuing, you agree to TOEGO's <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>.
-        </div>
-
+        <div class="tg-terms">By continuing, you agree to TOEGO's <a href="terms.html">Terms of Use</a> and <a href="privacy.html">Privacy Policy</a>.</div>
         <button type="submit" class="tg-submit" id="tg-submit">
           <span class="tg-spinner"></span>
           <span class="tg-btn-text" id="tg-submit-text">Login</span>
         </button>
-
         <div class="tg-div">or</div>
-
         <button type="button" class="tg-alt-btn" id="tg-google">
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
@@ -421,15 +134,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           </svg>
           <span id="tg-google-text">Continue with Google</span>
         </button>
-
         <div class="tg-mode">
           <span id="tg-mode-label">New to TOEGO?</span>
           <button type="button" id="tg-mode-switch">Create an account</button>
         </div>
-
       </form>
     </main>
-
   </div>
 </div>
 
@@ -441,23 +151,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 (function() {
   'use strict';
 
-  /* ═══════════════════════════════════════════════════════════
-     STEP 0: REDIRECT URL — respects ?redirect= query param
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     STEP 0: CONSTANTS
+     ═══════════════════════════════════════════════════════════════ */
   const REDIRECT_URL = (function() {
     try {
       const params = new URLSearchParams(window.location.search);
       const r = params.get('redirect');
-      if (r && /^[\w\-\.\/]+\.html/.test(r) && !r.includes('..') && !r.startsWith('http')) {
-        return r;
-      }
+      if (r && /^[\w\-\.\/]+\.html/.test(r) && !r.includes('..') && !r.startsWith('http')) return r;
     } catch(e) {}
     return 'shop-home.html';
   })();
 
-  /* ═══════════════════════════════════════════════════════════
+  const AUTH_CACHE_KEY = 'toego_auth_cache';
+  const GOOGLE_PENDING_KEY = 'toego_google_pending';
+
+  /* ═══════════════════════════════════════════════════════════════
      STEP 1: FIREBASE INIT
-     ═══════════════════════════════════════════════════════════ */
+     ═══════════════════════════════════════════════════════════════ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -472,16 +183,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  /* ═══════════════════════════════════════════════════════════
-     STEP 2: AUTH CACHE KEY — shop-home.html isko padhta hai
-     Isse turant logged-in state dikhta hai (0ms paint)
-     ═══════════════════════════════════════════════════════════ */
-  const AUTH_CACHE_KEY = 'toego_auth_cache';
-
-  /* ═══════════════════════════════════════════════════════════
-     STEP 3: PERSISTENCE — awaited before any auth operation
-     Mobile pe ye zaroori hai warna session save nahi hota
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     STEP 2: PERSISTENCE — awaited before any auth call
+     ═══════════════════════════════════════════════════════════════ */
   const PERSISTENCE_READY = (async function() {
     try {
       await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -491,9 +195,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   })();
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════
      THEME
-     ═══════════════════════════════════════════════════════════ */
+     ═══════════════════════════════════════════════════════════════ */
   const themeMeta = document.getElementById('tg-theme-meta');
   function applyTheme(primary) {
     primary = primary || '#2874f0';
@@ -518,22 +222,17 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     } catch(e) {}
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     OVERLAY
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     OVERLAY + TOAST
+     ═══════════════════════════════════════════════════════════════ */
   const overlay = document.getElementById('tg-overlay');
   const overlayText = document.getElementById('tg-overlay-text');
   function showOverlay(text) {
     if (overlayText) overlayText.textContent = text || 'Signing you in…';
     if (overlay) overlay.classList.add('show');
   }
-  function hideOverlay() {
-    if (overlay) overlay.classList.remove('show');
-  }
+  function hideOverlay() { if (overlay) overlay.classList.remove('show'); }
 
-  /* ═══════════════════════════════════════════════════════════
-     TOAST
-     ═══════════════════════════════════════════════════════════ */
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -548,12 +247,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       el.style.transform = 'translateX(130%)';
       el.style.opacity = '0';
       setTimeout(() => el.remove(), 320);
-    }, 2800);
+    }, 3500);
   }
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════
      FRIENDLY ERRORS
-     ═══════════════════════════════════════════════════════════ */
+     ═══════════════════════════════════════════════════════════════ */
   function friendlyError(code) {
     const map = {
       'auth/invalid-email': 'Please enter a valid email address.',
@@ -567,21 +266,23 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       'auth/too-many-requests': 'Too many attempts. Try again later.',
       'auth/network-request-failed': 'Network error. Check your internet.',
       'auth/popup-closed-by-user': 'Sign-in was cancelled.',
-      'auth/popup-blocked': 'Popup blocked. Please allow popups.',
+      'auth/popup-blocked': 'Popup blocked. Trying alternative method…',
       'auth/cancelled-popup-request': '',
       'auth/account-exists-with-different-credential': 'This email exists with a different sign-in method.',
       'auth/operation-not-allowed': 'This sign-in method is not enabled.',
+      'auth/operation-not-supported-in-this-environment': 'Please use Chrome or Safari browser.',
       'auth/requires-recent-login': 'Please log in again to continue.',
-      'auth/unauthorized-domain': 'This domain is not authorized for Google sign-in. Please contact support.',
-      'auth/no-auth-event': ''
+      'auth/unauthorized-domain': '⚠ Domain not authorized. Contact support.',
+      'auth/no-auth-event': '',
+      'auth/web-storage-unsupported': '⚠ Enable cookies. Settings → Cookies → Allow all.',
+      'auth/internal-error': 'Please try again or enable cookies in browser.'
     };
     return map[code] || 'Something went wrong. Please try again.';
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     USER DOC SYNC — Firestore me profile save karta hai
-     Returns the profile data so we can cache it
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     USER DOC SYNC
+     ═══════════════════════════════════════════════════════════════ */
   async function ensureUserDoc(user, extraName) {
     if (!user) return null;
     const ref = db.collection('users').doc(user.uid);
@@ -611,13 +312,17 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     } catch (err) {
       console.warn('[auth] user doc sync failed:', err && err.message);
-      return { name: extraName || user.displayName || (user.email ? user.email.split('@')[0] : ''), email: user.email || '' };
+      return {
+        name: extraName || user.displayName || (user.email ? user.email.split('@')[0] : ''),
+        email: user.email || '',
+        role: 'customer'
+      };
     }
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     CACHE AUTH — shop-home.html isko localStorage se padhega
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     CACHE AUTH — shop-home.html isko padhega
+     ═══════════════════════════════════════════════════════════════ */
   function cacheAuth(user, profile) {
     if (!user) {
       try { localStorage.removeItem(AUTH_CACHE_KEY); } catch(e) {}
@@ -634,15 +339,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         ts: Date.now()
       };
       localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify(cached));
-      console.log('[auth] cached ✓');
+      console.log('[auth] cached ✓', cached.email);
     } catch(e) {
       console.warn('[auth] cache failed:', e);
     }
   }
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════
      UI REFS
-     ═══════════════════════════════════════════════════════════ */
+     ═══════════════════════════════════════════════════════════════ */
   const card = document.getElementById('tg-card');
   const leftTitle = document.getElementById('tg-left-title');
   const leftSub = document.getElementById('tg-left-sub');
@@ -713,12 +418,36 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
   function setGoogleLoading(on) {
     googleBtn.classList.toggle('loading', on);
-    googleText.textContent = on ? 'Redirecting…' : 'Continue with Google';
+    googleText.textContent = on ? 'Please wait…' : 'Continue with Google';
   }
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════
+     REDIRECT GUARD — one-time redirect
+     ═══════════════════════════════════════════════════════════════ */
+  let _redirected = false;
+  function doFinalRedirect() {
+    if (_redirected) return;
+    _redirected = true;
+    console.log('[auth] ✅ REDIRECTING TO:', REDIRECT_URL);
+    window.location.replace(REDIRECT_URL);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     HANDLE SUCCESS — called whenever user is confirmed
+     ═══════════════════════════════════════════════════════════════ */
+  async function handleAuthSuccess(user, source) {
+    if (!user) return;
+    console.log('[auth] ✅ AUTH SUCCESS via', source, '→', user.email);
+    try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {}
+    showOverlay('Signing you in…');
+    const prof = await ensureUserDoc(user);
+    cacheAuth(user, prof);
+    setTimeout(doFinalRedirect, 300);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
      EMAIL / PASSWORD SUBMIT
-     ═══════════════════════════════════════════════════════════ */
+     ═══════════════════════════════════════════════════════════════ */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
@@ -734,7 +463,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
 
     try {
-      /* ✅ CRITICAL: ensure persistence set BEFORE sign-in */
       await PERSISTENCE_READY;
 
       if (mode === 'signup') {
@@ -742,126 +470,163 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (cred.user && name) {
           try { await cred.user.updateProfile({ displayName: name }); } catch(e) {}
         }
-        const prof = await ensureUserDoc(cred.user, name);
-        cacheAuth(cred.user, prof);
         toast('Account created! Welcome to TOEGO 🎉', 'success');
+        await handleAuthSuccess(cred.user, 'signup');
       } else {
         const cred = await auth.signInWithEmailAndPassword(email, password);
-        const prof = await ensureUserDoc(cred.user);
-        cacheAuth(cred.user, prof);
         toast('Logged in successfully!', 'success');
+        await handleAuthSuccess(cred.user, 'login');
       }
-
-      /* Redirect after short delay so toast is visible */
-      setTimeout(() => { window.location.replace(REDIRECT_URL); }, 600);
     } catch (err) {
-      console.error('[auth] sign-in failed:', err);
+      console.error('[auth] email sign-in failed:', err);
       toast(friendlyError(err && err.code) || 'Login failed', 'error');
       setSubmitLoading(false);
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════
-     GOOGLE — REDIRECT (mobile + desktop safe)
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     GOOGLE — POPUP FIRST (reliable on mobile + desktop)
+     Fallback to redirect only if popup is blocked
+     ═══════════════════════════════════════════════════════════════ */
   googleBtn.addEventListener('click', async () => {
     setGoogleLoading(true);
+    await PERSISTENCE_READY;
 
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    /* ✅ STRATEGY 1: Try POPUP first — works reliably on mobile */
     try {
-      /* ✅ CRITICAL: ensure persistence is set BEFORE redirect */
-      await PERSISTENCE_READY;
+      console.log('[auth] trying popup…');
+      const result = await auth.signInWithPopup(provider);
+      if (result && result.user) {
+        console.log('[auth] popup success ✓');
+        toast('Welcome, ' + (result.user.displayName || 'user') + '! 🎉', 'success');
+        await handleAuthSuccess(result.user, 'google-popup');
+        return;
+      }
+    } catch (popupErr) {
+      const code = popupErr && popupErr.code;
+      console.warn('[auth] popup failed:', code, popupErr && popupErr.message);
 
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
+      /* If user just cancelled — stop */
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        setGoogleLoading(false);
+        return;
+      }
 
-      showOverlay('Redirecting to Google…');
-      await auth.signInWithRedirect(provider);
-      /* Page navigates away — nothing after this runs */
-    } catch (err) {
-      console.error('[auth] google sign-in failed:', err);
+      /* If popup not supported or blocked → fallback to redirect */
+      const shouldFallback =
+        code === 'auth/popup-blocked' ||
+        code === 'auth/operation-not-supported-in-this-environment' ||
+        code === 'auth/operation-not-allowed' ||
+        code === 'auth/web-storage-unsupported' ||
+        code === 'auth/internal-error' ||
+        !code;
+
+      if (shouldFallback) {
+        console.log('[auth] falling back to redirect…');
+        /* Mark pending so we can detect return from Google */
+        try { localStorage.setItem(GOOGLE_PENDING_KEY, '1'); } catch(e) {}
+        showOverlay('Redirecting to Google…');
+        try {
+          await auth.signInWithRedirect(provider);
+          /* Page navigates away */
+          return;
+        } catch (redirErr) {
+          console.error('[auth] redirect also failed:', redirErr);
+          try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {}
+          hideOverlay();
+          setGoogleLoading(false);
+          toast(friendlyError(redirErr && redirErr.code) || 'Google sign-in failed', 'error');
+          return;
+        }
+      }
+
+      /* Other error — show message */
       hideOverlay();
       setGoogleLoading(false);
-      toast(friendlyError(err && err.code) || 'Google sign-in failed', 'error');
+      const msg = friendlyError(code);
+      if (msg) toast(msg, 'error');
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════
-     REDIRECT GUARD — only one redirect ever
-     ═══════════════════════════════════════════════════════════ */
-  let _redirected = false;
-  function doFinalRedirect() {
-    if (_redirected) return;
-    _redirected = true;
-    console.log('[auth] redirecting to:', REDIRECT_URL);
-    window.location.replace(REDIRECT_URL);
-  }
+  /* ═══════════════════════════════════════════════════════════════
+     HANDLE REDIRECT RESULT (after coming back from Google)
+     ═══════════════════════════════════════════════════════════════ */
+  (async function handleRedirectReturn() {
+    let wasPending = false;
+    try { wasPending = localStorage.getItem(GOOGLE_PENDING_KEY) === '1'; } catch(e) {}
 
-  /* ═══════════════════════════════════════════════════════════
-     HANDLER #1: Google redirect result (primary path)
-     ═══════════════════════════════════════════════════════════ */
-  (async function resolveRedirect() {
+    /* If user is coming back from Google redirect — show overlay immediately */
+    if (wasPending) {
+      console.log('[auth] detected return from Google redirect');
+      showOverlay('Signing you in…');
+      setGoogleLoading(true);
+    }
+
     try {
-      const r = await auth.getRedirectResult();
-      if (r && r.user) {
-        console.log('[auth] google redirect success:', r.user.email);
-        showOverlay('Signing you in…');
-        const prof = await ensureUserDoc(r.user);
-        cacheAuth(r.user, prof);
-        toast('Welcome, ' + (r.user.displayName || 'shopper') + '! 🎉', 'success');
-        setTimeout(doFinalRedirect, 300);
+      const result = await auth.getRedirectResult();
+      if (result && result.user) {
+        console.log('[auth] ✅ google redirect success:', result.user.email);
+        toast('Welcome, ' + (result.user.displayName || 'user') + '! 🎉', 'success');
+        await handleAuthSuccess(result.user, 'google-redirect');
+        return;
       }
     } catch (err) {
       const code = err && err.code;
-      /* Silent: no-auth-event (normal when no pending redirect) */
       if (code && code !== 'auth/no-auth-event' && code !== 'auth/cancelled-popup-request') {
         console.warn('[auth] redirect result error:', code);
         const m = friendlyError(code);
         if (m && m !== 'Something went wrong. Please try again.') toast(m, 'error');
       }
     }
+
+    /* If we had a pending redirect but got no user → session lost */
+    if (wasPending) {
+      /* Give onAuthStateChanged a chance to fire with restored session */
+      setTimeout(() => {
+        if (!auth.currentUser) {
+          console.warn('[auth] ⚠ pending redirect but no session — lost');
+          try { localStorage.removeItem(GOOGLE_PENDING_KEY); } catch(e) {}
+          hideOverlay();
+          setGoogleLoading(false);
+          toast('Sign-in session lost. Please enable cookies/3rd-party cookies in browser settings.', 'error');
+        }
+      }, 5000);
+    }
   })();
 
-  /* ═══════════════════════════════════════════════════════════
-     HANDLER #2: Auth state listener (mobile-safe, no gating)
-     This fires for:
-     - Fresh email/password login
-     - Restored session from IndexedDB (mobile)
-     - Google redirect (as backup)
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     AUTH STATE LISTENER — catches everything
+     Fresh login, restored session, Google redirect
+     ═══════════════════════════════════════════════════════════════ */
   auth.onAuthStateChanged(async (user) => {
     if (!user) return;
     console.log('[auth] state changed → signed in:', user.email);
-    const prof = await ensureUserDoc(user);
-    cacheAuth(user, prof);
-    /* Small delay so handler #1 can run first if present */
-    setTimeout(doFinalRedirect, 150);
+    await handleAuthSuccess(user, 'state-change');
   });
 
-  /* ═══════════════════════════════════════════════════════════
-     HANDLER #3: Failsafe timer (iOS Safari bfcache case)
-     ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     FAILSAFES
+     ═══════════════════════════════════════════════════════════════ */
   setTimeout(() => {
     if (auth.currentUser && !_redirected) {
-      console.log('[auth] failsafe redirect triggered');
-      cacheAuth(auth.currentUser);
-      doFinalRedirect();
+      console.log('[auth] failsafe redirect');
+      handleAuthSuccess(auth.currentUser, 'failsafe');
     }
   }, 3000);
 
-  /* ═══════════════════════════════════════════════════════════
-     HANDLER #4: bfcache restore (Safari back button)
-     ═══════════════════════════════════════════════════════════ */
   window.addEventListener('pageshow', (e) => {
     if (e.persisted && auth.currentUser && !_redirected) {
-      console.log('[auth] pageshow redirect triggered');
-      cacheAuth(auth.currentUser);
-      doFinalRedirect();
+      console.log('[auth] pageshow redirect');
+      handleAuthSuccess(auth.currentUser, 'pageshow');
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════
      FORGOT PASSWORD
-     ═══════════════════════════════════════════════════════════ */
+     ═══════════════════════════════════════════════════════════════ */
   forgotLink.addEventListener('click', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
@@ -875,7 +640,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   });
 
-  /* Theme load */
+  /* Load theme */
   loadThemeColor();
 
 })();
