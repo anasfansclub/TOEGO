@@ -335,8 +335,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-srch input{flex:1;border:none;outline:none;font-size:13.5px;background:transparent;color:#fff;min-width:0;}
 .tg-srch input::placeholder{color:#64748b;}
 
-.tg-flash-icon{font-size:120px;color:#fff;font-weight:900;}
-
 .tg-blocked{position:fixed;inset:0;background:rgba(5,8,16,0.98);z-index:9999999;display:none;align-items:center;justify-content:center;padding:24px;text-align:center;flex-direction:column;gap:16px;}
 .tg-blocked.show{display:flex;}
 .tg-blocked-icon{font-size:80px;}
@@ -357,7 +355,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-blocked-banner-t{font-size:13px;font-weight:800;color:#f87171;margin-bottom:4px;}
 .tg-blocked-banner-d{font-size:11.5px;color:#cbd5e1;line-height:1.5;}
 
-/* ⭐ NEW: Notification Panel */
 .tg-notif-panel{position:fixed;top:70px;right:14px;width:400px;max-width:calc(100vw - 28px);max-height:600px;background:linear-gradient(180deg,#0f1729 0%,#0a0e1a 100%);border:1px solid rgba(0,212,255,0.25);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:9998;display:none;flex-direction:column;overflow:hidden;}
 .tg-notif-panel.show{display:flex;animation:tgFade .2s;}
 .tg-notif-head{padding:14px 16px;background:linear-gradient(135deg,#00d4ff,#0090c4);display:flex;align-items:center;justify-content:space-between;}
@@ -380,18 +377,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-notif-time{font-size:10px;color:#64748b;margin-top:4px;font-family:monospace;}
 .tg-notif-empty{text-align:center;padding:50px 20px;color:#64748b;font-size:12.5px;}
 
-/* ⭐ NEW: Perf bars */
-.tg-perf-bar{margin-bottom:14px;}
-.tg-perf-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;}
-.tg-perf-name{font-weight:700;color:#fff;}
-.tg-perf-val{font-weight:900;color:#00d4ff;font-family:monospace;font-size:13px;}
-.tg-perf-track{height:10px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;}
-.tg-perf-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#00d4ff,#0090c4);transition:width .5s;}
-.tg-perf-fill.gold{background:linear-gradient(90deg,#fbbf24,#f59e0b);}
-.tg-perf-fill.silver{background:linear-gradient(90deg,#94a3b8,#64748b);}
-.tg-perf-fill.bronze{background:linear-gradient(90deg,#fb923c,#ea580c);}
-
-/* ⭐ NEW: Chart bars */
 .tg-chart{display:flex;align-items:flex-end;gap:8px;height:180px;padding:20px 12px 30px;overflow-x:auto;position:relative;}
 .tg-chart-col{flex:1;min-width:50px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;}
 .tg-chart-bar{width:80%;max-width:44px;background:linear-gradient(180deg,#00d4ff,#0090c4);border-radius:6px 6px 0 0;min-height:4px;position:relative;transition:all .3s;}
@@ -399,18 +384,60 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-chart-val{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:900;color:#00d4ff;font-family:monospace;white-space:nowrap;}
 .tg-chart-lbl{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:9.5px;color:#8892a6;font-weight:700;white-space:nowrap;max-width:64px;overflow:hidden;text-overflow:ellipsis;text-align:center;}
 
-/* ⭐ Bulk actions bar */
 .tg-bulk-action-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(0,212,255,0.06);border-bottom:1px solid rgba(0,212,255,0.15);flex-wrap:wrap;}
 .tg-bulk-action-bar label{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#00d4ff;cursor:pointer;}
 .tg-bulk-action-bar input[type=checkbox]{width:18px;height:18px;accent-color:#00d4ff;cursor:pointer;}
 .tg-bulk-action-bar .cnt{font-size:11.5px;color:#8892a6;font-weight:700;margin-left:auto;}
 
-/* Notes */
 .tg-notes-box{background:rgba(250,204,21,0.06);border:1.5px solid rgba(250,204,21,0.25);border-radius:12px;padding:12px 14px;margin-bottom:14px;}
 .tg-notes-title{font-size:10.5px;font-weight:800;color:#facc15;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .tg-note-item{background:rgba(0,0,0,0.2);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:11.5px;color:#cbd5e1;line-height:1.5;}
 .tg-note-item:last-child{margin-bottom:0;}
 .tg-note-meta{font-size:9.5px;color:#8892a6;margin-top:3px;font-family:monospace;}
+
+/* ⭐ NEW: Rate Manager */
+.tg-rate-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.tg-rate-row:last-child{border-bottom:none;}
+.tg-rate-info{display:flex;align-items:center;gap:12px;min-width:0;}
+.tg-rate-av{width:38px;height:38px;border-radius:10px;background:rgba(0,212,255,0.15);color:#00d4ff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.tg-rate-body{flex:1;min-width:0;}
+.tg-rate-name{font-size:13.5px;font-weight:800;color:#fff;margin-bottom:2px;}
+.tg-rate-meta{font-size:11px;color:#8892a6;}
+.tg-rate-input-wrap{display:flex;align-items:center;gap:4px;background:rgba(0,212,255,0.08);border:1.5px solid rgba(0,212,255,0.3);border-radius:10px;padding:4px;}
+.tg-rate-input{width:70px;padding:6px 8px;border:none;border-radius:6px;background:transparent;color:#00d4ff;font-size:14px;font-weight:900;font-family:'JetBrains Mono',monospace;text-align:center;outline:none;}
+.tg-rate-input:focus{background:rgba(0,212,255,0.1);}
+.tg-rate-rs{color:#00d4ff;font-weight:900;font-size:14px;padding:0 4px;}
+.tg-rate-save{padding:6px 10px;border-radius:6px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:10.5px;font-weight:900;letter-spacing:0.3px;text-transform:uppercase;cursor:pointer;border:none;white-space:nowrap;}
+.tg-rate-save:disabled{opacity:0.4;cursor:not-allowed;}
+.tg-rate-save.dirty{background:linear-gradient(135deg,#f59e0b,#d97706);}
+.tg-rate-zone-badge{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px;background:rgba(0,212,255,0.12);color:#00d4ff;letter-spacing:0.4px;text-transform:uppercase;margin-left:6px;}
+
+/* ⭐ NEW: Announcements */
+.tg-ann-card{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px 18px;margin-bottom:12px;transition:all .15s;}
+.tg-ann-card:hover{border-color:rgba(0,212,255,0.25);}
+.tg-ann-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.tg-ann-title{font-size:14.5px;font-weight:800;color:#fff;margin-bottom:4px;}
+.tg-ann-meta{font-size:11px;color:#8892a6;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.tg-ann-body{font-size:12.5px;color:#cbd5e1;line-height:1.6;background:rgba(0,0,0,0.2);border-radius:8px;padding:10px 12px;white-space:pre-wrap;margin-bottom:10px;}
+.tg-ann-target{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:rgba(0,212,255,0.15);color:#00d4ff;letter-spacing:0.4px;text-transform:uppercase;}
+.tg-ann-target.all{background:rgba(34,197,94,0.15);color:#4ade80;}
+.tg-ann-target.zone{background:rgba(250,204,21,0.15);color:#facc15;}
+.tg-ann-target.partner{background:rgba(236,72,153,0.15);color:#f472b6;}
+.tg-ann-actions{display:flex;gap:6px;}
+
+/* ⭐ NEW: Rate History */
+.tg-rh-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.tg-rh-row:last-child{border-bottom:none;}
+.tg-rh-av{width:34px;height:34px;border-radius:9px;background:rgba(250,204,21,0.15);color:#facc15;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.tg-rh-body{flex:1;min-width:0;}
+.tg-rh-title{font-size:12.5px;font-weight:800;color:#fff;margin-bottom:2px;}
+.tg-rh-meta{font-size:10.5px;color:#8892a6;font-family:'JetBrains Mono',monospace;}
+.tg-rh-delta{font-size:13px;font-weight:900;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+.tg-rh-delta.up{color:#4ade80;}
+.tg-rh-delta.down{color:#f87171;}
+
+.tg-zone-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,212,255,0.04);border-radius:10px;margin-bottom:8px;}
+.tg-zone-name{flex:1;font-size:13px;font-weight:800;color:#fff;}
 
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
@@ -423,6 +450,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   .tg-hs-n{font-size:17px;}
   #tg-reader{min-height:220px;}
   .tg-notif-panel{top:auto;bottom:12px;left:12px;right:12px;width:auto;max-height:70vh;}
+  .tg-rate-row{grid-template-columns:1fr;gap:8px;}
 }
 </style>
 </head>
@@ -479,7 +507,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </header>
 
-<!-- ⭐ NOTIFICATION PANEL -->
+<!-- NOTIFICATION PANEL -->
 <div class="tg-notif-panel" id="tg-notif-panel">
   <div class="tg-notif-head">
     <h4>🔔 Notifications</h4>
@@ -513,10 +541,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     <div class="tg-dr-s">Finance</div>
     <div class="tg-dr-i" data-v="settle" onclick="tgNav('settle')"><div class="tg-dr-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="tg-dr-il">Settle Earnings</div><span class="tg-dr-ib" id="dr-b-settle" style="display:none;">0</span></div>
     <div class="tg-dr-i" data-v="history" onclick="tgNav('history')"><div class="tg-dr-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tg-dr-il">History & Export</div></div>
+    <div class="tg-dr-s">Rates & Comms</div>
+    <div class="tg-dr-i" data-v="rates" onclick="tgNav('rates')"><div class="tg-dr-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="tg-dr-il">Rate Manager</div><span class="tg-dr-ib" id="dr-b-rates" style="display:none;">0</span></div>
+    <div class="tg-dr-i" data-v="announce" onclick="tgNav('announce')"><div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 8a5 5 0 0 1 0 8"/></svg></div><div class="tg-dr-il">Announcements</div><span class="tg-dr-ib" id="dr-b-announce" style="display:none;">0</span></div>
     <div class="tg-dr-s">Settings</div>
     <div class="tg-dr-i" data-v="data" onclick="tgNav('data')"><div class="tg-dr-ic"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div><div class="tg-dr-il">Data Management</div></div>
   </div>
-  <div class="tg-dr-f">Pickup Command v6.0 · Made in India 🇮🇳</div>
+  <div class="tg-dr-f">Pickup Command v7.0 · Made in India 🇮🇳</div>
 </aside>
 
 <div class="tg-w" id="tg-w">
@@ -538,7 +569,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         </div>
       </div>
 
-      <!-- Today / Month quick stats -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;">
         <div class="tg-sc noclick" style="padding:14px;border-color:rgba(34,197,94,0.3);">
           <div class="tg-scl" style="font-size:10px;margin-bottom:6px;">📅 Today</div>
@@ -555,6 +585,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         <div class="tg-sc noclick" style="padding:14px;border-color:rgba(168,85,247,0.3);">
           <div class="tg-scl" style="font-size:10px;margin-bottom:6px;">🏆 Top Partner</div>
           <div class="tg-scn" style="font-size:15px;color:#c084fc;font-family:Roboto,sans-serif;" id="d-top-partner">—</div>
+        </div>
+        <div class="tg-sc noclick" style="padding:14px;border-color:rgba(0,212,255,0.3);">
+          <div class="tg-scl" style="font-size:10px;margin-bottom:6px;">💰 Avg Rate</div>
+          <div class="tg-scn" style="font-size:20px;color:#00d4ff;" id="d-avg-rate">₹0</div>
         </div>
       </div>
 
@@ -601,7 +635,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         </div>
       </div>
 
-      <!-- ⭐ TOP PARTNERS CHART -->
       <div class="tg-sec">
         <div class="tg-sh">
           <div><div class="tg-st">🏆 Top Partners This Month</div><div class="tg-ss">By number of packets collected</div></div>
@@ -815,6 +848,75 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
+    <!-- ⭐ NEW: RATE MANAGER -->
+    <div class="tg-v" id="v-rates">
+      <div class="tg-cw">
+        <div class="tg-chips" id="rates-chips">
+          <div class="tg-chip active" data-f="all" onclick="tgFilterRates('all')">All Partners <span class="tg-chip-c" id="rc-all">0</span></div>
+          <div class="tg-chip" data-f="zone" onclick="tgFilterRates('zone')">By Zone <span class="tg-chip-c" id="rc-zone">0</span></div>
+          <div class="tg-chip" data-f="history" onclick="tgFilterRates('history')">History <span class="tg-chip-c" id="rc-history">0</span></div>
+        </div>
+      </div>
+
+      <div id="rates-all-view">
+        <div class="tg-sec">
+          <div class="tg-sh">
+            <div><div class="tg-st">💰 Rate Manager</div><div class="tg-ss">Set/edit rate per packet · Inline save</div></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <div class="tg-srch" style="max-width:180px;padding:8px 12px;">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="rates-srch" placeholder="Search..." oninput="renderRates()">
+              </div>
+              <button class="tg-btn out" onclick="tgOpenBulkRate()">📊 Bulk Update</button>
+            </div>
+          </div>
+          <div class="tg-info-box" style="margin:12px 14px;">
+            <b>💡 Tip:</b> Rate change karte hi partner ke pickup.html dashboard pe update ho jayega. Rate history auto-save hoti hai.
+          </div>
+          <div id="rates-list"></div>
+        </div>
+
+        <div class="tg-sec">
+          <div class="tg-sh">
+            <div><div class="tg-st">📍 Zone-Based Overview</div><div class="tg-ss">Zone-wise average rate</div></div>
+          </div>
+          <div id="zone-rate-list" style="padding:14px 18px;"></div>
+        </div>
+      </div>
+
+      <div id="rates-zone-view" style="display:none;">
+        <div class="tg-sec">
+          <div class="tg-sh">
+            <div><div class="tg-st">📍 Partners by Zone</div><div class="tg-ss">Zone-wise rate overview</div></div>
+          </div>
+          <div id="rates-zone-list"></div>
+        </div>
+      </div>
+
+      <div id="rates-history-view" style="display:none;">
+        <div class="tg-sec">
+          <div class="tg-sh">
+            <div><div class="tg-st">📜 Rate Change History</div><div class="tg-ss">Full audit log · Kaun kab badla</div></div>
+            <span class="tg-pill blu" id="rh-count">0</span>
+          </div>
+          <div id="rate-history-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⭐ NEW: ANNOUNCEMENTS -->
+    <div class="tg-v" id="v-announce">
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st">📢 Announcements</div><div class="tg-ss">Partners ko message bhejo · Dashboard pe dikhega</div></div>
+          <button class="tg-btn pri" onclick="tgOpenAnnounce()">+ New Announcement</button>
+        </div>
+        <div id="announce-list" style="padding:14px 18px;">
+          <div class="tg-empty"><div class="tg-empty-i">📢</div><div class="tg-empty-t">No announcements</div><div class="tg-empty-d">Pehla announcement banao</div></div>
+        </div>
+      </div>
+    </div>
+
     <!-- HISTORY & EXPORT -->
     <div class="tg-v" id="v-history">
       <div class="tg-sec">
@@ -992,6 +1094,48 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
+<!-- ⭐ NEW: RATE EDIT MODAL -->
+<div class="tg-mod" id="mod-rate-edit">
+  <div class="tg-mod-c" style="max-width:480px;">
+    <div class="tg-mod-h"><div class="tg-mod-t">💰 Edit Rate</div><button class="tg-mod-x" onclick="tgCloseMod('mod-rate-edit')">✕</button></div>
+    <input type="hidden" id="re-partner-id">
+    <div id="re-body"></div>
+  </div>
+</div>
+
+<!-- ⭐ NEW: BULK RATE MODAL -->
+<div class="tg-mod" id="mod-bulk-rate">
+  <div class="tg-mod-c" style="max-width:520px;">
+    <div class="tg-mod-h"><div class="tg-mod-t">📊 Bulk Rate Update</div><button class="tg-mod-x" onclick="tgCloseMod('mod-bulk-rate')">✕</button></div>
+    <div id="br-body"></div>
+  </div>
+</div>
+
+<!-- ⭐ NEW: ANNOUNCEMENT MODAL -->
+<div class="tg-mod" id="mod-announce">
+  <div class="tg-mod-c" style="max-width:560px;">
+    <div class="tg-mod-h"><div class="tg-mod-t">📢 New Announcement</div><button class="tg-mod-x" onclick="tgCloseMod('mod-announce')">✕</button></div>
+    <div class="tg-fld"><label>Title *</label><input type="text" id="ann-title" maxlength="80" placeholder="e.g. Rate increase from Monday!"></div>
+    <div class="tg-fld"><label>Message *</label><textarea id="ann-message" maxlength="500" style="min-height:110px;" placeholder="Message body..."></textarea></div>
+    <div class="tg-fld"><label>Target *</label>
+      <select id="ann-target" onchange="tgUpdateAnnTarget()">
+        <option value="all">🌐 All Partners</option>
+        <option value="zone">📍 Specific Zone</option>
+        <option value="partner">👤 Specific Partner</option>
+      </select>
+    </div>
+    <div class="tg-fld" id="ann-target-value-wrap" style="display:none;">
+      <label id="ann-target-value-label">Select Zone</label>
+      <select id="ann-target-value"></select>
+    </div>
+    <div class="tg-info-box"><b>📌 Note:</b> Ye announcement partners ke pickup.html dashboard pe LIVE dikhega.</div>
+    <div class="tg-mod-a">
+      <button class="tg-mod-b gho" onclick="tgCloseMod('mod-announce')">Cancel</button>
+      <button class="tg-mod-b pri" id="ann-submit-btn" onclick="tgSubmitAnnouncement()">📤 Send</button>
+    </div>
+  </div>
+</div>
+
 <div class="tg-confirm" id="tg-confirm" style="position:fixed;inset:0;background:rgba(5,8,16,0.9);backdrop-filter:blur(8px);z-index:999999;display:none;align-items:center;justify-content:center;padding:20px;">
   <div style="background:linear-gradient(180deg,#0f1729,#0a0e1a);border:1px solid rgba(0,212,255,0.25);border-radius:18px;padding:26px 22px 22px;max-width:420px;width:100%;text-align:center;">
     <div id="cf-i" style="width:64px;height:64px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:30px;background:rgba(0,212,255,0.12);">❓</div>
@@ -1071,6 +1215,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let NOTIF_CACHE = [];
   let NOTIF_READ_KEY = 'toego_pickup_admin_notif_read';
 
+  /* ⭐ NEW: Rate & Announcement state */
+  let ALL_RATE_HISTORY = [];
+  let ALL_ANNOUNCEMENTS = [];
+  let unsubAnnounce = null, unsubRateHistory = null;
+  let RATE_FILTER = 'all';
+  let _rateDirty = new Set();
+  let BULK_RATE_SELECTED = new Set();
+
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function inr(n){ return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0}); }
   function fdate(d){ if(!d) return '—'; const dt = d.toDate?d.toDate():new Date(d); return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
@@ -1124,7 +1276,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts'); if (!w) return;
-    const icons = { info:'ℹ', suc:'✓', err:'✕' };
     const el = document.createElement('div');
     el.className = 'tg-toast ' + (type === 'success' ? 'suc' : type === 'error' ? 'err' : '');
     el.innerHTML = '<div class="tg-toast-icon">' + (type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ') + '</div><div>' + msg + '</div>';
@@ -1152,7 +1303,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setTimeout(() => el.classList.remove('show'), 400);
   }
 
-  /* Call / WhatsApp helpers */
   window.tgCall = function(phone) {
     if (!phone) { toast('No phone number', 'err'); return; }
     const p = String(phone).replace(/\D/g, '');
@@ -1217,12 +1367,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     initHistory();
     initListeners();
     loadNotifRead();
+    listenAnnouncements();
+    listenRateHistory();
   }
 
   function initHistory() {
     try {
       const hash = (location.hash || '').replace('#', '');
-      const validViews = ['dash','apps','boys','pickups','stuck','tasks','receive','received','settle','history','data'];
+      const validViews = ['dash','apps','boys','pickups','stuck','tasks','receive','received','settle','rates','announce','history','data'];
       const initialView = validViews.includes(hash) ? hash : 'dash';
       history.replaceState({ pickupView: initialView }, '', '#' + initialView);
       if (initialView !== 'dash') switchViewInternal(initialView, true);
@@ -1258,11 +1410,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       if (v === 'apps') renderApps();
       if (v === 'boys') renderBoys();
       if (v === 'pickups') renderPendingPickups();
-      if (v === 'stuck') renderStuckTasks();
+      if (v === 'stuck') { populateStuckFilters(); renderStuckTasks(); }
       if (v === 'receive') renderReceive();
       if (v === 'received') renderReceived();
       if (v === 'tasks') { populateTaskFilters(); renderTasks(); }
       if (v === 'settle') { renderSettle(); renderSettleHistory(); }
+      if (v === 'rates') { tgFilterRates('all'); renderRates(); }
+      if (v === 'announce') renderAnnouncements();
       if (v === 'history') { initExportDates(); renderHistory(); }
     });
   }
@@ -1288,6 +1442,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       else if (CUR_VIEW === 'received') renderReceived();
       else if (CUR_VIEW === 'tasks') renderTasks();
       else if (CUR_VIEW === 'settle') { renderSettle(); renderSettleHistory(); }
+      else if (CUR_VIEW === 'rates') renderRates();
+      else if (CUR_VIEW === 'announce') renderAnnouncements();
     }, 150);
   }
 
@@ -1320,7 +1476,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     });
   }
 
-  /* Notifications */
   function loadNotifRead() {
     try { const arr = JSON.parse(localStorage.getItem(NOTIF_READ_KEY) || '[]'); NOTIF_CACHE.read = new Set(arr); }
     catch(e) { NOTIF_CACHE.read = new Set(); }
@@ -1328,24 +1483,19 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function saveNotifRead() { try { localStorage.setItem(NOTIF_READ_KEY, JSON.stringify([...NOTIF_CACHE.read])); } catch(e) {} }
   function buildNotifList() {
     const list = [];
-    const now = Date.now();
-    // New applications
     ALL_APPS.filter(a => {
       const st = (a.status||'pending').toLowerCase();
       return st !== 'approved' && st !== 'rejected' && a.approved !== true;
     }).forEach(a => {
       list.push({ id: 'app_' + a.id, type: 'pink', icon: '📩', title: 'New Application', text: a.name + ' ne apply kiya', time: a.appliedAt || a.createdAt, link: 'apps' });
     });
-    // Ready pickups
     const ready = getPendingPickupOrders().slice(0, 5);
     ready.forEach(o => {
       list.push({ id: 'ready_' + o.id, type: 'yellow', icon: '📦', title: 'Ready for Pickup', text: '#' + String(o.id).slice(0,10).toUpperCase() + ' · ' + (o.sellerName||'Seller'), time: o.labelGeneratedAt || o.updatedAt, link: 'pickups' });
     });
-    // Stuck > 24h
     ALL_TASKS.filter(t => normStatus(t.status) === 'assigned' && ageHours(t.assignedAt) > 24).forEach(t => {
       list.push({ id: 'stuck_' + t.id, type: 'red', icon: '⚠️', title: 'Order Stuck >24h', text: '#' + getTaskDisplayId(t) + ' · ' + (t.pickupBoyName||'Partner'), time: t.assignedAt, link: 'stuck' });
     });
-    // Pending settlement
     const pendingSettle = ALL_TASKS.filter(t => normStatus(t.status) === 'received').reduce((s,t) => s + Number(t.earning||0), 0);
     if (pendingSettle > 0) {
       list.push({ id: 'settle_' + Math.floor(pendingSettle), type: 'purple', icon: '💰', title: 'Pending Settlement', text: inr(pendingSettle) + ' pending hai partners ke liye', time: { toDate: () => new Date() }, link: 'settle' });
@@ -1416,7 +1566,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   });
 
-  /* Dashboard render */
   function renderDash() {
     renderTicker();
     const pendingApps = ALL_APPS.filter(a => {
@@ -1429,7 +1578,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const received = ALL_TASKS.filter(t => normStatus(t.status) === 'received').length;
     const pendingSettle = ALL_TASKS.filter(t => normStatus(t.status) === 'received').reduce((s,t) => s + Number(t.earning||0), 0);
 
-    // Today/Month
     const today = new Date(); today.setHours(0,0,0,0);
     const todayMs = today.getTime();
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).getTime();
@@ -1441,9 +1589,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         if (tms >= monthStart) monthCount++;
       }
     });
-    // Stuck 24h+
     const stuck24 = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned' && ageHours(t.assignedAt) > 24).length;
-    // Top partner this month
     const partnerCounts = {};
     ALL_TASKS.forEach(t => {
       if (normStatus(t.status) === 'received') {
@@ -1455,6 +1601,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     });
     const topPartner = Object.entries(partnerCounts).sort((a,b) => b[1]-a[1])[0];
 
+    const rates = ALL_BOYS.map(p => Number(p.ratePerPacket || 10));
+    const avgRate = rates.length ? Math.round(rates.reduce((a,b) => a+b, 0) / rates.length) : 0;
+
     setText('d-ready', ready);
     setText('d-stuck', stuck);
     setText('d-assigned', stuck);
@@ -1464,6 +1613,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setText('d-month', monthCount);
     setText('d-stuck24', stuck24);
     setText('d-top-partner', topPartner ? topPartner[0].split(' ')[0] + ' · ' + topPartner[1] : '—');
+    setText('d-avg-rate', inr(avgRate));
     setText('s-ready', ready);
     setText('s-stuck', stuck);
     setText('s-apps', pendingApps);
@@ -1473,7 +1623,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setText('s-received', received);
     setText('s-settle', inr(pendingSettle));
 
-    // Top chart
     const chartEl = document.getElementById('d-top-chart');
     if (chartEl) {
       const sorted = Object.entries(partnerCounts).sort((a,b) => b[1]-a[1]).slice(0, 6);
@@ -1488,7 +1637,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }
     }
 
-    // Live feed
     const feed = [];
     ALL_TASKS.slice(0, 40).forEach(t => {
       const s = normStatus(t.status);
@@ -1512,7 +1660,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }).join('');
     }
 
-    // Active partners
     const activeBoys = {};
     ALL_TASKS.forEach(t => {
       if (normStatus(t.status) === 'collected' && t.pickupBoyId) {
@@ -1958,7 +2105,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     })();
   };
 
-  /* Boy detail with performance chart */
   window.tgOpenBoyDetail = function(bid) {
     const b = ALL_APPS.find(x => x.id === bid);
     if (!b) return;
@@ -1969,8 +2115,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const totalPickups = tasks.filter(t => normStatus(t.status) !== 'assigned').length;
     const isBlocked = b.blocked === true;
     const isOffline = b.offline === true;
+    const rate = Number(b.ratePerPacket || b.rate || 10);
 
-    // Perf stats
     const today = new Date(); today.setHours(0,0,0,0);
     const todayMs = today.getTime();
     const weekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay(), 0, 0, 0).getTime();
@@ -1985,7 +2131,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }
     });
 
-    // Chart: last 7 days
     const days = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() - i);
@@ -2014,6 +2159,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<button class="tg-btn suc" style="flex:1;justify-content:center;padding:12px;" onclick="tgCall(\'' + esc(b.phone||'') + '\')">📞 Call</button>' +
         '<button class="tg-btn wa" style="flex:1;justify-content:center;padding:12px;" onclick="tgWhatsApp(\'' + esc(b.phone||'') + '\')">💬 WhatsApp</button>' +
       '</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:14px;">' +
+        '<button class="tg-btn pri" style="flex:1;justify-content:center;padding:11px;font-size:11.5px;" onclick="tgCloseMod(\'mod-boy-detail\');tgOpenRateEditModal(\'' + esc(bid) + '\')">💰 Edit Rate (' + inr(rate) + '/pkt)</button>' +
+      '</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">' +
         '<div class="tg-sc noclick" style="padding:10px;"><div class="tg-scn" style="font-size:18px;color:#4ade80;">' + todayCnt + '</div><div class="tg-scl" style="font-size:9px;">Today</div></div>' +
         '<div class="tg-sc noclick" style="padding:10px;"><div class="tg-scn" style="font-size:18px;color:#00d4ff;">' + weekCnt + '</div><div class="tg-scl" style="font-size:9px;">Week</div></div>' +
@@ -2025,7 +2173,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div class="tg-sc noclick" style="padding:12px;"><div class="tg-scn" style="font-size:18px;color:#4ade80;">' + inr(totalPaid) + '</div><div class="tg-scl" style="font-size:9.5px;">Paid</div></div>' +
         '<div class="tg-sc noclick" style="padding:12px;"><div class="tg-scn" style="font-size:18px;">' + totalPickups + '</div><div class="tg-scl" style="font-size:9.5px;">Total</div></div>' +
       '</div>' +
-      // Chart
       '<div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:14px;margin-bottom:14px;">' +
         '<div style="font-size:11px;font-weight:800;color:#8892a6;text-transform:uppercase;margin-bottom:8px;">📊 Last 7 Days</div>' +
         '<div class="tg-chart" style="height:120px;">' + days.map(d => {
@@ -2250,7 +2397,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const el = document.getElementById('stuck-list');
     if (!el) return;
     let stuck = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned');
-    // Filters
     const q = (document.getElementById('stuck-srch')?.value || '').toLowerCase().trim();
     if (q) stuck = stuck.filter(t => [(t.orderId||''),(t.sellerName||''),(t.pickupBoyName||''),(t.buyerName||'')].join(' ').toLowerCase().includes(q));
     const sellerF = document.getElementById('stuck-seller-filter')?.value;
@@ -2258,7 +2404,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const partnerF = document.getElementById('stuck-partner-filter')?.value;
     if (partnerF && partnerF !== 'all') stuck = stuck.filter(t => t.pickupBoyName === partnerF);
 
-    // Sort by age (oldest first)
     stuck.sort((a, b) => ageHours(b.assignedAt) - ageHours(a.assignedAt));
 
     if (!stuck.length) {
@@ -2745,6 +2890,355 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
+  /* ========== ⭐ NEW: RATE MANAGER ========== */
+  function renderRates() {
+    const el = document.getElementById('rates-list');
+    if (!el) return;
+    const partners = ALL_BOYS.slice();
+    const q = (document.getElementById('rates-srch')?.value || '').toLowerCase().trim();
+    let list = partners;
+    if (q) list = list.filter(p => [(p.name||''),(p.phone||''),(p.zone||'')].join(' ').toLowerCase().includes(q));
+
+    setText('rc-all', partners.length);
+    setText('rc-zone', [...new Set(partners.map(p => p.zone).filter(Boolean))].length);
+    setText('rc-history', ALL_RATE_HISTORY.length);
+
+    if (!list.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">💰</div><div class="tg-empty-t">No partners</div></div>';
+    } else {
+      el.innerHTML = list.map(p => {
+        const rate = Number(p.ratePerPacket || p.rate || 10);
+        const dirty = _rateDirty.has(p.id);
+        return '<div class="tg-rate-row" data-partner-id="' + esc(p.id) + '">' +
+          '<div class="tg-rate-info">' +
+            '<div class="tg-rate-av">' + esc(ini(p.name)) + '</div>' +
+            '<div class="tg-rate-body">' +
+              '<div class="tg-rate-name">' + esc(p.name || 'Partner') + '</div>' +
+              '<div class="tg-rate-meta">📞 ' + esc(p.phone||'—') + (p.zone ? ' · 📍 ' + esc(p.zone) : '') + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="tg-rate-input-wrap">' +
+            '<span class="tg-rate-rs">₹</span>' +
+            '<input type="number" class="tg-rate-input" value="' + rate + '" min="0" max="500" oninput="tgRateChanged(\'' + esc(p.id) + '\', this.value)">' +
+            '<span style="font-size:10px;color:#8892a6;font-weight:700;">/pkt</span>' +
+          '</div>' +
+          '<button class="tg-rate-save ' + (dirty ? 'dirty' : '') + '" ' + (dirty ? '' : 'disabled') + ' onclick="tgSaveRate(\'' + esc(p.id) + '\')">' + (dirty ? 'Save' : '✓') + '</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    const zoneList = document.getElementById('zone-rate-list');
+    if (zoneList) {
+      const zones = {};
+      partners.forEach(p => {
+        if (p.zone) {
+          if (!zones[p.zone]) zones[p.zone] = { count: 0, rates: [] };
+          zones[p.zone].count++;
+          zones[p.zone].rates.push(Number(p.ratePerPacket || 10));
+        }
+      });
+      const zoneArr = Object.entries(zones).sort((a,b) => b[1].count - a[1].count);
+      if (!zoneArr.length) {
+        zoneList.innerHTML = '<div style="text-align:center;padding:16px;color:#64748b;font-size:12.5px;">No zones configured yet. Partner approval ke waqt zone set karo.</div>';
+      } else {
+        zoneList.innerHTML = zoneArr.map(([zone, data]) => {
+          const avgRate = Math.round(data.rates.reduce((a,b) => a+b, 0) / data.rates.length);
+          return '<div class="tg-zone-row"><div class="tg-zone-name">📍 ' + esc(zone) + '<span class="tg-rate-zone-badge">' + data.count + ' partners</span></div><div style="font-size:12px;color:#8892a6;font-weight:700;">Avg: <span style="color:#00d4ff;font-weight:900;font-family:monospace;">' + inr(avgRate) + '</span></div></div>';
+        }).join('');
+      }
+    }
+  }
+
+  window.tgFilterRates = function(f) {
+    RATE_FILTER = f;
+    document.querySelectorAll('#rates-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
+    document.getElementById('rates-all-view').style.display = (f === 'all') ? 'block' : 'none';
+    document.getElementById('rates-zone-view').style.display = (f === 'zone') ? 'block' : 'none';
+    document.getElementById('rates-history-view').style.display = (f === 'history') ? 'block' : 'none';
+    if (f === 'zone') renderRatesByZone();
+    if (f === 'history') renderRateHistory();
+  };
+
+  function renderRatesByZone() {
+    const el = document.getElementById('rates-zone-list');
+    if (!el) return;
+    const partners = ALL_BOYS.slice();
+    const zones = {};
+    partners.forEach(p => {
+      const z = p.zone || 'Unknown';
+      if (!zones[z]) zones[z] = [];
+      zones[z].push(p);
+    });
+    const zoneArr = Object.entries(zones).sort((a,b) => b[1].length - a[1].length);
+    if (!zoneArr.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📍</div><div class="tg-empty-t">No zones</div></div>';
+      return;
+    }
+    el.innerHTML = zoneArr.map(([zone, list]) => {
+      return '<div class="tg-sec" style="margin:12px 18px;"><div class="tg-sh" style="padding:12px 14px;"><div><div class="tg-st" style="font-size:13px;">📍 ' + esc(zone) + '</div><div class="tg-ss">' + list.length + ' partners</div></div></div>' +
+        list.map(p => {
+          const rate = Number(p.ratePerPacket || 10);
+          return '<div class="tg-rate-row"><div class="tg-rate-info"><div class="tg-rate-av">' + esc(ini(p.name)) + '</div><div class="tg-rate-body"><div class="tg-rate-name">' + esc(p.name) + '</div><div class="tg-rate-meta">📞 ' + esc(p.phone||'—') + '</div></div></div><div class="tg-rate-input-wrap"><span class="tg-rate-rs">₹</span><input type="number" class="tg-rate-input" value="' + rate + '" min="0" max="500" oninput="tgRateChanged(\'' + esc(p.id) + '\', this.value)"><span style="font-size:10px;color:#8892a6;font-weight:700;">/pkt</span></div><button class="tg-rate-save ' + (_rateDirty.has(p.id) ? 'dirty' : '') + '" ' + (_rateDirty.has(p.id) ? '' : 'disabled') + ' onclick="tgSaveRate(\'' + esc(p.id) + '\')">' + (_rateDirty.has(p.id) ? 'Save' : '✓') + '</button></div>';
+        }).join('') + '</div>';
+    }).join('');
+  }
+
+  function renderRateHistory() {
+    const el = document.getElementById('rate-history-list');
+    if (!el) return;
+    setText('rh-count', ALL_RATE_HISTORY.length);
+    if (!ALL_RATE_HISTORY.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📜</div><div class="tg-empty-t">No rate changes yet</div></div>';
+      return;
+    }
+    el.innerHTML = ALL_RATE_HISTORY.slice(0, 100).map(h => {
+      const delta = Number(h.newRate || 0) - Number(h.oldRate || 0);
+      const dt = h.changedAt?.toDate ? h.changedAt.toDate() : null;
+      return '<div class="tg-rh-row"><div class="tg-rh-av">₹</div><div class="tg-rh-body"><div class="tg-rh-title">' + esc(h.partnerName || 'Partner') + '</div><div class="tg-rh-meta">' + inr(h.oldRate) + ' → ' + inr(h.newRate) + ' · ' + (dt ? fdatetime(dt) : '—') + '</div></div><div class="tg-rh-delta ' + (delta >= 0 ? 'up' : 'down') + '">' + (delta >= 0 ? '+' : '') + inr(delta) + '</div></div>';
+    }).join('');
+  }
+
+  window.tgRateChanged = function(pid, val) {
+    const existing = ALL_BOYS.find(p => p.id === pid);
+    if (!existing) return;
+    const oldRate = Number(existing.ratePerPacket || 10);
+    const newRate = Number(val || 0);
+    if (newRate !== oldRate) _rateDirty.add(pid);
+    else _rateDirty.delete(pid);
+    const row = document.querySelector('[data-partner-id="' + pid + '"]');
+    if (row) {
+      const btn = row.querySelector('.tg-rate-save');
+      if (btn) {
+        const dirty = _rateDirty.has(pid);
+        btn.classList.toggle('dirty', dirty);
+        btn.disabled = !dirty;
+        btn.textContent = dirty ? 'Save' : '✓';
+      }
+    }
+  };
+
+  window.tgSaveRate = async function(pid) {
+    const p = ALL_BOYS.find(x => x.id === pid);
+    if (!p) return;
+    const row = document.querySelector('[data-partner-id="' + pid + '"]');
+    if (!row) return;
+    const input = row.querySelector('.tg-rate-input');
+    const newRate = Number(input?.value || 0);
+    const oldRate = Number(p.ratePerPacket || 10);
+    if (newRate === oldRate) return;
+    if (newRate < 0 || newRate > 500) { toast('Rate 0-500 ke beech hona chahiye', 'err'); return; }
+    const btn = row.querySelector('.tg-rate-save');
+    if (btn) { btn.disabled = true; btn.textContent = '...'; }
+    try {
+      await db.collection('deliveryPartners').doc(pid).update({
+        ratePerPacket: newRate,
+        rateUpdatedAt: FV.serverTimestamp(),
+        rateUpdatedBy: USER.uid,
+        updatedAt: FV.serverTimestamp()
+      });
+      await db.collection('rateHistory').add({
+        partnerId: pid, partnerName: p.name || 'Partner',
+        oldRate, newRate, changedAt: FV.serverTimestamp(),
+        changedBy: USER.uid, changedByEmail: USER.email || ''
+      });
+      _rateDirty.delete(pid);
+      toast('✓ Rate updated to ' + inr(newRate), 'suc');
+      renderRates();
+    } catch(e) {
+      toast('Failed: ' + e.message, 'err');
+      if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+    }
+  };
+
+  window.tgOpenBulkRate = function() {
+    BULK_RATE_SELECTED.clear();
+    const partners = ALL_BOYS.slice();
+    const phtml = partners.map(p => '<div class="tg-sel" data-bulk-id="' + esc(p.id) + '" onclick="tgBulkTogglePartner(\'' + esc(p.id) + '\')"><div class="tg-sel-radio"></div><div class="tg-sel-body"><div class="tg-sel-t">' + esc(p.name||'Partner') + '</div><div class="tg-sel-s"><span>📞 ' + esc(p.phone||'—') + '</span>' + (p.zone ? '<span>📍 ' + esc(p.zone) + '</span>' : '') + '</div></div><div class="tg-sel-r">₹' + (p.ratePerPacket||10) + '</div></div>').join('');
+    document.getElementById('br-body').innerHTML =
+      '<div class="tg-info-box warn"><b>⚠️ Bulk Update:</b> Selected partners ka rate change hoga + history log hogi.</div>' +
+      '<div class="tg-fld"><label>Select Partners</label><div style="max-height:280px;overflow-y:auto;">' + (partners.length ? phtml : '<div style="padding:14px;text-align:center;color:#64748b;">No partners</div>') + '</div></div>' +
+      '<div class="tg-fld"><label>New Rate (₹ / packet)</label><input type="number" id="br-rate" value="10" min="0" max="500"></div>' +
+      '<div class="tg-mod-a"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-bulk-rate\')">Cancel</button><button class="tg-mod-b suc" id="br-confirm" onclick="tgConfirmBulkRate()">📊 Update Selected</button></div>';
+    openMod('mod-bulk-rate');
+  };
+
+  window.tgBulkTogglePartner = function(pid) {
+    if (BULK_RATE_SELECTED.has(pid)) BULK_RATE_SELECTED.delete(pid);
+    else BULK_RATE_SELECTED.add(pid);
+    const el = document.querySelector('[data-bulk-id="' + pid + '"]');
+    if (el) el.classList.toggle('active', BULK_RATE_SELECTED.has(pid));
+  };
+
+  window.tgConfirmBulkRate = async function() {
+    const ids = Array.from(BULK_RATE_SELECTED);
+    if (!ids.length) { toast('Select at least 1 partner', 'err'); return; }
+    const newRate = Number(document.getElementById('br-rate')?.value || 0);
+    if (newRate < 0 || newRate > 500) { toast('Rate 0-500', 'err'); return; }
+    const btn = document.getElementById('br-confirm');
+    if (btn) { btn.disabled = true; btn.textContent = 'Updating...'; }
+    let ok = 0;
+    for (const pid of ids) {
+      const p = ALL_BOYS.find(x => x.id === pid);
+      if (!p) continue;
+      const oldRate = Number(p.ratePerPacket || 10);
+      if (oldRate === newRate) continue;
+      try {
+        await db.collection('deliveryPartners').doc(pid).update({ ratePerPacket: newRate, rateUpdatedAt: FV.serverTimestamp(), rateUpdatedBy: USER.uid, updatedAt: FV.serverTimestamp() });
+        await db.collection('rateHistory').add({ partnerId: pid, partnerName: p.name || 'Partner', oldRate, newRate, changedAt: FV.serverTimestamp(), changedBy: USER.uid, changedByEmail: USER.email || '' });
+        ok++;
+      } catch(e) {}
+    }
+    toast('✓ ' + ok + ' partner(s) updated to ' + inr(newRate), 'suc');
+    tgCloseMod('mod-bulk-rate');
+    renderRates();
+  };
+
+  window.tgOpenRateEditModal = function(pid) {
+    const p = ALL_BOYS.find(x => x.id === pid);
+    if (!p) return;
+    document.getElementById('re-partner-id').value = pid;
+    const rate = Number(p.ratePerPacket || 10);
+    const hist = ALL_RATE_HISTORY.filter(h => h.partnerId === pid).slice(0, 10);
+    document.getElementById('re-body').innerHTML =
+      '<div class="tg-info-box"><b>' + esc(p.name || 'Partner') + '</b><br>📞 ' + esc(p.phone||'—') + (p.zone ? ' · 📍 ' + esc(p.zone) : '') + '</div>' +
+      '<div class="tg-fld"><label>New Rate (₹ / packet)</label><input type="number" id="re-new-rate" value="' + rate + '" min="0" max="500"></div>' +
+      (hist.length ? '<div style="font-size:11px;font-weight:800;color:#8892a6;text-transform:uppercase;margin-bottom:8px;">Recent Changes</div>' + hist.map(h => {
+        const dt = h.changedAt?.toDate ? h.changedAt.toDate() : null;
+        return '<div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(0,0,0,0.2);border-radius:6px;margin-bottom:4px;font-size:11.5px;"><span>' + inr(h.oldRate) + ' → ' + inr(h.newRate) + '</span><span style="color:#64748b;font-family:monospace;">' + (dt ? fdate(dt) : '') + '</span></div>';
+      }).join('') : '') +
+      '<div class="tg-mod-a"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-rate-edit\')">Cancel</button><button class="tg-mod-b suc" onclick="tgConfirmRateEdit()">✓ Save</button></div>';
+    openMod('mod-rate-edit');
+  };
+
+  window.tgConfirmRateEdit = async function() {
+    const pid = document.getElementById('re-partner-id').value;
+    const p = ALL_BOYS.find(x => x.id === pid);
+    if (!p) return;
+    const newRate = Number(document.getElementById('re-new-rate').value || 0);
+    const oldRate = Number(p.ratePerPacket || 10);
+    if (newRate === oldRate) { tgCloseMod('mod-rate-edit'); return; }
+    if (newRate < 0 || newRate > 500) { toast('Rate 0-500', 'err'); return; }
+    try {
+      await db.collection('deliveryPartners').doc(pid).update({ ratePerPacket: newRate, rateUpdatedAt: FV.serverTimestamp(), rateUpdatedBy: USER.uid, updatedAt: FV.serverTimestamp() });
+      await db.collection('rateHistory').add({ partnerId: pid, partnerName: p.name || 'Partner', oldRate, newRate, changedAt: FV.serverTimestamp(), changedBy: USER.uid, changedByEmail: USER.email || '' });
+      toast('✓ Rate updated: ' + inr(newRate), 'suc');
+      tgCloseMod('mod-rate-edit');
+      renderRates();
+    } catch(e) { toast('Failed: ' + e.message, 'err'); }
+  };
+
+  /* ========== ⭐ NEW: ANNOUNCEMENTS ========== */
+  function renderAnnouncements() {
+    const el = document.getElementById('announce-list');
+    if (!el) return;
+    const active = ALL_ANNOUNCEMENTS.filter(a => a.active !== false);
+    const badge = document.getElementById('dr-b-announce');
+    if (badge) { badge.textContent = active.length; badge.style.display = active.length > 0 ? 'inline-block' : 'none'; }
+    if (!active.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📢</div><div class="tg-empty-t">No announcements</div><div class="tg-empty-d">Partners ko kuch bhi message bhejo — dashboard pe dikhega</div></div>';
+      return;
+    }
+    el.innerHTML = active.map(a => {
+      const dt = a.createdAt?.toDate ? a.createdAt.toDate() : null;
+      const tgt = a.target === 'all' ? '🌐 All Partners' : a.target === 'zone' ? '📍 ' + (a.targetDisplay || a.targetValue || 'Zone') : '👤 ' + (a.targetDisplay || a.targetValue || 'Partner');
+      const tgtCls = a.target || 'all';
+      return '<div class="tg-ann-card"><div class="tg-ann-head"><div style="flex:1;min-width:0;"><div class="tg-ann-title">' + esc(a.title || '') + '</div><div class="tg-ann-meta"><span class="tg-ann-target ' + tgtCls + '">' + esc(tgt) + '</span><span>' + (dt ? fdatetime(dt) : '—') + '</span></div></div><div class="tg-ann-actions"><button class="tg-btn dan" style="padding:6px 10px;font-size:10.5px;" onclick="tgDeleteAnnouncement(\'' + esc(a.id) + '\')">🗑️</button></div></div><div class="tg-ann-body">' + esc(a.message || '') + '</div></div>';
+    }).join('');
+  }
+
+  window.tgOpenAnnounce = function() {
+    document.getElementById('ann-title').value = '';
+    document.getElementById('ann-message').value = '';
+    document.getElementById('ann-target').value = 'all';
+    document.getElementById('ann-target-value-wrap').style.display = 'none';
+    tgUpdateAnnTarget();
+    openMod('mod-announce');
+  };
+
+  window.tgUpdateAnnTarget = function() {
+    const tgt = document.getElementById('ann-target').value;
+    const wrap = document.getElementById('ann-target-value-wrap');
+    const sel = document.getElementById('ann-target-value');
+    const lbl = document.getElementById('ann-target-value-label');
+    if (tgt === 'all') { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    if (tgt === 'zone') {
+      lbl.textContent = 'Select Zone';
+      const zones = [...new Set(ALL_BOYS.map(p => p.zone).filter(Boolean))].sort();
+      sel.innerHTML = '<option value="">Select zone</option>' + zones.map(z => '<option value="' + esc(z) + '">' + esc(z) + '</option>').join('');
+    } else {
+      lbl.textContent = 'Select Partner';
+      sel.innerHTML = '<option value="">Select partner</option>' + ALL_BOYS.map(p => '<option value="' + esc(p.id) + '">' + esc(p.name || 'Partner') + '</option>').join('');
+    }
+  };
+
+  window.tgSubmitAnnouncement = async function() {
+    const title = (document.getElementById('ann-title').value || '').trim();
+    const message = (document.getElementById('ann-message').value || '').trim();
+    const target = document.getElementById('ann-target').value;
+    const targetValue = target === 'all' ? '' : (document.getElementById('ann-target-value').value || '').trim();
+    if (!title) { toast('Title required', 'err'); return; }
+    if (!message) { toast('Message required', 'err'); return; }
+    if (target !== 'all' && !targetValue) { toast('Select target', 'err'); return; }
+    const btn = document.getElementById('ann-submit-btn');
+    btn.disabled = true; btn.textContent = 'Sending...';
+    try {
+      let targetDisplay = targetValue;
+      if (target === 'partner') {
+        const p = ALL_BOYS.find(x => x.id === targetValue);
+        targetDisplay = p?.name || targetValue;
+      }
+      await db.collection('announcements').add({
+        title, message, target, targetValue, targetDisplay,
+        active: true,
+        createdAt: FV.serverTimestamp(),
+        createdBy: USER.uid,
+        createdByEmail: USER.email || ''
+      });
+      toast('✓ Announcement sent', 'suc');
+      tgCloseMod('mod-announce');
+    } catch(e) {
+      toast('Failed: ' + e.message, 'err');
+      btn.disabled = false; btn.textContent = '📤 Send';
+    }
+  };
+
+  window.tgDeleteAnnouncement = function(aid) {
+    confirmCb = async () => {
+      try {
+        await db.collection('announcements').doc(aid).update({ active: false, deletedAt: FV.serverTimestamp(), deletedBy: USER.uid });
+        toast('✓ Deleted', 'suc');
+        tgCloseConfirm();
+      } catch(e) { toast('Failed: ' + e.message, 'err'); }
+    };
+    setText('cf-t', 'Delete Announcement?');
+    setText('cf-m', 'Partners ke dashboard se hata jayega.');
+    setText('cf-b', '🗑️ Delete');
+    document.getElementById('cf-b').style.background = 'linear-gradient(135deg,#ef4444,#b91c1c)';
+    openMod('tg-confirm');
+  };
+
+  function listenAnnouncements() {
+    if (unsubAnnounce) try { unsubAnnounce(); } catch(e){}
+    try {
+      unsubAnnounce = db.collection('announcements').onSnapshot(snap => {
+        ALL_ANNOUNCEMENTS = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt?.toDate?.()?.getTime?.() || 0) - (a.createdAt?.toDate?.()?.getTime?.() || 0));
+        if (CUR_VIEW === 'announce') renderAnnouncements();
+        else { const active = ALL_ANNOUNCEMENTS.filter(a => a.active !== false); const b = document.getElementById('dr-b-announce'); if (b) { b.textContent = active.length; b.style.display = active.length > 0 ? 'inline-block' : 'none'; } }
+      }, err => console.warn('Announce err:', err && err.message));
+    } catch(e) {}
+  }
+
+  function listenRateHistory() {
+    if (unsubRateHistory) try { unsubRateHistory(); } catch(e){}
+    try {
+      unsubRateHistory = db.collection('rateHistory').orderBy('changedAt', 'desc').limit(200).onSnapshot(snap => {
+        ALL_RATE_HISTORY = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (CUR_VIEW === 'rates' && RATE_FILTER === 'history') renderRateHistory();
+      }, err => console.warn('Rate history err:', err && err.message));
+    } catch(e) {}
+  }
+
   /* ========== EXPORT ========== */
   function initExportDates() {
     const today = new Date().toISOString().slice(0,10);
@@ -3113,7 +3607,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (prompt('Type "FULL RESET":') !== 'FULL RESET') return;
     (async () => {
       let n = 0;
-      for (const c of ['pickupTasks', 'scanLogs', 'settlements', 'handovers', 'deliveryPartners']) {
+      for (const c of ['pickupTasks', 'scanLogs', 'settlements', 'handovers', 'deliveryPartners', 'rateHistory', 'announcements']) {
         try {
           let hasMore = true;
           while (hasMore) {
@@ -3185,6 +3679,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         scheduleHeavyRender();
       }).catch(() => {});
     });
+
+    listenAnnouncements();
+    listenRateHistory();
   }
 
   function updateBadges() {
@@ -3202,6 +3699,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const bRecv = document.getElementById('dr-b-receive'); if (bRecv) { bRecv.textContent = collected; bRecv.style.display = collected > 0 ? 'inline-block' : 'none'; }
     const bReceived = document.getElementById('dr-b-received'); if (bReceived) { bReceived.textContent = received; bReceived.style.display = received > 0 ? 'inline-block' : 'none'; }
     const bSettle = document.getElementById('dr-b-settle'); if (bSettle) { bSettle.textContent = received; bSettle.style.display = received > 0 ? 'inline-block' : 'none'; }
+    const bRates = document.getElementById('dr-b-rates'); if (bRates) { bRates.textContent = ALL_BOYS.length; bRates.style.display = ALL_BOYS.length > 0 ? 'inline-block' : 'none'; }
+    const bAnn = document.getElementById('dr-b-announce'); if (bAnn) { const cnt = ALL_ANNOUNCEMENTS.filter(a => a.active !== false).length; bAnn.textContent = cnt; bAnn.style.display = cnt > 0 ? 'inline-block' : 'none'; }
   }
 
   window.tgCloseConfirm = function() {
