@@ -671,7 +671,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 (function() {
   'use strict';
 
-  /* ══════════════════ ULTRA FAST SPLASH (250ms) ══════════════════ */
   (function() {
     const el = document.getElementById('tg-splash');
     if (!el) return;
@@ -682,7 +681,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     setTimeout(() => { el.classList.add('hide'); setTimeout(() => el.classList.add('gone'), 250); }, 250);
   })();
 
-  /* ══════════════════ FIREBASE ══════════════════ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -700,7 +698,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   const FV = firebase.firestore.FieldValue;
 
-  /* ══════════════════ STATE ══════════════════ */
   let CONFIG = null;
   let allProducts = [];
   let allReviews = [];
@@ -1173,7 +1170,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     scrollRAF = requestAnimationFrame(handleScrollDesktop);
   }, { passive: true });
 
-  /* SEARCH POPUP */
   window.tgOpenSearchModal = function() {
     const popup = document.getElementById('tg-search-popup');
     if (!popup) return;
@@ -1370,10 +1366,44 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     el.innerHTML = html;
   }
 
-  /* ✅ FIXED: Category click navigates to categories.html with ?cat= param */
+  /* ✅ FIXED: Category click — copies cache to categories.html + navigates (with ?cat= for ALL too) */
   window.tgMSelectCategory = function(cat, el) {
+    try {
+      let cats = ALL_CATS_FROM_DB;
+      let prods = allProducts;
+
+      if (!Array.isArray(cats) || !cats.length) {
+        const cached = getCache(CATS_CACHE, CATS_TTL);
+        if (Array.isArray(cached) && cached.length) cats = cached;
+      }
+      if (!Array.isArray(prods) || !prods.length) {
+        const cached = getCache(PROD_CACHE, PROD_TTL);
+        if (Array.isArray(cached) && cached.length) prods = cached;
+      }
+
+      if (Array.isArray(cats) && cats.length) {
+        const normalized = cats.map(c => {
+          let subs = c.subcategories || c.subs || [];
+          subs = subs.map(s => typeof s === 'string' ? { name: s, icon: '📦' } : s);
+          return {
+            id: c.id,
+            name: c.name || '',
+            icon: c.icon || '📦',
+            image: c.image || '',
+            order: Number(c.order) || 9999,
+            subcategories: subs
+          };
+        });
+        localStorage.setItem('toego_cat_cats_v3', JSON.stringify(normalized));
+      }
+      if (Array.isArray(prods) && prods.length) {
+        localStorage.setItem('toego_cat_prods_v3', JSON.stringify(prods));
+      }
+    } catch(e) {}
+
+    // ✅ "All" click → categories.html?cat=all (shows every product)
     if (!cat || cat === 'all') {
-      window.location.href = 'categories.html';
+      window.location.href = 'categories.html?cat=all';
     } else {
       window.location.href = 'categories.html?cat=' + encodeURIComponent(cat);
     }
