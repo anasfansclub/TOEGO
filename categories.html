@@ -166,7 +166,6 @@ a { color: inherit; text-decoration: none; }
 .tg-top-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 .tg-admin-mode .tg-top-btn { display: none !important; }
 
-/* ✅ BOTTOM NAV — shop-home style */
 .tg-mbnav { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -1px 4px rgba(0,0,0,0.05); padding-bottom: env(safe-area-inset-bottom, 0); }
 .tg-mbnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; text-decoration: none; transition: color 0.15s; }
 .tg-mbnav-item.active { color: var(--tg-primary); }
@@ -425,7 +424,8 @@ a { color: inherit; text-decoration: none; }
   let ALL_CATEGORIES = [];
   let ALL_PRODUCTS = [];
 
-  let currentCatId = null;
+  // ✅ FIX: currentCatId can be 'all' (pseudo-category showing all products)
+  let currentCatId = 'all';
   let currentSubName = 'all';
 
   let searchQuery = '';
@@ -444,12 +444,9 @@ a { color: inherit; text-decoration: none; }
   let unsubCats = null;
   let unsubProds = null;
   let hasCache = false;
-
-  // ✅ CRITICAL: productsReady prevents "No products found" flash during initial load
-  // Skeleton stays until products arrive (from cache or Firestore)
   let productsReady = false;
 
-  // ✅ Read ?cat= URL param from shop-home category click
+  // ✅ Read ?cat= URL param — 'all' or missing → shows ALL products
   let pendingCatSlug = null;
   try {
     const _v = new URLSearchParams(window.location.search).get('cat');
@@ -671,34 +668,38 @@ a { color: inherit; text-decoration: none; }
     try {
       const c = JSON.parse(localStorage.getItem(CACHE_CATS) || 'null');
       const p = JSON.parse(localStorage.getItem(CACHE_PRODS) || 'null');
+
+      // Resolve pending category from URL (against cache)
+      if (pendingCatSlug && Array.isArray(c) && c.length) {
+        const s = slugify(pendingCatSlug);
+        const m = c.find(x => slugify(x.name) === s || slugify(x.id) === s);
+        if (m) {
+          currentCatId = m.id;
+          currentSubName = 'all';
+          pendingCatSlug = null;
+        }
+      }
+
       if (Array.isArray(c) && c.length) {
         ALL_CATEGORIES = c;
-        // ✅ Only mark productsReady if products cache exists AND has items
-        const hasCachedProducts = Array.isArray(p) && p.length > 0;
-        if (hasCachedProducts) {
-          ALL_PRODUCTS = p;
-          productsReady = true;
-        }
+      }
+      if (Array.isArray(p) && p.length) {
+        ALL_PRODUCTS = p;
+        productsReady = true;
+      }
+      // If products cache existed (even empty array) we still say ready so we don't hang
+      if (Array.isArray(p)) productsReady = true;
 
-        // ✅ Resolve pending category from URL (against cache)
-        if (pendingCatSlug) {
-          const s = slugify(pendingCatSlug);
-          const m = c.find(x => slugify(x.name) === s || slugify(x.id) === s);
-          if (m) {
-            currentCatId = m.id;
-            currentSubName = 'all';
-            pendingCatSlug = null;
-          }
-        }
-
-        if (!currentCatId || !ALL_CATEGORIES.find(x => x.id === currentCatId)) {
-          currentCatId = ALL_CATEGORIES[0].id;
+      if (Array.isArray(c) && c.length) {
+        hasCache = true;
+        // If currentCatId is a real category but no longer exists → fallback
+        if (currentCatId !== 'all' && !ALL_CATEGORIES.find(x => x.id === currentCatId)) {
+          currentCatId = 'all';
           currentSubName = 'all';
         }
-        hasCache = true;
         renderSidebar();
         renderSubcats();
-        renderProducts();  // internally guards based on productsReady
+        renderProducts();
         return true;
       }
     } catch(e) {}
@@ -730,15 +731,15 @@ a { color: inherit; text-decoration: none; }
       }
     }
 
-    const stillExists = cats.find(c => c.id === currentCatId);
-    if (!stillExists) {
-      currentCatId = cats.length ? cats[0].id : null;
+    // ✅ 'all' is always valid; only check real cats
+    if (currentCatId !== 'all' && !cats.find(c => c.id === currentCatId)) {
+      currentCatId = 'all';
       currentSubName = 'all';
     }
     ALL_CATEGORIES = cats;
     renderSidebar();
     renderSubcats();
-    renderProducts();  // guarded — won't show "no products" until ready
+    renderProducts();
   }
 
   function setupListeners() {
@@ -764,21 +765,19 @@ a { color: inherit; text-decoration: none; }
     unsubProds = db.collection('products').limit(500).onSnapshot(snap => {
       const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
       ALL_PRODUCTS = prods;
-      // ✅ Mark products ready after first snapshot (cache or server)
       productsReady = true;
       persistCache();
       renderProducts();
       if (!snap.metadata.fromCache) setProgress(false);
     }, err => {
       console.warn('prods listener error', err);
-      // ✅ Even on error, unblock the grid after Firestore fails
       productsReady = true;
       setProgress(false);
       renderProducts();
     });
 
     setTimeout(() => {
-      if (!hasCache && ALL_CATEGORIES.length === 0) {
+      if (!hasCache && ALL_CATEGORIES.length === 0 && !productsReady) {
         setProgress(false);
         showErrorState();
       }
@@ -799,13 +798,22 @@ a { color: inherit; text-decoration: none; }
     setupListeners();
   };
 
+  // ✅ Sidebar — "All" always first, then real categories
   function renderSidebar() {
     const el = document.getElementById('tg-sidebar');
+    const allActive = currentCatId === 'all' ? 'active' : '';
+
+    let html = `<div class="tg-side-item ${allActive}" onclick="tgSelectCat('all')">
+      <div class="tg-side-icon">🛍️</div>
+      <div class="tg-side-text">All</div>
+    </div>`;
+
     if (!ALL_CATEGORIES.length) {
-      el.innerHTML = '<div style="text-align:center;padding:20px 10px;font-size:12px;color:#666;">No categories</div>';
+      el.innerHTML = html;
       return;
     }
-    el.innerHTML = ALL_CATEGORIES.map(c => {
+
+    html += ALL_CATEGORIES.map(c => {
       const active = currentCatId === c.id ? 'active' : '';
       const imgTag = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy">` : esc(c.icon);
       const adminBtns = IS_ADMIN ? `
@@ -819,9 +827,17 @@ a { color: inherit; text-decoration: none; }
         <div class="tg-side-text">${esc(c.name)}</div>
       </div>`;
     }).join('');
+
+    el.innerHTML = html;
   }
 
   function renderSubcats() {
+    // ✅ "All" view has no subcategories
+    if (currentCatId === 'all') {
+      document.getElementById('tg-subcats-wrap').style.display = 'none';
+      return;
+    }
+
     const catObj = ALL_CATEGORIES.find(c => c.id === currentCatId);
     const wrap = document.getElementById('tg-subcats-wrap');
     const scroll = document.getElementById('tg-subcats-scroll');
@@ -865,12 +881,12 @@ a { color: inherit; text-decoration: none; }
 
   function renderProducts() {
     updateFilterUI();
-    const catObj = ALL_CATEGORIES.find(c => c.id === currentCatId);
     const grid = document.getElementById('tg-prod-grid');
     const countEl = document.getElementById('tg-prod-count');
 
-    if (!catObj) {
-      // Don't wipe skeleton if we don't even have categories yet
+    // ✅ For 'all' → no category filter needed; for real cat → must exist
+    const catObj = currentCatId === 'all' ? null : ALL_CATEGORIES.find(c => c.id === currentCatId);
+    if (currentCatId !== 'all' && !catObj) {
       if (ALL_CATEGORIES.length > 0) {
         grid.innerHTML = '<div class="tg-empty">Select a category</div>';
       }
@@ -878,15 +894,17 @@ a { color: inherit; text-decoration: none; }
       return;
     }
 
-    // ✅ CRITICAL FIX: if products haven't loaded yet, KEEP skeleton — no "no products" flash
     if (!productsReady) {
       if (countEl) countEl.textContent = '';
-      return;
+      return; // keep skeleton
     }
 
     let filtered = ALL_PRODUCTS.filter(p => {
-      if (!productMatchesCategory(p, catObj)) return false;
-      if (currentSubName !== 'all' && !productMatchesSubcat(p, currentSubName)) return false;
+      // ✅ 'all' → skip category check
+      if (currentCatId !== 'all') {
+        if (!productMatchesCategory(p, catObj)) return false;
+      }
+      if (currentCatId !== 'all' && currentSubName !== 'all' && !productMatchesSubcat(p, currentSubName)) return false;
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         const name = String(p.name || '').toLowerCase();
@@ -970,6 +988,15 @@ a { color: inherit; text-decoration: none; }
     searchQuery = '';
     document.getElementById('tg-search-input').value = '';
     document.getElementById('tg-search-clear').style.display = 'none';
+
+    // ✅ Keep URL in sync (nice for refresh / share)
+    try {
+      const url = new URL(window.location.href);
+      if (id === 'all') url.searchParams.set('cat', 'all');
+      else url.searchParams.set('cat', slugify(ALL_CATEGORIES.find(c => c.id === id)?.name || ''));
+      history.replaceState(null, '', url.toString());
+    } catch(e) {}
+
     renderSidebar();
     renderSubcats();
     renderProducts();
@@ -1182,7 +1209,7 @@ a { color: inherit; text-decoration: none; }
   };
 
   window.tgOpenSubcatModal = function(index) {
-    if (!IS_ADMIN || !currentCatId) return;
+    if (!IS_ADMIN || !currentCatId || currentCatId === 'all') { toast('Select a category first', 'error'); return; }
     const cat = ALL_CATEGORIES.find(c => c.id === currentCatId);
     if (!cat) return;
     const title = document.getElementById('tg-subcat-modal-title');
@@ -1207,6 +1234,7 @@ a { color: inherit; text-decoration: none; }
   };
 
   window.tgSaveSubcategory = async function() {
+    if (!currentCatId || currentCatId === 'all') return;
     const cat = ALL_CATEGORIES.find(c => c.id === currentCatId);
     if (!cat) return;
     const index = Number(document.getElementById('tg-subcat-index').value);
@@ -1239,7 +1267,10 @@ a { color: inherit; text-decoration: none; }
     try {
       if (deleteAction.type === 'cat') {
         await db.collection('categories').doc(deleteAction.catId).delete();
-        if (currentCatId === deleteAction.catId) currentCatId = null;
+        if (currentCatId === deleteAction.catId) {
+          currentCatId = 'all';
+          currentSubName = 'all';
+        }
       } else if (deleteAction.type === 'sub') {
         const cat = ALL_CATEGORIES.find(c => c.id === deleteAction.catId);
         if (cat) {
