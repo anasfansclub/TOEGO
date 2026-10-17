@@ -95,38 +95,44 @@ a{color:inherit;text-decoration:none;}
 .tg-assured{display:inline-flex;align-items:center;gap:5px;color:var(--tg-primary);font-size:13px;font-weight:700;margin-bottom:16px;}
 .tg-assured svg{width:14px;height:14px;stroke:var(--tg-primary);fill:none;stroke-width:2.4;}
 .tg-divider{height:1px;background:#f1f3f6;margin:16px 0;}
-.tg-opt-title{font-size:13.5px;color:#878787;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-.tg-opt-title .err{color:#d32f2f;font-size:11.5px;font-weight:700;text-transform:none;letter-spacing:0;display:none;}
+
+/* ═══ SMALLER TEXT: Size, Color, Qty labels ═══ */
+.tg-opt-title{font-size:11.5px;color:#878787;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.tg-opt-title .err{color:#d32f2f;font-size:10.5px;font-weight:700;text-transform:none;letter-spacing:0;display:none;}
 .tg-opt-title.has-error .err{display:inline;}
-.tg-sizes{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
-.tg-size-btn{position:relative;min-width:68px;height:52px;padding:0 22px;border:2px solid #e0e0e0;border-radius:10px;background:#fff;font-size:15px;font-weight:700;color:#212121;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+
+.tg-sizes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.tg-size-btn{position:relative;min-width:56px;height:42px;padding:0 16px;border:2px solid #e0e0e0;border-radius:8px;background:#fff;font-size:13px;font-weight:700;color:#212121;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:5px;}
 .tg-size-btn:hover:not(:disabled):not(.active){border-color:var(--tg-primary);}
 .tg-size-btn.active{border-color:var(--tg-primary);background:var(--tg-primary-light);color:var(--tg-primary);box-shadow:0 0 0 3px rgba(var(--tg-primary-rgb),0.15);}
 .tg-size-btn.out{opacity:0.35;cursor:not-allowed;text-decoration:line-through;}
-.tg-size-tick{display:none;width:18px;height:18px;border-radius:50%;background:var(--tg-primary);color:#fff;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;line-height:1;font-weight:900;}
+.tg-size-tick{display:none;width:14px;height:14px;border-radius:50%;background:var(--tg-primary);color:#fff;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;line-height:1;font-weight:900;}
 .tg-size-btn.active .tg-size-tick{display:inline-flex;}
 .tg-size-btn.active .tg-size-tick::before{content:'✓';}
-.tg-color-wrap{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
-.tg-color-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:6px;user-select:none;transition:transform .15s;}
+
+.tg-color-wrap{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.tg-color-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:4px;user-select:none;transition:transform .15s;}
 .tg-color-item:hover{transform:translateY(-2px);}
-.tg-color-swatch{width:54px;height:54px;border-radius:50%;padding:4px;border:2.5px solid #e0e0e0;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .18s;position:relative;}
+.tg-color-swatch{width:44px;height:44px;border-radius:50%;padding:3px;border:2.5px solid #e0e0e0;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .18s;position:relative;}
 .tg-color-item:hover .tg-color-swatch{border-color:#b3c7ec;}
-.tg-color-swatch.active{border-color:var(--tg-primary);box-shadow:0 0 0 4px rgba(var(--tg-primary-rgb),0.15);}
-.tg-color-swatch-inner{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;line-height:1;border:1px solid rgba(0,0,0,0.10);box-shadow:inset 0 -3px 5px rgba(0,0,0,0.10),inset 0 2px 3px rgba(255,255,255,0.25);text-shadow:0 1px 2px rgba(0,0,0,0.35);transition:all .18s;}
+.tg-color-swatch.active{border-color:var(--tg-primary);box-shadow:0 0 0 3px rgba(var(--tg-primary-rgb),0.15);}
+.tg-color-swatch-inner{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;line-height:1;border:1px solid rgba(0,0,0,0.10);box-shadow:inset 0 -3px 5px rgba(0,0,0,0.10),inset 0 2px 3px rgba(255,255,255,0.25);text-shadow:0 1px 2px rgba(0,0,0,0.35);transition:all .18s;}
 .tg-color-item:hover .tg-color-swatch-inner{transform:scale(1.04);}
-.tg-color-swatch-label{font-size:12px;font-weight:600;color:#666;text-align:center;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .15s;}
+.tg-color-swatch-label{font-size:10.5px;font-weight:600;color:#666;text-align:center;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .15s;}
 .tg-color-item.active .tg-color-swatch-label{color:var(--tg-primary);font-weight:800;}
 .tg-color-item.active .tg-color-swatch-inner{transform:scale(1.05);}
 @media (max-width:520px){
-  .tg-color-swatch{width:48px;height:48px;padding:3px;}
-  .tg-color-swatch-inner{font-size:18px;}
-  .tg-color-swatch-label{font-size:11px;max-width:68px;}
+  .tg-color-swatch{width:40px;height:40px;padding:3px;}
+  .tg-color-swatch-inner{font-size:14px;}
+  .tg-color-swatch-label{font-size:10px;max-width:58px;}
 }
-.tg-qty-row{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
-.tg-qty{display:inline-flex;align-items:center;border:2px solid #e0e0e0;border-radius:10px;overflow:hidden;}
-.tg-qty button{width:48px;height:48px;font-size:22px;font-weight:700;color:var(--tg-primary);background:#fff;}
+
+.tg-qty-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.tg-qty{display:inline-flex;align-items:center;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden;}
+.tg-qty button{width:40px;height:40px;font-size:19px;font-weight:700;color:var(--tg-primary);background:#fff;}
 .tg-qty button:disabled{color:#ccc;cursor:not-allowed;}
-.tg-qty-val{min-width:58px;height:48px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0;}
+.tg-qty-val{min-width:46px;height:40px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0;}
+
 .tg-seller-card{background:#f8f9fb;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:14px;}
 .tg-seller-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--tg-primary),var(--tg-primary-dark));color:#fff;font-size:22px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .tg-seller-info{flex:1;min-width:0;}
@@ -651,7 +657,6 @@ a{color:inherit;text-decoration:none;}
     try { localStorage.setItem(ALL_PROD_CACHE_KEY, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
   }
   function getFromHomeCache(pid) {
-    // ⭐ FALLBACK: Try to find product in shop-home's cached product list
     try {
       const raw = localStorage.getItem(HOME_PROD_CACHE_KEY);
       if (!raw) return null;
@@ -733,7 +738,7 @@ a{color:inherit;text-decoration:none;}
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // PRODUCT DATA GETTERS (DEFENSIVE)
+  // PRODUCT DATA GETTERS
   // ═══════════════════════════════════════════════════════════════
   function getImages() {
     const imgs = [];
@@ -741,7 +746,6 @@ a{color:inherit;text-decoration:none;}
       if (Array.isArray(PRODUCT.images)) {
         PRODUCT.images.forEach(u => {
           if (!u) return;
-          // Handle case where image might be an object {url: '...'}
           const url = typeof u === 'string' ? u : (u.url || u.src || u.image || '');
           if (url) imgs.push(url);
         });
@@ -827,7 +831,7 @@ a{color:inherit;text-decoration:none;}
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // PRODUCT LOADING — MULTI-FALLBACK STRATEGY
+  // PRODUCT LOADING
   // ═══════════════════════════════════════════════════════════════
   async function loadProduct() {
     const pid = getProductId();
@@ -840,7 +844,6 @@ a{color:inherit;text-decoration:none;}
 
     document.getElementById('tg-hd-title').textContent = 'Loading…';
 
-    // ─── STEP 1: Instant from localStorage cache ───
     const cached = getCachedProduct(pid);
     if (cached && cached.id) {
       PRODUCT = cached;
@@ -852,7 +855,6 @@ a{color:inherit;text-decoration:none;}
         console.warn('[product] cache render failed:', e);
       }
     } else {
-      // ⭐ STEP 1.5: Try home cache as fallback
       const homeCached = getFromHomeCache(pid);
       if (homeCached && homeCached.id) {
         PRODUCT = homeCached;
@@ -867,14 +869,12 @@ a{color:inherit;text-decoration:none;}
       }
     }
 
-    // ─── STEP 2: Firestore (cache-first, then server) ───
     if (_productFetchInProgress) return;
     _productFetchInProgress = true;
 
     let fresh = null;
     let fetchErr = null;
 
-    // 2a. Try Firestore cache
     try {
       const snapCache = await withTimeout(
         db.collection('products').doc(pid).get({ source: 'cache' }),
@@ -883,11 +883,8 @@ a{color:inherit;text-decoration:none;}
       if (snapCache && snapCache.exists) {
         fresh = { id: snapCache.id, ...snapCache.data() };
       }
-    } catch(e) {
-      // Cache miss is normal for fresh users
-    }
+    } catch(e) {}
 
-    // 2b. If cache empty, fetch from server
     if (!fresh) {
       try {
         const snapServer = await withTimeout(
@@ -903,7 +900,6 @@ a{color:inherit;text-decoration:none;}
       }
     }
 
-    // 2c. If still no data, try explicit server source
     if (!fresh) {
       try {
         const snapServer2 = await withTimeout(
@@ -920,11 +916,8 @@ a{color:inherit;text-decoration:none;}
 
     _productFetchInProgress = false;
 
-    // ─── STEP 3: Handle result ───
     if (fresh) {
-      // Check if product is intentionally hidden
       const isHidden = (fresh.active === false) || (fresh.approved === false && fresh.approvalStatus !== 'pending');
-      // We still render hidden products but show a notice to the owner
       const changed = !PRODUCT
         || PRODUCT.rating !== fresh.rating
         || PRODUCT.ratingCount !== fresh.ratingCount
@@ -953,7 +946,6 @@ a{color:inherit;text-decoration:none;}
         setTimeout(() => toast('⚠️ This product is not publicly visible', 'info'), 500);
       }
     } else if (!PRODUCT) {
-      // Nothing was cached and network fetch failed
       const msg = fetchErr
         ? (fetchErr.message === 'timeout'
             ? 'Connection timed out. Please check your internet and try again.'
@@ -963,7 +955,6 @@ a{color:inherit;text-decoration:none;}
       return;
     }
 
-    // ─── STEP 4: Non-blocking background tasks ───
     setTimeout(() => {
       try { db.collection('products').doc(pid).update({ views: FV.increment(1) }).catch(() => {}); } catch(e) {}
     }, 1500);
@@ -974,14 +965,12 @@ a{color:inherit;text-decoration:none;}
       try { checkReviewEligibility(pid); } catch(e) {}
     }
 
-    // ─── STEP 5: ALL_PRODUCTS from cache instantly ───
     const cachedAll = getCachedAllProducts();
     if (cachedAll && cachedAll.length) {
       ALL_PRODUCTS = cachedAll.filter(p => p && p.id !== pid);
       try { renderAllProducts(); } catch(e) {}
     }
 
-    // ─── STEP 6: Setup lazy load for All Products section ───
     setupAllProductsLazy();
   }
 
@@ -1010,6 +999,10 @@ a{color:inherit;text-decoration:none;}
     // Reset selection if not in new options
     if (hasSizes && SELECTED_SIZE && sizes.indexOf(SELECTED_SIZE) === -1) SELECTED_SIZE = '';
     if (hasColors && SELECTED_COLOR && colors.indexOf(SELECTED_COLOR) === -1) SELECTED_COLOR = '';
+
+    // ⭐ NEW: Auto-select if seller provided ONLY ONE size/color
+    if (sizes.length === 1) { SELECTED_SIZE = sizes[0]; SIZE_ERROR = false; }
+    if (colors.length === 1) { SELECTED_COLOR = colors[0]; COLOR_ERROR = false; }
 
     const ratingHtml = '<div id="tg-main-rating"></div>';
 
@@ -1095,7 +1088,7 @@ a{color:inherit;text-decoration:none;}
               '<div class="tg-qty-val" id="tg-qty-val">' + QTY + '</div>' +
               '<button onclick="tgChangeQty(1)" ' + (QTY>=10?'disabled':'') + '>+</button>' +
             '</div>' +
-            '<span style="font-size:13px;color:#878787;">Max 10 per order</span>' +
+            '<span style="font-size:12.5px;color:#878787;">Max 10 per order</span>' +
           '</div>' +
           '<div class="tg-divider"></div>' +
           '<div class="tg-seller-card">' +
@@ -1183,9 +1176,6 @@ a{color:inherit;text-decoration:none;}
 
     const slider = document.getElementById('tg-slider');
     if (!slider) return;
-
-    // Always rebind to new element (fresh DOM after innerHTML)
-    // We use a data flag only to avoid double-binding on SAME element
     if (slider.dataset.sliderBound === '1') return;
     slider.dataset.sliderBound = '1';
 
@@ -1353,7 +1343,6 @@ a{color:inherit;text-decoration:none;}
         list = list.concat(fromAll.slice(0, 12 - list.length));
       }
       if (!list.length) {
-        // Try global fallback
         try {
           const snap = await withTimeout(db.collection('products').limit(12).get(), 8000);
           list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id);
@@ -1490,7 +1479,6 @@ a{color:inherit;text-decoration:none;}
     if (unsubReviews) { try { unsubReviews(); } catch(e) {} unsubReviews = null; }
     _reviewsLoaded = false;
 
-    // Try cache-first quick load
     try {
       db.collection('reviews').where('productId', '==', pid).get({ source: 'cache' })
         .then(snap => {
@@ -1507,7 +1495,6 @@ a{color:inherit;text-decoration:none;}
         }).catch(() => {});
     } catch(e) {}
 
-    // Live listener
     try {
       unsubReviews = db.collection('reviews')
         .where('productId', '==', pid)
@@ -1620,7 +1607,6 @@ a{color:inherit;text-decoration:none;}
     HAS_REVIEWED = false;
     if (!currentUser || !pid) { updateReviewButton(); return; }
 
-    // Check if already reviewed
     try {
       const rSnap = await db.collection('reviews')
         .where('userId', '==', currentUser.uid)
@@ -1635,7 +1621,6 @@ a{color:inherit;text-decoration:none;}
       console.warn('[review eligibility] reviewed check failed:', e && e.message);
     }
 
-    // Check if user has a delivered order containing this product
     try {
       const uid = currentUser.uid;
       const ordersMap = new Map();
@@ -2177,7 +2162,6 @@ a{color:inherit;text-decoration:none;}
     const wasLoggedIn = !!currentUser;
     currentUser = u;
     updateCartBadge();
-    // Re-check eligibility if login state changed AND product is loaded
     if (PRODUCT && PRODUCT.id && wasLoggedIn !== !!u) {
       setTimeout(() => {
         try { checkReviewEligibility(PRODUCT.id); } catch(e) {}
@@ -2188,7 +2172,6 @@ a{color:inherit;text-decoration:none;}
   // ═══════════════════════════════════════════════════════════════
   // INIT
   // ═══════════════════════════════════════════════════════════════
-  // Global safety net: if product didn't render within 15s, show error
   setTimeout(() => {
     if (!PRODUCT || !document.querySelector('.tg-main')) {
       const el = document.getElementById('tg-content');
