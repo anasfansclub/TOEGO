@@ -1030,6 +1030,22 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return { text: 'Delivery in 3-5 days', cls: '' };
   }
 
+  /* ⭐ NEW FIX: Directly refresh the delivery tag inside every product card.
+     This runs the moment a pincode / address changes so the tag updates
+     immediately (Same Day ⇄ 3-5 Days) without waiting for a re-render. */
+  function refreshDeliveryTagsInPlace() {
+    if (!_itemNodeMap || !_itemNodeMap.size) return;
+    const dInfo = getDeliveryInfo();
+    cartItems.forEach(it => {
+      const node = _itemNodeMap.get(it.id);
+      if (!node) return;
+      const el = node.querySelector('.tg-item-delivery');
+      if (!el) return;
+      el.className = 'tg-item-delivery' + (dInfo.cls ? ' ' + dInfo.cls : '');
+      el.innerHTML = '🚚 <b>' + esc(dInfo.text) + '</b>';
+    });
+  }
+
   /* ⭐ FIXED: Force full re-render + better UX + Kanpur toast */
   window.tgChangePin = function() {
     const p = prompt('Enter delivery pincode (6 digits)', getPin() || '');
@@ -1059,6 +1075,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       'success'
     );
 
+    /* ⭐ NEW FIX: update the delivery tag inside every product card instantly */
+    refreshDeliveryTagsInPlace();
+
     /* ⭐ Force FULL re-render — remove ALL structural sigs */
     _itemNodeMap.forEach(node => {
       node.removeAttribute('data-struct-sig');
@@ -1067,6 +1086,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     _lastRenderSig = '';
     _lastIdsKey = '';
     renderCart(true);
+
+    /* ⭐ Safety net — refresh again after re-render */
+    refreshDeliveryTagsInPlace();
   };
 
   function getItemCount() { return cartItems.reduce((s, i) => s + Number(i.qty || 1), 0); }
@@ -2476,6 +2498,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (addr.pin) setPin(addr.pin);
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
+
+    /* ⭐ NEW FIX: delivery tag ko turant update karo product cards me */
+    refreshDeliveryTagsInPlace();
+
     tgCloseAddrList();
     tgOpenPayModal();
   };
@@ -2569,6 +2595,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     setPin(pin);
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = city + ' - ' + pin;
+
+    /* ⭐ NEW FIX: pincode save hote hi product cards ka delivery tag update karo */
+    refreshDeliveryTagsInPlace();
 
     try {
       const list = await addAddressToList(pendingAddress);
