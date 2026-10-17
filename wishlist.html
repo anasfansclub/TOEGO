@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>My Wishlist — TOEGO</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
@@ -52,7 +55,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 @media (min-width: 900px) { .tg-wishlist { grid-template-columns: repeat(4, 1fr); } }
 @media (min-width: 1200px) { .tg-wishlist { grid-template-columns: repeat(5, 1fr); } }
 
-.tg-card { background: #fff; border: 1px solid #ececec; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .22s, transform .22s, border-color .22s; box-shadow: 0 1px 2px rgba(15,23,41,0.04); position: relative; }
+.tg-card { background: #fff; border: 1px solid #ececec; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .22s, transform .22s, border-color .22s; box-shadow: 0 1px 2px rgba(15,23,41,0.04); position: relative; contain: layout style paint; }
 .tg-card:hover { box-shadow: 0 10px 24px rgba(15,23,41,0.10); transform: translateY(-3px); border-color: #dfe6f3; }
 .tg-card-img { aspect-ratio: 1/1; position: relative; overflow: hidden; background: linear-gradient(135deg,#fafbfc,#eef1f6); cursor: pointer; }
 .tg-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
@@ -103,6 +106,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-btn-trash:hover { background: #ffebee; border-color: #ffcdd2; }
 .tg-btn-trash svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
+/* Placeholder while product data fetching */
+.tg-card.loading { pointer-events: none; }
+.tg-card.loading .tg-card-img { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; }
+.tg-card.loading .tg-card-body > * { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 4px; color: transparent; }
+.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
+@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
 /* EMPTY STATE */
 .tg-empty { background: #fff; border-radius: 12px; padding: 60px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-top: 12px; }
 .tg-empty-img { width: 160px; height: 160px; margin: 0 auto 20px; background: linear-gradient(135deg,#fce4ec,#f8bbd0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; box-shadow: 0 12px 40px rgba(244,51,151,0.15); }
@@ -111,14 +121,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; font-size: 14px; font-weight: 800; border-radius: 8px; letter-spacing: 0.4px; text-transform: uppercase; box-shadow: 0 6px 18px rgba(40,116,240,0.3); transition: all .15s; }
 .tg-empty-cta:hover { filter: brightness(1.06); }
 .tg-empty-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-
-/* SKELETON */
-.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
-@keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-.tg-skel-card { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #ebebeb; }
-.tg-skel-img { aspect-ratio: 1/1; }
-.tg-skel-body { padding: 10px; }
-.tg-skel-line { height: 10px; margin-bottom: 6px; border-radius: 4px; }
 
 /* LOGIN PROMPT */
 .tg-login-prompt { background: #fff; border-radius: 12px; padding: 48px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-top: 12px; }
@@ -209,7 +211,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <div class="tg-wrap">
   <div class="tg-container">
 
-    <!-- LOGIN PROMPT -->
     <div id="tg-login-prompt" style="display:none;">
       <div class="tg-login-prompt">
         <div class="tg-login-icon">🔐</div>
@@ -222,7 +223,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </div>
     </div>
 
-    <!-- TOOLBAR -->
     <div class="tg-toolbar" id="tg-toolbar" style="display:none;">
       <div class="tg-toolbar-info">
         <div class="tg-toolbar-title" id="tg-toolbar-title">My Wishlist</div>
@@ -238,18 +238,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </button>
     </div>
 
-    <!-- WISHLIST GRID -->
     <div class="tg-wishlist" id="tg-wishlist"></div>
 
-    <!-- SKELETON -->
-    <div class="tg-wishlist" id="tg-loading">
-      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
-      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
-      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
-      <div class="tg-skel-card"><div class="tg-skel-img tg-skel"></div><div class="tg-skel-body"><div class="tg-skel-line tg-skel" style="width:60%;"></div><div class="tg-skel-line tg-skel" style="width:85%;"></div><div class="tg-skel-line tg-skel" style="width:40%;"></div></div></div>
+    <!-- Skeleton only shows if NO cache at all -->
+    <div class="tg-wishlist" id="tg-loading" style="display:none;">
+      <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
+      <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
+      <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
+      <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
     </div>
 
-    <!-- EMPTY STATE -->
     <div class="tg-empty" id="tg-empty" style="display:none;">
       <div class="tg-empty-img">💖</div>
       <h2 class="tg-empty-title">Your wishlist is empty</h2>
@@ -263,7 +261,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   </div>
 </div>
 
-<!-- CONFIRM MODAL -->
 <div class="tg-modal" id="tg-confirm-modal">
   <div class="tg-modal-card">
     <div class="tg-modal-icon">🗑️</div>
@@ -276,7 +273,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="tg-bnav">
   <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
   <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
@@ -295,11 +291,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 (function() {
   'use strict';
 
-  // ⚠ IMPORTANT: Agar koi cached user pehle se login hai toh use clear karo
-  // BUT: Hum sirf tab clear karenge jab user explicitly wishlist.html pe aaye
-  // aur logout na karna ho. Ye line hatai gayi hai kyunki redirect issues thi.
-  // Cached admin login ke wajah se yahan aa raha tha issue.
-
+  /* ═══════════════════════════════════════════════════════════════
+     FIREBASE INIT — CACHED (no re-init)
+     ═══════════════════════════════════════════════════════════════ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -314,8 +308,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
+  try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
+  try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
+
+  /* ═══════════════════════════════════════════════════════════════
+     CONSTANTS
+     ═══════════════════════════════════════════════════════════════ */
   const GUEST_CART = 'toego_cart_guest';
-  const WISHLIST_CACHE_PREFIX = 'toego_wishlist_cache_';
+  const WISHLIST_CACHE_PREFIX = 'toego_wishlist_cache_v2_';
+  const PRODUCT_CACHE_KEY = 'toego_pcache_v2';           // ⭐ SHARED with cart/product
+  const PRODUCT_CACHE_TTL = 15 * 60 * 1000;
+  const WISHLIST_CACHE_TTL = 30 * 60 * 1000;
+  const CHUNK_SIZE = 30;                                 // ⭐ Firestore max for 'in'
 
   let USER = null;
   let WISHLIST_IDS = [];
@@ -324,30 +328,60 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let unsubWishlist = null;
   let unsubCart = null;
   let confirmCb = null;
+  let renderScheduled = false;
+  let _lastRenderHash = '';
 
-  // ========= THEME =========
-  const themeMeta = document.getElementById('tg-theme-meta');
-  function applyTheme(primary) {
-    primary = primary || '#2874f0';
-    if (themeMeta) themeMeta.setAttribute('content', primary);
-    document.documentElement.style.setProperty('--tg-primary', primary);
-    const hd = document.querySelector('.tg-hd'); if (hd) hd.style.background = primary;
-    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
-  }
-  (function boot() {
-    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
-  })();
-  (async function loadTheme() {
+  /* ═══════════════════════════════════════════════════════════════
+     SHARED PRODUCT CACHE (same as cart.html & product.html)
+     ═══════════════════════════════════════════════════════════════ */
+  const _pCache = new Map();
+  let _pCacheDirty = false;
+  let _pCacheSaveTimer = null;
+
+  function _pCacheBoot() {
     try {
-      const s = await db.collection('siteSettings').doc('theme').get();
-      if (s.exists) {
-        const d = s.data();
-        applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
+      const raw = localStorage.getItem(PRODUCT_CACHE_KEY);
+      if (!raw) return;
+      const obj = JSON.parse(raw);
+      const now = Date.now();
+      for (const k in obj) {
+        const v = obj[k];
+        if (v && v.ts && (now - v.ts) < PRODUCT_CACHE_TTL) _pCache.set(k, v);
       }
     } catch(e) {}
-  })();
+  }
+  function _pCacheFlush() {
+    if (!_pCacheDirty) return;
+    try {
+      const obj = {};
+      for (const [k, v] of _pCache) obj[k] = v;
+      localStorage.setItem(PRODUCT_CACHE_KEY, JSON.stringify(obj));
+      _pCacheDirty = false;
+    } catch(e) {}
+  }
+  function _pCacheScheduleFlush() {
+    if (_pCacheSaveTimer) return;
+    _pCacheSaveTimer = setTimeout(() => { _pCacheSaveTimer = null; _pCacheFlush(); }, 1500);
+  }
+  function _pGet(id) {
+    if (!id) return undefined;
+    const v = _pCache.get(id);
+    if (!v) return undefined;
+    if ((Date.now() - v.ts) > PRODUCT_CACHE_TTL) { _pCache.delete(id); return undefined; }
+    return v.data;
+  }
+  function _pSet(id, data) {
+    if (!id) return;
+    _pCache.set(id, { data: data || null, ts: Date.now() });
+    _pCacheDirty = true;
+    _pCacheScheduleFlush();
+  }
+  _pCacheBoot();
+  window.addEventListener('beforeunload', _pCacheFlush);
 
-  // ========= HELPERS =========
+  /* ═══════════════════════════════════════════════════════════════
+     HELPERS
+     ═══════════════════════════════════════════════════════════════ */
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -356,7 +390,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     el.className = 'tg-toast ' + type;
     el.textContent = msg;
     w.appendChild(el);
-    setTimeout(() => el.remove(), 2600);
+    setTimeout(() => el.remove(), 2400);
   }
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
@@ -367,6 +401,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return { avg: 0, count: 0, hasRating: false };
   }
   function isOutOfStock(p) {
+    if (!p) return false;
     if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
       let total = 0;
       Object.values(p.sizeStock).forEach(v => { total += Number(v||0); });
@@ -375,6 +410,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return Number(p.stock || 0) <= 0;
   }
   function isLowStock(p) {
+    if (!p) return false;
     if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
       let total = 0;
       Object.values(p.sizeStock).forEach(v => { total += Number(v||0); });
@@ -403,26 +439,30 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return { text: tag, cls };
   }
 
-  // ========= WISHLIST CACHE =========
-  function getCacheKey() { return WISHLIST_CACHE_PREFIX + (USER ? USER.uid : 'guest'); }
-  function saveWishlistCache(products) {
+  /* ═══════════════════════════════════════════════════════════════
+     WISHLIST LOCAL CACHE (full product objects)
+     ═══════════════════════════════════════════════════════════════ */
+  function getWishCacheKey() { return WISHLIST_CACHE_PREFIX + (USER ? USER.uid : 'guest'); }
+  function saveWishCache() {
     try {
-      const arr = Object.values(products || {});
-      localStorage.setItem(getCacheKey(), JSON.stringify({ data: arr, time: Date.now() }));
+      const arr = WISHLIST_IDS.map(id => PRODUCTS[id]).filter(Boolean);
+      localStorage.setItem(getWishCacheKey(), JSON.stringify({ ids: WISHLIST_IDS, data: arr, time: Date.now() }));
     } catch(e) {}
   }
-  function loadWishlistCache() {
+  function loadWishCache() {
     try {
-      const raw = localStorage.getItem(getCacheKey());
+      const raw = localStorage.getItem(getWishCacheKey());
       if (!raw) return null;
       const c = JSON.parse(raw);
-      if (!c || !Array.isArray(c.data)) return null;
-      if (Date.now() - (c.time || 0) > 5 * 60 * 1000) return null;
-      return c.data;
+      if (!c || !Array.isArray(c.ids)) return null;
+      if (Date.now() - (c.time || 0) > WISHLIST_CACHE_TTL) return null;
+      return { ids: c.ids, data: Array.isArray(c.data) ? c.data : [] };
     } catch(e) { return null; }
   }
 
-  // ========= CART =========
+  /* ═══════════════════════════════════════════════════════════════
+     CART
+     ═══════════════════════════════════════════════════════════════ */
   function getGuestCart() { try { return JSON.parse(localStorage.getItem(GUEST_CART) || '[]'); } catch(e) { return []; } }
   function cartCount(items) { return (items||[]).reduce((s,i) => s + Number(i.qty || 1), 0); }
   function updateCartBadge() {
@@ -443,7 +483,21 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }, () => {});
   }
 
-  // ========= RENDER =========
+  /* ═══════════════════════════════════════════════════════════════
+     SCHEDULED RENDER — batches multiple updates into 1 paint
+     ═══════════════════════════════════════════════════════════════ */
+  function scheduleRender() {
+    if (renderScheduled) return;
+    renderScheduled = true;
+    requestAnimationFrame(() => {
+      renderScheduled = false;
+      render();
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     RENDER
+     ═══════════════════════════════════════════════════════════════ */
   function render() {
     const loading = document.getElementById('tg-loading');
     const toolbar = document.getElementById('tg-toolbar');
@@ -451,31 +505,61 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const grid = document.getElementById('tg-wishlist');
     const loginPrompt = document.getElementById('tg-login-prompt');
 
-    if (loading) loading.style.display = 'none';
-    if (loginPrompt) loginPrompt.style.display = 'none';
-    if (grid) grid.style.display = 'grid';
-
-    const ids = WISHLIST_IDS || [];
-    const products = ids.map(id => PRODUCTS[id]).filter(Boolean);
-
-    const cnt = document.getElementById('tg-hd-count');
-    if (cnt) cnt.textContent = products.length > 0 ? '(' + products.length + ')' : '';
-
-    if (!products.length) {
-      toolbar.style.display = 'none';
-      empty.style.display = 'block';
-      grid.innerHTML = '';
+    if (!USER) {
+      if (loading) loading.style.display = 'none';
+      if (grid) { grid.style.display = 'none'; grid.innerHTML = ''; }
+      if (toolbar) toolbar.style.display = 'none';
+      if (empty) empty.style.display = 'none';
+      if (loginPrompt) loginPrompt.style.display = 'block';
+      const cnt = document.getElementById('tg-hd-count'); if (cnt) cnt.textContent = '';
       return;
     }
 
-    empty.style.display = 'none';
-    toolbar.style.display = 'flex';
-    document.getElementById('tg-toolbar-title').textContent = 'My Wishlist';
-    document.getElementById('tg-toolbar-sub').textContent = products.length + ' item' + (products.length === 1 ? '' : 's') + ' saved';
+    if (loginPrompt) loginPrompt.style.display = 'none';
 
-    grid.innerHTML = products.map(productCard).join('');
+    /* Build hash to skip identical renders */
+    const hash = WISHLIST_IDS.join('|') + '::' + Object.keys(PRODUCTS).length;
+    const ids = WISHLIST_IDS || [];
+    const products = ids.map(id => PRODUCTS[id]).filter(Boolean);
+    const stillLoading = products.length < ids.length;
+
+    if (hash === _lastRenderHash && products.length > 0) return;
+    _lastRenderHash = hash;
+
+    const cnt = document.getElementById('tg-hd-count');
+    if (cnt) cnt.textContent = ids.length > 0 ? '(' + ids.length + ')' : '';
+
+    if (!ids.length) {
+      if (loading) loading.style.display = 'none';
+      if (toolbar) toolbar.style.display = 'none';
+      if (grid) { grid.style.display = 'none'; grid.innerHTML = ''; }
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+    if (toolbar) toolbar.style.display = 'flex';
+    document.getElementById('tg-toolbar-title').textContent = 'My Wishlist';
+    document.getElementById('tg-toolbar-sub').textContent = ids.length + ' item' + (ids.length === 1 ? '' : 's') + ' saved';
+
+    /* If we have some products, show grid immediately (partial render) */
+    if (products.length > 0) {
+      if (loading) loading.style.display = 'none';
+      if (grid) {
+        grid.style.display = 'grid';
+        // Only render products we have data for
+        grid.innerHTML = products.map(productCard).join('');
+      }
+    } else {
+      /* No product data yet — show skeleton */
+      if (grid) grid.style.display = 'none';
+      if (loading) loading.style.display = 'grid';
+    }
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     PRODUCT CARD
+     ═══════════════════════════════════════════════════════════════ */
   function productCard(p) {
     const price = Number(p.price || 0);
     const mrp = Number(p.compareAtPrice || p.mrp || 0);
@@ -506,7 +590,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div class="tg-card" data-pid="${esc(p.id)}">
         <div class="tg-card-img" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">
           ${badges ? '<div class="tg-card-badges">' + badges + '</div>' : ''}
-          <img src="${esc(img)}" alt="${esc(p.name || '')}" loading="lazy" />
+          <img src="${esc(img)}" alt="${esc(p.name || '')}" loading="lazy" decoding="async" fetchpriority="low" />
           <button class="tg-card-remove" onclick="event.stopPropagation();tgRemoveFromWishlist('${esc(p.id)}')" title="Remove from wishlist">
             <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
           </button>
@@ -534,103 +618,227 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     `;
   }
 
-  // ========= LOAD WISHLIST =========
+  /* ═══════════════════════════════════════════════════════════════
+     BATCH FETCH PRODUCTS (PARALLEL, chunk 30)
+     ═══════════════════════════════════════════════════════════════ */
+  async function fetchProductsFast(ids) {
+    if (!ids || !ids.length) return {};
+    const now = Date.now();
+    const missing = [];
+    for (const id of ids) {
+      const c = _pCache.get(id);
+      if (!c || (now - c.ts) > PRODUCT_CACHE_TTL) missing.push(id);
+    }
+    if (!missing.length) {
+      const out = {};
+      ids.forEach(id => { const v = _pGet(id); if (v) out[id] = v; });
+      return out;
+    }
+
+    /* Parallel chunks */
+    const chunks = [];
+    for (let i = 0; i < missing.length; i += CHUNK_SIZE) chunks.push(missing.slice(i, i + CHUNK_SIZE));
+
+    const results = {};
+    await Promise.all(chunks.map(async chunk => {
+      try {
+        const snap = await db.collection('products')
+          .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+          .get();
+        const got = new Set();
+        snap.forEach(d => {
+          const data = { id: d.id, ...d.data() };
+          _pSet(d.id, data);
+          results[d.id] = data;
+          got.add(d.id);
+        });
+        chunk.forEach(id => { if (!got.has(id)) _pSet(id, null); });
+      } catch(e) {
+        /* Fallback: individual gets in parallel */
+        await Promise.all(chunk.map(async id => {
+          try {
+            const d = await db.collection('products').doc(id).get();
+            const data = d.exists ? { id: d.id, ...d.data() } : null;
+            _pSet(id, data);
+            if (data) results[id] = data;
+          } catch(e2) { _pSet(id, null); }
+        }));
+      }
+    }));
+
+    /* Merge cached hits for IDs that were already cached */
+    for (const id of ids) {
+      if (!results[id]) {
+        const v = _pGet(id);
+        if (v) results[id] = v;
+      }
+    }
+    return results;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     WISHLIST LOADING — THE FAST PATH
+     ═══════════════════════════════════════════════════════════════ */
+  function hydrateFromCaches() {
+    /* Try wishlist full cache first */
+    const wc = loadWishCache();
+    if (wc && wc.ids.length) {
+      WISHLIST_IDS = wc.ids.slice();
+      const map = {};
+      wc.data.forEach(p => { if (p && p.id) map[p.id] = p; });
+      PRODUCTS = map;
+      /* Also merge from shared product cache */
+      let merged = false;
+      for (const id of WISHLIST_IDS) {
+        if (!PRODUCTS[id]) {
+          const cached = _pGet(id);
+          if (cached) { PRODUCTS[id] = cached; merged = true; }
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  async function syncProductsForMissing() {
+    const missing = WISHLIST_IDS.filter(id => !PRODUCTS[id]);
+    if (!missing.length) return false;
+
+    try {
+      const fetched = await fetchProductsFast(missing);
+      let added = 0;
+      for (const id in fetched) {
+        if (fetched[id]) {
+          PRODUCTS[id] = fetched[id];
+          added++;
+        }
+      }
+      if (added > 0) {
+        saveWishCache();
+        _lastRenderHash = ''; // force re-render
+        scheduleRender();
+      }
+      return added > 0;
+    } catch(e) {
+      console.warn('[wishlist] product fetch failed:', e && e.message);
+      return false;
+    }
+  }
+
   function loadWishlist() {
     if (unsubWishlist) { try { unsubWishlist(); } catch(e) {} unsubWishlist = null; }
 
-    // ⭐ If NOT logged in — show login prompt only
+    /* ─── Guest: show login prompt ─── */
     if (!USER) {
       WISHLIST_IDS = [];
       PRODUCTS = {};
-      document.getElementById('tg-wishlist').style.display = 'none';
-      document.getElementById('tg-loading').style.display = 'none';
-      document.getElementById('tg-toolbar').style.display = 'none';
-      document.getElementById('tg-empty').style.display = 'none';
-      document.getElementById('tg-login-prompt').style.display = 'block';
-      const cnt = document.getElementById('tg-hd-count'); if (cnt) cnt.textContent = '';
+      _lastRenderHash = '';
+      render();
       return;
     }
 
-    // ⭐ Show skeleton while loading (if no cache)
-    const cached = loadWishlistCache();
-    if (cached && cached.length) {
-      const map = {};
-      cached.forEach(p => { if (p && p.id) map[p.id] = p; });
-      PRODUCTS = map;
-      WISHLIST_IDS = cached.map(p => p.id).filter(Boolean);
-      render();
-    } else {
-      // show skeleton
-      document.getElementById('tg-loading').style.display = 'grid';
-      document.getElementById('tg-wishlist').style.display = 'none';
+    /* ─── STEP 1: Instant hydrate from cache (NO skeleton if cached) ─── */
+    const hadCache = hydrateFromCaches();
+    if (hadCache && WISHLIST_IDS.length) {
+      _lastRenderHash = '';
+      render(); // Instant paint
     }
 
-    // ⭐ Subscribe to wishlist doc (real-time)
+    /* ─── STEP 2: Kick off product fetch for missing (background) ─── */
+    if (WISHLIST_IDS.length) {
+      syncProductsForMissing();
+    }
+
+    /* ─── STEP 3: Subscribe to wishlist doc (live sync) ─── */
     unsubWishlist = db.collection('wishlists').doc(USER.uid).onSnapshot(async snap => {
       const items = snap.exists && Array.isArray(snap.data().items) ? snap.data().items : [];
-      const ids = items.filter(Boolean).map(String);
-      WISHLIST_IDS = ids;
+      const newIds = items.filter(Boolean).map(String);
 
-      if (!ids.length) {
-        PRODUCTS = {};
-        saveWishlistCache({});
+      const idsChanged = newIds.length !== WISHLIST_IDS.length ||
+                        newIds.some((id, i) => id !== WISHLIST_IDS[i]);
+
+      WISHLIST_IDS = newIds;
+
+      /* Prune products that are no longer in wishlist */
+      const idSet = new Set(newIds);
+      Object.keys(PRODUCTS).forEach(k => { if (!idSet.has(k)) delete PRODUCTS[k]; });
+
+      if (!newIds.length) {
+        saveWishCache();
+        _lastRenderHash = '';
         render();
         return;
       }
 
-      // Fetch products we don't have
-      const missing = ids.filter(id => !PRODUCTS[id]);
-      if (missing.length) {
-        try {
-          const fetched = {};
-          const chunks = [];
-          for (let i = 0; i < missing.length; i += 10) chunks.push(missing.slice(i, i + 10));
-          await Promise.all(chunks.map(async chunk => {
-            try {
-              const s = await db.collection('products').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
-              s.docs.forEach(d => { fetched[d.id] = { id: d.id, ...d.data() }; });
-            } catch(e) {
-              await Promise.all(chunk.map(async id => {
-                try {
-                  const d = await db.collection('products').doc(id).get();
-                  if (d.exists) fetched[id] = { id: d.id, ...d.data() };
-                } catch(e2) {}
-              }));
-            }
-          }));
-          Object.assign(PRODUCTS, fetched);
-          const currentSet = new Set(ids);
-          Object.keys(PRODUCTS).forEach(k => { if (!currentSet.has(k)) delete PRODUCTS[k]; });
-          saveWishlistCache(PRODUCTS);
-        } catch(e) {
-          console.warn('Product fetch failed:', e && e.message);
+      /* Fast render with whatever we have (from shared cache) */
+      for (const id of newIds) {
+        if (!PRODUCTS[id]) {
+          const cached = _pGet(id);
+          if (cached) PRODUCTS[id] = cached;
         }
       }
 
-      render();
+      if (idsChanged || Object.keys(PRODUCTS).length !== newIds.length) {
+        _lastRenderHash = '';
+        render();
+      }
+
+      /* Background: fetch any missing products */
+      const missing = newIds.filter(id => !PRODUCTS[id]);
+      if (missing.length) {
+        await syncProductsForMissing();
+      } else {
+        saveWishCache();
+      }
     }, err => {
-      console.warn('Wishlist subscribe err:', err && err.message);
-      render();
+      console.warn('[wishlist] subscribe err:', err && err.message);
+      if (!WISHLIST_IDS.length) {
+        _lastRenderHash = '';
+        render();
+      }
     });
+
+    /* ─── STEP 4: If no cache and no snapshot yet, show skeleton ─── */
+    if (!hadCache || !WISHLIST_IDS.length) {
+      if (!WISHLIST_IDS.length) {
+        /* Show skeleton briefly until snapshot fires (usually <500ms) */
+        const loading = document.getElementById('tg-loading');
+        const grid = document.getElementById('tg-wishlist');
+        if (loading && grid && grid.style.display === 'none') loading.style.display = 'grid';
+      }
+    }
   }
 
-  // ========= ACTIONS =========
+  /* ═══════════════════════════════════════════════════════════════
+     ACTIONS
+     ═══════════════════════════════════════════════════════════════ */
   window.tgRemoveFromWishlist = function(pid) {
     if (!USER) { toast('Please log in first', 'info'); return; }
     const p = PRODUCTS[pid];
     const name = p ? (p.name || 'this item') : 'this item';
     confirmCb = async () => {
+      /* ⚡ OPTIMISTIC: remove from UI instantly */
+      const backupIds = WISHLIST_IDS.slice();
+      const backupProduct = PRODUCTS[pid];
+      delete PRODUCTS[pid];
+      WISHLIST_IDS = WISHLIST_IDS.filter(x => x !== pid);
+      _lastRenderHash = '';
+      render();
+      saveWishCache();
+
       try {
         await db.collection('wishlists').doc(USER.uid).set({
           items: FV.arrayRemove(pid),
           updatedAt: FV.serverTimestamp()
         }, { merge: true });
-        delete PRODUCTS[pid];
-        WISHLIST_IDS = WISHLIST_IDS.filter(x => x !== pid);
-        saveWishlistCache(PRODUCTS);
-        render();
         toast('Removed from wishlist', 'success');
       } catch(e) {
+        /* Rollback */
+        WISHLIST_IDS = backupIds;
+        if (backupProduct) PRODUCTS[pid] = backupProduct;
+        _lastRenderHash = '';
+        render();
+        saveWishCache();
         toast('Failed: ' + (e.message || 'Try again'), 'error');
       }
       tgCloseConfirm();
@@ -653,6 +861,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return;
     }
 
+    /* ⚡ OPTIMISTIC: remove from wishlist UI instantly */
+    const backupIds = WISHLIST_IDS.slice();
+    const backupProduct = PRODUCTS[pid];
+    delete PRODUCTS[pid];
+    WISHLIST_IDS = WISHLIST_IDS.filter(x => x !== pid);
+    _lastRenderHash = '';
+    render();
+    saveWishCache();
+    toast('✓ Added to cart', 'success');
+
     const sellerId = p.sellerId || p.seller_id || p.sid || p.sellerUid || '';
     const sellerName = p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '';
     const docId = pid + '||';
@@ -670,44 +888,58 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     try {
       const ref = db.collection('carts').doc(USER.uid).collection('items').doc(docId);
-      const snap = await ref.get();
-      if (snap.exists) await ref.update({ qty: FV.increment(1), updatedAt: FV.serverTimestamp() });
-      else await ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+      /* Use server merge-set which is atomic (no read-then-write race) */
+      await ref.set({
+        ...item,
+        addedAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
 
-      await db.collection('wishlists').doc(USER.uid).set({ items: FV.arrayRemove(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
-      delete PRODUCTS[pid];
-      WISHLIST_IDS = WISHLIST_IDS.filter(x => x !== pid);
-      saveWishlistCache(PRODUCTS);
-      render();
-      toast('✓ Added to cart', 'success');
+      await db.collection('wishlists').doc(USER.uid).set({
+        items: FV.arrayRemove(pid),
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
     } catch(e) {
+      /* Rollback wishlist */
+      WISHLIST_IDS = backupIds;
+      if (backupProduct) PRODUCTS[pid] = backupProduct;
+      _lastRenderHash = '';
+      render();
+      saveWishCache();
       toast('Failed: ' + (e.message || 'Try again'), 'error');
     }
   };
 
   window.tgMoveAllToCart = async function() {
     if (!USER) { toast('Please log in first', 'info'); return; }
-    const available = WISHLIST_IDS.map(id => PRODUCTS[id]).filter(p => p && !isOutOfStock(p));
+    const available = WISHLIST_IDS.map(id => PRODUCTS[id]).filter(p => p && !isOutOfStock(p) && !hasVariants(p));
     if (!available.length) { toast('No items available to add', 'error'); return; }
 
     const btn = document.getElementById('tg-move-all-btn');
     btn.disabled = true;
-    const orig = btn.textContent;
-    btn.textContent = 'Moving…';
+    const orig = btn.innerHTML;
+    btn.innerHTML = 'Moving…';
 
-    let ok = 0, variantSkips = [];
-    const movedIds = [];
+    /* ⚡ OPTIMISTIC: remove all from UI instantly */
+    const movedIds = available.map(p => p.id);
+    const backupIds = WISHLIST_IDS.slice();
+    const backupProducts = { ...PRODUCTS };
+    movedIds.forEach(id => { delete PRODUCTS[id]; });
+    WISHLIST_IDS = WISHLIST_IDS.filter(x => !movedIds.includes(x));
+    _lastRenderHash = '';
+    render();
 
-    for (const p of available) {
-      try {
-        if (hasVariants(p)) { variantSkips.push(p); continue; }
+    let ok = 0;
+    try {
+      /* Batch write all cart items */
+      const batch = db.batch();
+      const cartCol = db.collection('carts').doc(USER.uid).collection('items');
+      available.forEach(p => {
         const sellerId = p.sellerId || p.seller_id || p.sid || p.sellerUid || '';
         const sellerName = p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '';
         const docId = p.id + '||';
-        const ref = db.collection('carts').doc(USER.uid).collection('items').doc(docId);
-        const snap = await ref.get();
-        if (snap.exists) await ref.update({ qty: FV.increment(1), updatedAt: FV.serverTimestamp() });
-        else await ref.set({
+        const ref = cartCol.doc(docId);
+        batch.set(ref, {
           productId: p.id, name: p.name || 'Product',
           price: Number(p.price || 0),
           mrp: Number(p.compareAtPrice || p.mrp || 0),
@@ -716,45 +948,54 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           weight: Number(p.weight || 0), gst: Number(p.gst || 0),
           sellerId: sellerId, sellerName: sellerName,
           addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
-        });
-        movedIds.push(p.id);
-        ok++;
-      } catch(e) { console.warn('Move failed for', p.id, e); }
-    }
-
-    if (movedIds.length) {
-      try {
-        await db.collection('wishlists').doc(USER.uid).set({
-          items: FV.arrayRemove(...movedIds),
-          updatedAt: FV.serverTimestamp()
         }, { merge: true });
-        movedIds.forEach(id => { delete PRODUCTS[id]; });
-        WISHLIST_IDS = WISHLIST_IDS.filter(x => !movedIds.includes(x));
-        saveWishlistCache(PRODUCTS);
-      } catch(e) {}
+      });
+      await batch.commit();
+      ok = available.length;
+
+      /* Remove from wishlist */
+      await db.collection('wishlists').doc(USER.uid).set({
+        items: FV.arrayRemove(...movedIds),
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
+
+      saveWishCache();
+      if (ok > 0) toast('✓ ' + ok + ' item' + (ok === 1 ? '' : 's') + ' added to cart', 'success');
+    } catch(e) {
+      /* Rollback */
+      WISHLIST_IDS = backupIds;
+      PRODUCTS = backupProducts;
+      _lastRenderHash = '';
+      render();
+      saveWishCache();
+      toast('Failed: ' + (e.message || 'Try again'), 'error');
     }
 
     btn.disabled = false;
-    btn.textContent = orig;
-
-    if (ok > 0) toast('✓ ' + ok + ' item' + (ok === 1 ? '' : 's') + ' added to cart', 'success');
-    if (variantSkips.length) toast(variantSkips.length + ' item(s) need size/color selection', 'info');
-
-    render();
+    btn.innerHTML = orig;
   };
 
   window.tgClearWishlist = function() {
     if (!USER) { toast('Please log in first', 'info'); return; }
     if (!WISHLIST_IDS.length) { toast('Wishlist already empty', 'info'); return; }
     confirmCb = async () => {
+      const backupIds = WISHLIST_IDS.slice();
+      const backupProducts = { ...PRODUCTS };
+      WISHLIST_IDS = [];
+      PRODUCTS = {};
+      _lastRenderHash = '';
+      render();
+      saveWishCache();
+
       try {
         await db.collection('wishlists').doc(USER.uid).set({ items: [], updatedAt: FV.serverTimestamp() }, { merge: true });
-        PRODUCTS = {};
-        WISHLIST_IDS = [];
-        saveWishlistCache({});
-        render();
         toast('Wishlist cleared', 'success');
       } catch(e) {
+        WISHLIST_IDS = backupIds;
+        PRODUCTS = backupProducts;
+        _lastRenderHash = '';
+        render();
+        saveWishCache();
         toast('Failed: ' + (e.message || 'Try again'), 'error');
       }
       tgCloseConfirm();
@@ -765,7 +1006,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.getElementById('tg-confirm-modal').classList.add('show');
   };
 
-  // ========= CONFIRM MODAL =========
   window.tgCloseConfirm = function() {
     document.getElementById('tg-confirm-modal').classList.remove('show');
     confirmCb = null;
@@ -777,17 +1017,37 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (e.target.id === 'tg-confirm-modal') tgCloseConfirm();
   });
 
-  // ========= AUTH =========
+  /* ═══════════════════════════════════════════════════════════════
+     THEME
+     ═══════════════════════════════════════════════════════════════ */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(primary) {
+    primary = primary || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    const hd = document.querySelector('.tg-hd'); if (hd) hd.style.background = primary;
+    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
+  }
+  (function boot() {
+    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
+  })();
+  /* Background theme refresh — non-blocking */
+  db.collection('siteSettings').doc('theme').get().then(s => {
+    if (s.exists) {
+      const d = s.data();
+      applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
+    }
+  }).catch(() => {});
+
+  /* ═══════════════════════════════════════════════════════════════
+     AUTH
+     ═══════════════════════════════════════════════════════════════ */
   auth.onAuthStateChanged((u) => {
-    // ⚠ IMPORTANT: Ye line ensure karti hai ki hum wishlist.html pe redirect na karein
-    // Bas user state update karo, kuch aur mat karo
     USER = u;
     if (u) {
-      console.log('[TOEGO Wishlist] User logged in:', u.email);
       watchCart(u.uid);
       loadWishlist();
     } else {
-      console.log('[TOEGO Wishlist] No user logged in — showing login prompt');
       watchCart(null);
       loadWishlist();
     }
