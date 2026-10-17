@@ -16,12 +16,10 @@ input,select,textarea{font:inherit;}
 a{color:inherit;text-decoration:none;}
 header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb,.breadcrumb{display:none!important;}
 
-/* OFFLINE BANNER */
 .tg-offline{position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;font-size:12px;font-weight:800;padding:8px 14px;text-align:center;z-index:99999;display:none;letter-spacing:0.4px;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
 .tg-offline.show{display:block;}
 .tg-offline::before{content:'⚠ ';font-size:14px;}
 
-/* LOGIN */
 .tg-login{position:fixed;inset:0;background:radial-gradient(ellipse at top,#1a2238 0%,#0a0e1a 70%);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;}
 .tg-login::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(0,212,255,0.15),transparent 70%);border-radius:50%;animation:tgFloat 12s ease-in-out infinite;}
 .tg-login::after{content:'';position:absolute;bottom:-200px;left:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(255,229,0,0.10),transparent 70%);border-radius:50%;animation:tgFloat 15s ease-in-out infinite reverse;}
@@ -52,7 +50,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-login-back{display:block;text-align:center;margin-top:16px;font-size:12px;color:#64748b;}
 .tg-login-back:hover{color:#00d4ff;}
 
-/* HEADER */
 .tg-hd{background:linear-gradient(135deg,#0f1729 0%,#1a2238 100%);position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:1px solid rgba(0,212,255,0.15);box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:top .3s;}
 .tg-offline.show ~ .tg-hd{top:36px;}
 .tg-hd-i{display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:60px;}
@@ -81,7 +78,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 @keyframes tgSndRing{0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,0.4);}50%{box-shadow:0 0 0 8px rgba(0,212,255,0);}}
 .tg-hd-snd svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
-/* TICKER */
 .tg-ticker{background:rgba(0,0,0,0.25);padding:7px 14px;display:flex;align-items:center;gap:14px;overflow-x:auto;scrollbar-width:none;border-top:1px solid rgba(255,255,255,0.05);}
 .tg-ticker::-webkit-scrollbar{display:none;}
 .tg-tk{display:flex;align-items:center;gap:6px;flex-shrink:0;font-size:11px;color:#8892a6;font-weight:600;}
@@ -98,7 +94,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-tk .dot.red{background:#ef4444;box-shadow:0 0 6px #ef4444;}
 .tg-tk .dot.pink{background:#ec4899;box-shadow:0 0 6px #ec4899;}
 
-/* OVERLAY */
 .tg-ov{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:99998;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;}
 .tg-ov.show{opacity:1;visibility:visible;}
 .tg-dr{position:fixed;top:0;left:0;bottom:0;width:320px;max-width:88vw;background:#0d1424;z-index:99999;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid rgba(0,212,255,0.15);box-shadow:8px 0 40px rgba(0,0,0,0.5);}
@@ -132,7 +127,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 @keyframes tgPinkPulse{0%,100%{box-shadow:0 2px 8px rgba(236,72,153,0.5);}50%{box-shadow:0 2px 16px rgba(236,72,153,0.9);}}
 .tg-dr-f{padding:14px 20px;border-top:1px solid rgba(255,255,255,0.05);font-size:10.5px;color:#4b5563;text-align:center;letter-spacing:0.3px;}
 
-/* MAIN */
 .tg-w{padding-top:104px;padding-bottom:20px;min-height:100vh;background:radial-gradient(ellipse at top,rgba(0,212,255,0.06) 0%,#0a0e1a 50%);display:none;transition:padding-top .3s;}
 .tg-offline.show ~ .tg-w{padding-top:140px;}
 .tg-w.show{display:block;}
@@ -141,7 +135,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-v.active{display:block;}
 @keyframes tgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-/* HERO */
 .tg-hero{background:linear-gradient(135deg,rgba(0,212,255,0.15) 0%,rgba(40,116,240,0.12) 50%,rgba(0,212,255,0.08) 100%);border:1px solid rgba(0,212,255,0.25);border-radius:18px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);}
 .tg-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(0,212,255,0.25),transparent 70%);border-radius:50%;animation:tgFloat 8s ease-in-out infinite;}
 .tg-hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:250px;height:250px;background:radial-gradient(circle,rgba(255,229,0,0.15),transparent 70%);border-radius:50%;animation:tgFloat 10s ease-in-out infinite reverse;}
@@ -158,7 +151,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-hs-n.pink{color:#f472b6;}
 .tg-hs-l{font-size:10px;color:#8892a6;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;}
 
-/* STAT GRID */
 .tg-sg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
 @media (min-width:700px){.tg-sg{grid-template-columns:repeat(5,1fr);}}
 .tg-sc{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;backdrop-filter:blur(8px);}
@@ -178,14 +170,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-scn{font-size:26px;font-weight:900;color:#fff;line-height:1;letter-spacing:-1px;font-family:'JetBrains Mono',monospace;margin-bottom:5px;}
 .tg-scl{font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;}
 
-/* SECTION */
 .tg-sec{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;margin-bottom:14px;overflow:hidden;backdrop-filter:blur(8px);}
 .tg-sh{padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.05);}
 .tg-st{font-size:15px;font-weight:800;color:#fff;letter-spacing:-0.2px;display:flex;align-items:center;gap:8px;}
 .tg-st .ic{font-size:16px;}
 .tg-ss{font-size:11.5px;color:#8892a6;margin-top:3px;font-weight:500;}
 
-/* CHIPS */
 .tg-cw{padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;}
 .tg-cw::-webkit-scrollbar{display:none;}
 .tg-chips{display:flex;gap:8px;width:max-content;padding-bottom:12px;}
@@ -195,7 +185,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-chip-c{background:rgba(0,0,0,0.25);padding:2px 7px;border-radius:999px;font-size:10px;font-weight:900;min-width:18px;text-align:center;}
 .tg-chip.active .tg-chip-c{background:rgba(0,0,0,0.2);color:#0a0e1a;}
 
-/* BUTTONS */
 .tg-btn{padding:10px 16px;border-radius:10px;font-size:12.5px;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;transition:all .15s;border:1.5px solid transparent;cursor:pointer;}
 .tg-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
 .tg-btn.pri{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;box-shadow:0 4px 14px rgba(0,212,255,0.4);}
@@ -209,18 +198,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-btn.out:hover{background:rgba(0,212,255,0.1);}
 .tg-btn.gho{background:rgba(255,255,255,0.06);color:#cbd5e1;border-color:rgba(255,255,255,0.08);}
 .tg-btn.gho:hover{background:rgba(255,255,255,0.1);color:#fff;}
-.tg-btn.pink{background:linear-gradient(135deg,#ec4899,#be185d);color:#fff;box-shadow:0 4px 14px rgba(236,72,153,0.4);}
-.tg-btn.pink:hover{filter:brightness(1.1);}
 .tg-btn:disabled{opacity:0.5;cursor:not-allowed;}
 
-/* ROW */
 .tg-row{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s;position:relative;}
 .tg-row:last-child{border-bottom:none;}
 .tg-row:hover{background:rgba(0,212,255,0.04);}
 .tg-row-av{width:44px;height:44px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(40,116,240,0.15));color:#00d4ff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
 .tg-row-av.sq{border-radius:10px;background:rgba(255,255,255,0.04);}
 .tg-row-av.pink{background:linear-gradient(135deg,rgba(236,72,153,0.15),rgba(190,24,93,0.15));color:#f472b6;}
-.tg-row-av img{width:100%;height:100%;object-fit:cover;}
 .tg-row-b{flex:1;min-width:0;}
 .tg-row-t{font-size:14px;font-weight:800;color:#fff;margin-bottom:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;letter-spacing:-0.1px;}
 .tg-row-s{font-size:11.5px;color:#8892a6;display:flex;gap:12px;flex-wrap:wrap;font-weight:500;}
@@ -228,7 +213,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-row-s b{color:#cbd5e1;font-weight:700;}
 .tg-row-a{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:center;}
 
-/* PILL */
 .tg-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:900;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.5px;}
 .tg-pill.blu{background:rgba(0,212,255,0.15);color:#00d4ff;border:1px solid rgba(0,212,255,0.3);}
 .tg-pill.ylw{background:rgba(250,204,21,0.15);color:#facc15;border:1px solid rgba(250,204,21,0.3);}
@@ -238,10 +222,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-pill.gry{background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3);}
 .tg-pill.pnk{background:rgba(236,72,153,0.15);color:#f472b6;border:1px solid rgba(236,72,153,0.3);}
 
-/* LIVE DOT */
 .tg-live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e;animation:tgLivePulse 1.5s infinite;display:inline-block;}
 
-/* DUAL SCAN CARDS */
 .tg-scan-dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 @media (max-width:480px){.tg-scan-dual{grid-template-columns:1fr;}}
 .tg-scan-card{border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid;}
@@ -264,13 +246,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-scan-card.bulk .tg-scan-card-badge{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.4);}
 .tg-scan-card.single .tg-scan-card-badge{background:rgba(0,212,255,0.2);color:#00d4ff;border:1px solid rgba(0,212,255,0.4);}
 
-/* EMPTY */
 .tg-empty{text-align:center;padding:50px 20px;}
 .tg-empty-i{font-size:54px;margin-bottom:12px;opacity:0.4;}
 .tg-empty-t{font-size:15px;font-weight:800;margin:0 0 6px;color:#fff;}
 .tg-empty-d{font-size:12.5px;color:#8892a6;margin:0;}
 
-/* MODAL */
 .tg-mod{position:fixed;inset:0;background:rgba(5,8,16,0.85);backdrop-filter:blur(8px);z-index:99999;display:none;align-items:flex-end;justify-content:center;animation:tgFade .2s;}
 .tg-mod.show{display:flex;}
 .tg-mod-c{width:100%;max-width:640px;background:linear-gradient(180deg,#0f1729 0%,#0a0e1a 100%);border:1px solid rgba(0,212,255,0.2);border-radius:22px 22px 0 0;padding:22px 20px 26px;max-height:92vh;overflow-y:auto;animation:tgSlideUp .3s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -20px 60px rgba(0,0,0,0.6);}
@@ -280,11 +260,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-mod-t{font-size:18px;font-weight:900;color:#fff;letter-spacing:-0.3px;}
 .tg-mod-x{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);color:#8892a6;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
 .tg-mod-x:hover{background:#ef4444;color:#fff;transform:rotate(90deg);}
-
-/* SCANNER MODAL */
 .tg-mod-c.scanner{padding:16px 16px 20px;max-width:640px;}
 
-/* BULK BAR */
 .tg-bulk-bar{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.1));border:1.5px solid rgba(34,197,94,0.4);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .tg-bulk-cnt{display:flex;align-items:center;gap:16px;flex:1;min-width:0;}
 .tg-bulk-cnt-num{font-size:24px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;line-height:1;}
@@ -292,7 +269,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-bulk-cnt-earn{font-size:15px;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;}
 .tg-bulk-done{padding:9px 16px;border-radius:9px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:11.5px;font-weight:900;letter-spacing:0.4px;text-transform:uppercase;box-shadow:0 4px 12px rgba(34,197,94,0.4);cursor:pointer;flex-shrink:0;border:none;}
 
-/* SCANNER */
 .tg-scanner-wrap{background:#000;border-radius:16px;padding:10px;margin-bottom:10px;position:relative;overflow:hidden;border:1.5px solid rgba(0,212,255,0.3);box-shadow:inset 0 0 60px rgba(0,212,255,0.15);}
 #tg-reader{width:100%;border-radius:12px;overflow:hidden;background:#000;min-height:260px;position:relative;}
 #tg-reader video{width:100%!important;height:auto!important;display:block;border-radius:12px;}
@@ -311,18 +287,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-scan-status.error{border-color:rgba(239,68,68,0.5);color:#f87171;}
 .tg-scan-status.error::before{background:#ef4444;box-shadow:0 0 8px #ef4444;}
 
-/* CAMERA ERROR */
 .tg-cam-err{background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.4);border-radius:12px;padding:14px;color:#f87171;font-size:12.5px;line-height:1.6;text-align:center;margin-bottom:12px;}
 .tg-cam-err b{color:#fff;}
 
-/* MANUAL */
 .tg-manual-box{background:rgba(0,212,255,0.06);border:1.5px solid rgba(0,212,255,0.25);border-radius:14px;padding:12px;margin-top:10px;}
 .tg-manual-box label{display:block;font-size:10px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;}
 .tg-manual-box input{width:100%;padding:11px 12px;border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;font-size:14px;font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,0.3);color:#fff;outline:none;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-align:center;}
 .tg-manual-box input:focus{border-color:#00d4ff;box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
 .tg-manual-box input::placeholder{color:#4b5563;letter-spacing:0.5px;font-weight:500;}
 
-/* RECENT LIST */
 .tg-recent-list{margin-top:10px;max-height:180px;overflow-y:auto;border-radius:12px;background:rgba(0,0,0,0.2);padding:4px 0;}
 .tg-recent-empty{text-align:center;padding:14px;color:#64748b;font-size:11.5px;}
 .tg-recent-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);animation:tgRecentIn .35s;}
@@ -335,7 +308,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-recent-s{font-size:10px;color:#8892a6;}
 .tg-recent-v{font-size:12px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
 
-/* FORM */
 .tg-fld{margin-bottom:14px;}
 .tg-fld label{display:block;font-size:11px;color:#8892a6;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.6px;}
 .tg-fld label .rq{color:#ef4444;margin-left:2px;}
@@ -357,7 +329,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-mod-b.gho:hover{background:rgba(255,255,255,0.1);}
 .tg-mod-b:disabled{opacity:0.6;cursor:not-allowed;}
 
-/* SELECTABLE */
 .tg-sel{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:all .15s;margin-bottom:8px;background:rgba(255,255,255,0.02);}
 .tg-sel:hover{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.04);}
 .tg-sel.active{border-color:#00d4ff;background:rgba(0,212,255,0.08);box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
@@ -369,14 +340,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-sel-s{font-size:11.5px;color:#8892a6;display:flex;gap:10px;flex-wrap:wrap;}
 .tg-sel-r{font-size:11.5px;color:#00d4ff;font-weight:800;font-family:'JetBrains Mono',monospace;}
 
-/* SETTLE HERO */
 .tg-settle-hero{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.08));border:1.5px solid rgba(34,197,94,0.3);border-radius:16px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden;}
 .tg-settle-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;background:radial-gradient(circle,rgba(34,197,94,0.2),transparent 70%);border-radius:50%;}
 .tg-settle-lbl{font-size:11px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;position:relative;z-index:2;}
 .tg-settle-amt{font-size:38px;font-weight:900;color:#4ade80;line-height:1;letter-spacing:-1.5px;font-family:'JetBrains Mono',monospace;position:relative;z-index:2;text-shadow:0 0 20px rgba(74,222,128,0.3);}
 .tg-settle-sub{font-size:12.5px;color:#8892a6;margin-top:8px;position:relative;z-index:2;}
 
-/* TOAST */
 .tg-toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;gap:10px;max-width:calc(100vw - 24px);pointer-events:none;}
 .tg-toast{padding:13px 18px;background:linear-gradient(135deg,rgba(20,27,45,0.98),rgba(15,23,41,0.98));backdrop-filter:blur(14px);color:#fff;font-size:13px;border-radius:12px;box-shadow:0 20px 44px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08);pointer-events:auto;font-weight:600;animation:tgToastIn .3s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;min-width:280px;max-width:400px;position:relative;overflow:hidden;}
 .tg-toast::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#00d4ff,#0090c4);box-shadow:0 0 12px #00d4ff;}
@@ -390,24 +359,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-toast-body{flex:1;line-height:1.35;}
 @keyframes tgToastIn{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 
-/* FAB */
 .tg-fab{position:fixed;bottom:24px;right:20px;padding:16px 22px;border-radius:999px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:13px;font-weight:900;letter-spacing:0.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(34,197,94,0.5),0 0 0 1px rgba(34,197,94,0.3);z-index:9998;transition:all .15s;cursor:pointer;border:none;}
 .tg-fab:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(34,197,94,0.6),0 0 0 1px rgba(34,197,94,0.4);}
 .tg-fab svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;}
 
-/* RATE INPUT */
 .tg-rate-input{display:flex;align-items:center;background:rgba(0,212,255,0.06);border:1.5px solid rgba(0,212,255,0.25);border-radius:10px;padding:4px;gap:4px;}
 .tg-rate-input button{width:34px;height:34px;border-radius:8px;background:rgba(0,212,255,0.15);color:#00d4ff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .tg-rate-input button:hover{background:rgba(0,212,255,0.25);}
 .tg-rate-input input{flex:1;background:transparent;border:none;outline:none;text-align:center;font-size:18px;font-weight:900;color:#00d4ff;font-family:'JetBrains Mono',monospace;min-width:0;padding:0;}
 
-/* RATE PICK */
 .tg-rate-pick{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
 .tg-rate-pick-btn{padding:10px 16px;border-radius:10px;background:rgba(0,212,255,0.08);border:1.5px solid rgba(0,212,255,0.2);color:#00d4ff;font-size:14px;font-weight:900;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all .15s;}
 .tg-rate-pick-btn:hover{background:rgba(0,212,255,0.15);border-color:rgba(0,212,255,0.4);}
 .tg-rate-pick-btn.active{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;border-color:transparent;box-shadow:0 4px 14px rgba(0,212,255,0.4);}
 
-/* CONFIRM */
 .tg-confirm{position:fixed;inset:0;background:rgba(5,8,16,0.9);backdrop-filter:blur(8px);z-index:999999;display:none;align-items:center;justify-content:center;padding:20px;}
 .tg-confirm.show{display:flex;}
 .tg-confirm-c{background:linear-gradient(180deg,#0f1729,#0a0e1a);border:1px solid rgba(0,212,255,0.25);border-radius:18px;padding:26px 22px 22px;max-width:420px;width:100%;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.7);animation:tgConfirmIn .3s cubic-bezier(.34,1.56,.64,1);}
@@ -422,7 +387,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-confirm-b.suc{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 4px 14px rgba(34,197,94,0.4);}
 .tg-confirm-b.gho{background:rgba(255,255,255,0.06);color:#cbd5e1;flex:0 0 40%;border:1px solid rgba(255,255,255,0.08);}
 
-/* APPLICATION DETAIL */
 .tg-app-hero{background:linear-gradient(135deg,rgba(236,72,153,0.15),rgba(168,85,247,0.08));border:1.5px solid rgba(236,72,153,0.3);border-radius:16px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden;}
 .tg-app-hero::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;background:radial-gradient(circle,rgba(236,72,153,0.25),transparent 70%);border-radius:50%;}
 .tg-app-hero-content{position:relative;z-index:2;display:flex;align-items:center;gap:16px;}
@@ -432,7 +396,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-app-meta{font-size:12.5px;color:#cbd5e1;margin-bottom:2px;display:flex;align-items:center;gap:6px;}
 .tg-app-id{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8892a6;background:rgba(0,0,0,0.3);padding:3px 8px;border-radius:5px;margin-top:6px;display:inline-block;}
 
-/* DETAIL SECTION */
 .tg-detail-section{background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin-bottom:14px;}
 .tg-detail-title{font-size:11px;font-weight:900;color:#8892a6;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .tg-detail-title .ic{font-size:15px;}
@@ -442,10 +405,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-detail-v{color:#fff;font-weight:800;text-align:right;word-break:break-word;font-family:'JetBrains Mono',monospace;font-size:12.5px;}
 .tg-detail-v.hl{color:#00d4ff;}
 .tg-detail-v.green{color:#4ade80;}
-.tg-detail-v.pink{color:#f472b6;}
 .tg-detail-v.address{font-family:Roboto;font-weight:600;font-size:12.5px;line-height:1.5;text-align:right;}
 
-/* PAY CARD */
 .tg-pay-card{background:linear-gradient(135deg,#1a1d21 0%,#2d3748 50%,#4a5568 100%);border-radius:14px;padding:18px 20px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);}
 .tg-pay-card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,212,255,0.15),transparent 70%);border-radius:50%;}
 .tg-pay-lbl{font-size:9.5px;opacity:0.6;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;position:relative;z-index:2;}
@@ -453,7 +414,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-pay-value{font-size:19px;font-family:'JetBrains Mono',monospace;letter-spacing:1.5px;font-weight:700;position:relative;z-index:2;margin-top:10px;text-shadow:0 2px 8px rgba(0,0,0,0.5);}
 .tg-pay-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px;position:relative;z-index:2;}
 
-/* INFO BOX */
 .tg-info-box{background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(40,116,240,0.06));border:1.5px solid rgba(0,212,255,0.25);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:12.5px;color:#cbd5e1;line-height:1.6;}
 .tg-info-box b{color:#00d4ff;font-weight:800;}
 .tg-info-box.warn{background:linear-gradient(135deg,rgba(250,204,21,0.1),rgba(245,158,11,0.06));border-color:rgba(250,204,21,0.3);}
@@ -464,14 +424,41 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-info-box.danger b{color:#f87171;}
 .tg-info-box .ic{font-size:16px;margin-right:6px;}
 
-/* FLASH OVERLAY */
 .tg-flash-overlay{position:fixed;inset:0;background:rgba(34,197,94,0.25);z-index:999999;pointer-events:none;display:none;align-items:center;justify-content:center;animation:tgFlash .4s ease-out;}
 .tg-flash-overlay.show{display:flex;}
 .tg-flash-overlay.err{background:rgba(239,68,68,0.25);}
 @keyframes tgFlash{from{opacity:0.9;}to{opacity:0;}}
 .tg-flash-icon{font-size:120px;color:#fff;font-weight:900;text-shadow:0 0 40px rgba(34,197,94,1);}
 
-/* SCROLLBAR */
+.tg-feed-i{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.tg-feed-i:last-child{border-bottom:none;}
+.tg-feed-dot{width:10px;height:10px;border-radius:50%;background:#00d4ff;box-shadow:0 0 10px #00d4ff;flex-shrink:0;}
+.tg-feed-dot.grn{background:#22c55e;box-shadow:0 0 10px #22c55e;}
+.tg-feed-dot.ylw{background:#facc15;box-shadow:0 0 10px #facc15;}
+.tg-feed-b{flex:1;min-width:0;}
+.tg-feed-t{font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;}
+.tg-feed-s{font-size:11px;color:#8892a6;font-family:'JetBrains Mono',monospace;}
+.tg-feed-v{font-size:13px;font-weight:900;color:#00d4ff;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+
+.tg-order-id-box{background:rgba(0,212,255,0.06);border:1.5px solid rgba(0,212,255,0.25);border-radius:12px;padding:14px;margin-bottom:14px;}
+.tg-order-id-box .hint{font-size:11.5px;color:#8892a6;margin-bottom:8px;line-height:1.5;}
+.tg-order-id-box .hint b{color:#00d4ff;}
+.tg-order-id-box textarea{width:100%;min-height:90px;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:0.5px;padding:10px 12px;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;outline:none;text-transform:uppercase;resize:vertical;}
+.tg-order-id-box textarea:focus{border-color:#00d4ff;box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
+.tg-order-id-box textarea::placeholder{color:#4b5563;text-transform:none;letter-spacing:0;}
+.tg-fetch-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(34,197,94,0.15);border:1.5px solid rgba(34,197,94,0.4);color:#4ade80;border-radius:8px;font-size:11.5px;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;cursor:pointer;margin-top:8px;transition:all .15s;}
+.tg-fetch-btn:hover{background:rgba(34,197,94,0.25);}
+.tg-fetch-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.tg-fetch-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.tg-fetched-orders{max-height:240px;overflow-y:auto;margin-top:10px;border-radius:10px;background:rgba(0,0,0,0.3);}
+.tg-fetched-order{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background .15s;}
+.tg-fetched-order:hover{background:rgba(0,212,255,0.06);}
+.tg-fetched-order input[type="checkbox"]{width:18px;height:18px;accent-color:#00d4ff;cursor:pointer;flex-shrink:0;}
+.tg-fetched-order-info{flex:1;min-width:0;}
+.tg-fetched-order-id{font-size:11.5px;font-weight:800;color:#fff;font-family:'JetBrains Mono',monospace;letter-spacing:0.3px;margin-bottom:2px;}
+.tg-fetched-order-meta{font-size:10.5px;color:#8892a6;}
+.tg-fetched-order-amt{font-size:12px;font-weight:900;color:#00d4ff;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
+
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:3px;}
@@ -506,10 +493,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 </head>
 <body>
 
-<!-- OFFLINE -->
 <div class="tg-offline" id="tg-offline">Offline · Reconnecting...</div>
 
-<!-- LOGIN -->
 <div class="tg-login" id="tg-login">
   <div class="tg-login-card">
     <div class="tg-login-logo">
@@ -529,7 +514,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- HEADER -->
 <header class="tg-hd" id="tg-hd" style="display:none;">
   <div class="tg-hd-i">
     <button class="tg-hd-m" onclick="tgOpenDrawer()">
@@ -560,7 +544,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </header>
 
-<!-- DRAWER -->
 <div class="tg-ov" id="tg-ov" onclick="tgCloseDrawer()"></div>
 <aside class="tg-dr" id="tg-dr">
   <div class="tg-dr-h">
@@ -620,14 +603,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div class="tg-dr-il">History</div>
     </div>
   </div>
-  <div class="tg-dr-f">Pickup Command v4.0 LIVE · Made in India 🇮🇳</div>
+  <div class="tg-dr-f">Pickup Command v4.1 LIVE · Made in India 🇮🇳</div>
 </aside>
 
-<!-- MAIN -->
 <div class="tg-w" id="tg-w">
   <div class="tg-co">
 
-    <!-- DASHBOARD -->
     <div class="tg-v active" id="v-dash">
       <div class="tg-hero">
         <div class="tg-hero-c">
@@ -687,7 +668,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- APPLICATIONS -->
     <div class="tg-v" id="v-apps">
       <div class="tg-cw">
         <div class="tg-chips" id="apps-chips">
@@ -705,7 +685,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- BOYS -->
     <div class="tg-v" id="v-boys">
       <div class="tg-cw">
         <div class="tg-chips" id="boys-chips">
@@ -724,7 +703,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- ASSIGN -->
     <div class="tg-v" id="v-assign">
       <div class="tg-sec">
         <div class="tg-sh">
@@ -744,10 +722,26 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <div><div class="tg-st"><span class="ic">🏍️</span>Assign Pickup Boy</div><div class="tg-ss" id="as-selected-seller-info">—</div></div>
         </div>
         <div style="padding:14px 18px;">
+          <div class="tg-order-id-box">
+            <div class="hint">📋 <b>Seller ke label se order IDs paste karo</b> — barcode/QR se jo ID scan hota hai. Multiple order IDs new line ya comma se separate. Ye zaroori hai taaki boy label scan kar sake.</div>
+            <textarea id="as-order-ids" placeholder="ABC123DEF456&#10;XYZ789ABC123&#10;(one per line or comma-separated)" oninput="tgUpdateOrderIdCount()"></textarea>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:8px;">
+              <div style="font-size:11.5px;color:#8892a6;">
+                <span id="as-oid-count" style="color:#00d4ff;font-weight:900;">0</span> order ID(s) — Packet count auto-set hoga
+              </div>
+              <button class="tg-fetch-btn" id="as-fetch-btn" onclick="tgFetchSellerOrders()">
+                <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></svg>
+                Auto-fetch from seller
+              </button>
+            </div>
+            <div class="tg-fetched-orders" id="as-fetched-orders" style="display:none;"></div>
+          </div>
+
           <div class="tg-fld">
             <label>Select Pickup Boy <span class="rq">*</span></label>
             <div id="as-boys-list"></div>
           </div>
+
           <div class="tg-fld-row">
             <div class="tg-fld">
               <label>Packet Count <span class="rq">*</span></label>
@@ -758,16 +752,19 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
               <input type="number" id="as-rate" min="0" value="10" oninput="tgCalcAssignTotal()">
             </div>
           </div>
+
           <div class="tg-fld">
             <label>Notes (optional)</label>
             <textarea id="as-notes" placeholder="Kuch special instruction..." maxlength="200" style="min-height:70px;"></textarea>
           </div>
+
           <div style="background:rgba(0,212,255,0.08);border:1.5px solid rgba(0,212,255,0.25);border-radius:12px;padding:14px 16px;margin-top:8px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <span style="font-size:12px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Total Earning</span>
               <span style="font-size:22px;font-weight:900;color:#00d4ff;font-family:'JetBrains Mono',monospace;" id="as-total">₹10</span>
             </div>
           </div>
+
           <div class="tg-mod-a">
             <button class="tg-mod-b gho" onclick="tgCancelAssign()">Cancel</button>
             <button class="tg-mod-b pri" id="as-confirm-btn" onclick="tgConfirmAssign()">
@@ -779,7 +776,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- TASKS -->
     <div class="tg-v" id="v-tasks">
       <div class="tg-cw">
         <div class="tg-chips" id="tasks-chips">
@@ -798,7 +794,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- RECEIVE (SCAN) -->
     <div class="tg-v" id="v-receive">
       <div class="tg-scan-dual">
         <div class="tg-scan-card bulk" onclick="tgOpenScanner('bulk')">
@@ -823,7 +818,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- SETTLE -->
     <div class="tg-v" id="v-settle">
       <div class="tg-sec">
         <div class="tg-sh">
@@ -840,7 +834,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- HISTORY -->
     <div class="tg-v" id="v-history">
       <div class="tg-sec">
         <div class="tg-sh">
@@ -853,13 +846,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- FAB -->
 <button class="tg-fab" id="tg-fab" onclick="tgOpenScanner('bulk')" style="display:none;">
   <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
   Bulk Receive
 </button>
 
-<!-- SCANNER MODAL -->
 <div class="tg-mod" id="mod-scanner">
   <div class="tg-mod-c scanner">
     <div class="tg-mod-h">
@@ -903,7 +894,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
     <div class="tg-manual-box">
       <label>🔢 Ya Order ID manually daalo</label>
-      <input type="text" id="tg-manual-scan" placeholder="PKP-XXXXX" autocomplete="off" onkeypress="if(event.key==='Enter')tgManualScan()">
+      <input type="text" id="tg-manual-scan" placeholder="ABC123DEF456" autocomplete="off" onkeypress="if(event.key==='Enter')tgManualScan()">
       <button class="tg-btn pri" style="width:100%;margin-top:8px;padding:11px;" onclick="tgManualScan()">
         <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
         Confirm Manual Entry
@@ -912,7 +903,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- APPLICATION DETAIL -->
 <div class="tg-mod" id="mod-app-detail">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -923,7 +913,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- APPROVE MODAL -->
 <div class="tg-mod" id="mod-approve">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -935,7 +924,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- REJECT MODAL -->
 <div class="tg-mod" id="mod-reject">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -955,7 +943,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- ADD BOY -->
 <div class="tg-mod" id="mod-boy">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -996,7 +983,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- BOY DETAIL -->
 <div class="tg-mod" id="mod-boy-detail">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -1007,7 +993,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- SETTLE MODAL -->
 <div class="tg-mod" id="mod-settle">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -1019,7 +1004,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- CONFIRM -->
 <div class="tg-confirm" id="tg-confirm">
   <div class="tg-confirm-c">
     <div class="tg-confirm-i" id="cf-i">❓</div>
@@ -1032,7 +1016,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- FLASH -->
 <div class="tg-flash-overlay" id="tg-flash">
   <div class="tg-flash-icon" id="tg-flash-icon">✓</div>
 </div>
@@ -1071,6 +1054,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let ALL_TASKS = [];
   let ALL_SELLERS = [];
   let ALL_SETTLEMENTS = [];
+  let FETCHED_SELLER_ORDERS = [];
   let CUR_VIEW = 'dash';
   let APP_FILTER = 'pending';
   let BOY_FILTER = 'all';
@@ -1088,11 +1072,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let prevAssignedCount = -1;
   let lastScanTime = 0;
   let RECENT_SCAN_CODES = new Map();
+  let RECENTLY_RECEIVED = new Set();
   let SCAN_MODE = 'bulk';
   let SCAN_SESSION = { count: 0, value: 0, recent: [] };
   let SCANNER_DEBUG = false;
 
-  // HELPERS
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function inr(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
   function fdate(d) { if (!d) return '—'; const dt = d.toDate?d.toDate():new Date(d); return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
@@ -1104,11 +1088,60 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function openMod(id) { document.getElementById(id).classList.add('show'); document.body.style.overflow='hidden'; }
   window.tgCloseMod = function(id) { document.getElementById(id).classList.remove('show'); document.body.style.overflow=''; };
 
+  /* ⭐ NEW: Order ID extraction + matching helpers */
+  function extractOrderIdFromScan(rawCode) {
+    let clean = String(rawCode || '').trim().toUpperCase();
+    if (!clean) return '';
+    // Handle QR format: TOEGO|ORDER_ID|PINCODE|AMOUNT|MODE
+    if (clean.startsWith('TOEGO|')) {
+      const parts = clean.split('|');
+      if (parts[1]) clean = parts[1].trim();
+    }
+    clean = clean.replace(/^\*|\*$/g, '').trim();
+    return clean;
+  }
+
+  function getTaskCandidates(t) {
+    const out = new Set();
+    const fields = ['id', 'orderId', 'order_id', 'orderDisplayId', 'displayId', 'trackingId', 'awb', 'awbNumber'];
+    fields.forEach(f => {
+      const v = t[f];
+      if (v != null && v !== '') {
+        const s = String(v).toUpperCase().trim();
+        out.add(s);
+        // Also add truncated version (for Code39 label which uses first 12 chars)
+        if (s.length > 12) out.add(s.slice(0, 12));
+      }
+    });
+    return Array.from(out).filter(Boolean);
+  }
+
+  function taskMatchesScan(t, scanCode) {
+    const clean = String(scanCode || '').toUpperCase().trim();
+    if (!clean || clean.length < 3) return false;
+    const candidates = getTaskCandidates(t);
+    if (candidates.includes(clean)) return true;
+    // Partial match (min 6 chars to avoid false positives)
+    if (clean.length >= 6) {
+      for (const c of candidates) {
+        if (c.length >= 6 && (c.includes(clean) || clean.includes(c))) return true;
+      }
+    }
+    return false;
+  }
+
+  function getTaskDisplayId(t) {
+    if (!t) return '';
+    if (t.orderId) return String(t.orderId).slice(0, 12).toUpperCase();
+    if (t.orderDisplayId) return String(t.orderDisplayId).slice(0, 14).toUpperCase();
+    return String(t.id || '').slice(0, 12).toUpperCase();
+  }
+
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
     if (!w) return;
-    const icons = { info:'ℹ', suc:'✓', err:'✕', pink:'📩' };
+    const icons = { info:'ℹ', suc:'✓', err:'✕', app:'📩' };
     const el = document.createElement('div');
     el.className = 'tg-toast ' + (type === 'success' ? 'suc' : type === 'error' ? 'err' : type === 'app' ? 'pnk' : '');
     el.innerHTML = '<div class="tg-toast-icon">' + (icons[type]||icons.info) + '</div><div class="tg-toast-body">' + msg + '</div>';
@@ -1116,7 +1149,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setTimeout(() => el.remove(), 2800);
   }
 
-  // NETWORK
   function setOnlineStatus(online) {
     const el = document.getElementById('tg-offline');
     const badge = document.getElementById('tg-live-badge');
@@ -1132,7 +1164,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.addEventListener('offline', () => setOnlineStatus(false));
   setOnlineStatus(navigator.onLine);
 
-  // AUDIO
   function _initAudio() { if (audioCtx) return; try { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
   function playBeep() {
     if (!soundEnabled) return;
@@ -1228,7 +1259,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setTimeout(() => el.classList.remove('show'), 400);
   }
 
-  // LOGIN
   document.getElementById('tg-pt').onclick = function() {
     const p = document.getElementById('tg-lp');
     const isP = p.type === 'password';
@@ -1285,7 +1315,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     initListeners();
   }
 
-  // DRAWER
   window.tgOpenDrawer = function() {
     document.getElementById('tg-dr').classList.add('show');
     document.getElementById('tg-ov').classList.add('show');
@@ -1317,7 +1346,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }, 100);
   };
 
-  // LISTENERS (all real-time)
   function initListeners() {
     if (unsubPartners) try { unsubPartners(); } catch(e){}
     unsubPartners = db.collection('deliveryPartners').onSnapshot(snap => {
@@ -1390,7 +1418,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }, err => console.warn('Settle listener err:', err && err.message));
   }
 
-  // STATUS HELPERS
   function normStatus(s) {
     s = String(s||'').toLowerCase().trim();
     if (!s) return 'assigned';
@@ -1408,7 +1435,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return { assigned:'ylw', collected:'blu', received:'grn', settled:'gry' }[normStatus(s)] || 'ylw';
   }
 
-  // TICKER
   function renderTicker() {
     const pendingApps = ALL_APPS.filter(a => {
       const st = (a.status||'pending').toLowerCase();
@@ -1427,7 +1453,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setText('tk-boys', ALL_BOYS.length);
   }
 
-  // DASHBOARD
   function renderDash() {
     renderTicker();
     const pendingApps = ALL_APPS.filter(a => {
@@ -1450,7 +1475,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setText('s-collected', collected);
     setText('s-settle', inr(pendingSettle));
 
-    // Feed
     const feed = [];
     ALL_TASKS.slice(0, 40).forEach(t => {
       const s = normStatus(t.status);
@@ -1475,14 +1499,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           '<div class="tg-feed-dot ' + cls + '"></div>' +
           '<div class="tg-feed-b">' +
             '<div class="tg-feed-t">' + title + '</div>' +
-            '<div class="tg-feed-s">' + esc((f.t.orderDisplayId || f.t.id).slice(0,12).toUpperCase()) + ' · ' + esc(tago(f.time)) + '</div>' +
+            '<div class="tg-feed-s">' + esc(getTaskDisplayId(f.t)) + ' · ' + esc(tago(f.time)) + '</div>' +
           '</div>' +
           (val ? '<div class="tg-feed-v">' + val + '</div>' : '') +
         '</div>';
       }).join('');
     }
 
-    // Active boys
     const activeBoys = {};
     ALL_TASKS.forEach(t => {
       if (normStatus(t.status) === 'collected' && t.pickupBoyId) {
@@ -1509,7 +1532,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   }
 
-  // APPLICATIONS
   window.tgFilterApps = function(f) {
     APP_FILTER = f;
     document.querySelectorAll('#apps-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
@@ -1651,7 +1673,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     openMod('mod-app-detail');
   };
 
-  // APPROVE
   window.tgOpenApprove = function(uid) {
     const a = ALL_APPS.find(x => x.id === uid);
     if (!a) return;
@@ -1757,7 +1778,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   };
 
-  // REJECT
   window.tgOpenReject = function(uid) {
     document.getElementById('rj-id').value = uid;
     document.getElementById('rj-reason').value = '';
@@ -1791,7 +1811,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   };
 
-  // BOYS
   function boyStats(boyId) {
     const tasks = ALL_TASKS.filter(t => t.pickupBoyId === boyId);
     const withBoy = tasks.filter(t => normStatus(t.status) === 'collected').length;
@@ -1945,7 +1964,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;">' +
           '<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.12);color:#00d4ff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">' + (normStatus(t.status) === 'settled' ? '💰' : normStatus(t.status) === 'received' ? '✓' : normStatus(t.status) === 'collected' ? '📦' : '⏳') + '</div>' +
           '<div style="flex:1;min-width:0;">' +
-            '<div style="font-size:13.5px;font-weight:800;color:#fff;margin-bottom:3px;">#' + esc((t.orderDisplayId || t.id).slice(0,12).toUpperCase()) + '</div>' +
+            '<div style="font-size:13.5px;font-weight:800;color:#fff;margin-bottom:3px;">#' + esc(getTaskDisplayId(t)) + '</div>' +
             '<div style="font-size:11.5px;color:#8892a6;display:flex;gap:10px;flex-wrap:wrap;"><span>' + esc(t.sellerName || 'Seller') + '</span><span>' + stLabel(t.status) + '</span></div>' +
           '</div>' +
           '<div style="font-size:15px;font-weight:900;color:#00d4ff;font-family:monospace;white-space:nowrap;">' + inr(t.earning||0) + '</div>' +
@@ -1955,7 +1974,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     openMod('mod-boy-detail');
   };
 
-  // ASSIGN
   function renderAssignSellers() {
     const el = document.getElementById('as-sellers-list');
     if (!el) return;
@@ -1985,10 +2003,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const s = ALL_SELLERS.find(x => x.id === sid);
     if (!s) return;
     SELECTED_SELLER = s;
+    FETCHED_SELLER_ORDERS = [];
     renderAssignSellers();
     document.getElementById('as-assign-box').style.display = 'block';
     document.getElementById('as-selected-seller-info').innerHTML = '📍 ' + esc(s.shopName || '') + ' · ' + esc(s.phone || '') + (s.pincode ? ' · ' + esc(s.pincode) : '');
+    document.getElementById('as-order-ids').value = '';
+    document.getElementById('as-fetched-orders').style.display = 'none';
+    document.getElementById('as-fetched-orders').innerHTML = '';
     renderAssignBoys();
+    tgUpdateOrderIdCount();
     tgCalcAssignTotal();
     document.getElementById('as-assign-box').scrollIntoView({ behavior:'smooth', block:'start' });
   };
@@ -1996,8 +2019,117 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.tgCancelAssign = function() {
     SELECTED_SELLER = null;
     SELECTED_BOY_FOR_ASSIGN = null;
+    FETCHED_SELLER_ORDERS = [];
     document.getElementById('as-assign-box').style.display = 'none';
+    document.getElementById('as-order-ids').value = '';
+    document.getElementById('as-fetched-orders').style.display = 'none';
     renderAssignSellers();
+  };
+
+  /* ⭐ NEW: Parse order IDs from textarea */
+  window.tgUpdateOrderIdCount = function() {
+    const raw = (document.getElementById('as-order-ids')?.value || '').trim();
+    const ids = raw.split(/[\n,]/).map(s => s.trim().toUpperCase()).filter(Boolean);
+    setText('as-oid-count', ids.length);
+    // Auto-update packet count if IDs provided
+    if (ids.length > 0) {
+      const pc = document.getElementById('as-packet-count');
+      if (pc) pc.value = ids.length;
+      tgCalcAssignTotal();
+    }
+  };
+
+  /* ⭐ NEW: Auto-fetch seller's pending orders */
+  window.tgFetchSellerOrders = async function() {
+    if (!SELECTED_SELLER) { toast('Select a seller first', 'error'); return; }
+    const btn = document.getElementById('as-fetch-btn');
+    btn.disabled = true;
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" style="animation:tgSpin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></svg> Fetching...';
+
+    try {
+      // Query orders for this seller. Use both sellerIds array and sellerId scalar
+      const results = new Map();
+      try {
+        const s1 = await db.collection('orders')
+          .where('sellerIds', 'array-contains', SELECTED_SELLER.id)
+          .limit(100).get();
+        s1.docs.forEach(d => results.set(d.id, { id: d.id, ...d.data() }));
+      } catch(e) { console.warn('sellerIds query failed:', e); }
+      try {
+        const s2 = await db.collection('orders')
+          .where('sellerId', '==', SELECTED_SELLER.id)
+          .limit(100).get();
+        s2.docs.forEach(d => results.set(d.id, { id: d.id, ...d.data() }));
+      } catch(e) { console.warn('sellerId query failed:', e); }
+
+      // Filter to orders that need pickup (not cancelled/delivered/returned/pending-admin)
+      const pickupStatuses = ['seller_accepted', 'admin_approved', 'label_generated', 'processing'];
+      const filtered = [];
+      results.forEach((o, id) => {
+        const st = String(o.status || '').toLowerCase().trim().replace(/[\s-]/g, '_');
+        // Include if status is one of pickup statuses OR if it's ambiguous (pending confirmation)
+        if (pickupStatuses.some(ps => st.includes(ps.replace('_', '')))) filtered.push(o);
+        else if (st === 'admin_approved' || st === 'label_generated' || st === 'processing' || st === 'seller_accepted') filtered.push(o);
+        else if (!st || st === 'confirmed') filtered.push(o); // include if status unclear
+      });
+
+      // Dedupe by order ID
+      FETCHED_SELLER_ORDERS = filtered.sort((a,b) => {
+        const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+        return bt - at;
+      });
+
+      if (!FETCHED_SELLER_ORDERS.length) {
+        toast('Koi pending orders nahi mile is seller ke', 'info');
+        document.getElementById('as-fetched-orders').style.display = 'none';
+        return;
+      }
+
+      renderFetchedOrders();
+      toast('✓ ' + FETCHED_SELLER_ORDERS.length + ' order(s) found — select to add', 'success');
+    } catch(e) {
+      console.error(e);
+      toast('Fetch failed: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+    }
+  };
+
+  function renderFetchedOrders() {
+    const el = document.getElementById('as-fetched-orders');
+    if (!el) return;
+    if (!FETCHED_SELLER_ORDERS.length) {
+      el.style.display = 'none';
+      return;
+    }
+    el.style.display = 'block';
+    el.innerHTML = FETCHED_SELLER_ORDERS.map(o => {
+      const oid = String(o.id).toUpperCase();
+      const shortId = oid.slice(0, 12);
+      const items = Array.isArray(o.items) ? o.items : [];
+      const itemCount = items.length || Number(o.itemCount || 0);
+      const total = Number(o.total || o.grandTotal || 0);
+      const status = String(o.status || '').toLowerCase().replace(/_/g, ' ');
+      return '<div class="tg-fetched-order">' +
+        '<input type="checkbox" class="tg-fetched-order-cb" data-oid="' + esc(shortId) + '" onchange="tgSyncFetchedSelection()">' +
+        '<div class="tg-fetched-order-info">' +
+          '<div class="tg-fetched-order-id">#' + esc(shortId) + '</div>' +
+          '<div class="tg-fetched-order-meta">' + itemCount + ' item(s) · ' + esc(status) + ' · ' + esc(fdate(o.createdAt)) + '</div>' +
+        '</div>' +
+        '<div class="tg-fetched-order-amt">' + inr(total) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.tgSyncFetchedSelection = function() {
+    const cbs = document.querySelectorAll('.tg-fetched-order-cb');
+    const selected = [];
+    cbs.forEach(cb => { if (cb.checked) selected.push(cb.dataset.oid); });
+    document.getElementById('as-order-ids').value = selected.join('\n');
+    tgUpdateOrderIdCount();
   };
 
   function renderAssignBoys() {
@@ -2044,25 +2176,44 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setText('as-total', '₹' + (count * rate));
   };
 
+  /* ⭐ FIXED: Add orderId to pickupTask for label matching */
   window.tgConfirmAssign = async function() {
     if (!SELECTED_SELLER) { toast('Select seller', 'error'); return; }
     if (!SELECTED_BOY_FOR_ASSIGN) { toast('Select pickup boy', 'error'); return; }
-    const count = Number(document.getElementById('as-packet-count').value || 1);
+
+    // Parse order IDs
+    const orderIdsRaw = (document.getElementById('as-order-ids').value || '').trim();
+    const orderIds = orderIdsRaw.split(/[\n,]/).map(s => s.trim().toUpperCase()).filter(Boolean);
+
+    const packetCount = Number(document.getElementById('as-packet-count').value || 1);
     const rate = Number(document.getElementById('as-rate').value || 10);
     const notes = (document.getElementById('as-notes').value || '').trim();
-    if (count < 1) { toast('Packet count ≥ 1', 'error'); return; }
+
+    if (packetCount < 1) { toast('Packet count ≥ 1', 'error'); return; }
     if (rate < 0) { toast('Rate ≥ 0', 'error'); return; }
+
+    // Warn if no order IDs - pickup boy won't be able to scan seller labels
+    if (!orderIds.length) {
+      const ok = confirm('⚠️ Aapne order IDs nahi daale!\n\nBina order IDs ke, pickup boy seller ke label ko scan NAHI kar payega (kyunki physical packet pe seller ka order ID hota hai).\n\nKya aap phir bhi assign karna chahte ho?');
+      if (!ok) return;
+    }
+
+    // If order IDs given but count doesn't match, use orderIds.length
+    const finalCount = orderIds.length > 0 ? orderIds.length : packetCount;
+
     const boy = ALL_BOYS.find(x => x.id === SELECTED_BOY_FOR_ASSIGN);
     if (!boy) { toast('Boy not found', 'error'); return; }
     const btn = document.getElementById('as-confirm-btn');
     btn.disabled = true; btn.textContent = 'Assigning...';
     try {
-      const totalEarning = count * rate;
+      const totalEarning = finalCount * rate;
       const batch = db.batch();
       const now = FV.serverTimestamp();
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < finalCount; i++) {
         const ref = db.collection('pickupTasks').doc();
-        batch.set(ref, {
+        // ⭐ NEW: Include orderId for label matching
+        const orderId = orderIds[i] || '';
+        const payload = {
           sellerId: SELECTED_SELLER.id,
           sellerName: SELECTED_SELLER.shopName || '',
           sellerPhone: SELECTED_SELLER.phone || '',
@@ -2081,11 +2232,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           assignedBy: USER.uid,
           createdAt: now,
           updatedAt: now,
-          orderDisplayId: 'PKP-' + Date.now().toString(36).toUpperCase() + '-' + (i+1)
-        });
+          orderDisplayId: orderId || ('PKP-' + Date.now().toString(36).toUpperCase() + '-' + (i+1))
+        };
+        // Only add orderId if provided (so scans match seller's actual labels)
+        if (orderId) payload.orderId = orderId;
+        batch.set(ref, payload);
       }
       await batch.commit();
-      toast('✓ Assigned ' + count + ' packet(s) to ' + esc(boy.name) + ' · Total ' + inr(totalEarning), 'success');
+      toast('✓ Assigned ' + finalCount + ' packet(s) to ' + esc(boy.name) + ' · Total ' + inr(totalEarning), 'success');
       playBeep(); vibrate([40,30,80]);
       tgCancelAssign();
       tgNav('tasks');
@@ -2096,7 +2250,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   };
 
-  // TASKS
   window.tgFilterTasks = function(f) {
     TASK_FILTER = f;
     document.querySelectorAll('#tasks-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
@@ -2126,10 +2279,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const s = normStatus(t.status);
       const cls = stClass(t.status);
       const lbl = stLabel(t.status);
+      const hasOrderId = !!(t.orderId || t.order_id);
       return '<div class="tg-row">' +
         '<div class="tg-row-av sq" style="font-size:16px;">' + (s==='received'?'✓':s==='settled'?'💰':s==='collected'?'📦':'⏳') + '</div>' +
         '<div class="tg-row-b">' +
-          '<div class="tg-row-t">#' + esc((t.orderDisplayId || t.id).slice(0,12).toUpperCase()) + '</div>' +
+          '<div class="tg-row-t">#' + esc(getTaskDisplayId(t)) + (hasOrderId ? '' : ' <span class="tg-pill ylw" style="font-size:9px;">No Label ID</span>') + '</div>' +
           '<div class="tg-row-s"><span>🏪 ' + esc(t.sellerName||'Seller') + '</span><span>🏍️ ' + esc(t.pickupBoyName||'Boy') + '</span><span>' + esc(tago(t.createdAt)) + '</span></div>' +
           '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
             '<span class="tg-pill ' + cls + '">' + lbl + '</span>' +
@@ -2140,7 +2294,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
-  // RECEIVE
   function renderReceive() {
     const el = document.getElementById('receive-list');
     if (!el) return;
@@ -2170,7 +2323,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;">' +
             '<div style="width:36px;height:36px;border-radius:9px;background:rgba(0,212,255,0.12);color:#00d4ff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📦</div>' +
             '<div style="flex:1;min-width:0;">' +
-              '<div style="font-size:12px;font-weight:800;color:#fff;font-family:monospace;letter-spacing:0.3px;">#' + esc((t.orderDisplayId || t.id).slice(0,14).toUpperCase()) + '</div>' +
+              '<div style="font-size:12px;font-weight:800;color:#fff;font-family:monospace;letter-spacing:0.3px;">#' + esc(getTaskDisplayId(t)) + '</div>' +
               '<div style="font-size:11px;color:#8892a6;">🏪 ' + esc(t.sellerName||'Seller') + '</div>' +
             '</div>' +
             '<div style="font-size:14px;font-weight:900;color:#00d4ff;font-family:monospace;">' + inr(t.earning||0) + '</div>' +
@@ -2182,12 +2335,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
-  // ============ SCANNER ============
   window.tgOpenScanner = function(mode) {
     if (scannerRunning) return;
     SCAN_MODE = mode || 'bulk';
     SCAN_SESSION = { count: 0, value: 0, recent: [] };
     RECENT_SCAN_CODES.clear();
+    RECENTLY_RECEIVED.clear();
     lastScanTime = 0;
 
     const title = document.getElementById('scanner-title');
@@ -2343,20 +2496,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (reader) reader.innerHTML = '';
   }
 
+  /* ⭐ FIXED: Parse QR format + better dedupe */
   function onScanSuccess(decodedText) {
     const now = Date.now();
-    if (now - lastScanTime < 800) return;
+    if (now - lastScanTime < 600) return;
     lastScanTime = now;
 
-    let code = String(decodedText || '').trim().toUpperCase();
-    if (!code) return;
-    code = code.replace(/^\*|\*$/g, '').trim();
+    const clean = extractOrderIdFromScan(decodedText);
+    if (!clean || clean.length < 3) return;
 
-    const recentTs = RECENT_SCAN_CODES.get(code);
+    const recentTs = RECENT_SCAN_CODES.get(clean);
     if (recentTs && (now - recentTs) < 5000) return;
 
     vibrate([50, 30, 50]);
-    tgProcessScan(code);
+    tgProcessScan(clean);
   }
 
   function onScanFailure(err) { if (SCANNER_DEBUG) console.log('[scan fail]', err); }
@@ -2364,27 +2517,33 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.tgManualScan = function() {
     const v = (document.getElementById('tg-manual-scan').value || '').trim().toUpperCase();
     if (!v) { toast('Order ID daalo', 'error'); return; }
-    tgProcessScan(v);
+    const clean = extractOrderIdFromScan(v);
+    if (!clean) { toast('Invalid ID', 'error'); return; }
+    tgProcessScan(clean);
   };
 
+  /* ⭐ FULLY FIXED: Match against orderId, orderDisplayId, id, tracking, etc. */
   async function tgProcessScan(code) {
-    const clean = String(code||'').replace(/^\*|\*$/g, '').trim().toUpperCase();
-    if (!clean) return;
+    const clean = extractOrderIdFromScan(code);
+    if (!clean || clean.length < 3) {
+      playErrBeep(); flashError();
+      setScanStatus('❌ Invalid barcode', 'error');
+      toast('Invalid barcode', 'error');
+      return;
+    }
 
-    // Find matching collected task
+    // Find matching collected task (with all possible ID fields)
     const task = ALL_TASKS.find(t => {
-      const status = normStatus(t.status);
-      if (status !== 'collected') return false;
-      const oid = String(t.orderDisplayId || '').toUpperCase();
-      const tid = String(t.id || '').toUpperCase();
-      return oid === clean || tid === clean || oid.includes(clean) || clean.includes(oid);
+      if (normStatus(t.status) !== 'collected') return false;
+      if (RECENTLY_RECEIVED.has(t.id)) return false;
+      return taskMatchesScan(t, clean);
     });
 
     if (!task) {
       playErrBeep(); vibrate([100, 60, 100]); flashError();
       if (SCAN_MODE === 'single') {
         setScanStatus('❌ Not found', 'error');
-        showResultCard('error', 'Not Found', 'Code: ' + esc(clean), '');
+        showResultCard('error', 'Not Found', 'Scanned: <b>' + esc(clean) + '</b><br>Koi matching packet nahi mila.', '');
       } else {
         setScanStatus('❌ Not found — retry', 'error');
       }
@@ -2402,10 +2561,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         status: 'received',
         receivedAt: now,
         receivedBy: USER.uid,
+        receivedScanCode: clean,
         updatedAt: now
       });
 
-      // Log scan (admin)
       try {
         await db.collection('scanLogs').add({
           boyId: USER.uid,
@@ -2421,6 +2580,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       } catch(e) {}
 
       RECENT_SCAN_CODES.set(clean, Date.now());
+      RECENTLY_RECEIVED.add(task.id);
       SCAN_SESSION.count++;
       SCAN_SESSION.value += earn;
       SCAN_SESSION.recent.push(task.id);
@@ -2437,20 +2597,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       } else {
         setScanStatus('✓ Received', 'success');
         showResultCard('success', 'Received!',
-          'Packet: <b>#' + esc((task.orderDisplayId || task.id).slice(0,14).toUpperCase()) + '</b><br>From: <b>' + esc(task.pickupBoyName || '—') + '</b>',
+          'Packet: <b>#' + esc(getTaskDisplayId(task)) + '</b><br>From: <b>' + esc(task.pickupBoyName || '—') + '</b>',
           '₹' + earn);
         setTimeout(() => tgCloseScanner(), 1800);
       }
 
       tgAddRecent({
         code: clean, ok: true,
-        packet: (task.orderDisplayId || task.id).slice(0,14).toUpperCase(),
+        packet: getTaskDisplayId(task),
         seller: task.pickupBoyName || 'Boy',
         earn: earn
       });
 
       document.getElementById('tg-manual-scan').value = '';
-      lastScanTime = Date.now() - 700;
+      lastScanTime = Date.now() - 400;
     } catch(e) {
       console.error('[processScan error]', e);
       playErrBeep(); flashError();
@@ -2477,7 +2637,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div style="font-size:12px;color:#cbd5e1;line-height:1.6;">' + info + '</div>' +
         (amount ? '<div style="font-size:20px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:8px;">' + amount + '</div>' : '') +
       '</div>';
-    setTimeout(() => { el.style.display = 'none'; }, isOk ? 1600 : 2500);
+    setTimeout(() => { el.style.display = 'none'; }, isOk ? 1600 : 2800);
   }
 
   function tgAddRecent(data) {
@@ -2508,7 +2668,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     while (el.children.length > 15) el.removeChild(el.lastChild);
   }
 
-  // SETTLE
   function renderSettle() {
     const el = document.getElementById('settle-list');
     if (!el) return;
@@ -2551,6 +2710,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       payInfo = '<div class="tg-info-box success"><span class="ic">📱</span><b>UPI:</b> ' + esc(b.upiId) + '</div>';
     } else if (b?.bankAcc) {
       payInfo = '<div class="tg-info-box success"><span class="ic">🏦</span><b>Bank:</b> ' + esc(b.bankName||'') + ' ••••' + esc(b.bankAcc.slice(-4)) + '<br><b>IFSC:</b> ' + esc(b.ifsc||'') + '</div>';
+    } else {
+      payInfo = '<div class="tg-info-box danger"><span class="ic">⚠️</span><b style="color:#f87171;">Payment details missing!</b><br>Is boy ne UPI ya bank details nahi di. Pehle collect karo.</div>';
     }
 
     document.getElementById('ms-boy-id').value = bid;
@@ -2677,7 +2838,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
-  // HISTORY
   function renderHistory() {
     const el = document.getElementById('history-list');
     if (!el) return;
@@ -2697,7 +2857,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return '<div class="tg-row">' +
         '<div class="tg-row-av sq" style="font-size:16px;">' + (s==='received'?'✓':s==='settled'?'💰':s==='collected'?'📦':'⏳') + '</div>' +
         '<div class="tg-row-b">' +
-          '<div class="tg-row-t">#' + esc((t.orderDisplayId || t.id).slice(0,12).toUpperCase()) + '</div>' +
+          '<div class="tg-row-t">#' + esc(getTaskDisplayId(t)) + '</div>' +
           '<div class="tg-row-s"><span>🏪 ' + esc(t.sellerName||'Seller') + '</span><span>🏍️ ' + esc(t.pickupBoyName||'Boy') + '</span></div>' +
           '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
             '<span class="tg-pill ' + cls + '">' + lbl + '</span>' +
@@ -2709,7 +2869,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
-  // BADGES
   function updateBadges() {
     const pendingApps = ALL_APPS.filter(a => {
       const st = (a.status||'pending').toLowerCase();
@@ -2745,7 +2904,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }});
   });
 
-  // AUTH
   auth.onAuthStateChanged(async (u) => {
     if (!u) return;
     const isSA = u.email === SA;
