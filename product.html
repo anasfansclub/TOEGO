@@ -150,6 +150,8 @@ a{color:inherit;text-decoration:none;}
 .tg-review-status.not-ordered{background:#fff3e0;color:#e65100;}
 .tg-review-status.login{background:#e3f2fd;color:#1565c0;}
 .tg-review-status.eligible{background:#e6f7ec;color:#1b8a3a;}
+.tg-reviews-rate{background:#388e3c;color:#fff;font-size:13px;font-weight:700;padding:5px 10px;border-radius:6px;display:flex;align-items:center;gap:3px;}
+.tg-reviews-rate svg{width:12px;height:12px;fill:#fff;}
 .tg-review{padding:14px 0;border-bottom:1px solid #f1f3f6;}
 .tg-review:last-child{border-bottom:none;}
 .tg-review-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
@@ -298,9 +300,6 @@ a{color:inherit;text-decoration:none;}
   .tg-review-imgs{grid-template-columns:repeat(3,60px);gap:5px;}
   .tg-review-img{width:60px;height:60px;}
 }
-/* Toast for instant buy now feedback */
-.tg-buy-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:linear-gradient(135deg,#fb641b,#e05515);color:#fff;padding:18px 36px;border-radius:14px;font-size:15px;font-weight:800;box-shadow:0 20px 60px rgba(251,100,27,0.5);z-index:999999;opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.34,1.56,.64,1);letter-spacing:0.3px;text-transform:uppercase;}
-.tg-buy-flash.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
 </style>
 </head>
 <body id="tg-body" class="tg-hide-actions">
@@ -347,8 +346,6 @@ a{color:inherit;text-decoration:none;}
   </button>
   <button class="tg-act-btn buy" id="tg-buy-btn" onclick="tgBuyNow()">⚡ Buy Now</button>
 </div>
-
-<div class="tg-buy-flash" id="tg-buy-flash">⚡ Taking you to cart…</div>
 
 <div class="tg-rv-modal" id="tg-rv-modal">
   <div class="tg-rv-card">
@@ -435,9 +432,9 @@ a{color:inherit;text-decoration:none;}
 (function(){
   'use strict';
 
-  /* ═══════════════════════════════════════════════════════════════
-     FIREBASE INIT — CACHED
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // FIREBASE INIT
+  // ═══════════════════════════════════════════════════════════════
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -455,26 +452,24 @@ a{color:inherit;text-decoration:none;}
   try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
-  /* ═══════════════════════════════════════════════════════════════
-     CONSTANTS
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // CONSTANTS
+  // ═══════════════════════════════════════════════════════════════
   const GUEST_CART = 'toego_cart_guest';
   const PROD_CACHE_PREFIX = 'toego_prod_v2_';
   const PROD_CACHE_TTL = 30 * 60 * 1000;
   const ALL_PROD_CACHE_KEY = 'toego_allprod_v2';
   const HOME_PROD_CACHE_KEY = 'toego_home_prod_v20';
-  const SHARED_PCACHE_KEY = 'toego_pcache_v2';
-  const SHARED_PCACHE_TTL = 15 * 60 * 1000;
   const ALL_PROD_CACHE_TTL = 10 * 60 * 1000;
   const ALL_PROD_LIMIT = 60;
   const THEME_CACHE_KEY = 'toego_theme_v2';
   const TOAST_CACHE_KEY = 'toego_toast_v2';
   const CLOUD_CACHE_KEY = 'toego_cloud_v2';
-  const PRODUCT_FETCH_TIMEOUT = 8000;
+  const PRODUCT_FETCH_TIMEOUT = 12000;
 
-  /* ═══════════════════════════════════════════════════════════════
-     STATE
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // STATE
+  // ═══════════════════════════════════════════════════════════════
   let PRODUCT = null;
   let ALL_PRODUCTS = [];
   let REVIEWS = [];
@@ -492,67 +487,20 @@ a{color:inherit;text-decoration:none;}
   let CAN_REVIEW = false;
   let HAS_REVIEWED = false;
   let AR_FILTER = 'all';
+  let _sliderMouseBound = false;
   let _sliderDrag = { down:false, startX:0, deltaX:0 };
   let _allProductsIO = null;
   let _allProductsFetching = false;
   let _allProductsFetched = false;
   let _reviewsLoaded = false;
+  let _productRenderAttempts = 0;
   let _currentProductId = '';
   let _productFetchInProgress = false;
-  let _lastRenderedHash = '';
   let CLOUD = { cloudName: '', uploadPreset: '' };
 
-  /* ═══════════════════════════════════════════════════════════════
-     SHARED PRODUCT CACHE (same key as cart.html + wishlist.html)
-     ═══════════════════════════════════════════════════════════════ */
-  const _pCache = new Map();
-  let _pCacheDirty = false;
-  let _pCacheSaveTimer = null;
-
-  function _pCacheBoot() {
-    try {
-      const raw = localStorage.getItem(SHARED_PCACHE_KEY);
-      if (!raw) return;
-      const obj = JSON.parse(raw);
-      const now = Date.now();
-      for (const k in obj) {
-        const v = obj[k];
-        if (v && v.ts && (now - v.ts) < SHARED_PCACHE_TTL) _pCache.set(k, v);
-      }
-    } catch(e) {}
-  }
-  function _pCacheFlush() {
-    if (!_pCacheDirty) return;
-    try {
-      const obj = {};
-      for (const [k, v] of _pCache) obj[k] = v;
-      localStorage.setItem(SHARED_PCACHE_KEY, JSON.stringify(obj));
-      _pCacheDirty = false;
-    } catch(e) {}
-  }
-  function _pCacheScheduleFlush() {
-    if (_pCacheSaveTimer) return;
-    _pCacheSaveTimer = setTimeout(() => { _pCacheSaveTimer = null; _pCacheFlush(); }, 1500);
-  }
-  function _pGet(id) {
-    if (!id) return undefined;
-    const v = _pCache.get(id);
-    if (!v) return undefined;
-    if ((Date.now() - v.ts) > SHARED_PCACHE_TTL) { _pCache.delete(id); return undefined; }
-    return v.data;
-  }
-  function _pSet(id, data) {
-    if (!id) return;
-    _pCache.set(id, { data: data || null, ts: Date.now() });
-    _pCacheDirty = true;
-    _pCacheScheduleFlush();
-  }
-  _pCacheBoot();
-  window.addEventListener('beforeunload', _pCacheFlush);
-
-  /* ═══════════════════════════════════════════════════════════════
-     THEME / TOAST MSGS / CLOUDINARY
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // THEME / TOAST MESSAGES CACHE
+  // ═══════════════════════════════════════════════════════════════
   const DEFAULT_TOAST_MSGS = {
     addCart: 'Added to cart',
     loginRequired: 'Please log in to continue',
@@ -615,35 +563,33 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
   })();
 
-  /* Background refreshes (non-blocking) */
-  setTimeout(() => {
-    db.collection('siteSettings').doc('theme').get().then(s => {
-      if (!s.exists) return;
-      const d = s.data() || {};
-      const c = d.primaryColor || d.primary || d.color || d.themeColor || d.theme || '';
-      try { localStorage.setItem(THEME_CACHE_KEY, JSON.stringify({ c })); } catch(e) {}
-      applyTheme(c);
-    }).catch(() => {});
+  // Background network refresh
+  db.collection('siteSettings').doc('theme').get().then(s => {
+    if (!s.exists) return;
+    const d = s.data() || {};
+    const c = d.primaryColor || d.primary || d.color || d.themeColor || d.theme || '';
+    try { localStorage.setItem(THEME_CACHE_KEY, JSON.stringify({ c })); } catch(e) {}
+    applyTheme(c);
+  }).catch(() => {});
 
-    db.collection('siteSettings').doc('toastMessages').get().then(s => {
-      if (!s.exists) return;
-      const d = s.data();
-      TOAST_MSGS = { ...TOAST_MSGS, ...d };
-      try { localStorage.setItem(TOAST_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
-    }).catch(() => {});
+  db.collection('siteSettings').doc('toastMessages').get().then(s => {
+    if (!s.exists) return;
+    const d = s.data();
+    TOAST_MSGS = { ...TOAST_MSGS, ...d };
+    try { localStorage.setItem(TOAST_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
+  }).catch(() => {});
 
-    db.collection('siteSettings').doc('cloudinary').get().then(s => {
-      if (!s.exists) return;
-      const d = s.data();
-      CLOUD.cloudName = d.cloudName || '';
-      CLOUD.uploadPreset = d.uploadPreset || '';
-      try { localStorage.setItem(CLOUD_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
-    }).catch(() => {});
-  }, 100);
+  db.collection('siteSettings').doc('cloudinary').get().then(s => {
+    if (!s.exists) return;
+    const d = s.data();
+    CLOUD.cloudName = d.cloudName || '';
+    CLOUD.uploadPreset = d.uploadPreset || '';
+    try { localStorage.setItem(CLOUD_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
+  }).catch(() => {});
 
-  /* ═══════════════════════════════════════════════════════════════
-     HELPERS
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // HELPERS
+  // ═══════════════════════════════════════════════════════════════
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -676,37 +622,20 @@ a{color:inherit;text-decoration:none;}
   function tago(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; if (s < 604800) return Math.floor(s/86400)+'d ago'; return fdate(d); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
 
-  /* ═══════════════════════════════════════════════════════════════
-     PRODUCT CACHE HELPERS
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // CACHE
+  // ═══════════════════════════════════════════════════════════════
   function getCachedProduct(pid) {
-    /* Try local prod cache first */
     try {
       const raw = localStorage.getItem(PROD_CACHE_PREFIX + pid);
-      if (raw) {
-        const c = JSON.parse(raw);
-        if (c.data && (Date.now() - c.time) < PROD_CACHE_TTL) return c.data;
-      }
-    } catch(e) {}
-    /* Fallback: shared pcache */
-    const shared = _pGet(pid);
-    if (shared) return shared;
-    /* Fallback: home cache */
-    try {
-      const raw = localStorage.getItem(HOME_PROD_CACHE_KEY);
-      if (raw) {
-        const c = JSON.parse(raw);
-        if (Array.isArray(c.data)) {
-          const p = c.data.find(p => p && p.id === pid);
-          if (p) return p;
-        }
-      }
-    } catch(e) {}
-    return null;
+      if (!raw) return null;
+      const c = JSON.parse(raw);
+      if (!c.data || (Date.now() - c.time) > PROD_CACHE_TTL) return null;
+      return c.data;
+    } catch(e) { return null; }
   }
   function cacheProduct(pid, data) {
     try { localStorage.setItem(PROD_CACHE_PREFIX + pid, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
-    _pSet(pid, data);
   }
   function getCachedAllProducts() {
     try {
@@ -721,7 +650,20 @@ a{color:inherit;text-decoration:none;}
   function cacheAllProducts(data) {
     try { localStorage.setItem(ALL_PROD_CACHE_KEY, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
   }
+  function getFromHomeCache(pid) {
+    // ⭐ FALLBACK: Try to find product in shop-home's cached product list
+    try {
+      const raw = localStorage.getItem(HOME_PROD_CACHE_KEY);
+      if (!raw) return null;
+      const c = JSON.parse(raw);
+      if (!Array.isArray(c.data)) return null;
+      return c.data.find(p => p && p.id === pid) || null;
+    } catch(e) { return null; }
+  }
 
+  // ═══════════════════════════════════════════════════════════════
+  // PRODUCT ID
+  // ═══════════════════════════════════════════════════════════════
   function getProductId() {
     try {
       const p = new URLSearchParams(window.location.search);
@@ -730,9 +672,9 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return ''; }
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     COLOR UTILS
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // COLOR UTILS
+  // ═══════════════════════════════════════════════════════════════
   const COLOR_HEX_MAP = {
     'red': '#e53935', 'dark red': '#b71c1c', 'light red': '#ef5350',
     'blue': '#1e88e5', 'dark blue': '#0d47a1', 'light blue': '#42a5f5',
@@ -790,15 +732,16 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return false; }
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     PRODUCT DATA GETTERS
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // PRODUCT DATA GETTERS (DEFENSIVE)
+  // ═══════════════════════════════════════════════════════════════
   function getImages() {
     const imgs = [];
     try {
       if (Array.isArray(PRODUCT.images)) {
         PRODUCT.images.forEach(u => {
           if (!u) return;
+          // Handle case where image might be an object {url: '...'}
           const url = typeof u === 'string' ? u : (u.url || u.src || u.image || '');
           if (url) imgs.push(url);
         });
@@ -811,6 +754,7 @@ a{color:inherit;text-decoration:none;}
     if (!imgs.length) imgs.push('https://via.placeholder.com/400x400/f1f3f6/878787?text=TOEGO');
     return imgs;
   }
+
   function getSizes() {
     try {
       if (PRODUCT.sizeStock && typeof PRODUCT.sizeStock === 'object' && Object.keys(PRODUCT.sizeStock).length) {
@@ -822,6 +766,7 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
     return [];
   }
+
   function getColors() {
     try {
       if (Array.isArray(PRODUCT.colors) && PRODUCT.colors.length) {
@@ -830,6 +775,7 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
     return [];
   }
+
   function getStockForSize(size) {
     try {
       if (!size) return Number(PRODUCT.stock || 0);
@@ -837,6 +783,7 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
     return Number(PRODUCT.stock || 0);
   }
+
   function totalStock() {
     try {
       if (PRODUCT.sizeStock && typeof PRODUCT.sizeStock === 'object' && Object.keys(PRODUCT.sizeStock).length) {
@@ -848,9 +795,9 @@ a{color:inherit;text-decoration:none;}
     return Number(PRODUCT.stock || 0);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ERROR SCREEN
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // ERROR SCREEN
+  // ═══════════════════════════════════════════════════════════════
   function showError(title, desc, showRetry) {
     document.getElementById('tg-content').innerHTML =
       '<div class="tg-card"><div class="tg-error">' +
@@ -866,6 +813,9 @@ a{color:inherit;text-decoration:none;}
     document.getElementById('tg-body').classList.add('tg-hide-actions');
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // TIMEOUT WRAPPER
+  // ═══════════════════════════════════════════════════════════════
   function withTimeout(promise, ms) {
     return new Promise((resolve, reject) => {
       const t = setTimeout(() => reject(new Error('timeout')), ms);
@@ -876,10 +826,10 @@ a{color:inherit;text-decoration:none;}
     });
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     PRODUCT LOADING — SUPER FAST PATH
-     ═══════════════════════════════════════════════════════════════ */
-  function loadProduct() {
+  // ═══════════════════════════════════════════════════════════════
+  // PRODUCT LOADING — MULTI-FALLBACK STRATEGY
+  // ═══════════════════════════════════════════════════════════════
+  async function loadProduct() {
     const pid = getProductId();
     _currentProductId = pid;
 
@@ -888,11 +838,12 @@ a{color:inherit;text-decoration:none;}
       return;
     }
 
-    /* ─── STEP 1: INSTANT render from any cache available ─── */
+    document.getElementById('tg-hd-title').textContent = 'Loading…';
+
+    // ─── STEP 1: Instant from localStorage cache ───
     const cached = getCachedProduct(pid);
     if (cached && cached.id) {
       PRODUCT = cached;
-      _lastRenderedHash = '';
       try {
         document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
         document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
@@ -900,40 +851,30 @@ a{color:inherit;text-decoration:none;}
       } catch(e) {
         console.warn('[product] cache render failed:', e);
       }
+    } else {
+      // ⭐ STEP 1.5: Try home cache as fallback
+      const homeCached = getFromHomeCache(pid);
+      if (homeCached && homeCached.id) {
+        PRODUCT = homeCached;
+        cacheProduct(pid, PRODUCT);
+        try {
+          document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
+          document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
+          renderProduct();
+        } catch(e) {
+          console.warn('[product] home cache render failed:', e);
+        }
+      }
     }
 
-    /* ─── STEP 2: Background network fetch (non-blocking) ─── */
-    fetchFreshProduct(pid);
-
-    /* ─── STEP 3: Non-blocking background tasks ─── */
-    setTimeout(() => {
-      try { db.collection('products').doc(pid).update({ views: FV.increment(1) }).catch(() => {}); } catch(e) {}
-    }, 2000);
-
-    try { loadRelated(); } catch(e) {}
-    try { subscribeReviews(pid); } catch(e) {}
-    if (currentUser) {
-      try { checkReviewEligibility(pid); } catch(e) {}
-    }
-
-    /* ─── STEP 4: All products from cache instantly ─── */
-    const cachedAll = getCachedAllProducts();
-    if (cachedAll && cachedAll.length) {
-      ALL_PRODUCTS = cachedAll.filter(p => p && p.id !== pid);
-      try { renderAllProducts(); } catch(e) {}
-    }
-
-    /* ─── STEP 5: Setup lazy load ─── */
-    setupAllProductsLazy();
-  }
-
-  async function fetchFreshProduct(pid) {
+    // ─── STEP 2: Firestore (cache-first, then server) ───
     if (_productFetchInProgress) return;
     _productFetchInProgress = true;
 
     let fresh = null;
+    let fetchErr = null;
 
-    /* Try Firestore cache first (usually instant) */
+    // 2a. Try Firestore cache
     try {
       const snapCache = await withTimeout(
         db.collection('products').doc(pid).get({ source: 'cache' }),
@@ -942,9 +883,11 @@ a{color:inherit;text-decoration:none;}
       if (snapCache && snapCache.exists) {
         fresh = { id: snapCache.id, ...snapCache.data() };
       }
-    } catch(e) {}
+    } catch(e) {
+      // Cache miss is normal for fresh users
+    }
 
-    /* If no cached Firestore data, fetch server */
+    // 2b. If cache empty, fetch from server
     if (!fresh) {
       try {
         const snapServer = await withTimeout(
@@ -955,56 +898,101 @@ a{color:inherit;text-decoration:none;}
           fresh = { id: snapServer.id, ...snapServer.data() };
         }
       } catch(e) {
+        fetchErr = e;
         console.warn('[product] server fetch failed:', e && e.message);
+      }
+    }
+
+    // 2c. If still no data, try explicit server source
+    if (!fresh) {
+      try {
+        const snapServer2 = await withTimeout(
+          db.collection('products').doc(pid).get({ source: 'server' }),
+          PRODUCT_FETCH_TIMEOUT
+        );
+        if (snapServer2 && snapServer2.exists) {
+          fresh = { id: snapServer2.id, ...snapServer2.data() };
+        }
+      } catch(e) {
+        console.warn('[product] explicit server fetch failed:', e && e.message);
       }
     }
 
     _productFetchInProgress = false;
 
+    // ─── STEP 3: Handle result ───
     if (fresh) {
+      // Check if product is intentionally hidden
       const isHidden = (fresh.active === false) || (fresh.approved === false && fresh.approvalStatus !== 'pending');
-      const hash = JSON.stringify({
-        n: fresh.name, p: fresh.price, r: fresh.rating, rc: fresh.ratingCount,
-        s: fresh.stock, ss: fresh.sizeStock, c: fresh.colors, i: fresh.images
-      });
+      // We still render hidden products but show a notice to the owner
+      const changed = !PRODUCT
+        || PRODUCT.rating !== fresh.rating
+        || PRODUCT.ratingCount !== fresh.ratingCount
+        || PRODUCT.stock !== fresh.stock
+        || PRODUCT.price !== fresh.price
+        || JSON.stringify(PRODUCT.sizeStock) !== JSON.stringify(fresh.sizeStock)
+        || JSON.stringify(PRODUCT.colors) !== JSON.stringify(fresh.colors)
+        || JSON.stringify(PRODUCT.images) !== JSON.stringify(fresh.images);
 
-      cacheProduct(pid, fresh);
+      PRODUCT = fresh;
+      cacheProduct(pid, PRODUCT);
+      document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
+      document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
 
-      /* Only re-render if meaningful change */
-      if (hash !== _lastRenderedHash || !document.querySelector('.tg-main')) {
-        PRODUCT = fresh;
-        _lastRenderedHash = '';
-        document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
-        document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
+      if (changed || !document.querySelector('.tg-main')) {
         try {
           renderProduct();
         } catch(e) {
           console.error('[product] render failed:', e);
-          showError('Failed to display product', e.message || 'An error occurred.', true);
+          showError('Failed to display product', e.message || 'An error occurred while rendering.', true);
+          return;
         }
-      } else {
-        /* Update PRODUCT data silently */
-        PRODUCT = fresh;
-        _pSet(pid, fresh);
       }
 
       if (isHidden) {
         setTimeout(() => toast('⚠️ This product is not publicly visible', 'info'), 500);
       }
     } else if (!PRODUCT) {
-      showError(
-        'Product Not Available',
-        'Could not load product. Check your internet connection.',
-        true
-      );
+      // Nothing was cached and network fetch failed
+      const msg = fetchErr
+        ? (fetchErr.message === 'timeout'
+            ? 'Connection timed out. Please check your internet and try again.'
+            : 'Could not load product. Please check your internet connection.')
+        : 'This product may have been removed or is unavailable.';
+      showError('Product Not Available', msg, true);
+      return;
     }
+
+    // ─── STEP 4: Non-blocking background tasks ───
+    setTimeout(() => {
+      try { db.collection('products').doc(pid).update({ views: FV.increment(1) }).catch(() => {}); } catch(e) {}
+    }, 1500);
+
+    try { loadRelated(); } catch(e) {}
+    try { subscribeReviews(pid); } catch(e) {}
+    if (currentUser) {
+      try { checkReviewEligibility(pid); } catch(e) {}
+    }
+
+    // ─── STEP 5: ALL_PRODUCTS from cache instantly ───
+    const cachedAll = getCachedAllProducts();
+    if (cachedAll && cachedAll.length) {
+      ALL_PRODUCTS = cachedAll.filter(p => p && p.id !== pid);
+      try { renderAllProducts(); } catch(e) {}
+    }
+
+    // ─── STEP 6: Setup lazy load for All Products section ───
+    setupAllProductsLazy();
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     RENDER PRODUCT
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // RENDER PRODUCT
+  // ═══════════════════════════════════════════════════════════════
   function renderProduct() {
-    if (!PRODUCT) return;
+    if (!PRODUCT) {
+      showError('Product Not Available', 'No product data to display.', true);
+      return;
+    }
 
     if (_allProductsIO) { try { _allProductsIO.disconnect(); } catch(e) {} _allProductsIO = null; }
 
@@ -1019,11 +1007,13 @@ a{color:inherit;text-decoration:none;}
     const hasSizes = sizes.length > 0;
     const hasColors = colors.length > 0;
 
+    // Reset selection if not in new options
     if (hasSizes && SELECTED_SIZE && sizes.indexOf(SELECTED_SIZE) === -1) SELECTED_SIZE = '';
     if (hasColors && SELECTED_COLOR && colors.indexOf(SELECTED_COLOR) === -1) SELECTED_COLOR = '';
 
     const ratingHtml = '<div id="tg-main-rating"></div>';
 
+    // Sizes HTML
     let sizeHtml = '';
     if (hasSizes) {
       sizeHtml = '<div class="tg-opt-title ' + (SIZE_ERROR ? 'has-error' : '') + '">Select Size <span class="err">• Required</span></div><div class="tg-sizes" id="tg-sizes-wrap">' + sizes.map(sz => {
@@ -1035,6 +1025,7 @@ a{color:inherit;text-decoration:none;}
       }).join('') + '</div>';
     }
 
+    // Colors HTML
     let colorHtml = '';
     if (hasColors) {
       colorHtml = '<div class="tg-opt-title ' + (COLOR_ERROR ? 'has-error' : '') + '">Select Color <span class="err">• Required</span></div>' +
@@ -1163,6 +1154,8 @@ a{color:inherit;text-decoration:none;}
     renderReviewsBlock();
     if (ALL_PRODUCTS.length) renderAllProducts();
     updateReviewButton();
+
+    _productRenderAttempts++;
   }
 
   function updateMainRating() {
@@ -1177,9 +1170,9 @@ a{color:inherit;text-decoration:none;}
     }
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     SLIDER
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // SLIDER
+  // ═══════════════════════════════════════════════════════════════
   function initSlider() {
     sliderTrack = document.getElementById('tg-slider-track');
     if (!sliderTrack) return;
@@ -1190,6 +1183,9 @@ a{color:inherit;text-decoration:none;}
 
     const slider = document.getElementById('tg-slider');
     if (!slider) return;
+
+    // Always rebind to new element (fresh DOM after innerHTML)
+    // We use a data flag only to avoid double-binding on SAME element
     if (slider.dataset.sliderBound === '1') return;
     slider.dataset.sliderBound = '1';
 
@@ -1283,9 +1279,9 @@ a{color:inherit;text-decoration:none;}
   window.tgSliderPrev = function(e) { if (e) { e.preventDefault(); e.stopPropagation(); } if (SLIDER_INDEX > 0) { SLIDER_INDEX--; updateSlider(); } };
   window.tgSliderNext = function(e) { if (e) { e.preventDefault(); e.stopPropagation(); } if (!sliderTrack) return; const slides = sliderTrack.children.length; if (SLIDER_INDEX < slides - 1) { SLIDER_INDEX++; updateSlider(); } };
 
-  /* ═══════════════════════════════════════════════════════════════
-     SELECTION
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // SELECTION
+  // ═══════════════════════════════════════════════════════════════
   window.tgSelectSize = function(sz) {
     SELECTED_SIZE = sz; SIZE_ERROR = false;
     document.querySelectorAll('[data-size]').forEach(b => {
@@ -1328,9 +1324,9 @@ a{color:inherit;text-decoration:none;}
     if (btns[1]) btns[1].disabled = QTY >= 10;
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     RELATED PRODUCTS (non-blocking)
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // RELATED PRODUCTS
+  // ═══════════════════════════════════════════════════════════════
   async function loadRelated() {
     try {
       if (!PRODUCT) return;
@@ -1339,14 +1335,14 @@ a{color:inherit;text-decoration:none;}
         try {
           const q = await withTimeout(
             db.collection('products').where('active','==',true).where('category','==',PRODUCT.category).limit(12).get(),
-            6000
+            8000
           );
           list = q.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id);
         } catch(e) {
           try {
             const q = await withTimeout(
               db.collection('products').where('category','==',PRODUCT.category).limit(12).get(),
-              6000
+              8000
             );
             list = q.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id);
           } catch(e2) {}
@@ -1357,13 +1353,15 @@ a{color:inherit;text-decoration:none;}
         list = list.concat(fromAll.slice(0, 12 - list.length));
       }
       if (!list.length) {
+        // Try global fallback
         try {
-          const snap = await withTimeout(db.collection('products').limit(12).get(), 6000);
+          const snap = await withTimeout(db.collection('products').limit(12).get(), 8000);
           list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id);
         } catch(e) {}
       }
       renderRelated(list.slice(0, 12));
     } catch(e) {
+      console.warn('[related] failed:', e && e.message);
       if (ALL_PRODUCTS.length) renderRelated(ALL_PRODUCTS.slice(0, 12));
       else {
         const el = document.getElementById('tg-related');
@@ -1423,15 +1421,18 @@ a{color:inherit;text-decoration:none;}
     '</div>';
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ALL PRODUCTS (LAZY)
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // ALL PRODUCTS (LAZY)
+  // ═══════════════════════════════════════════════════════════════
   function setupAllProductsLazy() {
     const el = document.getElementById('tg-all-products');
     if (!el) return;
     if (_allProductsIO) { try { _allProductsIO.disconnect(); } catch(e) {} _allProductsIO = null; }
     const target = el.closest('.tg-card') || el;
-    if (!('IntersectionObserver' in window)) { fetchAllProducts(); return; }
+    if (!('IntersectionObserver' in window)) {
+      fetchAllProducts();
+      return;
+    }
     _allProductsIO = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -1450,10 +1451,10 @@ a{color:inherit;text-decoration:none;}
     try {
       let snap;
       try {
-        snap = await withTimeout(db.collection('products').where('active','==',true).limit(ALL_PROD_LIMIT).get(), 6000);
+        snap = await withTimeout(db.collection('products').where('active','==',true).limit(ALL_PROD_LIMIT).get(), 8000);
       } catch(e) {
         try {
-          snap = await withTimeout(db.collection('products').limit(ALL_PROD_LIMIT).get(), 6000);
+          snap = await withTimeout(db.collection('products').limit(ALL_PROD_LIMIT).get(), 8000);
         } catch(e2) {
           _allProductsFetching = false;
           return;
@@ -1465,8 +1466,6 @@ a{color:inherit;text-decoration:none;}
         cacheAllProducts(list);
         renderAllProducts();
         _allProductsFetched = true;
-        /* Also populate shared cache */
-        list.forEach(p => _pSet(p.id, p));
       }
     } catch(e) {
       console.warn('[all products] failed:', e && e.message);
@@ -1483,14 +1482,15 @@ a{color:inherit;text-decoration:none;}
     el.innerHTML = shuffleArr(ALL_PRODUCTS).slice(0, 40).map(p => productCardHtml(p)).join('');
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     REVIEWS (lazy, non-blocking)
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // REVIEWS
+  // ═══════════════════════════════════════════════════════════════
   function subscribeReviews(pid) {
     if (!pid) return;
     if (unsubReviews) { try { unsubReviews(); } catch(e) {} unsubReviews = null; }
     _reviewsLoaded = false;
 
+    // Try cache-first quick load
     try {
       db.collection('reviews').where('productId', '==', pid).get({ source: 'cache' })
         .then(snap => {
@@ -1507,6 +1507,7 @@ a{color:inherit;text-decoration:none;}
         }).catch(() => {});
     } catch(e) {}
 
+    // Live listener
     try {
       unsubReviews = db.collection('reviews')
         .where('productId', '==', pid)
@@ -1522,6 +1523,7 @@ a{color:inherit;text-decoration:none;}
           renderReviewsBlock();
           if (document.getElementById('tg-ar-modal')?.classList.contains('show')) renderAllReviewsModal();
         }, err => {
+          console.warn('[reviews] listener error:', err && err.message);
           _reviewsLoaded = true;
           renderReviewsBlock();
         });
@@ -1610,14 +1612,15 @@ a{color:inherit;text-decoration:none;}
     if (e.target.id === 'tg-ar-modal') tgCloseAllReviews();
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     REVIEW ELIGIBILITY
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // REVIEW ELIGIBILITY
+  // ═══════════════════════════════════════════════════════════════
   async function checkReviewEligibility(pid) {
     CAN_REVIEW = false;
     HAS_REVIEWED = false;
     if (!currentUser || !pid) { updateReviewButton(); return; }
 
+    // Check if already reviewed
     try {
       const rSnap = await db.collection('reviews')
         .where('userId', '==', currentUser.uid)
@@ -1628,8 +1631,11 @@ a{color:inherit;text-decoration:none;}
         updateReviewButton();
         return;
       }
-    } catch(e) {}
+    } catch(e) {
+      console.warn('[review eligibility] reviewed check failed:', e && e.message);
+    }
 
+    // Check if user has a delivered order containing this product
     try {
       const uid = currentUser.uid;
       const ordersMap = new Map();
@@ -1647,7 +1653,9 @@ a{color:inherit;text-decoration:none;}
         const items = Array.isArray(o.items) ? o.items : [];
         if (items.some(it => it && it.productId === pid)) { CAN_REVIEW = true; break; }
       }
-    } catch(e) {}
+    } catch(e) {
+      console.warn('[review eligibility] order check failed:', e && e.message);
+    }
     updateReviewButton();
   }
 
@@ -1684,9 +1692,9 @@ a{color:inherit;text-decoration:none;}
   }
   window.tgShowNotEligibleMsg = function() { toast(TOAST_MSGS.onlyDelivered, 'info'); };
 
-  /* ═══════════════════════════════════════════════════════════════
-     REVIEW MODAL
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // REVIEW MODAL
+  // ═══════════════════════════════════════════════════════════════
   window.tgOpenReview = function() {
     if (!currentUser) { toast(TOAST_MSGS.loginToReview, 'info'); setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('product.html?id=' + (PRODUCT?.id || '')), 1000); return; }
     if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'info'); return; }
@@ -1864,9 +1872,9 @@ a{color:inherit;text-decoration:none;}
     }
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     IMAGE VIEWER
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // IMAGE VIEWER
+  // ═══════════════════════════════════════════════════════════════
   let vwScale = 1, vwLastScale = 1, vwStartDist = 0, vwPanX = 0, vwPanY = 0, vwStartX = 0, vwStartY = 0, vwIsPanning = false, vwLastTap = 0;
 
   function vwApply() {
@@ -2004,9 +2012,9 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     VALIDATION
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // VALIDATION
+  // ═══════════════════════════════════════════════════════════════
   function validateSelection() {
     if (!PRODUCT) return false;
     const sizes = getSizes();
@@ -2026,9 +2034,9 @@ a{color:inherit;text-decoration:none;}
     return true;
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     CART ACTIONS
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // CART ACTIONS
+  // ═══════════════════════════════════════════════════════════════
   function buildCartItem() {
     const sellerId = PRODUCT.sellerId || PRODUCT.seller_id || PRODUCT.sid || PRODUCT.sellerUid || '';
     const sellerName = PRODUCT.sellerName || PRODUCT.shopName || (PRODUCT.seller && PRODUCT.seller.shopName) || '';
@@ -2066,13 +2074,19 @@ a{color:inherit;text-decoration:none;}
 
     const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
 
-    /* Merge-set — single round trip, no read needed */
-    ref.set({
-      ...item,
-      qty: FV.increment(QTY),
-      addedAt: FV.serverTimestamp(),
-      updatedAt: FV.serverTimestamp()
-    }, { merge: true }).catch(err => {
+    ref.get({ source: 'cache' }).then(snap => {
+      if (snap.exists) {
+        return ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
+      }
+      return ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+    }).catch(() => {
+      return ref.set({
+        ...item,
+        qty: FV.increment(QTY),
+        addedAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
+    }).catch(err => {
       console.warn('Cart write failed:', err && err.message);
     });
   }
@@ -2092,71 +2106,40 @@ a{color:inherit;text-decoration:none;}
     }, 400);
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     ⚡ INSTANT BUY NOW — Navigate FIRST, write in background
-     ═══════════════════════════════════════════════════════════════ */
   window.tgBuyNow = function() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
-
-    const btn = document.getElementById('tg-buy-btn');
-    if (btn && btn.disabled) return;
-
     const item = buildCartItem();
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
 
-    /* ─── GUEST: save to local cart, redirect to login ─── */
     if (!currentUser) {
       try {
         let cart = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
-        const existing = cart.find(x => ((x.productId || x.id) + '|' + (x.size||'') + '|' + (x.color||'')) === docId);
-        if (existing) existing.qty = Math.min(10, Number(existing.qty||1) + QTY);
-        else cart.push({ ...item, addedAt: Date.now() });
-        localStorage.setItem(GUEST_CART, JSON.stringify(cart));
+        if (!cart.find(x => ((x.productId||x.id) + '|' + (x.size||'') + '|' + (x.color||'')) === docId)) {
+          cart.push({ ...item, addedAt: Date.now() });
+          localStorage.setItem(GUEST_CART, JSON.stringify(cart));
+        }
       } catch(e) {}
       try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
-      try { localStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
       location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html?buynow=' + encodeURIComponent(docId));
       return;
     }
 
-    /* ─── LOGGED-IN: instant nav + background write ─── */
-    if (btn) {
-      btn.disabled = true;
-      btn.dataset.origText = btn.textContent;
-      btn.textContent = '⚡ Opening…';
-    }
-
-    /* Store intent in all 3 places for maximum reliability */
-    try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
-    try { localStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
-
-    /* Show flash feedback */
-    const flash = document.getElementById('tg-buy-flash');
-    if (flash) {
-      flash.classList.add('show');
-      setTimeout(() => flash.classList.remove('show'), 900);
-    }
-
-    /* Fire Firestore write WITHOUT awaiting — cart page will retry if it fails */
-    try {
-      const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-      ref.set({
+    const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
+    ref.get({ source: 'cache' }).then(snap => {
+      if (snap.exists) return ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
+      return ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+    }).catch(() => {
+      return ref.set({
         ...item,
         qty: FV.increment(QTY),
         addedAt: FV.serverTimestamp(),
         updatedAt: FV.serverTimestamp()
-      }, { merge: true }).catch(err => {
-        console.warn('[buynow] background write failed (cart page will retry):', err && err.message);
-      });
-    } catch(e) {
-      console.warn('[buynow] write error:', e);
-    }
+      }, { merge: true });
+    }).catch(() => {});
 
-    /* Navigate immediately — cart page handles retries via ensureBuyNowItem */
-    setTimeout(() => {
-      location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
-    }, 80);
+    try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
+    location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
   };
 
   function updateCartBadge() {
@@ -2176,6 +2159,9 @@ a{color:inherit;text-decoration:none;}
     }
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  // RESIZE
+  // ═══════════════════════════════════════════════════════════════
   window.addEventListener('resize', () => {
     if (sliderTrack) {
       sliderTrack.classList.add('no-trans');
@@ -2184,13 +2170,14 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     AUTH
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // AUTH
+  // ═══════════════════════════════════════════════════════════════
   auth.onAuthStateChanged((u) => {
     const wasLoggedIn = !!currentUser;
     currentUser = u;
     updateCartBadge();
+    // Re-check eligibility if login state changed AND product is loaded
     if (PRODUCT && PRODUCT.id && wasLoggedIn !== !!u) {
       setTimeout(() => {
         try { checkReviewEligibility(PRODUCT.id); } catch(e) {}
@@ -2198,9 +2185,10 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  /* ═══════════════════════════════════════════════════════════════
-     INIT — GO GO GO
-     ═══════════════════════════════════════════════════════════════ */
+  // ═══════════════════════════════════════════════════════════════
+  // INIT
+  // ═══════════════════════════════════════════════════════════════
+  // Global safety net: if product didn't render within 15s, show error
   setTimeout(() => {
     if (!PRODUCT || !document.querySelector('.tg-main')) {
       const el = document.getElementById('tg-content');
@@ -2212,7 +2200,7 @@ a{color:inherit;text-decoration:none;}
         );
       }
     }
-  }, 12000);
+  }, 15000);
 
   loadProduct();
 
