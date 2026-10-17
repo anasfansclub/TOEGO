@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Page Not Found — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0!important;padding:0!important;width:100%!important;max-width:100vw;overflow-x:hidden;min-height:100vh;font-family:'Roboto',Arial,sans-serif;color:#212121;background:#f1f3f6;-webkit-font-smoothing:antialiased;}
+img{max-width:100%;display:block;}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input{font:inherit;}
+a{color:inherit;text-decoration:none;}
+header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#footer,.o_breadcrumb,.breadcrumb{display:none!important;}
+
+.tg-hd{background:#2874f0;position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 1px 4px rgba(0,0,0,0.15);}
+.tg-hd-inner{display:flex;align-items:center;gap:10px;padding:10px 14px;height:58px;}
+.tg-hd-logo{display:flex;align-items:center;gap:8px;flex:1;}
+.tg-hd-logo-mark{width:34px;height:34px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#2874f0;font-weight:900;font-style:italic;font-size:20px;}
+.tg-hd-logo-text{color:#fff;font-weight:900;font-style:italic;font-size:22px;letter-spacing:-0.4px;}
+.tg-hd-logo-text span{color:#ffe500;}
+.tg-hd-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;border-radius:50%;}
+.tg-hd-btn:hover{background:rgba(255,255,255,0.12);}
+.tg-hd-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+.tg-wrap{padding-top:58px;padding-bottom:76px;min-height:100vh;display:flex;align-items:center;justify-content:center;padding-left:16px;padding-right:16px;}
+.tg-container{max-width:560px;width:100%;}
+
+.tg-card{background:#fff;border-radius:16px;padding:50px 32px 40px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08);position:relative;overflow:hidden;}
+
+/* ═══ DECORATIVE ELEMENTS ═══ */
+.tg-deco-1{position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(40,116,240,0.12),transparent 70%);border-radius:50%;pointer-events:none;}
+.tg-deco-2{position:absolute;bottom:-80px;left:-80px;width:240px;height:240px;background:radial-gradient(circle,rgba(255,229,0,0.15),transparent 70%);border-radius:50%;pointer-events:none;}
+
+/* ═══ 404 NUMBER ═══ */
+.tg-error-code{font-size:clamp(90px,22vw,140px);font-weight:900;font-style:italic;line-height:1;background:linear-gradient(135deg,#2874f0 0%,#1a5dc7 60%,#0f1729 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-6px;margin:0 0 8px;position:relative;z-index:2;animation:tgFloat 3s ease-in-out infinite;}
+@keyframes tgFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+.tg-emoji{font-size:56px;margin-bottom:16px;position:relative;z-index:2;animation:tgWiggle 2.5s ease-in-out infinite;display:inline-block;}
+@keyframes tgWiggle{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
+
+/* ═══ TITLE & DESC ═══ */
+.tg-title{font-size:clamp(22px,5vw,28px);font-weight:800;color:#212121;margin:0 0 12px;letter-spacing:-0.4px;position:relative;z-index:2;}
+.tg-desc{font-size:15px;color:#666;line-height:1.6;margin:0 auto 30px;max-width:400px;position:relative;z-index:2;}
+.tg-desc b{color:#2874f0;font-weight:700;}
+
+/* ═══ ACTION BUTTONS ═══ */
+.tg-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:24px;position:relative;z-index:2;}
+.tg-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:800;letter-spacing:0.3px;transition:all .15s;min-width:160px;text-transform:uppercase;}
+.tg-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.tg-btn.primary{background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;box-shadow:0 6px 20px rgba(40,116,240,0.35);}
+.tg-btn.primary:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 8px 24px rgba(40,116,240,0.45);}
+.tg-btn.outline{background:#fff;color:#2874f0;border:1.5px solid #2874f0;}
+.tg-btn.outline:hover{background:#f0f5ff;transform:translateY(-1px);}
+
+/* ═══ QUICK LINKS ═══ */
+.tg-links-divider{display:flex;align-items:center;gap:12px;margin:24px 0 20px;color:#999;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;position:relative;z-index:2;}
+.tg-links-divider::before,.tg-links-divider::after{content:'';flex:1;height:1px;background:#e5e7eb;}
+
+.tg-links{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;position:relative;z-index:2;max-width:400px;margin:0 auto;}
+.tg-link-card{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#f8f9fb;border:1.5px solid #e5e7eb;border-radius:12px;transition:all .15s;text-align:left;cursor:pointer;}
+.tg-link-card:hover{background:#f0f5ff;border-color:#2874f0;transform:translateY(-2px);}
+.tg-link-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tg-link-icon.blue{background:linear-gradient(135deg,#eef3ff,#e0eaff);color:#2874f0;}
+.tg-link-icon.orange{background:linear-gradient(135deg,#fff3e0,#ffe0b2);color:#fb641b;}
+.tg-link-icon.green{background:linear-gradient(135deg,#e6f7ec,#d1f0dd);color:#1b8a3a;}
+.tg-link-icon.purple{background:linear-gradient(135deg,#ede7f6,#d1c4e9);color:#7e57c2;}
+.tg-link-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.tg-link-body{flex:1;min-width:0;}
+.tg-link-title{font-size:12.5px;font-weight:700;color:#212121;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tg-link-sub{font-size:10.5px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ═══ SEARCH ═══ */
+.tg-search{margin-bottom:20px;position:relative;z-index:2;}
+.tg-search-form{display:flex;align-items:center;background:#f5f5f6;border:1.5px solid #e0e0e0;border-radius:12px;padding:0 6px 0 14px;transition:all .15s;}
+.tg-search-form:focus-within{border-color:#2874f0;background:#fff;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
+.tg-search-form svg{width:18px;height:18px;stroke:#999;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.tg-search-input{flex:1;border:none;outline:none;background:transparent;font-size:14px;color:#212121;padding:14px 10px;min-width:0;}
+.tg-search-input::placeholder{color:#999;}
+.tg-search-btn{width:36px;height:36px;border-radius:8px;background:#2874f0;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tg-search-btn svg{stroke:#fff;width:16px;height:16px;}
+
+/* ═══ BOTTOM NAV ═══ */
+.tg-bnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e0e0;display:flex;z-index:9999;box-shadow:0 -2px 8px rgba(0,0,0,0.06);padding-bottom:env(safe-area-inset-bottom,0);}
+.tg-bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px;gap:3px;font-size:10px;color:#666;font-weight:600;position:relative;transition:color .15s;}
+.tg-bnav-item.active{color:#2874f0;}
+.tg-bnav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ═══ TOASTS ═══ */
+.tg-toasts{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 24px);pointer-events:none;}
+.tg-toast{padding:12px 20px;background:#212121;color:#fff;font-size:13px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);pointer-events:auto;font-weight:500;animation:tgToastIn .3s;}
+@keyframes tgToastIn{from{transform:translateY(20px);opacity:0;}to{transform:none;opacity:1;}}
+.tg-toast.error{background:#d32f2f;}
+
+/* ═══ FOOTER NOTE ═══ */
+.tg-foot-note{text-align:center;margin-top:26px;font-size:11.5px;color:#999;line-height:1.5;position:relative;z-index:2;}
+.tg-foot-note a{color:#2874f0;font-weight:600;}
+
+/* ═══ MOBILE ═══ */
+@media (max-width:600px){
+  .tg-card{padding:36px 22px 32px;border-radius:14px;}
+  .tg-emoji{font-size:46px;margin-bottom:12px;}
+  .tg-title{font-size:20px;}
+  .tg-desc{font-size:13.5px;margin-bottom:24px;}
+  .tg-actions{flex-direction:column;}
+  .tg-btn{width:100%;padding:13px 24px;}
+  .tg-links{grid-template-columns:1fr;}
+  .tg-link-card{padding:12px 14px;}
+  .tg-search-input{padding:13px 8px;font-size:16px;}
+}
+@media (max-width:380px){
+  .tg-card{padding:30px 18px 26px;}
+  .tg-error-code{letter-spacing:-4px;}
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="shop-home.html" class="tg-hd-logo">
+      <div class="tg-hd-logo-mark">T</div>
+      <span class="tg-hd-logo-text">TOE<span>GO</span></span>
+    </a>
+    <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
+    </a>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+    <div class="tg-card">
+      <div class="tg-deco-1"></div>
+      <div class="tg-deco-2"></div>
+
+      <div class="tg-emoji">🔍</div>
+      <div class="tg-error-code">404</div>
+
+      <h1 class="tg-title">Page Not Found</h1>
+      <p class="tg-desc">Bhai, jo page aap dhundh rahe ho woh <b>exist nahi karta</b> ya <b>move ho gaya</b> hai. Chalo kuch aur dhundhte hain!</p>
+
+      <!-- SEARCH -->
+      <div class="tg-search">
+        <form class="tg-search-form" onsubmit="event.preventDefault();tgSearchSubmit();">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" class="tg-search-input" id="tg-search-input" placeholder="Search products, brands..." autocomplete="off" enterkeyhint="search">
+          <button type="submit" class="tg-search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="tg-actions">
+        <a href="shop-home.html" class="tg-btn primary">
+          <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+          Go Home
+        </a>
+        <button class="tg-btn outline" onclick="history.back()">
+          <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Go Back
+        </button>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="tg-links-divider">Popular Pages</div>
+
+      <div class="tg-links">
+        <a href="shop-home.html" class="tg-link-card">
+          <div class="tg-link-icon blue"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg></div>
+          <div class="tg-link-body">
+            <div class="tg-link-title">Home</div>
+            <div class="tg-link-sub">Shop everything</div>
+          </div>
+        </a>
+        <a href="categories.html" class="tg-link-card">
+          <div class="tg-link-icon orange"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div class="tg-link-body">
+            <div class="tg-link-title">Categories</div>
+            <div class="tg-link-sub">Browse all</div>
+          </div>
+        </a>
+        <a href="cart.html" class="tg-link-card">
+          <div class="tg-link-icon green"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg></div>
+          <div class="tg-link-body">
+            <div class="tg-link-title">My Cart</div>
+            <div class="tg-link-sub">Checkout now</div>
+          </div>
+        </a>
+        <a href="my-orders.html" class="tg-link-card">
+          <div class="tg-link-icon purple"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg></div>
+          <div class="tg-link-body">
+            <div class="tg-link-title">My Orders</div>
+            <div class="tg-link-sub">Track orders</div>
+          </div>
+        </a>
+      </div>
+
+      <p class="tg-foot-note">
+        Looking for something specific? <a href="shop-home.html">Browse our store</a> or <a href="account.html">contact support</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ═══ SEARCH HANDLER ═══ */
+  window.tgSearchSubmit = function() {
+    const input = document.getElementById('tg-search-input');
+    const q = (input && input.value || '').trim();
+    if (!q) {
+      toast('Type something to search', 'error');
+      if (input) input.focus();
+      return;
+    }
+    window.location.href = 'shop-home.html?q=' + encodeURIComponent(q);
+  };
+
+  /* ═══ TOAST ═══ */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w || !msg) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
+  }
+
+  /* ═══ THEME (from cache or firebase) ═══ */
+  (function applyCachedTheme() {
+    try {
+      const cached = localStorage.getItem('toego_theme_colors');
+      if (cached) {
+        const p = JSON.parse(cached).primary || '#2874f0';
+        document.documentElement.style.setProperty('--tg-primary', p);
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', p);
+        const hd = document.querySelector('.tg-hd');
+        if (hd) hd.style.background = p;
+        document.querySelectorAll('.tg-bnav-item.active').forEach(el => el.style.color = p);
+        document.querySelectorAll('.tg-btn.primary').forEach(el => {
+          el.style.background = 'linear-gradient(135deg,' + p + ', #1a5dc7)';
+        });
+      }
+    } catch(e) {}
+  })();
+
+  /* ═══ AUTO FOCUS SEARCH (if empty) ═══ */
+  window.addEventListener('load', () => {
+    const input = document.getElementById('tg-search-input');
+    if (input && window.innerWidth > 768) input.focus();
+  });
+
+  /* ═══ LOG TO CONSOLE ═══ */
+  console.log('[404] Page not found:', window.location.pathname);
+
+})();
+</script>
+</body>
+</html>
