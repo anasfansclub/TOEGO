@@ -30,8 +30,9 @@ a { color: inherit; text-decoration: none; }
 .tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--text-main); flex-shrink: 0; }
 .tg-hd-back svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.2; }
 .tg-hd-search { flex: 1; height: 38px; background: #f1f3f6; border-radius: 4px; display: flex; align-items: center; overflow: hidden; }
-.tg-hd-search-icon { padding: 0 12px; color: #2874f0; display: flex; align-items: center; }
+.tg-hd-search-icon { padding: 0 12px; color: #2874f0; display: flex; align-items: center; flex-shrink: 0; }
 .tg-hd-search input { flex: 1; height: 100%; border: none; outline: none; background: transparent; font-size: 14px; min-width: 0; }
+.tg-hd-clear { display: none; width: 28px; height: 28px; align-items: center; justify-content: center; color: #666; font-size: 14px; flex-shrink: 0; }
 .tg-hd-mic { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #2874f0; border-radius: 50%; margin-right: 2px; transition: 0.2s; flex-shrink: 0; }
 .tg-hd-mic.listening { color: #d32f2f; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -40,17 +41,24 @@ a { color: inherit; text-decoration: none; }
 .tg-hd-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
 .tg-hd-badge { position: absolute; top: 0px; right: 0px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #fff; }
 
+/* Top Progress */
+.tg-progress { position: fixed; top: 58px; left: 0; height: 2px; width: 0; background: var(--primary); z-index: 1002; opacity: 0; transition: width 0.3s ease, opacity 0.3s ease; box-shadow: 0 0 6px rgba(40,116,240,0.5); }
+
+/* Offline Banner */
+.tg-offline { position: fixed; top: 58px; left: 0; right: 0; z-index: 998; background: #f57c00; color: #fff; text-align: center; font-size: 12px; font-weight: 600; padding: 5px; display: none; }
+.tg-offline.show { display: block; }
+
 /* Admin Bar */
-.tg-admin-bar { display: none; position: fixed; top: 58px; left: 0; right: 0; z-index: 999; background: #0f1729; color: #fff; padding: 8px 16px; align-items: center; justify-content: space-between; }
+.tg-admin-bar { display: none; position: fixed; top: 58px; left: 0; right: 0; height: 40px; z-index: 999; background: #0f1729; color: #fff; padding: 0 16px; align-items: center; justify-content: space-between; }
 .tg-admin-bar.show { display: flex; }
 .tg-admin-bar-info { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .tg-admin-bar-btn { background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 4px; }
 
 /* Layout */
 .tg-container { display: flex; height: calc(100vh - 58px); margin-top: 58px; background: #fff; }
-.tg-admin-mode .tg-container { height: calc(100vh - 96px); margin-top: 96px; }
+.tg-admin-mode .tg-container { height: calc(100vh - 98px); margin-top: 98px; }
 
-/* Left Sidebar - Independent Scroll */
+/* Sidebar */
 .tg-sidebar { width: 90px; background: var(--bg-sec); overflow-y: auto; -webkit-overflow-scrolling: touch; border-right: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none; }
 .tg-sidebar::-webkit-scrollbar { display: none; }
 .tg-side-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px 4px; gap: 6px; cursor: pointer; font-size: 11px; font-weight: 500; color: var(--text-muted); text-align: center; position: relative; border-bottom: 1px solid #e8e8e8; }
@@ -60,10 +68,10 @@ a { color: inherit; text-decoration: none; }
 .tg-side-icon img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .tg-side-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
 
-/* Right Content Area */
+/* Right Content */
 .tg-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; position: relative; }
 
-/* Subcategories Row */
+/* Subcats */
 .tg-subcats-wrap { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; background: #fff; flex-shrink: 0; }
 .tg-subcats-scroll { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
 .tg-subcats-scroll::-webkit-scrollbar { display: none; }
@@ -72,45 +80,42 @@ a { color: inherit; text-decoration: none; }
 .tg-subcat-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .tg-subcat-name { font-size: 11px; font-weight: 500; color: var(--text-main); text-align: center; }
 
-/* Filter & Sort Bar */
+/* Filter Bar */
 .tg-filter-bar { position: sticky; top: 0; z-index: 90; background: #fff; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; padding: 10px 16px; gap: 12px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 .tg-fb-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-size: 13px; font-weight: 500; color: var(--text-main); position: relative; }
 .tg-fb-btn.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); font-weight: 700; }
 .tg-fb-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
 .tg-fb-count { position: absolute; top: -6px; right: -6px; background: #ff6161; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
 
-/* Active Chips */
+/* Chips */
 .tg-active-chips-wrap { background: #fff; overflow-x: auto; scrollbar-width: none; padding: 8px 16px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
 .tg-active-chips-wrap::-webkit-scrollbar { display: none; }
 .tg-active-chips { display: flex; gap: 8px; width: max-content; }
 .tg-ac { display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); border: 1px solid #d0e2ff; color: var(--primary); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; white-space: nowrap; }
 .tg-ac button { width: 16px; height: 16px; border-radius: 50%; background: rgba(40,116,240,0.15); color: var(--primary); font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
 
-/* Products Grid - Independent Scroll */
+/* Products */
 .tg-prod-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 60px; }
-.tg-prod-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
-.tg-prod-card { border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; background: #fff; cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s; position: relative; }
+.tg-prod-count { padding: 12px 16px 0; font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.tg-prod-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px 16px 16px; }
+.tg-prod-card { border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; background: #fff; cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s; position: relative; }
 .tg-prod-card:active { transform: scale(0.98); }
-
-/* IMAGE SIZE BADA KAR DIYA HAI (aspect-ratio 4/5) */
+@media (hover: hover) {
+  .tg-prod-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+}
 .tg-prod-img { width: 100%; aspect-ratio: 4/5; background: #ffffff; padding: 12px; display: flex; align-items: center; justify-content: center; position: relative; }
 .tg-prod-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-/* STYLISH DISCOUNT TAG (Right Corner) */
 .tg-discount-badge { position: absolute; top: 8px; right: 0; background: linear-gradient(135deg, #ff4d4d, #f9cb28); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px 0 0 8px; z-index: 2; text-transform: uppercase; box-shadow: -2px 2px 6px rgba(255, 77, 77, 0.4); letter-spacing: 0.5px; }
-
-/* ADMIN TAG (Left Corner) */
 .tg-prod-tag-badge { position: absolute; top: 8px; left: 8px; background: #212121; color: #fff; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px; z-index: 2; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: 0.5px; }
 .tg-prod-tag-badge.hot { background: #f57c00; }
 .tg-prod-tag-badge.new { background: #388e3c; }
-
 .tg-prod-body { padding: 10px; text-align: center; border-top: 1px solid #f8f9fb; }
 .tg-prod-name { font-size: 12px; font-weight: 500; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; margin-bottom: 6px; }
 .tg-prod-price-row { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
 .tg-prod-price { font-size: 15px; font-weight: 800; color: #212121; }
 .tg-prod-mrp { font-size: 11px; color: #878787; text-decoration: line-through; font-weight: 500; }
 
-/* Empty State & Skeleton */
+/* Empty & Skeleton */
 .tg-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); grid-column: 1/-1; font-size: 13px; }
 .tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 4px; }
 @keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -124,12 +129,20 @@ a { color: inherit; text-decoration: none; }
 .tg-adm-btn.del { color: #d32f2f; }
 .tg-adm-btn.tag { color: #f57c00; }
 
-/* Add Subcategory */
+/* Sidebar admin buttons override */
+.tg-side-item .tg-admin-btn-wrap { bottom: auto; top: 3px; right: 2px; flex-direction: column; gap: 3px; }
+.tg-side-item .tg-adm-btn { width: 22px; height: 22px; }
+.tg-side-item .tg-adm-btn svg { width: 11px; height: 11px; }
+.tg-subcat-chip .tg-admin-btn-wrap { top: -3px; right: -3px; bottom: auto; gap: 2px; }
+.tg-subcat-chip .tg-adm-btn { width: 20px; height: 20px; }
+.tg-subcat-chip .tg-adm-btn svg { width: 10px; height: 10px; }
+
+/* Add Subcat */
 .tg-add-subcat { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 60px; cursor: pointer; opacity: 0.8; }
 .tg-add-subcat .tg-subcat-img { border: 1.5px dashed var(--primary); color: var(--primary); background: transparent; }
 .tg-add-subcat .tg-subcat-name { color: var(--primary); font-weight: 600; }
 
-/* Modals & Sheets */
+/* Modals */
 .tg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; display: none; align-items: flex-end; justify-content: center; }
 .tg-modal.show { display: flex; }
 .tg-sheet { width: 100%; max-width: 500px; background: #fff; border-radius: 16px 16px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto; animation: tgSlideUp .2s; }
@@ -138,7 +151,6 @@ a { color: inherit; text-decoration: none; }
 .tg-modal-close { width: 30px; height: 30px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; }
 @keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-/* Filter Section inside Sheet */
 .tg-fs { margin-bottom: 20px; }
 .tg-fs-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
 .tg-fs-options { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -150,18 +162,24 @@ a { color: inherit; text-decoration: none; }
 .tg-btn.ghost { background: #f1f3f6; color: var(--text-main); flex: 0 0 40%; }
 .tg-btn.danger { background: #d32f2f; color: #fff; }
 
-/* Forms inside modals */
 .tg-field { margin-bottom: 12px; }
 .tg-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
 .tg-field input { width: 100%; border: 1.5px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 14px; outline: none; }
 .tg-field input:focus { border-color: var(--primary); }
 .tg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-/* FAB & Toasts */
+/* FABs */
 .tg-fab { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(40,116,240,0.4); z-index: 1000; }
 .tg-admin-mode .tg-fab { display: flex; }
 .tg-fab svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-.tg-toasts { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+
+.tg-top-btn { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--primary); border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: none; align-items: center; justify-content: center; z-index: 950; }
+.tg-top-btn.show { display: flex; }
+.tg-top-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+.tg-admin-mode .tg-top-btn { display: none !important; }
+
+/* Toasts */
+.tg-toasts { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
 .tg-toast { padding: 10px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 4px; font-weight: 500; animation: tgToastIn .2s; }
 @keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 .tg-toast.success { background: #388e3c; }
@@ -191,7 +209,8 @@ a { color: inherit; text-decoration: none; }
   <div class="tg-hd-search">
     <span class="tg-hd-search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
     <input type="text" id="tg-search-input" placeholder="Search within products..." oninput="tgHandleSearch()">
-    <button class="tg-hd-mic" id="tg-mic-btn" onclick="tgStartVoiceSearch()">
+    <button class="tg-hd-clear" id="tg-search-clear" onclick="tgClearSearch()" aria-label="Clear search">✕</button>
+    <button class="tg-hd-mic" id="tg-mic-btn" onclick="tgStartVoiceSearch()" aria-label="Voice search">
       <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 19v3"/></svg>
     </button>
   </div>
@@ -201,28 +220,26 @@ a { color: inherit; text-decoration: none; }
   </a>
 </header>
 
+<div class="tg-progress" id="tg-progress"></div>
+<div class="tg-offline" id="tg-offline">⚠️ You are offline — showing cached data</div>
+
 <div class="tg-admin-bar" id="tg-admin-bar">
   <div class="tg-admin-bar-info">🛡️ Admin Mode ON</div>
   <button class="tg-admin-bar-btn" onclick="tgOpenCatModal()">+ Add Category</button>
 </div>
 
 <div class="tg-container">
-  <!-- LEFT: Sidebar (Independent Scroll) -->
   <div class="tg-sidebar" id="tg-sidebar">
-    <div style="padding:10px;"><div class="tg-skel" style="height:50px; margin-bottom:10px; border-radius:50%;"></div></div>
-    <div style="padding:10px;"><div class="tg-skel" style="height:50px; margin-bottom:10px; border-radius:50%;"></div></div>
-    <div style="padding:10px;"><div class="tg-skel" style="height:50px; margin-bottom:10px; border-radius:50%;"></div></div>
+    <div style="padding:10px;"><div class="tg-skel" style="height:50px; border-radius:50%;"></div></div>
+    <div style="padding:10px;"><div class="tg-skel" style="height:50px; border-radius:50%;"></div></div>
+    <div style="padding:10px;"><div class="tg-skel" style="height:50px; border-radius:50%;"></div></div>
   </div>
 
-  <!-- RIGHT: Content Area -->
   <div class="tg-content">
-    
-    <!-- Subcategories -->
     <div class="tg-subcats-wrap" id="tg-subcats-wrap" style="display:none;">
       <div class="tg-subcats-scroll" id="tg-subcats-scroll"></div>
     </div>
 
-    <!-- Filter & Sort Bar -->
     <div class="tg-filter-bar">
       <button class="tg-fb-btn" id="tg-btn-sort" onclick="tgOpenSortSheet()">
         <svg viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
@@ -235,13 +252,12 @@ a { color: inherit; text-decoration: none; }
       </button>
     </div>
 
-    <!-- Active Filter Chips -->
     <div class="tg-active-chips-wrap" id="tg-active-chips-wrap" style="display:none;">
       <div class="tg-active-chips" id="tg-active-chips"></div>
     </div>
 
-    <!-- Product Grid (Independent Scroll) -->
-    <div class="tg-prod-scroll">
+    <div class="tg-prod-scroll" id="tg-prod-scroll">
+      <div class="tg-prod-count" id="tg-prod-count"></div>
       <div class="tg-prod-grid" id="tg-prod-grid">
         <div class="tg-skel tg-skel-card"></div>
         <div class="tg-skel tg-skel-card"></div>
@@ -249,15 +265,16 @@ a { color: inherit; text-decoration: none; }
         <div class="tg-skel tg-skel-card"></div>
       </div>
     </div>
-
   </div>
 </div>
 
-<button class="tg-fab" onclick="tgOpenCatModal()">
+<button class="tg-fab" onclick="tgOpenCatModal()" aria-label="Add category">
   <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
 </button>
 
-<!-- ================= MODALS & SHEETS ================= -->
+<button class="tg-top-btn" id="tg-top-btn" onclick="tgScrollTop()" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
 
 <!-- Sort Sheet -->
 <div class="tg-modal" id="tg-sort-modal">
@@ -283,7 +300,6 @@ a { color: inherit; text-decoration: none; }
       <div class="tg-sheet-title">Filters</div>
       <button class="tg-modal-close" onclick="tgCloseModal('tg-filter-modal')">✕</button>
     </div>
-    
     <div class="tg-fs">
       <div class="tg-fs-title">Price Range</div>
       <div class="tg-fs-options" id="tg-price-options">
@@ -293,7 +309,6 @@ a { color: inherit; text-decoration: none; }
         <div class="tg-fs-opt" data-min="2000" data-max="999999" onclick="tgSetPrice(2000, 999999, this)">Above ₹2000</div>
       </div>
     </div>
-
     <div class="tg-fs">
       <div class="tg-fs-title">Customer Rating</div>
       <div class="tg-fs-options" id="tg-rating-options">
@@ -301,7 +316,6 @@ a { color: inherit; text-decoration: none; }
         <div class="tg-fs-opt" data-rating="3" onclick="tgSetRating(3, this)">3★ & above</div>
       </div>
     </div>
-
     <div class="tg-sheet-foot">
       <button class="tg-btn ghost" onclick="tgClearFilters()">Clear All</button>
       <button class="tg-btn primary" onclick="tgApplyFilters()">Apply Filters</button>
@@ -391,25 +405,34 @@ a { color: inherit; text-decoration: none; }
 (function() {
   'use strict';
   const SUPER_ADMIN_EMAIL = 'anasfansclub@toego.in';
-  
+
   let IS_ADMIN = false;
   let ALL_CATEGORIES = [];
   let ALL_PRODUCTS = [];
-  
+
   let currentCatId = null;
   let currentSubName = 'all';
-  
+
   let searchQuery = '';
   let filterMinPrice = 0;
   let filterMaxPrice = 999999;
   let filterRating = 0;
   let sortBy = 'relevance';
 
+  // Temp state for filter modal (apply-on-confirm)
+  let tempMinPrice = 0;
+  let tempMaxPrice = 999999;
+  let tempRating = 0;
+
   let deleteAction = null;
   let recognition = null;
+  let searchTimer = null;
+  let unsubCats = null;
+  let unsubProds = null;
+  let hasCache = false;
 
-  const CACHE_CATS = 'toego_cat_cats_v2';
-  const CACHE_PRODS = 'toego_cat_prods_v2';
+  const CACHE_CATS = 'toego_cat_cats_v3';
+  const CACHE_PRODS = 'toego_cat_prods_v3';
 
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
@@ -424,9 +447,9 @@ a { color: inherit; text-decoration: none; }
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // ⚡ ULTRA FAST: Enable Firestore Offline Cache (Localhost Ready)
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
+  // ---- Helpers ----
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -434,15 +457,32 @@ a { color: inherit; text-decoration: none; }
     el.className = 'tg-toast ' + type;
     el.textContent = msg;
     w.appendChild(el);
-    setTimeout(() => el.remove(), 2000);
+    setTimeout(() => el.remove(), 2200);
   }
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
   function tsToMs(ts) { if (!ts) return 0; if (typeof ts.toDate === 'function') return ts.toDate().getTime(); if (typeof ts === 'number') return ts; if (ts.seconds) return ts.seconds * 1000; return 0; }
-  
-  window.tgCloseModal = function(id) { document.getElementById(id).classList.remove('show'); };
 
-  // --- VOICE SEARCH ---
+  window.tgCloseModal = function(id) { document.getElementById(id).classList.remove('show'); };
+  window.tgScrollTop = function() { document.getElementById('tg-prod-scroll').scrollTo({ top: 0, behavior: 'smooth' }); };
+
+  function setProgress(on) {
+    const el = document.getElementById('tg-progress');
+    if (on) {
+      el.style.transition = 'none';
+      el.style.width = '0%';
+      el.style.opacity = '1';
+      requestAnimationFrame(() => {
+        el.style.transition = 'width 1.5s ease, opacity 0.3s ease';
+        el.style.width = '75%';
+      });
+    } else {
+      el.style.width = '100%';
+      setTimeout(() => { el.style.opacity = '0'; setTimeout(() => { el.style.width = '0%'; }, 300); }, 200);
+    }
+  }
+
+  // ---- Voice ----
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
     recognition = new SpeechRecognition();
@@ -465,7 +505,32 @@ a { color: inherit; text-decoration: none; }
     try { recognition.start(); } catch(e) {}
   };
 
-  // --- ADMIN CHECK ---
+  // ---- Cart Badge ----
+  function updateCartBadge() {
+    let count = 0;
+    try {
+      const keys = ['toego_cart', 'cart', 'toego-cart'];
+      let raw = null;
+      for (const k of keys) { raw = localStorage.getItem(k); if (raw) break; }
+      if (raw) {
+        const c = JSON.parse(raw);
+        if (Array.isArray(c)) {
+          count = c.reduce((s, i) => s + (Number(i.qty || i.quantity || 1) || 1), 0);
+        } else if (c && typeof c === 'object') {
+          Object.values(c).forEach(v => {
+            if (v && typeof v === 'object') count += Number(v.qty || v.quantity || 1) || 1;
+            else count += 1;
+          });
+        }
+      }
+    } catch(e) {}
+    const b = document.getElementById('tg-cart-badge');
+    if (!b) return;
+    if (count > 0) { b.textContent = count > 99 ? '99+' : count; b.style.display = 'flex'; }
+    else b.style.display = 'none';
+  }
+
+  // ---- Admin ----
   async function checkAdmin(user) {
     if (!user) { setAdmin(false); return; }
     if (user.email === SUPER_ADMIN_EMAIL) { setAdmin(true); return; }
@@ -474,7 +539,7 @@ a { color: inherit; text-decoration: none; }
       if (snap.exists) {
         const role = (snap.data().role || '').toLowerCase();
         setAdmin(role === 'admin' || role === 'superadmin');
-      } else { setAdmin(false); }
+      } else setAdmin(false);
     } catch(e) { setAdmin(false); }
   }
   function setAdmin(on) {
@@ -483,95 +548,183 @@ a { color: inherit; text-decoration: none; }
     document.body.classList.toggle('tg-admin-mode', on);
     document.getElementById('tg-admin-bar').classList.toggle('show', on);
     renderSidebar();
-    renderProducts(); 
+    renderSubcats();
+    renderProducts();
   }
 
-  // --- ULTRA FAST DATA LOADING ---
-  // 1. Load from LocalStorage (0ms delay)
-  function loadLocalCache() {
+  // ---- Product Visibility ----
+  function isProductVisible(p) {
+    if (p.active === false) return false;
+    if (p.hidden === true) return false;
+    if (p.rejectionStatus === 'rejected') return false;
+    if (p.status) {
+      const s = String(p.status).toLowerCase();
+      if (['inactive','rejected','draft','hidden','deleted'].includes(s)) return false;
+    }
+    return true;
+  }
+
+  // ---- Category Matching (robust) ----
+  function productMatchesCategory(p, cat) {
+    const catNameSlug = slugify(cat.name);
+    const catIdSlug = slugify(cat.id);
+    if (p.categoryId === cat.id || p.category_id === cat.id || p.catId === cat.id) return true;
+    const list = [];
+    [p.category, p.categoryName, p.cat, p.category_id, p.categorySlug].forEach(v => { if (v) list.push(slugify(v)); });
+    if (Array.isArray(p.categories)) {
+      p.categories.forEach(c => {
+        if (typeof c === 'string') list.push(slugify(c));
+        else if (c) { if (c.name) list.push(slugify(c.name)); if (c.id) list.push(slugify(c.id)); }
+      });
+    } else if (p.categories && typeof p.categories === 'object') {
+      Object.keys(p.categories).forEach(k => list.push(slugify(k)));
+    }
+    return list.includes(catNameSlug) || list.includes(catIdSlug);
+  }
+
+  function productMatchesSubcat(p, subName) {
+    const s = slugify(subName);
+    const list = [];
+    [p.subCategory, p.subcategory, p.sub_cat, p.subCat, p.subCategoryName].forEach(v => { if (v) list.push(slugify(v)); });
+    if (Array.isArray(p.subcategories)) p.subcategories.forEach(v => list.push(slugify(typeof v === 'string' ? v : (v.name || v.id))));
+    return list.includes(s);
+  }
+
+  // ---- Cache ----
+  function persistCache() {
     try {
-      const c = JSON.parse(localStorage.getItem(CACHE_CATS));
-      const p = JSON.parse(localStorage.getItem(CACHE_PRODS));
-      if (c && c.length) {
-        ALL_CATEGORIES = c;
-        if (p && p.length) ALL_PRODUCTS = p;
-        if (ALL_CATEGORIES.length > 0 && !currentCatId) currentCatId = ALL_CATEGORIES[0].id;
-        
-        renderSidebar();
-        renderSubcats();
-        renderProducts();
-      }
+      localStorage.setItem(CACHE_CATS, JSON.stringify(ALL_CATEGORIES));
+      localStorage.setItem(CACHE_PRODS, JSON.stringify(ALL_PRODUCTS));
     } catch(e) {}
   }
 
-  // 2. Fetch Fresh from Firebase in background
-  async function fetchFreshData() {
+  function loadLocalCache() {
     try {
-      const [catsSnap, prodsSnap] = await Promise.all([
-        db.collection('categories').get(), // Firestore automatically uses cache first!
-        db.collection('products').limit(200).get()
-      ]);
-
-      ALL_CATEGORIES = catsSnap.docs.map(d => {
-        const data = d.data();
-        let subs = data.subcategories || data.subs || [];
-        subs = subs.map(s => typeof s === 'string' ? { name: s, icon: '📦' } : s);
-        return {
-          id: d.id, name: data.name || '', icon: data.icon || '📦',
-          image: data.image || '', order: Number(data.order) || 9999,
-          subcategories: subs
-        };
-      }).filter(c => c.name);
-      
-      ALL_CATEGORIES.sort((a,b) => a.order - b.order);
-
-      ALL_PRODUCTS = prodsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
-        .filter(p => p.active !== false && p.rejectionStatus !== 'rejected' && p.hidden !== true);
-
-      if (ALL_CATEGORIES.length > 0 && !currentCatId) {
-        currentCatId = ALL_CATEGORIES[0].id;
+      const c = JSON.parse(localStorage.getItem(CACHE_CATS) || 'null');
+      const p = JSON.parse(localStorage.getItem(CACHE_PRODS) || 'null');
+      if (Array.isArray(c) && c.length) {
+        ALL_CATEGORIES = c;
+        if (Array.isArray(p)) ALL_PRODUCTS = p;
+        if (!currentCatId || !ALL_CATEGORIES.find(x => x.id === currentCatId)) {
+          currentCatId = ALL_CATEGORIES[0].id;
+          currentSubName = 'all';
+        }
+        hasCache = true;
+        renderSidebar();
+        renderSubcats();
+        renderProducts();
+        return true;
       }
-      
-      // Update LocalStorage
-      try {
-        localStorage.setItem(CACHE_CATS, JSON.stringify(ALL_CATEGORIES));
-        localStorage.setItem(CACHE_PRODS, JSON.stringify(ALL_PRODUCTS));
-      } catch(e) {}
-
-      renderSidebar();
-      renderSubcats();
-      renderProducts();
-    } catch (err) {
-      console.warn('Offline mode or failed fetch', err);
-    }
+    } catch(e) {}
+    return false;
   }
 
-  // --- RENDERERS ---
+  // ---- Normalize ----
+  function normalizeCategory(doc) {
+    const data = doc.data();
+    let subs = data.subcategories || data.subs || [];
+    subs = subs.map(s => typeof s === 'string' ? { name: s, icon: '📦' } : s);
+    return {
+      id: doc.id,
+      name: data.name || '',
+      icon: data.icon || '📦',
+      image: data.image || '',
+      order: Number(data.order) || 9999,
+      subcategories: subs
+    };
+  }
+
+  function applyCategories(cats) {
+    // Auto-reselect if current category disappeared
+    const stillExists = cats.find(c => c.id === currentCatId);
+    if (!stillExists) {
+      currentCatId = cats.length ? cats[0].id : null;
+      currentSubName = 'all';
+    }
+    ALL_CATEGORIES = cats;
+    renderSidebar();
+    renderSubcats();
+    renderProducts();
+  }
+
+  // ---- Realtime Listeners (cache-first via persistence) ----
+  function setupListeners() {
+    if (unsubCats) { try { unsubCats(); } catch(e) {} unsubCats = null; }
+    if (unsubProds) { try { unsubProds(); } catch(e) {} unsubProds = null; }
+
+    if (!hasCache) setProgress(true);
+
+    unsubCats = db.collection('categories').onSnapshot(snap => {
+      const cats = snap.docs.map(normalizeCategory).filter(c => c.name).sort((a,b) => a.order - b.order);
+      const isServer = !snap.metadata.fromCache;
+      // Don't wipe local cache with an empty cache snapshot
+      if (cats.length > 0 || isServer) {
+        applyCategories(cats);
+        persistCache();
+      }
+      if (!snap.metadata.fromCache) setProgress(false);
+    }, err => {
+      console.warn('cats listener error', err);
+      setProgress(false);
+      if (!hasCache) showErrorState();
+    });
+
+    unsubProds = db.collection('products').limit(500).onSnapshot(snap => {
+      const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
+      const isServer = !snap.metadata.fromCache;
+      if (prods.length > 0 || isServer) {
+        ALL_PRODUCTS = prods;
+        persistCache();
+        renderProducts();
+      }
+      if (!snap.metadata.fromCache) setProgress(false);
+    }, err => {
+      console.warn('prods listener error', err);
+      setProgress(false);
+    });
+
+    // Fallback: if nothing arrived in 8s and no cache, show error
+    setTimeout(() => {
+      if (!hasCache && ALL_CATEGORIES.length === 0) {
+        setProgress(false);
+        showErrorState();
+      }
+    }, 8000);
+  }
+
+  function showErrorState() {
+    const el = document.getElementById('tg-sidebar');
+    if (el) el.innerHTML = '<div style="text-align:center;padding:20px 8px;font-size:11px;color:#666;">Unable to load<br><button onclick="tgRetry()" style="margin-top:8px;color:var(--primary);font-weight:700;font-size:11px;">Retry</button></div>';
+    const grid = document.getElementById('tg-prod-grid');
+    if (grid) grid.innerHTML = '<div class="tg-empty"><div style="font-size:36px;margin-bottom:8px;">📡</div>Could not load data<br><button class="tg-btn primary" style="margin-top:14px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgRetry()">Retry</button></div>';
+  }
+
+  window.tgRetry = function() {
+    hasCache = false;
+    setProgress(true);
+    setupListeners();
+  };
+
+  // ---- Renderers ----
   function renderSidebar() {
     const el = document.getElementById('tg-sidebar');
     if (!ALL_CATEGORIES.length) {
       el.innerHTML = '<div style="text-align:center;padding:20px 10px;font-size:12px;color:#666;">No categories</div>';
       return;
     }
-
     el.innerHTML = ALL_CATEGORIES.map(c => {
       const active = currentCatId === c.id ? 'active' : '';
-      const imgTag = c.image ? `<img src="${esc(c.image)}">` : esc(c.icon);
-      
+      const imgTag = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy">` : esc(c.icon);
       const adminBtns = IS_ADMIN ? `
         <div class="tg-admin-btn-wrap">
-          <button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenCatModal('${esc(c.id)}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-          <button class="tg-adm-btn del" onclick="event.stopPropagation();tgOpenDelModal('cat', '${esc(c.id)}')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-        </div>
-      ` : '';
-
-      return `
-        <div class="tg-side-item ${active}" onclick="tgSelectCat('${esc(c.id)}')">
-          ${adminBtns}
-          <div class="tg-side-icon">${imgTag}</div>
-          <div class="tg-side-text">${esc(c.name)}</div>
-        </div>
-      `;
+          <button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenCatModal('${esc(c.id)}')" aria-label="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="tg-adm-btn del" onclick="event.stopPropagation();tgOpenDelModal('cat', '${esc(c.id)}')" aria-label="Delete"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>` : '';
+      return `<div class="tg-side-item ${active}" onclick="tgSelectCat('${esc(c.id)}')">
+        ${adminBtns}
+        <div class="tg-side-icon">${imgTag}</div>
+        <div class="tg-side-text">${esc(c.name)}</div>
+      </div>`;
     }).join('');
   }
 
@@ -579,84 +732,69 @@ a { color: inherit; text-decoration: none; }
     const catObj = ALL_CATEGORIES.find(c => c.id === currentCatId);
     const wrap = document.getElementById('tg-subcats-wrap');
     const scroll = document.getElementById('tg-subcats-scroll');
-
     if (!catObj) { wrap.style.display = 'none'; return; }
-    
     const subs = catObj.subcategories || [];
     if (subs.length === 0 && !IS_ADMIN) { wrap.style.display = 'none'; return; }
-    
     wrap.style.display = 'block';
-    
+
     let html = '';
     if (subs.length > 0) {
-      html += `
-        <div class="tg-subcat-chip" onclick="tgSelectSubcat('all')">
-          <div class="tg-subcat-img" style="${currentSubName === 'all' ? 'border:2px solid var(--primary); background:var(--primary-light);' : ''}">📦</div>
-          <div class="tg-subcat-name" style="color:${currentSubName === 'all' ? 'var(--primary)' : 'inherit'};font-weight:${currentSubName === 'all' ? '700' : '500'}">All</div>
-        </div>
-      `;
+      html += `<div class="tg-subcat-chip" onclick="tgSelectSubcat('all')">
+        <div class="tg-subcat-img" style="${currentSubName === 'all' ? 'border:2px solid var(--primary); background:var(--primary-light);' : ''}">📦</div>
+        <div class="tg-subcat-name" style="color:${currentSubName === 'all' ? 'var(--primary)' : 'inherit'};font-weight:${currentSubName === 'all' ? '700' : '500'}">All</div>
+      </div>`;
     }
 
     subs.forEach((s, i) => {
       const name = s.name || '';
       const icon = s.icon || '📦';
       const isActive = currentSubName === name;
-      
       const adminBtns = IS_ADMIN ? `
         <div class="tg-admin-btn-wrap">
-          <button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenSubcatModal(${i})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-          <button class="tg-adm-btn del" onclick="event.stopPropagation();tgOpenDelModal('sub', '${esc(catObj.id)}', ${i})"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-        </div>
-      ` : '';
-
-      html += `
-        <div class="tg-subcat-chip" onclick="tgSelectSubcat('${esc(name)}')">
-          ${adminBtns}
-          <div class="tg-subcat-img" style="${isActive ? 'border:2px solid var(--primary); background:var(--primary-light);' : ''}">${icon}</div>
-          <div class="tg-subcat-name" style="color:${isActive ? 'var(--primary)' : 'inherit'};font-weight:${isActive ? '700' : '500'}">${esc(name)}</div>
-        </div>
-      `;
+          <button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenSubcatModal(${i})" aria-label="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="tg-adm-btn del" onclick="event.stopPropagation();tgOpenDelModal('sub', '${esc(catObj.id)}', ${i})" aria-label="Delete"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>` : '';
+      html += `<div class="tg-subcat-chip" onclick="tgSelectSubcat('${esc(name)}')">
+        ${adminBtns}
+        <div class="tg-subcat-img" style="${isActive ? 'border:2px solid var(--primary); background:var(--primary-light);' : ''}">${icon}</div>
+        <div class="tg-subcat-name" style="color:${isActive ? 'var(--primary)' : 'inherit'};font-weight:${isActive ? '700' : '500'}">${esc(name)}</div>
+      </div>`;
     });
 
     if (IS_ADMIN) {
-      html += `
-        <div class="tg-add-subcat" onclick="tgOpenSubcatModal(-1)">
-          <div class="tg-subcat-img">+</div>
-          <div class="tg-subcat-name">Add</div>
-        </div>
-      `;
+      html += `<div class="tg-add-subcat" onclick="tgOpenSubcatModal(-1)">
+        <div class="tg-subcat-img">+</div>
+        <div class="tg-subcat-name">Add</div>
+      </div>`;
     }
-
     scroll.innerHTML = html;
   }
 
   function renderProducts() {
+    updateFilterUI();
     const catObj = ALL_CATEGORIES.find(c => c.id === currentCatId);
     const grid = document.getElementById('tg-prod-grid');
-    
-    if (!catObj) { grid.innerHTML = '<div class="tg-empty">Select a category</div>'; return; }
+    const countEl = document.getElementById('tg-prod-count');
+
+    if (!catObj) {
+      grid.innerHTML = '<div class="tg-empty">Select a category</div>';
+      if (countEl) countEl.textContent = '';
+      return;
+    }
 
     let filtered = ALL_PRODUCTS.filter(p => {
-      const pCats = [p.category, p.categoryName, p.cat].filter(Boolean).map(slugify);
-      if (Array.isArray(p.categories)) p.categories.forEach(c => pCats.push(slugify(typeof c === 'string' ? c : c.name)));
-      if (!pCats.includes(slugify(catObj.name))) return false;
-
-      if (currentSubName !== 'all') {
-        const pSubs = [p.subCategory, p.subcategory, p.sub_cat].filter(Boolean).map(slugify);
-        if (!pSubs.includes(slugify(currentSubName))) return false;
-      }
-
+      if (!productMatchesCategory(p, catObj)) return false;
+      if (currentSubName !== 'all' && !productMatchesSubcat(p, currentSubName)) return false;
       if (searchQuery) {
-        const pName = String(p.name || '').toLowerCase();
-        if (!pName.includes(searchQuery.toLowerCase())) return false;
+        const q = searchQuery.toLowerCase();
+        const name = String(p.name || '').toLowerCase();
+        const brand = String(p.brand || '').toLowerCase();
+        if (!name.includes(q) && !brand.includes(q)) return false;
       }
-
       const price = Number(p.price || 0);
       if (price < filterMinPrice || price > filterMaxPrice) return false;
-
       const rating = Number(p.rating || 0);
       if (rating < filterRating) return false;
-
       return true;
     });
 
@@ -665,87 +803,102 @@ a { color: inherit; text-decoration: none; }
     else if (sortBy === 'newest') filtered.sort((a,b) => tsToMs(b.createdAt) - tsToMs(a.createdAt));
     else if (sortBy === 'discount') {
       filtered.sort((a,b) => {
-        const discA = a.compareAtPrice > a.price ? (1 - a.price/a.compareAtPrice) : 0;
-        const discB = b.compareAtPrice > b.price ? (1 - b.price/b.compareAtPrice) : 0;
-        return discB - discA;
+        const pA = Number(a.price||0), oA = Number(a.compareAtPrice||a.mrp||0);
+        const pB = Number(b.price||0), oB = Number(b.compareAtPrice||b.mrp||0);
+        const dA = oA > pA ? (1 - pA/oA) : 0;
+        const dB = oB > pB ? (1 - pB/oB) : 0;
+        return dB - dA;
       });
     }
 
-    if (filtered.length === 0) {
-      grid.innerHTML = '<div class="tg-empty">No products match your search/filters.</div>';
-    } else {
-      grid.innerHTML = filtered.map(p => {
-        const img = p.image || (p.images && p.images[0]) || '';
-        const price = Number(p.price || 0);
-        const old = Number(p.compareAtPrice || p.mrp || 0);
-        const disc = old > price ? Math.round((1 - price/old)*100) : 0;
-        const adminTag = p.saleTag || p.tag || '';
-        
-        let adminTagHtml = '';
-        if (adminTag) {
-          let tagClass = '';
-          const lower = adminTag.toLowerCase();
-          if (lower.includes('hot')) tagClass = 'hot';
-          else if (lower.includes('new')) tagClass = 'new';
-          adminTagHtml = `<div class="tg-prod-tag-badge ${tagClass}">${esc(adminTag)}</div>`;
-        }
-
-        const adminEditBtn = IS_ADMIN ? `
-          <div class="tg-admin-btn-wrap">
-            <button class="tg-adm-btn tag" onclick="event.stopPropagation();tgOpenTagModal('${p.id}', '${esc(adminTag)}')" title="Add Tag">
-              <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-            </button>
-          </div>
-        ` : '';
-
-        return `
-          <div class="tg-prod-card" onclick="location.href='product.html?id=${p.id}'">
-            <div class="tg-prod-img">
-              ${adminTagHtml}
-              ${disc > 0 ? `<div class="tg-discount-badge">${disc}% OFF</div>` : ''}
-              ${img ? `<img src="${esc(img)}" loading="lazy">` : `<span style="font-size:30px;">📦</span>`}
-              ${adminEditBtn}
-            </div>
-            <div class="tg-prod-body">
-              <div class="tg-prod-name">${esc(p.name)}</div>
-              <div class="tg-prod-price-row">
-                <span class="tg-prod-price">₹${price.toLocaleString('en-IN')}</span>
-                ${old > price ? `<span class="tg-prod-mrp">₹${old.toLocaleString('en-IN')}</span>` : ''}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
+    if (countEl) {
+      countEl.textContent = filtered.length === 0 ? '' : `${filtered.length} product${filtered.length > 1 ? 's' : ''} found`;
     }
 
-    updateFilterUI();
+    if (filtered.length === 0) {
+      const hasFilters = filterMinPrice > 0 || filterMaxPrice < 999999 || filterRating > 0 || searchQuery;
+      grid.innerHTML = `<div class="tg-empty">
+        <div style="font-size:40px;margin-bottom:10px;">🔍</div>
+        <div>No products found</div>
+        ${hasFilters ? '<button class="tg-btn primary" style="margin-top:16px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgClearAll()">Clear All</button>' : ''}
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(p => {
+      const img = p.image || (p.images && p.images[0]) || '';
+      const price = Number(p.price || 0);
+      const old = Number(p.compareAtPrice || p.mrp || 0);
+      const disc = old > price ? Math.round((1 - price/old)*100) : 0;
+      const adminTag = p.saleTag || p.tag || '';
+      let adminTagHtml = '';
+      if (adminTag) {
+        const lower = String(adminTag).toLowerCase();
+        const tagClass = lower.includes('hot') ? 'hot' : (lower.includes('new') ? 'new' : '');
+        adminTagHtml = `<div class="tg-prod-tag-badge ${tagClass}">${esc(adminTag)}</div>`;
+      }
+      const adminEditBtn = IS_ADMIN ? `
+        <div class="tg-admin-btn-wrap">
+          <button class="tg-adm-btn tag" onclick="event.stopPropagation();tgOpenTagModal('${p.id}', '${esc(adminTag)}')" title="Add Tag">
+            <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </button>
+        </div>` : '';
+      return `<div class="tg-prod-card" onclick="location.href='product.html?id=${p.id}'">
+        <div class="tg-prod-img">
+          ${adminTagHtml}
+          ${disc > 0 ? `<div class="tg-discount-badge">${disc}% OFF</div>` : ''}
+          ${img ? `<img src="${esc(img)}" loading="lazy" alt="${esc(p.name)}">` : `<span style="font-size:30px;">📦</span>`}
+          ${adminEditBtn}
+        </div>
+        <div class="tg-prod-body">
+          <div class="tg-prod-name">${esc(p.name)}</div>
+          <div class="tg-prod-price-row">
+            <span class="tg-prod-price">₹${price.toLocaleString('en-IN')}</span>
+            ${old > price ? `<span class="tg-prod-mrp">₹${old.toLocaleString('en-IN')}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
   }
 
-  // --- EVENT HANDLERS ---
+  // ---- Handlers ----
   window.tgSelectCat = function(id) {
     currentCatId = id;
     currentSubName = 'all';
     searchQuery = '';
     document.getElementById('tg-search-input').value = '';
+    document.getElementById('tg-search-clear').style.display = 'none';
     renderSidebar();
     renderSubcats();
     renderProducts();
-    document.querySelector('.tg-prod-scroll').scrollTop = 0;
+    document.getElementById('tg-prod-scroll').scrollTop = 0;
   };
 
   window.tgSelectSubcat = function(name) {
     currentSubName = name;
     renderSubcats();
     renderProducts();
-    document.querySelector('.tg-prod-scroll').scrollTop = 0;
+    document.getElementById('tg-prod-scroll').scrollTop = 0;
   };
 
   window.tgHandleSearch = function() {
-    searchQuery = document.getElementById('tg-search-input').value.trim();
+    const val = document.getElementById('tg-search-input').value;
+    document.getElementById('tg-search-clear').style.display = val ? 'flex' : 'none';
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      searchQuery = val.trim();
+      renderProducts();
+    }, 150);
+  };
+
+  window.tgClearSearch = function() {
+    document.getElementById('tg-search-input').value = '';
+    document.getElementById('tg-search-clear').style.display = 'none';
+    searchQuery = '';
     renderProducts();
   };
 
-  // --- FILTER & SORT LOGIC ---
+  // ---- Sort ----
   window.tgOpenSortSheet = function() {
     document.querySelectorAll('#tg-sort-modal .tg-fs-opt').forEach(el => {
       el.classList.toggle('active', el.dataset.sort === sortBy);
@@ -755,62 +908,81 @@ a { color: inherit; text-decoration: none; }
 
   window.tgApplySort = function(val) {
     sortBy = val;
-    document.getElementById('tg-sort-label').textContent = 
-      val === 'relevance' ? 'Sort By' : 
-      val === 'price-low' ? 'Price: Low' : 
-      val === 'price-high' ? 'Price: High' : 
+    document.getElementById('tg-sort-label').textContent =
+      val === 'relevance' ? 'Sort By' :
+      val === 'price-low' ? 'Price: Low' :
+      val === 'price-high' ? 'Price: High' :
       val === 'newest' ? 'Newest' : 'Discount';
-    
     document.getElementById('tg-btn-sort').classList.toggle('active', val !== 'relevance');
     tgCloseModal('tg-sort-modal');
     renderProducts();
   };
 
-  window.tgOpenFilterSheet = function() {
+  // ---- Filter (temp state pattern - bug fix) ----
+  function refreshFilterModalUI() {
     document.querySelectorAll('#tg-price-options .tg-fs-opt').forEach(el => {
-      el.classList.toggle('active', Number(el.dataset.min) === filterMinPrice && Number(el.dataset.max) === filterMaxPrice);
+      el.classList.toggle('active', Number(el.dataset.min) === tempMinPrice && Number(el.dataset.max) === tempMaxPrice);
     });
     document.querySelectorAll('#tg-rating-options .tg-fs-opt').forEach(el => {
-      el.classList.toggle('active', Number(el.dataset.rating) === filterRating);
+      el.classList.toggle('active', Number(el.dataset.rating) === tempRating);
     });
+  }
+
+  window.tgOpenFilterSheet = function() {
+    tempMinPrice = filterMinPrice;
+    tempMaxPrice = filterMaxPrice;
+    tempRating = filterRating;
+    refreshFilterModalUI();
     document.getElementById('tg-filter-modal').classList.add('show');
   };
 
   window.tgSetPrice = function(min, max, btn) {
-    filterMinPrice = min;
-    filterMaxPrice = max;
-    document.querySelectorAll('#tg-price-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
-    btn.classList.add('active');
+    tempMinPrice = min;
+    tempMaxPrice = max;
+    refreshFilterModalUI();
   };
 
   window.tgSetRating = function(val, btn) {
-    filterRating = val;
-    document.querySelectorAll('#tg-rating-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
-    btn.classList.add('active');
+    tempRating = val;
+    refreshFilterModalUI();
   };
 
   window.tgApplyFilters = function() {
+    filterMinPrice = tempMinPrice;
+    filterMaxPrice = tempMaxPrice;
+    filterRating = tempRating;
     tgCloseModal('tg-filter-modal');
     renderProducts();
   };
 
   window.tgClearFilters = function() {
-    filterMinPrice = 0;
-    filterMaxPrice = 999999;
-    filterRating = 0;
-    document.querySelectorAll('#tg-price-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('#tg-rating-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
+    tempMinPrice = 0; tempMaxPrice = 999999; tempRating = 0;
+    filterMinPrice = 0; filterMaxPrice = 999999; filterRating = 0;
+    refreshFilterModalUI();
     renderProducts();
     tgCloseModal('tg-filter-modal');
+  };
+
+  window.tgClearAll = function() {
+    searchQuery = '';
+    document.getElementById('tg-search-input').value = '';
+    document.getElementById('tg-search-clear').style.display = 'none';
+    filterMinPrice = 0; filterMaxPrice = 999999; filterRating = 0;
+    tempMinPrice = 0; tempMaxPrice = 999999; tempRating = 0;
+    renderProducts();
   };
 
   function updateFilterUI() {
     let count = 0;
     let chipsHtml = '';
-    
+
     if (filterMinPrice > 0 || filterMaxPrice < 999999) {
       count++;
-      chipsHtml += `<div class="tg-ac">₹${filterMinPrice}-₹${filterMaxPrice === 999999 ? 'Max' : filterMaxPrice} <button onclick="tgRemoveFilter('price')">✕</button></div>`;
+      let label;
+      if (filterMinPrice === 0) label = `Under ₹${filterMaxPrice}`;
+      else if (filterMaxPrice >= 999999) label = `Above ₹${filterMinPrice}`;
+      else label = `₹${filterMinPrice} - ₹${filterMaxPrice}`;
+      chipsHtml += `<div class="tg-ac">${label} <button onclick="tgRemoveFilter('price')">✕</button></div>`;
     }
     if (filterRating > 0) {
       count++;
@@ -838,7 +1010,7 @@ a { color: inherit; text-decoration: none; }
     renderProducts();
   };
 
-  // --- PRODUCT TAG MODAL ---
+  // ---- Product Tag ----
   window.tgOpenTagModal = function(prodId, currentTag) {
     if (!IS_ADMIN) return;
     document.getElementById('tg-tag-prod-id').value = prodId;
@@ -850,23 +1022,14 @@ a { color: inherit; text-decoration: none; }
     if (!IS_ADMIN) return;
     const prodId = document.getElementById('tg-tag-prod-id').value;
     const tag = document.getElementById('tg-tag-input').value.trim().toUpperCase();
-    
     try {
       await db.collection('products').doc(prodId).update({ saleTag: tag });
       toast('Tag Saved!', 'success');
       tgCloseModal('tg-tag-modal');
-      
-      const pIndex = ALL_PRODUCTS.findIndex(p => p.id === prodId);
-      if (pIndex > -1) ALL_PRODUCTS[pIndex].saleTag = tag;
-      try { localStorage.setItem(CACHE_PRODS, JSON.stringify(ALL_PRODUCTS)); } catch(e) {}
-      
-      renderProducts();
-    } catch(e) {
-      toast('Error saving tag', 'error');
-    }
+    } catch(e) { toast('Error saving tag', 'error'); }
   };
 
-  // --- ADMIN CRUD (Category/Subcat) ---
+  // ---- CRUD ----
   window.tgOpenCatModal = function(id) {
     if (!IS_ADMIN) return;
     const title = document.getElementById('tg-cat-modal-title');
@@ -900,7 +1063,6 @@ a { color: inherit; text-decoration: none; }
     const id = document.getElementById('tg-cat-id').value;
     const name = document.getElementById('tg-cat-name').value.trim();
     if (!name) { toast('Name required', 'error'); return; }
-    
     const payload = {
       name,
       icon: document.getElementById('tg-cat-icon').value.trim() || '📦',
@@ -908,7 +1070,6 @@ a { color: inherit; text-decoration: none; }
       image: document.getElementById('tg-cat-image').value.trim(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-
     try {
       if (id) {
         await db.collection('categories').doc(id).update(payload);
@@ -919,7 +1080,6 @@ a { color: inherit; text-decoration: none; }
       }
       toast('Saved!', 'success');
       tgCloseModal('tg-cat-modal');
-      fetchFreshData();
     } catch(e) { toast('Error saving', 'error'); }
   };
 
@@ -927,14 +1087,14 @@ a { color: inherit; text-decoration: none; }
     if (!IS_ADMIN || !currentCatId) return;
     const cat = ALL_CATEGORIES.find(c => c.id === currentCatId);
     if (!cat) return;
-
     const title = document.getElementById('tg-subcat-modal-title');
     const inpIndex = document.getElementById('tg-subcat-index');
     const inpName = document.getElementById('tg-subcat-name');
     const inpIcon = document.getElementById('tg-subcat-icon');
+    const subs = cat.subcategories || [];
 
-    if (index > -1) {
-      const sub = cat.subcategories[index];
+    if (index > -1 && subs[index]) {
+      const sub = subs[index];
       title.textContent = 'Edit Sub-category';
       inpIndex.value = index;
       inpName.value = sub.name || '';
@@ -951,35 +1111,26 @@ a { color: inherit; text-decoration: none; }
   window.tgSaveSubcategory = async function() {
     const cat = ALL_CATEGORIES.find(c => c.id === currentCatId);
     if (!cat) return;
-
     const index = Number(document.getElementById('tg-subcat-index').value);
     const name = document.getElementById('tg-subcat-name').value.trim();
     const icon = document.getElementById('tg-subcat-icon').value.trim() || '📦';
-    
     if (!name) { toast('Name required', 'error'); return; }
-
     const subs = Array.isArray(cat.subcategories) ? [...cat.subcategories] : [];
     const newSub = { name, icon };
-
-    if (index > -1) subs[index] = newSub;
-    else subs.push(newSub);
-
+    if (index > -1) subs[index] = newSub; else subs.push(newSub);
     try {
       await db.collection('categories').doc(cat.id).update({ subcategories: subs });
       toast('Saved!', 'success');
       tgCloseModal('tg-subcat-modal');
-      fetchFreshData();
     } catch(e) { toast('Error saving', 'error'); }
   };
 
   window.tgOpenDelModal = function(type, catId, subIndex) {
     if (!IS_ADMIN) return;
     deleteAction = { type, catId, subIndex: subIndex !== undefined ? Number(subIndex) : null };
-    
     const text = document.getElementById('tg-del-text');
-    if (type === 'cat') text.textContent = 'Delete this entire category? Products will remain but won\'t show here.';
+    if (type === 'cat') text.textContent = "Delete this entire category? Products will remain but won't show here.";
     else text.textContent = 'Delete this sub-category?';
-    
     document.getElementById('tg-del-modal').classList.add('show');
   };
 
@@ -987,7 +1138,6 @@ a { color: inherit; text-decoration: none; }
     if (!deleteAction) return;
     const btn = document.getElementById('tg-del-btn');
     btn.disabled = true;
-
     try {
       if (deleteAction.type === 'cat') {
         await db.collection('categories').doc(deleteAction.catId).delete();
@@ -995,22 +1145,51 @@ a { color: inherit; text-decoration: none; }
       } else if (deleteAction.type === 'sub') {
         const cat = ALL_CATEGORIES.find(c => c.id === deleteAction.catId);
         if (cat) {
-          const subs = [...cat.subcategories];
+          const subs = [...(cat.subcategories || [])];
           subs.splice(deleteAction.subIndex, 1);
           await db.collection('categories').doc(cat.id).update({ subcategories: subs });
         }
       }
       toast('Deleted', 'success');
       tgCloseModal('tg-del-modal');
-      fetchFreshData();
-    } catch(e) { toast('Failed to delete', 'error'); } 
+    } catch(e) { toast('Failed to delete', 'error'); }
     finally { btn.disabled = false; deleteAction = null; }
   };
 
-  // --- INITIALIZATION ---
-  loadLocalCache(); // 0ms Load
-  fetchFreshData(); // Background Sync
+  // ---- Scroll to top button visibility ----
+  function attachScrollListener() {
+    const scroller = document.getElementById('tg-prod-scroll');
+    const btn = document.getElementById('tg-top-btn');
+    if (scroller && btn) {
+      scroller.addEventListener('scroll', () => {
+        btn.classList.toggle('show', scroller.scrollTop > 300);
+      }, { passive: true });
+    }
+  }
+
+  // ---- Online / Offline ----
+  function updateOnlineStatus() {
+    const off = document.getElementById('tg-offline');
+    if (off) off.classList.toggle('show', !navigator.onLine);
+  }
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  window.addEventListener('storage', (e) => {
+    if (e.key && (e.key.includes('cart'))) updateCartBadge();
+  });
+
+  // ---- Init ----
+  loadLocalCache();          // 0ms from localStorage
+  setupListeners();          // realtime from Firestore (cache-first if enabled)
   auth.onAuthStateChanged(u => checkAdmin(u));
+  updateCartBadge();
+  updateOnlineStatus();
+  attachScrollListener();
+
+  // Hide progress if we already had cache
+  if (hasCache) {
+    setTimeout(() => setProgress(false), 500);
+  }
 
 })();
 </script>
