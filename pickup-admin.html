@@ -153,7 +153,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-hs-l{font-size:10px;color:#8892a6;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;}
 
 .tg-sg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
-@media (min-width:700px){.tg-sg{grid-template-columns:repeat(6,1fr);}}
+@media (min-width:700px){.tg-sg{grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));}}
 .tg-sc{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;backdrop-filter:blur(8px);}
 .tg-sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#00d4ff,transparent);opacity:0;transition:opacity .2s;}
 .tg-sc:hover{border-color:rgba(0,212,255,0.3);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,212,255,0.15);}
@@ -408,7 +408,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-detail-k{color:#8892a6;font-weight:700;flex-shrink:0;}
 .tg-detail-v{color:#fff;font-weight:800;text-align:right;word-break:break-word;font-family:'JetBrains Mono',monospace;font-size:12.5px;}
 .tg-detail-v.hl{color:#00d4ff;}
-.tg-detail-v.green{color:#4ade80;}
 .tg-detail-v.address{font-family:Roboto;font-weight:600;font-size:12.5px;line-height:1.5;text-align:right;}
 
 .tg-pay-card{background:linear-gradient(135deg,#1a1d21 0%,#2d3748 50%,#4a5568 100%);border-radius:14px;padding:18px 20px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);}
@@ -535,7 +534,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div class="tg-f"><div class="tg-f-ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><input type="password" id="tg-lp" placeholder="Password" autocomplete="current-password" required><button type="button" class="tg-f-toggle" id="tg-pt">Show</button></div>
       <button type="submit" class="tg-login-btn" id="tg-lb"><span>Sign In</span></button>
     </form>
-    <div class="tg-login-hint"><b>🔐 Admin Access Only</b><br>Sirf authorized admins hi access kar sakte hain</div>
+    <div class="tg-login-hint"><b>🔐 Admin Access Only</b><br>Authorized admins hi access kar sakte hain</div>
     <a href="shop-home.html" class="tg-login-back">← Back to Shop</a>
   </div>
 </div>
@@ -563,8 +562,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   <div class="tg-ticker">
     <div class="tg-tk"><span class="dot pink"></span>New Apps <b class="pink" id="tk-apps">0</b></div>
     <div class="tg-tk"><span class="dot yellow"></span>Ready Pickup <b class="yellow" id="tk-ready">0</b></div>
-    <div class="tg-tk"><span class="dot blue"></span>Assigned <b class="blue" id="tk-assigned">0</b></div>
-    <div class="tg-tk"><span class="dot yellow"></span>Collected <b class="yellow" id="tk-collected">0</b></div>
+    <div class="tg-tk"><span class="dot red"></span>Stuck <b class="red" id="tk-stuck">0</b></div>
+    <div class="tg-tk"><span class="dot blue"></span>With Boy <b class="blue" id="tk-collected">0</b></div>
     <div class="tg-tk"><span class="dot green"></span>Received <b class="green" id="tk-received">0</b></div>
     <div class="tg-tk"><span class="dot red"></span>Pending Settle <b class="red" id="tk-pending">₹0</b></div>
     <div class="tg-tk">Boys <b id="tk-boys">0</b></div>
@@ -606,13 +605,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     </div>
     <div class="tg-dr-s">Operations</div>
     <div class="tg-dr-i" data-v="pickups" onclick="tgNav('pickups')">
-      <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+      <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/></svg></div>
       <div class="tg-dr-il">📦 Ready for Pickup</div>
       <span class="tg-dr-ib pink" id="dr-b-pickups" style="display:none;">0</span>
     </div>
-    <div class="tg-dr-i" data-v="assign" onclick="tgNav('assign')">
-      <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
-      <div class="tg-dr-il">Manual Assign</div>
+    <div class="tg-dr-i" data-v="stuck" onclick="tgNav('stuck')">
+      <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="tg-dr-il">⏳ Pending from Seller</div>
+      <span class="tg-dr-ib red" id="dr-b-stuck" style="display:none;">0</span>
     </div>
     <div class="tg-dr-i" data-v="tasks" onclick="tgNav('tasks')">
       <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg></div>
@@ -635,7 +635,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div class="tg-dr-il">History & Export</div>
     </div>
   </div>
-  <div class="tg-dr-f">Pickup Command v4.3 LIVE · Made in India 🇮🇳</div>
+  <div class="tg-dr-f">Pickup Command v4.4 LIVE · Made in India 🇮🇳</div>
 </aside>
 
 <div class="tg-w" id="tg-w">
@@ -648,6 +648,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <div class="tg-hero-s">Real-time · Seller → Admin</div>
           <div class="tg-hero-stats">
             <div class="tg-hs"><div class="tg-hs-n yellow" id="d-ready">0</div><div class="tg-hs-l">Ready Pickup</div></div>
+            <div class="tg-hs"><div class="tg-hs-n red" id="d-stuck">0</div><div class="tg-hs-l">From Seller</div></div>
             <div class="tg-hs"><div class="tg-hs-n blue" id="d-assigned">0</div><div class="tg-hs-l">Assigned</div></div>
             <div class="tg-hs"><div class="tg-hs-n green" id="d-received">0</div><div class="tg-hs-l">Received</div></div>
             <div class="tg-hs"><div class="tg-hs-n red" id="d-pending-settle">₹0</div><div class="tg-hs-l">Settle Pending</div></div>
@@ -657,9 +658,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
       <div class="tg-sg">
         <div class="tg-sc" style="border-color:rgba(250,204,21,0.4);" onclick="tgNav('pickups')">
-          <div class="tg-sci yellow"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+          <div class="tg-sci yellow"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/></svg></div>
           <div class="tg-scn" id="s-ready">0</div>
           <div class="tg-scl">Ready Pickup</div>
+        </div>
+        <div class="tg-sc" style="border-color:rgba(239,68,68,0.4);" onclick="tgNav('stuck')">
+          <div class="tg-sci red"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <div class="tg-scn" id="s-stuck">0</div>
+          <div class="tg-scl">From Seller</div>
         </div>
         <div class="tg-sc pink" onclick="tgNav('apps')">
           <div class="tg-sci pink"><svg viewBox="0 0 24 24"><path d="M9 11H15M9 15H15M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div>
@@ -723,6 +729,16 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
+    <div class="tg-v" id="v-stuck">
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st"><span class="ic">⏳</span>Pending from Seller</div><div class="tg-ss">Pickup boy assigned but seller hasn't handed over yet — re-assign to another boy</div></div>
+          <span class="tg-pill red"><span class="tg-live-dot"></span>LIVE</span>
+        </div>
+        <div id="stuck-list"></div>
+      </div>
+    </div>
+
     <div class="tg-v" id="v-apps">
       <div class="tg-cw">
         <div class="tg-chips" id="apps-chips">
@@ -755,79 +771,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <button class="tg-btn pri" onclick="tgOpenAddBoy()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add Boy</button>
         </div>
         <div id="boys-list"></div>
-      </div>
-    </div>
-
-    <div class="tg-v" id="v-assign">
-      <div class="tg-sec">
-        <div class="tg-sh">
-          <div><div class="tg-st"><span class="ic">📋</span>Select Seller</div><div class="tg-ss">Jis seller se pickup uthana hai</div></div>
-        </div>
-        <div style="padding:14px 18px;">
-          <div class="tg-fld">
-            <label>Search Seller</label>
-            <input type="text" id="as-seller-search" placeholder="Shop name, phone, pincode..." oninput="tgSearchSellers()">
-          </div>
-          <div id="as-sellers-list" style="max-height:380px;overflow-y:auto;margin-top:10px;"></div>
-        </div>
-      </div>
-
-      <div class="tg-sec" id="as-assign-box" style="display:none;">
-        <div class="tg-sh">
-          <div><div class="tg-st"><span class="ic">🏍️</span>Assign Pickup Boy</div><div class="tg-ss" id="as-selected-seller-info">—</div></div>
-        </div>
-        <div style="padding:14px 18px;">
-          <div class="tg-order-id-box">
-            <div class="hint">📋 <b>Seller ke label se order IDs paste karo</b> — barcode/QR se jo ID scan hota hai. Multiple order IDs new line ya comma se separate.</div>
-            <textarea id="as-order-ids" placeholder="ABC123DEF456&#10;XYZ789ABC123" oninput="tgUpdateOrderIdCount()"></textarea>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:8px;">
-              <div style="font-size:11.5px;color:#8892a6;">
-                <span id="as-oid-count" style="color:#00d4ff;font-weight:900;">0</span> order ID(s)
-              </div>
-              <button class="tg-fetch-btn" id="as-fetch-btn" onclick="tgFetchSellerOrders()">
-                <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></svg>
-                Auto-fetch
-              </button>
-            </div>
-            <div class="tg-fetched-orders" id="as-fetched-orders" style="display:none;"></div>
-          </div>
-
-          <div class="tg-fld">
-            <label>Select Pickup Boy <span class="rq">*</span></label>
-            <div id="as-boys-list"></div>
-          </div>
-
-          <div class="tg-fld-row">
-            <div class="tg-fld">
-              <label>Packet Count <span class="rq">*</span></label>
-              <input type="number" id="as-packet-count" min="1" value="1" oninput="tgCalcAssignTotal()">
-            </div>
-            <div class="tg-fld">
-              <label>Rate Per Packet (₹) <span class="rq">*</span></label>
-              <input type="number" id="as-rate" min="0" value="10" oninput="tgCalcAssignTotal()">
-            </div>
-          </div>
-
-          <div class="tg-fld">
-            <label>Notes (optional)</label>
-            <textarea id="as-notes" placeholder="Kuch special instruction..." maxlength="200" style="min-height:70px;"></textarea>
-          </div>
-
-          <div style="background:rgba(0,212,255,0.08);border:1.5px solid rgba(0,212,255,0.25);border-radius:12px;padding:14px 16px;margin-top:8px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <span style="font-size:12px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Total Earning</span>
-              <span style="font-size:22px;font-weight:900;color:#00d4ff;font-family:'JetBrains Mono',monospace;" id="as-total">₹10</span>
-            </div>
-          </div>
-
-          <div class="tg-mod-a">
-            <button class="tg-mod-b gho" onclick="tgCancelAssign()">Cancel</button>
-            <button class="tg-mod-b pri" id="as-confirm-btn" onclick="tgConfirmAssign()">
-              <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;"><path d="M20 6 9 17l-5-5"/></svg>
-              Assign Now
-            </button>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -867,7 +810,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
       <div class="tg-sec">
         <div class="tg-sh">
-          <div><div class="tg-st"><span class="ic">📦</span>With Pickup Boys</div><div class="tg-ss">In packets waiting for receive</div></div>
+          <div><div class="tg-st"><span class="ic">📦</span>With Pickup Boys</div><div class="tg-ss">Pickup boy select karo · uske packets hi scan honge</div></div>
         </div>
         <div id="receive-list"></div>
       </div>
@@ -891,8 +834,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
     <div class="tg-v" id="v-history">
       <div class="tg-export-card">
-        <div class="tg-export-title">📥 Export Daily Orders</div>
-        <div class="tg-export-sub">Date range select karo · Excel me sab pickup data download hoga</div>
+        <div class="tg-export-title">📥 Export Received Orders</div>
+        <div class="tg-export-sub">Sirf received/settled orders export honge · Excel download</div>
         <div class="tg-export-body">
           <div class="tg-export-date-row">
             <div>
@@ -976,6 +919,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <button class="tg-mod-x" onclick="tgCloseMod('mod-quick-assign')">✕</button>
     </div>
     <div id="qa-body"></div>
+  </div>
+</div>
+
+<div class="tg-mod" id="mod-reassign">
+  <div class="tg-mod-c">
+    <div class="tg-mod-h">
+      <div class="tg-mod-t">🔄 Re-assign Pickup Boy</div>
+      <button class="tg-mod-x" onclick="tgCloseMod('mod-reassign')">✕</button>
+    </div>
+    <input type="hidden" id="reassign-task-id">
+    <div id="reassign-body"></div>
   </div>
 </div>
 
@@ -1100,16 +1054,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let ALL_SELLERS = [];
   let ALL_SETTLEMENTS = [];
   let PENDING_PICKUP_ORDERS = [];
-  let FETCHED_SELLER_ORDERS = [];
   let SELECTED_ORDER_IDS = new Set();
   let QUICK_ASSIGN_ORDERS = [];
   let QA_SELECTED_BOY = null;
+  let REASSIGN_TASK = null;
+  let REASSIGN_BOY_ID = null;
   let CUR_VIEW = 'dash';
   let APP_FILTER = 'pending';
   let BOY_FILTER = 'all';
   let TASK_FILTER = 'all';
-  let SELECTED_SELLER = null;
-  let SELECTED_BOY_FOR_ASSIGN = null;
   let scanner = null;
   let scannerRunning = false;
   let confirmCb = null;
@@ -1127,7 +1080,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let SCAN_SESSION = { count: 0, value: 0, recent: [] };
   let SCANNER_DEBUG = false;
   let _scanProcessing = false;
+  let _scanCooldownUntil = 0;
   let _scannerCleanupTimer = null;
+
+  /* Boy filter for scan */
+  let SCAN_BOY_FILTER = null;
+  let SCAN_EXPECTED_COUNT = 0;
+  let SCAN_DONE_COUNT = 0;
+
+  let _heavyRenderTimer = null;
 
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function inr(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
@@ -1364,11 +1325,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     initListeners();
   }
 
-  /* ⭐ NEW: History management for back button */
   function initHistory() {
     try {
       const hash = (location.hash || '').replace('#', '');
-      const validViews = ['dash','apps','boys','pickups','assign','tasks','receive','settle','history'];
+      const validViews = ['dash','apps','boys','pickups','stuck','tasks','receive','settle','history'];
       const initialView = validViews.includes(hash) ? hash : 'dash';
       history.replaceState({ pickupView: initialView }, '', '#' + initialView);
       if (initialView !== 'dash') {
@@ -1391,7 +1351,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     document.body.style.overflow='';
   };
 
-  /* ⭐ FIXED: Nav with history push */
   window.tgNav = function(v) {
     tgCloseDrawer();
     if (v !== CUR_VIEW) {
@@ -1410,17 +1369,16 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       window.scrollTo({top:0, behavior:'smooth'});
       if (v === 'dash') renderDash();
       if (v === 'pickups') renderPendingPickups();
+      if (v === 'stuck') renderStuckTasks();
       if (v === 'apps') renderApps();
       if (v === 'boys') renderBoys();
       if (v === 'tasks') renderTasks();
       if (v === 'receive') renderReceive();
       if (v === 'settle') { renderSettle(); renderSettleHistory(); }
       if (v === 'history') { initExportDates(); renderHistory(); }
-      if (v === 'assign') renderAssignSellers();
     }, 100);
   }
 
-  /* ⭐ NEW: Back button handler - goes back one page */
   window.addEventListener('popstate', (e) => {
     const v = (e.state && e.state.pickupView) ? e.state.pickupView : 'dash';
     tgNavInternal(v, true);
@@ -1450,13 +1408,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }
       prevPendingApps = pending;
 
-      renderApps();
-      renderBoys();
-      renderDash();
-      renderAssignBoys();
-      renderPendingPickups();
-      updateBadges();
-      renderTicker();
+      scheduleHeavyRender();
     }, err => console.warn('Partners listener err:', err && err.message));
 
     if (unsubTasks) try { unsubTasks(); } catch(e){}
@@ -1472,19 +1424,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         playNewTask(); vibrate([60,40,120]);
       }
       prevAssignedCount = assigned;
-      renderTasks();
-      renderDash();
-      renderReceive();
-      renderSettle();
-      renderPendingPickups();
-      updateBadges();
-      renderTicker();
+      scheduleHeavyRender();
     }, err => console.warn('Tasks listener err:', err && err.message));
 
     if (unsubSellers) try { unsubSellers(); } catch(e){}
     unsubSellers = db.collection('sellers').where('status', '==', 'approved').onSnapshot(snap => {
       ALL_SELLERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderAssignSellers();
     }, err => console.warn('Sellers listener err:', err && err.message));
 
     if (unsubSettle) try { unsubSettle(); } catch(e){}
@@ -1495,8 +1440,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         const bt = b.settledAt?.toDate?.()?.getTime?.() || 0;
         return bt - at;
       });
-      renderSettleHistory();
-      renderDash();
+      if (CUR_VIEW === 'settle' || CUR_VIEW === 'dash') scheduleHeavyRender();
     }, err => console.warn('Settle listener err:', err && err.message));
 
     if (unsubPendingOrders) try { unsubPendingOrders(); } catch(e){}
@@ -1517,27 +1461,33 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           toast('🔔 ' + diff + ' new order(s) ready for pickup!', 'success');
         }
         prevPendingPickups = pendingCount;
-        renderPendingPickups();
-        renderDash();
-        updateBadges();
-        renderTicker();
+        scheduleHeavyRender();
       }, err => {
         console.warn('Pending orders listener err:', err && err.message);
         db.collection('orders').limit(200).get().then(snap => {
           let orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
             .filter(o => ['label_generated', 'processing'].includes(String(o.status || '').toLowerCase()));
-          orders.sort((a,b) => {
-            const at = a.labelGeneratedAt?.toDate?.()?.getTime?.() || 0;
-            const bt = b.labelGeneratedAt?.toDate?.()?.getTime?.() || 0;
-            return bt - at;
-          });
           PENDING_PICKUP_ORDERS = orders;
-          renderPendingPickups();
-          renderDash();
-          updateBadges();
-          renderTicker();
+          scheduleHeavyRender();
         }).catch(() => {});
       });
+  }
+
+  function scheduleHeavyRender() {
+    if (_heavyRenderTimer) return;
+    _heavyRenderTimer = setTimeout(() => {
+      _heavyRenderTimer = null;
+      renderTicker();
+      updateBadges();
+      if (CUR_VIEW === 'dash') renderDash();
+      else if (CUR_VIEW === 'pickups') renderPendingPickups();
+      else if (CUR_VIEW === 'stuck') renderStuckTasks();
+      else if (CUR_VIEW === 'apps') renderApps();
+      else if (CUR_VIEW === 'boys') renderBoys();
+      else if (CUR_VIEW === 'tasks') renderTasks();
+      else if (CUR_VIEW === 'receive') renderReceive();
+      else if (CUR_VIEW === 'settle') { renderSettle(); renderSettleHistory(); }
+    }, 150);
   }
 
   function normStatus(s) {
@@ -1566,6 +1516,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     });
     return PENDING_PICKUP_ORDERS.filter(o => {
       if (o.pickupAssignedTo) return false;
+      if (o.pickupCompleted) return false;
       const labelId = String(o.id).slice(0, 12).toUpperCase();
       const fullId = String(o.id).toUpperCase();
       return !assignedOrderIds.has(labelId) && !assignedOrderIds.has(fullId);
@@ -1578,14 +1529,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return st !== 'approved' && st !== 'rejected' && a.approved !== true;
     }).length;
     const ready = getPendingPickupOrders().length;
-    const assigned = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
+    const stuck = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
     const collected = ALL_TASKS.filter(t => normStatus(t.status) === 'collected').length;
     const received = ALL_TASKS.filter(t => normStatus(t.status) === 'received').length;
     const pendingSettle = ALL_TASKS.filter(t => normStatus(t.status) === 'received')
       .reduce((s,t) => s + Number(t.earning||0), 0);
     setText('tk-apps', pendingApps);
     setText('tk-ready', ready);
-    setText('tk-assigned', assigned);
+    setText('tk-stuck', stuck);
     setText('tk-collected', collected);
     setText('tk-received', received);
     setText('tk-pending', '₹' + pendingSettle);
@@ -1599,17 +1550,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return st !== 'approved' && st !== 'rejected' && a.approved !== true;
     }).length;
     const ready = getPendingPickupOrders().length;
-    const assigned = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
+    const stuck = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
+    const assigned = stuck;
     const collected = ALL_TASKS.filter(t => normStatus(t.status) === 'collected').length;
     const received = ALL_TASKS.filter(t => normStatus(t.status) === 'received').length;
     const pendingSettle = ALL_TASKS.filter(t => normStatus(t.status) === 'received')
       .reduce((s,t) => s + Number(t.earning||0), 0);
 
     setText('d-ready', ready);
+    setText('d-stuck', stuck);
     setText('d-assigned', assigned);
     setText('d-received', received);
     setText('d-pending-settle', inr(pendingSettle));
     setText('s-ready', ready);
+    setText('s-stuck', stuck);
     setText('s-apps', pendingApps);
     setText('s-boys', ALL_BOYS.length);
     setText('s-assigned', assigned);
@@ -1627,10 +1581,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     feed.sort((a,b) => (b.time?.toDate?.()?.getTime?.() || 0) - (a.time?.toDate?.()?.getTime?.() || 0));
     const feedEl = document.getElementById('d-feed');
     if (!feed.length) {
-      feedEl.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📡</div><div class="tg-empty-t">No activity yet</div><div class="tg-empty-d">Assignments karne pe events yahan dikhenge</div></div>';
+      feedEl.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📡</div><div class="tg-empty-t">No activity yet</div></div>';
     } else {
       feedEl.innerHTML = feed.slice(0, 15).map(f => {
-        const cls = f.type === 'received' ? 'grn' : f.type === 'assigned' ? 'ylw' : f.type === 'collected' ? '' : '';
+        const cls = f.type === 'received' ? 'grn' : f.type === 'assigned' ? 'ylw' : '';
         let title = '', val = '';
         if (f.type === 'assigned') { title = '📋 Assigned to ' + esc(f.t.pickupBoyName||'Boy'); val = inr(f.t.earning||0); }
         else if (f.type === 'collected') { title = '📦 Collected from ' + esc(f.t.sellerName||'Seller'); }
@@ -1658,16 +1612,16 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const activeEl = document.getElementById('d-boys-active');
     const activeList = Object.entries(activeBoys);
     if (!activeList.length) {
-      activeEl.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">🏍️</div><div class="tg-empty-t">No active boys</div><div class="tg-empty-d">Jab boy packets collect karega, yahan dikhega</div></div>';
+      activeEl.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">🏍️</div><div class="tg-empty-t">No active boys</div></div>';
     } else {
       activeEl.innerHTML = activeList.map(([bid, b]) =>
         '<div class="tg-mini" onclick="tgOpenBoyDetail(\''+esc(bid)+'\')" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;">' +
           '<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.12);color:#00d4ff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏍️</div>' +
           '<div style="flex:1;min-width:0;">' +
             '<div style="font-size:13.5px;font-weight:800;color:#fff;margin-bottom:3px;">' + esc(b.name) + '</div>' +
-            '<div style="font-size:11.5px;color:#8892a6;display:flex;gap:10px;flex-wrap:wrap;"><span>📞 ' + esc(b.phone||'—') + '</span><span>' + b.count + ' packet(s)</span></div>' +
+            '<div style="font-size:11.5px;color:#8892a6;">📞 ' + esc(b.phone||'—') + ' · ' + b.count + ' packet(s)</div>' +
           '</div>' +
-          '<div style="font-size:15px;font-weight:900;color:#00d4ff;font-family:\'JetBrains Mono\',monospace;white-space:nowrap;">' + inr(b.earning) + '</div>' +
+          '<div style="font-size:15px;font-weight:900;color:#00d4ff;font-family:monospace;">' + inr(b.earning) + '</div>' +
         '</div>'
       ).join('');
     }
@@ -1766,6 +1720,138 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     tgQuickAssignOrders(Array.from(SELECTED_ORDER_IDS));
   };
 
+  /* ⭐ NEW: Stuck tasks view — assigned but not collected */
+  function renderStuckTasks() {
+    const el = document.getElementById('stuck-list');
+    if (!el) return;
+    const stuck = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned');
+    if (!stuck.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">✅</div><div class="tg-empty-t">All Clear!</div><div class="tg-empty-d">Koi pending stuck orders nahi hai</div></div>';
+      return;
+    }
+    el.innerHTML = stuck.map(t => {
+      const boy = ALL_APPS.find(b => b.id === t.pickupBoyId);
+      const boyActiveCount = ALL_TASKS.filter(x => x.pickupBoyId === t.pickupBoyId && normStatus(x.status) === 'collected').length;
+      return '<div class="tg-row">' +
+        '<div class="tg-row-av sq" style="font-size:16px;color:#f87171;">⏳</div>' +
+        '<div class="tg-row-b">' +
+          '<div class="tg-row-t">#' + esc(getTaskDisplayId(t)) + ' <span class="tg-pill red" style="font-size:9px;">Not Collected</span></div>' +
+          '<div class="tg-row-s">' +
+            '<span>🏪 ' + esc(t.sellerName || 'Seller') + '</span>' +
+            '<span>🏍️ ' + esc(t.pickupBoyName || 'Boy') + '</span>' +
+          '</div>' +
+          '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
+            '<span class="tg-pill ylw">' + esc(tago(t.assignedAt)) + '</span>' +
+            '<span class="tg-pill grn">' + inr(t.earning || 0) + '</span>' +
+            (boyActiveCount > 0 ? '<span class="tg-pill blu">' + boyActiveCount + ' with boy</span>' : '<span class="tg-pill gry">Boy idle</span>') +
+          '</div>' +
+        '</div>' +
+        '<div class="tg-row-a">' +
+          '<button class="tg-btn suc" onclick="tgOpenReassign(\'' + esc(t.id) + '\')" style="padding:8px 12px;font-size:11px;">🔄 Re-assign</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.tgOpenReassign = function(taskId) {
+    const task = ALL_TASKS.find(t => t.id === taskId);
+    if (!task) { toast('Task not found', 'error'); return; }
+    REASSIGN_TASK = task;
+    REASSIGN_BOY_ID = task.pickupBoyId || null;
+    document.getElementById('reassign-task-id').value = taskId;
+
+    const boys = ALL_BOYS.slice();
+    const boyHtml = boys.map(b => {
+      const activeCount = ALL_TASKS.filter(x => x.pickupBoyId === b.id && normStatus(x.status) === 'collected').length;
+      const isCurrent = b.id === task.pickupBoyId;
+      return '<div class="tg-sel' + (isCurrent ? ' active' : '') + '" onclick="tgReassignPickBoy(\'' + esc(b.id) + '\')" data-boy-id="' + esc(b.id) + '">' +
+        '<div class="tg-sel-radio"></div>' +
+        '<div class="tg-sel-body">' +
+          '<div class="tg-sel-t">' + esc(b.name||'Boy') + (isCurrent ? ' <span class="tg-pill ylw" style="font-size:9px;">CURRENT</span>' : '') + (activeCount > 0 ? ' <span class="tg-pill blu" style="font-size:9px;">' + activeCount + ' with boy</span>' : ' <span class="tg-pill grn" style="font-size:9px;">IDLE</span>') + '</div>' +
+          '<div class="tg-sel-s"><span>📞 ' + esc(b.phone||'—') + '</span>' + (b.zone ? '<span>📍 ' + esc(b.zone) + '</span>' : '') + '</div>' +
+        '</div>' +
+        '<div class="tg-sel-r">' + inr(b.ratePerPacket || b.rate || 10) + '/pkt</div>' +
+      '</div>';
+    }).join('');
+
+    document.getElementById('reassign-body').innerHTML = 
+      '<div class="tg-info-box warn">' +
+        '<span class="ic">⚠️</span><b>Order #' + esc(getTaskDisplayId(task)) + '</b> — ' + esc(task.sellerName||'Seller') + '<br>' +
+        '<span style="font-size:11.5px;">Seller ne abhi tak packet nahi diya. Dobara kisi aur pickup boy ko bhejo collect karne ke liye.</span>' +
+      '</div>' +
+      '<div class="tg-fld">' +
+        '<label>Select New Pickup Boy <span class="rq">*</span></label>' +
+        '<div id="reassign-boys-list" style="max-height:340px;overflow-y:auto;">' + boyHtml + '</div>' +
+      '</div>' +
+      '<div class="tg-mod-a">' +
+        '<button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-reassign\')">Cancel</button>' +
+        '<button class="tg-mod-b suc" id="reassign-confirm-btn" onclick="tgConfirmReassign()">🔄 Re-assign</button>' +
+      '</div>';
+
+    openMod('mod-reassign');
+  };
+
+  window.tgReassignPickBoy = function(boyId) {
+    REASSIGN_BOY_ID = boyId;
+    document.querySelectorAll('#reassign-boys-list .tg-sel').forEach(el => {
+      el.classList.toggle('active', el.dataset.boyId === boyId);
+    });
+  };
+
+  window.tgConfirmReassign = async function() {
+    const taskId = document.getElementById('reassign-task-id').value;
+    const newBoyId = REASSIGN_BOY_ID;
+    if (!taskId || !newBoyId) { toast('Select pickup boy', 'error'); return; }
+    const task = ALL_TASKS.find(t => t.id === taskId);
+    if (!task) { toast('Task not found', 'error'); return; }
+    const newBoy = ALL_BOYS.find(b => b.id === newBoyId);
+    if (!newBoy) { toast('Boy not found', 'error'); return; }
+
+    if (newBoyId === task.pickupBoyId) {
+      toast('Same boy already assigned', 'info');
+      tgCloseMod('mod-reassign');
+      return;
+    }
+
+    const btn = document.getElementById('reassign-confirm-btn');
+    btn.disabled = true; btn.innerHTML = 'Reassigning...';
+
+    try {
+      const now = FV.serverTimestamp();
+      await db.collection('pickupTasks').doc(taskId).update({
+        pickupBoyId: newBoy.id,
+        pickupBoyName: newBoy.name || '',
+        pickupBoyPhone: newBoy.phone || '',
+        assignedAt: now,
+        reassignedFrom: task.pickupBoyId || '',
+        reassignedFromName: task.pickupBoyName || '',
+        reassignedAt: now,
+        reassignedBy: USER.uid,
+        status: 'assigned',
+        updatedAt: now
+      });
+
+      if (task.orderFullId) {
+        try {
+          await db.collection('orders').doc(task.orderFullId).update({
+            pickupBoyId: newBoy.id,
+            pickupBoyName: newBoy.name || '',
+            pickupReassignedAt: now,
+            updatedAt: now
+          });
+        } catch(e) {}
+      }
+
+      playBeep(); vibrate([40,30,80]);
+      toast('✓ Re-assigned to ' + esc(newBoy.name), 'success');
+      tgCloseMod('mod-reassign');
+    } catch(e) {
+      toast('Failed: ' + e.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '🔄 Re-assign';
+    }
+  };
+
   window.tgQuickAssignOrders = function(orderIds) {
     const orders = PENDING_PICKUP_ORDERS.filter(o => orderIds.includes(o.id));
     if (!orders.length) { toast('No orders found', 'error'); return; }
@@ -1778,11 +1864,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const o = orders[0];
       const labelId = String(o.id).slice(0, 12).toUpperCase();
       const items = Array.isArray(o.items) ? o.items : [];
-      const sellerName = o.sellerName || o.shopName || 'Seller';
       summaryHtml = 
         '<div style="font-size:12px;color:#cbd5e1;line-height:1.7;">' +
           '<b style="color:#00d4ff;font-family:monospace;">#' + esc(labelId) + '</b><br>' +
-          'Seller: ' + esc(sellerName) + '<br>' +
+          'Seller: ' + esc(o.sellerName || o.shopName || 'Seller') + '<br>' +
           'Items: ' + items.length + ' · Total: ' + inr(o.total || 0) +
         '</div>';
     } else {
@@ -1814,7 +1899,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       '</div>' +
       '<div class="tg-info-box" style="background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.25);">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-          '<span style="font-size:12px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Total Earning</span>' +
+          '<span style="font-size:12px;color:#8892a6;font-weight:800;text-transform:uppercase;">Total Earning</span>' +
           '<span style="font-size:22px;font-weight:900;color:#00d4ff;font-family:monospace;" id="qa-total">₹' + (total * 10) + '</span>' +
         '</div>' +
       '</div>' +
@@ -1839,7 +1924,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return aAct - bAct;
     });
     if (!list.length) {
-      el.innerHTML = '<div style="padding:14px;color:#8892a6;text-align:center;font-size:12.5px;">No pickup boys available. Pehle applications approve karo.</div>';
+      el.innerHTML = '<div style="padding:14px;color:#8892a6;text-align:center;font-size:12.5px;">No pickup boys available.</div>';
       return;
     }
     el.innerHTML = list.map(b => {
@@ -1849,7 +1934,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return '<div class="tg-sel ' + (active?'active':'') + '" onclick="tgQAPickBoy(\'' + esc(b.id) + '\')">' +
         '<div class="tg-sel-radio"></div>' +
         '<div class="tg-sel-body">' +
-          '<div class="tg-sel-t">' + esc(b.name||'Boy') + ' ' + (withBoy > 0 ? '<span class="tg-pill blu" style="font-size:9px;padding:2px 7px;">' + withBoy + ' with boy</span>' : '<span class="tg-pill grn" style="font-size:9px;padding:2px 7px;">IDLE</span>') + '</div>' +
+          '<div class="tg-sel-t">' + esc(b.name||'Boy') + (withBoy > 0 ? ' <span class="tg-pill blu" style="font-size:9px;">' + withBoy + ' with boy</span>' : ' <span class="tg-pill grn" style="font-size:9px;">IDLE</span>') + '</div>' +
           '<div class="tg-sel-s"><span>📞 ' + esc(b.phone||'—') + '</span>' + (b.zone ? '<span>📍 ' + esc(b.zone) + '</span>' : '') + '</div>' +
         '</div>' +
         '<div class="tg-sel-r">' + inr(rate) + '/pkt</div>' +
@@ -1907,32 +1992,25 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         const sellerId = (Array.isArray(order.sellerIds) && order.sellerIds[0]) || (items[0] && items[0].sellerId) || '';
         const seller = ALL_SELLERS.find(s => s.id === sellerId);
         const sellerName = order.sellerName || order.shopName || (seller && seller.shopName) || (items[0] && items[0].sellerName) || '';
-        const sellerPhone = order.sellerPhone || (seller && seller.phone) || '';
-        const sellerAddress = order.sellerAddress || (seller && seller.address) || '';
-        const sellerPincode = order.sellerPincode || (seller && seller.pincode) || (order.address && order.address.pincode) || '';
 
         batch.set(ref, {
           sellerId: sellerId,
           sellerName: sellerName,
-          sellerPhone: sellerPhone,
-          sellerAddress: sellerAddress,
-          sellerPincode: sellerPincode,
-
+          sellerPhone: order.sellerPhone || (seller && seller.phone) || '',
+          sellerAddress: order.sellerAddress || (seller && seller.address) || '',
+          sellerPincode: order.sellerPincode || (seller && seller.pincode) || (order.address && order.address.pincode) || '',
           orderId: labelId,
           labelId: labelId,
           orderFullId: order.id,
           orderDisplayId: labelId,
-
           items: items,
           itemCount: items.length,
           orderValue: Number(order.total || 0),
           paymentMode: order.paymentMethod || 'cod',
-
           buyerName: order.userName || (order.address && order.address.name) || '',
           buyerPhone: order.userPhone || (order.address && order.address.phone) || '',
           buyerCity: (order.address && order.address.city) || '',
           buyerPincode: (order.address && order.address.pincode) || '',
-
           pickupBoyId: boy.id,
           pickupBoyName: boy.name || '',
           pickupBoyPhone: boy.phone || '',
@@ -1969,7 +2047,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       SELECTED_ORDER_IDS.clear();
       renderPendingPickups();
     } catch(e) {
-      console.error(e);
       toast('Failed: ' + e.message, 'error');
       btn.disabled = false;
       btn.innerHTML = 'Assign Now';
@@ -2028,7 +2105,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div class="tg-row-b">' +
           '<div class="tg-row-t">' + esc(a.name || 'Applicant') + '</div>' +
           '<div class="tg-row-s"><span>📞 ' + esc(a.phone||'—') + '</span>' + (a.zone ? '<span>📍 ' + esc(a.zone) + '</span>' : '') + '</div>' +
-          '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' +
+          '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
             '<span class="tg-pill ' + pillCls + '">' + pillLabel + '</span>' +
             (payInfo !== '—' ? '<span class="tg-pill gry">' + payInfo + '</span>' : '') +
             '<span style="font-size:10.5px;color:#8892a6;font-weight:600;">' + esc(tago(a.appliedAt || a.createdAt)) + '</span>' +
@@ -2338,239 +2415,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     openMod('mod-boy-detail');
   };
 
-  function renderAssignSellers() {
-    const el = document.getElementById('as-sellers-list');
-    if (!el) return;
-    const q = (document.getElementById('as-seller-search')?.value || '').toLowerCase().trim();
-    let list = ALL_SELLERS.slice();
-    if (q) list = list.filter(s => [(s.shopName||''),(s.ownerName||''),(s.phone||''),(s.pincode||'')].join(' ').toLowerCase().includes(q));
-    if (!list.length) {
-      el.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:40px;">🏪</div><div class="tg-empty-t">No sellers</div></div>';
-      return;
-    }
-    el.innerHTML = list.slice(0, 50).map(s => {
-      const active = SELECTED_SELLER && SELECTED_SELLER.id === s.id;
-      const pendingTasks = ALL_TASKS.filter(t => t.sellerId === s.id && (normStatus(t.status) === 'assigned' || normStatus(t.status) === 'collected')).length;
-      return '<div class="tg-sel ' + (active?'active':'') + '" onclick="tgPickSeller(\'' + esc(s.id) + '\')">' +
-        '<div class="tg-sel-radio"></div>' +
-        '<div class="tg-sel-body">' +
-          '<div class="tg-sel-t">' + esc(s.shopName || 'Shop') + '</div>' +
-          '<div class="tg-sel-s"><span>📞 ' + esc(s.phone||'—') + '</span>' + (s.pincode ? '<span>📍 ' + esc(s.pincode) + '</span>' : '') + '</div>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  }
-
-  window.tgSearchSellers = function() { renderAssignSellers(); };
-
-  window.tgPickSeller = function(sid) {
-    const s = ALL_SELLERS.find(x => x.id === sid);
-    if (!s) return;
-    SELECTED_SELLER = s;
-    FETCHED_SELLER_ORDERS = [];
-    renderAssignSellers();
-    document.getElementById('as-assign-box').style.display = 'block';
-    document.getElementById('as-selected-seller-info').innerHTML = '📍 ' + esc(s.shopName || '') + ' · ' + esc(s.phone || '');
-    document.getElementById('as-order-ids').value = '';
-    document.getElementById('as-fetched-orders').style.display = 'none';
-    renderAssignBoys();
-    tgUpdateOrderIdCount();
-    tgCalcAssignTotal();
-    document.getElementById('as-assign-box').scrollIntoView({ behavior:'smooth', block:'start' });
-  };
-
-  window.tgCancelAssign = function() {
-    SELECTED_SELLER = null;
-    SELECTED_BOY_FOR_ASSIGN = null;
-    FETCHED_SELLER_ORDERS = [];
-    document.getElementById('as-assign-box').style.display = 'none';
-    document.getElementById('as-order-ids').value = '';
-    document.getElementById('as-fetched-orders').style.display = 'none';
-    renderAssignSellers();
-  };
-
-  window.tgUpdateOrderIdCount = function() {
-    const raw = (document.getElementById('as-order-ids')?.value || '').trim();
-    const ids = raw.split(/[\n,]/).map(s => s.trim().toUpperCase()).filter(Boolean);
-    setText('as-oid-count', ids.length);
-    if (ids.length > 0) {
-      const pc = document.getElementById('as-packet-count');
-      if (pc) pc.value = ids.length;
-      tgCalcAssignTotal();
-    }
-  };
-
-  window.tgFetchSellerOrders = async function() {
-    if (!SELECTED_SELLER) { toast('Select seller first', 'error'); return; }
-    const btn = document.getElementById('as-fetch-btn');
-    btn.disabled = true;
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></svg> Fetching...';
-
-    try {
-      const results = new Map();
-      try {
-        const s1 = await db.collection('orders').where('sellerIds', 'array-contains', SELECTED_SELLER.id).limit(100).get();
-        s1.docs.forEach(d => results.set(d.id, { id: d.id, ...d.data() }));
-      } catch(e) {}
-      try {
-        const s2 = await db.collection('orders').where('sellerId', '==', SELECTED_SELLER.id).limit(100).get();
-        s2.docs.forEach(d => results.set(d.id, { id: d.id, ...d.data() }));
-      } catch(e) {}
-
-      const pickupStatuses = ['label_generated', 'processing'];
-      FETCHED_SELLER_ORDERS = [];
-      results.forEach((o, id) => {
-        const st = String(o.status || '').toLowerCase().trim();
-        if (pickupStatuses.includes(st)) FETCHED_SELLER_ORDERS.push(o);
-      });
-
-      FETCHED_SELLER_ORDERS.sort((a,b) => {
-        const at = a.labelGeneratedAt?.toDate?.()?.getTime?.() || a.createdAt?.toDate?.()?.getTime?.() || 0;
-        const bt = b.labelGeneratedAt?.toDate?.()?.getTime?.() || b.createdAt?.toDate?.()?.getTime?.() || 0;
-        return bt - at;
-      });
-
-      if (!FETCHED_SELLER_ORDERS.length) {
-        toast('Koi label-generated orders nahi mile', 'info');
-        document.getElementById('as-fetched-orders').style.display = 'none';
-        return;
-      }
-
-      renderFetchedOrders();
-      toast('✓ ' + FETCHED_SELLER_ORDERS.length + ' order(s) found', 'success');
-    } catch(e) {
-      toast('Fetch failed: ' + e.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = originalHTML;
-    }
-  };
-
-  function renderFetchedOrders() {
-    const el = document.getElementById('as-fetched-orders');
-    if (!el) return;
-    if (!FETCHED_SELLER_ORDERS.length) { el.style.display = 'none'; return; }
-    el.style.display = 'block';
-    el.innerHTML = FETCHED_SELLER_ORDERS.map(o => {
-      const oid = String(o.id).toUpperCase();
-      const shortId = oid.slice(0, 12);
-      const items = Array.isArray(o.items) ? o.items : [];
-      const total = Number(o.total || 0);
-      return '<div class="tg-fetched-order">' +
-        '<input type="checkbox" class="tg-fetched-order-cb" data-oid="' + esc(shortId) + '" onchange="tgSyncFetchedSelection()">' +
-        '<div class="tg-fetched-order-info">' +
-          '<div class="tg-fetched-order-id">#' + esc(shortId) + '</div>' +
-          '<div class="tg-fetched-order-meta">' + items.length + ' items · ' + fdate(o.createdAt) + '</div>' +
-        '</div>' +
-        '<div class="tg-fetched-order-amt">' + inr(total) + '</div>' +
-      '</div>';
-    }).join('');
-  }
-
-  window.tgSyncFetchedSelection = function() {
-    const cbs = document.querySelectorAll('.tg-fetched-order-cb');
-    const selected = [];
-    cbs.forEach(cb => { if (cb.checked) selected.push(cb.dataset.oid); });
-    document.getElementById('as-order-ids').value = selected.join('\n');
-    tgUpdateOrderIdCount();
-  };
-
-  function renderAssignBoys() {
-    const el = document.getElementById('as-boys-list');
-    if (!el) return;
-    const list = ALL_BOYS.slice();
-    if (!list.length) {
-      el.innerHTML = '<div style="padding:14px;color:#8892a6;text-align:center;font-size:12.5px;">No pickup boys. Pehle approve karo.</div>';
-      return;
-    }
-    el.innerHTML = list.map(b => {
-      const active = SELECTED_BOY_FOR_ASSIGN === b.id;
-      return '<div class="tg-sel ' + (active?'active':'') + '" onclick="tgPickBoyForAssign(\'' + esc(b.id) + '\')">' +
-        '<div class="tg-sel-radio"></div>' +
-        '<div class="tg-sel-body">' +
-          '<div class="tg-sel-t">' + esc(b.name||'Boy') + '</div>' +
-          '<div class="tg-sel-s"><span>📞 ' + esc(b.phone||'—') + '</span></div>' +
-        '</div>' +
-        '<div class="tg-sel-r">' + inr(b.ratePerPacket || b.rate || 10) + '/pkt</div>' +
-      '</div>';
-    }).join('');
-  }
-
-  window.tgPickBoyForAssign = function(bid) {
-    SELECTED_BOY_FOR_ASSIGN = bid;
-    const b = ALL_BOYS.find(x => x.id === bid);
-    if (b) document.getElementById('as-rate').value = b.ratePerPacket || b.rate || 10;
-    renderAssignBoys();
-    tgCalcAssignTotal();
-  };
-
-  window.tgCalcAssignTotal = function() {
-    const count = Number(document.getElementById('as-packet-count')?.value || 1);
-    const rate = Number(document.getElementById('as-rate')?.value || 10);
-    setText('as-total', '₹' + (count * rate));
-  };
-
-  window.tgConfirmAssign = async function() {
-    if (!SELECTED_SELLER) { toast('Select seller', 'error'); return; }
-    if (!SELECTED_BOY_FOR_ASSIGN) { toast('Select pickup boy', 'error'); return; }
-    const orderIdsRaw = (document.getElementById('as-order-ids').value || '').trim();
-    const orderIds = orderIdsRaw.split(/[\n,]/).map(s => s.trim().toUpperCase()).filter(Boolean);
-    const packetCount = Number(document.getElementById('as-packet-count').value || 1);
-    const rate = Number(document.getElementById('as-rate').value || 10);
-    const notes = (document.getElementById('as-notes').value || '').trim();
-    if (packetCount < 1) { toast('Packet count ≥ 1', 'error'); return; }
-    const finalCount = orderIds.length > 0 ? orderIds.length : packetCount;
-    const boy = ALL_BOYS.find(x => x.id === SELECTED_BOY_FOR_ASSIGN);
-    if (!boy) { toast('Boy not found', 'error'); return; }
-    const btn = document.getElementById('as-confirm-btn');
-    btn.disabled = true; btn.textContent = 'Assigning...';
-    try {
-      const batch = db.batch();
-      const now = FV.serverTimestamp();
-      for (let i = 0; i < finalCount; i++) {
-        const ref = db.collection('pickupTasks').doc();
-        const rawId = orderIds[i] || '';
-        const labelId = rawId.length > 12 ? rawId.slice(0, 12) : rawId;
-        const payload = {
-          sellerId: SELECTED_SELLER.id,
-          sellerName: SELECTED_SELLER.shopName || '',
-          sellerPhone: SELECTED_SELLER.phone || '',
-          sellerAddress: SELECTED_SELLER.address || '',
-          sellerPincode: SELECTED_SELLER.pincode || '',
-          pickupBoyId: boy.id,
-          pickupBoyName: boy.name || '',
-          pickupBoyPhone: boy.phone || '',
-          packetIndex: i + 1,
-          packetCount: 1,
-          ratePerPacket: rate,
-          earning: rate,
-          notes,
-          status: 'assigned',
-          assignedAt: now,
-          assignedBy: USER.uid,
-          createdAt: now,
-          updatedAt: now,
-          orderDisplayId: labelId || ('PKP-' + Date.now().toString(36).toUpperCase() + '-' + (i+1))
-        };
-        if (labelId) {
-          payload.orderId = labelId;
-          payload.labelId = labelId;
-          if (rawId && rawId !== labelId) payload.orderFullId = rawId;
-        }
-        batch.set(ref, payload);
-      }
-      await batch.commit();
-      toast('✓ ' + finalCount + ' packet(s) assigned to ' + esc(boy.name), 'success');
-      playBeep(); vibrate([40,30,80]);
-      tgCancelAssign();
-      tgNav('tasks');
-    } catch(e) {
-      toast('Failed: ' + e.message, 'error');
-      btn.disabled = false; btn.textContent = 'Assign Now';
-    }
-  };
-
   window.tgFilterTasks = function(f) {
     TASK_FILTER = f;
     document.querySelectorAll('#tasks-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
@@ -2600,11 +2444,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const s = normStatus(t.status);
       const cls = stClass(t.status);
       const lbl = stLabel(t.status);
-      const hasLabelId = !!(t.orderId || t.labelId);
       return '<div class="tg-row">' +
         '<div class="tg-row-av sq" style="font-size:16px;">' + (s==='received'?'✓':s==='settled'?'💰':s==='collected'?'📦':'⏳') + '</div>' +
         '<div class="tg-row-b">' +
-          '<div class="tg-row-t">#' + esc(getTaskDisplayId(t)) + (hasLabelId ? '' : ' <span class="tg-pill ylw" style="font-size:9px;">No Label ID</span>') + '</div>' +
+          '<div class="tg-row-t">#' + esc(getTaskDisplayId(t)) + '</div>' +
           '<div class="tg-row-s"><span>🏪 ' + esc(t.sellerName||'Seller') + '</span><span>🏍️ ' + esc(t.pickupBoyName||'Boy') + '</span><span>' + esc(tago(t.createdAt)) + '</span></div>' +
           '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
             '<span class="tg-pill ' + cls + '">' + lbl + '</span>' +
@@ -2615,6 +2458,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
+  /* ⭐ MODIFIED: Receive view shows boy status + filter scan */
   function renderReceive() {
     const el = document.getElementById('receive-list');
     if (!el) return;
@@ -2635,35 +2479,81 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">' +
           '<div class="tg-row-av">' + esc(ini(g.name)) + '</div>' +
           '<div style="flex:1;min-width:0;">' +
-            '<div style="font-size:14px;font-weight:800;color:#fff;">' + esc(g.name) + '</div>' +
+            '<div style="font-size:14px;font-weight:800;color:#fff;">' + esc(g.name) + ' <span class="tg-pill blu" style="font-size:9px;">ACTIVE</span></div>' +
             '<div style="font-size:11.5px;color:#8892a6;">📞 ' + esc(g.phone||'—') + ' · ' + g.tasks.length + ' packet · ' + inr(total) + '</div>' +
           '</div>' +
-          '<span class="tg-pill blu">' + g.tasks.length + '</span>' +
+          '<span class="tg-pill ylw" style="font-size:11px;font-weight:900;">' + g.tasks.length + '</span>' +
         '</div>' +
-        g.tasks.slice(0, 5).map(t =>
-          '<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;">' +
-            '<div style="width:36px;height:36px;border-radius:9px;background:rgba(0,212,255,0.12);color:#00d4ff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📦</div>' +
-            '<div style="flex:1;min-width:0;">' +
-              '<div style="font-size:12px;font-weight:800;color:#fff;font-family:monospace;">#' + esc(getTaskDisplayId(t)) + '</div>' +
-              '<div style="font-size:11px;color:#8892a6;">🏪 ' + esc(t.sellerName||'Seller') + '</div>' +
-            '</div>' +
-            '<div style="font-size:14px;font-weight:900;color:#00d4ff;font-family:monospace;">' + inr(t.earning||0) + '</div>' +
-          '</div>'
-        ).join('') +
-        (g.tasks.length > 5 ? '<div style="font-size:11.5px;color:#00d4ff;font-weight:700;padding:6px 0;">+ ' + (g.tasks.length - 5) + ' more</div>' : '') +
-        '<button class="tg-btn suc" style="width:100%;padding:11px;justify-content:center;margin-top:8px;" onclick="tgOpenScanner(\'bulk\')">📷 Bulk Receive</button>' +
+        '<div style="max-height:140px;overflow-y:auto;margin-bottom:8px;">' +
+          g.tasks.slice(0, 5).map(t =>
+            '<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:6px;">' +
+              '<div style="width:32px;height:32px;border-radius:8px;background:rgba(0,212,255,0.12);color:#00d4ff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">📦</div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="font-size:11.5px;font-weight:800;color:#fff;font-family:monospace;">#' + esc(getTaskDisplayId(t)) + '</div>' +
+                '<div style="font-size:10.5px;color:#8892a6;">🏪 ' + esc(t.sellerName||'Seller') + '</div>' +
+              '</div>' +
+              '<div style="font-size:13px;font-weight:900;color:#00d4ff;font-family:monospace;">' + inr(t.earning||0) + '</div>' +
+            '</div>'
+          ).join('') +
+        '</div>' +
+        (g.tasks.length > 5 ? '<div style="font-size:11.5px;color:#00d4ff;font-weight:700;padding:4px 0 8px;">+ ' + (g.tasks.length - 5) + ' more</div>' : '') +
+        '<button class="tg-btn suc" style="width:100%;padding:12px;justify-content:center;font-size:12.5px;" onclick="tgReceiveFromBoy(\'' + esc(g.boyId) + '\')">' +
+          '📷 Receive from ' + esc(g.name.split(' ')[0]) + ' · ' + g.tasks.length + ' packets' +
+        '</button>' +
       '</div>';
     }).join('');
   }
 
+  /* ⭐ NEW: Receive from specific boy with scan filter */
+  window.tgReceiveFromBoy = function(boyId) {
+    if (!boyId) return;
+    const boy = ALL_APPS.find(b => b.id === boyId);
+    if (!boy) { toast('Boy not found', 'error'); return; }
+    const packets = ALL_TASKS.filter(t => t.pickupBoyId === boyId && normStatus(t.status) === 'collected');
+    if (!packets.length) { toast('No packets', 'error'); return; }
+
+    SCAN_BOY_FILTER = boyId;
+    SCAN_EXPECTED_COUNT = packets.length;
+    SCAN_DONE_COUNT = 0;
+
+    tgOpenScanner('bulk');
+
+    setTimeout(() => {
+      const hint = document.getElementById('scan-hint-text');
+      if (hint) hint.textContent = '📸 ' + boy.name.split(' ')[0] + ' ke ' + packets.length + ' packets scan karo';
+
+      const bulkBar = document.getElementById('tg-bulk-bar');
+      if (bulkBar) {
+        bulkBar.innerHTML =
+          '<div class="tg-bulk-cnt">' +
+            '<div>' +
+              '<div class="tg-bulk-cnt-num" id="bulk-count">0/' + packets.length + '</div>' +
+              '<div class="tg-bulk-cnt-lbl">From ' + esc(boy.name.split(' ')[0]) + '</div>' +
+            '</div>' +
+            '<div>' +
+              '<div class="tg-bulk-cnt-earn" id="bulk-earn">₹0</div>' +
+              '<div class="tg-bulk-cnt-lbl">To Settle</div>' +
+            '</div>' +
+          '</div>' +
+          '<button class="tg-bulk-done" onclick="tgCloseScanner()">✓ Done</button>';
+      }
+    }, 60);
+  };
+
   window.tgOpenScanner = function(mode) {
     if (scannerRunning) return;
+    /* Reset boy filter if this is a fresh open (not from boy click) */
+    if (!SCAN_BOY_FILTER) {
+      SCAN_EXPECTED_COUNT = 0;
+      SCAN_DONE_COUNT = 0;
+    }
     SCAN_MODE = mode || 'bulk';
     SCAN_SESSION = { count: 0, value: 0, recent: [] };
     RECENT_SCAN_CODES.clear();
     RECENTLY_RECEIVED.clear();
     lastScanTime = 0;
     _scanProcessing = false;
+    _scanCooldownUntil = 0;
 
     const title = document.getElementById('scanner-title');
     if (title) title.textContent = SCAN_MODE === 'bulk' ? '📷 Bulk Receive' : '📷 Single Receive';
@@ -2671,8 +2561,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (hint) hint.textContent = SCAN_MODE === 'bulk' ? '📸 Continuous · Auto-receive' : '📸 Ek packet scan karo';
 
     const bulkBar = document.getElementById('tg-bulk-bar');
-    if (bulkBar) bulkBar.style.display = SCAN_MODE === 'bulk' ? 'flex' : 'none';
-    setText('bulk-count', 0);
+    if (bulkBar && SCAN_MODE === 'bulk') bulkBar.style.display = 'flex';
+    else if (bulkBar) bulkBar.style.display = 'none';
+
+    setText('bulk-count', SCAN_BOY_FILTER ? ('0/' + SCAN_EXPECTED_COUNT) : '0');
     setText('bulk-earn', '₹0');
     document.getElementById('tg-recent-list').innerHTML = '<div class="tg-recent-empty">Recent scans yahan dikhenge...</div>';
     document.getElementById('tg-scan-err').style.display = 'none';
@@ -2689,6 +2581,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
     stopScanner();
     tgCloseMod('mod-scanner');
+    SCAN_BOY_FILTER = null;
+    SCAN_EXPECTED_COUNT = 0;
+    SCAN_DONE_COUNT = 0;
   };
 
   function setScanStatus(txt, cls) {
@@ -2747,7 +2642,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', '');
       errEl.style.display = 'none';
 
-      // Start periodic cleanup of RECENT_SCAN_CODES
       if (_scannerCleanupTimer) clearInterval(_scannerCleanupTimer);
       _scannerCleanupTimer = setInterval(() => {
         const now = Date.now();
@@ -2784,28 +2678,28 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       scannerRunning = false;
     }
     _scanProcessing = false;
+    _scanCooldownUntil = 0;
     const reader = document.getElementById('tg-reader');
     if (reader) reader.innerHTML = '';
   }
 
-  /* ⭐ FIXED: No duplicate scans — flag + pause/resume + longer cooldowns */
+  /* ⭐ Scanner success handler — duplicate-proof */
   function onScanSuccess(decodedText) {
-    // Block re-entry while processing
     if (_scanProcessing) return;
     const now = Date.now();
+    if (now < _scanCooldownUntil) return;
     if (now - lastScanTime < 1500) return;
 
     const clean = extractOrderIdFromScan(decodedText);
     if (!clean || clean.length < 3) return;
 
-    // Same barcode blocked for 20 seconds
     const recentTs = RECENT_SCAN_CODES.get(clean);
     if (recentTs && (now - recentTs) < 20000) return;
 
     _scanProcessing = true;
     lastScanTime = now;
+    _scanCooldownUntil = now + 1500;
 
-    // Pause camera briefly (smooth — video keeps playing but no detection)
     try {
       if (scanner && scannerRunning && typeof scanner.pause === 'function') {
         scanner.pause(false);
@@ -2815,7 +2709,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setScanStatus('⏳ Processing...', 'processing');
     vibrate([50, 30, 50]);
 
-    // Process, then resume
     Promise.resolve().then(() => tgProcessScan(clean)).finally(() => {
       setTimeout(() => {
         try {
@@ -2824,8 +2717,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           }
         } catch(e) {}
         _scanProcessing = false;
-        if (scannerRunning && document.getElementById('tg-scan-status')?.classList.contains('processing')) {
-          setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', '');
+        if (scannerRunning) {
+          const statusEl = document.getElementById('tg-scan-status');
+          if (statusEl && statusEl.classList.contains('processing')) {
+            setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', '');
+          }
         }
       }, 1200);
     });
@@ -2840,13 +2736,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const clean = extractOrderIdFromScan(v);
     if (!clean) { toast('Invalid ID', 'error'); return; }
     const recentTs = RECENT_SCAN_CODES.get(clean);
-    if (recentTs && (Date.now() - recentTs) < 20000) { toast('Ye already scan ho chuka hai', 'info'); return; }
+    if (recentTs && (Date.now() - recentTs) < 20000) { toast('Already scanned', 'info'); return; }
     _scanProcessing = true;
     Promise.resolve().then(() => tgProcessScan(clean)).finally(() => {
       setTimeout(() => { _scanProcessing = false; }, 400);
     });
   };
 
+  /* ⭐ Process scan — filtered by boy + updates order status */
   async function tgProcessScan(code) {
     const clean = extractOrderIdFromScan(code);
     if (!clean || clean.length < 3) {
@@ -2857,6 +2754,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const task = ALL_TASKS.find(t => {
       if (normStatus(t.status) !== 'collected') return false;
       if (RECENTLY_RECEIVED.has(t.id)) return false;
+      if (SCAN_BOY_FILTER && t.pickupBoyId !== SCAN_BOY_FILTER) return false;
       return taskMatchesScan(t, clean);
     });
 
@@ -2864,11 +2762,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       playErrBeep(); vibrate([100, 60, 100]); flashError();
       if (SCAN_MODE === 'single') {
         setScanStatus('❌ Not found', 'error');
-        showResultCard('error', 'Not Found', 'Scanned: <b>' + esc(clean) + '</b><br>No matching packet.', '');
+        showResultCard('error', 'Not Found', 'Scanned: <b>' + esc(clean) + '</b>' + (SCAN_BOY_FILTER ? '<br>Ye packet is boy ke packets me nahi hai.' : ''), '');
       } else {
         setScanStatus('❌ Not found', 'error');
       }
-      tgAddRecent({ code: clean, ok: false, msg: 'Not found' });
+      tgAddRecent({ code: clean, ok: false, msg: SCAN_BOY_FILTER ? 'Not from this boy' : 'Not found' });
       toast('❌ No match', 'error');
       setTimeout(() => { if (scannerRunning && !_scanProcessing) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', ''); }, 1500);
       return;
@@ -2880,6 +2778,35 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       await db.collection('pickupTasks').doc(task.id).update({
         status: 'received', receivedAt: now, receivedBy: USER.uid, receivedScanCode: clean, updatedAt: now
       });
+
+      /* ⭐ Update corresponding order so it disappears from panel */
+      if (task.orderFullId) {
+        try {
+          await db.collection('orders').doc(task.orderFullId).update({
+            pickupReceivedAt: now,
+            pickupReceivedBy: USER.uid,
+            pickupCompleted: true,
+            updatedAt: now
+          });
+        } catch(e) { console.warn('Order status update failed:', e); }
+      } else if (task.orderId) {
+        // Try by truncated order ID as fallback
+        try {
+          const q = await db.collection('orders').where('status', 'in', ['label_generated', 'processing']).limit(50).get();
+          for (const doc of q.docs) {
+            if (String(doc.id).slice(0, 12).toUpperCase() === String(task.orderId).toUpperCase()) {
+              await doc.ref.update({
+                pickupReceivedAt: now,
+                pickupReceivedBy: USER.uid,
+                pickupCompleted: true,
+                updatedAt: now
+              });
+              break;
+            }
+          }
+        } catch(e) {}
+      }
+
       try {
         await db.collection('scanLogs').add({
           boyId: USER.uid, boyName: (USER.displayName || 'Admin') + ' (Admin)',
@@ -2892,12 +2819,19 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       RECENTLY_RECEIVED.add(task.id);
       SCAN_SESSION.count++;
       SCAN_SESSION.value += earn;
+      SCAN_DONE_COUNT++;
 
       playBeep(); vibrate([60, 30, 100]); flashSuccess();
 
-      if (SCAN_MODE === 'bulk') {
+      /* Update bulk counter (with progress if boy filter) */
+      if (SCAN_BOY_FILTER) {
+        setText('bulk-count', SCAN_DONE_COUNT + '/' + SCAN_EXPECTED_COUNT);
+      } else {
         setText('bulk-count', SCAN_SESSION.count);
-        setText('bulk-earn', '₹' + SCAN_SESSION.value);
+      }
+      setText('bulk-earn', '₹' + SCAN_SESSION.value);
+
+      if (SCAN_MODE === 'bulk') {
         setScanStatus('✓ Received', 'success');
       } else {
         setScanStatus('✓ Received', 'success');
@@ -2906,6 +2840,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }
       tgAddRecent({ code: clean, ok: true, packet: getTaskDisplayId(task), seller: task.pickupBoyName || 'Boy', earn: earn });
       document.getElementById('tg-manual-scan').value = '';
+
+      /* Auto-close if all packets from this boy received */
+      if (SCAN_BOY_FILTER && SCAN_DONE_COUNT >= SCAN_EXPECTED_COUNT) {
+        setTimeout(() => {
+          toast('✓ All packets from this boy received!', 'success');
+          tgCloseScanner();
+        }, 900);
+      }
     } catch(e) {
       playErrBeep(); flashError();
       tgAddRecent({ code: clean, ok: false, msg: 'Error' });
@@ -3110,7 +3052,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
-  /* ⭐ NEW: Export functions */
+  /* ⭐ NEW: Export only received/settled orders */
   function initExportDates() {
     const today = new Date().toISOString().slice(0,10);
     const fromEl = document.getElementById('export-from');
@@ -3136,22 +3078,23 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) { toast('Invalid dates', 'error'); return; }
     if (fromDate > toDate) { toast('From date > To date', 'error'); return; }
 
-    // Filter tasks whose assignedAt/createdAt falls in range
+    /* ⭐ Only received & settled orders */
     const filtered = ALL_TASKS.filter(t => {
-      const d = t.assignedAt?.toDate?.() || t.createdAt?.toDate?.();
+      const s = normStatus(t.status);
+      if (s !== 'received' && s !== 'settled') return false;
+      const d = t.receivedAt?.toDate?.() || t.settledAt?.toDate?.() || t.updatedAt?.toDate?.() || t.createdAt?.toDate?.();
       if (!d) return false;
       return d >= fromDate && d <= toDate;
     });
 
     if (!filtered.length) {
-      toast('No orders found in this range', 'error');
+      toast('No received orders in this range', 'error');
       return;
     }
 
-    // Sort by assigned date
     filtered.sort((a,b) => {
-      const at = a.assignedAt?.toDate?.()?.getTime?.() || a.createdAt?.toDate?.()?.getTime?.() || 0;
-      const bt = b.assignedAt?.toDate?.()?.getTime?.() || b.createdAt?.toDate?.()?.getTime?.() || 0;
+      const at = a.receivedAt?.toDate?.()?.getTime?.() || a.settledAt?.toDate?.()?.getTime?.() || 0;
+      const bt = b.receivedAt?.toDate?.()?.getTime?.() || b.settledAt?.toDate?.()?.getTime?.() || 0;
       return at - bt;
     });
 
@@ -3188,7 +3131,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
     try {
       const ws = XLSX.utils.json_to_sheet(rows);
-      // Column widths
       ws['!cols'] = [
         { wch: 16 }, { wch: 20 }, { wch: 22 }, { wch: 14 }, { wch: 12 },
         { wch: 18 }, { wch: 14 }, { wch: 20 }, { wch: 14 }, { wch: 14 },
@@ -3197,9 +3139,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       ];
 
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Pickup Orders');
+      XLSX.utils.book_append_sheet(wb, ws, 'Received Orders');
 
-      // Summary sheet
       const totalEarning = filtered.reduce((s,t) => s + Number(t.earning||0), 0);
       const totalOrders = filtered.length;
       const statusCounts = {};
@@ -3209,8 +3150,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       });
 
       const summaryRows = [
+        { 'Metric': 'Report Type', 'Value': 'RECEIVED ORDERS ONLY' },
         { 'Metric': 'Report Range', 'Value': fromStr + ' to ' + toStr },
-        { 'Metric': 'Total Orders', 'Value': totalOrders },
+        { 'Metric': 'Total Received Orders', 'Value': totalOrders },
         { 'Metric': 'Total Earning (₹)', 'Value': totalEarning },
         { 'Metric': '', 'Value': '' },
         { 'Metric': '— STATUS BREAKDOWN —', 'Value': '' }
@@ -3226,10 +3168,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       wsSum['!cols'] = [{ wch: 30 }, { wch: 40 }];
       XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
 
-      const filename = 'TOEGO_Pickup_' + fromStr + '_to_' + toStr + '.xlsx';
+      const filename = 'TOEGO_Pickup_Received_' + fromStr + '_to_' + toStr + '.xlsx';
       XLSX.writeFile(wb, filename);
 
-      toast('✓ ' + totalOrders + ' orders exported', 'success');
+      toast('✓ ' + totalOrders + ' received orders exported', 'success');
       playBeep();
     } catch(e) {
       console.error('Export error:', e);
@@ -3243,20 +3185,22 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return st !== 'approved' && st !== 'rejected' && a.approved !== true;
     }).length;
     const readyPickup = getPendingPickupOrders().length;
-    const assigned = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
+    const stuck = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
     const collected = ALL_TASKS.filter(t => normStatus(t.status) === 'collected').length;
     const received = ALL_TASKS.filter(t => normStatus(t.status) === 'received').length;
 
     const hb = document.getElementById('tg-app-badge');
-    if (hb) { hb.textContent = pendingApps + readyPickup; hb.style.display = (pendingApps + readyPickup) > 0 ? 'flex' : 'none'; }
+    if (hb) { hb.textContent = pendingApps + readyPickup + stuck; hb.style.display = (pendingApps + readyPickup + stuck) > 0 ? 'flex' : 'none'; }
     const bApps = document.getElementById('dr-b-apps');
     if (bApps) { bApps.textContent = pendingApps; bApps.style.display = pendingApps > 0 ? 'inline-block' : 'none'; }
     const bPickups = document.getElementById('dr-b-pickups');
     if (bPickups) { bPickups.textContent = readyPickup; bPickups.style.display = readyPickup > 0 ? 'inline-block' : 'none'; }
+    const bStuck = document.getElementById('dr-b-stuck');
+    if (bStuck) { bStuck.textContent = stuck; bStuck.style.display = stuck > 0 ? 'inline-block' : 'none'; }
     const bBoys = document.getElementById('dr-b-boys');
     if (bBoys) { bBoys.textContent = ALL_BOYS.length; bBoys.style.display = ALL_BOYS.length > 0 ? 'inline-block' : 'none'; }
     const bTasks = document.getElementById('dr-b-tasks');
-    if (bTasks) { bTasks.textContent = assigned + collected; bTasks.style.display = (assigned+collected) > 0 ? 'inline-block' : 'none'; }
+    if (bTasks) { bTasks.textContent = stuck + collected; bTasks.style.display = (stuck+collected) > 0 ? 'inline-block' : 'none'; }
     const bRecv = document.getElementById('dr-b-receive');
     if (bRecv) { bRecv.textContent = collected; bRecv.style.display = collected > 0 ? 'inline-block' : 'none'; }
     const bSettle = document.getElementById('dr-b-settle');
@@ -3271,7 +3215,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     m.addEventListener('click', e => { if (e.target === m) {
       m.classList.remove('show');
       document.body.style.overflow = '';
-      if (m.id === 'mod-scanner') stopScanner();
+      if (m.id === 'mod-scanner') {
+        stopScanner();
+        SCAN_BOY_FILTER = null;
+        SCAN_EXPECTED_COUNT = 0;
+        SCAN_DONE_COUNT = 0;
+      }
     }});
   });
 
