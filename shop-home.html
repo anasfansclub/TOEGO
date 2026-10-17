@@ -1257,7 +1257,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
     const cachedCfg = getCache(CFG_CACHE, CFG_TTL);
     if (cachedCfg) {
-      CONFIG = cachedCfg;
+      CONFIG = mergeDeep(DEFAULT_CONFIG, cachedCfg);
       renderAll();
     }
 
@@ -1269,11 +1269,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
             unsubCats = db.collection('categories').onSnapshot(snap => {
               const raw = snap.docs.map(d => ({ id: d.id, ...d.data() }))
                 .sort((a,b) => (Number(a.order)||999) - (Number(b.order)||999));
-              if (raw.length) {
-                ALL_CATS_FROM_DB = raw;
-                setCache(CATS_CACHE, raw);
-                renderCategories();
-              }
+              ALL_CATS_FROM_DB = raw;
+              setCache(CATS_CACHE, raw);
+              renderCategories();
             }, err => {});
           } catch(e) {}
           res();
@@ -1384,7 +1382,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     renderProducts(true);
   };
 
-  function renderAll() {
+  function renderAll(skipLoad) {
     if (!CONFIG) return;
     const main = document.getElementById('tg-mmain'); if (!main) return;
 
@@ -1470,8 +1468,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     _productsSig = ''; 
     renderBannerSlider(false);
     renderFlashSale();
-    renderProducts(true);
-    loadProducts();
+    if (!skipLoad) loadProducts();
     setTimeout(() => { loadTracker(); }, 3000);
     if (currentSearch) {
       const home = document.getElementById('tg-mhome'), wrap = document.getElementById('tg-msearch-wrap');
@@ -1628,7 +1625,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       return true;
     };
 
-    // Ultra-fast initial fetch
     db.collection('products').limit(60).get().then(snap => {
       if (isFirstLoad) {
         if (snap.empty) { renderProducts(true); return; }
@@ -1639,7 +1635,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       if (isFirstLoad) { renderProducts(true); isFirstLoad = false; }
     });
 
-    // Live listener
     try {
       const q = db.collection('products').limit(60);
       unsubProducts = q.onSnapshot(snap => {
@@ -2420,6 +2415,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   renderCategories();
   updateCartBadge();
   loadTheme();
+  
+  // Render skeleton layout immediately so the page doesn't stay blank on refresh
+  if (!CONFIG) {
+    CONFIG = DEFAULT_CONFIG;
+    renderAll(true);
+  }
+
   loadConfig().then(() => {
     if (initialQ) setTimeout(() => tgMDoSearch(initialQ), 350);
   });
