@@ -6,6 +6,7 @@
 <title>My Account — TOEGO</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 
 <style>
@@ -133,6 +134,71 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-profile-edit:hover { background: rgba(255,255,255,0.25); }
 .tg-profile-edit svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 
+/* ═══ SMALL SELLER / ADMIN PILLS ═══ */
+.tg-profile-mini-actions {
+  display: none;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+  align-items: center;
+}
+.tg-profile-mini-actions.show { display: flex; }
+.tg-mini-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: all .15s;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.tg-mini-pill svg {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.tg-mini-pill.seller {
+  background: rgba(255,229,0,0.9);
+  color: #212121;
+  border-color: rgba(255,229,0,1);
+}
+.tg-mini-pill.seller:active { background: #ffe500; transform: translateY(1px); }
+.tg-mini-pill.admin {
+  background: rgba(255,255,255,0.95);
+  color: #d32f2f;
+  border-color: #fff;
+}
+.tg-mini-pill.admin:active { background: #fff; transform: translateY(1px); }
+.tg-mini-pill.pending {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+  cursor: default;
+}
+.tg-mini-pill.rejected {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+}
+.tg-mini-pill.rejected:active { background: rgba(255,255,255,0.4); transform: translateY(1px); }
+
+/* ═══ HIDE OLD BIG BANNER (using pills instead) ═══ */
+.tg-seller-banner { display: none !important; }
+
 .tg-stats {
   background: #fff;
   border-radius: 12px;
@@ -147,93 +213,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-stat:hover { background: #f1f3f6; }
 .tg-stat-num { font-size: 20px; font-weight: 800; color: var(--tg-primary); margin-bottom: 2px; }
 .tg-stat-label { font-size: 11px; color: #666; font-weight: 600; }
-
-.tg-seller-banner {
-  border-radius: 12px;
-  padding: 18px 16px;
-  margin-bottom: 12px;
-  display: none;
-  align-items: center;
-  gap: 14px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-  cursor: pointer;
-  transition: transform .15s, box-shadow .2s;
-}
-.tg-seller-banner.show { display: flex; }
-.tg-seller-banner:active { transform: scale(0.98); }
-.tg-seller-banner:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
-
-.tg-seller-banner.apply { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: #fff; }
-.tg-seller-banner.pending { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); color: #212121; cursor: default; box-shadow: 0 2px 8px rgba(255,152,0,0.15); }
-.tg-seller-banner.pending:hover { box-shadow: 0 2px 8px rgba(255,152,0,0.15); transform: none; }
-.tg-seller-banner.pending:active { transform: none; }
-.tg-seller-banner.approved { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: #fff; }
-.tg-seller-banner.rejected { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #fff; }
-.tg-seller-banner.admin { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); color: #fff; }
-
-.tg-seller-banner::after {
-  content: '';
-  position: absolute;
-  top: -50px; right: -50px;
-  width: 160px; height: 160px;
-  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
-  border-radius: 50%;
-}
-
-.tg-seller-icon {
-  width: 52px; height: 52px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 24px;
-  position: relative;
-  z-index: 2;
-  background: rgba(255,255,255,0.22);
-  backdrop-filter: blur(6px);
-}
-.tg-seller-banner.pending .tg-seller-icon { background: rgba(255,152,0,0.20); }
-.tg-seller-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-.tg-seller-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
-.tg-seller-title { font-size: 15px; font-weight: 800; margin-bottom: 3px; letter-spacing: -0.2px; }
-.tg-seller-desc { font-size: 12px; opacity: 0.92; line-height: 1.4; }
-.tg-seller-banner.pending .tg-seller-desc { color: #666; opacity: 1; }
-
-.tg-seller-arrow {
-  position: relative;
-  z-index: 2;
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  background: rgba(255,255,255,0.22);
-}
-.tg-seller-banner.apply .tg-seller-arrow,
-.tg-seller-banner.approved .tg-seller-arrow,
-.tg-seller-banner.rejected .tg-seller-arrow,
-.tg-seller-banner.admin .tg-seller-arrow { display: flex; }
-.tg-seller-arrow svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-
-.tg-seller-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 999px;
-  margin-top: 6px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  background: rgba(255,255,255,0.25);
-}
-.tg-seller-banner.pending .tg-seller-status-pill { background: rgba(255,152,0,0.20); color: #e65100; }
 
 .tg-sec { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .tg-sec-title { padding: 14px 18px 6px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -313,6 +292,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-avatar { width: 58px; height: 58px; font-size: 24px; }
   .tg-profile-name { font-size: 16px; }
   .tg-profile-edit { padding: 7px 10px; font-size: 11.5px; }
+  .tg-mini-pill { padding: 3px 8px; font-size: 9.5px; }
+  .tg-mini-pill svg { width: 9px; height: 9px; }
   .tg-order-tile-icon { width: 42px; height: 42px; }
   .tg-order-tile-icon svg { width: 20px; height: 20px; }
   .tg-list-icon { width: 36px; height: 36px; }
@@ -320,16 +301,29 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-list-item { padding: 12px 14px; gap: 12px; }
   .tg-list-title { font-size: 14px; }
   .tg-modal-card { padding: 20px 18px 22px; }
-  .tg-seller-banner { padding: 16px 14px; gap: 12px; }
-  .tg-seller-icon { width: 46px; height: 46px; font-size: 22px; }
-  .tg-seller-title { font-size: 14px; }
-  .tg-seller-desc { font-size: 11.5px; }
 }
 </style>
+
+<!-- ⚡ INSTANT THEME — runs before anything paints -->
+<script>
+(function() {
+  try {
+    var c = localStorage.getItem('toego_theme_colors') || sessionStorage.getItem('toego_theme_colors');
+    if (!c) return;
+    var t = JSON.parse(c);
+    if (t && t.primary) {
+      document.documentElement.style.setProperty('--tg-primary', t.primary);
+      document.documentElement.style.setProperty('--tg-primary-dark', t.dark || t.primary);
+      var m = document.getElementById('tg-theme-meta');
+      if (m) m.setAttribute('content', t.primary);
+    }
+  } catch(e) {}
+})();
+</script>
 </head>
 <body>
 
-<header class="tg-hd">
+<header class="tg-hd" id="tg-hd">
   <div class="tg-hd-inner">
     <a href="shop-home.html" class="tg-hd-back" aria-label="Back">
       <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -391,6 +385,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <div class="tg-profile-email" id="tg-p-email">Please wait…</div>
         <div class="tg-profile-phone" id="tg-p-phone" style="display:none;"></div>
         <div id="tg-p-badge-wrap"></div>
+        <div class="tg-profile-mini-actions" id="tg-profile-mini-actions"></div>
       </div>
       <button class="tg-profile-edit" onclick="tgEditProfile()">
         <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -398,18 +393,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </button>
     </div>
 
-    <div class="tg-seller-banner" id="tg-seller-banner">
-      <div class="tg-seller-icon" id="tg-seller-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </div>
+    <!-- Hidden banner (kept for backward compatibility, but hidden via CSS) -->
+    <div class="tg-seller-banner" id="tg-seller-banner" style="display:none;">
+      <div class="tg-seller-icon" id="tg-seller-icon"></div>
       <div class="tg-seller-body">
-        <div class="tg-seller-title" id="tg-seller-title">Become a Seller</div>
-        <div class="tg-seller-desc" id="tg-seller-desc">Start selling on TOEGO and grow your business</div>
+        <div class="tg-seller-title" id="tg-seller-title"></div>
+        <div class="tg-seller-desc" id="tg-seller-desc"></div>
         <div id="tg-seller-pill-wrap"></div>
       </div>
-      <div class="tg-seller-arrow" id="tg-seller-arrow">
-        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-      </div>
+      <div class="tg-seller-arrow" id="tg-seller-arrow"></div>
     </div>
 
     <div class="tg-stats">
@@ -693,577 +685,646 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 <div class="tg-toasts" id="tg-toasts"></div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
+<!-- ═══════════════════════════════════════════════════════════
+     ⚡ INSTANT PAINT — runs BEFORE Firebase SDKs load
+     Uses last-cached UID → 0ms render
+     ═══════════════════════════════════════════════════════════ -->
 <script>
-(function() {
+(function(){
   'use strict';
 
   const SUPER_ADMIN_EMAIL = 'anasfansclub@toego.in';
   const PROFILE_CACHE_PREFIX = 'toego_acc_profile_v1_';
   const STATS_CACHE_PREFIX = 'toego_acc_stats_v1_';
   const SELLER_CACHE_PREFIX = 'toego_acc_seller_v1_';
-  const CACHE_TTL = 5 * 60 * 1000;
+  const LAST_UID_KEY = 'toego_acc_last_uid';
+  const CACHE_TTL = 30 * 60 * 1000;
 
-  if (!window.__TOEGO_FB__) {
-    window.__TOEGO_FB__ = firebase.initializeApp({
-      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
-      authDomain: "toego-ecommerce.firebaseapp.com",
-      projectId: "toego-ecommerce",
-      storageBucket: "toego-ecommerce.firebasestorage.app",
-      messagingSenderId: "234167880880",
-      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
-    });
+  /* ─── SAFE STORAGE ─── */
+  const _mem = new Map();
+  function safeGet(k) {
+    try { const v = localStorage.getItem(k); if (v !== null) return v; } catch(e) {}
+    try { const v = sessionStorage.getItem(k); if (v !== null) return v; } catch(e) {}
+    return _mem.has(k) ? _mem.get(k) : null;
   }
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const FV = firebase.firestore.FieldValue;
-
-  let LAST_INIT_UID = null;
-  let USER_DOC = null;
-
-  /* ========= THEME ========= */
-  const themeMeta = document.getElementById('tg-theme-meta');
-
-  function adjustColor(hex, pct) {
+  function safeSet(k, v) {
+    try { localStorage.setItem(k, v); } catch(e) {}
+    try { sessionStorage.setItem(k, v); } catch(e) {}
+    _mem.set(k, v);
+  }
+  function cacheGet(k) {
     try {
-      hex = hex.replace('#','');
-      const n = parseInt(hex, 16);
-      const r = Math.max(0, Math.min(255, (n >> 16) + pct));
-      const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
-      const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
-      return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
-    } catch(e) { return hex; }
-  }
-
-  function applyTheme(primary, dark) {
-    primary = primary || '#2874f0';
-    dark = dark || adjustColor(primary, -30);
-    document.documentElement.style.setProperty('--tg-primary', primary);
-    document.documentElement.style.setProperty('--tg-primary-dark', dark);
-    if (themeMeta) themeMeta.setAttribute('content', primary);
-    let msMeta = document.querySelector('meta[name="msapplication-navbutton-color"]');
-    if (!msMeta) { msMeta = document.createElement('meta'); msMeta.name = 'msapplication-navbutton-color'; document.head.appendChild(msMeta); }
-    msMeta.setAttribute('content', primary);
-    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary, dark })); } catch(e) {}
-  }
-
-  (function bootCachedColor() {
-    try { const c = localStorage.getItem('toego_theme_colors'); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {}
-  })();
-
-  async function loadThemeColor() {
-    try {
-      const snap = await db.collection('siteSettings').doc('theme').get();
-      if (!snap.exists) return;
-      const d = snap.data();
-      const primary = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
-      applyTheme(primary, adjustColor(primary, -30));
-    } catch(e) {}
-    db.collection('siteSettings').doc('theme').onSnapshot(snap => {
-      if (!snap.exists) return;
-      const d = snap.data();
-      const primary = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
-      applyTheme(primary, adjustColor(primary, -30));
-    }, () => {});
-  }
-
-  /* ========= CACHE ========= */
-  function cacheSet(key, data) {
-    try { localStorage.setItem(key, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
-  }
-  function cacheGet(key) {
-    try {
-      const r = localStorage.getItem(key);
+      const r = safeGet(k);
       if (!r) return null;
       const c = JSON.parse(r);
-      if (!c || !c.data) return null;
+      if (!c || c.data === undefined) return null;
       if (Date.now() - (c.time || 0) > CACHE_TTL) return null;
       return c.data;
     } catch(e) { return null; }
   }
-
-  /* ========= TOAST ========= */
-  function toast(msg, type) {
-    type = type || 'info';
-    const w = document.getElementById('tg-toasts');
-    if (!w) return;
-    const el = document.createElement('div');
-    el.className = 'tg-toast ' + type;
-    el.textContent = msg;
-    w.appendChild(el);
-    setTimeout(() => el.remove(), 2400);
+  function cacheSet(k, data) {
+    try { safeSet(k, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
   }
 
-  /* ========= 3-DOT MENU ========= */
-  const menuBtn = document.getElementById('tg-3dot-btn');
-  const menu = document.getElementById('tg-3dot-menu');
-  menuBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    menu.classList.toggle('show');
-  });
-  document.addEventListener('click', (e) => {
-    if (menu.classList.contains('show') && !menu.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) {
-      menu.classList.remove('show');
-    }
-  });
+  /* ─── UI REFS ─── */
+  const $avatar = document.getElementById('tg-avatar');
+  const $name = document.getElementById('tg-p-name');
+  const $email = document.getElementById('tg-p-email');
+  const $phone = document.getElementById('tg-p-phone');
+  const $badgeWrap = document.getElementById('tg-p-badge-wrap');
+  const $miniActions = document.getElementById('tg-profile-mini-actions');
 
-  /* ========= GLOBAL FUNCTIONS ========= */
-  window.tgEditProfile = function() {
-    menu.classList.remove('show');
-    document.getElementById('tg-edit-modal').classList.add('show');
-    document.body.style.overflow = 'hidden';
-  };
-  window.tgCloseEdit = function() {
-    document.getElementById('tg-edit-modal').classList.remove('show');
-    document.body.style.overflow = '';
-  };
-  document.getElementById('tg-edit-modal').addEventListener('click', (e) => {
-    if (e.target.id === 'tg-edit-modal') tgCloseEdit();
-  });
-
-  window.tgSaveProfile = async function() {
-    const u = auth.currentUser;
-    if (!u) { toast('Please log in first', 'error'); return; }
-    const name = (document.getElementById('tg-edit-name').value || '').trim();
-    const phone = (document.getElementById('tg-edit-phone').value || '').trim();
-    const gender = document.getElementById('tg-edit-gender').value || '';
-    const dob = document.getElementById('tg-edit-dob').value || '';
-    if (!name) { toast('Please enter your name', 'error'); return; }
-
-    const btn = document.getElementById('tg-edit-save');
-    const txt = document.getElementById('tg-edit-save-text');
-    btn.disabled = true; txt.textContent = 'Saving…';
-
-    try {
-      try { await u.updateProfile({ displayName: name }); } catch(e) {}
-      await db.collection('users').doc(u.uid).set({
-        name: name, phone: phone, gender: gender, dob: dob,
-        email: u.email || '', uid: u.uid,
-        updatedAt: FV.serverTimestamp()
-      }, { merge: true });
-
-      const cached = cacheGet(PROFILE_CACHE_PREFIX + u.uid) || {};
-      cached.name = name; cached.phone = phone; cached.gender = gender; cached.dob = dob;
-      cacheSet(PROFILE_CACHE_PREFIX + u.uid, cached);
-
-      toast('Profile updated ✓', 'success');
-      setTimeout(() => { tgCloseEdit(); location.reload(); }, 700);
-    } catch (err) {
-      toast('Failed: ' + (err.message || 'Error'), 'error');
-      btn.disabled = false;
-      txt.textContent = 'Save Changes';
-    }
-  };
-
-  window.tgShareProfile = async function() {
-    menu.classList.remove('show');
-    const u = auth.currentUser;
-    if (!u) return;
-    const url = window.location.origin + '/account.html?uid=' + u.uid;
-    try {
-      if (navigator.share) { await navigator.share({ title: 'My TOEGO Profile', url }); return; }
-      await navigator.clipboard.writeText(url);
-      toast('Profile link copied ✓', 'success');
-    } catch(e) { toast('Share cancelled'); }
-  };
-
-  window.tgCopyUID = async function() {
-    menu.classList.remove('show');
-    const u = auth.currentUser;
-    if (!u) return;
-    try {
-      await navigator.clipboard.writeText(u.uid);
-      toast('User ID copied ✓', 'success');
-    } catch(e) { toast('Copy failed', 'error'); }
-  };
-
-  window.tgOpenHelp = function() {
-    menu.classList.remove('show');
-    location.href = 'contact.html';
-  };
-
-  window.tgLogout = async function() {
-    menu.classList.remove('show');
-    if (!confirm('Are you sure you want to logout?')) return;
-    try {
-      const uid = auth.currentUser && auth.currentUser.uid;
-      if (uid) {
-        try {
-          localStorage.removeItem(PROFILE_CACHE_PREFIX + uid);
-          localStorage.removeItem(STATS_CACHE_PREFIX + uid);
-          localStorage.removeItem(SELLER_CACHE_PREFIX + uid);
-        } catch(e) {}
-      }
-      await auth.signOut();
-      toast('Logged out successfully', 'success');
-      setTimeout(() => location.href = 'log-in.html', 500);
-    } catch(e) { toast('Logout failed', 'error'); }
-  };
-
-  window.tgDeleteAccount = function(e) {
-    e.preventDefault();
-    if (!confirm('Are you sure? This action cannot be undone.')) return;
-    if (!confirm('Really delete your account? Click OK to confirm.')) return;
-    const u = auth.currentUser;
-    if (!u) return;
-    const uid = u.uid;
-    u.delete().then(() => {
-      try {
-        localStorage.removeItem(PROFILE_CACHE_PREFIX + uid);
-        localStorage.removeItem(STATS_CACHE_PREFIX + uid);
-        localStorage.removeItem(SELLER_CACHE_PREFIX + uid);
-      } catch(e) {}
-      toast('Account deleted', 'success');
-      setTimeout(() => location.href = 'shop-home.html', 600);
-    }).catch(err => {
-      if (err.code === 'auth/requires-recent-login') {
-        toast('Please log out and log back in, then try again', 'error');
-      } else {
-        toast('Failed: ' + err.message, 'error');
-      }
-    });
-  };
-
-  window.tgToggleDarkMode = function(el) {
-    const sw = document.getElementById('tg-dark-switch');
-    sw.classList.toggle('on');
-    const on = sw.classList.contains('on');
-    try { localStorage.setItem('toego_dark_mode', on ? '1' : '0'); } catch(e) {}
-    toast(on ? 'Dark mode enabled' : 'Dark mode disabled');
-  };
-
-  window.tgSelectLanguage = function() {
-    const langs = ['English', 'हिन्दी (Hindi)', 'தமிழ் (Tamil)', 'తెలుగు (Telugu)', 'বাংলা (Bengali)', 'मराठी (Marathi)'];
-    const pick = prompt('Choose language:\n\n' + langs.map((l,i) => (i+1) + '. ' + l).join('\n'), '1');
-    if (!pick) return;
-    const idx = parseInt(pick) - 1;
-    if (idx >= 0 && idx < langs.length) {
-      document.getElementById('tg-lang-desc').textContent = langs[idx];
-      try { localStorage.setItem('toego_lang', langs[idx]); } catch(e) {}
-      toast('Language set to ' + langs[idx], 'success');
-    }
-  };
-
-  window.tgReferEarn = function() {
-    const u = auth.currentUser;
-    if (!u) return;
-    const code = 'TOE' + u.uid.slice(0, 6).toUpperCase();
-    const msg = 'Hey! Use my TOEGO referral code ' + code + ' to get ₹100 off on your first order.';
-    const url = window.location.origin;
-    if (navigator.share) {
-      navigator.share({ title: 'TOEGO Referral', text: msg, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(msg + ' ' + url).then(() => toast('Referral code copied ✓', 'success'));
-    }
-  };
-
-  /* ========= SELLER BANNER ========= */
-  function showSellerBanner(status, data) {
-    const banner = document.getElementById('tg-seller-banner');
-    const title = document.getElementById('tg-seller-title');
-    const desc = document.getElementById('tg-seller-desc');
-    const iconBox = document.getElementById('tg-seller-icon');
-    const pillWrap = document.getElementById('tg-seller-pill-wrap');
-    if (!banner) return;
-
-    banner.classList.remove('apply', 'pending', 'approved', 'rejected', 'admin', 'show');
-    pillWrap.innerHTML = '';
-
-    if (status === 'admin') {
-      banner.classList.add('admin', 'show');
-      title.textContent = 'Admin Dashboard';
-      desc.textContent = 'Manage the entire TOEGO marketplace';
-      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>';
-      pillWrap.innerHTML = '<span class="tg-seller-status-pill">🛡️ Admin Access</span>';
-      banner.onclick = () => location.href = 'admin.html';
-
-    } else if (status === 'approved') {
-      banner.classList.add('approved', 'show');
-      title.textContent = 'Seller Dashboard';
-      desc.textContent = 'Manage your products, orders & earnings';
-      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
-      pillWrap.innerHTML = '<span class="tg-seller-status-pill">✓ Approved Seller</span>';
-      banner.onclick = () => location.href = 'seller.html';
-
-    } else if (status === 'pending') {
-      banner.classList.add('pending', 'show');
-      title.textContent = 'Application Under Review';
-      desc.textContent = "We're reviewing your seller application. Usually takes 24-48 hours.";
-      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
-      pillWrap.innerHTML = '<span class="tg-seller-status-pill">⏳ Pending</span>';
-      banner.onclick = null;
-
-    } else if (status === 'rejected') {
-      banner.classList.add('rejected', 'show');
-      title.textContent = 'Application Rejected';
-      desc.textContent = 'Your application was not approved. Tap to apply again.';
-      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>';
-      pillWrap.innerHTML = '<span class="tg-seller-status-pill">✕ Try Again</span>';
-      banner.onclick = () => location.href = 'seller-apply.html';
-
-    } else {
-      banner.classList.add('apply', 'show');
-      title.textContent = 'Become a Seller';
-      desc.textContent = 'Start selling on TOEGO and grow your business';
-      iconBox.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
-      pillWrap.innerHTML = '';
-      banner.onclick = () => location.href = 'seller-apply.html';
-    }
-  }
-
-  /* ========= PROFILE RENDER ========= */
+  /* ─── INITIAL FROM NAME ─── */
   function initialFromName(name) {
     if (!name) return 'T';
     return name.trim().charAt(0).toUpperCase();
   }
 
-  function renderProfileUI(user, d, source) {
+  /* ─── RENDER PROFILE ─── */
+  function renderProfileUI(userLike, d) {
     d = d || {};
-    const nameEl = document.getElementById('tg-p-name');
-    const emailEl = document.getElementById('tg-p-email');
-    const phoneEl = document.getElementById('tg-p-phone');
-    const avatarEl = document.getElementById('tg-avatar');
-    const badgeWrap = document.getElementById('tg-p-badge-wrap');
+    userLike = userLike || {};
 
-    const name = d.name || user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-    const email = user.email || d.email || '';
-    const phone = d.phone || user.phoneNumber || '';
-    const photo = d.photoURL || user.photoURL || '';
+    const name = d.name || userLike.displayName || (userLike.email ? userLike.email.split('@')[0] : 'User');
+    const email = userLike.email || d.email || '';
+    const phone = d.phone || userLike.phoneNumber || '';
+    const photo = d.photoURL || userLike.photoURL || '';
     const role = (d.role || 'customer').toLowerCase();
 
-    nameEl.textContent = name;
-    emailEl.textContent = email || phone || 'TOEGO User';
-    if (phone) { phoneEl.textContent = phone; phoneEl.style.display = 'block'; }
+    $name.textContent = name;
+    $email.textContent = email || phone || 'TOEGO User';
+    if (phone) { $phone.textContent = phone; $phone.style.display = 'block'; }
+    else { $phone.style.display = 'none'; }
 
-    if (photo) avatarEl.innerHTML = '<img src="' + photo + '" alt="" />';
-    else avatarEl.textContent = initialFromName(name);
-
-    const isSuperAdmin = user.email === SUPER_ADMIN_EMAIL || role === 'superadmin';
-    if (isSuperAdmin) {
-      badgeWrap.innerHTML = '<div class="tg-profile-badge superadmin"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>SUPER ADMIN</div>';
-    } else if (role === 'admin') {
-      badgeWrap.innerHTML = '<div class="tg-profile-badge admin"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>ADMIN</div>';
-    } else if (role === 'seller') {
-      badgeWrap.innerHTML = '<div class="tg-profile-badge seller"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>SELLER</div>';
+    if (photo) {
+      const cur = $avatar.querySelector('img');
+      if (!cur || cur.src !== photo) {
+        $avatar.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = photo;
+        img.alt = name;
+        img.onerror = function() { $avatar.textContent = initialFromName(name); };
+        $avatar.appendChild(img);
+      }
     } else {
-      badgeWrap.innerHTML = '';
+      $avatar.textContent = initialFromName(name);
     }
 
-    document.getElementById('tg-edit-name').value = name;
-    document.getElementById('tg-edit-email').value = email;
-    document.getElementById('tg-edit-phone').value = phone;
-    if (d.gender) document.getElementById('tg-edit-gender').value = d.gender;
-    if (d.dob) document.getElementById('tg-edit-dob').value = d.dob;
+    const isSuperAdmin = userLike.email === SUPER_ADMIN_EMAIL || role === 'superadmin';
+    if (isSuperAdmin) {
+      $badgeWrap.innerHTML = '<div class="tg-profile-badge superadmin"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>SUPER ADMIN</div>';
+    } else if (role === 'admin') {
+      $badgeWrap.innerHTML = '<div class="tg-profile-badge admin"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>ADMIN</div>';
+    } else if (role === 'seller') {
+      $badgeWrap.innerHTML = '<div class="tg-profile-badge seller"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>SELLER</div>';
+    } else {
+      $badgeWrap.innerHTML = '';
+    }
 
-    if (isSuperAdmin || role === 'admin') {
-      document.getElementById('tg-admin-sec').style.display = 'block';
+    const $editName = document.getElementById('tg-edit-name');
+    const $editEmail = document.getElementById('tg-edit-email');
+    const $editPhone = document.getElementById('tg-edit-phone');
+    if ($editName) $editName.value = name;
+    if ($editEmail) $editEmail.value = email;
+    if ($editPhone) $editPhone.value = phone;
+    if (d.gender) { const g = document.getElementById('tg-edit-gender'); if (g) g.value = d.gender; }
+    if (d.dob) { const dob = document.getElementById('tg-edit-dob'); if (dob) dob.value = d.dob; }
+
+    if (isSuperAdmin || role === 'admin' || role === 'superadmin') {
+      const adminSec = document.getElementById('tg-admin-sec');
+      if (adminSec) adminSec.style.display = 'block';
     }
   }
 
-  /* ========= SELLER RESOLVER ========= */
-  function resolveSellerBanner(user, userData) {
-    if (!userData) userData = {};
-    const role = (userData.role || 'customer').toLowerCase();
-    const isSuperAdmin = user.email === SUPER_ADMIN_EMAIL;
-    const isAdmin = ['admin', 'superadmin'].includes(role);
+  /* ─── ⭐ RENDER SELLER/ADMIN PILLS (small) ⭐ ─── */
+  function renderSellerPills(status, data) {
+    if (!$miniActions) return;
+    data = data || {};
 
-    if (isSuperAdmin || isAdmin) {
-      showSellerBanner('admin');
-      return Promise.resolve('admin');
+    if (status === 'admin') {
+      $miniActions.innerHTML = '<a href="admin.html" class="tg-mini-pill admin"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>Admin</a>';
+      $miniActions.classList.add('show');
+    } else if (status === 'approved') {
+      $miniActions.innerHTML = '<a href="seller.html" class="tg-mini-pill seller"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Seller</a>';
+      $miniActions.classList.add('show');
+    } else if (status === 'pending') {
+      $miniActions.innerHTML = '<span class="tg-mini-pill pending"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Pending</span>';
+      $miniActions.classList.add('show');
+    } else if (status === 'rejected') {
+      $miniActions.innerHTML = '<a href="seller-apply.html" class="tg-mini-pill rejected"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>Try Again</a>';
+      $miniActions.classList.add('show');
+    } else {
+      /* No app → "Become Seller" pill */
+      $miniActions.innerHTML = '<a href="seller-apply.html" class="tg-mini-pill pending"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Become Seller</a>';
+      $miniActions.classList.add('show');
     }
-    if (role === 'seller') {
-      showSellerBanner('approved');
-      return Promise.resolve('approved');
-    }
-
-    return db.collection('sellers').doc(user.uid).get().then(sellerSnap => {
-      if (!sellerSnap.exists) {
-        showSellerBanner('none');
-        return 'none';
-      }
-      const sd = sellerSnap.data();
-      const status = (sd.status || '').toLowerCase();
-      if (status === 'approved' || sd.approved === true) {
-        db.collection('users').doc(user.uid).set({ role: 'seller', updatedAt: FV.serverTimestamp() }, { merge: true }).catch(() => {});
-        showSellerBanner('approved');
-        return 'approved';
-      } else if (status === 'rejected') {
-        showSellerBanner('rejected', sd);
-        return 'rejected';
-      } else {
-        showSellerBanner('pending', sd);
-        return 'pending';
-      }
-    }).catch(() => {
-      showSellerBanner('none');
-      return 'none';
-    });
   }
 
-  /* ========= STATS RENDER ========= */
+  /* ─── RENDER STATS ─── */
   function renderStatsUI(stats) {
     stats = stats || { orders: 0, wish: 0, cart: 0, coupons: 0 };
-    document.getElementById('tg-stat-orders').textContent = stats.orders || 0;
-    document.getElementById('tg-stat-wish').textContent = stats.wish || 0;
-    document.getElementById('tg-stat-cart').textContent = stats.cart || 0;
-    document.getElementById('tg-coupon-count').textContent = stats.coupons || 0;
+    const o = document.getElementById('tg-stat-orders');
+    const w = document.getElementById('tg-stat-wish');
+    const c = document.getElementById('tg-stat-cart');
+    const cp = document.getElementById('tg-coupon-count');
+    if (o) o.textContent = stats.orders || 0;
+    if (w) w.textContent = stats.wish || 0;
+    if (c) c.textContent = stats.cart || 0;
+    if (cp) cp.textContent = stats.coupons || 0;
 
     const badge = document.getElementById('tg-cart-badge');
     const badgeM = document.getElementById('tg-cart-badge-m');
     const cartCount = stats.cart || 0;
-    if (cartCount > 0) {
-      [badge, badgeM].forEach(b => { if (b) { b.textContent = cartCount; b.style.display = 'flex'; } });
-    } else {
-      [badge, badgeM].forEach(b => { if (b) b.style.display = 'none'; });
+    [badge, badgeM].forEach(b => {
+      if (!b) return;
+      if (cartCount > 0) { b.textContent = cartCount; b.style.display = 'flex'; }
+      else b.style.display = 'none';
+    });
+  }
+
+  /* ─── ⚡ INSTANT PAINT FROM LAST CACHED UID ─── */
+  (function paintFromCache() {
+    const lastUid = safeGet(LAST_UID_KEY);
+    if (!lastUid) return;
+    const cachedProfile = cacheGet(PROFILE_CACHE_PREFIX + lastUid);
+    if (cachedProfile) {
+      renderProfileUI({
+        uid: lastUid,
+        email: cachedProfile._email || cachedProfile.email || '',
+        displayName: cachedProfile._displayName || cachedProfile.name || '',
+        photoURL: cachedProfile._photoURL || cachedProfile.photoURL || ''
+      }, cachedProfile);
     }
+    const cachedStats = cacheGet(STATS_CACHE_PREFIX + lastUid);
+    if (cachedStats) renderStatsUI(cachedStats);
+    const cachedSeller = cacheGet(SELLER_CACHE_PREFIX + lastUid);
+    if (cachedSeller && cachedSeller.status) {
+      renderSellerPills(cachedSeller.status, cachedSeller.data);
+    }
+  })();
+
+  /* ─── EXPOSE TO MAIN SCRIPT ─── */
+  window.__TG_ACC__ = {
+    renderProfileUI: renderProfileUI,
+    renderSellerPills: renderSellerPills,
+    renderStatsUI: renderStatsUI,
+    cacheGet: cacheGet,
+    cacheSet: cacheSet,
+    safeGet: safeGet,
+    safeSet: safeSet,
+    initialFromName: initialFromName,
+    SUPER_ADMIN_EMAIL: SUPER_ADMIN_EMAIL,
+    PROFILE_CACHE_PREFIX: PROFILE_CACHE_PREFIX,
+    STATS_CACHE_PREFIX: STATS_CACHE_PREFIX,
+    SELLER_CACHE_PREFIX: SELLER_CACHE_PREFIX,
+    LAST_UID_KEY: LAST_UID_KEY
+  };
+
+})();
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js" defer></script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ⚡ MAIN LOGIC — runs after Firebase SDKs are loaded
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  function waitForFirebase(cb, tries) {
+    tries = tries || 0;
+    if (typeof firebase !== 'undefined' && firebase.auth) return cb();
+    if (tries > 200) return console.warn('[account] firebase timeout');
+    setTimeout(() => waitForFirebase(cb, tries + 1), 30);
   }
 
-  /* ========= PARALLEL STATS LOADER ========= */
-  async function loadStatsParallel(user) {
-    const uid = user.uid;
+  waitForFirebase(function() {
+    const T = window.__TG_ACC__;
+    const SUPER_ADMIN_EMAIL = T.SUPER_ADMIN_EMAIL;
+    const PROFILE_CACHE_PREFIX = T.PROFILE_CACHE_PREFIX;
+    const STATS_CACHE_PREFIX = T.STATS_CACHE_PREFIX;
+    const SELLER_CACHE_PREFIX = T.SELLER_CACHE_PREFIX;
+    const LAST_UID_KEY = T.LAST_UID_KEY;
 
-    const ordersP = (async () => {
+    if (!window.__TOEGO_FB__) {
+      window.__TOEGO_FB__ = firebase.initializeApp({
+        apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+        authDomain: "toego-ecommerce.firebaseapp.com",
+        projectId: "toego-ecommerce",
+        storageBucket: "toego-ecommerce.firebasestorage.app",
+        messagingSenderId: "234167880880",
+        appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+      });
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const FV = firebase.firestore.FieldValue;
+
+    let LAST_INIT_UID = null;
+    let USER_DOC = null;
+
+    /* ═══ THEME ═══ */
+    const themeMeta = document.getElementById('tg-theme-meta');
+    function adjustColor(hex, pct) {
       try {
-        const s = await db.collection('orders').where('customerId', '==', uid).get();
-        return s.size || 0;
-      } catch(e) {
-        try {
-          const s2 = await db.collection('orders').where('userId', '==', uid).get();
-          return s2.size || 0;
-        } catch(e2) { return 0; }
+        hex = hex.replace('#','');
+        const n = parseInt(hex, 16);
+        const r = Math.max(0, Math.min(255, (n >> 16) + pct));
+        const g = Math.max(0, Math.min(255, ((n >> 8) & 0xFF) + pct));
+        const b = Math.max(0, Math.min(255, (n & 0xFF) + pct));
+        return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+      } catch(e) { return hex; }
+    }
+    function applyTheme(primary, dark) {
+      primary = primary || '#2874f0';
+      dark = dark || adjustColor(primary, -30);
+      document.documentElement.style.setProperty('--tg-primary', primary);
+      document.documentElement.style.setProperty('--tg-primary-dark', dark);
+      if (themeMeta) themeMeta.setAttribute('content', primary);
+      const hd = document.getElementById('tg-hd');
+      if (hd) hd.style.background = primary;
+      document.querySelectorAll('.tg-bnav-item.active').forEach(el => el.style.color = primary);
+      T.safeSet('toego_theme_colors', JSON.stringify({ primary, dark }));
+    }
+    (function() {
+      try { const c = T.safeGet('toego_theme_colors'); if (c) { const d = JSON.parse(c); applyTheme(d.primary, d.dark); } } catch(e) {}
+    })();
+    (async function() {
+      try {
+        const snap = await db.collection('siteSettings').doc('theme').get();
+        if (!snap.exists) return;
+        const d = snap.data();
+        const primary = d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0';
+        applyTheme(primary, adjustColor(primary, -30));
+      } catch(e) {}
+    })();
+
+    /* ═══ TOAST ═══ */
+    function toast(msg, type) {
+      type = type || 'info';
+      const w = document.getElementById('tg-toasts');
+      if (!w) return;
+      const el = document.createElement('div');
+      el.className = 'tg-toast ' + type;
+      el.textContent = msg;
+      w.appendChild(el);
+      setTimeout(() => el.remove(), 2400);
+    }
+
+    /* ═══ 3-DOT MENU ═══ */
+    const menuBtn = document.getElementById('tg-3dot-btn');
+    const menu = document.getElementById('tg-3dot-menu');
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      if (menu.classList.contains('show') && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
+        menu.classList.remove('show');
       }
-    })();
+    });
 
-    const wishP = (async () => {
-      try {
-        const s = await db.collection('wishlists').doc(uid).get();
-        return (s.exists && Array.isArray(s.data().items)) ? s.data().items.length : 0;
-      } catch(e) { return 0; }
-    })();
+    /* ═══ GLOBAL FUNCTIONS ═══ */
+    window.tgEditProfile = function() {
+      menu.classList.remove('show');
+      document.getElementById('tg-edit-modal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+    window.tgCloseEdit = function() {
+      document.getElementById('tg-edit-modal').classList.remove('show');
+      document.body.style.overflow = '';
+    };
+    document.getElementById('tg-edit-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'tg-edit-modal') tgCloseEdit();
+    });
 
-    const cartP = (async () => {
+    window.tgSaveProfile = async function() {
+      const u = auth.currentUser;
+      if (!u) { toast('Please log in first', 'error'); return; }
+      const name = (document.getElementById('tg-edit-name').value || '').trim();
+      const phone = (document.getElementById('tg-edit-phone').value || '').trim();
+      const gender = document.getElementById('tg-edit-gender').value || '';
+      const dob = document.getElementById('tg-edit-dob').value || '';
+      if (!name) { toast('Please enter your name', 'error'); return; }
+
+      const btn = document.getElementById('tg-edit-save');
+      const txt = document.getElementById('tg-edit-save-text');
+      btn.disabled = true; txt.textContent = 'Saving…';
+
       try {
-        const s = await db.collection('carts').doc(uid).collection('items').get();
-        let c = 0;
-        s.forEach(d => { c += Number(d.data().qty || 1); });
-        return c;
-      } catch(e) {
-        try {
-          const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
-          return gc.reduce((a,i) => a + Number(i.qty||1), 0);
-        } catch(e2) { return 0; }
+        try { await u.updateProfile({ displayName: name }); } catch(e) {}
+        await db.collection('users').doc(u.uid).set({
+          name: name, phone: phone, gender: gender, dob: dob,
+          email: u.email || '', uid: u.uid,
+          updatedAt: FV.serverTimestamp()
+        }, { merge: true });
+
+        const cached = T.cacheGet(PROFILE_CACHE_PREFIX + u.uid) || {};
+        cached.name = name; cached.phone = phone; cached.gender = gender; cached.dob = dob;
+        T.cacheSet(PROFILE_CACHE_PREFIX + u.uid, cached);
+
+        toast('Profile updated ✓', 'success');
+        setTimeout(() => { tgCloseEdit(); location.reload(); }, 700);
+      } catch (err) {
+        toast('Failed: ' + (err.message || 'Error'), 'error');
+        btn.disabled = false;
+        txt.textContent = 'Save Changes';
       }
-    })();
+    };
 
-    const couponsP = (async () => {
+    window.tgShareProfile = async function() {
+      menu.classList.remove('show');
+      const u = auth.currentUser;
+      if (!u) return;
+      const url = window.location.origin + '/account.html?uid=' + u.uid;
       try {
-        const s = await db.collection('coupons').where('active', '==', true).limit(10).get();
-        return s.size || 0;
-      } catch(e) { return 0; }
-    })();
+        if (navigator.share) { await navigator.share({ title: 'My TOEGO Profile', url }); return; }
+        await navigator.clipboard.writeText(url);
+        toast('Profile link copied ✓', 'success');
+      } catch(e) { toast('Share cancelled'); }
+    };
 
-    const [orders, wish, cart, coupons] = await Promise.all([ordersP, wishP, cartP, couponsP]);
-    const stats = { orders, wish, cart, coupons };
-    renderStatsUI(stats);
-    cacheSet(STATS_CACHE_PREFIX + uid, stats);
-    return stats;
-  }
+    window.tgCopyUID = async function() {
+      menu.classList.remove('show');
+      const u = auth.currentUser;
+      if (!u) return;
+      try {
+        await navigator.clipboard.writeText(u.uid);
+        toast('User ID copied ✓', 'success');
+      } catch(e) { toast('Copy failed', 'error'); }
+    };
 
-  /* ========= FAST USER DOC LOADER ========= */
-  async function loadUserDoc(user) {
-    try {
-      const snap = await db.collection('users').doc(user.uid).get();
-      const d = snap.exists ? snap.data() : {};
-      USER_DOC = d;
-      renderProfileUI(user, d);
-      cacheSet(PROFILE_CACHE_PREFIX + user.uid, {
-        ...d,
+    window.tgOpenHelp = function() {
+      menu.classList.remove('show');
+      location.href = 'contact.html';
+    };
+
+    window.tgLogout = async function() {
+      menu.classList.remove('show');
+      if (!confirm('Are you sure you want to logout?')) return;
+      try {
+        const uid = auth.currentUser && auth.currentUser.uid;
+        if (uid) {
+          try {
+            localStorage.removeItem(PROFILE_CACHE_PREFIX + uid);
+            localStorage.removeItem(STATS_CACHE_PREFIX + uid);
+            localStorage.removeItem(SELLER_CACHE_PREFIX + uid);
+          } catch(e) {}
+        }
+        try { localStorage.removeItem(LAST_UID_KEY); } catch(e) {}
+        try { sessionStorage.removeItem(LAST_UID_KEY); } catch(e) {}
+        await auth.signOut();
+        toast('Logged out successfully', 'success');
+        setTimeout(() => location.href = 'log-in.html', 500);
+      } catch(e) { toast('Logout failed', 'error'); }
+    };
+
+    window.tgDeleteAccount = function(e) {
+      e.preventDefault();
+      if (!confirm('Are you sure? This action cannot be undone.')) return;
+      if (!confirm('Really delete your account? Click OK to confirm.')) return;
+      const u = auth.currentUser;
+      if (!u) return;
+      const uid = u.uid;
+      u.delete().then(() => {
+        try {
+          localStorage.removeItem(PROFILE_CACHE_PREFIX + uid);
+          localStorage.removeItem(STATS_CACHE_PREFIX + uid);
+          localStorage.removeItem(SELLER_CACHE_PREFIX + uid);
+          localStorage.removeItem(LAST_UID_KEY);
+        } catch(e) {}
+        toast('Account deleted', 'success');
+        setTimeout(() => location.href = 'shop-home.html', 600);
+      }).catch(err => {
+        if (err.code === 'auth/requires-recent-login') {
+          toast('Please log out and log back in, then try again', 'error');
+        } else {
+          toast('Failed: ' + err.message, 'error');
+        }
+      });
+    };
+
+    window.tgToggleDarkMode = function(el) {
+      const sw = document.getElementById('tg-dark-switch');
+      sw.classList.toggle('on');
+      const on = sw.classList.contains('on');
+      try { localStorage.setItem('toego_dark_mode', on ? '1' : '0'); } catch(e) {}
+      toast(on ? 'Dark mode enabled' : 'Dark mode disabled');
+    };
+
+    window.tgSelectLanguage = function() {
+      const langs = ['English', 'हिन्दी (Hindi)', 'தமிழ் (Tamil)', 'తెలుగు (Telugu)', 'বাংলা (Bengali)', 'मराठी (Marathi)'];
+      const pick = prompt('Choose language:\n\n' + langs.map((l,i) => (i+1) + '. ' + l).join('\n'), '1');
+      if (!pick) return;
+      const idx = parseInt(pick) - 1;
+      if (idx >= 0 && idx < langs.length) {
+        document.getElementById('tg-lang-desc').textContent = langs[idx];
+        try { localStorage.setItem('toego_lang', langs[idx]); } catch(e) {}
+        toast('Language set to ' + langs[idx], 'success');
+      }
+    };
+
+    window.tgReferEarn = function() {
+      const u = auth.currentUser;
+      if (!u) return;
+      const code = 'TOE' + u.uid.slice(0, 6).toUpperCase();
+      const msg = 'Hey! Use my TOEGO referral code ' + code + ' to get ₹100 off on your first order.';
+      const url = window.location.origin;
+      if (navigator.share) {
+        navigator.share({ title: 'TOEGO Referral', text: msg, url }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(msg + ' ' + url).then(() => toast('Referral code copied ✓', 'success'));
+      }
+    };
+
+    /* ═══ STATS LOADER ═══ */
+    async function loadStatsParallel(user) {
+      const uid = user.uid;
+      const ordersP = (async () => {
+        try {
+          const s = await db.collection('orders').where('customerId', '==', uid).get();
+          return s.size || 0;
+        } catch(e) {
+          try {
+            const s2 = await db.collection('orders').where('userId', '==', uid).get();
+            return s2.size || 0;
+          } catch(e2) { return 0; }
+        }
+      })();
+      const wishP = (async () => {
+        try {
+          const s = await db.collection('wishlists').doc(uid).get();
+          return (s.exists && Array.isArray(s.data().items)) ? s.data().items.length : 0;
+        } catch(e) { return 0; }
+      })();
+      const cartP = (async () => {
+        try {
+          const s = await db.collection('carts').doc(uid).collection('items').get();
+          let c = 0;
+          s.forEach(d => { c += Number(d.data().qty || 1); });
+          return c;
+        } catch(e) {
+          try {
+            const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+            return gc.reduce((a,i) => a + Number(i.qty||1), 0);
+          } catch(e2) { return 0; }
+        }
+      })();
+      const couponsP = (async () => {
+        try {
+          const s = await db.collection('coupons').where('active', '==', true).limit(10).get();
+          return s.size || 0;
+        } catch(e) { return 0; }
+      })();
+
+      const [orders, wish, cart, coupons] = await Promise.all([ordersP, wishP, cartP, couponsP]);
+      const stats = { orders, wish, cart, coupons };
+      T.renderStatsUI(stats);
+      T.cacheSet(STATS_CACHE_PREFIX + uid, stats);
+      return stats;
+    }
+
+    /* ═══ SELLER STATUS RESOLVER (from snap) ═══ */
+    function resolveSellerStatusFromSnap(user, userData, sellerSnap) {
+      userData = userData || {};
+      const role = (userData.role || 'customer').toLowerCase();
+      const isSuperAdmin = user.email === SUPER_ADMIN_EMAIL;
+      const isAdmin = role === 'admin' || role === 'superadmin';
+
+      if (isSuperAdmin || isAdmin) {
+        return { status: 'admin', data: null };
+      }
+      if (role === 'seller') {
+        return { status: 'approved', data: null };
+      }
+      if (!sellerSnap || !sellerSnap.exists) {
+        return { status: 'none', data: null };
+      }
+      const sd = sellerSnap.data();
+      const st = (sd.status || '').toLowerCase();
+      if (st === 'approved' || sd.approved === true) {
+        return { status: 'approved', data: sd };
+      } else if (st === 'rejected') {
+        return { status: 'rejected', data: sd };
+      } else {
+        return { status: 'pending', data: sd };
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       ⚡ ULTRA-FAST INIT — PARALLEL queries, cache-first paint
+       ═══════════════════════════════════════════════════════════ */
+    async function initFast(user) {
+      if (!user) {
+        window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
+        return;
+      }
+      if (LAST_INIT_UID === user.uid) return;
+      LAST_INIT_UID = user.uid;
+
+      /* Save last uid for instant paint on next visit */
+      T.safeSet(LAST_UID_KEY, user.uid);
+
+      /* STEP 1: Paint from cache (INSTANT, 0ms) */
+      const cachedProfile = T.cacheGet(PROFILE_CACHE_PREFIX + user.uid);
+      const cachedStats = T.cacheGet(STATS_CACHE_PREFIX + user.uid);
+      const cachedSeller = T.cacheGet(SELLER_CACHE_PREFIX + user.uid);
+
+      /* Preload avatar */
+      const photo = (cachedProfile && (cachedProfile.photoURL || cachedProfile._photoURL)) || user.photoURL;
+      if (photo) { const pre = new Image(); pre.src = photo; }
+
+      T.renderProfileUI(user, cachedProfile || {});
+      if (cachedStats) T.renderStatsUI(cachedStats);
+      if (cachedSeller && cachedSeller.status) {
+        T.renderSellerPills(cachedSeller.status, cachedSeller.data);
+        if (cachedSeller.status === 'admin') {
+          const adminSec = document.getElementById('tg-admin-sec');
+          if (adminSec) adminSec.style.display = 'block';
+        }
+      }
+
+      /* STEP 2: Fire ALL queries in PARALLEL (no sequential waits) */
+      const profileP = db.collection('users').doc(user.uid).get().catch(() => null);
+      const sellerP = db.collection('sellers').doc(user.uid).get().catch(() => null);
+      const statsP = loadStatsParallel(user).catch(() => null); /* fire-and-forget */
+
+      /* STEP 3: Process profile + seller in parallel */
+      const [profileSnap, sellerSnap] = await Promise.all([profileP, sellerP]);
+
+      let userData = {};
+      if (profileSnap && profileSnap.exists) {
+        userData = profileSnap.data();
+        USER_DOC = userData;
+      }
+
+      /* Render profile with fresh data */
+      T.renderProfileUI(user, userData);
+
+      /* Cache fresh profile */
+      T.cacheSet(PROFILE_CACHE_PREFIX + user.uid, {
+        ...userData,
         _displayName: user.displayName || '',
         _photoURL: user.photoURL || '',
         _email: user.email || ''
       });
-      return d;
-    } catch(e) {
-      renderProfileUI(user, {});
-      return {};
-    }
-  }
 
-  /* ========= MAIN FAST INIT ========= */
-  async function initFast(user) {
-    if (!user) {
-      window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
-      return;
-    }
-    if (LAST_INIT_UID === user.uid) return;
-    LAST_INIT_UID = user.uid;
+      /* Resolve seller pills */
+      const sellerStatus = resolveSellerStatusFromSnap(user, userData, sellerSnap);
+      T.renderSellerPills(sellerStatus.status, sellerStatus.data);
+      T.cacheSet(SELLER_CACHE_PREFIX + user.uid, { status: sellerStatus.status, data: sellerStatus.data });
 
-    // ⚡ STEP 1: INSTANT render from cache
-    const cachedProfile = cacheGet(PROFILE_CACHE_PREFIX + user.uid);
-    if (cachedProfile) {
-      renderProfileUI(user, cachedProfile, 'cache');
-    } else {
-      renderProfileUI(user, {});
-    }
-
-    const cachedStats = cacheGet(STATS_CACHE_PREFIX + user.uid);
-    if (cachedStats) renderStatsUI(cachedStats);
-
-    const cachedSeller = cacheGet(SELLER_CACHE_PREFIX + user.uid);
-    if (cachedSeller && cachedSeller.status) {
-      showSellerBanner(cachedSeller.status, cachedSeller.data);
-      if (cachedSeller.status === 'admin') {
+      /* Show admin section if applicable */
+      const role = (userData.role || 'customer').toLowerCase();
+      const isSuperAdmin = user.email === SUPER_ADMIN_EMAIL;
+      if (isSuperAdmin || role === 'admin' || role === 'superadmin') {
         document.getElementById('tg-admin-sec').style.display = 'block';
       }
+
+      /* Auto-upgrade role if seller approved but user doc lagging */
+      if (sellerStatus.status === 'approved' && role !== 'seller') {
+        db.collection('users').doc(user.uid).set({
+          role: 'seller', updatedAt: FV.serverTimestamp()
+        }, { merge: true }).catch(() => {});
+        userData.role = 'seller';
+        T.renderProfileUI(user, userData);
+      }
+
+      /* Stats already cached, no need to await */
+      statsP.catch(() => {});
     }
 
-    // ⚡ STEP 2: Fire everything in parallel
-    const profilePromise = loadUserDoc(user).then(d => {
-      return resolveSellerBanner(user, d);
-    }).then(sellerStatus => {
-      cacheSet(SELLER_CACHE_PREFIX + user.uid, { status: sellerStatus });
-    }).catch(() => {
-      return resolveSellerBanner(user, {}).then(s => cacheSet(SELLER_CACHE_PREFIX + user.uid, { status: s })).catch(() => {});
+    /* ═══ RESTORE LOCAL SETTINGS ═══ */
+    (function() {
+      try {
+        const dm = localStorage.getItem('toego_dark_mode') === '1';
+        if (dm) document.getElementById('tg-dark-switch').classList.add('on');
+      } catch(e) {}
+      try {
+        const lang = localStorage.getItem('toego_lang');
+        if (lang) document.getElementById('tg-lang-desc').textContent = lang;
+      } catch(e) {}
+    })();
+
+    /* ═══ AUTH GUARD — fast path first, then listener ═══ */
+    if (auth.currentUser) {
+      initFast(auth.currentUser);
+    }
+
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
+        return;
+      }
+      if (user.uid !== LAST_INIT_UID) {
+        initFast(user);
+      }
     });
 
-    const statsPromise = loadStatsParallel(user).catch(() => {});
-
-    await Promise.all([profilePromise, statsPromise]);
-  }
-
-  /* ========= RESTORE LOCAL SETTINGS ========= */
-  (function restoreSettings() {
-    try {
-      const dm = localStorage.getItem('toego_dark_mode') === '1';
-      if (dm) document.getElementById('tg-dark-switch').classList.add('on');
-    } catch(e) {}
-    try {
-      const lang = localStorage.getItem('toego_lang');
-      if (lang) document.getElementById('tg-lang-desc').textContent = lang;
-    } catch(e) {}
-  })();
-
-  /* ========= AUTH GUARD ========= */
-  const initialUser = auth.currentUser;
-  if (initialUser) {
-    initFast(initialUser);
-  }
-
-  auth.onAuthStateChanged((user) => {
-    if (!user) {
-      window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
-      return;
-    }
-    if (user.uid !== LAST_INIT_UID) {
-      initFast(user);
-    }
   });
-
-  loadThemeColor();
-
 })();
 </script>
 </body>
