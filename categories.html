@@ -76,7 +76,7 @@ a { color: inherit; text-decoration: none; }
 .tg-subcats-scroll { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
 .tg-subcats-scroll::-webkit-scrollbar { display: none; }
 .tg-subcat-chip { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 60px; cursor: pointer; position: relative; }
-.tg-subcat-img { width: 50px; height: 50px; border-radius: 50%; background: #f8f9fb; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #eee; }
+.tg-subcat-img { width: 50px; height: 50px; border-radius: 50%; background: #f8f9fb; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #eee; overflow: hidden; }
 .tg-subcat-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .tg-subcat-name { font-size: 11px; font-weight: 500; color: var(--text-main); text-align: center; }
 
@@ -103,8 +103,11 @@ a { color: inherit; text-decoration: none; }
 @media (hover: hover) {
   .tg-prod-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
 }
-.tg-prod-img { width: 100%; aspect-ratio: 4/5; background: #ffffff; padding: 12px; display: flex; align-items: center; justify-content: center; position: relative; }
-.tg-prod-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+/* ✅ IMAGE FULL CARD — no padding, object-fit cover */
+.tg-prod-img { width: 100%; aspect-ratio: 4/5; background: #f8f9fb; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.tg-prod-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
 .tg-discount-badge { position: absolute; top: 8px; right: 0; background: linear-gradient(135deg, #ff4d4d, #f9cb28); color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px 0 0 8px; z-index: 2; text-transform: uppercase; box-shadow: -2px 2px 6px rgba(255, 77, 77, 0.4); letter-spacing: 0.5px; }
 .tg-prod-tag-badge { position: absolute; top: 8px; left: 8px; background: #212121; color: #fff; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px; z-index: 2; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: 0.5px; }
 .tg-prod-tag-badge.hot { background: #f57c00; }
@@ -419,7 +422,6 @@ a { color: inherit; text-decoration: none; }
   let filterRating = 0;
   let sortBy = 'relevance';
 
-  // Temp state for filter modal (apply-on-confirm)
   let tempMinPrice = 0;
   let tempMaxPrice = 999999;
   let tempRating = 0;
@@ -449,7 +451,6 @@ a { color: inherit; text-decoration: none; }
 
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
-  // ---- Helpers ----
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -482,7 +483,6 @@ a { color: inherit; text-decoration: none; }
     }
   }
 
-  // ---- Voice ----
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
     recognition = new SpeechRecognition();
@@ -505,7 +505,6 @@ a { color: inherit; text-decoration: none; }
     try { recognition.start(); } catch(e) {}
   };
 
-  // ---- Cart Badge ----
   function updateCartBadge() {
     let count = 0;
     try {
@@ -530,7 +529,6 @@ a { color: inherit; text-decoration: none; }
     else b.style.display = 'none';
   }
 
-  // ---- Admin ----
   async function checkAdmin(user) {
     if (!user) { setAdmin(false); return; }
     if (user.email === SUPER_ADMIN_EMAIL) { setAdmin(true); return; }
@@ -552,7 +550,6 @@ a { color: inherit; text-decoration: none; }
     renderProducts();
   }
 
-  // ---- Product Visibility ----
   function isProductVisible(p) {
     if (p.active === false) return false;
     if (p.hidden === true) return false;
@@ -564,7 +561,6 @@ a { color: inherit; text-decoration: none; }
     return true;
   }
 
-  // ---- Category Matching (robust) ----
   function productMatchesCategory(p, cat) {
     const catNameSlug = slugify(cat.name);
     const catIdSlug = slugify(cat.id);
@@ -590,7 +586,6 @@ a { color: inherit; text-decoration: none; }
     return list.includes(s);
   }
 
-  // ---- Cache ----
   function persistCache() {
     try {
       localStorage.setItem(CACHE_CATS, JSON.stringify(ALL_CATEGORIES));
@@ -619,7 +614,6 @@ a { color: inherit; text-decoration: none; }
     return false;
   }
 
-  // ---- Normalize ----
   function normalizeCategory(doc) {
     const data = doc.data();
     let subs = data.subcategories || data.subs || [];
@@ -635,7 +629,6 @@ a { color: inherit; text-decoration: none; }
   }
 
   function applyCategories(cats) {
-    // Auto-reselect if current category disappeared
     const stillExists = cats.find(c => c.id === currentCatId);
     if (!stillExists) {
       currentCatId = cats.length ? cats[0].id : null;
@@ -647,7 +640,6 @@ a { color: inherit; text-decoration: none; }
     renderProducts();
   }
 
-  // ---- Realtime Listeners (cache-first via persistence) ----
   function setupListeners() {
     if (unsubCats) { try { unsubCats(); } catch(e) {} unsubCats = null; }
     if (unsubProds) { try { unsubProds(); } catch(e) {} unsubProds = null; }
@@ -657,7 +649,6 @@ a { color: inherit; text-decoration: none; }
     unsubCats = db.collection('categories').onSnapshot(snap => {
       const cats = snap.docs.map(normalizeCategory).filter(c => c.name).sort((a,b) => a.order - b.order);
       const isServer = !snap.metadata.fromCache;
-      // Don't wipe local cache with an empty cache snapshot
       if (cats.length > 0 || isServer) {
         applyCategories(cats);
         persistCache();
@@ -683,7 +674,6 @@ a { color: inherit; text-decoration: none; }
       setProgress(false);
     });
 
-    // Fallback: if nothing arrived in 8s and no cache, show error
     setTimeout(() => {
       if (!hasCache && ALL_CATEGORIES.length === 0) {
         setProgress(false);
@@ -705,7 +695,6 @@ a { color: inherit; text-decoration: none; }
     setupListeners();
   };
 
-  // ---- Renderers ----
   function renderSidebar() {
     const el = document.getElementById('tg-sidebar');
     if (!ALL_CATEGORIES.length) {
@@ -861,7 +850,6 @@ a { color: inherit; text-decoration: none; }
     }).join('');
   }
 
-  // ---- Handlers ----
   window.tgSelectCat = function(id) {
     currentCatId = id;
     currentSubName = 'all';
@@ -898,7 +886,6 @@ a { color: inherit; text-decoration: none; }
     renderProducts();
   };
 
-  // ---- Sort ----
   window.tgOpenSortSheet = function() {
     document.querySelectorAll('#tg-sort-modal .tg-fs-opt').forEach(el => {
       el.classList.toggle('active', el.dataset.sort === sortBy);
@@ -918,7 +905,6 @@ a { color: inherit; text-decoration: none; }
     renderProducts();
   };
 
-  // ---- Filter (temp state pattern - bug fix) ----
   function refreshFilterModalUI() {
     document.querySelectorAll('#tg-price-options .tg-fs-opt').forEach(el => {
       el.classList.toggle('active', Number(el.dataset.min) === tempMinPrice && Number(el.dataset.max) === tempMaxPrice);
@@ -1010,7 +996,6 @@ a { color: inherit; text-decoration: none; }
     renderProducts();
   };
 
-  // ---- Product Tag ----
   window.tgOpenTagModal = function(prodId, currentTag) {
     if (!IS_ADMIN) return;
     document.getElementById('tg-tag-prod-id').value = prodId;
@@ -1029,7 +1014,6 @@ a { color: inherit; text-decoration: none; }
     } catch(e) { toast('Error saving tag', 'error'); }
   };
 
-  // ---- CRUD ----
   window.tgOpenCatModal = function(id) {
     if (!IS_ADMIN) return;
     const title = document.getElementById('tg-cat-modal-title');
@@ -1156,7 +1140,6 @@ a { color: inherit; text-decoration: none; }
     finally { btn.disabled = false; deleteAction = null; }
   };
 
-  // ---- Scroll to top button visibility ----
   function attachScrollListener() {
     const scroller = document.getElementById('tg-prod-scroll');
     const btn = document.getElementById('tg-top-btn');
@@ -1167,7 +1150,6 @@ a { color: inherit; text-decoration: none; }
     }
   }
 
-  // ---- Online / Offline ----
   function updateOnlineStatus() {
     const off = document.getElementById('tg-offline');
     if (off) off.classList.toggle('show', !navigator.onLine);
@@ -1178,15 +1160,13 @@ a { color: inherit; text-decoration: none; }
     if (e.key && (e.key.includes('cart'))) updateCartBadge();
   });
 
-  // ---- Init ----
-  loadLocalCache();          // 0ms from localStorage
-  setupListeners();          // realtime from Firestore (cache-first if enabled)
+  loadLocalCache();
+  setupListeners();
   auth.onAuthStateChanged(u => checkAdmin(u));
   updateCartBadge();
   updateOnlineStatus();
   attachScrollListener();
 
-  // Hide progress if we already had cache
   if (hasCache) {
     setTimeout(() => setProgress(false), 500);
   }
