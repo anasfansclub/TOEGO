@@ -1574,18 +1574,20 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   };
 
   /* ═══════════════════════════════════════════════════════════════
-     ✅ NEW: BULLETPROOF BUYNOW ITEM ENSURER
-     Handles all cases:
-     1. Item already in cart → select it
-     2. Item in Firestore cart → fetch and add
-     3. Item not in cart but product exists → fetch product and add
+     ✅ FIXED: BULLETPROOF BUYNOW ITEM ENSURER
+     - Clears pending deletes for the buynow item
+     - Multi-strategy fetch with proper retries
      ═══════════════════════════════════════════════════════════════ */
   async function ensureBuyNowItem(docId) {
     if (!docId || !currentUser) return false;
 
-    /* Check 1: exact doc ID match */
+    /* ⭐ CRITICAL FIX: Remove from pending deletes if present */
+    _pendingCartDeletes.delete(docId);
+
+    /* Check 1: exact doc ID match in current cart */
     let found = cartItems.find(it => it.id === docId);
     if (found) {
+      selectedIds.clear();
       selectedIds.add(found.id);
       saveSelected();
       renderCart(true);
@@ -1595,6 +1597,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     /* Check 2: productId match */
     found = cartItems.find(it => it.productId === docId);
     if (found) {
+      selectedIds.clear();
       selectedIds.add(found.id);
       saveSelected();
       renderCart(true);
@@ -1611,6 +1614,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (!cartItems.find(it => it.id === item.id)) {
           cartItems = [...cartItems, ...enrichFromCacheSync([item])];
         }
+        selectedIds.clear();
         selectedIds.add(item.id);
         saveSelected();
         _saveMirror(currentUser.uid, cartItems);
@@ -1630,6 +1634,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (!cartItems.find(it => it.id === item.id)) {
           cartItems = [...cartItems, ...enrichFromCacheSync([item])];
         }
+        selectedIds.clear();
         selectedIds.add(item.id);
         saveSelected();
         _saveMirror(currentUser.uid, cartItems);
@@ -1638,9 +1643,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     } catch(e) { console.warn('[buynow] cart query fetch:', e); }
 
-    /* Check 5: Fetch product and add to cart ourselves */
+    /* Check 5: Parse docId to extract productId (format: productId|size|color) */
+    const parts = docId.split('|');
+    const productIdFromDoc = parts[0] || docId;
+    const sizeFromDoc = parts[1] || '';
+    const colorFromDoc = parts[2] || '';
+
+    /* Check 6: Fetch product and add to cart ourselves */
     try {
-      const prodDoc = await db.collection('products').doc(docId).get();
+      const prodDoc = await db.collection('products').doc(productIdFromDoc).get();
       if (prodDoc.exists) {
         const p = prodDoc.data();
         const newItem = {
@@ -1650,8 +1661,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           price: Number(p.price || 0),
           mrp: Number(p.compareAtPrice || p.mrp || 0),
           qty: 1,
-          size: '',
-          color: '',
+          size: sizeFromDoc,
+          color: colorFromDoc,
           sellerId: p.sellerId || p.seller_id || '',
           sellerName: p.sellerName || '',
           rating: p.rating || null,
@@ -1661,14 +1672,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           addedAt: FV.serverTimestamp()
         };
         const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-        const existing = await ref.get();
-        if (!existing.exists) {
-          await ref.set(newItem);
-        }
+        await ref.set(newItem, { merge: true });
         const item = { ...newItem, id: docId };
         if (!cartItems.find(it => it.id === item.id)) {
           cartItems = [...cartItems, ...enrichFromCacheSync([item])];
         }
+        selectedIds.clear();
         selectedIds.add(docId);
         saveSelected();
         _saveMirror(currentUser.uid, cartItems);
@@ -1999,6 +2008,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const buyNowDoc = buyNowFromUrl || buyNowFromSession;
     if (buyNowDoc) {
+      /* ⭐ CRITICAL FIX: Clear pending deletes for this doc */
+      _pendingCartDeletes.delete(buyNowDoc);
       selectedIds.clear();
       selectedIds.add(buyNowDoc);
       saveSelected();
@@ -2048,8 +2059,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
 
     /* ═══════════════════════════════════════════════════════════════
-       ✅ CRITICAL FIX: Ensure buynow item is loaded — with retries
-       Handles: slow product-page write, missing cart entry, etc.
+       ✅ CRITICAL FIX: Ensure buynow item is loaded — with multiple retries
+       Clears pending deletes AND re-fetches from server if needed
        ═══════════════════════════════════════════════════════════════ */
     if (buyNowDoc) {
       /* Attempt 1: immediate */
