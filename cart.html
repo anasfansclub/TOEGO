@@ -78,8 +78,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-item-off { font-size:13px; color:#388e3c; font-weight:700; }
 .tg-item-gst { font-size:11.5px; color:#666; margin-bottom:8px; display:flex; align-items:center; gap:6px; background:#f8f9fb; padding:5px 10px; border-radius:6px; align-self:flex-start; }
 .tg-item-gst b { color:#212121; font-weight:600; }
-.tg-item-delivery { font-size:12px; color:#212121; margin-bottom:10px; display:flex; align-items:center; gap:5px; font-weight:500; }
-.tg-item-delivery.same-day b { color:#fb641b; }
+
+/* ⭐ NEW: delivery row wrapper + free delivery tag */
+.tg-item-delivery-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+.tg-item-delivery { font-size:12px; color:#212121; display:inline-flex; align-items:center; gap:5px; font-weight:600; }
+.tg-item-delivery b { font-weight:700; color:#212121; }
+.tg-item-delivery.same-day, .tg-item-delivery.same-day b { color:#fb641b; }
+.tg-item-free-badge { font-size:10.5px; font-weight:800; color:#1b8a3a; background:linear-gradient(135deg,#e6f7ec,#c8e6c9); padding:3px 8px; border-radius:999px; letter-spacing:.3px; text-transform:uppercase; display:inline-flex; align-items:center; gap:3px; border:1px solid #b8e0c2; white-space:nowrap; }
+.tg-item-free-badge svg { width:10px; height:10px; stroke:currentColor; fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
 
 .tg-qty { display:inline-flex; align-items:center; border:1px solid #e0e0e0; border-radius:8px; overflow:hidden; align-self:flex-start; margin-bottom:10px; transition:border-color .15s; }
 .tg-qty:hover { border-color:#2874f0; }
@@ -308,6 +314,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-qty-val { min-width:38px; height:30px; font-size:13px; }
   .tg-item-actions { font-size:11.5px; gap:12px; }
   .tg-item-remove { top:8px; right:8px; width:26px; height:26px; opacity:.9; }
+  /* ⭐ delivery tag stays clearly visible on mobile */
+  .tg-item-delivery-row { margin-bottom:8px; gap:6px; }
+  .tg-item-delivery { font-size:11.5px; }
+  .tg-item-free-badge { font-size:9.5px; padding:2px 7px; }
   .tg-price-card { display:none; }
   .tg-trust { display:none; }
   .tg-mobile-order { display:flex; }
@@ -993,22 +1003,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  /* ⭐ FIXED: Bulletproof Kanpur pincode detection — 208xxx and 209xxx */
+  /* ⭐ Bulletproof Kanpur pincode detection — 208xxx and 209xxx */
   function isKanpurPincode(pin) {
     if (!pin) return false;
     const p = String(pin).trim().replace(/\s+/g, '');
     if (!/^\d{6}$/.test(p)) return false;
     const num = parseInt(p, 10);
-    /* Kanpur Nagar (city): 208001-208027
-       Kanpur Dehat (rural): 209101-209899
-       Full range: 208000-209999 */
     if (num >= 208000 && num <= 209999) return true;
-    /* Any pincode starting with 208 or 209 */
     if (p.startsWith('208') || p.startsWith('209')) return true;
     return false;
   }
 
-  /* ⭐ FIXED: Robust delivery info with city + pin check */
+  /* ⭐ Robust delivery info with city + pin check */
   function getDeliveryInfo() {
     let pin = String(getPin() || '').trim();
     const a = getAddr();
@@ -1016,23 +1022,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!pin && a.pin) pin = String(a.pin).trim();
     const cityL = city.toLowerCase();
 
-    /* 1. City check — "kanpur" anywhere in city name */
     if (cityL.includes('kanpur')) {
       return { text: 'Same Day Delivery', cls: 'same-day' };
     }
-
-    /* 2. Pincode check — 208xxx / 209xxx */
     if (isKanpurPincode(pin)) {
       return { text: 'Same Day Delivery', cls: 'same-day' };
     }
-
-    /* 3. Default — 3-5 days for all other pincodes */
     return { text: 'Delivery in 3-5 days', cls: '' };
   }
 
-  /* ⭐ NEW FIX: Directly refresh the delivery tag inside every product card.
-     This runs the moment a pincode / address changes so the tag updates
-     immediately (Same Day ⇄ 3-5 Days) without waiting for a re-render. */
+  /* ⭐ Directly refresh the delivery tag inside every product card.
+     Runs the moment a pincode / address changes so the tag updates
+     immediately on BOTH desktop and mobile (Same Day ⇄ 3-5 Days). */
   function refreshDeliveryTagsInPlace() {
     if (!_itemNodeMap || !_itemNodeMap.size) return;
     const dInfo = getDeliveryInfo();
@@ -1041,8 +1042,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (!node) return;
       const el = node.querySelector('.tg-item-delivery');
       if (!el) return;
-      el.className = 'tg-item-delivery' + (dInfo.cls ? ' ' + dInfo.cls : '');
-      el.innerHTML = '🚚 <b>' + esc(dInfo.text) + '</b>';
+      const newCls = 'tg-item-delivery' + (dInfo.cls ? ' ' + dInfo.cls : '');
+      if (el.className !== newCls) el.className = newCls;
+      if (el.getAttribute('data-delivery-text') !== dInfo.text) {
+        el.innerHTML = '🚚 <b>' + esc(dInfo.text) + '</b>';
+        el.setAttribute('data-delivery-text', dInfo.text);
+      }
     });
   }
 
@@ -1057,28 +1062,25 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
     setPin(clean);
 
-    /* Also update addr.pin if address exists */
     const addr = getAddr();
     if (addr && Object.keys(addr).length) {
       addr.pin = clean;
       setAddr(addr);
     }
 
-    /* Update pin label in UI */
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = clean;
 
-    /* Show delivery type in toast */
     const isKan = isKanpurPincode(clean);
     toast(
       isKan ? '✓ Same Day Delivery available for ' + clean : '✓ Delivery in 3-5 days for ' + clean,
       'success'
     );
 
-    /* ⭐ NEW FIX: update the delivery tag inside every product card instantly */
+    /* ⭐ Update delivery tags in product cards instantly (mobile + desktop) */
     refreshDeliveryTagsInPlace();
 
-    /* ⭐ Force FULL re-render — remove ALL structural sigs */
+    /* ⭐ Force FULL re-render */
     _itemNodeMap.forEach(node => {
       node.removeAttribute('data-struct-sig');
       node.removeAttribute('data-qty');
@@ -1309,7 +1311,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       ${ratingHtml}
       <div class="tg-item-price-row"><span class="tg-item-price">${fmtINR(price)}</span>${mrp > price ? `<span class="tg-item-mrp">${fmtINR(mrp)}</span>` : ''}${off > 0 ? `<span class="tg-item-off">${off}% off</span>` : ''}</div>
       ${gstPct > 0 ? `<div class="tg-item-gst">GST <b>${gstPct}%</b> ${gstIncluded ? '· incl.' : '· ' + fmtINR(gstAmt)}</div>` : ''}
-      <div class="tg-item-delivery ${dInfo.cls}">🚚 <b>${esc(dInfo.text)}</b></div>
+      <div class="tg-item-delivery-row">
+        <div class="tg-item-delivery ${dInfo.cls}" data-delivery-text="${esc(dInfo.text)}">🚚 <b>${esc(dInfo.text)}</b></div>
+        <span class="tg-item-free-badge"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>FREE Delivery</span>
+      </div>
       <div class="tg-qty">
         <button class="tg-qty-btn" onclick="tgChangeQty('${escapeAttr(item.id)}', -1)" ${qty<=1?'disabled':''}>−</button>
         <div class="tg-qty-val">${qty}</div>
@@ -2499,7 +2504,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
 
-    /* ⭐ NEW FIX: delivery tag ko turant update karo product cards me */
+    /* ⭐ Update delivery tags in product cards instantly */
     refreshDeliveryTagsInPlace();
 
     tgCloseAddrList();
@@ -2596,7 +2601,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = city + ' - ' + pin;
 
-    /* ⭐ NEW FIX: pincode save hote hi product cards ka delivery tag update karo */
+    /* ⭐ Update delivery tags instantly on BOTH desktop and mobile */
     refreshDeliveryTagsInPlace();
 
     try {
@@ -2622,7 +2627,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.getElementById('tg-pay-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
   };
-  window.tgClosePay = function() { document.getElementById('tg-pay-modal').classList.remove('show'); document.body.style.overflow = ''; };
+  window.tgClosePay = function() {
+    document.getElementById('tg-pay-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    /* ⭐ Safety: refresh delivery tags when pay modal closes */
+    refreshDeliveryTagsInPlace();
+  };
   window.tgPickPay = function(method, el) {
     pendingPayMethod = method;
     document.querySelectorAll('.tg-pay-opt').forEach(o => o.classList.remove('active'));
@@ -2924,6 +2934,26 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     console.log('Cart items:', cartItems.length);
     console.log('═══════════════════════');
   };
+
+  /* ⭐ Safety net: keep delivery tag in sync every 1.5s (mobile included) */
+  setInterval(() => {
+    try {
+      if (!cartItems.length || !_itemNodeMap.size) return;
+      const dInfo = getDeliveryInfo();
+      cartItems.forEach(it => {
+        const node = _itemNodeMap.get(it.id);
+        if (!node) return;
+        const el = node.querySelector('.tg-item-delivery');
+        if (!el) return;
+        const newCls = 'tg-item-delivery' + (dInfo.cls ? ' ' + dInfo.cls : '');
+        if (el.className !== newCls) el.className = newCls;
+        if (el.getAttribute('data-delivery-text') !== dInfo.text) {
+          el.innerHTML = '🚚 <b>' + esc(dInfo.text) + '</b>';
+          el.setAttribute('data-delivery-text', dInfo.text);
+        }
+      });
+    } catch(e) {}
+  }, 1500);
 
   /* ========== BOOT ========== */
   loadSelected();
