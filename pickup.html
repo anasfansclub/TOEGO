@@ -79,6 +79,25 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-hs-n.green{color:#4ade80;}
 .tg-hs-l{font-size:9.5px;color:#8892a6;text-transform:uppercase;letter-spacing:0.6px;margin-top:4px;font-weight:800;}
 
+/* ⭐ NEW: Rate banner on dashboard */
+.tg-rate-banner{background:linear-gradient(135deg,rgba(250,204,21,0.15),rgba(245,158,11,0.1));border:1.5px solid rgba(250,204,21,0.4);border-radius:14px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.tg-rate-banner-ic{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0a0e1a;font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 20px rgba(250,204,21,0.4);}
+.tg-rate-banner-body{flex:1;min-width:0;}
+.tg-rate-banner-label{font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;}
+.tg-rate-banner-value{font-size:24px;font-weight:900;color:#facc15;font-family:'JetBrains Mono',monospace;line-height:1;}
+.tg-rate-banner-note{font-size:11px;color:#8892a6;margin-top:4px;}
+
+/* ⭐ NEW: Announcements */
+.tg-ann-section{margin-bottom:14px;}
+.tg-ann-list{display:flex;flex-direction:column;gap:10px;}
+.tg-ann-card{background:linear-gradient(135deg,rgba(236,72,153,0.1),rgba(190,24,93,0.06));border:1.5px solid rgba(236,72,153,0.35);border-radius:14px;padding:14px 16px;position:relative;overflow:hidden;}
+.tg-ann-card::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(236,72,153,0.2),transparent 70%);border-radius:50%;}
+.tg-ann-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;position:relative;z-index:2;}
+.tg-ann-icon{width:32px;height:32px;border-radius:50%;background:rgba(236,72,153,0.2);color:#f472b6;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.tg-ann-title{font-size:14px;font-weight:900;color:#fff;margin-bottom:2px;}
+.tg-ann-time{font-size:10px;color:#8892a6;font-family:monospace;}
+.tg-ann-body{font-size:12.5px;color:#cbd5e1;line-height:1.55;position:relative;z-index:2;white-space:pre-wrap;}
+
 .tg-scan-dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 @media (max-width:480px){.tg-scan-dual{grid-template-columns:1fr;}}
 .tg-scan-card{border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid;}
@@ -116,6 +135,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-sh-r{text-align:right;flex-shrink:0;}
 .tg-sh-cnt{font-size:22px;font-weight:900;color:#00d4ff;line-height:1;font-family:'JetBrains Mono',monospace;}
 .tg-sh-cnt-l{font-size:9.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+.tg-sh-actions{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.05);}
+.tg-sh-actions button{flex:1;padding:8px 10px;border-radius:8px;font-size:10.5px;font-weight:800;letter-spacing:0.3px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:4px;transition:all .15s;}
+.tg-sh-actions .call{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+.tg-sh-actions .wa{background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);}
+.tg-sh-actions .map{background:rgba(0,212,255,0.15);color:#00d4ff;border:1px solid rgba(0,212,255,0.3);}
 
 .tg-parcel{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:12px;}
 .tg-parcel:last-child{border-bottom:none;}
@@ -260,6 +284,28 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-blocked-title{font-size:22px;font-weight:900;color:#f87171;letter-spacing:-0.3px;}
 .tg-blocked-desc{font-size:14px;color:#8892a6;max-width:360px;line-height:1.6;}
 
+/* ⭐ NEW: Search + filter */
+.tg-search-box{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin:12px 14px;}
+.tg-search-box svg{width:16px;height:16px;stroke:#00d4ff;fill:none;stroke-width:2.4;}
+.tg-search-box input{flex:1;border:none;outline:none;font-size:13.5px;background:transparent;color:#fff;min-width:0;}
+.tg-search-box input::placeholder{color:#64748b;}
+
+.tg-filter-row{display:flex;gap:8px;padding:8px 14px;overflow-x:auto;scrollbar-width:none;}
+.tg-filter-row::-webkit-scrollbar{display:none;}
+.tg-filter-chip{padding:6px 14px;border-radius:999px;font-size:11.5px;font-weight:800;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);color:#cbd5e1;white-space:nowrap;cursor:pointer;text-transform:uppercase;letter-spacing:0.4px;transition:all .15s;}
+.tg-filter-chip.active{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;border-color:transparent;}
+
+/* ⭐ NEW: Profile edit form */
+.tg-fld{margin-bottom:14px;}
+.tg-fld label{display:block;font-size:11px;color:#8892a6;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.6px;}
+.tg-fld input,.tg-fld select,.tg-fld textarea{width:100%;border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:14px;outline:none;background:rgba(255,255,255,0.04);color:#fff;font-family:inherit;}
+.tg-fld input:focus,.tg-fld select:focus,.tg-fld textarea:focus{border-color:#00d4ff;background:rgba(0,212,255,0.06);}
+.tg-fld textarea{min-height:70px;resize:vertical;}
+.tg-mod-a{display:flex;gap:10px;margin-top:14px;}
+.tg-mod-b{flex:1;padding:13px;border-radius:12px;font-size:13.5px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
+.tg-mod-b.pri{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;}
+.tg-mod-b.gho{background:rgba(255,255,255,0.06);color:#cbd5e1;border:1px solid rgba(255,255,255,0.08);}
+
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:3px;}
@@ -333,6 +379,19 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         </div>
       </div>
 
+      <!-- ⭐ NEW: Rate Banner -->
+      <div class="tg-rate-banner">
+        <div class="tg-rate-banner-ic">💰</div>
+        <div class="tg-rate-banner-body">
+          <div class="tg-rate-banner-label">Your Rate Per Packet</div>
+          <div class="tg-rate-banner-value" id="rate-display">₹10</div>
+          <div class="tg-rate-banner-note">Admin set करता है · Rate बदलने पर आपको notify किया जाएगा</div>
+        </div>
+      </div>
+
+      <!-- ⭐ NEW: Announcements -->
+      <div id="ann-dash-container"></div>
+
       <div class="tg-scan-dual">
         <div class="tg-scan-card bulk" onclick="openScanner('bulk')">
           <div class="tg-scan-card-badge">FASTEST</div>
@@ -366,11 +425,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     </div>
 
     <div class="tg-v" id="v-sellers">
-      <div style="background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px);">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="seller-search" placeholder="Search seller..." oninput="renderSellerGroups()" style="flex:1;border:none;outline:none;font-size:14px;background:transparent;color:#fff;min-width:0;">
+      <div class="tg-search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="seller-search" placeholder="Search seller..." oninput="renderSellerGroups()">
       </div>
-      <div id="sellers-full-list"></div>
+      <div id="sellers-full-list" style="padding:0 14px;"></div>
     </div>
 
     <div class="tg-v" id="v-collected">
@@ -379,7 +438,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <div><div class="tg-st">📦 Collected</div><div class="tg-ss">Aapke paas hain · admin ko handover karo</div></div>
           <span class="tg-parcel-badge" id="col-count">0</span>
         </div>
-        <div id="collected-list" style="padding:12px;"></div>
+        <div class="tg-search-box" style="margin:0 14px 12px;">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" id="col-search" placeholder="Search order, seller..." oninput="renderCollected()">
+        </div>
+        <div id="collected-list" style="padding:0 14px 12px;"></div>
       </div>
 
       <div class="tg-sec">
@@ -401,11 +464,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         </div>
       </div>
 
+      <div class="tg-filter-row" id="earn-filters">
+        <div class="tg-filter-chip active" data-f="week" onclick="tgFilterEarnings('week')">This Week</div>
+        <div class="tg-filter-chip" data-f="month" onclick="tgFilterEarnings('month')">This Month</div>
+        <div class="tg-filter-chip" data-f="all" onclick="tgFilterEarnings('all')">All Time</div>
+      </div>
+
       <div class="tg-sec">
-        <div class="tg-sh"><div><div class="tg-st">💵 Earning Breakdown</div><div class="tg-ss">Current week</div></div></div>
-        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">📦 Scans this week</div></div><div class="tg-hist-amt" id="e-week-scans" style="color:#fff;">0</div></div>
+        <div class="tg-sh"><div><div class="tg-st">💵 Earning Breakdown</div><div class="tg-ss" id="earn-period-lbl">Current week</div></div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">📦 Scans</div></div><div class="tg-hist-amt" id="e-week-scans" style="color:#fff;">0</div></div>
         <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">💰 Rate per packet</div></div><div class="tg-hist-amt" id="e-rate" style="color:#fff;">₹0</div></div>
-        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t" style="color:#4ade80;">Week Earnings</div></div><div class="tg-hist-amt" id="e-week-earn" style="font-size:17px;">₹0</div></div>
+        <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t" style="color:#4ade80;">Total Earnings</div></div><div class="tg-hist-amt" id="e-week-earn" style="font-size:17px;">₹0</div></div>
       </div>
 
       <div class="tg-sec">
@@ -425,6 +494,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         </div>
       </div>
 
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="tg-btn pri wide" style="padding:12px;font-size:12px;" onclick="tgOpenProfileEdit()">✏️ Edit Profile</button>
+      </div>
+
       <div class="tg-sec">
         <div class="tg-sh"><div><div class="tg-st">📊 My Stats</div></div></div>
         <div class="tg-hist-row"><div class="tg-hist-b"><div class="tg-hist-t">📦 Total Scans</div></div><div class="tg-hist-amt" id="p-total-scans" style="color:#fff;">0</div></div>
@@ -437,7 +510,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         <div id="payout-hist"></div>
       </div>
 
-      <div style="text-align:center;font-size:11px;color:#4b5563;padding:20px 0;">TOEGO Pickup Partner · v4.0 LIVE</div>
+      <div style="text-align:center;font-size:11px;color:#4b5563;padding:20px 0;">TOEGO Pickup Partner · v5.0 LIVE</div>
     </div>
 
   </div>
@@ -519,6 +592,22 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
+<!-- ⭐ NEW: Profile Edit Modal -->
+<div class="tg-mod" id="tg-profile-modal">
+  <div class="tg-mod-c" style="max-width:480px;">
+    <div class="tg-mod-h"><div class="tg-mod-t">✏️ Edit Profile</div><button class="tg-mod-x" onclick="tgCloseProfileEdit()">✕</button></div>
+    <div class="tg-fld"><label>Full Name *</label><input type="text" id="pe-name" maxlength="60"></div>
+    <div class="tg-fld"><label>Phone</label><input type="tel" id="pe-phone" maxlength="10"></div>
+    <div class="tg-fld"><label>Zone</label><input type="text" id="pe-zone" maxlength="40"></div>
+    <div class="tg-fld"><label>UPI ID</label><input type="text" id="pe-upi" maxlength="60" placeholder="yourname@upi"></div>
+    <div class="tg-fld"><label>Bank Account (optional)</label><input type="text" id="pe-bank" maxlength="20" placeholder="Account number"></div>
+    <div class="tg-mod-a">
+      <button class="tg-mod-b gho" onclick="tgCloseProfileEdit()">Cancel</button>
+      <button class="tg-mod-b pri" id="pe-save-btn" onclick="tgSaveProfile()">💾 Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="tg-flash-overlay" id="tg-flash">
   <div class="tg-flash-icon" id="tg-flash-icon">✓</div>
 </div>
@@ -554,6 +643,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let HANDOVERS = [];
   let LOGS = [];
   let SETTLEMENTS = [];
+  let SELLERS_MAP = {};           // ⭐ NEW
+  let ANNOUNCEMENTS = [];          // ⭐ NEW
+  let MY_ANNOUNCEMENTS = [];       // ⭐ NEW (filtered for this partner)
   let scanner = null;
   let scannerRunning = false;
   let confirmCb = null;
@@ -561,6 +653,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let SCAN_MODE = 'bulk';
   let BULK_SESSION = { count: 0, earned: 0, scannedIds: [], recent: [] };
   let unsubT, unsubH, unsubL, unsubS, unsubPartner, unsubUser;
+  let unsubSellers = null, unsubAnn = null;    // ⭐ NEW
   let audioCtx = null;
   let soundEnabled = true;
   try { soundEnabled = localStorage.getItem('tg_pickup_sound') !== '0'; } catch(e) {}
@@ -573,13 +666,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let IS_BLOCKED = false;
   let JUST_APPROVED_SHOWN = false;
   let CUR_VIEW = 'dash';
+  let EARN_FILTER = 'week';        // ⭐ NEW
 
-  /* ⭐ NEW: Scan processing flag + cooldown for duplicate prevention */
   let _scanProcessing = false;
   let _scanCooldownUntil = 0;
   let _scannerCleanupTimer = null;
 
-  /* ⭐ NEW: Performance - render debounce + earnings cache */
   let _heavyRenderTimer = null;
   let _calcEarningsCache = null;
   let _calcEarningsCacheKey = '';
@@ -592,13 +684,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function ini(n) { return String(n||'P').trim().charAt(0).toUpperCase(); }
   function setText(id,v) { const el = document.getElementById(id); if (el) el.textContent = v; }
   function openM(id) { const el = document.getElementById(id); if (el) { el.classList.add('show'); document.body.style.overflow='hidden'; } }
-  function closeM(id) { const el = document.getElementById(id); if (el) { el.classList.remove('show'); document.body.style.overflow=''; } }
+  function closeM(id) { const el = document.getElementById(id); if (el) { el.classList.remove('show'); if (!document.querySelector('.tg-mod.show')) document.body.style.overflow=''; } }
 
-  /* ⭐ NEW: Order ID extraction — handles plain barcode + QR format */
   function extractOrderIdFromScan(rawCode) {
     let clean = String(rawCode || '').trim().toUpperCase();
     if (!clean) return '';
-    // Handle QR format: TOEGO|ORDER_ID|PINCODE|AMOUNT|MODE
     if (clean.startsWith('TOEGO|')) {
       const parts = clean.split('|');
       if (parts[1]) clean = parts[1].trim();
@@ -607,7 +697,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return clean;
   }
 
-  /* ⭐ NEW: Get all possible ID candidates from task */
   function getTaskCandidates(t) {
     if (!t) return [];
     const out = new Set();
@@ -623,7 +712,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return Array.from(out).filter(Boolean);
   }
 
-  /* ⭐ NEW: Match scanned code against task */
   function taskMatchesScan(t, scanCode) {
     const clean = String(scanCode || '').toUpperCase().trim();
     if (!clean || clean.length < 3) return false;
@@ -853,15 +941,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function updatePartnerUI() {
     if (!PARTNER) return;
     const name = PARTNER.name || 'Partner';
+    const rate = Number(PARTNER.ratePerPacket || 10);
     setText('hi-name', 'Hi ' + name.split(' ')[0] + '! 👋');
     setText('hi-zone', (PARTNER.zone||'') || '—');
     setText('p-av', ini(name));
     setText('p-name', name);
     setText('p-zone', 'Zone: ' + (PARTNER.zone||'—'));
     setText('p-phone', '📞 ' + (PARTNER.phone||'—'));
-    setText('p-rate-tag', '💰 ' + inr(PARTNER.ratePerPacket || 10) + '/packet');
-    setText('d-rate', inr(PARTNER.ratePerPacket || 10));
-    setText('e-rate', inr(PARTNER.ratePerPacket || 10));
+    setText('p-rate-tag', '💰 ' + inr(rate) + '/packet');
+    setText('d-rate', inr(rate));
+    setText('e-rate', inr(rate));
+    setText('rate-display', inr(rate));  // ⭐ NEW
   }
 
   function initUI() {
@@ -876,7 +966,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     initHistory();
   }
 
-  /* ⭐ NEW: History management for back button */
   function initHistory() {
     try {
       const hash = (location.hash || '').replace('#', '');
@@ -909,9 +998,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const el = document.getElementById('v-' + v); if (el) el.classList.add('active');
     document.querySelectorAll('.tg-bn').forEach(i => i.classList.toggle('active', i.dataset.v === v));
     window.scrollTo({top:0,behavior:'smooth'});
-    /* ⭐ Only render active view */
     requestAnimationFrame(() => {
-      if (v === 'dash') { renderDash(); }
+      if (v === 'dash') { renderDash(); renderAnnouncementsDash(); }
       if (v === 'sellers') renderSellerGroups();
       if (v === 'collected') { renderCollected(); renderHandovers(); }
       if (v === 'earn') renderEarnings();
@@ -978,17 +1066,85 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       window.__prevSettleCount = SETTLEMENTS.length;
       scheduleHeavyRender();
     }, () => {});
+
+    // ⭐ NEW: Listen to sellers for info fallback
+    listenSellers();
+
+    // ⭐ NEW: Listen to announcements
+    listenAnnouncements();
   }
 
-  /* ⭐ ULTRA SPEED: Debounce heavy renders */
+  /* ⭐ NEW: Sellers Map (fix seller info bug) */
+  function listenSellers() {
+    if (unsubSellers) try { unsubSellers(); } catch(e){}
+    try {
+      unsubSellers = db.collection('sellers').onSnapshot(snap => {
+        SELLERS_MAP = {};
+        snap.docs.forEach(d => {
+          SELLERS_MAP[d.id] = { id: d.id, ...d.data() };
+        });
+        // Re-render with fresh seller info
+        if (CUR_VIEW === 'dash') renderDash();
+        else if (CUR_VIEW === 'sellers') renderSellerGroups();
+        else if (CUR_VIEW === 'collected') renderCollected();
+      }, err => console.warn('Sellers err:', err && err.message));
+    } catch(e) {}
+  }
+
+  /* ⭐ NEW: Announcements */
+  function listenAnnouncements() {
+    if (unsubAnn) try { unsubAnn(); } catch(e){}
+    try {
+      unsubAnn = db.collection('announcements').where('active', '==', true).onSnapshot(snap => {
+        ANNOUNCEMENTS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Filter for this partner
+        const myId = USER.uid;
+        const myZone = (PARTNER && PARTNER.zone) || '';
+        MY_ANNOUNCEMENTS = ANNOUNCEMENTS.filter(a => {
+          if (a.target === 'all') return true;
+          if (a.target === 'zone' && a.targetValue === myZone) return true;
+          if (a.target === 'partner' && a.targetValue === myId) return true;
+          return false;
+        });
+        // Sort newest first
+        MY_ANNOUNCEMENTS.sort((a, b) => {
+          const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+          const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+          return bt - at;
+        });
+        if (CUR_VIEW === 'dash') renderAnnouncementsDash();
+      }, err => console.warn('Ann err:', err && err.message));
+    } catch(e) {}
+  }
+
+  /* ⭐ NEW: Render Announcements on Dashboard */
+  function renderAnnouncementsDash() {
+    const container = document.getElementById('ann-dash-container');
+    if (!container) return;
+    if (!MY_ANNOUNCEMENTS.length) { container.innerHTML = ''; return; }
+    const recent = MY_ANNOUNCEMENTS.slice(0, 3);
+    container.innerHTML = '<div class="tg-ann-section">' + recent.map(a => {
+      const dt = a.createdAt?.toDate ? a.createdAt.toDate() : null;
+      return '<div class="tg-ann-card">' +
+        '<div class="tg-ann-head">' +
+          '<div class="tg-ann-icon">📢</div>' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div class="tg-ann-title">' + esc(a.title || 'Announcement') + '</div>' +
+            '<div class="tg-ann-time">' + (dt ? fdate(dt) + ' · ' + ftime(dt) : '') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tg-ann-body">' + esc(a.message || '') + '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+
   function scheduleHeavyRender() {
     if (_heavyRenderTimer) return;
     _heavyRenderTimer = setTimeout(() => {
       _heavyRenderTimer = null;
       renderHeaderStats();
       updateBadges();
-      /* Only render active view */
-      if (CUR_VIEW === 'dash') renderDash();
+      if (CUR_VIEW === 'dash') { renderDash(); renderAnnouncementsDash(); }
       else if (CUR_VIEW === 'sellers') renderSellerGroups();
       else if (CUR_VIEW === 'collected') { renderCollected(); renderHandovers(); }
       else if (CUR_VIEW === 'earn') renderEarnings();
@@ -1048,7 +1204,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const q = (document.getElementById('seller-search')?.value || '').toLowerCase().trim();
     const groups = groupBySeller(TASKS.filter(t => (t.status||'assigned') === 'assigned'));
     let list = groups;
-    if (q) list = list.filter(g => (g.sellerName||'').toLowerCase().includes(q) || (g.sellerPincode||'').includes(q));
+    if (q) list = list.filter(g => (g.sellerName||'').toLowerCase().includes(q) || (g.sellerPincode||'').includes(q) || (g.sellerPhone||'').includes(q));
     if (!list.length) {
       el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">🏪</div><div class="tg-empty-t">No sellers</div><div class="tg-empty-d">Assigned sellers yahan dikhenge</div></div>';
       return;
@@ -1056,17 +1212,21 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     el.innerHTML = list.map(g => sellerCard(g)).join('');
   }
 
+  /* ⭐ FIXED: Use SELLERS_MAP fallback for missing seller info */
   function groupBySeller(tasks) {
     const map = new Map();
     tasks.forEach(t => {
       const sid = t.sellerId || 'unknown';
       if (!map.has(sid)) {
+        const s = SELLERS_MAP[sid] || {};
         map.set(sid, {
           sellerId: sid,
-          sellerName: t.sellerName || 'Seller',
-          sellerPhone: t.sellerPhone || '',
-          sellerAddress: t.sellerAddress || '',
-          sellerPincode: t.sellerPincode || '',
+          sellerName: t.sellerName || s.shopName || s.name || s.ownerName || 'Seller',
+          sellerPhone: t.sellerPhone || s.phone || s.mobile || s.contactPhone || '',
+          sellerAddress: t.sellerAddress || s.address || s.shopAddress || '',
+          sellerPincode: t.sellerPincode || s.pincode || s.zip || '',
+          sellerCity: t.sellerCity || s.city || '',
+          sellerState: t.sellerState || s.state || '',
           tasks: []
         });
       }
@@ -1075,27 +1235,56 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return Array.from(map.values());
   }
 
+  /* ⭐ ENHANCED: Seller card with Call/WA/Map + full address */
   function sellerCard(g) {
     const count = g.tasks.length;
-    return '<div class="tg-seller" onclick="openSellerTasks(\'' + esc(g.sellerId) + '\')">' +
-      '<div class="tg-sh-head">' +
+    const hasPhone = g.sellerPhone && g.sellerPhone.length >= 10;
+    const fullAddr = [g.sellerAddress, g.sellerCity, g.sellerState, g.sellerPincode].filter(Boolean).join(', ');
+    return '<div class="tg-seller">' +
+      '<div class="tg-sh-head" onclick="openSellerTasks(\'' + esc(g.sellerId) + '\')">' +
         '<div class="tg-sh-av">' + esc(ini(g.sellerName)) + '</div>' +
         '<div class="tg-sh-b">' +
           '<div class="tg-sh-n">' + esc(g.sellerName) + '</div>' +
           '<div class="tg-sh-a"><span>📞 ' + esc(g.sellerPhone || '—') + '</span></div>' +
-          (g.sellerPincode ? '<div class="tg-sh-a" style="margin-top:4px;"><span>📍 ' + esc(g.sellerPincode) + '</span></div>' : '') +
+          (fullAddr ? '<div class="tg-sh-a" style="margin-top:4px;"><span>📍 ' + esc(fullAddr) + '</span></div>' : '') +
         '</div>' +
         '<div class="tg-sh-r">' +
           '<div class="tg-sh-cnt">' + count + '</div>' +
           '<div class="tg-sh-cnt-l">Packet' + (count > 1 ? 's' : '') + '</div>' +
         '</div>' +
       '</div>' +
+      '<div class="tg-sh-actions" onclick="event.stopPropagation();">' +
+        (hasPhone ? '<button class="call" onclick="tgCallSeller(\'' + esc(g.sellerPhone) + '\')">📞 Call</button>' : '') +
+        (hasPhone ? '<button class="wa" onclick="tgWhatsAppSeller(\'' + esc(g.sellerPhone) + '\', \'' + esc(g.sellerName) + '\')">💬 WhatsApp</button>' : '') +
+        (fullAddr ? '<button class="map" onclick="tgOpenMap(\'' + esc(fullAddr) + '\')">🗺️ Navigate</button>' : '') +
+      '</div>' +
     '</div>';
   }
+
+  /* ⭐ NEW: Call / WhatsApp / Map helpers */
+  window.tgCallSeller = function(phone) {
+    if (!phone) { toast('No phone', 'error'); return; }
+    const p = String(phone).replace(/\D/g, '');
+    if (p.length < 10) { toast('Invalid phone', 'error'); return; }
+    window.location.href = 'tel:' + (p.length === 10 ? '+91' + p : p);
+  };
+  window.tgWhatsAppSeller = function(phone, name) {
+    if (!phone) { toast('No phone', 'error'); return; }
+    const p = String(phone).replace(/\D/g, '');
+    if (p.length < 10) { toast('Invalid phone', 'error'); return; }
+    const msg = encodeURIComponent('Hi ' + (name || '') + ', TOEGO pickup partner here. Aapke parcel pickup karne aa raha hoon.');
+    window.open('https://wa.me/' + (p.length === 10 ? '91' + p : p) + '?text=' + msg, '_blank');
+  };
+  window.tgOpenMap = function(addr) {
+    if (!addr) { toast('No address', 'error'); return; }
+    const q = encodeURIComponent(addr);
+    window.open('https://www.google.com/maps/search/?api=1&query=' + q, '_blank');
+  };
 
   window.openSellerTasks = function(sid) {
     const group = groupBySeller(TASKS.filter(t => (t.status||'assigned') === 'assigned')).find(g => g.sellerId === sid);
     if (!group) { toast('No parcels', 'info'); return; }
+    const fullAddr = [group.sellerAddress, group.sellerCity, group.sellerState, group.sellerPincode].filter(Boolean).join(', ');
     const modal = document.createElement('div');
     modal.id = 'tg-seller-modal';
     modal.className = 'tg-mod show';
@@ -1107,7 +1296,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '</div>' +
         '<div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:12px 14px;font-size:12.5px;color:#cbd5e1;line-height:1.6;margin-bottom:12px;">' +
           '📞 ' + esc(group.sellerPhone || '—') + '<br>' +
-          '📍 ' + esc(group.sellerAddress || '—') + (group.sellerPincode ? ' · ' + esc(group.sellerPincode) : '') +
+          '📍 ' + esc(fullAddr || '—') +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+          (group.sellerPhone ? '<button class="tg-btn suc" style="flex:1;justify-content:center;padding:10px;font-size:11.5px;" onclick="tgCallSeller(\'' + esc(group.sellerPhone) + '\')">📞 Call</button>' : '') +
+          (group.sellerPhone ? '<button class="tg-btn gho" style="flex:1;justify-content:center;padding:10px;font-size:11.5px;background:rgba(37,211,102,0.15);color:#25d366;border-color:rgba(37,211,102,0.3);" onclick="tgWhatsAppSeller(\'' + esc(group.sellerPhone) + '\', \'' + esc(group.sellerName) + '\')">💬 WhatsApp</button>' : '') +
+          (fullAddr ? '<button class="tg-btn gho" style="flex:1;justify-content:center;padding:10px;font-size:11.5px;" onclick="tgOpenMap(\'' + esc(fullAddr) + '\')">🗺️ Map</button>' : '') +
         '</div>' +
         '<button class="tg-btn suc wide" style="padding:12px;margin-bottom:10px;font-size:12.5px;" onclick="startBulkFromSeller(\'' + esc(sid) + '\')">' +
           '<svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>' +
@@ -1148,10 +1342,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     '</div>';
   }
 
+  /* ⭐ ENHANCED: renderCollected with search */
   function renderCollected() {
     const el = document.getElementById('collected-list'); if (!el) return;
-    const collected = TASKS.filter(t => t.status === 'collected');
-    setText('col-count', collected.length);
+    const q = (document.getElementById('col-search')?.value || '').toLowerCase().trim();
+    let collected = TASKS.filter(t => t.status === 'collected');
+    if (q) collected = collected.filter(t => [(t.sellerName||''),(t.orderId||''),(t.orderDisplayId||''),(t.buyerName||'')].join(' ').toLowerCase().includes(q));
+    setText('col-count', TASKS.filter(t => t.status === 'collected').length);
     if (!collected.length) {
       el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No collected packets</div><div class="tg-empty-d">Scan karke packets collect karo</div></div>';
       return;
@@ -1196,21 +1393,38 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('');
   }
 
-  /* ⭐ ULTRA SPEED: Cache earnings */
+  /* ⭐ NEW: Filter chips for earnings */
+  window.tgFilterEarnings = function(f) {
+    EARN_FILTER = f;
+    document.querySelectorAll('#earn-filters .tg-filter-chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
+    const lbl = document.getElementById('earn-period-lbl');
+    if (lbl) lbl.textContent = f === 'week' ? 'Current week' : f === 'month' ? 'This month' : 'All time';
+    renderEarnings();
+  };
+
   function calcEarnings() {
-    const key = ORDERS_KEY_HASH();
+    const key = EARN_FILTER + '|' + LOGS.length + '|' + SETTLEMENTS.length + '|' + (LOGS[0]?.id||'');
     if (_calcEarningsCacheKey === key && _calcEarningsCache) return _calcEarningsCache;
-    const ws = getWeekStart();
-    let pending = 0, weekEarn = 0, weekScans = 0, settled = 0;
+    const now = new Date();
+    let periodStart = 0;
+    if (EARN_FILTER === 'week') {
+      const d = new Date();
+      const day = d.getDay();
+      const diff = day === 0 ? 6 : day - 1;
+      periodStart = new Date(d.getFullYear(), d.getMonth(), d.getDate() - diff, 0, 0, 0).getTime();
+    } else if (EARN_FILTER === 'month') {
+      periodStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    }
+    let pending = 0, periodEarn = 0, periodScans = 0, settled = 0;
     LOGS.forEach(l => {
       const t = l.createdAt?.toDate?.()?.getTime?.() || 0;
       const amt = Number(l.earning || 0);
-      if (t < ws) pending += amt;
-      else { weekScans++; weekEarn += amt; }
+      if (t < periodStart) pending += amt;
+      else { periodScans++; periodEarn += amt; }
     });
     SETTLEMENTS.forEach(s => { if (s.type !== 'cod_deposit') settled += Number(s.amount || 0); });
     const eligible = Math.max(0, pending - settled);
-    const result = { pending, weekEarn, weekScans, settled, eligible };
+    const result = { pending, periodEarn, periodScans, settled, eligible };
     _calcEarningsCache = result;
     _calcEarningsCacheKey = key;
     return result;
@@ -1227,9 +1441,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setText('w-pending', inr(e.pending));
     setText('w-settled', inr(e.settled));
     setText('w-note', 'Next payout: ' + next.toLocaleDateString('en-IN',{day:'numeric',month:'short'}) + ' (' + daysLeft + ' din)');
-    setText('e-week-scans', e.weekScans);
+    setText('e-week-scans', e.periodScans);
     setText('e-rate', inr(PARTNER?.ratePerPacket || 10));
-    setText('e-week-earn', inr(e.weekEarn));
+    setText('e-week-earn', inr(e.periodEarn));
 
     const el = document.getElementById('activity-list');
     const recent = LOGS.slice(0, 30);
@@ -1274,6 +1488,37 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   }
 
+  /* ⭐ NEW: Profile Edit */
+  window.tgOpenProfileEdit = function() {
+    if (!PARTNER) return;
+    document.getElementById('pe-name').value = PARTNER.name || '';
+    document.getElementById('pe-phone').value = PARTNER.phone || '';
+    document.getElementById('pe-zone').value = PARTNER.zone || '';
+    document.getElementById('pe-upi').value = PARTNER.upiId || '';
+    document.getElementById('pe-bank').value = PARTNER.bankAcc || '';
+    openM('tg-profile-modal');
+  };
+  window.tgCloseProfileEdit = function() { closeM('tg-profile-modal'); };
+  window.tgSaveProfile = async function() {
+    const name = (document.getElementById('pe-name').value || '').trim();
+    if (!name) { toast('Name required', 'error'); return; }
+    const phone = (document.getElementById('pe-phone').value || '').trim();
+    const zone = (document.getElementById('pe-zone').value || '').trim();
+    const upi = (document.getElementById('pe-upi').value || '').trim().toLowerCase();
+    const bank = (document.getElementById('pe-bank').value || '').trim();
+    const btn = document.getElementById('pe-save-btn');
+    btn.disabled = true; btn.textContent = 'Saving...';
+    try {
+      const update = { name, phone, zone, upiId: upi, bankAcc: bank, updatedAt: FV.serverTimestamp() };
+      await db.collection('deliveryPartners').doc(USER.uid).update(update);
+      toast('✓ Profile updated', 'success');
+      tgCloseProfileEdit();
+    } catch(e) {
+      toast('Failed: ' + e.message, 'error');
+      btn.disabled = false; btn.textContent = '💾 Save';
+    }
+  };
+
   function updateBadges() {
     const pending = TASKS.filter(t => (t.status||'assigned') === 'assigned').length;
     const collected = TASKS.filter(t => t.status === 'collected').length;
@@ -1296,7 +1541,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return new Date(d.getFullYear(), d.getMonth(), d.getDate() + daysToMon, 10, 0, 0);
   }
 
-  /* ⭐ Scanner with seller filter */
   window.openScanner = function(mode, filterSellerId) {
     if (scannerRunning || IS_BLOCKED) return;
     SCAN_MODE = mode || 'bulk';
@@ -1308,7 +1552,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     _scanProcessing = false;
     _scanCooldownUntil = 0;
 
-    // Store seller filter on module level
     window.__SELLER_FILTER = filterSellerId || null;
 
     const title = document.getElementById('scanner-title');
@@ -1464,7 +1707,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', '');
       errEl.style.display = 'none';
 
-      // Periodic cleanup of RECENT_SCAN_CODES
       if (_scannerCleanupTimer) clearInterval(_scannerCleanupTimer);
       _scannerCleanupTimer = setInterval(() => {
         const now = Date.now();
@@ -1519,28 +1761,22 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (reader) reader.innerHTML = '';
   }
 
-  /* ⭐ FIXED: onScanSuccess — no duplicate reads */
   function onScanSuccess(decodedText, decodedResult) {
-    // Hard block: if currently processing, ignore
     if (_scanProcessing) return;
     const now = Date.now();
-    // Global cooldown between any scans
     if (now < _scanCooldownUntil) return;
     if (now - lastScanTime < 1500) return;
 
     const clean = extractOrderIdFromScan(decodedText);
     if (!clean || clean.length < 3) return;
 
-    // Same barcode blocked for 20 seconds
     const recentTs = RECENT_SCAN_CODES.get(clean);
     if (recentTs && (now - recentTs) < 20000) return;
 
-    // Set processing flag BEFORE any async work
     _scanProcessing = true;
     lastScanTime = now;
     _scanCooldownUntil = now + 1500;
 
-    // Pause camera smoothly (video keeps playing)
     try {
       if (scanner && scannerRunning && typeof scanner.pause === 'function') {
         scanner.pause(false);
@@ -1550,7 +1786,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setScanStatus('⏳ Processing...', 'processing');
     vibrate([50, 30, 50]);
 
-    // Process, then resume after cooldown
     Promise.resolve().then(() => processScan(clean)).finally(() => {
       setTimeout(() => {
         try {
@@ -1585,7 +1820,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     });
   };
 
-  /* ⭐ FULLY FIXED: processScan matches against all ID fields */
   async function processScan(rawCode) {
     const clean = extractOrderIdFromScan(rawCode);
     if (!clean || clean.length < 3) {
@@ -1598,7 +1832,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     let task = null;
     const sellerFilter = window.__SELLER_FILTER;
 
-    /* -------- SINGLE MODE: verify target -------- */
     if (currentScanTarget) {
       const expectedTask = TASKS.find(t => t.id === currentScanTarget);
 
@@ -1639,7 +1872,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
       task = expectedTask;
     } else {
-      /* -------- BULK MODE: find matching assigned task -------- */
       task = TASKS.find(t => {
         if ((t.status || 'assigned') !== 'assigned') return false;
         if (RECENTLY_COLLECTED.has(t.id)) return false;
@@ -1648,7 +1880,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       });
     }
 
-    /* -------- Not found -------- */
     if (!task) {
       beepErr(); vibrate([100, 60, 100]); flashError();
       setScanStatus('❌ Not found', 'error');
@@ -1665,7 +1896,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return;
     }
 
-    /* -------- Collect -------- */
     try {
       const earn = Number(PARTNER?.ratePerPacket || task.ratePerPacket || 10);
       const now = FV.serverTimestamp();
@@ -1847,7 +2077,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   document.querySelectorAll('.tg-mod').forEach(m => {
     m.addEventListener('click', e => { if (e.target === m) {
       m.classList.remove('show');
-      document.body.style.overflow='';
+      if (!document.querySelector('.tg-mod.show')) document.body.style.overflow='';
       if (m.id === 'tg-scan-modal') { stopScanner(); currentScanTarget = null; SCAN_MODE = 'bulk'; window.__SELLER_FILTER = null; }
     }});
   });
