@@ -1485,9 +1485,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     ✅ FIX #1: tgRemoveItem — skipConfirm param + immediate pending clear
-     ═══════════════════════════════════════════════════════════════ */
   window.tgRemoveItem = async function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
@@ -1507,7 +1504,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (currentUser) {
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
-        /* ✅ Clear pending IMMEDIATELY after successful delete */
         _pendingCartDeletes.delete(docId);
         if (!skipConfirm) toast('Removed from cart', 'success');
       } catch(err) {
@@ -1521,9 +1517,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     ✅ FIX #3: tgRemoveSelected — immediate pending clear
-     ═══════════════════════════════════════════════════════════════ */
   window.tgRemoveSelected = async function() {
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
@@ -1546,7 +1539,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const col = db.collection('carts').doc(currentUser.uid).collection('items');
         idsToRemove.forEach(id => batch.delete(col.doc(id)));
         await batch.commit();
-        /* ✅ Clear pending IMMEDIATELY after successful batch delete */
         idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
         toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
       } catch(err) {
@@ -1560,9 +1552,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     ✅ FIX #2: tgMoveToWishlist — no confirm dialog
-     ═══════════════════════════════════════════════════════════════ */
   window.tgMoveToWishlist = async function(docId) {
     if (!currentUser) {
       toast('Please log in to save to wishlist', 'info');
@@ -1577,13 +1566,119 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         items: FV.arrayUnion(pid),
         updatedAt: FV.serverTimestamp()
       }, { merge: true });
-      /* ✅ Skip confirm — user already committed by clicking "Save for later" */
       await window.tgRemoveItem(docId, true);
       toast('Saved for later ❤', 'success');
     } catch(err) {
       toast('Could not save to wishlist', 'error');
     }
   };
+
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ NEW: BULLETPROOF BUYNOW ITEM ENSURER
+     Handles all cases:
+     1. Item already in cart → select it
+     2. Item in Firestore cart → fetch and add
+     3. Item not in cart but product exists → fetch product and add
+     ═══════════════════════════════════════════════════════════════ */
+  async function ensureBuyNowItem(docId) {
+    if (!docId || !currentUser) return false;
+
+    /* Check 1: exact doc ID match */
+    let found = cartItems.find(it => it.id === docId);
+    if (found) {
+      selectedIds.add(found.id);
+      saveSelected();
+      renderCart(true);
+      return true;
+    }
+
+    /* Check 2: productId match */
+    found = cartItems.find(it => it.productId === docId);
+    if (found) {
+      selectedIds.add(found.id);
+      saveSelected();
+      renderCart(true);
+      return true;
+    }
+
+    /* Check 3: Firestore cart by doc ID (server) */
+    try {
+      const cartDoc = await db.collection('carts').doc(currentUser.uid)
+        .collection('items').doc(docId).get({ source: 'server' });
+      if (cartDoc.exists) {
+        const data = cartDoc.data();
+        const item = { ...data, id: cartDoc.id, productId: data.productId || cartDoc.id };
+        if (!cartItems.find(it => it.id === item.id)) {
+          cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+        }
+        selectedIds.add(item.id);
+        saveSelected();
+        _saveMirror(currentUser.uid, cartItems);
+        renderCart(true);
+        return true;
+      }
+    } catch(e) { console.warn('[buynow] cart doc fetch:', e); }
+
+    /* Check 4: Firestore cart by productId query (server) */
+    try {
+      const q = await db.collection('carts').doc(currentUser.uid)
+        .collection('items').where('productId', '==', docId).get({ source: 'server' });
+      if (!q.empty) {
+        const d = q.docs[0];
+        const data = d.data();
+        const item = { ...data, id: d.id, productId: data.productId || d.id };
+        if (!cartItems.find(it => it.id === item.id)) {
+          cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+        }
+        selectedIds.add(item.id);
+        saveSelected();
+        _saveMirror(currentUser.uid, cartItems);
+        renderCart(true);
+        return true;
+      }
+    } catch(e) { console.warn('[buynow] cart query fetch:', e); }
+
+    /* Check 5: Fetch product and add to cart ourselves */
+    try {
+      const prodDoc = await db.collection('products').doc(docId).get();
+      if (prodDoc.exists) {
+        const p = prodDoc.data();
+        const newItem = {
+          productId: prodDoc.id,
+          name: p.name || '',
+          image: p.image || (p.images && p.images[0]) || '',
+          price: Number(p.price || 0),
+          mrp: Number(p.compareAtPrice || p.mrp || 0),
+          qty: 1,
+          size: '',
+          color: '',
+          sellerId: p.sellerId || p.seller_id || '',
+          sellerName: p.sellerName || '',
+          rating: p.rating || null,
+          ratingCount: p.ratingCount || null,
+          gst: Number(p.gst || 18),
+          gstIncluded: p.gstIncluded === true,
+          addedAt: FV.serverTimestamp()
+        };
+        const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
+        const existing = await ref.get();
+        if (!existing.exists) {
+          await ref.set(newItem);
+        }
+        const item = { ...newItem, id: docId };
+        if (!cartItems.find(it => it.id === item.id)) {
+          cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+        }
+        selectedIds.add(docId);
+        saveSelected();
+        _saveMirror(currentUser.uid, cartItems);
+        renderCart(true);
+        return true;
+      }
+    } catch(e) { console.warn('[buynow] product fetch:', e); }
+
+    return false;
+  }
 
   function isCouponNotExpired(c) {
     if (!c || !c.expiry) return true;
@@ -1859,7 +1954,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!currentUser) {
       const raw = getGuestCart();
       let buyNowGuest = null;
-      try { buyNowGuest = new URLSearchParams(window.location.search).get('buynow'); } catch(e) {}
+      try {
+        const params = new URLSearchParams(window.location.search);
+        buyNowGuest = params.get('buynow') || params.get('buy_now') || params.get('buyNow');
+      } catch(e) {}
       if (buyNowGuest) {
         selectedIds.clear();
         selectedIds.add(buyNowGuest);
@@ -1880,16 +1978,41 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       renderCart(true);
     }
 
+    /* ✅ FIX: Read buynow from URL, sessionStorage, AND localStorage — multiple key names */
     let buyNowFromUrl = null;
-    try { buyNowFromUrl = new URLSearchParams(window.location.search).get('buynow'); } catch(e) {}
+    try {
+      const params = new URLSearchParams(window.location.search);
+      buyNowFromUrl = params.get('buynow') || params.get('buy_now') || params.get('buyNow') || null;
+    } catch(e) {}
+
     let buyNowFromSession = null;
-    try { buyNowFromSession = sessionStorage.getItem(BUY_NOW_KEY); } catch(e) {}
+    try {
+      buyNowFromSession = sessionStorage.getItem(BUY_NOW_KEY)
+        || sessionStorage.getItem('toego_buynow')
+        || sessionStorage.getItem('buy_now')
+        || sessionStorage.getItem('toego_buy_now')
+        || localStorage.getItem(BUY_NOW_KEY)
+        || localStorage.getItem('toego_buynow')
+        || localStorage.getItem('buy_now')
+        || localStorage.getItem('toego_buy_now');
+    } catch(e) {}
+
     const buyNowDoc = buyNowFromUrl || buyNowFromSession;
     if (buyNowDoc) {
       selectedIds.clear();
       selectedIds.add(buyNowDoc);
       saveSelected();
-      try { sessionStorage.removeItem(BUY_NOW_KEY); } catch(e) {}
+      /* Clear all possible keys */
+      try {
+        sessionStorage.removeItem(BUY_NOW_KEY);
+        sessionStorage.removeItem('toego_buynow');
+        sessionStorage.removeItem('buy_now');
+        sessionStorage.removeItem('toego_buy_now');
+        localStorage.removeItem(BUY_NOW_KEY);
+        localStorage.removeItem('toego_buynow');
+        localStorage.removeItem('buy_now');
+        localStorage.removeItem('toego_buy_now');
+      } catch(e) {}
       try { window.history.replaceState({}, '', window.location.pathname); } catch(e) {}
     }
 
@@ -1923,6 +2046,37 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         renderCart(true);
       }
     });
+
+    /* ═══════════════════════════════════════════════════════════════
+       ✅ CRITICAL FIX: Ensure buynow item is loaded — with retries
+       Handles: slow product-page write, missing cart entry, etc.
+       ═══════════════════════════════════════════════════════════════ */
+    if (buyNowDoc) {
+      /* Attempt 1: immediate */
+      setTimeout(() => {
+        if (!cartItems.find(it => it.id === buyNowDoc) && !cartItems.find(it => it.productId === buyNowDoc)) {
+          ensureBuyNowItem(buyNowDoc);
+        }
+      }, 150);
+
+      /* Attempt 2: 1.2s (in case product page write was slow) */
+      setTimeout(() => {
+        if (!cartItems.find(it => it.id === buyNowDoc) && !cartItems.find(it => it.productId === buyNowDoc)) {
+          ensureBuyNowItem(buyNowDoc);
+        }
+      }, 1200);
+
+      /* Attempt 3: 3s (final retry, show error if fails) */
+      setTimeout(() => {
+        if (!cartItems.find(it => it.id === buyNowDoc) && !cartItems.find(it => it.productId === buyNowDoc)) {
+          ensureBuyNowItem(buyNowDoc).then(ok => {
+            if (!ok) {
+              toast('Product not available. Please add to cart again.', 'error');
+            }
+          });
+        }
+      }, 3000);
+    }
   }
 
   async function loadProfile(u) {
