@@ -432,9 +432,6 @@ a{color:inherit;text-decoration:none;}
 (function(){
   'use strict';
 
-  // ═══════════════════════════════════════════════════════════════
-  // FIREBASE INIT
-  // ═══════════════════════════════════════════════════════════════
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -452,9 +449,6 @@ a{color:inherit;text-decoration:none;}
   try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
-  // ═══════════════════════════════════════════════════════════════
-  // CONSTANTS
-  // ═══════════════════════════════════════════════════════════════
   const GUEST_CART = 'toego_cart_guest';
   const PROD_CACHE_PREFIX = 'toego_prod_v2_';
   const PROD_CACHE_TTL = 30 * 60 * 1000;
@@ -467,9 +461,6 @@ a{color:inherit;text-decoration:none;}
   const CLOUD_CACHE_KEY = 'toego_cloud_v2';
   const PRODUCT_FETCH_TIMEOUT = 12000;
 
-  // ═══════════════════════════════════════════════════════════════
-  // STATE
-  // ═══════════════════════════════════════════════════════════════
   let PRODUCT = null;
   let ALL_PRODUCTS = [];
   let REVIEWS = [];
@@ -498,9 +489,6 @@ a{color:inherit;text-decoration:none;}
   let _productFetchInProgress = false;
   let CLOUD = { cloudName: '', uploadPreset: '' };
 
-  // ═══════════════════════════════════════════════════════════════
-  // THEME / TOAST MESSAGES CACHE
-  // ═══════════════════════════════════════════════════════════════
   const DEFAULT_TOAST_MSGS = {
     addCart: 'Added to cart',
     loginRequired: 'Please log in to continue',
@@ -563,7 +551,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
   })();
 
-  // Background network refresh
   db.collection('siteSettings').doc('theme').get().then(s => {
     if (!s.exists) return;
     const d = s.data() || {};
@@ -587,9 +574,6 @@ a{color:inherit;text-decoration:none;}
     try { localStorage.setItem(CLOUD_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
   }).catch(() => {});
 
-  // ═══════════════════════════════════════════════════════════════
-  // HELPERS
-  // ═══════════════════════════════════════════════════════════════
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -622,9 +606,6 @@ a{color:inherit;text-decoration:none;}
   function tago(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; if (s < 604800) return Math.floor(s/86400)+'d ago'; return fdate(d); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
 
-  // ═══════════════════════════════════════════════════════════════
-  // CACHE
-  // ═══════════════════════════════════════════════════════════════
   function getCachedProduct(pid) {
     try {
       const raw = localStorage.getItem(PROD_CACHE_PREFIX + pid);
@@ -651,7 +632,6 @@ a{color:inherit;text-decoration:none;}
     try { localStorage.setItem(ALL_PROD_CACHE_KEY, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
   }
   function getFromHomeCache(pid) {
-    // ⭐ FALLBACK: Try to find product in shop-home's cached product list
     try {
       const raw = localStorage.getItem(HOME_PROD_CACHE_KEY);
       if (!raw) return null;
@@ -661,9 +641,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return null; }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // PRODUCT ID
-  // ═══════════════════════════════════════════════════════════════
   function getProductId() {
     try {
       const p = new URLSearchParams(window.location.search);
@@ -672,9 +649,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return ''; }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // COLOR UTILS
-  // ═══════════════════════════════════════════════════════════════
   const COLOR_HEX_MAP = {
     'red': '#e53935', 'dark red': '#b71c1c', 'light red': '#ef5350',
     'blue': '#1e88e5', 'dark blue': '#0d47a1', 'light blue': '#42a5f5',
@@ -732,16 +706,12 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return false; }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // PRODUCT DATA GETTERS (DEFENSIVE)
-  // ═══════════════════════════════════════════════════════════════
   function getImages() {
     const imgs = [];
     try {
       if (Array.isArray(PRODUCT.images)) {
         PRODUCT.images.forEach(u => {
           if (!u) return;
-          // Handle case where image might be an object {url: '...'}
           const url = typeof u === 'string' ? u : (u.url || u.src || u.image || '');
           if (url) imgs.push(url);
         });
@@ -795,9 +765,6 @@ a{color:inherit;text-decoration:none;}
     return Number(PRODUCT.stock || 0);
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // ERROR SCREEN
-  // ═══════════════════════════════════════════════════════════════
   function showError(title, desc, showRetry) {
     document.getElementById('tg-content').innerHTML =
       '<div class="tg-card"><div class="tg-error">' +
@@ -813,9 +780,6 @@ a{color:inherit;text-decoration:none;}
     document.getElementById('tg-body').classList.add('tg-hide-actions');
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // TIMEOUT WRAPPER
-  // ═══════════════════════════════════════════════════════════════
   function withTimeout(promise, ms) {
     return new Promise((resolve, reject) => {
       const t = setTimeout(() => reject(new Error('timeout')), ms);
@@ -826,9 +790,6 @@ a{color:inherit;text-decoration:none;}
     });
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // PRODUCT LOADING — MULTI-FALLBACK STRATEGY
-  // ═══════════════════════════════════════════════════════════════
   async function loadProduct() {
     const pid = getProductId();
     _currentProductId = pid;
@@ -840,7 +801,6 @@ a{color:inherit;text-decoration:none;}
 
     document.getElementById('tg-hd-title').textContent = 'Loading…';
 
-    // ─── STEP 1: Instant from localStorage cache ───
     const cached = getCachedProduct(pid);
     if (cached && cached.id) {
       PRODUCT = cached;
@@ -852,7 +812,6 @@ a{color:inherit;text-decoration:none;}
         console.warn('[product] cache render failed:', e);
       }
     } else {
-      // ⭐ STEP 1.5: Try home cache as fallback
       const homeCached = getFromHomeCache(pid);
       if (homeCached && homeCached.id) {
         PRODUCT = homeCached;
@@ -867,14 +826,12 @@ a{color:inherit;text-decoration:none;}
       }
     }
 
-    // ─── STEP 2: Firestore (cache-first, then server) ───
     if (_productFetchInProgress) return;
     _productFetchInProgress = true;
 
     let fresh = null;
     let fetchErr = null;
 
-    // 2a. Try Firestore cache
     try {
       const snapCache = await withTimeout(
         db.collection('products').doc(pid).get({ source: 'cache' }),
@@ -883,11 +840,8 @@ a{color:inherit;text-decoration:none;}
       if (snapCache && snapCache.exists) {
         fresh = { id: snapCache.id, ...snapCache.data() };
       }
-    } catch(e) {
-      // Cache miss is normal for fresh users
-    }
+    } catch(e) {}
 
-    // 2b. If cache empty, fetch from server
     if (!fresh) {
       try {
         const snapServer = await withTimeout(
@@ -903,7 +857,6 @@ a{color:inherit;text-decoration:none;}
       }
     }
 
-    // 2c. If still no data, try explicit server source
     if (!fresh) {
       try {
         const snapServer2 = await withTimeout(
@@ -920,11 +873,8 @@ a{color:inherit;text-decoration:none;}
 
     _productFetchInProgress = false;
 
-    // ─── STEP 3: Handle result ───
     if (fresh) {
-      // Check if product is intentionally hidden
       const isHidden = (fresh.active === false) || (fresh.approved === false && fresh.approvalStatus !== 'pending');
-      // We still render hidden products but show a notice to the owner
       const changed = !PRODUCT
         || PRODUCT.rating !== fresh.rating
         || PRODUCT.ratingCount !== fresh.ratingCount
@@ -953,7 +903,6 @@ a{color:inherit;text-decoration:none;}
         setTimeout(() => toast('⚠️ This product is not publicly visible', 'info'), 500);
       }
     } else if (!PRODUCT) {
-      // Nothing was cached and network fetch failed
       const msg = fetchErr
         ? (fetchErr.message === 'timeout'
             ? 'Connection timed out. Please check your internet and try again.'
@@ -963,7 +912,6 @@ a{color:inherit;text-decoration:none;}
       return;
     }
 
-    // ─── STEP 4: Non-blocking background tasks ───
     setTimeout(() => {
       try { db.collection('products').doc(pid).update({ views: FV.increment(1) }).catch(() => {}); } catch(e) {}
     }, 1500);
@@ -974,20 +922,15 @@ a{color:inherit;text-decoration:none;}
       try { checkReviewEligibility(pid); } catch(e) {}
     }
 
-    // ─── STEP 5: ALL_PRODUCTS from cache instantly ───
     const cachedAll = getCachedAllProducts();
     if (cachedAll && cachedAll.length) {
       ALL_PRODUCTS = cachedAll.filter(p => p && p.id !== pid);
       try { renderAllProducts(); } catch(e) {}
     }
 
-    // ─── STEP 6: Setup lazy load for All Products section ───
     setupAllProductsLazy();
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // RENDER PRODUCT
-  // ═══════════════════════════════════════════════════════════════
   function renderProduct() {
     if (!PRODUCT) {
       showError('Product Not Available', 'No product data to display.', true);
@@ -1007,13 +950,11 @@ a{color:inherit;text-decoration:none;}
     const hasSizes = sizes.length > 0;
     const hasColors = colors.length > 0;
 
-    // Reset selection if not in new options
     if (hasSizes && SELECTED_SIZE && sizes.indexOf(SELECTED_SIZE) === -1) SELECTED_SIZE = '';
     if (hasColors && SELECTED_COLOR && colors.indexOf(SELECTED_COLOR) === -1) SELECTED_COLOR = '';
 
     const ratingHtml = '<div id="tg-main-rating"></div>';
 
-    // Sizes HTML
     let sizeHtml = '';
     if (hasSizes) {
       sizeHtml = '<div class="tg-opt-title ' + (SIZE_ERROR ? 'has-error' : '') + '">Select Size <span class="err">• Required</span></div><div class="tg-sizes" id="tg-sizes-wrap">' + sizes.map(sz => {
@@ -1025,7 +966,6 @@ a{color:inherit;text-decoration:none;}
       }).join('') + '</div>';
     }
 
-    // Colors HTML
     let colorHtml = '';
     if (hasColors) {
       colorHtml = '<div class="tg-opt-title ' + (COLOR_ERROR ? 'has-error' : '') + '">Select Color <span class="err">• Required</span></div>' +
@@ -1170,9 +1110,6 @@ a{color:inherit;text-decoration:none;}
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // SLIDER
-  // ═══════════════════════════════════════════════════════════════
   function initSlider() {
     sliderTrack = document.getElementById('tg-slider-track');
     if (!sliderTrack) return;
@@ -1184,8 +1121,6 @@ a{color:inherit;text-decoration:none;}
     const slider = document.getElementById('tg-slider');
     if (!slider) return;
 
-    // Always rebind to new element (fresh DOM after innerHTML)
-    // We use a data flag only to avoid double-binding on SAME element
     if (slider.dataset.sliderBound === '1') return;
     slider.dataset.sliderBound = '1';
 
@@ -1279,9 +1214,6 @@ a{color:inherit;text-decoration:none;}
   window.tgSliderPrev = function(e) { if (e) { e.preventDefault(); e.stopPropagation(); } if (SLIDER_INDEX > 0) { SLIDER_INDEX--; updateSlider(); } };
   window.tgSliderNext = function(e) { if (e) { e.preventDefault(); e.stopPropagation(); } if (!sliderTrack) return; const slides = sliderTrack.children.length; if (SLIDER_INDEX < slides - 1) { SLIDER_INDEX++; updateSlider(); } };
 
-  // ═══════════════════════════════════════════════════════════════
-  // SELECTION
-  // ═══════════════════════════════════════════════════════════════
   window.tgSelectSize = function(sz) {
     SELECTED_SIZE = sz; SIZE_ERROR = false;
     document.querySelectorAll('[data-size]').forEach(b => {
@@ -1324,9 +1256,6 @@ a{color:inherit;text-decoration:none;}
     if (btns[1]) btns[1].disabled = QTY >= 10;
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // RELATED PRODUCTS
-  // ═══════════════════════════════════════════════════════════════
   async function loadRelated() {
     try {
       if (!PRODUCT) return;
@@ -1353,7 +1282,6 @@ a{color:inherit;text-decoration:none;}
         list = list.concat(fromAll.slice(0, 12 - list.length));
       }
       if (!list.length) {
-        // Try global fallback
         try {
           const snap = await withTimeout(db.collection('products').limit(12).get(), 8000);
           list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id);
@@ -1421,9 +1349,6 @@ a{color:inherit;text-decoration:none;}
     '</div>';
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // ALL PRODUCTS (LAZY)
-  // ═══════════════════════════════════════════════════════════════
   function setupAllProductsLazy() {
     const el = document.getElementById('tg-all-products');
     if (!el) return;
@@ -1482,15 +1407,11 @@ a{color:inherit;text-decoration:none;}
     el.innerHTML = shuffleArr(ALL_PRODUCTS).slice(0, 40).map(p => productCardHtml(p)).join('');
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // REVIEWS
-  // ═══════════════════════════════════════════════════════════════
   function subscribeReviews(pid) {
     if (!pid) return;
     if (unsubReviews) { try { unsubReviews(); } catch(e) {} unsubReviews = null; }
     _reviewsLoaded = false;
 
-    // Try cache-first quick load
     try {
       db.collection('reviews').where('productId', '==', pid).get({ source: 'cache' })
         .then(snap => {
@@ -1507,7 +1428,6 @@ a{color:inherit;text-decoration:none;}
         }).catch(() => {});
     } catch(e) {}
 
-    // Live listener
     try {
       unsubReviews = db.collection('reviews')
         .where('productId', '==', pid)
@@ -1612,15 +1532,11 @@ a{color:inherit;text-decoration:none;}
     if (e.target.id === 'tg-ar-modal') tgCloseAllReviews();
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // REVIEW ELIGIBILITY
-  // ═══════════════════════════════════════════════════════════════
   async function checkReviewEligibility(pid) {
     CAN_REVIEW = false;
     HAS_REVIEWED = false;
     if (!currentUser || !pid) { updateReviewButton(); return; }
 
-    // Check if already reviewed
     try {
       const rSnap = await db.collection('reviews')
         .where('userId', '==', currentUser.uid)
@@ -1635,7 +1551,6 @@ a{color:inherit;text-decoration:none;}
       console.warn('[review eligibility] reviewed check failed:', e && e.message);
     }
 
-    // Check if user has a delivered order containing this product
     try {
       const uid = currentUser.uid;
       const ordersMap = new Map();
@@ -1692,9 +1607,6 @@ a{color:inherit;text-decoration:none;}
   }
   window.tgShowNotEligibleMsg = function() { toast(TOAST_MSGS.onlyDelivered, 'info'); };
 
-  // ═══════════════════════════════════════════════════════════════
-  // REVIEW MODAL
-  // ═══════════════════════════════════════════════════════════════
   window.tgOpenReview = function() {
     if (!currentUser) { toast(TOAST_MSGS.loginToReview, 'info'); setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('product.html?id=' + (PRODUCT?.id || '')), 1000); return; }
     if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'info'); return; }
@@ -1872,9 +1784,6 @@ a{color:inherit;text-decoration:none;}
     }
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // IMAGE VIEWER
-  // ═══════════════════════════════════════════════════════════════
   let vwScale = 1, vwLastScale = 1, vwStartDist = 0, vwPanX = 0, vwPanY = 0, vwStartX = 0, vwStartY = 0, vwIsPanning = false, vwLastTap = 0;
 
   function vwApply() {
@@ -2012,9 +1921,6 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // VALIDATION
-  // ═══════════════════════════════════════════════════════════════
   function validateSelection() {
     if (!PRODUCT) return false;
     const sizes = getSizes();
@@ -2034,9 +1940,6 @@ a{color:inherit;text-decoration:none;}
     return true;
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // CART ACTIONS
-  // ═══════════════════════════════════════════════════════════════
   function buildCartItem() {
     const sellerId = PRODUCT.sellerId || PRODUCT.seller_id || PRODUCT.sid || PRODUCT.sellerUid || '';
     const sellerName = PRODUCT.sellerName || PRODUCT.shopName || (PRODUCT.seller && PRODUCT.seller.shopName) || '';
@@ -2106,40 +2009,84 @@ a{color:inherit;text-decoration:none;}
     }, 400);
   };
 
-  window.tgBuyNow = function() {
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ FIXED: BULLETPROOF BUY NOW
+     - Awaits Firestore write completion before redirect
+     - Uses set with merge:true to guarantee item exists
+     - Handles all error cases
+     ═══════════════════════════════════════════════════════════════ */
+  window.tgBuyNow = async function() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
+
+    const btn = document.getElementById('tg-buy-btn');
+    if (btn && btn.disabled) return;
+
     const item = buildCartItem();
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
+
+    if (btn) {
+      btn.disabled = true;
+      btn.dataset.origText = btn.textContent;
+      btn.textContent = 'Processing…';
+    }
 
     if (!currentUser) {
       try {
         let cart = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
-        if (!cart.find(x => ((x.productId||x.id) + '|' + (x.size||'') + '|' + (x.color||'')) === docId)) {
-          cart.push({ ...item, addedAt: Date.now() });
-          localStorage.setItem(GUEST_CART, JSON.stringify(cart));
-        }
+        const existing = cart.find(x => ((x.productId || x.id) + '|' + (x.size||'') + '|' + (x.color||'')) === docId);
+        if (existing) existing.qty = Math.min(10, Number(existing.qty||1) + QTY);
+        else cart.push({ ...item, addedAt: Date.now() });
+        localStorage.setItem(GUEST_CART, JSON.stringify(cart));
       } catch(e) {}
       try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
+      try { localStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
       location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html?buynow=' + encodeURIComponent(docId));
       return;
     }
 
-    const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-    ref.get({ source: 'cache' }).then(snap => {
-      if (snap.exists) return ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
-      return ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
-    }).catch(() => {
-      return ref.set({
-        ...item,
-        qty: FV.increment(QTY),
-        addedAt: FV.serverTimestamp(),
-        updatedAt: FV.serverTimestamp()
-      }, { merge: true });
-    }).catch(() => {});
+    /* ⭐ CRITICAL FIX: Await Firestore write completion */
+    try {
+      const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
 
-    try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
-    location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
+      /* Try cache first for speed, fallback to server */
+      let existing = null;
+      try {
+        const snap = await ref.get({ source: 'cache' });
+        existing = snap;
+      } catch(e) {
+        try {
+          const snap2 = await ref.get({ source: 'server' });
+          existing = snap2;
+        } catch(e2) {}
+      }
+
+      if (existing && existing.exists) {
+        await ref.update({
+          qty: FV.increment(QTY),
+          updatedAt: FV.serverTimestamp()
+        });
+      } else {
+        /* Use set with merge to guarantee write */
+        await ref.set({
+          ...item,
+          addedAt: FV.serverTimestamp(),
+          updatedAt: FV.serverTimestamp()
+        }, { merge: true });
+      }
+
+      /* ✅ Write confirmed — now redirect */
+      try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
+      try { localStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
+      location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
+
+    } catch(err) {
+      console.warn('[buynow] write failed:', err);
+      /* Even if write failed, try to navigate — cart page will retry fetch */
+      try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
+      try { localStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
+      location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
+    }
   };
 
   function updateCartBadge() {
@@ -2159,9 +2106,6 @@ a{color:inherit;text-decoration:none;}
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // RESIZE
-  // ═══════════════════════════════════════════════════════════════
   window.addEventListener('resize', () => {
     if (sliderTrack) {
       sliderTrack.classList.add('no-trans');
@@ -2170,14 +2114,10 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // AUTH
-  // ═══════════════════════════════════════════════════════════════
   auth.onAuthStateChanged((u) => {
     const wasLoggedIn = !!currentUser;
     currentUser = u;
     updateCartBadge();
-    // Re-check eligibility if login state changed AND product is loaded
     if (PRODUCT && PRODUCT.id && wasLoggedIn !== !!u) {
       setTimeout(() => {
         try { checkReviewEligibility(PRODUCT.id); } catch(e) {}
@@ -2185,10 +2125,6 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // INIT
-  // ═══════════════════════════════════════════════════════════════
-  // Global safety net: if product didn't render within 15s, show error
   setTimeout(() => {
     if (!PRODUCT || !document.querySelector('.tg-main')) {
       const el = document.getElementById('tg-content');
