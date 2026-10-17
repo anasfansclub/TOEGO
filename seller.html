@@ -746,7 +746,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       <div class="tg-label-opt selected" data-format="a4" onclick="tgSelectFormat('a4', this)" style="background:#e8f0ff;border:2px solid #2874f0;border-radius:12px;padding:18px 14px;cursor:pointer;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">📄</div><div style="font-size:13.5px;font-weight:800;">A4 Sheet</div><div style="font-size:11px;color:#666;margin-top:4px;">4 per page</div></div>
       <div class="tg-label-opt" data-format="thermal" onclick="tgSelectFormat('thermal', this)" style="background:#f8f9fb;border:2px solid #e0e0e0;border-radius:12px;padding:18px 14px;cursor:pointer;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">🧾</div><div style="font-size:13.5px;font-weight:800;">Thermal 4×6</div><div style="font-size:11px;color:#666;margin-top:4px;">102×152mm</div></div>
     </div>
-    <div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-label-modal')">Cancel</button><button class="tg-modal-btn primary" onclick="tgPrintLabels()">🖨 Print → Processing</button></div>
+    <div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-label-modal')">Cancel</button><button class="tg-modal-btn primary" id="tg-label-print-btn" onclick="tgPrintLabels()">🖨 Print → Processing</button></div>
   </div>
 </div>
 
@@ -1231,6 +1231,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       b.push('<button class="tg-order-btn primary" onclick="tgDownloadLabel(\''+o.id+'\')">🖨 Print</button>');
     } else if (s === 'processing') {
       b.push('<span style="font-size:11.5px;color:#e65100;font-weight:700;padding:7px 12px;background:#fff3e0;border-radius:6px;">📦 Processing</span>');
+      b.push('<button class="tg-order-btn outline" onclick="tgDownloadLabel(\''+o.id+'\')">🖨 Download Label</button>');
     } else if (s === 'dispatched') {
       b.push('<span style="font-size:11.5px;color:#3949ab;font-weight:700;padding:7px 12px;background:#e8eaf6;border-radius:6px;">🚚 In Transit</span>');
     } else if (s === 'delivered') {
@@ -2129,6 +2130,10 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     if (!ids.length) { toast('No labels', 'error'); return; }
     PENDING_LABELS = ids.slice();
     document.getElementById('tg-label-count').textContent = ids.length;
+    const orders = ids.map(id => ORDERS.find(o => o.id === id)).filter(Boolean);
+    const willChangeStatus = orders.some(o => normStatus(o) === 'label_generated');
+    const printBtn = document.getElementById('tg-label-print-btn');
+    if (printBtn) printBtn.innerHTML = willChangeStatus ? '🖨 Print → Processing' : '🖨 Print Label';
     openModal('tg-label-modal');
   };
   window.tgSelectFormat = function(f, el) {
@@ -2176,9 +2181,13 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     const orderTotal = Number(o.total || o.grandTotal || o.totalAmount || 0) || sellerTotal;
     const payMethodRaw = String(o.paymentMethod || o.payment || 'cod').toLowerCase();
     const isCOD = payMethodRaw.indexOf('cod') !== -1 || payMethodRaw === 'cash' || payMethodRaw === '';
-    const payModeLabel = isCOD ? 'COD' : 'PREPAID';
+    const payModeLabel = isCOD ? 'COD' : 'ONLINE';
 
-    const items = di.map((it, i) => '<div class="li">'+(i+1)+'. '+esc(it.name||'Item')+(it.size?' ['+esc(it.size)+']':'')+' × '+Number(it.qty||1)+'</div>').join('');
+    const items = di.map((it, i) => {
+      const q = Number(it.qty||1);
+      const lineAmt = Number(it.price||0) * q;
+      return '<div class="li">'+(i+1)+'. '+esc(it.name||'Item')+(it.size?' ['+esc(it.size)+']':'')+' × '+q+' · <b>'+esc(inr(lineAmt))+'</b></div>';
+    }).join('');
     const sellerName = (SELLER && SELLER.shopName) || 'Seller';
     const sellerLine1 = (SELLER && SELLER.address) || '';
     const sellerCityState = [SELLER && SELLER.city, SELLER && SELLER.state].filter(Boolean).join(', ');
@@ -2191,8 +2200,8 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 
     /* ⭐ Total payment block - prominent */
     const totalPayHtml = isCOD
-      ? '<div class="lbl-total-pay">COLLECT: ' + esc(inr(sellerTotal)) + '</div>'
-      : '<div class="lbl-total-pay prepaid">PREPAID ₹' + esc(Number(orderTotal).toFixed(0)) + '</div>';
+      ? '<div class="lbl-total-pay">COD · COLLECT ' + esc(inr(sellerTotal)) + '</div>'
+      : '<div class="lbl-total-pay prepaid">ONLINE · PAID ' + esc(inr(sellerTotal)) + '</div>';
 
     return '<div class="lbl"><div class="lbl-top"><div class="brand">TOE<span>GO</span></div><div class="order-no">#'+esc(sid)+'</div></div>'+
       /* ⭐ NEW: barcode + QR side by side */
@@ -2293,7 +2302,10 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   };
 
   function openModal(id) { document.getElementById(id).classList.add('show'); document.body.style.overflow = 'hidden'; }
-  window.tgCloseModal = function(id) { document.getElementById(id).classList.remove('show'); document.body.style.overflow = ''; };
+  window.tgCloseModal = function(id) {
+    document.getElementById(id).classList.remove('show');
+    if (!document.querySelector('.tg-modal.show')) document.body.style.overflow = '';
+  };
   window.tgDoConfirm = async function() { if (confirmCb) await confirmCb(); };
 
   window.tgExportEarnings = function() {
@@ -2841,7 +2853,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   });
 
   document.querySelectorAll('.tg-modal').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) { m.classList.remove('show'); document.body.style.overflow = ''; } });
+    m.addEventListener('click', e => { if (e.target === m) { m.classList.remove('show'); if (!document.querySelector('.tg-modal.show')) document.body.style.overflow = ''; } });
   });
 
 })();
