@@ -870,12 +870,27 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   function fmtDate(date) {
     if (!date) return '—';
     const d = date.toDate ? date.toDate() : new Date(date);
+    if (isNaN(d.getTime())) return '—';
     return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   }
   function fmtTime(date) {
     if (!date) return '';
     const d = date.toDate ? date.toDate() : new Date(date);
+    if (isNaN(d.getTime())) return '';
     return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // ✅ Helper: normalize any timestamp type (string, number, Timestamp) → ms
+  function tsMs(v) {
+    if (!v) return 0;
+    if (typeof v === 'string') { const t = new Date(v).getTime(); return isNaN(t) ? 0 : t; }
+    if (typeof v === 'number') return v;
+    if (typeof v.toDate === 'function') { try { return v.toDate().getTime(); } catch(e) { return 0; } }
+    if (v.seconds != null) return v.seconds * 1000;
+    return 0;
+  }
+  function sortByCreatedDesc(a, b) {
+    return tsMs(b && b.createdAt) - tsMs(a && a.createdAt);
   }
 
   function normStatus(o) {
@@ -960,6 +975,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let unsubTrack = null;
   let TRACK_ID = null;
 
+  // ✅ CRITICAL: ordersReady flag — prevents "No orders" flash during initial load
+  let ordersReady = false;
+
   window.tgPickTab = function(tab) {
     CURRENT_TAB = tab;
     document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
@@ -1000,14 +1018,23 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
   }
 
+  // ✅ FIXED: keeps skeleton until data actually arrives (no premature "No orders")
   function renderOrders() {
     const wrap = document.getElementById('tg-orders');
     const loading = document.getElementById('tg-loading');
     const empty = document.getElementById('tg-empty');
     if (!wrap) return;
-    if (loading) loading.style.display = 'none';
 
     updateTabCounts();
+
+    // Not ready yet & nothing to show → keep skeleton, hide empty state
+    if (!ordersReady && ALL_ORDERS.length === 0) {
+      if (loading) loading.style.display = '';
+      if (empty) empty.style.display = 'none';
+      return;
+    }
+
+    if (loading) loading.style.display = 'none';
 
     let orders = filterByTab(ALL_ORDERS);
     orders = filterBySearch(orders);
@@ -1666,9 +1693,10 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     return false;
   }
 
-  /* ⭐⭐⭐ LOAD ORDERS — BULLETPROOF WITH ERROR TRACKING ⭐⭐⭐ */
+  // ⚡ ULTRA-FAST LOAD ORDERS — cache-first, no heavy queries upfront
   function loadOrders() {
     if (!USER) {
+      ordersReady = true;
       const wrap = document.getElementById('tg-orders');
       const loading = document.getElementById('tg-loading');
       const empty = document.getElementById('tg-empty');
@@ -1691,121 +1719,136 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     const phone = (USER.phoneNumber || '').replace(/\D/g, '');
     const col = db.collection('orders');
 
-    // Load cached orders
+    // ⚡ Load cache — paint INSTANTLY (0ms Firestore wait)
     const cachedArr = loadOrdersCache(uid) || [];
     const cachedMap = new Map();
     cachedArr.forEach(o => { if (o.id) cachedMap.set(o.id, o); });
 
-    // Paint cache instantly
     if (cachedArr.length) {
-      ALL_ORDERS = cachedArr.slice().sort((a, b) => {
-        const at = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const bt = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return bt - at;
-      });
+      ordersReady = true;
+      ALL_ORDERS = cachedArr.slice().sort(sortByCreatedDesc);
       renderOrders();
     }
 
-    // Three independent listener maps
-    const l1Map = new Map();  // customerId
-    const l2Map = new Map();  // userId
-    const l3Map = new Map();  // fallback
-    let f1 = false, f2 = false, f3 = false;
-    let e1 = false, e2 = false, e3 = false;
+    // Live data map (merges customerId + userId results)
+    const liveMap = new Map();
+    let l1Done = false, l2Done = false;
+    let l1Err = false, l2Err = false;
 
-    function rebuild() {
-      // Union of all listener maps
-      const fresh = new Map();
-      l3Map.forEach((v, k) => fresh.set(k, v));
-      l1Map.forEach((v, k) => fresh.set(k, v));
-      l2Map.forEach((v, k) => fresh.set(k, v));
+    const mergeAndRender = (force) => {
+      // Merge: cache first (fallback), then live (overrides)
+      const merged = new Map();
+      cachedMap.forEach((v, k) => merged.set(k, v));
+      liveMap.forEach((v, k) => merged.set(k, v));
 
-      // Only if ALL listeners succeeded with no errors → trust fresh data 100%
-      const allSuccess = f1 && f2 && f3 && !e1 && !e2 && !e3;
-      if (!allSuccess) {
-        // Merge cached orders that aren't already in fresh
-        cachedMap.forEach((v, k) => {
-          if (!fresh.has(k)) fresh.set(k, v);
-        });
-      }
-
-      ALL_ORDERS = Array.from(fresh.values()).sort((a, b) => {
-        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
-        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
-        return bt - at;
-      });
-
+      ALL_ORDERS = Array.from(merged.values()).sort(sortByCreatedDesc);
+      ordersReady = true;
       renderOrders();
 
-      // Save/clear cache ONLY after full successful cycle
-      if (allSuccess) {
+      // Save cache only when BOTH listeners responded successfully (or forced)
+      const allSuccess = l1Done && l2Done && !l1Err && !l2Err;
+      if (allSuccess || force) {
         if (ALL_ORDERS.length > 0) {
           saveOrdersCache(uid, ALL_ORDERS);
-        } else {
-          // All listeners succeeded with 0 orders → admin cleared all
+        } else if (cachedArr.length > 0) {
           clearOrdersCache(uid);
         }
       }
-    }
+    };
 
-    // ⭐ Listener 1: customerId
+    // ⚡ Listener 1: customerId (most common)
     try {
       const u1 = col.where('customerId', '==', uid).limit(100).onSnapshot(snap => {
-        l1Map.clear();
-        snap.docs.forEach(d => l1Map.set(d.id, { id: d.id, ...d.data() }));
-        f1 = true;
-        rebuild();
-      }, () => { e1 = true; f1 = true; rebuild(); });
+        snap.docs.forEach(d => liveMap.set(d.id, { id: d.id, ...d.data() }));
+        l1Done = true;
+        mergeAndRender();
+      }, err => {
+        console.warn('Orders customerId listener error:', err && err.message);
+        l1Err = true;
+        l1Done = true;
+        mergeAndRender();
+      });
       unsubOrders.push(u1);
-    } catch(e) { e1 = true; f1 = true; }
+    } catch(e) {
+      l1Err = true;
+      l1Done = true;
+    }
 
-    // ⭐ Listener 2: userId
+    // ⚡ Listener 2: userId (parallel — additive)
     try {
       const u2 = col.where('userId', '==', uid).limit(100).onSnapshot(snap => {
-        l2Map.clear();
-        snap.docs.forEach(d => l2Map.set(d.id, { id: d.id, ...d.data() }));
-        f2 = true;
-        rebuild();
-      }, () => { e2 = true; f2 = true; rebuild(); });
+        snap.docs.forEach(d => liveMap.set(d.id, { id: d.id, ...d.data() }));
+        l2Done = true;
+        mergeAndRender();
+      }, err => {
+        // Silent — userId may be optional
+        if (!l2Done) {
+          l2Err = true;
+          l2Done = true;
+          mergeAndRender();
+        }
+      });
       unsubOrders.push(u2);
-    } catch(e) { e2 = true; f2 = true; }
+    } catch(e) {
+      l2Err = true;
+      l2Done = true;
+    }
 
-    // ⭐ Listener 3: fallback (recent 200 + client filter)
-    try {
-      const u3 = col.orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => {
-        l3Map.clear();
-        snap.docs.forEach(d => {
-          const o = { id: d.id, ...d.data() };
-          if (userMatchesOrder(o, uid, email, phone)) l3Map.set(d.id, o);
-        });
-        f3 = true;
-        rebuild();
-      }, () => {
-        // Fallback: no orderBy
-        col.limit(200).get().then(snap => {
-          l3Map.clear();
+    // ⚡ Fallback: only if NEITHER primary responded in 2.5s
+    setTimeout(() => {
+      if (l1Done || l2Done) return;
+      try {
+        const u3 = col.orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
           snap.docs.forEach(d => {
             const o = { id: d.id, ...d.data() };
-            if (userMatchesOrder(o, uid, email, phone)) l3Map.set(d.id, o);
+            if (userMatchesOrder(o, uid, email, phone)) liveMap.set(d.id, o);
           });
-          f3 = true;
-          rebuild();
-        }).catch(() => { e3 = true; f3 = true; rebuild(); });
-      });
-      unsubOrders.push(u3);
-    } catch(e) { e3 = true; f3 = true; }
+          l1Done = true;
+          l2Done = true;
+          mergeAndRender(true);
+        }, () => {
+          l1Done = true;
+          l2Done = true;
+          l1Err = true;
+          l2Err = true;
+          mergeAndRender(true);
+        });
+        unsubOrders.push(u3);
+      } catch(e) {
+        l1Done = true;
+        l2Done = true;
+        l1Err = true;
+        l2Err = true;
+        mergeAndRender(true);
+      }
+    }, 2500);
 
-    // ⭐ Safety net: force fire after 4s (WITHOUT marking as error)
+    // ⚡ Absolute safety net: 6s — never let skeleton hang forever
     setTimeout(() => {
-      if (!f1) { f1 = true; }
-      if (!f2) { f2 = true; }
-      if (!f3) { f3 = true; }
-      rebuild();
-    }, 4000);
+      if (!ordersReady) {
+        ordersReady = true;
+        mergeAndRender(true);
+      }
+    }, 6000);
   }
 
+  // ⚡ Cart badge with localStorage cache for instant paint
   async function updateCartBadge() {
+    const CACHE_KEY = 'toego_cart_count';
     let count = 0;
+
+    // 1) Instant paint from cache
+    try {
+      const cached = parseInt(localStorage.getItem(CACHE_KEY) || '0', 10);
+      if (cached > 0) {
+        ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) { el.textContent = cached; el.style.display = 'flex'; }
+        });
+      }
+    } catch(e) {}
+
+    // 2) Fetch real count
     try {
       if (USER) {
         const snap = await db.collection('carts').doc(USER.uid).collection('items').get();
@@ -1814,7 +1857,9 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
         const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
         gc.forEach(i => { count += Number(i.qty || 1); });
       }
+      try { localStorage.setItem(CACHE_KEY, String(count)); } catch(e) {}
     } catch(e) {}
+
     ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
