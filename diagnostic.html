@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Razorpay Diagnostic — TOEGO</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; color: #212121; padding: 20px; padding-bottom: 40px; }
+.wrap { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 24px; margin-bottom: 4px; }
+.sub { color: #666; margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
+.actions { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.btn-primary { background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; box-shadow: 0 4px 12px rgba(40,116,240,0.3); }
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-secondary { background: #fff; color: #2874f0; border: 1.5px solid #2874f0; }
+.btn-secondary:hover { background: #f0f5ff; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+.card { background: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 14px; }
+.status-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; font-weight: 700; }
+.status-icon.pending { background: #f1f3f6; color: #999; }
+.status-icon.running { background: #e3f2fd; color: #2874f0; animation: spin 1s linear infinite; }
+.status-icon.pass { background: #e6f7ec; color: #1b8a3a; }
+.status-icon.fail { background: #ffebee; color: #d32f2f; }
+.status-icon.warn { background: #fff3e0; color: #e65100; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.body { flex: 1; min-width: 0; }
+.title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.msg { font-size: 13px; color: #666; line-height: 1.5; word-break: break-word; }
+.msg code { background: #f1f3f6; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 12px; }
+.details { margin-top: 8px; padding: 10px; background: #f8f9fb; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 11px; color: #444; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow: auto; display: none; }
+.details.show { display: block; }
+.card-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.card-btn { padding: 6px 12px; border: 1px solid #e0e0e0; background: #fff; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; color: #333; transition: all .15s; }
+.card-btn:hover { background: #f1f3f6; }
+.card-btn.primary { background: #2874f0; color: #fff; border-color: #2874f0; }
+.card-btn.primary:hover { background: #1a5dc7; }
+
+.log-panel { background: #1e1e1e; color: #d4d4d4; border-radius: 12px; padding: 16px; margin-top: 20px; font-family: 'Courier New', monospace; font-size: 12px; height: 300px; overflow-y: auto; line-height: 1.6; }
+.log-line { margin-bottom: 2px; word-break: break-word; }
+.log-line.info { color: #4ec9b0; }
+.log-line.error { color: #f48771; }
+.log-line.success { color: #6a9955; }
+.log-line.warn { color: #dcdcaa; }
+.log-line .ts { color: #666; margin-right: 8px; }
+
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #212121; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 9999; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100vw - 40px); text-align: center; }
+.toast.show { opacity: 1; }
+.toast.error { background: #d32f2f; }
+.toast.success { background: #388e3c; }
+
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
+.modal.show { display: flex; }
+.modal-card { background: #fff; border-radius: 12px; padding: 24px 24px 24px; max-width: 620px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; }
+.modal-card h2 { font-size: 18px; margin-bottom: 14px; color: #212121; padding-right: 30px; }
+.modal-card p { font-size: 14px; line-height: 1.65; color: #444; margin-bottom: 10px; }
+.modal-card ol, .modal-card ul { padding-left: 20px; line-height: 1.9; margin-bottom: 10px; }
+.modal-card li { font-size: 13.5px; color: #444; }
+.modal-card code { background: #f1f3f6; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 12px; color: #d63384; }
+.modal-card pre { background: #1e1e1e; color: #d4d4d4; padding: 14px 14px 14px 14px; border-radius: 8px; font-size: 12px; overflow-x: auto; margin: 12px 0; position: relative; line-height: 1.5; white-space: pre; }
+.modal-card pre code { background: transparent; padding: 0; color: inherit; font-size: 12px; }
+.modal-card .copy-btn { position: absolute; top: 8px; right: 8px; padding: 4px 10px; background: #2874f0; color: #fff; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 600; }
+.modal-card .copy-btn:hover { background: #1a5dc7; }
+.modal-card .close { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 50%; background: #f1f3f6; border: none; cursor: pointer; font-size: 14px; color: #666; }
+.modal-card .close:hover { background: #e0e0e0; }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-left: 8px; vertical-align: middle; }
+.badge.pass { background: #e6f7ec; color: #1b8a3a; }
+.badge.fail { background: #ffebee; color: #d32f2f; }
+.badge.warn { background: #fff3e0; color: #e65100; }
+.badge.running { background: #e3f2fd; color: #2874f0; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>🔧 Razorpay Diagnostic</h1>
+  <p class="sub">Sab kuch automatic check hota hai. Agar problem hai to red me dikhega — "How to fix" pe click karo aur steps follow karo.</p>
+  
+  <div class="actions">
+    <button class="btn btn-primary" id="runAll">▶ Run All Checks</button>
+    <button class="btn btn-secondary" id="testPay">💳 Test Payment Flow</button>
+    <button class="btn btn-secondary" id="clearLog">🗑 Clear Log</button>
+  </div>
+
+  <div id="checks"></div>
+
+  <div class="log-panel" id="log"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <button class="close" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+    authDomain: "toego-ecommerce.firebaseapp.com",
+    projectId: "toego-ecommerce",
+    storageBucket: "toego-ecommerce.firebasestorage.app",
+    messagingSenderId: "234167880880",
+    appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+  };
+
+  let firebaseApp, auth, db, functions;
+  let paymentSettings = null;
+
+  const checksEl = document.getElementById('checks');
+  const logEl = document.getElementById('log');
+  const toastEl = document.getElementById('toast');
+
+  function log(msg, type) {
+    type = type || 'info';
+    const ts = new Date().toLocaleTimeString();
+    const line = document.createElement('div');
+    line.className = 'log-line ' + type;
+    line.innerHTML = '<span class="ts">' + ts + '</span>' + escapeHtml(msg);
+    logEl.appendChild(line);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  function logClear() { logEl.innerHTML = ''; }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function toast(msg, type) {
+    type = type || 'info';
+    toastEl.textContent = msg;
+    toastEl.className = 'toast ' + type + ' show';
+    setTimeout(() => toastEl.classList.remove('show'), 3500);
+  }
+  window.closeModal = function() { document.getElementById('modal').classList.remove('show'); };
+  window.copyText = function(btn) {
+    const pre = btn.parentElement.querySelector('code');
+    const text = pre ? pre.textContent : btn.nextElementSibling.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    }).catch(() => toast('Copy failed', 'error'));
+  };
+  function showFix(type) {
+    const content = FIX_CONTENT[type] || '<h2>No fix available</h2>';
+    document.getElementById('modalBody').innerHTML = content;
+    document.getElementById('modal').classList.add('show');
+  }
+
+  // ============ CHECKS ============
+  const CHECKS = [
+    { id: 'firebase', title: 'Firebase initialized', run: checkFirebase },
+    { id: 'auth', title: 'User logged in', run: checkAuth },
+    { id: 'settings', title: 'Payment settings (siteSettings/payment)', run: checkSettings },
+    { id: 'key', title: 'Razorpay key configured', run: checkKey },
+    { id: 'functions', title: 'Cloud Functions reachable', run: checkFunctions },
+    { id: 'createorder', title: 'createRazorpayOrder works', run: checkCreateOrder },
+    { id: 'sdk', title: 'Razorpay checkout SDK loads', run: checkSDK }
+  ];
+
+  function renderChecks() {
+    checksEl.innerHTML = CHECKS.map(c => `
+      <div class="card" id="card-${c.id}">
+        <div class="status-icon pending" id="icon-${c.id}">•</div>
+        <div class="body">
+          <div class="title">${escapeHtml(c.title)}<span class="badge" id="badge-${c.id}"></span></div>
+          <div class="msg" id="msg-${c.id}">Not run yet</div>
+          <div class="details" id="details-${c.id}"></div>
+          <div class="card-actions" id="actions-${c.id}">
+            <button class="card-btn" onclick="window.__retest('${c.id}')">↻ Re-test</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.__retest = function(id) {
+    const c = CHECKS.find(x => x.id === id);
+    if (c) c.run();
+  };
+
+  function setCheckStatus(id, status, msg, details, actions) {
+    const icon = document.getElementById('icon-' + id);
+    const badge = document.getElementById('badge-' + id);
+    const msgEl = document.getElementById('msg-' + id);
+    const detailsEl = document.getElementById('details-' + id);
+    const actionsEl = document.getElementById('actions-' + id);
+    
+    icon.className = 'status-icon ' + status;
+    icon.textContent = status === 'pass' ? '✓' : status === 'fail' ? '✕' : status === 'warn' ? '⚠' : status === 'running' ? '⟳' : '•';
+    badge.className = 'badge ' + status;
+    badge.textContent = status === 'pending' ? '' : status.toUpperCase();
+    msgEl.innerHTML = msg;
+    
+    if (details) {
+      detailsEl.textContent = typeof details === 'string' ? details : JSON.stringify(details, null, 2);
+      detailsEl.classList.add('show');
+    } else { detailsEl.classList.remove('show'); }
+    
+    const check = CHECKS.find(c => c.id === id);
+    let actionsHtml = `<button class="card-btn" onclick="window.__retest('${id}')">↻ Re-test</button>`;
+    if (actions && actions.length) {
+      actionsHtml = actions.map((a, i) => `<button class="card-btn ${a.cls || ''}" id="act-${id}-${i}">${escapeHtml(a.label)}</button>`).join('') + actionsHtml;
+    }
+    actionsEl.innerHTML = actionsHtml;
+    
+    if (actions) {
+      actions.forEach((a, i) => {
+        const btn = document.getElementById('act-' + id + '-' + i);
+        if (btn) btn.onclick = a.onClick;
+      });
+    }
+  }
+
+  // ============ INDIVIDUAL CHECKS ============
+
+  async function checkFirebase() {
+    setCheckStatus('firebase', 'running', 'Checking…');
+    try {
+      if (typeof firebase === 'undefined') throw new Error('Firebase SDK not loaded in page');
+      if (!firebase.apps.length) {
+        firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
+      } else { firebaseApp = firebase.apps[0]; }
+      auth = firebase.auth();
+      db = firebase.firestore();
+      functions = firebase.functions();
+      log('Firebase initialized, testing Firestore…', 'info');
+      const snap = await db.collection('siteSettings').doc('payment').get();
+      log('Firestore read OK — payment doc exists: ' + snap.exists, 'success');
+      setCheckStatus('firebase', 'pass', 'Firebase OK. Project: <code>' + FIREBASE_CONFIG.projectId + '</code>');
+      return true;
+    } catch (e) {
+      log('Firebase check failed: ' + e.message, 'error');
+      setCheckStatus('firebase', 'fail', 'Error: <code>' + escapeHtml(e.message) + '</code>', e.stack, [
+        { label: 'How to fix', cls: 'primary', onClick: () => showFix('firebase') }
+      ]);
+      return false;
+    }
+  }
+
+  async function checkAuth() {
+    setCheckStatus('auth', 'running', 'Checking auth…');
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        log('No user logged in — Cloud Functions will fail with unauthenticated', 'warn');
+        setCheckStatus('auth', 'warn', 'Not logged in. Cloud Functions require auth. Pehle login karo.', null, [
+          { label: 'Open login page', cls: 'primary', onClick: () => window.open('log-in.html', '_blank') }
+        ]);
+        return false;
+      }
+      log('User logged in: ' + user.uid, 'success');
+      setCheckStatus('auth', 'pass', 'Logged in. UID: <code>' + user.uid + '</code>');
+      return true;
+    } catch (e) {
+      log('Auth error: ' + e.message, 'error');
+      setCheckStatus('auth', 'fail', 'Auth error: ' + escapeHtml(e.message));
+      return false;
+    }
+  }
+
+  async function checkSettings() {
+    setCheckStatus('settings', 'running', 'Fetching siteSettings/payment…');
+    try {
+      const snap = await db.collection('siteSettings').doc('payment').get();
+      if (!snap.exists) {
+        log('siteSettings/payment NOT FOUND', 'error');
+        setCheckStatus('settings', 'fail', 'Doc <code>siteSettings/payment</code> Firestore me nahi mila.', null, [
+          { label: 'How to create', cls: 'primary', onClick: () => showFix('settings') }
+        ]);
+        return false;
+      }
+      paymentSettings = snap.data();
+      log('Settings loaded: ' + JSON.stringify(paymentSettings), 'success');
+      const summary = `razorpayEnabled: <b>${paymentSettings.razorpayEnabled}</b><br>razorpayKeyId: <code>${paymentSettings.razorpayKeyId ? paymentSettings.razorpayKeyId.substring(0,16)+'...' : 'EMPTY'}</code><br>codEnabled: ${paymentSettings.codEnabled}`;
+      setCheckStatus('settings', 'pass', summary);
+      return true;
+    } catch (e) {
+      log('Settings fetch failed: ' + e.message, 'error');
+      setCheckStatus('settings', 'fail', 'Fetch error: ' + escapeHtml(e.message), e.stack, [
+        { label: 'How to fix', cls: 'primary', onClick: () => showFix('settings') }
+      ]);
+      return false;
+    }
+  }
+
+  async function checkKey() {
+    setCheckStatus('key', 'running', 'Checking key…');
+    try {
+      if (!paymentSettings) await checkSettings();
+      const keyId = (paymentSettings?.razorpayKeyId || '').trim();
+      const enabled = paymentSettings?.razorpayEnabled !== false;
+      
+      if (!enabled) {
+        log('razorpayEnabled = false', 'warn');
+        setCheckStatus('key', 'warn', '<code>razorpayEnabled = false</code> — online payment band hai.', null, [
+          { label: 'How to fix', cls: 'primary', onClick: () => showFix('keyEnabled') }
+        ]);
+        return false;
+      }
+      if (!keyId) {
+        log('razorpayKeyId empty', 'error');
+        setCheckStatus('key', 'fail', '<code>razorpayKeyId</code> empty hai. Admin panel ya Firestore me daalo.', null, [
+          { label: 'How to fix', cls: 'primary', onClick: () => showFix('keyEmpty') }
+        ]);
+        return false;
+      }
+      if (!keyId.startsWith('rzp_')) {
+        log('Key format invalid: ' + keyId, 'error');
+        setCheckStatus('key', 'fail', 'Key format galat: <code>' + escapeHtml(keyId.substring(0,20)) + '</code>. <code>rzp_test_</code> ya <code>rzp_live_</code> se start honi chahiye.', null, [
+          { label: 'How to fix', cls: 'primary', onClick: () => showFix('keyFormat') }
+        ]);
+        return false;
+      }
+      const isLive = keyId.startsWith('rzp_live_');
+      log('Key valid: ' + keyId.substring(0, 16) + '... (' + (isLive ? 'LIVE' : 'TEST') + ')', 'success');
+      setCheckStatus('key', 'pass', `Key set (${isLive ? 'LIVE 🔴' : 'TEST 🧪'}): <code>${keyId.substring(0,16)}...</code>`);
+      return true;
+    } catch (e) {
+      log('Key check error: ' + e.message, 'error');
+      setCheckStatus('key', 'fail', 'Error: ' + escapeHtml(e.message));
+      return false;
+    }
+  }
+
+  async function checkFunctions() {
+    setCheckStatus('functions', 'running', 'Calling function…');
+    try {
+      if (typeof firebase.functions !== 'function') {
+        throw new Error('firebase-functions.js script missing');
+      }
+      log('Testing function reachability…', 'info');
+      const fn = functions.httpsCallable('createRazorpayOrder');
+      try {
+        await fn({ amount: 100 });
+        log('Function call succeeded unexpectedly', 'success');
+        setCheckStatus('functions', 'pass', 'Cloud Function reachable ✓');
+        return true;
+      } catch (err) {
+        const code = err.code || '';
+        const msg = err.message || '';
+        log('Function error: ' + code + ' — ' + msg, 'warn');
+        
+        if (code.indexOf('not-found') !== -1) {
+          setCheckStatus('functions', 'fail', 'Function <code>createRazorpayOrder</code> deploy nahi hua.', 
+            'Error: ' + msg, [
+            { label: '🚀 Deploy steps', cls: 'primary', onClick: () => showFix('deploy') }
+          ]);
+          return false;
+        }
+        if (code.indexOf('unauthenticated') !== -1) {
+          setCheckStatus('functions', 'warn', 'Function reachable ✓ but auth required. Login karke test karo.', null, [
+            { label: 'Open login', cls: 'primary', onClick: () => window.open('log-in.html', '_blank') }
+          ]);
+          return true;
+        }
+        if (code.indexOf('invalid-argument') !== -1) {
+          setCheckStatus('functions', 'pass', 'Function reachable ✓ (rejected test payload — normal)');
+          return true;
+        }
+        if (msg.toLowerCase().indexOf('cors') !== -1) {
+          setCheckStatus('functions', 'fail', 'CORS error — function region galat ya crash hai.', msg, [
+            { label: 'CORS fix', cls: 'primary', onClick: () => showFix('cors') }
+          ]);
+          return false;
+        }
+        setCheckStatus('functions', 'warn', 'Function reachable but error: <code>' + escapeHtml(code || msg) + '</code>', msg, [
+          { label: 'Common fixes', cls: 'primary', onClick: () => showFix('fnError') }
+        ]);
+        return true;
+      }
+    } catch (e) {
+      log('Functions check fatal: ' + e.message, 'error');
+      setCheckStatus('functions', 'fail', 'Fatal: ' + escapeHtml(e.message), e.stack, [
+        { label: 'How to fix', cls: 'primary', onClick: () => showFix('deploy') }
+      ]);
+      return false;
+    }
+  }
+
+  async function checkCreateOrder() {
+    setCheckStatus('createorder', 'running', 'Testing order creation (₹1)…');
+    try {
+      if (!auth.currentUser) {
+        log('Cannot test without login', 'warn');
+        setCheckStatus('createorder', 'warn', 'Login required to test order creation.', null, [
+          { label: 'Open login', cls: 'primary', onClick: () => window.open('log-in.html', '_blank') }
+        ]);
+        return false;
+      }
+      const fn = functions.httpsCallable('createRazorpayOrder');
+      log('Calling createRazorpayOrder (amount=₹1)…', 'info');
+      const res = await fn({ amount: 100, name: 'Test User', phone: '9999999999' });
+      const data = res.data;
+      log('✓ Order created: ' + data.order_id, 'success');
+      log('✓ Amount: ₹' + (data.amount/100) + ' ' + data.currency, 'success');
+      log('✓ Key ID from server: ' + (data.key_id || '(not returned)'), 'info');
+      setCheckStatus('createorder', 'pass',
+        'Order ID: <code>' + data.order_id + '</code><br>Amount: ₹' + (data.amount/100) + '<br>Currency: ' + data.currency,
+        JSON.stringify(data, null, 2));
+      return true;
+    } catch (err) {
+      const code = err.code || '';
+      const msg = err.message || String(err);
+      log('Order creation FAILED: ' + code + ' — ' + msg, 'error');
+      
+      let fixType = 'fnError';
+      let fixLabel = 'Common fixes';
+      if (/key|auth|credential/i.test(msg)) { fixType = 'serverKeys'; fixLabel = '🔑 Server keys fix'; }
+      else if (code.indexOf('not-found') !== -1) { fixType = 'deploy'; fixLabel = '🚀 Deploy fix'; }
+      
+      setCheckStatus('createorder', 'fail',
+        '<b>Error:</b> <code>' + escapeHtml(code || 'unknown') + '</code><br>' + escapeHtml(msg),
+        err.stack || '',
+        [
+          { label: fixLabel, cls: 'primary', onClick: () => showFix(fixType) }
+        ]);
+      return false;
+    }
+  }
+
+  async function checkSDK() {
+    setCheckStatus('sdk', 'running', 'Loading Razorpay checkout…');
+    try {
+      if (typeof Razorpay !== 'undefined') {
+        log('Razorpay already loaded', 'success');
+        setCheckStatus('sdk', 'pass', 'Razorpay checkout SDK loaded ✓');
+        return true;
+      }
+      log('Loading checkout.js…', 'info');
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Script load failed'));
+        document.head.appendChild(s);
+        setTimeout(() => reject(new Error('Timeout after 10s')), 10000);
+      });
+      log('Razorpay loaded ✓', 'success');
+      setCheckStatus('sdk', 'pass', 'Razorpay checkout SDK loaded ✓');
+      return true;
+    } catch (e) {
+      log('SDK load failed: ' + e.message, 'error');
+      setCheckStatus('sdk', 'fail', 'SDK load nahi hua: ' + escapeHtml(e.message), null, [
+        { label: 'Test in browser', onClick: () => window.open('https://checkout.razorpay.com/v1/checkout.js', '_blank') }
+      ]);
+      return false;
+    }
+  }
+
+  // ============ FIX MODALS ============
+  const FIX_CONTENT = {
+    firebase: `
+      <h2>🔧 Firebase Initialization Fix</h2>
+      <p>Agar Firebase load nahi ho raha, yeh check karo:</p>
+      <ol>
+        <li>Page ke <code>&lt;head&gt;</code> me Firebase SDK scripts load hain?</li>
+        <li>Internet connection working hai?</li>
+        <li>Browser console (F12) me error dekho</li>
+      </ol>
+      <p><b>Required scripts:</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>&lt;script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"&gt;&lt;/script&gt;</code></pre>
+    `,
+    settings: `
+      <h2>🔧 Create siteSettings/payment Document</h2>
+      <p>Firestore me <code>siteSettings</code> collection me <code>payment</code> naam ka document banao.</p>
+      <p><b>Method 1 — Firebase Console:</b><br>Firestore → siteSettings → Add document (ID: <code>payment</code>)</p>
+      <p><b>Method 2 — Admin panel:</b> "Payment Settings" page kholo aur save karo.</p>
+      <p><b>Fields to add:</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>razorpayEnabled: true (boolean)
+razorpayKeyId: "rzp_live_xxxxxxxxx" (string)
+currency: "INR" (string)
+gstEnabled: true (boolean)
+gstPercent: 18 (number)
+codEnabled: true (boolean)</code></pre>
+    `,
+    keyEnabled: `
+      <h2>🔧 Enable Razorpay</h2>
+      <p><code>siteSettings/payment</code> doc me <code>razorpayEnabled</code> field ko <code>true</code> karo.</p>
+      <p>Ya admin panel me "Enable Razorpay" toggle ON karo.</p>
+    `,
+    keyEmpty: `
+      <h2>🔧 Add Razorpay Key</h2>
+      <p><code>siteSettings/payment</code> doc me <code>razorpayKeyId</code> field me apni LIVE key daalo.</p>
+      <p><b>Dashboard:</b> <a href="https://dashboard.razorpay.com/app/keys" target="_blank">dashboard.razorpay.com/app/keys</a></p>
+      <p><b>Example:</b> <code>rzp_live_ABC123xyz789</code></p>
+    `,
+    keyFormat: `
+      <h2>🔧 Key Format Fix</h2>
+      <p>Razorpay keys hamesha <code>rzp_test_</code> ya <code>rzp_live_</code> se shuru hoti hain.</p>
+      <ol>
+        <li>Extra space to nahi hai shuru/end me? (trim karo)</li>
+        <li>Copy-paste sahi hui hai?</li>
+        <li>Razorpay Dashboard → Settings → API Keys me sahi key hai?</li>
+      </ol>
+    `,
+    deploy: `
+      <h2>🚀 Deploy Cloud Functions</h2>
+      <p>Tumhare Cloud Function deploy nahi hue. Yeh steps follow karo:</p>
+      <p><b>Step 1 — Functions folder me jao:</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>cd functions
+npm install razorpay firebase-functions firebase-admin</code></pre>
+      <p><b>Step 2 — Keys set karo:</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>firebase functions:config:set razorpay.key_id="rzp_live_xxxx" razorpay.key_secret="xxxx"</code></pre>
+      <p><b>Step 3 — Deploy karo:</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>firebase deploy --only functions</code></pre>
+      <p>Deploy hone me 2-3 minute lagte hain. Console me 2 URLs dikhenge: <code>createRazorpayOrder</code> aur <code>verifyRazorpayPayment</code>.</p>
+    `,
+    cors: `
+      <h2>🔧 CORS Fix</h2>
+      <p>CORS error ka matlab: browser ko function se response nahi mil raha. 2 wajah:</p>
+      <p><b>1. Function crash ho gaya</b> — Razorpay keys missing hain<br>
+      <b>2. Function region galat hai</b></p>
+      <p><b>Check:</b> Firebase Console → Functions → Logs → exact error dekho.</p>
+      <p>Ya terminal se:</p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>firebase functions:log --only createRazorpayOrder</code></pre>
+    `,
+    serverKeys: `
+      <h2>🔑 Server Keys Fix</h2>
+      <p>Function chal raha hai but Razorpay keys nahi mil rahe. Confirm karo:</p>
+      <p><b>1. Keys set hain?</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>firebase functions:config:get</code></pre>
+      <p>Output me <code>razorpay.key_id</code> aur <code>razorpay.key_secret</code> dikhna chahiye.</p>
+      <p><b>2. Nahi dikh rahe to set karo:</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>firebase functions:config:set razorpay.key_id="rzp_live_xxxx" razorpay.key_secret="xxxx"
+firebase deploy --only functions</code></pre>
+      <p><b>3. Keys check karo:</b> Razorpay Dashboard → Settings → API Keys</p>
+    `,
+    fnError: `
+      <h2>🔍 Common Function Errors</h2>
+      <ul>
+        <li><b>Keys galat hain</b> → Razorpay Dashboard se dobara copy karo</li>
+        <li><b>Account blocked</b> → Dashboard me account status check karo</li>
+        <li><b>Test mode vs Live mode mismatch</b> → Dashboard mode aur key match karo</li>
+        <li><b>Function crash</b> → Firebase Console → Functions → Logs</li>
+      </ul>
+      <p><b>Exact error dekhne ke liye:</b></p>
+      <pre><button class="copy-btn" onclick="copyText(this)">Copy</button><code>firebase functions:log --only createRazorpayOrder</code></pre>
+    `
+  };
+
+  // ============ RUN ALL ============
+  async function runAll() {
+    logClear();
+    const btn = document.getElementById('runAll');
+    btn.disabled = true; btn.textContent = '⏳ Running…';
+    log('═══ Starting diagnostic ═══', 'info');
+    
+    const results = {};
+    for (const check of CHECKS) {
+      try {
+        results[check.id] = await check.run();
+        await new Promise(r => setTimeout(r, 100));
+      } catch (e) {
+        log('Check ' + check.id + ' threw: ' + e.message, 'error');
+        results[check.id] = false;
+      }
+    }
+    
+    const passed = Object.values(results).filter(r => r === true).length;
+    log('═══ Done: ' + passed + '/' + CHECKS.length + ' checks passed ═══', passed === CHECKS.length ? 'success' : 'warn');
+    if (passed === CHECKS.length) {
+      toast('🎉 All checks passed! Payment should work.', 'success');
+    } else {
+      toast(passed + '/' + CHECKS.length + ' passed — red items pe click karo', 'error');
+    }
+    
+    btn.disabled = false; btn.textContent = '▶ Run All Checks';
+  }
+
+  // ============ TEST PAYMENT FLOW ============
+  async function testPaymentFlow() {
+    log('═══ Test Payment Flow ═══', 'info');
+    try {
+      if (!auth.currentUser) {
+        toast('Login required first', 'error');
+        log('Not logged in. Login karke dobara try karo.', 'error');
+        return;
+      }
+      
+      const isLive = (paymentSettings?.razorpayKeyId || '').startsWith('rzp_live_');
+      if (isLive) {
+        const ok = confirm('⚠️ LIVE key detected!\n\nYeh test ₹1 ACTUALLY charge karega tumhare account se.\n\nContinue?');
+        if (!ok) { log('Test cancelled by user', 'warn'); return; }
+      }
+      
+      log('Step 1: Creating ₹1 order…', 'info');
+      const fn = functions.httpsCallable('createRazorpayOrder');
+      const res = await fn({ amount: 100, name: 'Test', phone: '9999999999' });
+      const orderData = res.data;
+      log('✓ Order created: ' + orderData.order_id, 'success');
+      
+      log('Step 2: Loading Razorpay SDK…', 'info');
+      if (typeof Razorpay === 'undefined') {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          s.onload = resolve; s.onerror = () => reject(new Error('SDK load failed'));
+          document.head.appendChild(s);
+        });
+      }
+      log('✓ SDK loaded', 'success');
+      log('Step 3: Opening Razorpay checkout…', 'info');
+      
+      const options = {
+        key: orderData.key_id || paymentSettings.razorpayKeyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        order_id: orderData.order_id,
+        name: 'TOEGO Diagnostic',
+        description: 'Test payment ₹1',
+        theme: { color: '#2874f0' },
+        handler: async function(response) {
+          log('✓ Payment success!', 'success');
+          log('Payment ID: ' + response.razorpay_payment_id, 'success');
+          log('Step 4: Verifying signature…', 'info');
+          try {
+            const verifyFn = functions.httpsCallable('verifyRazorpayPayment');
+            const v = await verifyFn({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            if (v.data && v.data.verified) {
+              log('✓ Signature verified!', 'success');
+              toast('🎉 Full flow works! Payment successful & verified.', 'success');
+            } else {
+              log('✕ Signature failed: ' + JSON.stringify(v.data), 'error');
+              toast('Signature verify failed — check server keys', 'error');
+            }
+          } catch (e) {
+            log('Verify error: ' + e.message, 'error');
+            toast('Verify error: ' + e.message, 'error');
+          }
+        },
+        modal: { ondismiss: function() { log('Payment cancelled by user', 'warn'); } }
+      };
+      
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function(resp) {
+        log('✕ Payment FAILED: ' + JSON.stringify(resp.error), 'error');
+        toast('Payment failed: ' + (resp.error?.description || ''), 'error');
+      });
+      rzp.open();
+      log('Checkout opened — complete payment to test full flow', 'info');
+      
+    } catch (e) {
+      log('Test flow error: ' + e.message, 'error');
+      toast('Test failed: ' + e.message, 'error');
+    }
+  }
+
+  // ============ INIT ============
+  renderChecks();
+  document.getElementById('runAll').onclick = runAll;
+  document.getElementById('testPay').onclick = testPaymentFlow;
+  document.getElementById('clearLog').onclick = logClear;
+  
+  // Auto-run on load
+  setTimeout(runAll, 400);
+  
+})();
+</script>
+</body>
+</html>
