@@ -601,6 +601,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const COUPON_KEY = 'toego_applied_coupon';
   const CART_MIRROR_PREFIX = 'toego_cart_mirror_';
   const NS_MARK = '__no_';
+  const PENDING_QTY_TTL = 8000;
 
   let SETTINGS = {
     razorpayEnabled: true, razorpayKeyId: '', currency: 'INR',
@@ -889,11 +890,60 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let _itemNodeMap = new Map();
   let _pendingCartDeletes = new Set();
   let _activeBuyNowId = null;
+  /* ✅ NEW: Track pending qty changes to avoid flicker from stale Firestore snapshots */
+  const _pendingQty = new Map();
 
   let availableCoupons = [];
   let appliedCoupon = null;
   let unsubCoupons = null;
   let usedCouponCodes = new Set();
+
+  /* ✅ NEW: Structural signature (excludes qty) — for smart patching */
+  function _itemStructuralSig(item) {
+    return [
+      item.name || '',
+      item.sellerName || '',
+      item.rating || '',
+      item.ratingCount || '',
+      item.gst || '',
+      item.gstIncluded ? 1 : 0,
+      item.price || 0,
+      item.mrp || 0,
+      item.size || '',
+      item.color || ''
+    ].join('|');
+  }
+
+  /* ✅ NEW: Update qty display in-place (NO FLICKER) */
+  function _updateQtyInPlace(docId, newQty) {
+    const node = _itemNodeMap.get(docId);
+    if (!node) return;
+    const body = node.querySelector('.tg-item-body');
+    if (!body) return;
+
+    const qtyValEl = body.querySelector('.tg-qty-val');
+    if (qtyValEl && Number(qtyValEl.textContent) !== newQty) {
+      qtyValEl.textContent = newQty;
+    }
+
+    const btns = body.querySelectorAll('.tg-qty-btn');
+    if (btns[0]) btns[0].disabled = newQty <= 1;
+
+    /* Update GST display if present */
+    const item = cartItems.find(it => it.id === docId);
+    if (item) {
+      const gstEl = body.querySelector('.tg-item-gst');
+      if (gstEl) {
+        const gstPct = getItemGstPct(item);
+        const gstIncluded = isGstIncluded(item);
+        const price = Number(item.price || 0);
+        const gstAmt = gstPct > 0
+          ? (gstIncluded ? (price * newQty) - ((price * newQty) / (1 + gstPct/100)) : (price * newQty) * gstPct/100)
+          : 0;
+        gstEl.innerHTML = `GST <b>${gstPct}%</b> ${gstIncluded ? '· incl.' : '· ' + fmtINR(gstAmt)}`;
+      }
+    }
+  }
 
   function makeGuestId(i) {
     const pid = i.productId || i.id || '';
@@ -1065,11 +1115,31 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     saveSelected();
   }
 
+  /* ✅ FIXED: Smart patch — only replaces body if structure actually changed */
   function patchItemInPlace(item) {
     const node = _itemNodeMap.get(item.id);
     if (!node) return;
     const body = node.querySelector('.tg-item-body');
-    if (body) body.innerHTML = itemBodyHtml(item);
+    if (!body) return;
+
+    const newStructSig = _itemStructuralSig(item);
+    const oldStructSig = node.getAttribute('data-struct-sig') || '';
+
+    if (newStructSig !== oldStructSig) {
+      /* Structural change → full body re-render */
+      body.innerHTML = itemBodyHtml(item);
+      node.setAttribute('data-struct-sig', newStructSig);
+      node.setAttribute('data-qty', String(item.qty || 1));
+    } else {
+      /* Only qty might have changed → update in place (NO FLICKER) */
+      const newQty = Number(item.qty || 1);
+      const oldQty = Number(node.getAttribute('data-qty') || 1);
+      if (newQty !== oldQty) {
+        _updateQtyInPlace(item.id, newQty);
+        node.setAttribute('data-qty', String(newQty));
+      }
+    }
+
     const cb = node.querySelector('.tg-item-check input');
     if (cb) cb.checked = selectedIds.has(item.id);
   }
@@ -1130,8 +1200,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const img = item.image || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=TOEGO';
     const checked = selectedIds.has(docId);
     const imgAttrs = isFirst ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
+    /* ✅ data-struct-sig + data-qty for smart patch */
     return `
-      <div class="tg-item" data-id="${esc(docId)}">
+      <div class="tg-item" data-id="${esc(docId)}" data-qty="${Number(item.qty||1)}" data-struct-sig="${esc(_itemStructuralSig(item))}">
         <div class="tg-item-check"><input type="checkbox" class="tg-checkbox" ${checked?'checked':''} onchange="tgToggleItem('${escapeAttr(docId)}', this.checked)"></div>
         <div class="tg-item-img" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'"><img src="${esc(img)}" alt="${esc(name)}" ${imgAttrs} draggable="false" /></div>
         <div class="tg-item-body">${itemBodyHtml(item)}</div>
@@ -1457,20 +1528,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (currentUser) _saveMirror(currentUser.uid, cartItems);
   }
 
+  /* ✅ FIXED: tgChangeQty — no body.innerHTML, updates in-place, tracks pending */
   window.tgChangeQty = async function(docId, delta) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
     const newQty = Number(item.qty || 1) + delta;
     if (newQty < 1) return;
     if (newQty > 10) { toast('Max 10 items per product', 'error'); return; }
+
+    /* Optimistic update */
     item.qty = newQty;
+    _pendingQty.set(docId, { qty: newQty, ts: Date.now() });
 
+    /* ✅ Update DOM in-place (NO FLICKER) */
+    _updateQtyInPlace(docId, newQty);
     const node = _itemNodeMap.get(docId);
-    if (node) {
-      const body = node.querySelector('.tg-item-body');
-      if (body) body.innerHTML = itemBodyHtml(item);
-    }
+    if (node) node.setAttribute('data-qty', String(newQty));
 
+    /* Update signature so re-renders are suppressed */
     _lastRenderSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|') + '|sel:' + [...selectedIds].sort().join(',');
 
     updateTotals();
@@ -1481,9 +1556,22 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId)
           .update({ qty: newQty, updatedAt: FV.serverTimestamp() });
-      } catch(err) { toast('Could not update quantity', 'error'); }
+        /* Clear pending after Firestore confirms */
+        setTimeout(() => {
+          const p = _pendingQty.get(docId);
+          if (p && p.qty === newQty) _pendingQty.delete(docId);
+        }, 1200);
+      } catch(err) {
+        _pendingQty.delete(docId);
+        toast('Could not update quantity', 'error');
+        loadCart();
+      }
     } else {
       setGuestCart(cartItems);
+      setTimeout(() => {
+        const p = _pendingQty.get(docId);
+        if (p && p.qty === newQty) _pendingQty.delete(docId);
+      }, 800);
     }
   };
 
@@ -1495,6 +1583,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const node = _itemNodeMap.get(docId);
     if (node) node.classList.add('removing');
     _pendingCartDeletes.add(docId);
+    _pendingQty.delete(docId);
     cartItems = cartItems.filter(it => it.id !== docId);
     selectedIds.delete(docId);
     selectedIds.delete(NS_MARK + docId);
@@ -1530,6 +1619,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       selectedIds.delete(id);
       selectedIds.delete(NS_MARK + id);
       _itemNodeMap.delete(id);
+      _pendingQty.delete(id);
     });
     saveSelected();
     _persistCartToMirror();
@@ -1575,16 +1665,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     ✅ BULLETPROOF BUYNOW ITEM ENSURER
-     - Extracts productId from composite IDs (pid|size|color)
-     - Tries 6 different lookup strategies
-     - Auto-adds product to cart if found in products collection
-     ═══════════════════════════════════════════════════════════════ */
   async function ensureBuyNowItem(buyNowId) {
     if (!buyNowId || !currentUser) return false;
 
-    /* Build candidate IDs — handle composite IDs like "pid|size|color" */
     const candidateIds = new Set();
     candidateIds.add(buyNowId);
     if (String(buyNowId).includes('|')) {
@@ -1592,13 +1675,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (parts[0]) candidateIds.add(parts[0]);
     }
 
-    console.log('[buynow] trying candidates:', [...candidateIds]);
-
-    /* Check 1: Local cart items */
     for (const cid of candidateIds) {
       const found = cartItems.find(it => it.id === cid || it.productId === cid);
       if (found) {
-        console.log('[buynow] ✓ found in local cart:', found.id);
         selectedIds.add(found.id);
         saveSelected();
         renderCart(true);
@@ -1606,13 +1685,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     }
 
-    /* Check 2: Firestore cart direct doc get (server) */
     for (const cid of candidateIds) {
       try {
         const cartDoc = await db.collection('carts').doc(currentUser.uid)
           .collection('items').doc(cid).get({ source: 'server' });
         if (cartDoc.exists) {
-          console.log('[buynow] ✓ found cart doc:', cid);
           const data = cartDoc.data();
           const item = { ...data, id: cartDoc.id, productId: data.productId || cartDoc.id };
           if (!cartItems.find(it => it.id === item.id)) {
@@ -1624,16 +1701,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           renderCart(true);
           return true;
         }
-      } catch(e) { /* ignore */ }
+      } catch(e) { }
     }
 
-    /* Check 3: Firestore cart query by productId */
     for (const cid of candidateIds) {
       try {
         const q = await db.collection('carts').doc(currentUser.uid)
           .collection('items').where('productId', '==', cid).limit(1).get({ source: 'server' });
         if (!q.empty) {
-          console.log('[buynow] ✓ found cart by productId:', cid);
           const d = q.docs[0];
           const data = d.data();
           const item = { ...data, id: d.id, productId: data.productId || d.id };
@@ -1646,25 +1721,21 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           renderCart(true);
           return true;
         }
-      } catch(e) { /* ignore */ }
+      } catch(e) { }
     }
 
-    /* Check 4: Products collection direct doc get → ADD TO CART */
     for (const cid of candidateIds) {
       try {
         const prodDoc = await db.collection('products').doc(cid).get();
         if (prodDoc.exists) {
           const p = prodDoc.data();
-          console.log('[buynow] ✓ found product in products, adding to cart:', cid);
           const newItem = {
             productId: prodDoc.id,
             name: p.name || '',
             image: p.image || (p.images && p.images[0]) || '',
             price: Number(p.price || 0),
             mrp: Number(p.compareAtPrice || p.mrp || 0),
-            qty: 1,
-            size: '',
-            color: '',
+            qty: 1, size: '', color: '',
             sellerId: p.sellerId || p.seller_id || '',
             sellerName: p.sellerName || '',
             rating: p.rating || null,
@@ -1675,9 +1746,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           };
           const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(prodDoc.id);
           const existing = await ref.get();
-          if (!existing.exists) {
-            await ref.set(newItem);
-          }
+          if (!existing.exists) await ref.set(newItem);
           const item = { ...newItem, id: prodDoc.id };
           if (!cartItems.find(it => it.id === item.id)) {
             cartItems = [...cartItems, ...enrichFromCacheSync([item])];
@@ -1688,19 +1757,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           renderCart(true);
           return true;
         }
-      } catch(e) {
-        console.warn('[buynow] product doc check failed:', cid, e && e.message);
-      }
+      } catch(e) { }
     }
 
-    /* Check 5: Products query by productId field */
     for (const cid of candidateIds) {
       try {
         const q = await db.collection('products').where('productId', '==', cid).limit(1).get();
         if (!q.empty) {
           const d = q.docs[0];
           const p = d.data();
-          console.log('[buynow] ✓ found product by query, adding:', d.id);
           const newItem = {
             productId: d.id,
             name: p.name || '',
@@ -1718,7 +1783,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           };
           const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(d.id);
           const existing = await ref.get();
-          if (!existing.exists) { await ref.set(newItem); }
+          if (!existing.exists) await ref.set(newItem);
           const item = { ...newItem, id: d.id };
           if (!cartItems.find(it => it.id === item.id)) {
             cartItems = [...cartItems, ...enrichFromCacheSync([item])];
@@ -1729,10 +1794,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           renderCart(true);
           return true;
         }
-      } catch(e) { /* ignore */ }
+      } catch(e) { }
     }
 
-    console.warn('[buynow] all checks failed for:', buyNowId);
     return false;
   }
 
@@ -1978,9 +2042,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     } catch(e) { usedCouponCodes = new Set(); }
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ✅ Read buynow from ALL sources
-     ═══════════════════════════════════════════════════════════════ */
   function readBuyNowId() {
     let id = null;
     try {
@@ -2003,15 +2064,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ✅ BUYNOW RETRY LOOP — 5 attempts over 7 seconds
-     ═══════════════════════════════════════════════════════════════ */
   function startBuyNowLoop(buyNowId) {
     if (!buyNowId || !currentUser) return;
     _activeBuyNowId = buyNowId;
 
     let attempt = 0;
-    const delays = [200, 600, 1200, 2200, 4000]; /* total ~8.2s */
+    const delays = [200, 600, 1200, 2200, 4000];
     const MAX = delays.length;
 
     const isFound = () => cartItems.some(it => it.id === buyNowId || it.productId === buyNowId ||
@@ -2020,21 +2078,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const attemptFn = async () => {
       if (!_activeBuyNowId) return;
-      if (isFound()) {
-        console.log('[buynow] ✓ already in cart, stopping loop');
-        return;
-      }
+      if (isFound()) return;
       attempt++;
-      console.log('[buynow] attempt', attempt, '/', MAX, 'for', buyNowId);
       const ok = await ensureBuyNowItem(buyNowId);
-      if (ok) {
-        console.log('[buynow] ✓ success on attempt', attempt);
-        return;
-      }
+      if (ok) return;
       if (attempt < MAX) {
         setTimeout(attemptFn, delays[attempt] || 4000);
       } else {
-        console.warn('[buynow] giving up after', MAX, 'attempts');
         toast('Unable to load this product. Please add it to cart from the product page.', 'error');
       }
     };
@@ -2095,7 +2145,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       renderCart(true);
     }
 
-    /* ✅ Read buynow from ALL sources */
     const buyNowDoc = readBuyNowId();
     if (buyNowDoc) {
       selectedIds.clear();
@@ -2107,11 +2156,33 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const cartRef = db.collection('carts').doc(currentUser.uid).collection('items');
     let firstRenderDone = mirror.length > 0;
 
+    /* ✅ FIXED: Apply pending qty overrides to prevent flicker from stale snapshots */
     unsubscribe = cartRef.onSnapshot(async snap => {
       let raw = snap.docs.map(d => {
         const data = d.data();
         return { ...data, id: d.id, productId: data.productId || d.id };
       }).filter(it => !_pendingCartDeletes.has(it.id));
+
+      /* ✅ Override qty with pending local value to prevent stale overwrite */
+      const now = Date.now();
+      raw = raw.map(it => {
+        const pending = _pendingQty.get(it.id);
+        if (pending && (now - pending.ts) < PENDING_QTY_TTL) {
+          return { ...it, qty: pending.qty };
+        }
+        /* Also check composite id */
+        for (const [pid, p] of _pendingQty) {
+          if ((now - p.ts) < PENDING_QTY_TTL && it.productId === pid) {
+            return { ...it, qty: p.qty };
+          }
+        }
+        return it;
+      });
+
+      /* Clean up expired pending entries */
+      _pendingQty.forEach((v, k) => {
+        if (now - v.ts > PENDING_QTY_TTL) _pendingQty.delete(k);
+      });
 
       raw = dedupeCart(raw);
 
@@ -2128,7 +2199,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
       } catch(e) {}
 
-      /* ✅ If buynow is active and item just appeared in this snapshot → select it */
       if (_activeBuyNowId) {
         const cid = _activeBuyNowId;
         const isComposite = String(cid).includes('|');
@@ -2138,7 +2208,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           selectedIds.add(found.id);
           saveSelected();
           renderCart(true);
-          console.log('[buynow] ✓ cart snapshot landed with item, auto-selected:', found.id);
         }
       }
     }, err => {
@@ -2149,7 +2218,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     });
 
-    /* ✅ START BUYNOW LOOP if buynow detected */
     if (buyNowDoc) {
       startBuyNowLoop(buyNowDoc);
     }
@@ -2644,6 +2712,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         selectedIds.delete(id);
         selectedIds.delete(NS_MARK + id);
         _itemNodeMap.delete(id);
+        _pendingQty.delete(id);
       });
       saveSelected();
       _persistCartToMirror();
