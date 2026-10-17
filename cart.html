@@ -83,14 +83,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 .tg-qty { display:inline-flex; align-items:center; border:1px solid #e0e0e0; border-radius:8px; overflow:hidden; align-self:flex-start; margin-bottom:10px; transition:border-color .15s; }
 .tg-qty:hover { border-color:#2874f0; }
-.tg-qty-btn { width:34px; height:34px; display:flex; align-items:center; justify-content:center; background:#fff; color:#2874f0; font-size:18px; font-weight:700; transition:background .15s; user-select:none; }
+.tg-qty-btn { width:34px; height:34px; display:flex; align-items:center; justify-content:center; background:#fff; color:#2874f0; font-size:18px; font-weight:700; transition:background .15s; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
 .tg-qty-btn:hover:not(:disabled) { background:#f0f5ff; }
+.tg-qty-btn:active:not(:disabled) { background:#e0eaff; }
 .tg-qty-btn:disabled { color:#ccc; cursor:not-allowed; }
 .tg-qty-val { min-width:44px; height:34px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#212121; border-left:1px solid #e0e0e0; border-right:1px solid #e0e0e0; background:#fff; }
 
 .tg-item-actions { display:flex; gap:16px; flex-wrap:wrap; font-size:13px; font-weight:700; letter-spacing:.2px; text-transform:uppercase; }
-.tg-item-action { color:#212121; padding:4px 0; transition:color .15s; display:flex; align-items:center; gap:5px; }
+.tg-item-action { color:#212121; padding:4px 0; transition:color .15s; display:flex; align-items:center; gap:5px; -webkit-tap-highlight-color:transparent; }
 .tg-item-action:hover { color:#2874f0; }
+.tg-item-action:active { opacity:0.7; }
 .tg-item-action.danger:hover { color:#d32f2f; }
 .tg-item-action svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 .tg-item-remove { position:absolute; top:10px; right:10px; width:30px; height:30px; border-radius:50%; background:#f1f3f6; color:#666; display:flex; align-items:center; justify-content:center; transition:all .2s; opacity:.5; z-index:3; }
@@ -104,6 +106,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-mobile-order-save { font-size:11.5px; color:#388e3c; font-weight:600; margin-top:1px; }
 .tg-mobile-order-btn { background:linear-gradient(135deg,#fb641b 0%,#e05515 100%); color:#fff; font-size:14.5px; font-weight:800; padding:12px 26px; border-radius:8px; letter-spacing:.4px; text-transform:uppercase; box-shadow:0 4px 14px rgba(251,100,27,.35); display:flex; align-items:center; gap:6px; transition:all .15s; }
 .tg-mobile-order-btn:disabled { opacity:.55; cursor:not-allowed; }
+.tg-mobile-order-btn:active:not(:disabled) { transform:scale(0.97); }
 
 .tg-mobile-tags { position:fixed; bottom:132px; left:0; right:0; background:#fff; padding:8px 12px; box-shadow:0 -2px 12px rgba(0,0,0,.06); display:none; flex-wrap:wrap; gap:6px; z-index:9997; border-top:1px solid #f1f3f6; max-height:100px; overflow-y:auto; }
 .tg-mobile-tags.has-tags { display:flex; }
@@ -123,7 +126,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-price-total .label { font-size:16px; font-weight:700; }
 .tg-price-save { background:#e6f7ec; color:#1b8a3a; font-size:13px; font-weight:700; padding:10px 14px; border-radius:8px; margin-top:12px; display:flex; align-items:center; gap:8px; }
 .tg-price-save svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-.tg-place-order { width:calc(100% - 40px); padding:15px; background:linear-gradient(135deg,#fb641b 0%,#e05515 100%); color:#fff; font-size:15px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; border-radius:8px; margin:16px 20px 20px; box-shadow:0 4px 14px rgba(251,100,27,.3); display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; }
+.tg-place-order { width:calc(100% - 40px); padding:15px; background:linear-gradient(135deg,#fb641b 0%,#e05515 100%); color:#fff; font-size:15px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; border-radius:8px; margin:16px 20px 20px; box-shadow:0 4px 14px rgba(251,100,27,.3); display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; -webkit-tap-highlight-color:transparent; }
+.tg-place-order:active:not(:disabled) { transform:scale(0.98); }
 .tg-place-order:disabled { opacity:.55; cursor:not-allowed; filter:grayscale(.3); }
 
 .tg-price-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; padding-top:12px; border-top:1px dashed #e5e7eb; }
@@ -134,8 +138,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-tag.info { background:linear-gradient(135deg,#f1f3f6,#e0e5eb); color:#455a64; }
 .tg-tag.gst-rate { background:linear-gradient(135deg,#e3f2fd,#bbdefb); color:#0d47a1; }
 
-.tg-coupon { background:#fff; border-radius:12px; padding:14px 18px; margin-top:12px; box-shadow:0 1px 4px rgba(0,0,0,.05); display:flex; align-items:center; gap:12px; cursor:pointer; transition:box-shadow .18s,transform .15s,border-color .18s; border:1.5px solid transparent; }
+.tg-coupon { background:#fff; border-radius:12px; padding:14px 18px; margin-top:12px; box-shadow:0 1px 4px rgba(0,0,0,.05); display:flex; align-items:center; gap:12px; cursor:pointer; transition:box-shadow .18s,transform .15s,border-color .18s; border:1.5px solid transparent; -webkit-tap-highlight-color:transparent; }
 .tg-coupon:hover { box-shadow:0 4px 14px rgba(0,0,0,.08); transform:translateY(-1px); }
+.tg-coupon:active { transform:scale(0.99); }
 .tg-coupon.applied { border-color:#1b8a3a; background:linear-gradient(135deg,#f0fff4,#e6f7ec); }
 .tg-coupon.applied .tg-coupon-icon { background:linear-gradient(135deg,#22c55e,#16a34a); }
 .tg-coupon.applied .tg-coupon-icon svg { stroke:#fff; }
@@ -174,7 +179,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-item-skel { display:grid; grid-template-columns:auto 100px 1fr; gap:14px; padding:14px; background:#fff; border-radius:12px; margin-bottom:10px; }
 
 .tg-bnav { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #e0e0e0; display:flex; z-index:9999; box-shadow:0 -2px 8px rgba(0,0,0,.06); padding-bottom:env(safe-area-inset-bottom,0); }
-.tg-bnav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 2px; gap:3px; font-size:10px; color:#666; font-weight:600; position:relative; transition:color .15s; }
+.tg-bnav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:8px 2px; gap:3px; font-size:10px; color:#666; font-weight:600; position:relative; transition:color .15s; -webkit-tap-highlight-color:transparent; }
 .tg-bnav-item.active { color:#2874f0; }
 .tg-bnav-item svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
 .tg-bnav-badge { position:absolute; top:4px; right:calc(50% - 20px); background:#ff6161; color:#fff; font-size:9px; font-weight:700; min-width:15px; height:15px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
@@ -195,6 +200,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-modal-field textarea { resize:vertical; min-height:70px; }
 .tg-modal-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .tg-modal-save { width:100%; padding:14px; border-radius:10px; background:linear-gradient(135deg,#2874f0,#1a5dc7); color:#fff; font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 6px 18px rgba(40,116,240,.3); margin-top:8px; transition:all .15s; }
+.tg-modal-save:active:not(:disabled) { transform:scale(0.99); }
 .tg-modal-save:disabled { opacity:.7; cursor:not-allowed; }
 
 .tg-addr-types { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
@@ -571,6 +577,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 (function() {
   'use strict';
 
+  /* ═══════════════════════════════════════════════════════════════
+     FIREBASE INIT
+     ═══════════════════════════════════════════════════════════════ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -588,6 +597,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
+  /* ═══════════════════════════════════════════════════════════════
+     CONSTANTS
+     ═══════════════════════════════════════════════════════════════ */
   const GUEST_CART_KEY = 'toego_cart_guest';
   const SELECTED_KEY = 'toego_cart_selected';
   const PIN_KEY = 'toego_delivery_pin';
@@ -595,10 +607,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const ADDR_LIST_KEY = 'toego_saved_addresses';
   const ADDR_LAST_IDX = 'toego_last_addr_index';
   const BUY_NOW_KEY = 'toego_buy_now_doc';
-  const PCACHE_KEY = 'toego_pcache_v2';
-  const PCACHE_TTL = 15 * 60 * 1000;
   const COUPON_KEY = 'toego_applied_coupon';
   const CART_MIRROR_PREFIX = 'toego_cart_mirror_';
+  const SHARED_PCACHE_KEY = 'toego_pcache_v2';
+  const SHARED_PCACHE_TTL = 15 * 60 * 1000;
   const NS_MARK = '__no_';
 
   let SETTINGS = {
@@ -606,24 +618,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     gstEnabled: true, gstPercent: 18, gstIncludedInPrice: false,
     codEnabled: true, freeDeliveryAbove: 0, deliveryCharge: 0
   };
+  let SELLER_GLOBAL = { commissionPercent: 0 };
 
-  let SELLER_GLOBAL = {
-    commissionPercent: 0
-  };
-
+  /* ═══════════════════════════════════════════════════════════════
+     SHARED PRODUCT CACHE
+     ═══════════════════════════════════════════════════════════════ */
   const _pCache = new Map();
   let _pCacheDirty = false;
   let _pCacheSaveTimer = null;
 
   function _pCacheBoot() {
     try {
-      const raw = localStorage.getItem(PCACHE_KEY);
+      const raw = localStorage.getItem(SHARED_PCACHE_KEY);
       if (!raw) return;
       const obj = JSON.parse(raw);
       const now = Date.now();
       for (const k in obj) {
         const v = obj[k];
-        if (v && v.ts && (now - v.ts) < PCACHE_TTL) _pCache.set(k, v);
+        if (v && v.ts && (now - v.ts) < SHARED_PCACHE_TTL) _pCache.set(k, v);
       }
     } catch(e) {}
   }
@@ -632,7 +644,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try {
       const obj = {};
       for (const [k, v] of _pCache) obj[k] = v;
-      localStorage.setItem(PCACHE_KEY, JSON.stringify(obj));
+      localStorage.setItem(SHARED_PCACHE_KEY, JSON.stringify(obj));
       _pCacheDirty = false;
     } catch(e) {}
   }
@@ -644,7 +656,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!id) return undefined;
     const v = _pCache.get(id);
     if (!v) return undefined;
-    if ((Date.now() - v.ts) > PCACHE_TTL) { _pCache.delete(id); return undefined; }
+    if ((Date.now() - v.ts) > SHARED_PCACHE_TTL) { _pCache.delete(id); return undefined; }
     return v.data;
   }
   function _pSet(id, data) {
@@ -661,7 +673,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const missing = [];
     for (const id of ids) {
       const c = _pCache.get(id);
-      if (!c || (now - c.ts) > PCACHE_TTL) missing.push(id);
+      if (!c || (now - c.ts) > SHARED_PCACHE_TTL) missing.push(id);
     }
     if (!missing.length) return;
     const CHUNK = 30;
@@ -775,28 +787,31 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try { return JSON.parse(localStorage.getItem(_mirrorKey(uid)) || '[]'); } catch(e) { return []; }
   }
 
-  async function loadPaymentSettings() {
-    try {
-      const snap = await db.collection('siteSettings').doc('payment').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('payment').get());
-      if (snap && snap.exists) {
-        const d = snap.data();
-        SETTINGS = {
-          razorpayEnabled: d.razorpayEnabled !== false,
-          razorpayKeyId: d.razorpayKeyId || '',
-          currency: d.currency || 'INR',
-          gstEnabled: d.gstEnabled !== false,
-          gstPercent: Number(d.gstPercent || 18),
-          gstIncludedInPrice: d.gstIncludedInPrice === true,
-          codEnabled: d.codEnabled !== false,
-          freeDeliveryAbove: 0,
-          deliveryCharge: 0
-        };
-      }
-    } catch(e) {}
-    applyPaymentUI();
-    updateTotals();
+  /* ═══════════════════════════════════════════════════════════════
+     PAYMENT & SELLER SETTINGS (non-blocking)
+     ═══════════════════════════════════════════════════════════════ */
+  function loadPaymentSettings() {
+    db.collection('siteSettings').doc('payment').get({ source: 'cache' })
+      .catch(() => db.collection('siteSettings').doc('payment').get())
+      .then(snap => {
+        if (snap && snap.exists) {
+          const d = snap.data();
+          SETTINGS = {
+            razorpayEnabled: d.razorpayEnabled !== false,
+            razorpayKeyId: d.razorpayKeyId || '',
+            currency: d.currency || 'INR',
+            gstEnabled: d.gstEnabled !== false,
+            gstPercent: Number(d.gstPercent || 18),
+            gstIncludedInPrice: d.gstIncludedInPrice === true,
+            codEnabled: d.codEnabled !== false,
+            freeDeliveryAbove: 0,
+            deliveryCharge: 0
+          };
+          applyPaymentUI();
+          scheduleUpdateTotals();
+        }
+      }).catch(() => {});
   }
-
   function watchPaymentSettings() {
     try {
       db.collection('siteSettings').doc('payment').onSnapshot(snap => {
@@ -810,45 +825,42 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         SETTINGS.gstIncludedInPrice = d.gstIncludedInPrice === true;
         SETTINGS.codEnabled = d.codEnabled !== false;
         applyPaymentUI();
-        updateTotals();
-      }, err => console.warn('[cart payment listener]', err && err.message));
+        scheduleUpdateTotals();
+      }, () => {});
     } catch(e) {}
   }
-
   function applyPaymentUI() {
     const gstRow = document.getElementById('tg-price-gst-row');
     if (gstRow) gstRow.style.display = SETTINGS.gstEnabled ? 'flex' : 'none';
     const codOpt = document.getElementById('tg-cod-opt');
     if (codOpt) codOpt.style.display = SETTINGS.codEnabled ? 'flex' : 'none';
   }
-
-  async function loadSellerGlobal() {
-    try {
-      const snap = await db.collection('siteSettings').doc('seller')
-        .get({ source: 'cache' })
-        .catch(() => db.collection('siteSettings').doc('seller').get());
-      if (snap && snap.exists) {
-        const d = snap.data() || {};
-        SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0);
-      }
-    } catch (e) {
-      console.warn('[Cart] seller settings load failed:', e && e.message);
-    }
-    try { updateTotals(); } catch (e) {}
+  function loadSellerGlobal() {
+    db.collection('siteSettings').doc('seller').get({ source: 'cache' })
+      .catch(() => db.collection('siteSettings').doc('seller').get())
+      .then(snap => {
+        if (snap && snap.exists) {
+          const d = snap.data() || {};
+          SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0);
+          scheduleUpdateTotals();
+        }
+      }).catch(() => {});
   }
-
   function watchSellerGlobal() {
     try {
       db.collection('siteSettings').doc('seller').onSnapshot(snap => {
         if (snap.exists) {
           const d = snap.data() || {};
           SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0);
-          try { updateTotals(); } catch(e) {}
+          scheduleUpdateTotals();
         }
       }, () => {});
     } catch(e) {}
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     THEME
+     ═══════════════════════════════════════════════════════════════ */
   const themeMeta = document.getElementById('tg-theme-meta');
   function applyTheme(primary) {
     primary = primary || '#2874f0';
@@ -859,6 +871,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
   })();
 
+  /* ═══════════════════════════════════════════════════════════════
+     HELPERS
+     ═══════════════════════════════════════════════════════════════ */
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -867,12 +882,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     el.className = 'tg-toast ' + type;
     el.textContent = msg;
     w.appendChild(el);
-    setTimeout(() => el.remove(), 2600);
+    setTimeout(() => el.remove(), 2400);
   }
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:2}); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
 
+  /* ═══════════════════════════════════════════════════════════════
+     STATE
+     ═══════════════════════════════════════════════════════════════ */
   let cartItems = [];
   let selectedIds = new Set();
   let unsubscribe = null;
@@ -887,12 +905,43 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let _lastIdsKey = '';
   let _itemNodeMap = new Map();
   let _pendingCartDeletes = new Set();
+  let _renderScheduled = false;
+  let _totalsScheduled = false;
+  let _lastTotalsSig = '';
 
   let availableCoupons = [];
   let appliedCoupon = null;
   let unsubCoupons = null;
   let usedCouponCodes = new Set();
 
+  /* ═══════════════════════════════════════════════════════════════
+     RAF BATCHING
+     ═══════════════════════════════════════════════════════════════ */
+  function scheduleRender(force) {
+    if (force) _forceNextRender = true;
+    if (_renderScheduled) return;
+    _renderScheduled = true;
+    requestAnimationFrame(() => {
+      _renderScheduled = false;
+      const forceNow = _forceNextRender;
+      _forceNextRender = false;
+      renderCart(forceNow);
+    });
+  }
+  let _forceNextRender = false;
+
+  function scheduleUpdateTotals() {
+    if (_totalsScheduled) return;
+    _totalsScheduled = true;
+    requestAnimationFrame(() => {
+      _totalsScheduled = false;
+      updateTotals();
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     GUEST CART
+     ═══════════════════════════════════════════════════════════════ */
   function makeGuestId(i) {
     const pid = i.productId || i.id || '';
     return pid + '|' + (i.size || '') + '|' + (i.color || '');
@@ -934,7 +983,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try { localStorage.setItem(PIN_KEY, p.trim()); } catch(e) {}
     document.getElementById('tg-pin-city').textContent = p.trim();
     toast('Delivery pincode updated', 'success');
-    renderCart(true);
+    scheduleRender(true);
   };
 
   function isKanpurPincode(pin) {
@@ -985,6 +1034,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return SETTINGS.gstIncludedInPrice === true;
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     RENDER CART
+     ═══════════════════════════════════════════════════════════════ */
   function renderCart(force) {
     const loading = document.getElementById('tg-loading');
     const itemsWrap = document.getElementById('tg-items');
@@ -1027,7 +1079,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const sig = itemSig + '|sel:' + [...selectedIds].sort().join(',');
 
     if (!force && sig === _lastRenderSig) {
-      updateTotals();
+      scheduleUpdateTotals();
       updateHeaderBadge();
       return;
     }
@@ -1127,11 +1179,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const name = item.name || 'Product';
     const img = item.image || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=TOEGO';
     const checked = selectedIds.has(docId);
-    const imgAttrs = isFirst ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
+    const imgAttrs = isFirst ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async" fetchpriority="low"';
     return `
       <div class="tg-item" data-id="${esc(docId)}">
         <div class="tg-item-check"><input type="checkbox" class="tg-checkbox" ${checked?'checked':''} onchange="tgToggleItem('${escapeAttr(docId)}', this.checked)"></div>
-        <div class="tg-item-img" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'"><img src="${esc(img)}" alt="${esc(name)}" ${imgAttrs} draggable="false" /></div>
+        <div class="tg-item-img" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'"><img src="${esc(img)}" alt="${esc(name)}" ${imgAttrs} draggable="false" onerror="this.src='https://via.placeholder.com/200x200/f1f3f6/878787?text=TOEGO'" /></div>
         <div class="tg-item-body">${itemBodyHtml(item)}</div>
         <button class="tg-item-remove" onclick="tgRemoveItem('${escapeAttr(docId)}')" aria-label="Remove"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
       </div>
@@ -1165,7 +1217,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (cb) cb.checked = this.checked;
     });
     updateSelectAllState();
-    updateTotals();
+    scheduleUpdateTotals();
     saveSelected();
   });
 
@@ -1178,7 +1230,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       selectedIds.add(NS_MARK + docId);
     }
     updateSelectAllState();
-    updateTotals();
+    scheduleUpdateTotals();
     saveSelected();
   };
 
@@ -1208,7 +1260,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const sel = getSelectedItems();
     let mrpTotal = 0, finalTotal = 0;
     let gstIncludedAmt = 0, gstAddedAmt = 0, qtyCount = 0;
-
     const gstByRate = {};
 
     sel.forEach(it => {
@@ -1242,74 +1293,43 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
 
     const discount = mrpTotal - finalTotal;
-    const delivery = 0;
-    const deliverySource = 'seller';
-
     const commPct = Number(SELLER_GLOBAL.commissionPercent || 0);
     const cartCommission = commPct !== 0 ? Math.round(finalTotal * commPct / 100) : 0;
-
     const couponDiscount = calcCouponDiscount(finalTotal);
-
-    const grand = Math.max(0,
-      finalTotal + gstAddedAmt + cartCommission - couponDiscount
-    );
-
+    const grand = Math.max(0, finalTotal + gstAddedAmt + cartCommission - couponDiscount);
     const gstTotal = gstIncludedAmt + gstAddedAmt;
 
     return {
-      mrpTotal,
-      finalTotal,
-      discount,
-      gstTotal,
-      gstIncludedAmt,
-      gstAddedAmt,
-      gstPayable: gstAddedAmt,
-      gstByRate,
-      delivery,
-      deliverySource,
-      cartCommission,
-      cartCommissionPct: commPct,
-      couponDiscount,
-      appliedCode: appliedCoupon?.code || '',
-      grand,
-      itemCount: qtyCount,
-      count: sel.length,
-      sel
+      mrpTotal, finalTotal, discount, gstTotal, gstIncludedAmt, gstAddedAmt,
+      gstPayable: gstAddedAmt, gstByRate,
+      delivery: 0, deliverySource: 'seller',
+      cartCommission, cartCommissionPct: commPct,
+      couponDiscount, appliedCode: appliedCoupon?.code || '',
+      grand, itemCount: qtyCount, count: sel.length, sel
     };
   }
 
   function buildChargeTags(t) {
     const tags = [];
-
     if (t.cartCommission !== 0) {
       if (t.cartCommission > 0) {
-        tags.push(`<span class="tg-tag handling">
-          <svg viewBox="0 0 24 24"><path d="M20 7h-4V5a3 3 0 0 0-3-3h-2a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2ZM9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2H9V5Z"/></svg>
-          Handling Fee · +${fmtINR(t.cartCommission)} (${t.cartCommissionPct}%)</span>`);
+        tags.push(`<span class="tg-tag handling"><svg viewBox="0 0 24 24"><path d="M20 7h-4V5a3 3 0 0 0-3-3h-2a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2ZM9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2H9V5Z"/></svg>Handling Fee · +${fmtINR(t.cartCommission)} (${t.cartCommissionPct}%)</span>`);
       } else {
-        tags.push(`<span class="tg-tag discount">
-          <svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>
-          Special Discount · −${fmtINR(Math.abs(t.cartCommission))} (${t.cartCommissionPct}%)</span>`);
+        tags.push(`<span class="tg-tag discount"><svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>Special Discount · −${fmtINR(Math.abs(t.cartCommission))} (${t.cartCommissionPct}%)</span>`);
       }
     }
-
     if (SETTINGS.gstEnabled && t.gstByRate) {
       const rates = Object.keys(t.gstByRate).map(Number).sort((a, b) => a - b);
       rates.forEach(rate => {
         const g = t.gstByRate[String(rate)];
         if (!g) return;
         if (g.hasAdded && g.added > 0) {
-          tags.push(`<span class="tg-tag gst-rate">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            GST ${rate}% · ${fmtINR(g.added)}</span>`);
+          tags.push(`<span class="tg-tag gst-rate"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>GST ${rate}% · ${fmtINR(g.added)}</span>`);
         } else if (g.hasIncluded && g.included > 0) {
-          tags.push(`<span class="tg-tag gst-rate">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            GST ${rate}% Included</span>`);
+          tags.push(`<span class="tg-tag gst-rate"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>GST ${rate}% Included</span>`);
         }
       });
     }
-
     if (!tags.length) return '';
     return tags.join('');
   }
@@ -1322,9 +1342,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!rates.length) { label.textContent = ''; return; }
     if (rates.length === 1) {
       const g = t.gstByRate[String(rates[0])];
-      label.textContent = g.hasIncluded && !g.hasAdded
-        ? '(' + rates[0] + '% included)'
-        : '(' + rates[0] + '%)';
+      label.textContent = g.hasIncluded && !g.hasAdded ? '(' + rates[0] + '% included)' : '(' + rates[0] + '%)';
     } else {
       const minR = rates[0];
       const maxR = rates[rates.length - 1];
@@ -1332,11 +1350,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const g = t.gstByRate[String(r)];
         return g.hasIncluded && !g.hasAdded;
       });
-      if (allIncluded) {
-        label.textContent = '(' + minR + '-' + maxR + '% included)';
-      } else {
-        label.textContent = '(' + minR + '-' + maxR + '%)';
-      }
+      if (allIncluded) label.textContent = '(' + minR + '-' + maxR + '% included)';
+      else label.textContent = '(' + minR + '-' + maxR + '%)';
     }
   }
 
@@ -1359,6 +1374,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     }
 
+    /* Skip if nothing changed */
+    const totalsSig = t.mrpTotal + '|' + t.finalTotal + '|' + t.gstAddedAmt + '|' + t.gstIncludedAmt + '|' + t.cartCommission + '|' + t.couponDiscount + '|' + t.grand + '|' + t.itemCount + '|' + t.count;
+    if (totalsSig === _lastTotalsSig) return;
+    _lastTotalsSig = totalsSig;
+
     const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     setText('tg-total-items', t.itemCount);
     setText('tg-price-total-mrp', fmtINR(t.mrpTotal));
@@ -1376,15 +1396,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
 
     updateGstLabel(t);
-    if (!SETTINGS.gstEnabled) {
-      setText('tg-price-gst', fmtINR(0));
-    } else if (t.gstAddedAmt > 0) {
-      setText('tg-price-gst', fmtINR(t.gstAddedAmt));
-    } else if (t.gstIncludedAmt > 0) {
-      setText('tg-price-gst', 'Included');
-    } else {
-      setText('tg-price-gst', fmtINR(0));
-    }
+    if (!SETTINGS.gstEnabled) setText('tg-price-gst', fmtINR(0));
+    else if (t.gstAddedAmt > 0) setText('tg-price-gst', fmtINR(t.gstAddedAmt));
+    else if (t.gstIncludedAmt > 0) setText('tg-price-gst', 'Included');
+    else setText('tg-price-gst', fmtINR(0));
 
     const ccRow = document.getElementById('tg-price-cartcharge-row');
     const ccVal = document.getElementById('tg-price-cartcharge');
@@ -1400,9 +1415,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           ccVal.textContent = '− ' + fmtINR(Math.abs(t.cartCommission));
           ccVal.style.color = '#388e3c';
         }
-      } else {
-        ccRow.style.display = 'none';
-      }
+      } else ccRow.style.display = 'none';
     }
 
     setText('tg-price-final', fmtINR(t.grand));
@@ -1433,9 +1446,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (totalSave > 0) {
       if (saveBox) saveBox.style.display = 'flex';
       if (saveAmt) saveAmt.textContent = fmtINR(totalSave);
-    } else {
-      if (saveBox) saveBox.style.display = 'none';
-    }
+    } else if (saveBox) saveBox.style.display = 'none';
 
     const disable = t.itemCount === 0;
     ['tg-place-order','tg-m-btn'].forEach(id => {
@@ -1455,7 +1466,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (currentUser) _saveMirror(currentUser.uid, cartItems);
   }
 
-  window.tgChangeQty = async function(docId, delta) {
+  /* ═══════════════════════════════════════════════════════════════
+     QTY CHANGE — OPTIMISTIC
+     ═══════════════════════════════════════════════════════════════ */
+  window.tgChangeQty = function(docId, delta) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
     const newQty = Number(item.qty || 1) + delta;
@@ -1463,6 +1477,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (newQty > 10) { toast('Max 10 items per product', 'error'); return; }
     item.qty = newQty;
 
+    /* Instant UI update */
     const node = _itemNodeMap.get(docId);
     if (node) {
       const body = node.querySelector('.tg-item-body');
@@ -1471,21 +1486,27 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     _lastRenderSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|') + '|sel:' + [...selectedIds].sort().join(',');
 
-    updateTotals();
+    scheduleUpdateTotals();
     updateHeaderBadge();
     _persistCartToMirror();
 
+    /* Background sync */
     if (currentUser) {
-      try {
-        await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId)
-          .update({ qty: newQty, updatedAt: FV.serverTimestamp() });
-      } catch(err) { toast('Could not update quantity', 'error'); }
+      db.collection('carts').doc(currentUser.uid).collection('items').doc(docId)
+        .update({ qty: newQty, updatedAt: FV.serverTimestamp() })
+        .catch(err => {
+          console.warn('[qty sync]', err && err.message);
+          toast('Could not update quantity', 'error');
+        });
     } else {
       setGuestCart(cartItems);
     }
   };
 
-  window.tgRemoveItem = async function(docId, skipConfirm) {
+  /* ═══════════════════════════════════════════════════════════════
+     REMOVE — OPTIMISTIC
+     ═══════════════════════════════════════════════════════════════ */
+  window.tgRemoveItem = function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
     if (!skipConfirm && !confirm('Remove "' + (item.name || 'this item') + '" from cart?')) return;
@@ -1499,25 +1520,26 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     _itemNodeMap.delete(docId);
     saveSelected();
     _persistCartToMirror();
-    setTimeout(() => renderCart(true), 200);
+    setTimeout(() => scheduleRender(true), 200);
 
     if (currentUser) {
-      try {
-        await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
-        _pendingCartDeletes.delete(docId);
-        if (!skipConfirm) toast('Removed from cart', 'success');
-      } catch(err) {
-        _pendingCartDeletes.delete(docId);
-        toast('Could not remove item', 'error');
-        loadCart();
-      }
+      db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete()
+        .then(() => {
+          _pendingCartDeletes.delete(docId);
+          if (!skipConfirm) toast('Removed from cart', 'success');
+        })
+        .catch(err => {
+          _pendingCartDeletes.delete(docId);
+          toast('Could not remove item', 'error');
+          loadCart();
+        });
     } else {
       setGuestCart(cartItems);
       if (!skipConfirm) toast('Removed from cart', 'success');
     }
   };
 
-  window.tgRemoveSelected = async function() {
+  window.tgRemoveSelected = function() {
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
     if (!confirm('Remove ' + sel.length + ' item(s)?')) return;
@@ -1531,28 +1553,29 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
     saveSelected();
     _persistCartToMirror();
-    renderCart(true);
+    scheduleRender(true);
 
     if (currentUser) {
-      try {
-        const batch = db.batch();
-        const col = db.collection('carts').doc(currentUser.uid).collection('items');
-        idsToRemove.forEach(id => batch.delete(col.doc(id)));
-        await batch.commit();
-        idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
-        toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
-      } catch(err) {
-        idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
-        toast('Could not remove items', 'error');
-        loadCart();
-      }
+      const batch = db.batch();
+      const col = db.collection('carts').doc(currentUser.uid).collection('items');
+      idsToRemove.forEach(id => batch.delete(col.doc(id)));
+      batch.commit()
+        .then(() => {
+          idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
+          toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
+        })
+        .catch(err => {
+          idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
+          toast('Could not remove items', 'error');
+          loadCart();
+        });
     } else {
       setGuestCart(cartItems);
       toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
     }
   };
 
-  window.tgMoveToWishlist = async function(docId) {
+  window.tgMoveToWishlist = function(docId) {
     if (!currentUser) {
       toast('Please log in to save to wishlist', 'info');
       setTimeout(() => location.href = 'log-in.html?redirect=cart.html', 1000);
@@ -1560,37 +1583,52 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
-    try {
-      const pid = item.productId || item.id;
-      await db.collection('wishlists').doc(currentUser.uid).set({
-        items: FV.arrayUnion(pid),
-        updatedAt: FV.serverTimestamp()
-      }, { merge: true });
-      await window.tgRemoveItem(docId, true);
-      toast('Saved for later ❤', 'success');
-    } catch(err) {
+    const pid = item.productId || item.id;
+
+    /* Optimistic: remove from cart UI */
+    _pendingCartDeletes.add(docId);
+    cartItems = cartItems.filter(it => it.id !== docId);
+    selectedIds.delete(docId);
+    selectedIds.delete(NS_MARK + docId);
+    _itemNodeMap.delete(docId);
+    saveSelected();
+    _persistCartToMirror();
+    scheduleRender(true);
+    toast('Saved for later ❤', 'success');
+
+    /* Background: add to wishlist + remove from cart */
+    db.collection('wishlists').doc(currentUser.uid).set({
+      items: FV.arrayUnion(pid),
+      updatedAt: FV.serverTimestamp()
+    }, { merge: true }).catch(() => {
       toast('Could not save to wishlist', 'error');
-    }
+    });
+
+    db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete()
+      .then(() => _pendingCartDeletes.delete(docId))
+      .catch(err => {
+        _pendingCartDeletes.delete(docId);
+        toast('Could not remove from cart', 'error');
+        loadCart();
+      });
   };
 
   /* ═══════════════════════════════════════════════════════════════
-     ✅ FIXED: BULLETPROOF BUYNOW ITEM ENSURER
-     - Clears pending deletes for the buynow item
-     - Multi-strategy fetch with proper retries
+     BUY NOW ITEM ENSURER
      ═══════════════════════════════════════════════════════════════ */
   async function ensureBuyNowItem(docId) {
     if (!docId || !currentUser) return false;
 
-    /* ⭐ CRITICAL FIX: Remove from pending deletes if present */
+    /* CRITICAL: Remove from pending deletes */
     _pendingCartDeletes.delete(docId);
 
-    /* Check 1: exact doc ID match in current cart */
+    /* Check 1: exact doc ID */
     let found = cartItems.find(it => it.id === docId);
     if (found) {
       selectedIds.clear();
       selectedIds.add(found.id);
       saveSelected();
-      renderCart(true);
+      scheduleRender(true);
       return true;
     }
 
@@ -1600,11 +1638,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       selectedIds.clear();
       selectedIds.add(found.id);
       saveSelected();
-      renderCart(true);
+      scheduleRender(true);
       return true;
     }
 
-    /* Check 3: Firestore cart by doc ID (server) */
+    /* Check 3: Firestore cart by doc ID */
     try {
       const cartDoc = await db.collection('carts').doc(currentUser.uid)
         .collection('items').doc(docId).get({ source: 'server' });
@@ -1618,12 +1656,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         selectedIds.add(item.id);
         saveSelected();
         _saveMirror(currentUser.uid, cartItems);
-        renderCart(true);
+        scheduleRender(true);
         return true;
       }
     } catch(e) { console.warn('[buynow] cart doc fetch:', e); }
 
-    /* Check 4: Firestore cart by productId query (server) */
+    /* Check 4: Firestore cart by productId query */
     try {
       const q = await db.collection('carts').doc(currentUser.uid)
         .collection('items').where('productId', '==', docId).get({ source: 'server' });
@@ -1638,18 +1676,17 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         selectedIds.add(item.id);
         saveSelected();
         _saveMirror(currentUser.uid, cartItems);
-        renderCart(true);
+        scheduleRender(true);
         return true;
       }
     } catch(e) { console.warn('[buynow] cart query fetch:', e); }
 
-    /* Check 5: Parse docId to extract productId (format: productId|size|color) */
+    /* Check 5: Parse docId, fetch product, add */
     const parts = docId.split('|');
     const productIdFromDoc = parts[0] || docId;
     const sizeFromDoc = parts[1] || '';
     const colorFromDoc = parts[2] || '';
 
-    /* Check 6: Fetch product and add to cart ourselves */
     try {
       const prodDoc = await db.collection('products').doc(productIdFromDoc).get();
       if (prodDoc.exists) {
@@ -1681,7 +1718,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         selectedIds.add(docId);
         saveSelected();
         _saveMirror(currentUser.uid, cartItems);
-        renderCart(true);
+        scheduleRender(true);
         return true;
       }
     } catch(e) { console.warn('[buynow] product fetch:', e); }
@@ -1689,6 +1726,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return false;
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     COUPON
+     ═══════════════════════════════════════════════════════════════ */
   function isCouponNotExpired(c) {
     if (!c || !c.expiry) return true;
     try {
@@ -1698,17 +1738,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return endOfDay.getTime() >= Date.now();
     } catch(e) { return true; }
   }
-
   function daysLeftCoupon(c) {
     if (!c || !c.expiry) return null;
     try {
       const exp = new Date(c.expiry);
       if (isNaN(exp.getTime())) return null;
-      const diff = exp.getTime() - Date.now();
-      return Math.ceil(diff / 86400000);
+      return Math.ceil((exp.getTime() - Date.now()) / 86400000);
     } catch(e) { return null; }
   }
-
   function fmtCouponExpiry(c) {
     if (!c || !c.expiry) return '';
     try {
@@ -1717,7 +1754,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return exp.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     } catch(e) { return ''; }
   }
-
   function loadAppliedCouponFromStorage() {
     try {
       const raw = localStorage.getItem(COUPON_KEY);
@@ -1761,7 +1797,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     appliedCoupon = null;
     saveAppliedCouponToStorage();
     updateCouponCard();
-    updateTotals();
+    _lastTotalsSig = '';
+    scheduleUpdateTotals();
     toast('Coupon removed', 'info');
   };
 
@@ -1786,7 +1823,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     };
     saveAppliedCouponToStorage();
     updateCouponCard();
-    updateTotals();
+    _lastTotalsSig = '';
+    scheduleUpdateTotals();
     if (!silent) toast('✓ ' + appliedCoupon.code + ' applied', 'success');
     return true;
   }
@@ -1804,7 +1842,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   window.tgApplyCouponFromList = function(code) {
     const c = availableCoupons.find(x => String(x.code || x.id || '').toUpperCase() === String(code || '').toUpperCase());
     if (!c) { toast('Coupon not found', 'error'); return; }
-    if (applyCouponObject(c)) { tgCloseCouponModal(); }
+    if (applyCouponObject(c)) tgCloseCouponModal();
   };
 
   function renderCouponList() {
@@ -1905,8 +1943,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         availableCoupons = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => c.active !== false);
         const modal = document.getElementById('tg-coupon-modal');
         if (modal && modal.classList.contains('show')) renderCouponList();
-      }, err => { console.warn('[coupons listener]', err && err.message); });
-    } catch(e) { console.warn('[coupons sync]', e && e.message); }
+      }, () => {});
+    } catch(e) {}
   }
 
   async function loadUsedCoupons(uid) {
@@ -1931,7 +1969,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     } catch(e) { usedCouponCodes = new Set(); }
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     LOAD CART — SUPER FAST PATH
+     ═══════════════════════════════════════════════════════════════ */
   function loadCart() {
+    /* Reset view */
     document.getElementById('tg-loading').style.display = 'block';
     document.getElementById('tg-items').style.display = 'none';
     document.getElementById('tg-empty').style.display = 'none';
@@ -1943,6 +1985,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     _itemNodeMap.clear();
     _lastRenderSig = '';
     _lastIdsKey = '';
+    _lastTotalsSig = '';
 
     try {
       const validIds = new Set((cartItems || []).map(it => it.id));
@@ -1960,6 +2003,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     if (unsubscribe) { try { unsubscribe(); } catch(e){} unsubscribe = null; }
 
+    /* ─── GUEST PATH ─── */
     if (!currentUser) {
       const raw = getGuestCart();
       let buyNowGuest = null;
@@ -1974,46 +2018,45 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
       cartItems = enrichFromCacheSync(raw);
       renderCart(true);
+      /* Background enrich */
       enrichCartItemsFast(raw).then(enriched => {
-        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
-        else cartItems = enriched;
+        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; scheduleRender(); }
       }).catch(() => {});
       return;
     }
 
+    /* ─── LOGGED-IN: instant mirror render ─── */
     const mirror = _loadMirror(currentUser.uid);
     if (mirror.length) {
       cartItems = enrichFromCacheSync(dedupeCart(mirror.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
       renderCart(true);
     }
 
-    /* ✅ FIX: Read buynow from URL, sessionStorage, AND localStorage — multiple key names */
-    let buyNowFromUrl = null;
+    /* Read buynow from URL/session/local */
+    let buyNowDoc = null;
     try {
       const params = new URLSearchParams(window.location.search);
-      buyNowFromUrl = params.get('buynow') || params.get('buy_now') || params.get('buyNow') || null;
+      buyNowDoc = params.get('buynow') || params.get('buy_now') || params.get('buyNow') || null;
     } catch(e) {}
 
-    let buyNowFromSession = null;
-    try {
-      buyNowFromSession = sessionStorage.getItem(BUY_NOW_KEY)
-        || sessionStorage.getItem('toego_buynow')
-        || sessionStorage.getItem('buy_now')
-        || sessionStorage.getItem('toego_buy_now')
-        || localStorage.getItem(BUY_NOW_KEY)
-        || localStorage.getItem('toego_buynow')
-        || localStorage.getItem('buy_now')
-        || localStorage.getItem('toego_buy_now');
-    } catch(e) {}
+    if (!buyNowDoc) {
+      try {
+        buyNowDoc = sessionStorage.getItem(BUY_NOW_KEY)
+          || sessionStorage.getItem('toego_buynow')
+          || sessionStorage.getItem('buy_now')
+          || sessionStorage.getItem('toego_buy_now')
+          || localStorage.getItem(BUY_NOW_KEY)
+          || localStorage.getItem('toego_buynow')
+          || localStorage.getItem('buy_now')
+          || localStorage.getItem('toego_buy_now');
+      } catch(e) {}
+    }
 
-    const buyNowDoc = buyNowFromUrl || buyNowFromSession;
     if (buyNowDoc) {
-      /* ⭐ CRITICAL FIX: Clear pending deletes for this doc */
       _pendingCartDeletes.delete(buyNowDoc);
       selectedIds.clear();
       selectedIds.add(buyNowDoc);
       saveSelected();
-      /* Clear all possible keys */
       try {
         sessionStorage.removeItem(BUY_NOW_KEY);
         sessionStorage.removeItem('toego_buynow');
@@ -2043,12 +2086,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const shouldForce = !firstRenderDone;
       const fastItems = enrichFromCacheSync(raw);
       cartItems = fastItems;
-      renderCart(shouldForce);
+      scheduleRender(shouldForce);
       firstRenderDone = true;
 
       try {
         const enriched = await enrichCartItemsFast(raw);
-        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
+        if (_cartChanged(cartItems, enriched)) {
+          cartItems = enriched;
+          scheduleRender();
+        }
       } catch(e) {}
     }, err => {
       console.warn('cart load error:', err && err.message);
@@ -2058,35 +2104,32 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     });
 
-    /* ═══════════════════════════════════════════════════════════════
-       ✅ CRITICAL FIX: Ensure buynow item is loaded — with multiple retries
-       Clears pending deletes AND re-fetches from server if needed
-       ═══════════════════════════════════════════════════════════════ */
+    /* Buy Now: instant select + retry */
     if (buyNowDoc) {
-      /* Attempt 1: immediate */
+      setTimeout(() => {
+        if (!cartItems.find(it => it.id === buyNowDoc) && !cartItems.find(it => it.productId === buyNowDoc)) {
+          ensureBuyNowItem(buyNowDoc);
+        } else {
+          selectedIds.clear();
+          selectedIds.add(buyNowDoc);
+          saveSelected();
+          scheduleRender(true);
+        }
+      }, 100);
+
       setTimeout(() => {
         if (!cartItems.find(it => it.id === buyNowDoc) && !cartItems.find(it => it.productId === buyNowDoc)) {
           ensureBuyNowItem(buyNowDoc);
         }
-      }, 150);
+      }, 800);
 
-      /* Attempt 2: 1.2s (in case product page write was slow) */
-      setTimeout(() => {
-        if (!cartItems.find(it => it.id === buyNowDoc) && !cartItems.find(it => it.productId === buyNowDoc)) {
-          ensureBuyNowItem(buyNowDoc);
-        }
-      }, 1200);
-
-      /* Attempt 3: 3s (final retry, show error if fails) */
       setTimeout(() => {
         if (!cartItems.find(it => it.id === buyNowDoc) && !cartItems.find(it => it.productId === buyNowDoc)) {
           ensureBuyNowItem(buyNowDoc).then(ok => {
-            if (!ok) {
-              toast('Product not available. Please add to cart again.', 'error');
-            }
+            if (!ok) toast('Product not available. Please add to cart again.', 'error');
           });
         }
-      }, 3000);
+      }, 2200);
     }
   }
 
@@ -2095,6 +2138,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     catch(e) { userProfile = null; }
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     ADDRESS
+     ═══════════════════════════════════════════════════════════════ */
   async function getSavedAddresses() {
     if (currentUser) {
       try {
@@ -2117,7 +2163,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       try { localStorage.setItem(ADDR_LIST_KEY, JSON.stringify(list)); } catch(e) {}
     }
   }
-
   async function addAddressToList(addr) {
     const list = await getSavedAddresses();
     const key = (addr.line||'').toLowerCase() + '|' + (addr.pin||'') + '|' + (addr.phone||'');
@@ -2242,7 +2287,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       openAddrList(list);
     }
   };
-
   window.tgPickAddrType = function(t, el) {
     pendingAddrType = t;
     document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => b.classList.remove('active'));
@@ -2252,13 +2296,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   window.tgOpenNewAddr = function() {
     const listModal = document.getElementById('tg-addr-list-modal');
     if (listModal) listModal.classList.remove('show');
-
     pendingAddrType = 'home';
     document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => {
       b.classList.toggle('active', b.dataset.type === 'home');
     });
     document.getElementById('tg-addr-default').checked = false;
-
     try {
       const saved = JSON.parse(localStorage.getItem(ADDR_KEY) || '{}');
       if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
@@ -2276,7 +2318,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const emailEl = document.getElementById('tg-addr-email');
       if (!emailEl.value) emailEl.value = currentUser.email;
     }
-
     ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
@@ -2582,7 +2623,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       });
       saveSelected();
       _persistCartToMirror();
-      renderCart(true);
+      scheduleRender(true);
 
       let cartCleanupPromise = Promise.resolve();
       if (currentUser) {
@@ -2622,7 +2663,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
       if (!currentUser) {
         cartItems = getGuestCart().filter(it => !_pendingCartDeletes.has(it.id));
-        renderCart(true);
+        scheduleRender(true);
       }
     } catch(err) {
       console.error('Order creation failed:', err);
@@ -2635,17 +2676,22 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  /* ========== BOOT ========== */
+  /* ═══════════════════════════════════════════════════════════════
+     BOOT
+     ═══════════════════════════════════════════════════════════════ */
   loadSelected();
   loadPin();
   loadAppliedCouponFromStorage();
   updateCouponCard();
 
-  loadPaymentSettings();
-  loadCoupons();
-  loadSellerGlobal();
-  watchSellerGlobal();
-  watchPaymentSettings();
+  /* Non-blocking settings load */
+  setTimeout(() => {
+    loadPaymentSettings();
+    loadCoupons();
+    loadSellerGlobal();
+    watchSellerGlobal();
+    watchPaymentSettings();
+  }, 50);
 
   document.getElementById('tg-coupon-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); window.tgApplyCouponManual(); }
