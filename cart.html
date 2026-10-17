@@ -603,6 +603,25 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
 
+  /* ⭐ NEW: In-memory fallback for pin/addr */
+  const _memStore = { pin: null, addr: null };
+  function getPin() {
+    if (_memStore.pin !== null) return _memStore.pin;
+    try { return localStorage.getItem(PIN_KEY) || ''; } catch(e) { return ''; }
+  }
+  function setPin(p) {
+    _memStore.pin = p;
+    try { localStorage.setItem(PIN_KEY, p); } catch(e) {}
+  }
+  function getAddr() {
+    if (_memStore.addr) return _memStore.addr;
+    try { return JSON.parse(localStorage.getItem(ADDR_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function setAddr(a) {
+    _memStore.addr = a;
+    try { localStorage.setItem(ADDR_KEY, JSON.stringify(a)); } catch(e) {}
+  }
+
   let SETTINGS = {
     razorpayEnabled: true, razorpayKeyId: '', currency: 'INR',
     gstEnabled: true, gstPercent: 18, gstIncludedInPrice: false,
@@ -890,7 +909,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let _itemNodeMap = new Map();
   let _pendingCartDeletes = new Set();
   let _activeBuyNowId = null;
-  /* ✅ NEW: Track pending qty changes to avoid flicker from stale Firestore snapshots */
   const _pendingQty = new Map();
 
   let availableCoupons = [];
@@ -898,7 +916,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let unsubCoupons = null;
   let usedCouponCodes = new Set();
 
-  /* ✅ NEW: Structural signature (excludes qty) — for smart patching */
+  /* ⭐ FIX: structural sig includes pincode */
   function _itemStructuralSig(item) {
     return [
       item.name || '',
@@ -910,11 +928,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       item.price || 0,
       item.mrp || 0,
       item.size || '',
-      item.color || ''
+      item.color || '',
+      'pin:' + (getPin() || '')
     ].join('|');
   }
 
-  /* ✅ NEW: Update qty display in-place (NO FLICKER) */
   function _updateQtyInPlace(docId, newQty) {
     const node = _itemNodeMap.get(docId);
     if (!node) return;
@@ -929,7 +947,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const btns = body.querySelectorAll('.tg-qty-btn');
     if (btns[0]) btns[0].disabled = newQty <= 1;
 
-    /* Update GST display if present */
     const item = cartItems.find(it => it.id === docId);
     if (item) {
       const gstEl = body.querySelector('.tg-item-gst');
@@ -969,24 +986,29 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
 
   function loadPin() {
-    try {
-      const pin = localStorage.getItem(PIN_KEY);
-      const city = document.getElementById('tg-pin-city');
-      if (pin && city) city.textContent = pin;
-      if (!pin) {
-        const a = JSON.parse(localStorage.getItem(ADDR_KEY) || '{}');
-        if (a.city && city) city.textContent = a.city + (a.pin ? ' - ' + a.pin : '');
-      }
-    } catch(e) {}
+    const pin = getPin();
+    const city = document.getElementById('tg-pin-city');
+    if (pin && city) city.textContent = pin;
+    if (!pin) {
+      const a = getAddr();
+      if (a.city && city) city.textContent = a.city + (a.pin ? ' - ' + a.pin : '');
+    }
   }
   window.tgChangePin = function() {
-    const p = prompt('Enter delivery pincode (6 digits)', '');
+    const p = prompt('Enter delivery pincode (6 digits)', getPin() || '');
     if (!p) return;
     if (!/^\d{6}$/.test(p.trim())) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
-    try { localStorage.setItem(PIN_KEY, p.trim()); } catch(e) {}
-    document.getElementById('tg-pin-city').textContent = p.trim();
+    setPin(p.trim());
+    const cityEl = document.getElementById('tg-pin-city');
+    if (cityEl) cityEl.textContent = p.trim();
     toast('Delivery pincode updated', 'success');
-    renderCart(true);
+    /* Force item body re-render with new delivery info */
+    cartItems.forEach(it => {
+      const node = _itemNodeMap.get(it.id);
+      if (node) node.removeAttribute('data-struct-sig');
+    });
+    _lastRenderSig = '';
+    renderCart(false);
   };
 
   function isKanpurPincode(pin) {
@@ -997,13 +1019,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
 
   function getDeliveryInfo() {
-    let pin = '', city = '';
-    try { pin = localStorage.getItem(PIN_KEY) || ''; } catch(e) {}
-    try {
-      const a = JSON.parse(localStorage.getItem(ADDR_KEY) || '{}');
-      if (a.city) city = a.city;
-      if (!pin && a.pin) pin = a.pin;
-    } catch(e) {}
+    let pin = getPin() || '';
+    const a = getAddr();
+    let city = a.city || '';
+    if (!pin && a.pin) pin = a.pin;
     const cityL = String(city || '').toLowerCase().trim();
     if (cityL.includes('kanpur') || isKanpurPincode(pin)) {
       return { text: 'Same Day Delivery', cls: 'same-day' };
@@ -1037,6 +1056,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return SETTINGS.gstIncludedInPrice === true;
   }
 
+  /* ⭐ FIX: DOM-DIFF renderer — no blink on qty/update */
   function renderCart(force) {
     const loading = document.getElementById('tg-loading');
     const itemsWrap = document.getElementById('tg-items');
@@ -1075,8 +1095,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     });
 
-    const itemSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|');
-    const sig = itemSig + '|sel:' + [...selectedIds].sort().join(',');
+    const itemSig = cartItems.map(i =>
+      i.id + ':' + i.qty + ':' + (i.rating || '') + ':' + (i.ratingCount || '') + ':' + (i.sellerName || '') + ':' + (i.gst || '')
+    ).join('|');
+    const sig = itemSig + '|sel:' + [...selectedIds].sort().join(',') + '|pin:' + (getPin() || '');
 
     if (!force && sig === _lastRenderSig) {
       updateTotals();
@@ -1084,30 +1106,85 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return;
     }
 
-    const idsKey = cartItems.map(i => i.id).join('§');
-    const structureChanged = force || idsKey !== _lastIdsKey;
-
-    _lastRenderSig = sig;
-    _lastIdsKey = idsKey;
-
     if (emptyWrap) emptyWrap.style.display = 'none';
     if (itemsWrap) itemsWrap.style.display = 'flex';
     if (selectBar) selectBar.style.display = 'flex';
     if (rightCol) rightCol.style.display = 'block';
     if (mobileBar) mobileBar.style.display = 'flex';
 
-    if (structureChanged) {
+    /* DOM-DIFF */
+    const currentIds = cartItems.map(i => i.id);
+    const currentIdSet = new Set(currentIds);
+    const existingIdSet = new Set(_itemNodeMap.keys());
+
+    const toRemove = [...existingIdSet].filter(id => !currentIdSet.has(id));
+    const toAdd = currentIds.filter(id => !existingIdSet.has(id));
+    const toPatch = currentIds.filter(id => existingIdSet.has(id));
+
+    const isEmpty = _itemNodeMap.size === 0;
+    const needsFullRebuild = force && isEmpty;
+
+    if (needsFullRebuild) {
       _itemNodeMap.clear();
-      let html = '';
-      cartItems.forEach((item, idx) => { html += itemHtml(item, idx === 0); });
-      itemsWrap.innerHTML = html;
+      itemsWrap.innerHTML = cartItems.map((it, i) => itemHtml(it, i === 0)).join('');
       itemsWrap.querySelectorAll('.tg-item').forEach(node => {
         const id = node.getAttribute('data-id');
         if (id) _itemNodeMap.set(id, node);
       });
     } else {
-      cartItems.forEach(item => patchItemInPlace(item));
+      /* Remove nodes gone */
+      toRemove.forEach(id => {
+        const node = _itemNodeMap.get(id);
+        if (node) {
+          node.style.transition = 'opacity .18s ease, transform .18s ease';
+          node.style.opacity = '0';
+          node.style.transform = 'translateX(-20px)';
+          setTimeout(() => { if (node.parentNode) node.remove(); }, 180);
+        }
+        _itemNodeMap.delete(id);
+      });
+
+      /* Add new nodes with fade */
+      toAdd.forEach(id => {
+        const item = cartItems.find(it => it.id === id);
+        if (!item) return;
+        const temp = document.createElement('div');
+        temp.innerHTML = itemHtml(item, false);
+        const node = temp.firstElementChild;
+        if (!node) return;
+        node.style.opacity = '0';
+        node.style.transform = 'translateY(8px)';
+        itemsWrap.appendChild(node);
+        _itemNodeMap.set(id, node);
+        requestAnimationFrame(() => {
+          node.style.transition = 'opacity .22s ease, transform .22s ease';
+          node.style.opacity = '1';
+          node.style.transform = 'translateY(0)';
+        });
+      });
+
+      /* Patch existing */
+      toPatch.forEach(id => {
+        const item = cartItems.find(it => it.id === id);
+        if (item) patchItemInPlace(item);
+      });
+
+      /* Reorder if needed */
+      const orderedNodes = currentIds.map(id => _itemNodeMap.get(id)).filter(Boolean);
+      const currentChildren = Array.from(itemsWrap.children).filter(n => n.classList && n.classList.contains('tg-item'));
+      let orderMismatch = false;
+      for (let i = 0; i < orderedNodes.length; i++) {
+        if (orderedNodes[i] !== currentChildren[i]) { orderMismatch = true; break; }
+      }
+      if (orderMismatch) {
+        orderedNodes.forEach(node => {
+          if (node.parentNode === itemsWrap) itemsWrap.appendChild(node);
+        });
+      }
     }
+
+    _lastRenderSig = sig;
+    _lastIdsKey = currentIds.join('§');
 
     updateSelectAllState();
     updateTotals();
@@ -1115,7 +1192,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     saveSelected();
   }
 
-  /* ✅ FIXED: Smart patch — only replaces body if structure actually changed */
   function patchItemInPlace(item) {
     const node = _itemNodeMap.get(item.id);
     if (!node) return;
@@ -1126,12 +1202,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const oldStructSig = node.getAttribute('data-struct-sig') || '';
 
     if (newStructSig !== oldStructSig) {
-      /* Structural change → full body re-render */
       body.innerHTML = itemBodyHtml(item);
       node.setAttribute('data-struct-sig', newStructSig);
       node.setAttribute('data-qty', String(item.qty || 1));
     } else {
-      /* Only qty might have changed → update in place (NO FLICKER) */
       const newQty = Number(item.qty || 1);
       const oldQty = Number(node.getAttribute('data-qty') || 1);
       if (newQty !== oldQty) {
@@ -1200,7 +1274,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const img = item.image || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=TOEGO';
     const checked = selectedIds.has(docId);
     const imgAttrs = isFirst ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
-    /* ✅ data-struct-sig + data-qty for smart patch */
     return `
       <div class="tg-item" data-id="${esc(docId)}" data-qty="${Number(item.qty||1)}" data-struct-sig="${esc(_itemStructuralSig(item))}">
         <div class="tg-item-check"><input type="checkbox" class="tg-checkbox" ${checked?'checked':''} onchange="tgToggleItem('${escapeAttr(docId)}', this.checked)"></div>
@@ -1528,7 +1601,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (currentUser) _saveMirror(currentUser.uid, cartItems);
   }
 
-  /* ✅ FIXED: tgChangeQty — no body.innerHTML, updates in-place, tracks pending */
   window.tgChangeQty = async function(docId, delta) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
@@ -1536,17 +1608,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (newQty < 1) return;
     if (newQty > 10) { toast('Max 10 items per product', 'error'); return; }
 
-    /* Optimistic update */
     item.qty = newQty;
     _pendingQty.set(docId, { qty: newQty, ts: Date.now() });
 
-    /* ✅ Update DOM in-place (NO FLICKER) */
     _updateQtyInPlace(docId, newQty);
     const node = _itemNodeMap.get(docId);
     if (node) node.setAttribute('data-qty', String(newQty));
 
-    /* Update signature so re-renders are suppressed */
-    _lastRenderSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|') + '|sel:' + [...selectedIds].sort().join(',');
+    _lastRenderSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|') + '|sel:' + [...selectedIds].sort().join(',') + '|pin:' + (getPin() || '');
 
     updateTotals();
     updateHeaderBadge();
@@ -1556,7 +1625,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId)
           .update({ qty: newQty, updatedAt: FV.serverTimestamp() });
-        /* Clear pending after Firestore confirms */
         setTimeout(() => {
           const p = _pendingQty.get(docId);
           if (p && p.qty === newQty) _pendingQty.delete(docId);
@@ -1680,7 +1748,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (found) {
         selectedIds.add(found.id);
         saveSelected();
-        renderCart(true);
+        renderCart(false);
         return true;
       }
     }
@@ -1698,7 +1766,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           selectedIds.add(item.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
-          renderCart(true);
+          renderCart(false);
           return true;
         }
       } catch(e) { }
@@ -1718,7 +1786,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           selectedIds.add(item.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
-          renderCart(true);
+          renderCart(false);
           return true;
         }
       } catch(e) { }
@@ -1754,7 +1822,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           selectedIds.add(prodDoc.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
-          renderCart(true);
+          renderCart(false);
           return true;
         }
       } catch(e) { }
@@ -1791,7 +1859,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           selectedIds.add(d.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
-          renderCart(true);
+          renderCart(false);
           return true;
         }
       } catch(e) { }
@@ -2154,23 +2222,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
 
     const cartRef = db.collection('carts').doc(currentUser.uid).collection('items');
-    let firstRenderDone = mirror.length > 0;
 
-    /* ✅ FIXED: Apply pending qty overrides to prevent flicker from stale snapshots */
-    unsubscribe = cartRef.onSnapshot(async snap => {
+    /* ⭐ NEW: Debounced snapshot handler — batches rapid writes → NO BLINK */
+    let _snapDebounceTimer = null;
+    let _latestSnap = null;
+    let _firstSnapshotDone = false;
+
+    async function processSnapshot(snap) {
       let raw = snap.docs.map(d => {
         const data = d.data();
         return { ...data, id: d.id, productId: data.productId || d.id };
       }).filter(it => !_pendingCartDeletes.has(it.id));
 
-      /* ✅ Override qty with pending local value to prevent stale overwrite */
       const now = Date.now();
       raw = raw.map(it => {
         const pending = _pendingQty.get(it.id);
         if (pending && (now - pending.ts) < PENDING_QTY_TTL) {
           return { ...it, qty: pending.qty };
         }
-        /* Also check composite id */
         for (const [pid, p] of _pendingQty) {
           if ((now - p.ts) < PENDING_QTY_TTL && it.productId === pid) {
             return { ...it, qty: p.qty };
@@ -2179,37 +2248,54 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         return it;
       });
 
-      /* Clean up expired pending entries */
       _pendingQty.forEach((v, k) => {
         if (now - v.ts > PENDING_QTY_TTL) _pendingQty.delete(k);
       });
 
       raw = dedupeCart(raw);
-
       _saveMirror(currentUser.uid, raw);
 
-      const shouldForce = !firstRenderDone;
       const fastItems = enrichFromCacheSync(raw);
       cartItems = fastItems;
-      renderCart(shouldForce);
-      firstRenderDone = true;
+      renderCart(false);
 
       try {
         const enriched = await enrichCartItemsFast(raw);
-        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
+        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(false); }
       } catch(e) {}
 
       if (_activeBuyNowId) {
         const cid = _activeBuyNowId;
-        const isComposite = String(cid).includes('|');
-        const pid = isComposite ? String(cid).split('|')[0] : cid;
+        const pid = String(cid).includes('|') ? String(cid).split('|')[0] : cid;
         const found = cartItems.find(it => it.id === cid || it.productId === cid || it.id === pid || it.productId === pid);
-        if (found) {
+        if (found && !selectedIds.has(found.id)) {
           selectedIds.add(found.id);
           saveSelected();
-          renderCart(true);
+          const node = _itemNodeMap.get(found.id);
+          if (node) {
+            const cb = node.querySelector('.tg-item-check input');
+            if (cb) cb.checked = true;
+          }
+          updateTotals();
+          updateSelectAllState();
         }
       }
+    }
+
+    unsubscribe = cartRef.onSnapshot(async snap => {
+      _latestSnap = snap;
+
+      if (!_firstSnapshotDone) {
+        _firstSnapshotDone = true;
+        await processSnapshot(snap);
+        return;
+      }
+
+      if (_snapDebounceTimer) clearTimeout(_snapDebounceTimer);
+      _snapDebounceTimer = setTimeout(async () => {
+        _snapDebounceTimer = null;
+        if (_latestSnap) await processSnapshot(_latestSnap);
+      }, 80);
     }, err => {
       console.warn('cart load error:', err && err.message);
       if (!cartItems.length) {
@@ -2353,13 +2439,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const addr = addrListCache[pendingAddrIndex];
     if (!addr) { toast('Please select an address', 'error'); return; }
     pendingAddress = addr;
-    try { localStorage.setItem(ADDR_KEY, JSON.stringify(addr)); } catch(e) {}
+    setAddr(addr);
     try { localStorage.setItem(ADDR_LAST_IDX, String(pendingAddrIndex)); } catch(e) {}
-    try {
-      if (addr.pin) localStorage.setItem(PIN_KEY, addr.pin);
-      const cityEl = document.getElementById('tg-pin-city');
-      if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
-    } catch(e) {}
+    if (addr.pin) setPin(addr.pin);
+    const cityEl = document.getElementById('tg-pin-city');
+    if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
     tgCloseAddrList();
     tgOpenPayModal();
   };
@@ -2393,7 +2477,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.getElementById('tg-addr-default').checked = false;
 
     try {
-      const saved = JSON.parse(localStorage.getItem(ADDR_KEY) || '{}');
+      const saved = getAddr();
       if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
       if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone;
       if (saved.altPhone) document.getElementById('tg-addr-alt-phone').value = saved.altPhone;
@@ -2449,12 +2533,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); return; }
 
     pendingAddress = { name, phone, altPhone, line, locality, landmark, city, pin, district, state, email, type, isDefault, country: 'India' };
-    try { localStorage.setItem(ADDR_KEY, JSON.stringify(pendingAddress)); } catch(e) {}
-    try {
-      localStorage.setItem(PIN_KEY, pin);
-      const cityEl = document.getElementById('tg-pin-city');
-      if (cityEl) cityEl.textContent = city + ' - ' + pin;
-    } catch(e) {}
+    setAddr(pendingAddress);
+    setPin(pin);
+    const cityEl = document.getElementById('tg-pin-city');
+    if (cityEl) cityEl.textContent = city + ' - ' + pin;
 
     try {
       const list = await addAddressToList(pendingAddress);
