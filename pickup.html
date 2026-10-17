@@ -16,7 +16,6 @@ input,select,textarea{font:inherit;}
 a{color:inherit;text-decoration:none;}
 header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb,.breadcrumb{display:none!important;}
 
-/* SPLASH */
 #tg-splash{position:fixed;inset:0;background:linear-gradient(135deg,#0a0e1a 0%,#1a2238 50%,#0a0e1a 100%);z-index:9999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .4s,visibility .4s;}
 #tg-splash.hide{opacity:0;visibility:hidden;}
 .tg-splash-logo{font-size:48px;font-weight:900;font-style:italic;color:#fff;letter-spacing:-1.5px;line-height:1;}
@@ -25,12 +24,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-spin{width:44px;height:44px;border:4px solid rgba(0,212,255,0.15);border-top-color:#00d4ff;border-radius:50%;animation:tgSpin .8s linear infinite;margin-top:10px;}
 @keyframes tgSpin{to{transform:rotate(360deg);}}
 
-/* OFFLINE BANNER */
 .tg-offline{position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;font-size:12px;font-weight:800;padding:8px 14px;text-align:center;z-index:99999;display:none;letter-spacing:0.4px;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,0.4);}
 .tg-offline.show{display:block;}
 .tg-offline::before{content:'⚠ ';font-size:14px;}
 
-/* HEADER */
 .tg-hd{background:linear-gradient(135deg,#0f1729 0%,#1a2238 100%);position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:1px solid rgba(0,212,255,0.15);box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:top .3s;}
 .tg-offline.show ~ .tg-hd{top:36px;}
 .tg-hd-i{display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:60px;}
@@ -55,7 +52,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 @keyframes tgSndRing{0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,0.4);}50%{box-shadow:0 0 0 8px rgba(0,212,255,0);}}
 .tg-hd-snd svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
-/* STATS BAR */
 .tg-stats{background:rgba(0,0,0,0.25);padding:8px 14px;display:flex;gap:16px;overflow-x:auto;scrollbar-width:none;border-top:1px solid rgba(255,255,255,0.05);}
 .tg-stats::-webkit-scrollbar{display:none;}
 .tg-st{flex-shrink:0;color:#8892a6;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;}
@@ -64,7 +60,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-st b.yellow{color:#facc15;}
 .tg-st b.red{color:#f87171;}
 
-/* MAIN */
 .tg-wrap{padding-top:100px;padding-bottom:80px;min-height:100vh;background:radial-gradient(ellipse at top,rgba(0,212,255,0.06) 0%,#0a0e1a 50%);transition:padding-top .3s;}
 .tg-offline.show ~ .tg-wrap{padding-top:136px;}
 .tg-co{max-width:800px;margin:0 auto;padding:14px;}
@@ -72,7 +67,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-v.active{display:block;animation:tgFade .25s;}
 @keyframes tgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-/* HERO */
 .tg-hero{background:linear-gradient(135deg,rgba(0,212,255,0.15) 0%,rgba(40,116,240,0.12) 50%,rgba(0,212,255,0.08) 100%);border:1px solid rgba(0,212,255,0.25);border-radius:18px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);}
 .tg-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:280px;height:280px;background:radial-gradient(circle,rgba(0,212,255,0.25),transparent 70%);border-radius:50%;}
 .tg-hero-c{position:relative;z-index:2;}
@@ -85,7 +79,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-hs-n.green{color:#4ade80;}
 .tg-hs-l{font-size:9.5px;color:#8892a6;text-transform:uppercase;letter-spacing:0.6px;margin-top:4px;font-weight:800;}
 
-/* DUAL SCAN BUTTONS */
 .tg-scan-dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 @media (max-width:480px){.tg-scan-dual{grid-template-columns:1fr;}}
 .tg-scan-card{border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border:2px solid;}
@@ -108,13 +101,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-scan-card.bulk .tg-scan-card-badge{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.4);}
 .tg-scan-card.single .tg-scan-card-badge{background:rgba(0,212,255,0.2);color:#00d4ff;border:1px solid rgba(0,212,255,0.4);}
 
-/* SECTIONS */
 .tg-sec{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;margin-bottom:14px;overflow:hidden;backdrop-filter:blur(8px);}
 .tg-sh{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.05);}
 .tg-st{font-size:15px;font-weight:800;color:#fff;letter-spacing:-0.2px;}
 .tg-ss{font-size:11.5px;color:#8892a6;margin-top:3px;font-weight:500;}
 
-/* SELLER CARD */
 .tg-seller{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:all .15s;backdrop-filter:blur(8px);border-left:4px solid #00d4ff;}
 .tg-seller:hover{border-color:rgba(0,212,255,0.4);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,212,255,0.15);}
 .tg-sh-head{padding:14px;display:flex;align-items:center;gap:12px;}
@@ -126,7 +117,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-sh-cnt{font-size:22px;font-weight:900;color:#00d4ff;line-height:1;font-family:'JetBrains Mono',monospace;}
 .tg-sh-cnt-l{font-size:9.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
 
-/* PARCEL ROW */
 .tg-parcel{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:12px;}
 .tg-parcel:last-child{border-bottom:none;}
 .tg-parcel-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:rgba(255,255,255,0.04);color:#8892a6;}
@@ -140,20 +130,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-parcel-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
 .tg-parcel-badge{font-size:10px;font-weight:900;padding:5px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.3px;background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
 
-/* EMPTY */
 .tg-empty{text-align:center;padding:50px 20px;}
 .tg-empty-i{font-size:54px;margin-bottom:12px;opacity:0.4;}
 .tg-empty-t{font-size:15px;font-weight:800;margin:0 0 6px;color:#fff;}
 .tg-empty-d{font-size:12.5px;color:#8892a6;margin:0;line-height:1.5;}
 
-/* WALLET */
 .tg-wallet{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.08));border:1.5px solid rgba(34,197,94,0.3);border-radius:16px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden;}
 .tg-wallet::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;background:radial-gradient(circle,rgba(34,197,94,0.2),transparent 70%);border-radius:50%;}
 .tg-wallet-lbl{font-size:11px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;position:relative;z-index:2;}
 .tg-wallet-amt{font-size:38px;font-weight:900;color:#4ade80;line-height:1;letter-spacing:-1.5px;font-family:'JetBrains Mono',monospace;position:relative;z-index:2;text-shadow:0 0 20px rgba(74,222,128,0.3);}
 .tg-wallet-sub{font-size:12.5px;color:#8892a6;margin-top:8px;position:relative;z-index:2;}
 
-/* ACTIVITY ROW */
 .tg-hist-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);}
 .tg-hist-row:last-child{border-bottom:none;}
 .tg-hist-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:rgba(0,212,255,0.12);color:#00d4ff;}
@@ -165,7 +152,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-hist-r{text-align:right;flex-shrink:0;}
 .tg-hist-amt{font-size:14px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;}
 
-/* MODAL */
 .tg-mod{position:fixed;inset:0;background:rgba(5,8,16,0.92);backdrop-filter:blur(10px);z-index:99999;display:none;align-items:flex-end;justify-content:center;animation:tgFade .2s;}
 .tg-mod.show{display:flex;}
 .tg-mod-c{width:100%;max-width:640px;background:linear-gradient(180deg,#0f1729 0%,#0a0e1a 100%);border:1px solid rgba(0,212,255,0.2);border-radius:22px 22px 0 0;padding:16px 16px 20px;max-height:96vh;overflow-y:auto;animation:tgSlideUp .3s cubic-bezier(.34,1.2,.64,1);box-shadow:0 -20px 60px rgba(0,0,0,0.6);}
@@ -176,7 +162,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-mod-x{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);color:#8892a6;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;cursor:pointer;flex-shrink:0;}
 .tg-mod-x:hover{background:#ef4444;color:#fff;transform:rotate(90deg);}
 
-/* BULK BAR */
 .tg-bulk-bar{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.1));border:1.5px solid rgba(34,197,94,0.4);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .tg-bulk-cnt{display:flex;align-items:center;gap:16px;flex:1;min-width:0;}
 .tg-bulk-cnt-num{font-size:24px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;line-height:1;}
@@ -184,7 +169,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-bulk-cnt-earn{font-size:15px;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;}
 .tg-bulk-done{padding:9px 16px;border-radius:9px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-size:11.5px;font-weight:900;letter-spacing:0.4px;text-transform:uppercase;box-shadow:0 4px 12px rgba(34,197,94,0.4);cursor:pointer;flex-shrink:0;border:none;}
 
-/* SCANNER */
 .tg-scanner-wrap{background:#000;border-radius:16px;padding:10px;margin-bottom:10px;position:relative;overflow:hidden;border:1.5px solid rgba(0,212,255,0.3);box-shadow:inset 0 0 60px rgba(0,212,255,0.15);}
 #tg-reader{width:100%;border-radius:12px;overflow:hidden;background:#000;min-height:260px;position:relative;}
 #tg-reader video{width:100%!important;height:auto!important;display:block;border-radius:12px;}
@@ -203,18 +187,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-scan-status.error{border-color:rgba(239,68,68,0.5);color:#f87171;}
 .tg-scan-status.error::before{background:#ef4444;box-shadow:0 0 8px #ef4444;}
 
-/* CAMERA ERROR */
 .tg-cam-err{background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.4);border-radius:12px;padding:14px;color:#f87171;font-size:12.5px;line-height:1.6;text-align:center;margin-bottom:12px;}
 .tg-cam-err b{color:#fff;}
 
-/* MANUAL INPUT */
 .tg-manual-box{background:rgba(0,212,255,0.06);border:1.5px solid rgba(0,212,255,0.25);border-radius:14px;padding:12px;margin-top:10px;}
 .tg-manual-box label{display:block;font-size:10px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;}
 .tg-manual-box input{width:100%;padding:11px 12px;border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;font-size:14px;font-family:'JetBrains Mono',monospace;background:rgba(0,0,0,0.3);color:#fff;outline:none;letter-spacing:1px;text-transform:uppercase;font-weight:700;text-align:center;}
 .tg-manual-box input:focus{border-color:#00d4ff;box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
 .tg-manual-box input::placeholder{color:#4b5563;letter-spacing:0.5px;font-weight:500;}
 
-/* RECENT LIST */
 .tg-recent-list{margin-top:10px;max-height:180px;overflow-y:auto;border-radius:12px;background:rgba(0,0,0,0.2);padding:4px 0;}
 .tg-recent-empty{text-align:center;padding:14px;color:#64748b;font-size:11.5px;}
 .tg-recent-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);animation:tgRecentIn .35s;}
@@ -227,7 +208,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-recent-s{font-size:10px;color:#8892a6;}
 .tg-recent-v{font-size:12px;font-weight:900;color:#4ade80;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
 
-/* BUTTONS */
 .tg-btn{padding:14px 18px;border-radius:12px;font-size:14px;font-weight:800;letter-spacing:0.4px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;border:1.5px solid transparent;cursor:pointer;}
 .tg-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
 .tg-btn.pri{background:linear-gradient(135deg,#00d4ff,#0090c4);color:#0a0e1a;box-shadow:0 6px 20px rgba(0,212,255,0.4);}
@@ -240,7 +220,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-btn.wide{width:100%;}
 .tg-btn:disabled{opacity:0.5;cursor:not-allowed;}
 
-/* BOTTOM NAV */
 .tg-bnav{position:fixed;bottom:0;left:0;right:0;background:#0f1729;border-top:1px solid rgba(0,212,255,0.15);display:flex;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,0.4);padding-bottom:env(safe-area-inset-bottom,0);}
 .tg-bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;gap:4px;font-size:10px;color:#64748b;font-weight:800;position:relative;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px;transition:color .15s;}
 .tg-bn.active{color:#00d4ff;}
@@ -248,7 +227,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-bn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .tg-bn-b{position:absolute;top:6px;right:calc(50% - 22px);background:linear-gradient(135deg,#ff4d4d,#d32f2f);color:#fff;font-size:9px;font-weight:900;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #0f1729;box-shadow:0 2px 6px rgba(255,77,77,0.5);}
 
-/* FAB */
 .tg-fab{position:fixed;bottom:90px;right:18px;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(34,197,94,0.6),0 0 0 1px rgba(34,197,94,0.3);z-index:9998;transition:all .2s;cursor:pointer;border:none;}
 .tg-fab::before{content:'';position:absolute;inset:-4px;border:2px solid rgba(34,197,94,0.4);border-radius:50%;animation:tgPulseRing 2s infinite;}
 .tg-fab:hover{transform:scale(1.08);}
@@ -257,7 +235,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-fab-lbl{position:absolute;top:-34px;left:50%;transform:translateX(-50%);background:#0a0e1a;color:#4ade80;font-size:10px;font-weight:900;padding:5px 12px;border-radius:7px;letter-spacing:0.6px;text-transform:uppercase;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.4);border:1px solid rgba(34,197,94,0.3);}
 .tg-fab-lbl::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid #0a0e1a;}
 
-/* TOASTS */
 .tg-toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 24px);pointer-events:none;max-height:50vh;overflow-y:auto;}
 .tg-toast{padding:11px 16px;background:linear-gradient(135deg,rgba(20,27,45,0.98),rgba(15,23,41,0.98));backdrop-filter:blur(14px);color:#fff;font-size:12.5px;border-radius:12px;box-shadow:0 20px 44px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08);pointer-events:auto;font-weight:600;animation:tgToastIn .3s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;min-width:240px;max-width:380px;position:relative;overflow:hidden;}
 .tg-toast::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#22c55e,#16a34a);box-shadow:0 0 12px #22c55e;}
@@ -268,14 +245,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-toast.info .tg-toast-icon{background:rgba(0,212,255,0.15);color:#00d4ff;}
 @keyframes tgToastIn{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 
-/* FLASH OVERLAY */
 .tg-flash-overlay{position:fixed;inset:0;background:rgba(34,197,94,0.25);z-index:999999;pointer-events:none;display:none;align-items:center;justify-content:center;animation:tgFlash .4s ease-out;}
 .tg-flash-overlay.show{display:flex;}
 .tg-flash-overlay.err{background:rgba(239,68,68,0.25);}
 @keyframes tgFlash{from{opacity:0.9;}to{opacity:0;}}
 .tg-flash-icon{font-size:120px;color:#fff;font-weight:900;text-shadow:0 0 40px rgba(34,197,94,1);}
 
-/* BLOCKED OVERLAY */
 .tg-blocked{position:fixed;inset:0;background:rgba(5,8,16,0.98);z-index:9999999;display:none;align-items:center;justify-content:center;padding:24px;text-align:center;}
 .tg-blocked.show{display:flex;flex-direction:column;gap:16px;}
 .tg-blocked-icon{font-size:80px;animation:tgShake .6s ease-in-out;}
@@ -283,7 +258,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-blocked-title{font-size:22px;font-weight:900;color:#f87171;letter-spacing:-0.3px;}
 .tg-blocked-desc{font-size:14px;color:#8892a6;max-width:360px;line-height:1.6;}
 
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:3px;}
@@ -303,24 +277,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 </head>
 <body>
 
-<!-- OFFLINE BANNER -->
 <div class="tg-offline" id="tg-offline">Offline · Reconnecting...</div>
 
-<!-- SPLASH -->
 <div id="tg-splash">
   <div class="tg-splash-logo">TOE<span>GO</span></div>
   <div class="tg-splash-tag">PICKUP PARTNER</div>
   <div class="tg-spin"></div>
 </div>
 
-<!-- BLOCKED OVERLAY -->
 <div class="tg-blocked" id="tg-blocked">
   <div class="tg-blocked-icon">🚫</div>
   <div class="tg-blocked-title">Account Blocked</div>
   <div class="tg-blocked-desc" id="tg-blocked-msg">Aapka account admin ne block kar diya hai. Support se contact karein.</div>
 </div>
 
-<!-- HEADER -->
 <header class="tg-hd" id="tg-hd" style="display:none;">
   <div class="tg-hd-i">
     <div class="tg-hd-logo">
@@ -345,11 +315,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </header>
 
-<!-- MAIN -->
 <div class="tg-wrap" id="tg-wrap" style="display:none;">
   <div class="tg-co">
 
-    <!-- DASHBOARD -->
     <div class="tg-v active" id="v-dash">
       <div class="tg-hero">
         <div class="tg-hero-c">
@@ -395,7 +363,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- SELLERS -->
     <div class="tg-v" id="v-sellers">
       <div style="background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px);">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -404,7 +371,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div id="sellers-full-list"></div>
     </div>
 
-    <!-- COLLECTED -->
     <div class="tg-v" id="v-collected">
       <div class="tg-sec">
         <div class="tg-sh">
@@ -422,7 +388,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- EARNINGS -->
     <div class="tg-v" id="v-earn">
       <div class="tg-wallet">
         <div class="tg-wallet-lbl">Available for Payout</div>
@@ -447,7 +412,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- PROFILE -->
     <div class="tg-v" id="v-profile">
       <div style="background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(40,116,240,0.1));border:1.5px solid rgba(0,212,255,0.3);color:#fff;border-radius:16px;padding:22px 20px;display:flex;align-items:center;gap:16px;margin-bottom:12px;position:relative;overflow:hidden;">
         <div style="width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#00d4ff,#2874f0);color:#0a0e1a;font-size:26px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;box-shadow:0 8px 24px rgba(0,212,255,0.4);" id="p-av">P</div>
@@ -471,19 +435,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         <div id="payout-hist"></div>
       </div>
 
-      <div style="text-align:center;font-size:11px;color:#4b5563;padding:20px 0;">TOEGO Pickup Partner · v3.5 LIVE</div>
+      <div style="text-align:center;font-size:11px;color:#4b5563;padding:20px 0;">TOEGO Pickup Partner · v3.6 LIVE</div>
     </div>
 
   </div>
 </div>
 
-<!-- FAB -->
 <div class="tg-fab" id="tg-fab" onclick="openScanner('bulk')" style="display:none;">
   <div class="tg-fab-lbl">BULK SCAN</div>
   <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="tg-bnav" id="tg-bnav" style="display:none;">
   <div class="tg-bn active" data-v="dash" onclick="switchView('dash')"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></div>
   <div class="tg-bn" data-v="sellers" onclick="switchView('sellers')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Sellers</span><span class="tg-bn-b" id="bn-sellers" style="display:none;">0</span></div>
@@ -492,7 +454,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   <div class="tg-bn" data-v="profile" onclick="switchView('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Profile</span></div>
 </nav>
 
-<!-- SCANNER MODAL -->
 <div class="tg-mod" id="tg-scan-modal">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -545,7 +506,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- CONFIRM MODAL -->
 <div class="tg-mod" id="tg-confirm-modal">
   <div class="tg-mod-c" style="max-width:440px;">
     <div class="tg-mod-h"><div class="tg-mod-t" id="cf-t">Confirm</div><button class="tg-mod-x" onclick="closeConfirm()">✕</button></div>
@@ -557,7 +517,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- FLASH -->
 <div class="tg-flash-overlay" id="tg-flash">
   <div class="tg-flash-icon" id="tg-flash-icon">✓</div>
 </div>
@@ -598,6 +557,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let confirmCb = null;
   let currentScanTarget = null;
   let SCAN_MODE = 'bulk';
+  let CURRENT_SELLER_FILTER = null;
   let BULK_SESSION = { count: 0, earned: 0, scannedIds: [], recent: [] };
   let unsubT, unsubH, unsubL, unsubS, unsubPartner, unsubUser;
   let audioCtx = null;
@@ -608,10 +568,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let lastScanTime = 0;
   let SCANNER_DEBUG = false;
   let RECENT_SCAN_CODES = new Map();
+  let RECENTLY_COLLECTED = new Set();
   let IS_BLOCKED = false;
   let JUST_APPROVED_SHOWN = false;
 
-  // HELPERS
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -633,7 +593,52 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function openM(id) { const el = document.getElementById(id); if (el) { el.classList.add('show'); document.body.style.overflow='hidden'; } }
   function closeM(id) { const el = document.getElementById(id); if (el) { el.classList.remove('show'); document.body.style.overflow=''; } }
 
-  // NETWORK STATUS
+  /* ⭐ NEW: order ID extraction + matching helpers */
+  function extractOrderIdFromScan(rawCode) {
+    let clean = String(rawCode || '').trim().toUpperCase();
+    if (!clean) return '';
+    if (clean.startsWith('TOEGO|')) {
+      const parts = clean.split('|');
+      if (parts[1]) clean = parts[1].trim();
+    }
+    clean = clean.replace(/^\*|\*$/g, '').trim();
+    return clean;
+  }
+
+  function getTaskCandidates(t) {
+    const out = new Set();
+    const fields = ['id', 'orderId', 'order_id', 'orderDisplayId', 'displayId', 'trackingId', 'awb', 'awbNumber'];
+    fields.forEach(f => {
+      const v = t[f];
+      if (v != null && v !== '') {
+        const s = String(v).toUpperCase().trim();
+        out.add(s);
+        if (s.length > 12) out.add(s.slice(0, 12));
+      }
+    });
+    return Array.from(out).filter(Boolean);
+  }
+
+  function taskMatchesScan(t, scanCode) {
+    const clean = String(scanCode || '').toUpperCase().trim();
+    if (!clean || clean.length < 3) return false;
+    const candidates = getTaskCandidates(t);
+    if (candidates.includes(clean)) return true;
+    if (clean.length >= 6) {
+      for (const c of candidates) {
+        if (c.length >= 6 && (c.includes(clean) || clean.includes(c))) return true;
+      }
+    }
+    return false;
+  }
+
+  function getTaskDisplayId(t) {
+    if (!t) return '';
+    if (t.orderDisplayId) return String(t.orderDisplayId).slice(0, 14).toUpperCase();
+    if (t.orderId) return String(t.orderId).slice(0, 12).toUpperCase();
+    return String(t.id || '').slice(0, 14).toUpperCase();
+  }
+
   function setOnlineStatus(online) {
     const el = document.getElementById('tg-offline');
     const badge = document.getElementById('tg-live-badge');
@@ -649,7 +654,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.addEventListener('offline', () => setOnlineStatus(false));
   setOnlineStatus(navigator.onLine);
 
-  // AUDIO
   function initAudio() { if (audioCtx) return; try { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
   function beepOk() {
     if (!soundEnabled) return;
@@ -729,13 +733,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setTimeout(() => el.classList.remove('show'), 400);
   }
 
-  // SPLASH
   setTimeout(() => {
     const sp = document.getElementById('tg-splash');
     if (sp) sp.classList.add('hide');
   }, 1000);
 
-  // ============ AUTH ============
   auth.onAuthStateChanged(async u => {
     USER = u;
     if (!u) { location.replace('log-in.html?redirect=' + encodeURIComponent('pickup.html')); return; }
@@ -743,7 +745,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   });
 
   async function startLiveMode() {
-    // ⭐ LIVE: user doc listener (role change / block)
     if (unsubUser) try { unsubUser(); } catch(e){}
     unsubUser = db.collection('users').doc(USER.uid).onSnapshot(snap => {
       const ud = snap.exists ? snap.data() : {};
@@ -752,13 +753,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const isAdmin = USER.email === 'anasfansclub@toego.in' || ['admin','superadmin'].includes(role);
       const isPickup = ['delivery_partner','pickup_partner'].includes(role);
 
-      // BLOCKED — kick out
       if (blocked && !isAdmin) {
         showBlocked(ud.blockReason || 'Aapka account admin ne block kar diya hai.');
         return;
       }
-
-      // Role removed
       if (!isPickup && !isAdmin && PARTNER) {
         toast('Aapka pickup access hataya gaya', 'error');
         setTimeout(() => location.href = 'pickup-apply.html', 1500);
@@ -766,7 +764,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }
     }, err => console.warn('User listener err:', err.message));
 
-    // ⭐ LIVE: partner doc listener (rate, status, block, zone change)
     if (unsubPartner) try { unsubPartner(); } catch(e){}
     unsubPartner = db.collection('deliveryPartners').doc(USER.uid).onSnapshot(async snap => {
       if (!snap.exists) {
@@ -782,19 +779,16 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         PARTNER = snap.data();
       }
 
-      // Blocked check
       if (PARTNER.blocked === true) {
         showBlocked(PARTNER.blockReason || 'Aapka account admin ne block kar diya hai.');
         return;
       }
 
-      // Status check
       const status = (PARTNER.status || '').toLowerCase();
       const userSnap = await db.collection('users').doc(USER.uid).get();
       const isAdmin = USER.email === 'anasfansclub@toego.in' || (userSnap.exists && ['admin','superadmin'].includes((userSnap.data().role||'').toLowerCase()));
 
       if (status !== 'approved' && PARTNER.approved !== true && !isAdmin) {
-        // Status changed → send back
         if (status === 'rejected') {
           toast('Application rejected by admin', 'error');
           setTimeout(() => location.href = 'pickup-apply.html', 1500);
@@ -807,19 +801,16 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         }
       }
 
-      // First time → init
       const sig = JSON.stringify({
         name: PARTNER.name, zone: PARTNER.zone,
         rate: PARTNER.ratePerPacket, status: PARTNER.status,
         approved: PARTNER.approved
       });
       if (prevPartnerSignature === '') {
-        // First load
         initUI();
         listenAll();
         JUST_APPROVED_SHOWN = true;
       } else if (prevPartnerSignature !== sig) {
-        // Changed → update UI live
         updatePartnerUI();
         const oldRate = JSON.parse(prevPartnerSignature).rate;
         const newRate = PARTNER.ratePerPacket;
@@ -827,11 +818,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           toast('💰 Rate updated: ' + inr(newRate) + '/packet', 'success');
           beepAlert();
         }
-        // Re-render everything with new rate
         renderAll();
       }
       prevPartnerSignature = sig;
-
     }, err => console.warn('Partner listener err:', err.message));
   }
 
@@ -841,7 +830,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const msg = document.getElementById('tg-blocked-msg');
     if (msg) msg.textContent = reason || 'Aapka account admin ne block kar diya hai. Support se contact karein.';
     if (el) el.classList.add('show');
-    // Stop scanner
     stopScanner();
   }
 
@@ -870,7 +858,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     snd.classList.toggle('off', !soundEnabled);
   }
 
-  // ============ LISTENERS ============
   function listenAll() {
     if (unsubT) try { unsubT(); } catch(e){}
     unsubT = db.collection('pickupTasks').where('pickupBoyId', '==', USER.uid).onSnapshot(snap => {
@@ -930,7 +917,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }, () => {});
   }
 
-  // ============ RENDER ============
   function renderAll() {
     if (IS_BLOCKED) return;
     renderHeaderStats();
@@ -1055,7 +1041,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           '📞 ' + esc(group.sellerPhone || '—') + '<br>' +
           '📍 ' + esc(group.sellerAddress || '—') + (group.sellerPincode ? ' · ' + esc(group.sellerPincode) : '') +
         '</div>' +
-        '<button class="tg-btn suc wide" style="padding:12px;margin-bottom:10px;font-size:12.5px;" onclick="closeSellerModal();startBulkFromSeller(\'' + esc(sid) + '\')">' +
+        '<button class="tg-btn suc wide" style="padding:12px;margin-bottom:10px;font-size:12.5px;" onclick="startBulkFromSeller(\'' + esc(sid) + '\')">' +
           '<svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>' +
           'Bulk Scan All (' + group.tasks.length + ')' +
         '</button>' +
@@ -1076,7 +1062,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   };
 
   window.startBulkFromSeller = function(sid) {
-    openScanner('bulk');
+    closeSellerModal();
+    openScanner('bulk', sid);
   };
 
   function sellerTaskRow(t) {
@@ -1086,7 +1073,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return '<div class="tg-parcel">' +
       '<div class="tg-parcel-ic ' + (done?'done':'') + '">' + (done?'✓':'📦') + '</div>' +
       '<div class="tg-parcel-b">' +
-        '<div class="tg-parcel-id">#' + esc((t.orderDisplayId || t.id).slice(0,14).toUpperCase()) + '</div>' +
+        '<div class="tg-parcel-id">#' + esc((t.orderDisplayId || t.orderId || t.id).slice(0,14).toUpperCase()) + '</div>' +
         '<div class="tg-parcel-meta">' + esc(t.customerName || 'Customer') + ' · ' + esc(t.customerPincode || '') + '</div>' +
       '</div>' +
       '<div class="tg-parcel-r">' + badge + '</div>' +
@@ -1114,7 +1101,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return '<div class="tg-parcel" style="background:rgba(20,27,45,0.6);border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.04);">' +
       '<div class="tg-parcel-ic done">✓</div>' +
       '<div class="tg-parcel-b">' +
-        '<div class="tg-parcel-id">#' + esc((t.orderDisplayId || t.id).slice(0,14).toUpperCase()) + '</div>' +
+        '<div class="tg-parcel-id">#' + esc((t.orderDisplayId || t.orderId || t.id).slice(0,14).toUpperCase()) + '</div>' +
         '<div class="tg-parcel-meta">' + esc(t.sellerName || '') + '</div>' +
       '</div>' +
       '<div class="tg-parcel-r" style="font-size:11px;color:#8892a6;font-weight:700;">' + esc(tago(t.collectedAt)) + '</div>' +
@@ -1228,7 +1215,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return new Date(d.getFullYear(), d.getMonth(), d.getDate() + daysToMon, 10, 0, 0);
   }
 
-  // ============ NAV ============
   window.switchView = function(v) {
     document.querySelectorAll('.tg-v').forEach(el => el.classList.remove('active'));
     const el = document.getElementById('v-' + v); if (el) el.classList.add('active');
@@ -1240,10 +1226,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (v === 'profile') renderProfile();
   };
 
-  // ============ SCANNER ============
-  window.openScanner = function(mode) {
+  /* ⭐ UPDATED openScanner — accepts optional seller filter */
+  window.openScanner = function(mode, filterSellerId) {
     if (scannerRunning || IS_BLOCKED) return;
     SCAN_MODE = mode || 'bulk';
+    CURRENT_SELLER_FILTER = filterSellerId || null;
     currentScanTarget = null;
     BULK_SESSION = { count: 0, earned: 0, scannedIds: [], recent: [] };
     RECENT_SCAN_CODES.clear();
@@ -1252,7 +1239,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (title) title.textContent = SCAN_MODE === 'bulk' ? '📷 Bulk Scan · Auto-Collect' : '📷 Single Scan';
     const hint = document.getElementById('scan-hint-text');
     if (hint) hint.textContent = SCAN_MODE === 'bulk'
-      ? '📸 Continuous scanning · Auto-collect · No confirm'
+      ? (CURRENT_SELLER_FILTER ? '📸 Is seller ke parcels scan karo · Auto-collect' : '📸 Continuous scanning · Auto-collect · No confirm')
       : '📸 Ek packet scan karo · Result dekho';
 
     const bulkBar = document.getElementById('tg-bulk-bar');
@@ -1276,13 +1263,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     closeSellerModal();
     currentScanTarget = tid;
     SCAN_MODE = 'single';
+    CURRENT_SELLER_FILTER = null;
     BULK_SESSION = { count: 0, earned: 0, scannedIds: [], recent: [] };
     RECENT_SCAN_CODES.clear();
 
     const title = document.getElementById('scanner-title');
     if (title) title.textContent = '📷 Single Scan';
     const hint = document.getElementById('scan-hint-text');
-    if (hint) hint.textContent = '📸 Ye packet scan karo';
+    const targetTask = TASKS.find(t => t.id === tid);
+    if (hint) hint.textContent = targetTask ? '📸 Expected: #' + getTaskDisplayId(targetTask) : '📸 Ye packet scan karo';
     const bulkBar = document.getElementById('tg-bulk-bar');
     if (bulkBar) bulkBar.style.display = 'none';
 
@@ -1305,6 +1294,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     closeM('tg-scan-modal');
     currentScanTarget = null;
     SCAN_MODE = 'bulk';
+    CURRENT_SELLER_FILTER = null;
   };
 
   function setScanStatus(txt, cls) {
@@ -1436,18 +1426,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
   function onScanSuccess(decodedText, decodedResult) {
     const now = Date.now();
-    if (now - lastScanTime < 800) return;
+    if (now - lastScanTime < 600) return;
     lastScanTime = now;
 
-    let code = String(decodedText || '').trim().toUpperCase();
-    if (!code) return;
-    code = code.replace(/^\*|\*$/g, '').trim();
+    let raw = String(decodedText || '').trim();
+    if (!raw) return;
 
-    const recentTs = RECENT_SCAN_CODES.get(code);
+    const clean = extractOrderIdFromScan(raw);
+    if (!clean) return;
+
+    const recentTs = RECENT_SCAN_CODES.get(clean);
     if (recentTs && (now - recentTs) < 5000) return;
 
     vibrate([50, 30, 50]);
-    processScan(code);
+    processScan(clean);
   }
 
   function onScanFailure(err) { if (SCANNER_DEBUG) console.log('[scan fail]', err); }
@@ -1455,54 +1447,101 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.scanManual = function() {
     const v = (document.getElementById('tg-scan-manual').value || '').trim().toUpperCase();
     if (!v) { toast('Order ID daalo', 'error'); return; }
-    processScan(v);
+    const clean = extractOrderIdFromScan(v);
+    if (!clean) { toast('Invalid ID', 'error'); return; }
+    processScan(clean);
   };
 
-  async function processScan(code) {
-    const clean = String(code||'').replace(/^\*|\*$/g, '').trim().toUpperCase();
-    if (!clean) return;
-
-    let task = null;
-    if (currentScanTarget) {
-      task = TASKS.find(t => t.id === currentScanTarget);
-    } else {
-      task = TASKS.find(t => {
-        const status = t.status || 'assigned';
-        if (status !== 'assigned') return false;
-        const oid = String(t.orderDisplayId || '').toUpperCase();
-        const tid = String(t.id || '').toUpperCase();
-        return oid === clean || tid === clean || oid.includes(clean) || clean.includes(oid);
-      });
-    }
-
-    if (!task) {
-      beepErr(); vibrate([100, 60, 100]); flashError();
-      if (SCAN_MODE === 'single') {
-        setScanStatus('❌ Not found', 'error');
-        showResultCard('error', 'Not Found', 'Code: ' + esc(clean), '');
-      } else {
-        setScanStatus('❌ Not found — retry', 'error');
-      }
-      addRecentItem({ code: clean, ok: false, msg: 'Not found' });
-      toast('❌ No matching parcel', 'error');
-      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1500);
+  /* ⭐ FULLY FIXED processScan — matches label barcode + QR, verifies single mode */
+  async function processScan(rawCode) {
+    const clean = extractOrderIdFromScan(rawCode);
+    if (!clean || clean.length < 3) {
+      beepErr(); flashError();
+      setScanStatus('❌ Invalid barcode', 'error');
+      toast('Invalid barcode', 'error');
       return;
     }
 
+    let task = null;
+
+    /* -------- SINGLE MODE: verify against target -------- */
+    if (currentScanTarget) {
+      const expectedTask = TASKS.find(t => t.id === currentScanTarget);
+
+      if (!expectedTask) {
+        beepErr(); vibrate([100, 60, 100]); flashError();
+        setScanStatus('❌ Packet unavailable', 'error');
+        showResultCard('error', 'Packet Not Available', 'Ye packet ab aapke list me nahi hai.', '');
+        addRecentItem({ code: clean, ok: false, msg: 'Unavailable' });
+        toast('❌ Packet no longer available', 'error');
+        setTimeout(() => closeScanner(), 2000);
+        return;
+      }
+
+      if ((expectedTask.status || 'assigned') !== 'assigned') {
+        beepErr(); vibrate([100, 60, 100]); flashError();
+        setScanStatus('⚠ Already collected', 'error');
+        showResultCard('error', 'Already Collected', 'Ye packet already collect ho chuka hai.', '');
+        addRecentItem({ code: clean, ok: false, msg: 'Already collected' });
+        toast('Already collected', 'error');
+        setTimeout(() => closeScanner(), 2000);
+        return;
+      }
+
+      if (!taskMatchesScan(expectedTask, clean)) {
+        beepErr(); vibrate([100, 60, 100]); flashError();
+        setScanStatus('❌ WRONG PACKET', 'error');
+        showResultCard('error', '❌ Wrong Packet',
+          'Aapne galat packet scan kiya.<br><br>' +
+          '<b style="color:#f87171;">Scanned:</b> ' + esc(clean) + '<br>' +
+          '<b style="color:#4ade80;">Expected:</b> #' + esc(getTaskDisplayId(expectedTask)) + '<br><br>' +
+          '<span style="font-size:11px;opacity:0.75;">Sahi packet ka barcode scan karo</span>',
+          '');
+        addRecentItem({ code: clean, ok: false, msg: 'Wrong packet' });
+        toast('❌ Wrong packet — expected #' + getTaskDisplayId(expectedTask), 'error');
+        setTimeout(() => { if (scannerRunning) setScanStatus('🎯 Ready to scan', ''); }, 2800);
+        return;
+      }
+
+      task = expectedTask;
+    } else {
+      /* -------- BULK MODE: find any matching assigned task -------- */
+      task = TASKS.find(t => {
+        if ((t.status || 'assigned') !== 'assigned') return false;
+        if (RECENTLY_COLLECTED.has(t.id)) return false;
+        if (CURRENT_SELLER_FILTER && t.sellerId !== CURRENT_SELLER_FILTER) return false;
+        return taskMatchesScan(t, clean);
+      });
+    }
+
+    /* -------- Not found -------- */
+    if (!task) {
+      beepErr(); vibrate([100, 60, 100]); flashError();
+      setScanStatus('❌ Not found', 'error');
+      if (SCAN_MODE === 'single') {
+        showResultCard('error', 'Not Found',
+          'Scanned: <b>' + esc(clean) + '</b><br>' +
+          'Koi matching packet nahi mila.<br>' +
+          '<span style="font-size:11px;opacity:0.75;">Check karo ki packet aapke list me hai</span>',
+          '');
+      }
+      addRecentItem({ code: clean, ok: false, msg: 'Not found' });
+      toast('❌ No matching parcel', 'error');
+      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1600);
+      return;
+    }
+
+    /* -------- Double-check status -------- */
     if ((task.status || 'assigned') !== 'assigned') {
       beepErr(); vibrate([100, 60, 100]); flashError();
-      if (SCAN_MODE === 'single') {
-        setScanStatus('⚠ Already ' + task.status, 'error');
-        showResultCard('error', 'Already Collected', 'Packet: #' + esc((task.orderDisplayId || task.id).slice(0,14).toUpperCase()), '');
-      } else {
-        setScanStatus('⚠ Already collected', 'error');
-      }
+      setScanStatus('⚠ Already collected', 'error');
       addRecentItem({ code: clean, ok: false, msg: 'Already collected' });
       toast('Already collected', 'error');
       setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1500);
       return;
     }
 
+    /* -------- COLLECT -------- */
     try {
       const earn = Number(PARTNER?.ratePerPacket || task.ratePerPacket || 10);
       const now = FV.serverTimestamp();
@@ -1511,6 +1550,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         status: 'collected',
         collectedAt: now,
         collectedBy: USER.uid,
+        collectedScanCode: clean,
         updatedAt: now
       });
 
@@ -1535,6 +1575,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       } catch(e) { console.warn('Partner total update failed:', e); }
 
       RECENT_SCAN_CODES.set(clean, Date.now());
+      RECENTLY_COLLECTED.add(task.id);
       BULK_SESSION.count++;
       BULK_SESSION.earned += earn;
       BULK_SESSION.scannedIds.push(task.id);
@@ -1551,20 +1592,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       } else {
         setScanStatus('✓ Collected', 'success');
         showResultCard('success', 'Collected!',
-          'Packet: <b>#' + esc((task.orderDisplayId || task.id).slice(0,14).toUpperCase()) + '</b><br>Seller: <b>' + esc(task.sellerName || '—') + '</b>',
+          'Packet: <b>#' + esc(getTaskDisplayId(task)) + '</b><br>Seller: <b>' + esc(task.sellerName || '—') + '</b>',
           '+' + inr(earn));
         setTimeout(() => closeScanner(), 1800);
       }
 
       addRecentItem({
         code: clean, ok: true,
-        packet: (task.orderDisplayId || task.id).slice(0,14).toUpperCase(),
+        packet: getTaskDisplayId(task),
         seller: task.sellerName || '',
         earn: earn
       });
 
       document.getElementById('tg-scan-manual').value = '';
-      lastScanTime = Date.now() - 700;
+      lastScanTime = Date.now() - 400;
 
     } catch(e) {
       console.error('[processScan error]', e);
@@ -1592,7 +1633,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div style="font-size:12px;color:#cbd5e1;line-height:1.6;">' + info + '</div>' +
         (amount ? '<div style="font-size:20px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:8px;">' + amount + '</div>' : '') +
       '</div>';
-    setTimeout(() => { el.style.display = 'none'; }, isOk ? 1600 : 2500);
+    setTimeout(() => { el.style.display = 'none'; }, isOk ? 1600 : 2800);
   }
 
   function addRecentItem(data) {
@@ -1624,7 +1665,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     while (el.children.length > 15) el.removeChild(el.lastChild);
   }
 
-  // ============ HANDOVER ============
   window.createHandover = function() {
     const collected = TASKS.filter(t => t.status === 'collected');
     if (!collected.length) { toast('No collected packets', 'info'); return; }
@@ -1686,11 +1726,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     m.addEventListener('click', e => { if (e.target === m) {
       m.classList.remove('show');
       document.body.style.overflow='';
-      if (m.id === 'tg-scan-modal') { stopScanner(); currentScanTarget = null; SCAN_MODE = 'bulk'; }
+      if (m.id === 'tg-scan-modal') { stopScanner(); currentScanTarget = null; SCAN_MODE = 'bulk'; CURRENT_SELLER_FILTER = null; }
     }});
   });
 
-  // ⭐ Handle Firestore sync errors — show syncing status
   try {
     db.collection('pickupTasks').limit(1).onSnapshot(
       () => {},
@@ -1702,7 +1741,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     );
   } catch(e) {}
 
-  // Reconnect on visible
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       setOnlineStatus(navigator.onLine);
