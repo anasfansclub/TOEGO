@@ -10,6 +10,7 @@
 <style>
 :root {
   --primary: #2874f0;
+  --tg-primary: #2874f0;
   --primary-light: #f0f5ff;
   --text-main: #212121;
   --text-muted: #878787;
@@ -56,10 +57,10 @@ a { color: inherit; text-decoration: none; }
 .tg-admin-bar-btn { background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 4px; }
 
 /* Layout */
-.tg-container { display: flex; height: calc(100vh - 58px - var(--nav-h)); margin-top: 58px; background: #fff; }
-.tg-admin-mode .tg-container { height: calc(100vh - 98px - var(--nav-h)); margin-top: 98px; }
+.tg-container { display: flex; height: calc(100vh - 58px - var(--nav-h) - env(safe-area-inset-bottom, 0px)); margin-top: 58px; background: #fff; }
+.tg-admin-mode .tg-container { height: calc(100vh - 98px - var(--nav-h) - env(safe-area-inset-bottom, 0px)); margin-top: 98px; }
 
-/* ✅ SIDEBAR — wider + bigger category circles */
+/* Sidebar */
 .tg-sidebar { width: 100px; background: var(--bg-sec); overflow-y: auto; -webkit-overflow-scrolling: touch; border-right: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none; }
 .tg-sidebar::-webkit-scrollbar { display: none; }
 .tg-side-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 6px; gap: 8px; cursor: pointer; font-size: 11px; font-weight: 500; color: var(--text-muted); text-align: center; position: relative; border-bottom: 1px solid #e8e8e8; transition: background 0.15s; }
@@ -172,28 +173,25 @@ a { color: inherit; text-decoration: none; }
 .tg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* FABs */
-.tg-fab { position: fixed; bottom: calc(var(--nav-h) + 16px); right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(40,116,240,0.4); z-index: 1000; }
+.tg-fab { position: fixed; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px)); right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(40,116,240,0.4); z-index: 1000; }
 .tg-admin-mode .tg-fab { display: flex; }
 .tg-fab svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 
-.tg-top-btn { position: fixed; bottom: calc(var(--nav-h) + 16px); right: 20px; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--primary); border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: none; align-items: center; justify-content: center; z-index: 950; }
+.tg-top-btn { position: fixed; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px)); right: 20px; width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--primary); border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: none; align-items: center; justify-content: center; z-index: 950; }
 .tg-top-btn.show { display: flex; }
 .tg-top-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 .tg-admin-mode .tg-top-btn { display: none !important; }
 
-/* ✅ BOTTOM NAV — 5 items now */
-.tg-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); background: #fff; border-top: 1px solid #eee; display: flex; align-items: stretch; z-index: 1001; box-shadow: 0 -2px 10px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
-.tg-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 9.5px; font-weight: 500; color: #878787; padding: 6px 2px; text-decoration: none; position: relative; transition: color 0.15s; min-width: 0; }
-.tg-nav-icon-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
-.tg-nav-item svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 2; }
-.tg-nav-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.tg-nav-item.active { color: var(--primary); font-weight: 700; }
-.tg-nav-item.active::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 28px; height: 3px; background: var(--primary); border-radius: 0 0 3px 3px; }
-.tg-nav-item:active { background: #f8f9fb; }
-.tg-nav-badge { position: absolute; top: -6px; right: -10px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: none; align-items: center; justify-content: center; padding: 0 3px; border: 1.5px solid #fff; line-height: 1; }
+/* ✅ BOTTOM NAVIGATION — exactly like shop-home (tg-mbnav) */
+.tg-mbnav { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -1px 4px rgba(0,0,0,0.05); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-mbnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; text-decoration: none; transition: color 0.15s; }
+.tg-mbnav-item.active { color: var(--tg-primary); }
+.tg-mbnav-item:active { background: #f8f9fb; }
+.tg-mbnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+.tg-mbnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #fff; }
 
 /* Toasts */
-.tg-toasts { position: fixed; bottom: calc(var(--nav-h) + 20px); left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.tg-toasts { position: fixed; bottom: calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
 .tg-toast { padding: 10px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 4px; font-weight: 500; animation: tgToastIn .2s; }
 @keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 .tg-toast.success { background: #388e3c; }
@@ -207,15 +205,12 @@ a { color: inherit; text-decoration: none; }
   .tg-side-item { padding: 18px 8px; font-size: 12px; }
   .tg-subcat-img { width: 76px; height: 76px; font-size: 36px; }
   .tg-subcat-chip, .tg-add-subcat { min-width: 84px; }
-  .tg-nav-item { font-size: 10.5px; }
-  .tg-nav-item svg { width: 23px; height: 23px; }
 }
 @media (min-width: 900px) {
   .tg-container { max-width: 1200px; margin-left: auto; margin-right: auto; border-left: 1px solid #eee; border-right: 1px solid #eee; }
   .tg-prod-grid { grid-template-columns: repeat(4, 1fr); }
   .tg-modal { align-items: center; }
   .tg-sheet { border-radius: 12px; max-width: 450px; }
-  .tg-nav { max-width: 1200px; margin-left: auto; margin-right: auto; border-left: 1px solid #eee; border-right: 1px solid #eee; }
 }
 </style>
 </head>
@@ -295,37 +290,27 @@ a { color: inherit; text-decoration: none; }
   <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<!-- ✅ BOTTOM NAV — 5 items: Home, Categories, Cart, Orders, Account -->
-<nav class="tg-nav" aria-label="Main navigation">
-  <a href="shop-home.html" class="tg-nav-item">
-    <div class="tg-nav-icon-wrap">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    </div>
+<!-- ✅ BOTTOM NAVIGATION — exactly like shop-home -->
+<nav class="tg-mbnav" aria-label="Main navigation">
+  <a href="shop-home.html" class="tg-mbnav-item">
+    <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path></svg>
     <span>Home</span>
   </a>
-  <a href="categories.html" class="tg-nav-item active">
-    <div class="tg-nav-icon-wrap">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-    </div>
+  <a href="categories.html" class="tg-mbnav-item active">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
     <span>Categories</span>
   </a>
-  <a href="cart.html" class="tg-nav-item">
-    <div class="tg-nav-icon-wrap">
-      <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
-      <span class="tg-nav-badge" id="tg-nav-cart-badge">0</span>
-    </div>
+  <a href="cart.html" class="tg-mbnav-item">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
     <span>Cart</span>
+    <span class="tg-mbnav-badge" id="tg-nav-cart-badge">0</span>
   </a>
-  <a href="orders.html" class="tg-nav-item">
-    <div class="tg-nav-icon-wrap">
-      <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 13l2 2 4-4"/></svg>
-    </div>
+  <a href="my-orders.html" class="tg-mbnav-item">
+    <svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"></path><path d="M4 8v12h16V8"></path><path d="M10 12h4"></path></svg>
     <span>Orders</span>
   </a>
-  <a href="account.html" class="tg-nav-item">
-    <div class="tg-nav-icon-wrap">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
-    </div>
+  <a href="account.html" class="tg-mbnav-item">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"></path></svg>
     <span>Account</span>
   </a>
 </nav>
@@ -484,6 +469,13 @@ a { color: inherit; text-decoration: none; }
   let unsubProds = null;
   let hasCache = false;
 
+  // ✅ Read ?cat= URL param from shop-home category click
+  let pendingCatSlug = null;
+  try {
+    const _v = new URLSearchParams(window.location.search).get('cat');
+    if (_v && _v.toLowerCase() !== 'all') pendingCatSlug = _v;
+  } catch(e) {}
+
   const CACHE_CATS = 'toego_cat_cats_v3';
   const CACHE_PRODS = 'toego_cat_prods_v3';
 
@@ -558,8 +550,7 @@ a { color: inherit; text-decoration: none; }
   };
 
   // ============================================
-  // ✅ ROBUST CART COUNT DETECTOR
-  // Handles: arrays, objects, nested (items/products), map of id:qty, etc.
+  // Robust cart count detector
   // ============================================
   function extractCartCount(raw) {
     if (!raw) return 0;
@@ -579,11 +570,9 @@ a { color: inherit; text-decoration: none; }
     if (Array.isArray(c)) return sumItems(c);
 
     if (typeof c === 'object') {
-      // Try common nested keys first
       const nested = c.items || c.products || c.list || c.cart || c.cartItems;
       if (Array.isArray(nested)) return sumItems(nested);
 
-      // Otherwise iterate values (map of id → qty or id → product object)
       let total = 0;
       Object.values(c).forEach(v => {
         if (v == null) return;
@@ -602,13 +591,11 @@ a { color: inherit; text-decoration: none; }
     let best = 0;
     try {
       const seen = new Set();
-      // 1) Known keys
-      const known = ['toego_cart', 'cart', 'toego-cart', 'toegoCart', 'cartItems', 'toego_cart_items', 'cartData'];
+      const known = ['toego_cart', 'cart', 'toego-cart', 'toegoCart', 'cartItems', 'toego_cart_items', 'cartData', 'toego_cart_guest'];
       for (const k of known) {
         const v = localStorage.getItem(k);
         if (v) { seen.add(k); best = Math.max(best, extractCartCount(v)); }
       }
-      // 2) Scan all keys for "cart"
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
         if (!k || seen.has(k)) continue;
@@ -637,7 +624,6 @@ a { color: inherit; text-decoration: none; }
       else nb.style.display = 'none';
     }
   }
-  // Expose so other pages can call after cart change
   window.tgUpdateCartBadge = updateCartBadge;
 
   async function checkAdmin(user) {
@@ -711,6 +697,18 @@ a { color: inherit; text-decoration: none; }
       if (Array.isArray(c) && c.length) {
         ALL_CATEGORIES = c;
         if (Array.isArray(p)) ALL_PRODUCTS = p;
+
+        // ✅ Resolve pending category from URL (against cache)
+        if (pendingCatSlug) {
+          const s = slugify(pendingCatSlug);
+          const m = c.find(x => slugify(x.name) === s || slugify(x.id) === s);
+          if (m) {
+            currentCatId = m.id;
+            currentSubName = 'all';
+            pendingCatSlug = null;
+          }
+        }
+
         if (!currentCatId || !ALL_CATEGORIES.find(x => x.id === currentCatId)) {
           currentCatId = ALL_CATEGORIES[0].id;
           currentSubName = 'all';
@@ -740,6 +738,17 @@ a { color: inherit; text-decoration: none; }
   }
 
   function applyCategories(cats) {
+    // ✅ Resolve pending category from URL (against fresh data)
+    if (pendingCatSlug && cats.length) {
+      const s = slugify(pendingCatSlug);
+      const m = cats.find(c => slugify(c.name) === s || slugify(c.id) === s);
+      if (m) {
+        currentCatId = m.id;
+        currentSubName = 'all';
+        pendingCatSlug = null;
+      }
+    }
+
     const stillExists = cats.find(c => c.id === currentCatId);
     if (!stillExists) {
       currentCatId = cats.length ? cats[0].id : null;
@@ -962,6 +971,7 @@ a { color: inherit; text-decoration: none; }
   }
 
   window.tgSelectCat = function(id) {
+    pendingCatSlug = null;
     currentCatId = id;
     currentSubName = 'all';
     searchQuery = '';
@@ -1268,7 +1278,6 @@ a { color: inherit; text-decoration: none; }
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
 
-  // ✅ Cart badge live sync — storage events + focus + interval
   window.addEventListener('storage', (e) => {
     if (!e.key || /cart/i.test(e.key)) updateCartBadge();
   });
@@ -1284,7 +1293,6 @@ a { color: inherit; text-decoration: none; }
   updateOnlineStatus();
   attachScrollListener();
 
-  // Periodic cart sync (catches updates made without storage events)
   setInterval(updateCartBadge, 3000);
 
   if (hasCache) {
