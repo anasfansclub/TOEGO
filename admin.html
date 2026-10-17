@@ -3973,37 +3973,53 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     renderShopSections();
     renderSiteData();
   }
+
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ FIX: renderShopLists() — oninput handlers now call
+     window.tgShopSetField() instead of accessing IIFE-scoped
+     variables directly (which was broken in global scope).
+     ═══════════════════════════════════════════════════════════════ */
   function renderShopLists(){
     document.getElementById('shop-hero-list').innerHTML = shopHeroList.length ? shopHeroList.map((h, i) =>
       '<div class="tg-sgrp" style="background:#fff;border:1.5px solid #e0e0e0;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><b style="font-size:13px;">Slide #'+(i+1)+'</b><button class="tg-btn dan" style="padding:4px 8px;" onclick="tgShopRemoveHero('+i+')">✕</button></div>' +
-        '<div class="tg-fld"><label>Title</label><input type="text" value="'+esc(h.title||'')+'" oninput="shopHeroList['+i+'].title=this.value"></div>' +
-        '<div class="tg-fld"><label>Subtitle</label><input type="text" value="'+esc(h.subtitle||'')+'" oninput="shopHeroList['+i+'].subtitle=this.value"></div>' +
-        '<div class="tg-fld"><label>Image URL</label><input type="text" value="'+esc(h.image||'')+'" placeholder="https://..." oninput="shopHeroList['+i+'].image=this.value"></div>' +
-        '<div class="tg-fld"><label>Gradient (fallback)</label><input type="text" value="'+esc(h.gradient||'')+'" placeholder="linear-gradient(...)" oninput="shopHeroList['+i+'].gradient=this.value"></div>' +
-        '<div class="tg-fld-row"><div class="tg-fld"><label>Button Text</label><input type="text" value="'+esc(h.buttonText||'SHOP NOW')+'" oninput="shopHeroList['+i+'].buttonText=this.value"></div><div class="tg-fld"><label>Link</label><input type="text" value="'+esc(h.link||'products.html')+'" oninput="shopHeroList['+i+'].link=this.value"></div></div>' +
+        '<div class="tg-fld"><label>Title</label><input type="text" value="'+esc(h.title||'')+'" oninput="tgShopSetField(\'hero\','+i+',\'title\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Subtitle</label><input type="text" value="'+esc(h.subtitle||'')+'" oninput="tgShopSetField(\'hero\','+i+',\'subtitle\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Image URL</label><input type="text" value="'+esc(h.image||'')+'" placeholder="https://..." oninput="tgShopSetField(\'hero\','+i+',\'image\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Gradient (fallback)</label><input type="text" value="'+esc(h.gradient||'')+'" placeholder="linear-gradient(...)" oninput="tgShopSetField(\'hero\','+i+',\'gradient\',this.value)"></div>' +
+        '<div class="tg-fld-row"><div class="tg-fld"><label>Button Text</label><input type="text" value="'+esc(h.buttonText||'SHOP NOW')+'" oninput="tgShopSetField(\'hero\','+i+',\'buttonText\',this.value)"></div><div class="tg-fld"><label>Link</label><input type="text" value="'+esc(h.link||'products.html')+'" oninput="tgShopSetField(\'hero\','+i+',\'link\',this.value)"></div></div>' +
       '</div>'
     ).join('') : '<div class="tg-empty" style="padding:20px;"><div class="tg-empty-i" style="font-size:34px;">🖼️</div><div class="tg-empty-t" style="font-size:13px;">No hero slides</div></div>';
     document.getElementById('shop-mid-list').innerHTML = shopMidList.length ? shopMidList.map((b, i) =>
       '<div class="tg-sgrp" style="background:#fff;border:1.5px solid #e0e0e0;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><b style="font-size:13px;">Banner #'+(i+1)+'</b><button class="tg-btn dan" style="padding:4px 8px;" onclick="tgShopRemoveMid('+i+')">✕</button></div>' +
-        '<div class="tg-fld"><label>Title</label><input type="text" value="'+esc(b.title||'')+'" oninput="shopMidList['+i+'].title=this.value"></div>' +
-        '<div class="tg-fld"><label>Subtitle</label><input type="text" value="'+esc(b.subtitle||'')+'" oninput="shopMidList['+i+'].subtitle=this.value"></div>' +
-        '<div class="tg-fld"><label>Image URL</label><input type="text" value="'+esc(b.image||'')+'" placeholder="https://..." oninput="shopMidList['+i+'].image=this.value"></div>' +
-        '<div class="tg-fld"><label>Link</label><input type="text" value="'+esc(b.link||'products.html')+'" oninput="shopMidList['+i+'].link=this.value"></div>' +
+        '<div class="tg-fld"><label>Title</label><input type="text" value="'+esc(b.title||'')+'" oninput="tgShopSetField(\'mid\','+i+',\'title\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Subtitle</label><input type="text" value="'+esc(b.subtitle||'')+'" oninput="tgShopSetField(\'mid\','+i+',\'subtitle\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Image URL</label><input type="text" value="'+esc(b.image||'')+'" placeholder="https://..." oninput="tgShopSetField(\'mid\','+i+',\'image\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Link</label><input type="text" value="'+esc(b.link||'products.html')+'" oninput="tgShopSetField(\'mid\','+i+',\'link\',this.value)"></div>' +
       '</div>'
     ).join('') : '<div class="tg-empty" style="padding:20px;"><div class="tg-empty-i" style="font-size:34px;">📢</div><div class="tg-empty-t" style="font-size:13px;">No mid banners</div></div>';
     document.getElementById('shop-feat-list').innerHTML = shopFeatList.length ? shopFeatList.map((b, i) =>
       '<div class="tg-sgrp" style="background:#fff;border:1.5px solid #e0e0e0;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><b style="font-size:13px;">Card #'+(i+1)+'</b><button class="tg-btn dan" style="padding:4px 8px;" onclick="tgShopRemoveFeat('+i+')">✕</button></div>' +
-        '<div class="tg-fld"><label>Tag</label><input type="text" value="'+esc(b.tag||'')+'" oninput="shopFeatList['+i+'].tag=this.value"></div>' +
-        '<div class="tg-fld"><label>Title</label><input type="text" value="'+esc(b.title||'')+'" oninput="shopFeatList['+i+'].title=this.value"></div>' +
-        '<div class="tg-fld"><label>Subtitle</label><input type="text" value="'+esc(b.subtitle||'')+'" oninput="shopFeatList['+i+'].subtitle=this.value"></div>' +
-        '<div class="tg-fld"><label>Image URL</label><input type="text" value="'+esc(b.image||'')+'" oninput="shopFeatList['+i+'].image=this.value"></div>' +
-        '<div class="tg-fld"><label>Link</label><input type="text" value="'+esc(b.link||'products.html')+'" oninput="shopFeatList['+i+'].link=this.value"></div>' +
+        '<div class="tg-fld"><label>Tag</label><input type="text" value="'+esc(b.tag||'')+'" oninput="tgShopSetField(\'feat\','+i+',\'tag\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Title</label><input type="text" value="'+esc(b.title||'')+'" oninput="tgShopSetField(\'feat\','+i+',\'title\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Subtitle</label><input type="text" value="'+esc(b.subtitle||'')+'" oninput="tgShopSetField(\'feat\','+i+',\'subtitle\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Image URL</label><input type="text" value="'+esc(b.image||'')+'" oninput="tgShopSetField(\'feat\','+i+',\'image\',this.value)"></div>' +
+        '<div class="tg-fld"><label>Link</label><input type="text" value="'+esc(b.link||'products.html')+'" oninput="tgShopSetField(\'feat\','+i+',\'link\',this.value)"></div>' +
       '</div>'
     ).join('') : '<div class="tg-empty" style="padding:20px;"><div class="tg-empty-i" style="font-size:34px;">⭐</div><div class="tg-empty-t" style="font-size:13px;">No featured cards</div></div>';
   }
+
+  /* ✅ NEW FUNCTION: handles field updates from inline oninput handlers.
+     Inline handlers run in global scope and cannot access shopHeroList,
+     shopMidList, shopFeatList (declared inside IIFE). This bridge fixes it. */
+  window.tgShopSetField = function(type, i, field, val) {
+    if (type === 'hero' && shopHeroList[i]) shopHeroList[i][field] = val;
+    else if (type === 'mid'  && shopMidList[i])  shopMidList[i][field]  = val;
+    else if (type === 'feat' && shopFeatList[i]) shopFeatList[i][field] = val;
+  };
+
   window.tgShopAddHero = function(){ shopHeroList.push({title:'',subtitle:'',image:'',gradient:'linear-gradient(135deg,#2874f0,#1a5dc7)',buttonText:'SHOP NOW',link:'products.html'}); renderShopLists(); };
   window.tgShopRemoveHero = function(i){ shopHeroList.splice(i,1); renderShopLists(); };
   window.tgShopAddMid = function(){ shopMidList.push({title:'',subtitle:'',image:'',gradient:'linear-gradient(135deg,#2874f0,#1a5dc7)',link:'products.html'}); renderShopLists(); };
