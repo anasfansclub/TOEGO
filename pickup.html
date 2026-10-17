@@ -209,8 +209,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-scan-status.error::before{background:#ef4444;box-shadow:0 0 8px #ef4444;}
 .tg-scan-status.processing{border-color:rgba(250,204,21,0.5);color:#facc15;}
 .tg-scan-status.processing::before{background:#facc15;box-shadow:0 0 8px #facc15;}
-.tg-scan-status.fast{border-color:rgba(34,197,94,0.5);color:#4ade80;animation:tgFastPulse .4s;}
-@keyframes tgFastPulse{0%{transform:translateX(-50%) scale(1.1);}100%{transform:translateX(-50%) scale(1);}}
 
 .tg-cam-err{background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.4);border-radius:12px;padding:14px;color:#f87171;font-size:12.5px;line-height:1.6;text-align:center;margin-bottom:12px;}
 .tg-cam-err b{color:#fff;}
@@ -505,7 +503,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         <div id="payout-hist"></div>
       </div>
 
-      <div style="text-align:center;font-size:11px;color:#4b5563;padding:20px 0;">TOEGO Pickup Partner · v5.1 ULTRA FAST</div>
+      <div style="text-align:center;font-size:11px;color:#4b5563;padding:20px 0;">TOEGO Pickup Partner · v5.2 · Made in India 🇮🇳</div>
     </div>
 
   </div>
@@ -662,7 +660,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let CUR_VIEW = 'dash';
   let EARN_FILTER = 'week';
 
-  /* ⚡ ULTRA FAST flags */
   let _scanProcessing = false;
   let _scanCooldownUntil = 0;
 
@@ -670,11 +667,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let _calcEarningsCache = null;
   let _calcEarningsCacheKey = '';
 
-  /* ⚡ ULTRA FAST: 100ms debounce (was 150) */
   const HEAVY_DEBOUNCE = 100;
-  /* ⚡ ULTRA FAST: 120ms min gap between scans (was 1500) */
   const SCAN_MIN_GAP = 120;
-  /* ⚡ ULTRA FAST: 10s same-code dedup (was 20s) */
   const SCAN_DEDUP_MS = 10000;
 
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
@@ -683,7 +677,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function ftime(d) { if (!d) return ''; const dt = d.toDate?d.toDate():new Date(d); return dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
   function tago(d) { if (!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s<60) return 'Just now'; if (s<3600) return Math.floor(s/60)+'m ago'; if (s<86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
   function ini(n) { return String(n||'P').trim().charAt(0).toUpperCase(); }
-  function setText(id,v) { const el = document.getElementById(id); if (el && el.textContent !== v) el.textContent = v; }
+  function setText(id,v) { const el = document.getElementById(id); if (el && el.textContent !== String(v)) el.textContent = v; }
   function openM(id) { const el = document.getElementById(id); if (el) { el.classList.add('show'); document.body.style.overflow='hidden'; } }
   function closeM(id) { const el = document.getElementById(id); if (el) { el.classList.remove('show'); if (!document.querySelector('.tg-mod.show')) document.body.style.overflow=''; } }
 
@@ -733,7 +727,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return String(t.id || '').slice(0, 14).toUpperCase();
   }
 
-  /* ⚡ ULTRA FAST: 1.8s toast (was 2.4s) */
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -1027,6 +1020,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       prevPendingCount = pendingCount;
       _calcEarningsCache = null; _calcEarningsCacheKey = '';
       scheduleHeavyRender();
+      // ⭐ Re-render handovers when tasks change (so received status updates)
+      if (CUR_VIEW === 'collected') renderHandovers();
     }, err => console.warn('Tasks err:', err.message));
 
     if (unsubH) try { unsubH(); } catch(e){}
@@ -1038,6 +1033,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         return bt - at;
       });
       scheduleHeavyRender();
+      if (CUR_VIEW === 'collected') renderHandovers();
     }, () => {});
 
     if (unsubL) try { unsubL(); } catch(e){}
@@ -1131,7 +1127,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }).join('') + '</div>';
   }
 
-  /* ⚡ ULTRA FAST: 100ms debounce */
   function scheduleHeavyRender() {
     if (_heavyRenderTimer) return;
     _heavyRenderTimer = setTimeout(() => {
@@ -1363,6 +1358,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     '</div>';
   }
 
+  /* ⭐ FIXED: Handover status computed from tasks — admin received par sahi dikhega */
   function renderHandovers() {
     const el = document.getElementById('handover-list'); if (!el) return;
     if (!HANDOVERS.length) {
@@ -1370,13 +1366,40 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return;
     }
     el.innerHTML = HANDOVERS.slice(0, 20).map(h => {
-      const st = h.status || 'pending';
-      const pill = st === 'received' ? '<span class="tg-parcel-badge" style="background:rgba(34,197,94,0.15);color:#4ade80;border-color:rgba(34,197,94,0.3);">✓ Received</span>' : '<span class="tg-parcel-badge" style="background:rgba(250,204,21,0.15);color:#facc15;border-color:rgba(250,204,21,0.3);">⏳ Pending</span>';
+      /* ⭐ Effective status — tasks se compute, DB stale ho to bhi sahi */
+      const taskIds = Array.isArray(h.taskIds) ? h.taskIds : [];
+      let effectiveStatus = h.status || 'pending';
+      let total = Number(h.packetCount) || taskIds.length || 0;
+      let receivedCount = 0;
+
+      if (taskIds.length > 0) {
+        const related = taskIds.map(id => TASKS.find(t => t.id === id)).filter(Boolean);
+        total = related.length || total;
+        receivedCount = related.filter(t => t.status === 'received' || t.status === 'settled').length;
+        if (total > 0) {
+          if (receivedCount >= total) effectiveStatus = 'received';
+          else if (receivedCount > 0) effectiveStatus = 'partial';
+          else effectiveStatus = 'pending';
+        }
+      }
+
+      let pill, ic, icCls;
+      if (effectiveStatus === 'received') {
+        pill = '<span class="tg-parcel-badge" style="background:rgba(34,197,94,0.15);color:#4ade80;border-color:rgba(34,197,94,0.3);">✓ Received</span>';
+        ic = '✓'; icCls = 'done';
+      } else if (effectiveStatus === 'partial') {
+        pill = '<span class="tg-parcel-badge" style="background:rgba(250,204,21,0.15);color:#facc15;border-color:rgba(250,204,21,0.3);">⚡ ' + receivedCount + '/' + total + ' Received</span>';
+        ic = '📦'; icCls = '';
+      } else {
+        pill = '<span class="tg-parcel-badge" style="background:rgba(250,204,21,0.15);color:#facc15;border-color:rgba(250,204,21,0.3);">⏳ Pending</span>';
+        ic = '📤'; icCls = '';
+      }
+
       return '<div class="tg-parcel">' +
-        '<div class="tg-parcel-ic ' + (st==='received'?'done':'') + '">' + (st==='received'?'✓':'📤') + '</div>' +
+        '<div class="tg-parcel-ic ' + icCls + '">' + ic + '</div>' +
         '<div class="tg-parcel-b">' +
           '<div class="tg-parcel-id">Handover #' + esc((h.id||'').slice(0,8).toUpperCase()) + '</div>' +
-          '<div class="tg-parcel-meta">' + (h.packetCount||0) + ' packet' + ((h.packetCount||0)>1?'s':'') + ' · ' + esc(tago(h.createdAt)) + '</div>' +
+          '<div class="tg-parcel-meta">' + total + ' packet' + (total>1?'s':'') + ' · ' + esc(tago(h.createdAt)) + '</div>' +
         '</div>' +
         '<div class="tg-parcel-r">' + pill + '</div>' +
       '</div>';
@@ -1658,7 +1681,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         experimentalFeatures: { useBarCodeDetectorIfSupported: true }
       });
 
-      /* ⚡ ULTRA FAST: 30 FPS (was 15) */
       const config = {
         fps: 30,
         qrbox: function(vw, vh) {
@@ -1688,7 +1710,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       setScanStatus('⚡ Turbo ready · scanning...', '');
       errEl.style.display = 'none';
 
-      // ⚡ Light cleanup every 15s
       setInterval(() => {
         const now = Date.now();
         const toDelete = [];
@@ -1741,7 +1762,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (reader) reader.innerHTML = '';
   }
 
-  /* ⚡ ULTRA FAST: NO pause, NO resume, NO 1.5s cooldown, NO 1.2s wait */
   function onScanSuccess(decodedText, decodedResult) {
     if (_scanProcessing) return;
     const now = Date.now();
@@ -1758,11 +1778,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     lastScanTime = now;
     _scanCooldownUntil = now + SCAN_MIN_GAP;
 
-    // ⚡ Camera ko pause NAHI karte - continuously chalta rahega
     setScanStatus('⚡ Collecting...', 'processing');
     vibrate([30]);
 
-    // ⚡ Fire & forget - UI turant update hoga
     processScan(clean).finally(() => {
       _scanProcessing = false;
       if (scannerRunning) {
@@ -1790,7 +1808,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     });
   };
 
-  /* ⚡ ULTRA FAST: Optimistic UI + parallel Firestore writes */
   async function processScan(rawCode) {
     const clean = extractOrderIdFromScan(rawCode);
     if (!clean || clean.length < 3) {
@@ -1867,14 +1884,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return;
     }
 
-    /* ⚡ OPTIMISTIC UI - turant feedback, Firestore await nahi */
     try {
       const earn = Number(PARTNER?.ratePerPacket || task.ratePerPacket || 10);
       const taskId = task.id;
       const displayId = getTaskDisplayId(task);
       const sellerName = task.sellerName || 'Seller';
 
-      // 1. Local state turant update
       RECENT_SCAN_CODES.set(clean, Date.now());
       RECENTLY_COLLECTED.add(taskId);
       BULK_SESSION.count++;
@@ -1886,7 +1901,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         TASKS[idx] = { ...TASKS[idx], status: 'collected', collectedAt: { toDate: () => new Date() } };
       }
 
-      // 2. UI turant
       beepOk();
       vibrate([60, 30, 100]);
       flashSuccess();
@@ -1912,10 +1926,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
       document.getElementById('tg-scan-manual').value = '';
 
-      /* 3. Firestore writes - PARALLEL, non-blocking where possible */
       const now = FV.serverTimestamp();
 
-      // Critical write - single update
       const updatePromise = db.collection('pickupTasks').doc(taskId).update({
         status: 'collected',
         collectedAt: now,
@@ -1924,7 +1936,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         updatedAt: now
       });
 
-      // Non-critical - fire & forget (parallel, don't block)
       Promise.all([
         db.collection('scanLogs').add({
           boyId: USER.uid,
@@ -1945,10 +1956,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         }, { merge: true }).catch(e => console.warn('partner total failed:', e))
       ]);
 
-      // Critical write fail hone pe revert
       updatePromise.catch(e => {
         console.error('pickupTask update failed:', e);
-        // Revert optimistic UI
         BULK_SESSION.count = Math.max(0, BULK_SESSION.count - 1);
         BULK_SESSION.earned = Math.max(0, BULK_SESSION.earned - earn);
         RECENT_SCAN_CODES.delete(clean);
@@ -1987,7 +1996,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div style="font-size:12px;color:#cbd5e1;line-height:1.6;">' + info + '</div>' +
         (amount ? '<div style="font-size:20px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:8px;">' + amount + '</div>' : '') +
       '</div>';
-    // ⚡ ULTRA FAST: shorter display time
     setTimeout(() => { el.style.display = 'none'; }, isOk ? 1000 : 2200);
   }
 
