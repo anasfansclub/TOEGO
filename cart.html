@@ -603,7 +603,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
 
-  /* ⭐ NEW: In-memory fallback for pin/addr */
   const _memStore = { pin: null, addr: null };
   function getPin() {
     if (_memStore.pin !== null) return _memStore.pin;
@@ -916,7 +915,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let unsubCoupons = null;
   let usedCouponCodes = new Set();
 
-  /* ⭐ FIX: structural sig includes pincode */
   function _itemStructuralSig(item) {
     return [
       item.name || '',
@@ -994,41 +992,82 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (a.city && city) city.textContent = a.city + (a.pin ? ' - ' + a.pin : '');
     }
   }
+
+  /* ⭐ FIXED: Bulletproof Kanpur pincode detection — 208xxx and 209xxx */
+  function isKanpurPincode(pin) {
+    if (!pin) return false;
+    const p = String(pin).trim().replace(/\s+/g, '');
+    if (!/^\d{6}$/.test(p)) return false;
+    const num = parseInt(p, 10);
+    /* Kanpur Nagar (city): 208001-208027
+       Kanpur Dehat (rural): 209101-209899
+       Full range: 208000-209999 */
+    if (num >= 208000 && num <= 209999) return true;
+    /* Any pincode starting with 208 or 209 */
+    if (p.startsWith('208') || p.startsWith('209')) return true;
+    return false;
+  }
+
+  /* ⭐ FIXED: Robust delivery info with city + pin check */
+  function getDeliveryInfo() {
+    let pin = String(getPin() || '').trim();
+    const a = getAddr();
+    let city = String(a.city || '').trim();
+    if (!pin && a.pin) pin = String(a.pin).trim();
+    const cityL = city.toLowerCase();
+
+    /* 1. City check — "kanpur" anywhere in city name */
+    if (cityL.includes('kanpur')) {
+      return { text: 'Same Day Delivery', cls: 'same-day' };
+    }
+
+    /* 2. Pincode check — 208xxx / 209xxx */
+    if (isKanpurPincode(pin)) {
+      return { text: 'Same Day Delivery', cls: 'same-day' };
+    }
+
+    /* 3. Default — 3-5 days for all other pincodes */
+    return { text: 'Delivery in 3-5 days', cls: '' };
+  }
+
+  /* ⭐ FIXED: Force full re-render + better UX + Kanpur toast */
   window.tgChangePin = function() {
     const p = prompt('Enter delivery pincode (6 digits)', getPin() || '');
     if (!p) return;
-    if (!/^\d{6}$/.test(p.trim())) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
-    setPin(p.trim());
+    const clean = String(p).trim().replace(/\s+/g, '');
+    if (!/^\d{6}$/.test(clean)) {
+      toast('Please enter a valid 6-digit pincode', 'error');
+      return;
+    }
+    setPin(clean);
+
+    /* Also update addr.pin if address exists */
+    const addr = getAddr();
+    if (addr && Object.keys(addr).length) {
+      addr.pin = clean;
+      setAddr(addr);
+    }
+
+    /* Update pin label in UI */
     const cityEl = document.getElementById('tg-pin-city');
-    if (cityEl) cityEl.textContent = p.trim();
-    toast('Delivery pincode updated', 'success');
-    /* Force item body re-render with new delivery info */
-    cartItems.forEach(it => {
-      const node = _itemNodeMap.get(it.id);
-      if (node) node.removeAttribute('data-struct-sig');
+    if (cityEl) cityEl.textContent = clean;
+
+    /* Show delivery type in toast */
+    const isKan = isKanpurPincode(clean);
+    toast(
+      isKan ? '✓ Same Day Delivery available for ' + clean : '✓ Delivery in 3-5 days for ' + clean,
+      'success'
+    );
+
+    /* ⭐ Force FULL re-render — remove ALL structural sigs */
+    _itemNodeMap.forEach(node => {
+      node.removeAttribute('data-struct-sig');
+      node.removeAttribute('data-qty');
     });
     _lastRenderSig = '';
-    renderCart(false);
+    _lastIdsKey = '';
+    renderCart(true);
   };
-
-  function isKanpurPincode(pin) {
-    if (!pin) return false;
-    const p = String(pin).trim();
-    if (!/^\d{6}$/.test(p)) return false;
-    return /^20[89]\d{3}$/.test(p);
-  }
-
-  function getDeliveryInfo() {
-    let pin = getPin() || '';
-    const a = getAddr();
-    let city = a.city || '';
-    if (!pin && a.pin) pin = a.pin;
-    const cityL = String(city || '').toLowerCase().trim();
-    if (cityL.includes('kanpur') || isKanpurPincode(pin)) {
-      return { text: 'Same Day Delivery', cls: 'same-day' };
-    }
-    return { text: 'Delivery in 3-5 days', cls: '' };
-  }
 
   function getItemCount() { return cartItems.reduce((s, i) => s + Number(i.qty || 1), 0); }
   function updateHeaderBadge() {
@@ -1056,7 +1095,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return SETTINGS.gstIncludedInPrice === true;
   }
 
-  /* ⭐ FIX: DOM-DIFF renderer — no blink on qty/update */
   function renderCart(force) {
     const loading = document.getElementById('tg-loading');
     const itemsWrap = document.getElementById('tg-items');
@@ -1112,7 +1150,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (rightCol) rightCol.style.display = 'block';
     if (mobileBar) mobileBar.style.display = 'flex';
 
-    /* DOM-DIFF */
     const currentIds = cartItems.map(i => i.id);
     const currentIdSet = new Set(currentIds);
     const existingIdSet = new Set(_itemNodeMap.keys());
@@ -1132,7 +1169,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (id) _itemNodeMap.set(id, node);
       });
     } else {
-      /* Remove nodes gone */
       toRemove.forEach(id => {
         const node = _itemNodeMap.get(id);
         if (node) {
@@ -1144,7 +1180,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         _itemNodeMap.delete(id);
       });
 
-      /* Add new nodes with fade */
       toAdd.forEach(id => {
         const item = cartItems.find(it => it.id === id);
         if (!item) return;
@@ -1163,13 +1198,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         });
       });
 
-      /* Patch existing */
       toPatch.forEach(id => {
         const item = cartItems.find(it => it.id === id);
         if (item) patchItemInPlace(item);
       });
 
-      /* Reorder if needed */
       const orderedNodes = currentIds.map(id => _itemNodeMap.get(id)).filter(Boolean);
       const currentChildren = Array.from(itemsWrap.children).filter(n => n.classList && n.classList.contains('tg-item'));
       let orderMismatch = false;
@@ -2223,7 +2256,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const cartRef = db.collection('carts').doc(currentUser.uid).collection('items');
 
-    /* ⭐ NEW: Debounced snapshot handler — batches rapid writes → NO BLINK */
     let _snapDebounceTimer = null;
     let _latestSnap = null;
     let _firstSnapshotDone = false;
@@ -2850,6 +2882,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       loadCart();
     }
   }
+
+  /* ⭐ Debug helper */
+  window.tgDebugDelivery = function() {
+    console.log('═══ DELIVERY DEBUG ═══');
+    console.log('Memory pin:', _memStore.pin);
+    try { console.log('localStorage pin:', localStorage.getItem('toego_delivery_pin')); } catch(e) { console.log('localStorage pin: (blocked)'); }
+    console.log('getPin() returns:', getPin());
+    console.log('isKanpurPincode:', isKanpurPincode(getPin()));
+    console.log('Address:', getAddr());
+    console.log('Delivery info:', getDeliveryInfo());
+    console.log('Cart items:', cartItems.length);
+    console.log('═══════════════════════');
+  };
 
   /* ========== BOOT ========== */
   loadSelected();
