@@ -911,7 +911,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return out;
   }
 
-  /* ✅ FIX: subtitle bhi hash me include kiya (pehle sirf image/title/link/buttonText tha) */
   function bannerHash() {
     return getAllAdminBanners().map(b => (b.image||'') + '|' + (b.title||'') + '|' + (b.subtitle||'') + '|' + (b.link||'') + '|' + (b.buttonText||'')).join('##');
   }
@@ -1262,7 +1261,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       renderAll();
     }
 
-    Promise.allSettled([
+    /* ✅ FIX: Added 'return' so loadConfig().then() works without throwing error */
+    return Promise.allSettled([
       (function() {
         return new Promise(res => {
           try {
@@ -1389,9 +1389,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!CONFIG) return;
     const main = document.getElementById('tg-mmain'); if (!main) return;
 
-    /* ✅ FIX: Ab sig me POORA content include hai (pehle sirf length tha).
-       Isse admin jab existing mid banner / featured card EDIT karta hai
-       (count same rehta hai), to bhi shop-home re-render hoga. */
     const sig = JSON.stringify({
       s: CONFIG.sections,
       m: CONFIG.midBanners || [],
