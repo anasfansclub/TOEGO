@@ -678,7 +678,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     try { visited = sessionStorage.getItem('toego_splash_seen') === '1'; } catch(e) {}
     if (visited) { el.classList.add('gone'); return; }
     try { sessionStorage.setItem('toego_splash_seen', '1'); } catch(e) {}
-    /* ✅ FAST: 250ms splash */
     setTimeout(() => { el.classList.add('hide'); setTimeout(() => el.classList.add('gone'), 250); }, 250);
   })();
 
@@ -696,7 +695,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  /* ✅ FAST: Cache-first reads for the initial load */
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
   const FV = firebase.firestore.FieldValue;
@@ -731,7 +729,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   const RECENT_GUEST = 'toego_recent_guest_v2';
   const GUEST_CART = 'toego_cart_guest';
-  /* ✅ FAST: Bumped cache versions — old stale flushed */
   const CFG_CACHE = 'toego_home_cfg_v23';
   const PROD_CACHE = 'toego_home_prod_v23';
   const CATS_CACHE = 'toego_home_cats_v23';
@@ -914,8 +911,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return out;
   }
 
+  /* ✅ FIX: subtitle bhi hash me include kiya (pehle sirf image/title/link/buttonText tha) */
   function bannerHash() {
-    return getAllAdminBanners().map(b => (b.image||'') + '|' + (b.title||'') + '|' + (b.link||'') + '|' + (b.buttonText||'')).join('##');
+    return getAllAdminBanners().map(b => (b.image||'') + '|' + (b.title||'') + '|' + (b.subtitle||'') + '|' + (b.link||'') + '|' + (b.buttonText||'')).join('##');
   }
 
   function renderBannerSlider(force) {
@@ -1246,7 +1244,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   /* ══════════════════ FAST CONFIG LOAD ══════════════════ */
   function loadConfig() {
-    /* ✅ FAST: Render from cache SYNCHRONOUSLY first */
     const bannerCache = loadBannersCache();
     if (bannerCache) {
       ALL_BANNERS = bannerCache.byId || {};
@@ -1265,9 +1262,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       renderAll();
     }
 
-    /* Then async updates in parallel */
     Promise.allSettled([
-      /* Categories listener */
       (function() {
         return new Promise(res => {
           try {
@@ -1285,7 +1280,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           res();
         });
       })(),
-      /* Config fetch + listener */
       (async function() {
         try {
           const s = await db.collection('siteSettings').doc('shopHome').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('shopHome').get());
@@ -1307,7 +1301,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           }, () => {});
         } catch(e) {}
       })(),
-      /* Banners listener */
       (function() {
         return new Promise(res => {
           try {
@@ -1396,11 +1389,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!CONFIG) return;
     const main = document.getElementById('tg-mmain'); if (!main) return;
 
+    /* ✅ FIX: Ab sig me POORA content include hai (pehle sirf length tha).
+       Isse admin jab existing mid banner / featured card EDIT karta hai
+       (count same rehta hai), to bhi shop-home re-render hoga. */
     const sig = JSON.stringify({
       s: CONFIG.sections,
-      m: (CONFIG.midBanners||[]).length,
-      f: (CONFIG.featured||[]).length,
-      fs: CONFIG.flashSale?.title || ''
+      m: CONFIG.midBanners || [],
+      f: CONFIG.featured || [],
+      fs: CONFIG.flashSale || {}
     });
     if (sig === _renderAllSig && main.children.length > 0) return;
     _renderAllSig = sig;
@@ -1478,7 +1474,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     renderBannerSlider(false);
     renderFlashSale();
     loadProducts();
-    /* ✅ FAST: Defer tracker to 3s */
     setTimeout(() => { loadTracker(); }, 3000);
     if (currentSearch) {
       const home = document.getElementById('tg-mhome'), wrap = document.getElementById('tg-msearch-wrap');
@@ -1605,7 +1600,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return parts.join(';');
   }
 
-  /* ✅ FAST: Products load with cache-first */
   function loadProducts() {
     let cached = getCache(PROD_CACHE, PROD_TTL);
     if (cached && cached.length) {
@@ -2476,17 +2470,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   try { initialQ = new URLSearchParams(window.location.search).get('q') || ''; } catch(e) {}
 
   /* ══════════════════ BOOT — Ultra Fast ══════════════════ */
-  /* ✅ FAST: Categories instantly */
   renderCategories();
-  /* ✅ FAST: Cart badge from cache */
   updateCartBadge();
-  /* ✅ FAST: Theme (cached synchronously before) */
   loadTheme();
-  /* ✅ FAST: Config from cache first, then async */
   loadConfig().then(() => {
     if (initialQ) setTimeout(() => tgMDoSearch(initialQ), 350);
   });
-  /* ✅ FAST: Defer notifications to 5s */
   setTimeout(() => { loadNotifs().catch(() => {}); }, 5000);
   setTimeout(() => { watchNotifs(); }, 6000);
 
