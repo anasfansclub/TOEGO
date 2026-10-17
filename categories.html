@@ -6,588 +6,379 @@
 <title>Categories — TOEGO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-<link rel="dns-prefetch" href="https://firestore.googleapis.com">
-<link rel="dns-prefetch" href="https://www.gstatic.com">
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" crossorigin>
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" crossorigin>
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 <style>
+:root {
+  --primary: #2874f0;
+  --primary-light: #f0f5ff;
+  --text-main: #212121;
+  --text-muted: #878787;
+  --border: #e0e0e0;
+  --bg-main: #ffffff;
+  --bg-sec: #f1f3f6;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f5f5f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+/* BODY SCROLL FIXED: No body scroll, only internal scroll */
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow: hidden !important; background: var(--bg-main); font-family: 'Roboto', Arial, sans-serif; color: var(--text-main); -webkit-font-smoothing: antialiased; height: 100vh; }
 img { max-width: 100%; display: block; }
 button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-input, textarea, select { font: inherit; }
+input { font: inherit; }
 a { color: inherit; text-decoration: none; }
-header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
 
-.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
-.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
-.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
-.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.tg-hd-search { flex: 1; height: 40px; background: #fff; border-radius: 6px; display: flex; align-items: center; overflow: hidden; max-width: 620px; margin: 0 auto; }
-.tg-hd-search-icon { padding: 0 12px; color: #2874f0; flex-shrink: 0; display: flex; align-items: center; }
-.tg-hd-search input { flex: 1; height: 100%; border: none; outline: none; font-size: 14px; padding: 0 6px; background: transparent; color: #212121; min-width: 0; }
-.tg-hd-search input::placeholder { color: #878787; }
-.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
-.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
-.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #2874f0; }
-.tg-hd-refresh { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
-.tg-hd-refresh svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.tg-hd-refresh.spin svg { animation: tgSpinOnce .7s ease; }
-@keyframes tgSpinOnce { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+/* Header & Search */
+.tg-hd { background: #fff; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.08); height: 58px; display: flex; align-items: center; padding: 0 16px; gap: 12px; }
+.tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--text-main); flex-shrink: 0; }
+.tg-hd-back svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+.tg-hd-search { flex: 1; height: 38px; background: #f1f3f6; border-radius: 4px; display: flex; align-items: center; overflow: hidden; }
+.tg-hd-search-icon { padding: 0 12px; color: #2874f0; display: flex; align-items: center; }
+.tg-hd-search input { flex: 1; height: 100%; border: none; outline: none; background: transparent; font-size: 14px; min-width: 0; }
+.tg-hd-mic { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #2874f0; border-radius: 50%; margin-right: 2px; transition: 0.2s; flex-shrink: 0; }
+.tg-hd-mic.listening { color: #d32f2f; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.tg-hd-mic svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+.tg-hd-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--text-main); position: relative; flex-shrink: 0; }
+.tg-hd-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+.tg-hd-badge { position: absolute; top: 0px; right: 0px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #fff; }
 
-.tg-admin-bar { display: none; background: linear-gradient(135deg, #0f1729, #1a5dc7); color: #fff; padding: 10px 14px; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+/* Admin Bar */
+.tg-admin-bar { display: none; position: fixed; top: 58px; left: 0; right: 0; z-index: 999; background: #0f1729; color: #fff; padding: 8px 16px; align-items: center; justify-content: space-between; }
 .tg-admin-bar.show { display: flex; }
-.tg-admin-bar-icon { width: 32px; height: 32px; border-radius: 8px; background: #ffe500; color: #0f1729; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-.tg-admin-bar-info { flex: 1; min-width: 0; }
-.tg-admin-bar-title { font-size: 12.5px; font-weight: 800; }
-.tg-admin-bar-sub { font-size: 11px; opacity: 0.75; margin-top: 1px; }
-.tg-admin-bar-btn { background: #fff; color: #0f1729; font-size: 11.5px; font-weight: 800; padding: 7px 12px; border-radius: 6px; display: flex; align-items: center; gap: 5px; }
-.tg-admin-bar-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+.tg-admin-bar-info { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.tg-admin-bar-btn { background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 4px; }
 
-.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+/* Layout */
+.tg-container { display: flex; height: calc(100vh - 58px); margin-top: 58px; background: #fff; }
+.tg-admin-mode .tg-container { height: calc(100vh - 96px); margin-top: 96px; }
 
-.tg-tabs-wrap { background: #fff; border-bottom: 1px solid #eee; overflow-x: auto; scrollbar-width: none; position: sticky; top: 58px; z-index: 100; }
-.tg-tabs-wrap::-webkit-scrollbar { display: none; }
-.tg-tabs { display: flex; padding: 0 8px; gap: 2px; width: max-content; min-width: 100%; }
-.tg-tab { padding: 13px 14px 11px; font-size: 13.5px; font-weight: 600; color: #666; white-space: nowrap; position: relative; cursor: pointer; }
-.tg-tab.active { color: #2874f0; font-weight: 700; }
-.tg-tab::after { content: ''; position: absolute; bottom: 0; left: 14px; right: 14px; height: 3px; background: #2874f0; border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform .25s; }
-.tg-tab.active::after { transform: scaleX(1); }
+/* Left Sidebar - Independent Scroll */
+.tg-sidebar { width: 90px; background: var(--bg-sec); overflow-y: auto; -webkit-overflow-scrolling: touch; border-right: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none; }
+.tg-sidebar::-webkit-scrollbar { display: none; }
+.tg-side-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px 4px; gap: 6px; cursor: pointer; font-size: 11px; font-weight: 500; color: var(--text-muted); text-align: center; position: relative; border-bottom: 1px solid #e8e8e8; }
+.tg-side-item.active { background: #fff; color: var(--primary); font-weight: 700; border-right: 3px solid var(--primary); border-bottom-color: transparent; }
+.tg-side-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--primary); }
+.tg-side-icon { font-size: 22px; line-height: 1; }
+.tg-side-icon img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.tg-side-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
 
-.tg-sec { margin: 12px 10px; }
-.tg-sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 0 4px; gap: 8px; }
-.tg-sec-title { font-size: 16px; font-weight: 800; color: #212121; letter-spacing: -0.2px; }
-.tg-sec-title em { font-style: normal; color: #2874f0; }
-.tg-sec-sub { font-size: 11.5px; color: #888; margin-top: 2px; font-weight: 500; }
+/* Right Content Area */
+.tg-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; position: relative; }
 
-.tg-feat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #fff; border-radius: 12px; padding: 14px 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.tg-feat-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 6px 4px; cursor: pointer; border-radius: 10px; text-align: center; }
-.tg-feat-icon { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; background: linear-gradient(135deg,#eef3ff,#e0eaff); overflow: hidden; }
-.tg-feat-icon img { width: 100%; height: 100%; object-fit: cover; }
-.tg-feat-label { font-size: 11px; font-weight: 600; color: #212121; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Subcategories Row */
+.tg-subcats-wrap { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; background: #fff; flex-shrink: 0; }
+.tg-subcats-scroll { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+.tg-subcats-scroll::-webkit-scrollbar { display: none; }
+.tg-subcat-chip { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 60px; cursor: pointer; position: relative; }
+.tg-subcat-img { width: 50px; height: 50px; border-radius: 50%; background: #f8f9fb; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #eee; }
+.tg-subcat-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.tg-subcat-name { font-size: 11px; font-weight: 500; color: var(--text-main); text-align: center; }
 
-.tg-cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tg-cat-card { background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; aspect-ratio: 3/4; content-visibility: auto; contain-intrinsic-size: 0 140px; }
-.tg-cat-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
-.tg-cat-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.15) 45%, transparent 70%); z-index: 2; }
-.tg-cat-body { position: relative; z-index: 3; margin-top: auto; padding: 8px 8px 10px; color: #fff; }
-.tg-cat-name { font-size: 12.5px; font-weight: 800; line-height: 1.2; margin-bottom: 2px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-.tg-cat-off { font-size: 10px; font-weight: 700; color: #ffe500; }
-.tg-cat-count { display: inline-block; background: rgba(255,255,255,0.28); color: #fff; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 999px; margin-top: 3px; }
-.tg-cat-badge { position: absolute; top: 6px; left: 6px; background: #ffe500; color: #212121; font-size: 8.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 4; }
-.tg-cat-emoji { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 54px; background: linear-gradient(135deg,#eef3ff,#e0eaff); z-index: 1; }
-.tg-cat-admin { position: absolute; top: 6px; right: 6px; z-index: 5; display: none; gap: 4px; }
-.tg-admin-mode .tg-cat-admin { display: flex; }
-.tg-cat-admin-btn { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.95); color: #212121; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
-.tg-cat-admin-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.4; }
-.tg-cat-admin-btn.danger { color: #d32f2f; }
+/* Filter & Sort Bar */
+.tg-filter-bar { position: sticky; top: 0; z-index: 90; background: #fff; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; padding: 10px 16px; gap: 12px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.tg-fb-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-size: 13px; font-weight: 500; color: var(--text-main); position: relative; }
+.tg-fb-btn.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); font-weight: 700; }
+.tg-fb-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+.tg-fb-count { position: absolute; top: -6px; right: -6px; background: #ff6161; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
 
-.tg-chips-wrap { overflow-x: auto; scrollbar-width: none; padding: 0 10px; }
-.tg-chips-wrap::-webkit-scrollbar { display: none; }
-.tg-chips { display: flex; gap: 8px; width: max-content; padding: 2px 0 8px; }
-.tg-chip { padding: 7px 14px; background: #fff; border: 1.5px solid #e5e7eb; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-.tg-chip.active { background: #2874f0; color: #fff; border-color: #2874f0; }
-
-.tg-filter-bar { position: sticky; top: 108px; z-index: 90; background: #fff; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 8px 10px; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-.tg-fb-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; border: 1.5px solid #e0e0e0; border-radius: 8px; background: #fff; font-size: 12.5px; font-weight: 700; position: relative; }
-.tg-fb-btn.active { border-color: #2874f0; color: #2874f0; background: #f0f5ff; }
-.tg-fb-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; }
-.tg-fb-btn .tg-fb-count { position: absolute; top: -6px; right: -6px; background: #ff6161; color: #fff; font-size: 9.5px; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
-.tg-fb-view { flex: 0 0 auto !important; width: 42px; padding: 0 !important; }
-
-.tg-active-chips-wrap { background: #fff; overflow-x: auto; scrollbar-width: none; padding: 8px 10px; border-bottom: 1px solid #eee; }
+/* Active Chips */
+.tg-active-chips-wrap { background: #fff; overflow-x: auto; scrollbar-width: none; padding: 8px 16px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
 .tg-active-chips-wrap::-webkit-scrollbar { display: none; }
-.tg-active-chips { display: flex; gap: 6px; width: max-content; }
-.tg-ac { display: inline-flex; align-items: center; gap: 5px; background: #f0f5ff; border: 1px solid #d0e2ff; color: #2874f0; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
-.tg-ac button { width: 16px; height: 16px; border-radius: 50%; background: rgba(40,116,240,0.15); color: #2874f0; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+.tg-active-chips { display: flex; gap: 8px; width: max-content; }
+.tg-ac { display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); border: 1px solid #d0e2ff; color: var(--primary); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; white-space: nowrap; }
+.tg-ac button { width: 16px; height: 16px; border-radius: 50%; background: rgba(40,116,240,0.15); color: var(--primary); font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
 
-.tg-recent-scroll { overflow-x: auto; scrollbar-width: none; padding: 0 10px 12px; }
-.tg-recent-scroll::-webkit-scrollbar { display: none; }
-.tg-recent-row { display: flex; gap: 8px; width: max-content; padding: 4px 0; }
-.tg-recent-card { flex: 0 0 118px; background: #fff; border-radius: 8px; overflow: hidden; cursor: pointer; border: 1px solid #eee; }
-.tg-recent-img { width: 100%; height: 110px; background: #f8f8f8; }
-.tg-recent-img img { width: 100%; height: 100%; object-fit: cover; }
-.tg-recent-info { padding: 6px 8px; }
-.tg-recent-name { font-size: 11px; font-weight: 500; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-.tg-recent-price { font-size: 12px; font-weight: 700; color: #2874f0; margin-top: 3px; }
+/* Products Grid - Independent Scroll */
+.tg-prod-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 60px; }
+.tg-prod-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
+.tg-prod-card { border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; background: #fff; cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s; position: relative; }
+.tg-prod-card:active { transform: scale(0.98); }
+.tg-prod-img { width: 100%; aspect-ratio: 1/1; background: #f8f9fb; padding: 8px; display: flex; align-items: center; justify-content: center; position: relative; }
+.tg-prod-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-.tg-inline-search { padding: 8px 10px; background: #fff; border-bottom: 1px solid #f1f3f6; }
-.tg-inline-search input { width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0; border-radius: 8px; font-size: 13px; outline: none; background: #fafbfc; }
-.tg-inline-search input:focus { border-color: #2874f0; background: #fff; }
+/* Product Tags (Badges) */
+.tg-prod-tag-badge { position: absolute; top: 6px; left: 6px; background: #d32f2f; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 2; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: 0.5px; }
+.tg-prod-tag-badge.hot { background: #f57c00; }
+.tg-prod-tag-badge.new { background: #388e3c; }
 
-.tg-prod-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 10px; }
-.tg-prod-grid.density-3 { grid-template-columns: repeat(3, 1fr); }
-.tg-pg-card { background: #fff; border-radius: 8px; overflow: hidden; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; flex-direction: column; position: relative; content-visibility: auto; contain-intrinsic-size: 0 280px; }
-.tg-pg-img { aspect-ratio: 1/1; background: #f8f8f8; position: relative; overflow: hidden; }
-.tg-pg-img img { width: 100%; height: 100%; object-fit: cover; }
-.tg-pg-discount { position: absolute; top: 6px; left: 6px; background: #f43397; color: #fff; font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; z-index: 2; }
-.tg-pg-wish { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.95); color: #666; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 3; }
-.tg-pg-wish svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
-.tg-pg-wish.active { color: #f43397; }
-.tg-pg-wish.active svg { fill: #f43397; }
-.tg-pg-qv { position: absolute; bottom: 6px; right: 6px; width: 30px; height: 30px; border-radius: 50%; background: rgba(0,0,0,0.65); color: #fff; display: flex; align-items: center; justify-content: center; z-index: 3; }
-.tg-pg-qv svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; }
-.tg-pg-body { padding: 8px 8px 10px; display: flex; flex-direction: column; flex: 1; }
-.tg-pg-name { font-size: 12px; font-weight: 500; line-height: 1.3; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 32px; }
-.tg-pg-price-row { display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; }
-.tg-pg-price { font-size: 14px; font-weight: 700; }
-.tg-pg-mrp { font-size: 10.5px; color: #878787; text-decoration: line-through; }
-.tg-pg-rating { display: inline-flex; align-items: center; gap: 3px; background: #e6f7ec; color: #388e3c; font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 3px; align-self: flex-start; }
-.tg-pg-tags { display: flex; gap: 3px; margin-top: 4px; flex-wrap: wrap; }
-.tg-pg-tag { font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px; }
-.tg-pg-tag.free { background: #e8f5e9; color: #2e7d32; }
-.tg-pg-tag.low { background: #fff3e0; color: #e65100; }
-.tg-prod-grid.density-3 .tg-pg-name { font-size: 11px; min-height: 28px; }
-.tg-prod-grid.density-3 .tg-pg-price { font-size: 12.5px; }
-.tg-prod-grid.density-3 .tg-pg-body { padding: 6px 6px 8px; }
+.tg-prod-body { padding: 10px; text-align: center; border-top: 1px solid #f8f9fb; }
+.tg-prod-name { font-size: 12px; font-weight: 500; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; margin-bottom: 6px; }
+.tg-prod-price-row { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
+.tg-prod-price { font-size: 14px; font-weight: 700; color: #212121; }
+.tg-prod-mrp { font-size: 11px; color: #878787; text-decoration: line-through; }
+.tg-prod-discount { font-size: 11px; color: #388e3c; font-weight: 600; margin-top: 2px; display: block; }
 
-.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
+/* Empty State & Skeleton */
+.tg-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); grid-column: 1/-1; font-size: 13px; }
+.tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 4px; }
 @keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-.tg-skel-cat { aspect-ratio: 3/4; border-radius: 10px; }
-.tg-skel-prod { aspect-ratio: 1/1.32; border-radius: 8px; }
-.tg-skel-feat { width: 54px; height: 54px; border-radius: 50%; margin: 6px auto; }
+.tg-skel-card { aspect-ratio: 1/1.4; }
 
-.tg-empty { text-align: center; padding: 40px 20px; color: #878787; background: #fff; border-radius: 12px; margin: 12px 10px; }
-.tg-empty-icon { font-size: 48px; margin-bottom: 10px; opacity: 0.4; }
-.tg-empty h3 { margin: 0 0 4px; color: #212121; font-size: 15px; font-weight: 700; }
-.tg-empty p { margin: 0 0 14px; font-size: 13px; }
-.tg-empty-btn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg,#2874f0,#1a5dc7); color: #fff; font-size: 12.5px; font-weight: 800; padding: 10px 18px; border-radius: 8px; }
+/* Admin Buttons */
+.tg-admin-btn-wrap { position: absolute; top: 4px; right: 4px; display: none; gap: 4px; z-index: 10; flex-direction: column; }
+.tg-admin-mode .tg-admin-btn-wrap { display: flex; }
+.tg-adm-btn { width: 26px; height: 26px; border-radius: 50%; background: #fff; color: #333; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); border: 1px solid #eee; }
+.tg-adm-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+.tg-adm-btn.del { color: #d32f2f; }
+.tg-adm-btn.tag { color: #f57c00; }
 
-.tg-load-more { text-align: center; padding: 20px 14px 30px; }
-.tg-load-more button { background: linear-gradient(135deg,#2874f0,#1a5dc7); color: #fff; font-size: 13.5px; font-weight: 800; padding: 12px 30px; border-radius: 8px; }
+/* Add Subcategory */
+.tg-add-subcat { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 60px; cursor: pointer; opacity: 0.8; }
+.tg-add-subcat .tg-subcat-img { border: 1.5px dashed var(--primary); color: var(--primary); background: transparent; }
+.tg-add-subcat .tg-subcat-name { color: var(--primary); font-weight: 600; }
 
-.tg-sheet, .tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: flex-end; justify-content: center; }
-.tg-sheet.show, .tg-modal.show { display: flex; }
-.tg-sheet-card, .tg-modal-card { width: 100%; max-width: 520px; background: #fff; border-radius: 18px 18px 0 0; max-height: 88vh; display: flex; flex-direction: column; animation: tgSlideUp .25s cubic-bezier(.34,1.2,.64,1); }
-.tg-modal-card { padding: 22px 20px 26px; overflow-y: auto; }
+/* Modals & Sheets */
+.tg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; display: none; align-items: flex-end; justify-content: center; }
+.tg-modal.show { display: flex; }
+.tg-sheet { width: 100%; max-width: 500px; background: #fff; border-radius: 16px 16px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto; animation: tgSlideUp .2s; }
+.tg-sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.tg-sheet-title { font-size: 18px; font-weight: 700; }
+.tg-modal-close { width: 30px; height: 30px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; }
 @keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.tg-sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 1px solid #eee; }
-.tg-sheet-title, .tg-modal-title { font-size: 17px; font-weight: 800; }
-.tg-sheet-sub { font-size: 11.5px; color: #888; margin-top: 2px; }
-.tg-sheet-close, .tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-.tg-sheet-body { flex: 1; overflow-y: auto; padding: 16px 20px; }
-.tg-sheet-foot { display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid #eee; }
-.tg-sheet-foot button { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 800; }
-.tg-sheet-btn-clear { background: #f1f3f6; color: #212121; flex: 0 0 40% !important; }
-.tg-sheet-btn-apply { background: linear-gradient(135deg,#2874f0,#1a5dc7); color: #fff; }
 
-.tg-fs { margin-bottom: 22px; }
-.tg-fs-title { font-size: 13px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
-.tg-fs-price-inputs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-bottom: 12px; }
-.tg-fs-price-inputs input { width: 100%; padding: 10px 12px; border: 1.5px solid #e0e0e0; border-radius: 8px; font-size: 13px; font-weight: 700; outline: none; text-align: center; }
-.tg-fs-price-inputs span { font-size: 12px; color: #888; font-weight: 700; }
-.tg-fs-presets { display: flex; flex-wrap: wrap; gap: 8px; }
-.tg-fs-preset { padding: 8px 14px; border: 1.5px solid #e0e0e0; border-radius: 999px; background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
-.tg-fs-preset.active { background: #f0f5ff; border-color: #2874f0; color: #2874f0; font-weight: 800; }
-.tg-fs-options { display: flex; flex-direction: column; gap: 10px; }
-.tg-fs-opt { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid #e0e0e0; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; }
-.tg-fs-opt.active { border-color: #2874f0; background: #f0f5ff; }
-.tg-fs-opt-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ccc; position: relative; flex-shrink: 0; }
-.tg-fs-opt.active .tg-fs-opt-radio { border-color: #2874f0; }
-.tg-fs-opt.active .tg-fs-opt-radio::after { content: ''; position: absolute; inset: 3px; background: #2874f0; border-radius: 50%; }
-.tg-fs-opt .tg-fs-sort-icon { margin-left: auto; font-size: 14px; color: #2874f0; font-weight: 900; }
+/* Filter Section inside Sheet */
+.tg-fs { margin-bottom: 20px; }
+.tg-fs-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.tg-fs-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.tg-fs-opt { padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; cursor: pointer; color: var(--text-main); }
+.tg-fs-opt.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); font-weight: 600; }
+.tg-sheet-foot { display: flex; gap: 10px; margin-top: 24px; }
+.tg-btn { flex: 1; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 700; text-align: center; border: none; cursor: pointer; }
+.tg-btn.primary { background: var(--primary); color: #fff; }
+.tg-btn.ghost { background: #f1f3f6; color: var(--text-main); flex: 0 0 40%; }
+.tg-btn.danger { background: #d32f2f; color: #fff; }
 
-.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-.tg-modal-field { margin-bottom: 14px; }
-.tg-modal-field label { display: block; font-size: 11.5px; color: #666; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
-.tg-modal-field input, .tg-modal-field textarea { width: 100%; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 14px; outline: none; }
-.tg-modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.tg-modal-actions { display: flex; gap: 10px; margin-top: 18px; }
-.tg-modal-btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 14.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.tg-modal-btn.primary { background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; }
-.tg-modal-btn.danger { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; }
-.tg-modal-btn.ghost { background: #f1f3f6; color: #212121; flex: 0 0 40%; }
-.tg-sub-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; min-height: 20px; }
-.tg-sub-pill { background: #eef3ff; color: #2874f0; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; }
-.tg-sub-pill button { color: #2874f0; font-size: 13px; line-height: 1; }
+/* Forms inside modals */
+.tg-field { margin-bottom: 12px; }
+.tg-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+.tg-field input { width: 100%; border: 1.5px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 14px; outline: none; }
+.tg-field input:focus { border-color: var(--primary); }
+.tg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-.tg-qv-img { width: 100%; aspect-ratio: 1/1; background: #f8f8f8; border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
-.tg-qv-img img { width: 100%; height: 100%; object-fit: contain; }
-.tg-qv-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
-.tg-qv-price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-.tg-qv-price { font-size: 22px; font-weight: 900; }
-.tg-qv-mrp { font-size: 13px; color: #888; text-decoration: line-through; }
-.tg-qv-off { font-size: 12px; color: #f43397; font-weight: 800; }
-.tg-qv-rating { display: inline-flex; gap: 4px; background: #e6f7ec; color: #388e3c; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-bottom: 12px; }
-.tg-qv-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 16px; }
-.tg-qv-actions { display: flex; gap: 10px; }
-.tg-qv-btn { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.tg-qv-btn.primary { background: linear-gradient(135deg,#2874f0,#1a5dc7); color: #fff; }
-.tg-qv-btn.ghost { background: #f1f3f6; color: #212121; }
-
-.tg-top-btn { position: fixed; bottom: 150px; right: 16px; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: #2874f0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.15); z-index: 9997; opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s; border: 1px solid #e0e0e0; }
-.tg-top-btn.show { opacity: 1; visibility: visible; }
-.tg-top-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.4; }
-
-.tg-fab { position: fixed; bottom: 90px; right: 16px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #ffe500 0%, #ffc400 100%); color: #0f1729; display: none; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(255,229,0,0.4); z-index: 9998; }
-.tg-fab.show { display: flex; }
-.tg-fab svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2.6; }
-
-.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; padding-bottom: env(safe-area-inset-bottom, 0); }
-.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; }
-.tg-bnav-item.active { color: #2874f0; }
-.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; }
-.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
-
-.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
-.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; pointer-events: auto; font-weight: 500; animation: tgToastIn .25s; }
+/* FAB & Toasts */
+.tg-fab { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(40,116,240,0.4); z-index: 1000; }
+.tg-admin-mode .tg-fab { display: flex; }
+.tg-fab svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+.tg-toasts { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.tg-toast { padding: 10px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 4px; font-weight: 500; animation: tgToastIn .2s; }
 @keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 .tg-toast.success { background: #388e3c; }
 .tg-toast.error { background: #d32f2f; }
 
 @media (min-width: 600px) {
-  .tg-cat-grid { grid-template-columns: repeat(4, 1fr); }
-  .tg-feat-grid { grid-template-columns: repeat(6, 1fr); }
   .tg-prod-grid { grid-template-columns: repeat(3, 1fr); }
+  .tg-sidebar { width: 110px; }
+  .tg-side-icon { font-size: 28px; }
+  .tg-side-icon img { width: 40px; height: 40px; }
+  .tg-side-item { padding: 18px 6px; font-size: 12px; }
 }
 @media (min-width: 900px) {
-  .tg-cat-grid { grid-template-columns: repeat(5, 1fr); }
-  .tg-feat-grid { grid-template-columns: repeat(8, 1fr); }
+  .tg-container { max-width: 1200px; margin-left: auto; margin-right: auto; border-left: 1px solid #eee; border-right: 1px solid #eee; }
   .tg-prod-grid { grid-template-columns: repeat(4, 1fr); }
-  .tg-wrap { max-width: 1200px; margin: 0 auto; }
-  .tg-sheet, .tg-modal { align-items: center; }
-  .tg-sheet-card, .tg-modal-card { border-radius: 18px; max-height: 85vh; }
-}
-@media (min-width: 1200px) {
-  .tg-prod-grid { grid-template-columns: repeat(5, 1fr); }
-}
-@media (max-width: 480px) {
-  .tg-feat-icon { width: 48px; height: 48px; font-size: 22px; }
-  .tg-feat-label { font-size: 10px; }
-  .tg-sec { margin: 10px 8px; }
-  .tg-modal-row { grid-template-columns: 1fr; }
-  .tg-prod-grid { padding: 0 8px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .tg-modal { align-items: center; }
+  .tg-sheet { border-radius: 12px; max-width: 450px; }
 }
 </style>
 </head>
 <body>
 
-<header class="tg-hd" id="tg-hd">
-  <div class="tg-hd-inner">
-    <a href="shop-home.html" class="tg-hd-back" aria-label="Back">
-      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    </a>
-    <form class="tg-hd-search" onsubmit="event.preventDefault(); tgSearch();">
-      <span class="tg-hd-search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
-      <input id="tg-search-input" type="text" placeholder="Search for products" autocomplete="off">
-    </form>
-    <button class="tg-hd-refresh" onclick="tgRefresh()" aria-label="Refresh" id="tg-refresh-btn">
-      <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-    </button>
-    <div class="tg-hd-actions">
-      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
-        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg>
-        <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
-      </a>
-    </div>
-  </div>
-  <div class="tg-admin-bar" id="tg-admin-bar">
-    <div class="tg-admin-bar-icon">🛡️</div>
-    <div class="tg-admin-bar-info">
-      <div class="tg-admin-bar-title">Admin Mode</div>
-      <div class="tg-admin-bar-sub">Tap any category to edit or delete</div>
-    </div>
-    <button class="tg-admin-bar-btn" onclick="tgOpenAddModal()">
-      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      Add
+<header class="tg-hd">
+  <a href="shop-home.html" class="tg-hd-back">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  </a>
+  <div class="tg-hd-search">
+    <span class="tg-hd-search-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+    <input type="text" id="tg-search-input" placeholder="Search within products..." oninput="tgHandleSearch()">
+    <button class="tg-hd-mic" id="tg-mic-btn" onclick="tgStartVoiceSearch()">
+      <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 19v3"/></svg>
     </button>
   </div>
+  <a href="cart.html" class="tg-hd-icon">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
+    <span class="tg-hd-badge" id="tg-cart-badge" style="display:none;">0</span>
+  </a>
 </header>
 
-<div class="tg-wrap">
-  <div class="tg-tabs-wrap"><div class="tg-tabs" id="tg-tabs"><div class="tg-tab active" data-cat="all" onclick="tgPickTab('all')">All</div></div></div>
+<div class="tg-admin-bar" id="tg-admin-bar">
+  <div class="tg-admin-bar-info">🛡️ Admin Mode ON</div>
+  <button class="tg-admin-bar-btn" onclick="tgOpenCatModal()">+ Add Category</button>
+</div>
 
-  <div class="tg-sec" id="tg-feat-sec">
-    <div class="tg-feat-grid" id="tg-feat-grid">
-      <div class="tg-skel tg-skel-feat"></div><div class="tg-skel tg-skel-feat"></div>
-      <div class="tg-skel tg-skel-feat"></div><div class="tg-skel tg-skel-feat"></div>
-    </div>
+<div class="tg-container">
+  <!-- LEFT: Sidebar (Independent Scroll) -->
+  <div class="tg-sidebar" id="tg-sidebar">
+    <div style="padding:10px;"><div class="tg-skel" style="height:50px; margin-bottom:10px; border-radius:50%;"></div></div>
+    <div style="padding:10px;"><div class="tg-skel" style="height:50px; margin-bottom:10px; border-radius:50%;"></div></div>
+    <div style="padding:10px;"><div class="tg-skel" style="height:50px; margin-bottom:10px; border-radius:50%;"></div></div>
   </div>
 
-  <div class="tg-sec" id="tg-cats-sec">
-    <div class="tg-sec-head">
-      <div><div class="tg-sec-title">Shop by <em>Category</em></div><div class="tg-sec-sub" id="tg-cat-sub">Loading...</div></div>
+  <!-- RIGHT: Content Area -->
+  <div class="tg-content">
+    
+    <!-- Subcategories -->
+    <div class="tg-subcats-wrap" id="tg-subcats-wrap" style="display:none;">
+      <div class="tg-subcats-scroll" id="tg-subcats-scroll"></div>
     </div>
-    <div class="tg-cat-grid" id="tg-cat-grid">
-      <div class="tg-skel tg-skel-cat"></div><div class="tg-skel tg-skel-cat"></div><div class="tg-skel tg-skel-cat"></div>
-      <div class="tg-skel tg-skel-cat"></div><div class="tg-skel tg-skel-cat"></div><div class="tg-skel tg-skel-cat"></div>
+
+    <!-- Filter & Sort Bar -->
+    <div class="tg-filter-bar">
+      <button class="tg-fb-btn" id="tg-btn-sort" onclick="tgOpenSortSheet()">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+        <span id="tg-sort-label">Sort By</span>
+      </button>
+      <button class="tg-fb-btn" id="tg-btn-filter" onclick="tgOpenFilterSheet()">
+        <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <span>Filters</span>
+        <span class="tg-fb-count" id="tg-filter-count" style="display:none;">0</span>
+      </button>
     </div>
-  </div>
 
-  <div class="tg-sec" id="tg-chips-sec" style="display:none;"><div class="tg-chips-wrap"><div class="tg-chips" id="tg-chips"></div></div></div>
-
-  <div class="tg-filter-bar">
-    <button class="tg-fb-btn" id="tg-fb-sort" onclick="tgOpenSortSheet()">
-      <svg viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
-      <span id="tg-fb-sort-label">Sort</span>
-    </button>
-    <button class="tg-fb-btn" id="tg-fb-filter" onclick="tgOpenFilterSheet()">
-      <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-      <span>Filters</span>
-      <span class="tg-fb-count" id="tg-fb-count" style="display:none;">0</span>
-    </button>
-    <button class="tg-fb-btn tg-fb-view" id="tg-fb-view" onclick="tgToggleView()" title="Grid density">
-      <svg viewBox="0 0 24 24" id="tg-view-icon"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-    </button>
-  </div>
-
-  <div class="tg-active-chips-wrap" id="tg-active-chips-wrap" style="display:none;"><div class="tg-active-chips" id="tg-active-chips"></div></div>
-
-  <div class="tg-sec" id="tg-recent-sec" style="display:none;">
-    <div class="tg-sec-head"><div><div class="tg-sec-title">👁️ Recently <em>Viewed</em></div></div></div>
-    <div class="tg-recent-scroll"><div class="tg-recent-row" id="tg-recent-row"></div></div>
-  </div>
-
-  <div class="tg-sec" id="tg-prod-sec">
-    <div class="tg-sec-head">
-      <div><div class="tg-sec-title" id="tg-prod-title">All <em>Products</em></div><div class="tg-sec-sub" id="tg-prod-sub">Loading...</div></div>
+    <!-- Active Filter Chips -->
+    <div class="tg-active-chips-wrap" id="tg-active-chips-wrap" style="display:none;">
+      <div class="tg-active-chips" id="tg-active-chips"></div>
     </div>
-    <div class="tg-inline-search"><input type="text" id="tg-inline-search" placeholder="🔍 Search in these products..." oninput="tgInlineSearch()" autocomplete="off"></div>
-    <div class="tg-prod-grid" id="tg-prod-grid">
-      <div class="tg-skel tg-skel-prod"></div><div class="tg-skel tg-skel-prod"></div>
-      <div class="tg-skel tg-skel-prod"></div><div class="tg-skel tg-skel-prod"></div>
-    </div>
-    <div id="tg-prod-loadmore" style="display:none;"><div class="tg-load-more"><button onclick="tgLoadMore()" id="tg-loadmore-btn">Load More</button></div></div>
-    <div id="tg-prod-empty" style="display:none;">
-      <div class="tg-empty"><div class="tg-empty-icon">📦</div><h3>No products found</h3><p>Try adjusting filters</p>
-        <button class="tg-empty-btn" onclick="tgClearAllFiltersAndCategory()">Clear Filters</button>
+
+    <!-- Product Grid (Independent Scroll) -->
+    <div class="tg-prod-scroll">
+      <div class="tg-prod-grid" id="tg-prod-grid">
+        <div class="tg-skel tg-skel-card"></div>
+        <div class="tg-skel tg-skel-card"></div>
+        <div class="tg-skel tg-skel-card"></div>
+        <div class="tg-skel tg-skel-card"></div>
       </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="tg-fab" onclick="tgOpenCatModal()">
+  <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+
+<!-- ================= MODALS & SHEETS ================= -->
+
+<!-- Sort Sheet -->
+<div class="tg-modal" id="tg-sort-modal">
+  <div class="tg-sheet">
+    <div class="tg-sheet-head">
+      <div class="tg-sheet-title">Sort By</div>
+      <button class="tg-modal-close" onclick="tgCloseModal('tg-sort-modal')">✕</button>
+    </div>
+    <div class="tg-fs-options">
+      <div class="tg-fs-opt" data-sort="relevance" onclick="tgApplySort('relevance')">Relevance</div>
+      <div class="tg-fs-opt" data-sort="price-low" onclick="tgApplySort('price-low')">Price: Low to High</div>
+      <div class="tg-fs-opt" data-sort="price-high" onclick="tgApplySort('price-high')">Price: High to Low</div>
+      <div class="tg-fs-opt" data-sort="newest" onclick="tgApplySort('newest')">Newest First</div>
+      <div class="tg-fs-opt" data-sort="discount" onclick="tgApplySort('discount')">Discount: High to Low</div>
     </div>
   </div>
 </div>
 
-<button class="tg-top-btn" id="tg-top-btn" onclick="tgScrollTop()"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>
-<button class="tg-fab" id="tg-fab" onclick="tgOpenAddModal()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
-
-<div class="tg-sheet" id="tg-sort-sheet">
-  <div class="tg-sheet-card" style="max-height:60vh;">
-    <div class="tg-sheet-head"><div><div class="tg-sheet-title">Sort by</div></div><button class="tg-sheet-close" onclick="tgCloseSortSheet()">✕</button></div>
-    <div class="tg-sheet-body">
-      <div class="tg-fs-options" id="tg-sort-options">
-        <div class="tg-fs-opt" data-sort="relevance" onclick="tgPickSort('relevance')"><div class="tg-fs-opt-radio"></div><div>Relevance</div><span class="tg-fs-sort-icon"></span></div>
-        <div class="tg-fs-opt" data-sort="price-low" onclick="tgPickSort('price-low')"><div class="tg-fs-opt-radio"></div><div>Price: Low to High</div><span class="tg-fs-sort-icon"></span></div>
-        <div class="tg-fs-opt" data-sort="price-high" onclick="tgPickSort('price-high')"><div class="tg-fs-opt-radio"></div><div>Price: High to Low</div><span class="tg-fs-sort-icon"></span></div>
-        <div class="tg-fs-opt" data-sort="newest" onclick="tgPickSort('newest')"><div class="tg-fs-opt-radio"></div><div>Newest First</div><span class="tg-fs-sort-icon"></span></div>
-        <div class="tg-fs-opt" data-sort="discount" onclick="tgPickSort('discount')"><div class="tg-fs-opt-radio"></div><div>Discount: High to Low</div><span class="tg-fs-sort-icon"></span></div>
+<!-- Filter Sheet -->
+<div class="tg-modal" id="tg-filter-modal">
+  <div class="tg-sheet">
+    <div class="tg-sheet-head">
+      <div class="tg-sheet-title">Filters</div>
+      <button class="tg-modal-close" onclick="tgCloseModal('tg-filter-modal')">✕</button>
+    </div>
+    
+    <div class="tg-fs">
+      <div class="tg-fs-title">Price Range</div>
+      <div class="tg-fs-options" id="tg-price-options">
+        <div class="tg-fs-opt" data-min="0" data-max="500" onclick="tgSetPrice(0, 500, this)">Under ₹500</div>
+        <div class="tg-fs-opt" data-min="500" data-max="1000" onclick="tgSetPrice(500, 1000, this)">₹500 - ₹1000</div>
+        <div class="tg-fs-opt" data-min="1000" data-max="2000" onclick="tgSetPrice(1000, 2000, this)">₹1000 - ₹2000</div>
+        <div class="tg-fs-opt" data-min="2000" data-max="999999" onclick="tgSetPrice(2000, 999999, this)">Above ₹2000</div>
       </div>
+    </div>
+
+    <div class="tg-fs">
+      <div class="tg-fs-title">Customer Rating</div>
+      <div class="tg-fs-options" id="tg-rating-options">
+        <div class="tg-fs-opt" data-rating="4" onclick="tgSetRating(4, this)">4★ & above</div>
+        <div class="tg-fs-opt" data-rating="3" onclick="tgSetRating(3, this)">3★ & above</div>
+      </div>
+    </div>
+
+    <div class="tg-sheet-foot">
+      <button class="tg-btn ghost" onclick="tgClearFilters()">Clear All</button>
+      <button class="tg-btn primary" onclick="tgApplyFilters()">Apply Filters</button>
     </div>
   </div>
 </div>
 
-<div class="tg-sheet" id="tg-filter-sheet">
-  <div class="tg-sheet-card">
-    <div class="tg-sheet-head"><div><div class="tg-sheet-title">Filters</div><div class="tg-sheet-sub" id="tg-filter-count-lbl">0 filters applied</div></div><button class="tg-sheet-close" onclick="tgCloseFilterSheet()">✕</button></div>
-    <div class="tg-sheet-body">
-      <div class="tg-fs">
-        <div class="tg-fs-title">💰 Price</div>
-        <div class="tg-fs-price-inputs"><input type="number" id="tg-price-min" placeholder="Min" min="0"><span>to</span><input type="number" id="tg-price-max" placeholder="Max" min="0"></div>
-        <div class="tg-fs-presets" id="tg-price-presets">
-          <button class="tg-fs-preset" data-min="0" data-max="500" onclick="tgPickPricePreset(this, 0, 500)">Under ₹500</button>
-          <button class="tg-fs-preset" data-min="500" data-max="1000" onclick="tgPickPricePreset(this, 500, 1000)">₹500 - ₹1000</button>
-          <button class="tg-fs-preset" data-min="1000" data-max="2000" onclick="tgPickPricePreset(this, 1000, 2000)">₹1000 - ₹2000</button>
-          <button class="tg-fs-preset" data-min="2000" data-max="5000" onclick="tgPickPricePreset(this, 2000, 5000)">₹2000 - ₹5000</button>
-          <button class="tg-fs-preset" data-min="5000" data-max="999999" onclick="tgPickPricePreset(this, 5000, 999999)">Above ₹5000</button>
-        </div>
-      </div>
-      <div class="tg-fs">
-        <div class="tg-fs-title">⭐ Rating</div>
-        <div class="tg-fs-options">
-          <div class="tg-fs-opt" data-rating="0" onclick="tgPickRating(0)"><div class="tg-fs-opt-radio"></div><div>All Ratings</div></div>
-          <div class="tg-fs-opt" data-rating="4" onclick="tgPickRating(4)"><div class="tg-fs-opt-radio"></div><div>4★ & above</div></div>
-          <div class="tg-fs-opt" data-rating="3" onclick="tgPickRating(3)"><div class="tg-fs-opt-radio"></div><div>3★ & above</div></div>
-        </div>
-      </div>
-      <div class="tg-fs">
-        <div class="tg-fs-title">🏷️ Discount</div>
-        <div class="tg-fs-options">
-          <div class="tg-fs-opt" data-discount="0" onclick="tgPickDiscount(0)"><div class="tg-fs-opt-radio"></div><div>All</div></div>
-          <div class="tg-fs-opt" data-discount="30" onclick="tgPickDiscount(30)"><div class="tg-fs-opt-radio"></div><div>30% or more off</div></div>
-          <div class="tg-fs-opt" data-discount="50" onclick="tgPickDiscount(50)"><div class="tg-fs-opt-radio"></div><div>50% or more off</div></div>
-        </div>
-      </div>
+<!-- Category Modal -->
+<div class="tg-modal" id="tg-cat-modal">
+  <div class="tg-sheet">
+    <div class="tg-sheet-head">
+      <div class="tg-sheet-title" id="tg-cat-modal-title">Add Category</div>
+      <button class="tg-modal-close" onclick="tgCloseModal('tg-cat-modal')">✕</button>
+    </div>
+    <input type="hidden" id="tg-cat-id">
+    <div class="tg-field"><label>Category Name *</label><input type="text" id="tg-cat-name" placeholder="e.g., Fashion"></div>
+    <div class="tg-row">
+      <div class="tg-field"><label>Emoji Icon</label><input type="text" id="tg-cat-icon" placeholder="👕" maxlength="4"></div>
+      <div class="tg-field"><label>Order</label><input type="number" id="tg-cat-order" placeholder="1" value="1"></div>
+    </div>
+    <div class="tg-field"><label>Image URL (Optional)</label><input type="url" id="tg-cat-image" placeholder="https://..."></div>
+    <div class="tg-sheet-foot">
+      <button class="tg-btn ghost" onclick="tgCloseModal('tg-cat-modal')">Cancel</button>
+      <button class="tg-btn primary" onclick="tgSaveCategory()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Subcategory Modal -->
+<div class="tg-modal" id="tg-subcat-modal">
+  <div class="tg-sheet">
+    <div class="tg-sheet-head">
+      <div class="tg-sheet-title" id="tg-subcat-modal-title">Add Sub-category</div>
+      <button class="tg-modal-close" onclick="tgCloseModal('tg-subcat-modal')">✕</button>
+    </div>
+    <input type="hidden" id="tg-subcat-index">
+    <div class="tg-field"><label>Sub-category Name *</label><input type="text" id="tg-subcat-name" placeholder="e.g., T-Shirts"></div>
+    <div class="tg-field"><label>Emoji Icon</label><input type="text" id="tg-subcat-icon" placeholder="👔" maxlength="4"></div>
+    <div class="tg-sheet-foot">
+      <button class="tg-btn ghost" onclick="tgCloseModal('tg-subcat-modal')">Cancel</button>
+      <button class="tg-btn primary" onclick="tgSaveSubcategory()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Tag Modal -->
+<div class="tg-modal" id="tg-tag-modal">
+  <div class="tg-sheet">
+    <div class="tg-sheet-head">
+      <div class="tg-sheet-title">Add Product Tag</div>
+      <button class="tg-modal-close" onclick="tgCloseModal('tg-tag-modal')">✕</button>
+    </div>
+    <input type="hidden" id="tg-tag-prod-id">
+    <div class="tg-field">
+      <label>Tag Text (e.g., MEGA SALE, HOT)</label>
+      <input type="text" id="tg-tag-input" placeholder="MEGA SALE" style="text-transform:uppercase;">
     </div>
     <div class="tg-sheet-foot">
-      <button class="tg-sheet-btn-clear" onclick="tgClearAllFilters()">Clear All</button>
-      <button class="tg-sheet-btn-apply" onclick="tgApplyFilters()">Apply Filters</button>
+      <button class="tg-btn ghost" onclick="tgCloseModal('tg-tag-modal')">Cancel</button>
+      <button class="tg-btn primary" onclick="tgSaveProductTag()">Save Tag</button>
     </div>
   </div>
 </div>
 
-<div class="tg-modal" id="tg-qv-modal">
-  <div class="tg-modal-card">
-    <div class="tg-modal-head"><div class="tg-modal-title">Quick View</div><button class="tg-modal-close" onclick="tgCloseQV()">✕</button></div>
-    <div id="tg-qv-body"></div>
-  </div>
-</div>
-
-<div class="tg-modal" id="tg-modal">
-  <div class="tg-modal-card">
-    <div class="tg-modal-head"><div class="tg-modal-title" id="tg-modal-title">Add Category</div><button class="tg-modal-close" onclick="tgCloseModal()">✕</button></div>
-    <input type="hidden" id="tg-cat-id">
-    <div class="tg-modal-field"><label>Category Name *</label><input type="text" id="tg-cat-name" placeholder="e.g., Leather" maxlength="50"></div>
-    <div class="tg-modal-row">
-      <div class="tg-modal-field"><label>Emoji Icon</label><input type="text" id="tg-cat-icon" placeholder="👜" maxlength="4"></div>
-      <div class="tg-modal-field"><label>Order</label><input type="number" id="tg-cat-order" placeholder="10" value="10"></div>
-    </div>
-    <div class="tg-modal-field"><label>Image URL</label><input type="url" id="tg-cat-image" placeholder="https://..."></div>
-    <div class="tg-modal-row">
-      <div class="tg-modal-field"><label>Discount Text</label><input type="text" id="tg-cat-discount" placeholder="Up to 60% Off" maxlength="40"></div>
-      <div class="tg-modal-field"><label>Badge</label><input type="text" id="tg-cat-badge" placeholder="NEW / HOT" maxlength="12"></div>
-    </div>
-    <div class="tg-modal-field"><label>Sub-categories</label><input type="text" id="tg-cat-subs-input" placeholder="Type and press Enter"><div class="tg-sub-preview" id="tg-sub-preview"></div></div>
-    <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0 4px;cursor:pointer;"><input type="checkbox" id="tg-cat-featured" style="width:16px;height:16px;accent-color:#2874f0;"><span style="font-weight:600;">Show in Quick Access</span></label>
-    <div class="tg-modal-actions">
-      <button class="tg-modal-btn ghost" onclick="tgCloseModal()">Cancel</button>
-      <button class="tg-modal-btn primary" id="tg-modal-save" onclick="tgSaveCategory()"><span id="tg-modal-save-text">Save</span></button>
-    </div>
-  </div>
-</div>
-
+<!-- Delete Modal -->
 <div class="tg-modal" id="tg-del-modal">
-  <div class="tg-modal-card" style="max-width:420px;">
-    <div class="tg-modal-head"><div class="tg-modal-title">Delete Category?</div><button class="tg-modal-close" onclick="tgCloseDelModal()">✕</button></div>
-    <p style="font-size:14px;color:#666;margin:0 0 6px;">Delete <b id="tg-del-name" style="color:#212121;">this</b>?</p>
-    <p style="font-size:12.5px;color:#d32f2f;margin:0 0 18px;">⚠ Cannot be undone.</p>
-    <div class="tg-modal-actions">
-      <button class="tg-modal-btn ghost" onclick="tgCloseDelModal()">Cancel</button>
-      <button class="tg-modal-btn danger" id="tg-del-btn" onclick="tgConfirmDelete()"><span id="tg-del-btn-text">Delete</span></button>
+  <div class="tg-sheet" style="max-width:340px;">
+    <div class="tg-sheet-head">
+      <div class="tg-sheet-title">Delete?</div>
+      <button class="tg-modal-close" onclick="tgCloseModal('tg-del-modal')">✕</button>
+    </div>
+    <p style="font-size:14px;color:#666;margin:0 0 16px;" id="tg-del-text">Are you sure?</p>
+    <div class="tg-sheet-foot">
+      <button class="tg-btn ghost" onclick="tgCloseModal('tg-del-modal')">Cancel</button>
+      <button class="tg-btn danger" id="tg-del-btn" onclick="tgConfirmDelete()">Delete</button>
     </div>
   </div>
 </div>
-
-<nav class="tg-bnav">
-  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
-  <a href="categories.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
-  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-cart-badge-m" style="display:none;">0</span></a>
-  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
-  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
-</nav>
 
 <div class="tg-toasts" id="tg-toasts"></div>
-
-<!-- ⚡⚡⚡ INLINE BOOT — 0ms cache render ⚡⚡⚡ -->
-<script>
-(function(){
-  'use strict';
-  try {
-    ['toego_cat_theme_v1','toego_cat_theme_v2','toego_cat_theme_v3','toego_cat_theme_v4',
-     'toego_cat_cats_v1','toego_cat_cats_v2','toego_cat_cats_v3','toego_cat_cats_v4',
-     'toego_cat_prods_v1','toego_cat_prods_v2','toego_cat_prods_v3','toego_cat_prods_v4',
-     'tg_v5','toego_data_cache_v1'].forEach(function(k){ try { localStorage.removeItem(k); } catch(e){} });
-  } catch(e){}
-
-  var cache;
-  try { cache = JSON.parse(localStorage.getItem('tg_v6') || 'null'); } catch(e){}
-  if (!cache || !cache.c || !cache.c.length) return;
-
-  window.__CACHE_BOOT__ = true;
-
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
-  function inr(n){ return '₹' + Number(n||0).toLocaleString('en-IN'); }
-  function slugify(s){ return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
-
-  var CATS = cache.c || [];
-  var PRODS = cache.p || [];
-
-  var tabs = document.getElementById('tg-tabs');
-  if (tabs) {
-    var html = '<div class="tg-tab active" data-cat="all" onclick="tgPickTab(\'all\')">All</div>';
-    CATS.slice(0,15).forEach(function(c){
-      html += '<div class="tg-tab" data-cat="'+slugify(c.name)+'" onclick="tgPickTab(\''+slugify(c.name)+'\')">'+esc(c.name)+'</div>';
-    });
-    tabs.innerHTML = html;
-  }
-
-  var feat = document.getElementById('tg-feat-grid');
-  var featSec = document.getElementById('tg-feat-sec');
-  if (feat) {
-    var fItems = CATS.filter(function(c){return c.featured;});
-    if (fItems.length === 0) fItems = CATS.slice(0, 6);
-    if (fItems.length === 0) { if (featSec) featSec.style.display = 'none'; }
-    else {
-      if (featSec) featSec.style.display = 'block';
-      feat.innerHTML = fItems.slice(0,8).map(function(f){
-        var slug = slugify(f.name);
-        var imgTag = f.image ? '<img src="'+esc(f.image)+'" loading="lazy" />' : esc(f.icon||'📦');
-        return '<div class="tg-feat-item" onclick="tgPickTab(\''+slug+'\')"><div class="tg-feat-icon">'+imgTag+'</div><div class="tg-feat-label">'+esc(f.name)+'</div></div>';
-      }).join('');
-    }
-  }
-
-  var cg = document.getElementById('tg-cat-grid');
-  if (cg && CATS.length) {
-    var counts = {};
-    PRODS.forEach(function(p){
-      var slugs = new Set();
-      [p.category, p.categoryName, p.cat].forEach(function(f){ if (f) slugs.add(slugify(f)); });
-      if (Array.isArray(p.categories)) p.categories.forEach(function(c){
-        if (typeof c === 'string') slugs.add(slugify(c));
-        else if (c && c.name) slugs.add(slugify(c.name));
-      });
-      slugs.forEach(function(s){ counts[s] = (counts[s]||0)+1; });
-    });
-    cg.innerHTML = CATS.map(function(c){
-      var slug = slugify(c.name);
-      var cnt = counts[slug] || 0;
-      return '<div class="tg-cat-card" onclick="tgPickTab(\''+slug+'\')">' +
-        (c.badge ? '<div class="tg-cat-badge">'+esc(c.badge)+'</div>' : '') +
-        (c.image ? '<div class="tg-cat-img" style="background-image:url(\''+esc(c.image)+'\')"></div>' : '<div class="tg-cat-emoji">'+esc(c.icon||'📦')+'</div>') +
-        '<div class="tg-cat-overlay"></div>' +
-        '<div class="tg-cat-body">' +
-          '<div class="tg-cat-name">'+esc(c.name)+'</div>' +
-          (c.discount ? '<div class="tg-cat-off">'+esc(c.discount)+'</div>' : '') +
-          (cnt > 0 ? '<div class="tg-cat-count">'+cnt+' item'+(cnt>1?'s':'')+'</div>' : '') +
-        '</div>' +
-      '</div>';
-    }).join('');
-    var subEl = document.getElementById('tg-cat-sub');
-    if (subEl) subEl.textContent = 'Browse all ' + CATS.length + ' categories';
-  }
-
-  var pg = document.getElementById('tg-prod-grid');
-  if (pg && PRODS.length) {
-    pg.innerHTML = PRODS.slice(0, 20).map(function(p){
-      var price = Number(p.price||0);
-      var old = Number(p.compareAtPrice||p.mrp||0);
-      var disc = old > price ? Math.round((1-price/old)*100) : 0;
-      var img = p.image || (p.images && p.images[0]) || '';
-      var rating = Number(p.rating||0);
-      var ratingCount = Number(p.ratingCount||p.reviewCount||0);
-      var stock = Number(p.stock||0);
-      var isLow = stock > 0 && stock < 10;
-      var isFree = p.freeDelivery === true;
-      return '<div class="tg-pg-card" onclick="tgClickProduct(\''+p.id+'\')">' +
-        '<div class="tg-pg-img">' +
-          (disc > 0 ? '<div class="tg-pg-discount">'+disc+'% OFF</div>' : '') +
-          '<img src="'+esc(img)+'" loading="lazy" />' +
-        '</div>' +
-        '<div class="tg-pg-body">' +
-          '<div class="tg-pg-name">'+esc(p.name||'Product')+'</div>' +
-          '<div class="tg-pg-price-row">' +
-            '<span class="tg-pg-price">'+inr(price)+'</span>' +
-            (old > price ? '<span class="tg-pg-mrp">'+inr(old)+'</span>' : '') +
-          '</div>' +
-          (rating > 0 ? '<div class="tg-pg-rating">⭐ '+rating.toFixed(1)+(ratingCount>0?' ('+ratingCount+')':'')+'</div>' : '') +
-          (isFree || isLow ? '<div class="tg-pg-tags">' +
-            (isFree ? '<span class="tg-pg-tag free">🚚 Free Delivery</span>' : '') +
-            (isLow ? '<span class="tg-pg-tag low">🔥 '+stock+' left</span>' : '') +
-          '</div>' : '') +
-        '</div></div>';
-    }).join('');
-    var prodSub = document.getElementById('tg-prod-sub');
-    if (prodSub) prodSub.textContent = PRODS.length + ' products found';
-  }
-})();
-</script>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -596,95 +387,26 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <script>
 (function() {
   'use strict';
-
   const SUPER_ADMIN_EMAIL = 'anasfansclub@toego.in';
-
+  
   let IS_ADMIN = false;
   let ALL_CATEGORIES = [];
-  let ALL_FEATURED = [];
-  let currentCat = 'all';
-  let currentSub = 'all';
-  let allProducts = [];
-  let filteredProducts = [];
-  let displayedProducts = [];
-  let PRODUCTS_PER_PAGE = 20;
-  let currentPage = 1;
-  let inlineQuery = '';
-  let pendingSubs = [];
-  let deleteTarget = null;
-  let _dataReady = false;
-  let _savingCache = false;
+  let ALL_PRODUCTS = [];
+  
+  let currentCatId = null;
+  let currentSubName = 'all';
+  
+  let searchQuery = '';
+  let filterMinPrice = 0;
+  let filterMaxPrice = 999999;
+  let filterRating = 0;
+  let sortBy = 'relevance';
 
-  let F = { priceMin: 0, priceMax: 999999, rating: 0, discount: 0, sort: 'relevance' };
+  let deleteAction = null;
+  let recognition = null;
 
-  let VIEW_DENSITY = '2';
-  try { VIEW_DENSITY = localStorage.getItem('toego_view_density') || '2'; } catch(e) {}
-
-  let WISHLIST = new Set();
-  try {
-    const wl = JSON.parse(localStorage.getItem('toego_wishlist') || '[]');
-    if (Array.isArray(wl)) wl.forEach(id => WISHLIST.add(String(id)));
-  } catch(e) {}
-
-  let RECENT_VIEWED = [];
-  try {
-    const rv = JSON.parse(localStorage.getItem('toego_recently_viewed') || '[]');
-    if (Array.isArray(rv)) RECENT_VIEWED = rv;
-  } catch(e) {}
-
-  function saveWishlist() { try { localStorage.setItem('toego_wishlist', JSON.stringify(Array.from(WISHLIST))); } catch(e) {} }
-  function saveRecent() { try { localStorage.setItem('toego_recently_viewed', JSON.stringify(RECENT_VIEWED.slice(0, 12))); } catch(e) {} }
-
-  /* ⚡ DEBOUNCED cache save — 800ms delay, non-blocking */
-  let _saveTimer;
-  function saveCache() {
-    if (_savingCache) return;
-    clearTimeout(_saveTimer);
-    _saveTimer = setTimeout(() => {
-      _savingCache = true;
-      try {
-        const catsLite = ALL_CATEGORIES.map(c => ({
-          id: c.id, name: c.name, icon: c.icon, image: c.image,
-          discount: c.discount, badge: c.badge, order: c.order,
-          featured: c.featured, subcategories: c.subcategories
-        }));
-        const prodsLite = allProducts.slice(0, 80).map(p => ({
-          id: p.id, name: p.name, price: p.price,
-          compareAtPrice: p.compareAtPrice, mrp: p.mrp,
-          image: p.image,
-          images: p.images && p.images.length ? [p.images[0]] : undefined,
-          category: p.category, categoryName: p.categoryName, cat: p.cat,
-          subCategory: p.subCategory, categories: p.categories,
-          rating: p.rating, ratingCount: p.ratingCount, reviewCount: p.reviewCount,
-          stock: p.stock, freeDelivery: p.freeDelivery
-        }));
-        localStorage.setItem('tg_v6', JSON.stringify({ c: catsLite, p: prodsLite, t: Date.now() }));
-      } catch(e) {}
-      _savingCache = false;
-    }, 800);
-  }
-
-  function toast(msg, type) {
-    type = type || 'info';
-    const w = document.getElementById('tg-toasts');
-    if (!w) return;
-    const el = document.createElement('div');
-    el.className = 'tg-toast ' + type;
-    el.textContent = msg;
-    w.appendChild(el);
-    setTimeout(() => el.remove(), 2000);
-  }
-  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-  function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN'); }
-  function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
-  function tsToMs(ts) {
-    if (!ts) return 0;
-    if (typeof ts.toDate === 'function') { try { return ts.toDate().getTime(); } catch(e) { return 0; } }
-    if (typeof ts === 'number') return ts;
-    if (ts.seconds) return ts.seconds * 1000;
-    if (ts._seconds) return ts._seconds * 1000;
-    return 0;
-  }
+  const CACHE_CATS = 'toego_cat_cats_v1';
+  const CACHE_PRODS = 'toego_cat_prods_v1';
 
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
@@ -699,6 +421,45 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const auth = firebase.auth();
   const db = firebase.firestore();
 
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  function tsToMs(ts) { if (!ts) return 0; if (typeof ts.toDate === 'function') return ts.toDate().getTime(); if (typeof ts === 'number') return ts; if (ts.seconds) return ts.seconds * 1000; return 0; }
+  
+  window.tgCloseModal = function(id) { document.getElementById(id).classList.remove('show'); };
+
+  // --- VOICE SEARCH ---
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    recognition.interimResults = false;
+    recognition.onresult = function(event) {
+      const text = event.results[0][0].transcript;
+      document.getElementById('tg-search-input').value = text;
+      tgHandleSearch();
+      document.getElementById('tg-mic-btn').classList.remove('listening');
+    };
+    recognition.onerror = function() { document.getElementById('tg-mic-btn').classList.remove('listening'); };
+    recognition.onend = function() { document.getElementById('tg-mic-btn').classList.remove('listening'); };
+  }
+
+  window.tgStartVoiceSearch = function() {
+    if (!recognition) { toast('Voice search not supported', 'error'); return; }
+    document.getElementById('tg-mic-btn').classList.add('listening');
+    toast('Listening... speak now');
+    try { recognition.start(); } catch(e) {}
+  };
+
+  // --- ADMIN CHECK ---
   async function checkAdmin(user) {
     if (!user) { setAdmin(false); return; }
     if (user.email === SUPER_ADMIN_EMAIL) { setAdmin(true); return; }
@@ -714,741 +475,534 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (IS_ADMIN === on) return;
     IS_ADMIN = on;
     document.body.classList.toggle('tg-admin-mode', on);
-    const bar = document.getElementById('tg-admin-bar');
-    const fab = document.getElementById('tg-fab');
-    if (bar) bar.classList.toggle('show', on);
-    if (fab) fab.classList.toggle('show', on);
-    if (_dataReady) scheduleRender('cat-grid');
+    document.getElementById('tg-admin-bar').classList.toggle('show', on);
+    renderSidebar();
+    renderProducts(); 
   }
 
-  function productMatchesCategory(p, catSlug, subSlug) {
-    if (!catSlug || catSlug === 'all') return true;
-    const catSlugFields = [];
-    const subSlugFields = [];
-    [p.category, p.categoryName, p.cat, p.catName].forEach(f => { if (f) catSlugFields.push(slugify(f)); });
-    [p.subCategory, p.subcategory, p.sub_cat, p.subcatName].forEach(f => { if (f) subSlugFields.push(slugify(f)); });
-    if (Array.isArray(p.categories)) {
-      p.categories.forEach(c => {
-        if (typeof c === 'string') catSlugFields.push(slugify(c));
-        else if (c && c.name) catSlugFields.push(slugify(c.name));
-      });
-    }
-    if (subSlug && subSlug !== 'all') return subSlugFields.includes(subSlug) || catSlugFields.includes(subSlug);
-    if (catSlugFields.includes(catSlug)) return true;
-    if (subSlugFields.includes(catSlug)) return true;
-    for (const s of catSlugFields.concat(subSlugFields)) {
-      if (s && (s === catSlug || s.startsWith(catSlug + '-') || catSlug.startsWith(s + '-'))) return true;
-    }
-    return false;
-  }
-
-  function productPrice(p) { return Number(p.price || 0); }
-  function productDiscount(p) {
-    const price = Number(p.price || 0);
-    const mrp = Number(p.compareAtPrice || p.mrp || 0);
-    return mrp > price ? Math.round((1 - price/mrp) * 100) : 0;
-  }
-  function productRating(p) { return Number(p.rating || 0); }
-  function countActiveFilters() {
-    let c = 0;
-    if (F.priceMin > 0 || F.priceMax < 999999) c++;
-    if (F.rating > 0) c++;
-    if (F.discount > 0) c++;
-    return c;
-  }
-
-  /* ⚡ rAF batching — ONE render per frame */
-  let _renderQueue = new Set();
-  let _rafScheduled = false;
-  function scheduleRender(...parts) {
-    parts.forEach(p => _renderQueue.add(p));
-    if (_rafScheduled) return;
-    _rafScheduled = true;
-    requestAnimationFrame(() => {
-      _rafScheduled = false;
-      const queue = Array.from(_renderQueue);
-      _renderQueue.clear();
-      const scrollY = window.scrollY;
-      queue.forEach(p => {
-        try {
-          if (p === 'tabs') renderTabs();
-          else if (p === 'feat') renderFeatured();
-          else if (p === 'chips') renderChips();
-          else if (p === 'cat-grid') renderCategoryGrid();
-          else if (p === 'prods') renderProductsSection();
-          else if (p === 'recent') renderRecent();
-          else if (p === 'all') { renderTabs(); renderFeatured(); renderChips(); renderCategoryGrid(); renderProductsSection(); renderRecent(); }
-        } catch(e) { console.warn('[render ' + p + ']', e); }
-      });
-      // Preserve scroll if scrolled down (avoid jump)
-      if (scrollY > 100) window.scrollTo(0, scrollY);
-    });
-  }
-
-  function renderTabs() {
-    const el = document.getElementById('tg-tabs');
-    if (!el) return;
-    let html = '<div class="tg-tab ' + (currentCat==='all'?'active':'') + '" data-cat="all" onclick="tgPickTab(\'all\')">All</div>';
-    ALL_CATEGORIES.slice(0, 15).forEach(c => {
-      const slug = slugify(c.name);
-      html += '<div class="tg-tab ' + (currentCat===slug?'active':'') + '" data-cat="' + slug + '" onclick="tgPickTab(\'' + slug + '\')">' + esc(c.name) + '</div>';
-    });
-    el.innerHTML = html;
-  }
-
-  function renderFeatured() {
-    const el = document.getElementById('tg-feat-grid');
-    const sec = document.getElementById('tg-feat-sec');
-    if (!el) return;
-    const items = ALL_FEATURED.slice(0, 8);
-    if (!items.length) { sec.style.display = 'none'; return; }
-    sec.style.display = 'block';
-    el.innerHTML = items.map(f => {
-      const slug = slugify(f.name);
-      const imgTag = f.image ? '<img src="' + esc(f.image) + '" alt="' + esc(f.name) + '" loading="lazy" decoding="async" />' : esc(f.icon || '📦');
-      return '<div class="tg-feat-item" onclick="tgPickTab(\'' + slug + '\')"><div class="tg-feat-icon">' + imgTag + '</div><div class="tg-feat-label">' + esc(f.name) + '</div></div>';
-    }).join('');
-  }
-
-  function renderChips() {
-    const sec = document.getElementById('tg-chips-sec');
-    const el = document.getElementById('tg-chips');
-    if (!sec || !el) return;
-    if (currentCat === 'all') { sec.style.display = 'none'; return; }
-    const catObj = ALL_CATEGORIES.find(c => slugify(c.name) === currentCat);
-    if (!catObj) { sec.style.display = 'none'; return; }
-    const subcats = catObj.subcategories || [];
-    if (!subcats.length) { sec.style.display = 'none'; return; }
-    sec.style.display = 'block';
-    let html = '<div class="tg-chip ' + (currentSub==='all'?'active':'') + '" onclick="tgPickSub(\'all\')">All ' + esc(catObj.name) + '</div>';
-    subcats.forEach(s => {
-      const name = typeof s === 'string' ? s : (s.name || '');
-      const icon = typeof s === 'object' ? (s.icon || '') : '';
-      const slug = slugify(name);
-      html += '<div class="tg-chip ' + (currentSub===slug?'active':'') + '" data-sub="' + slug + '" onclick="tgPickSub(\'' + slug + '\')">' + (icon ? icon + ' ' : '') + esc(name) + '</div>';
-    });
-    el.innerHTML = html;
-  }
-
-  function renderCategoryGrid() {
-    const sec = document.getElementById('tg-cats-sec');
-    const el = document.getElementById('tg-cat-grid');
-    const sub = document.getElementById('tg-cat-sub');
-    if (!el) return;
-    if (currentCat !== 'all') { sec.style.display = 'none'; return; }
-    sec.style.display = 'block';
-    const cats = ALL_CATEGORIES;
-    if (!cats.length) {
-      sub.textContent = 'No categories';
-      el.innerHTML = '<div class="tg-empty" style="grid-column:1/-1;margin:0;"><div class="tg-empty-icon">📦</div><h3>No categories</h3></div>';
-      return;
-    }
-    sub.textContent = 'Browse all ' + cats.length + ' categories';
-
-    // Pre-compute category counts (skip if no products)
-    const counts = {};
-    if (allProducts.length) {
-      allProducts.forEach(p => {
-        const slugs = new Set();
-        [p.category, p.categoryName, p.cat].forEach(f => { if (f) slugs.add(slugify(f)); });
-        if (Array.isArray(p.categories)) p.categories.forEach(c => {
-          if (typeof c === 'string') slugs.add(slugify(c));
-          else if (c && c.name) slugs.add(slugify(c.name));
-        });
-        slugs.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
-      });
-    }
-
-    el.innerHTML = cats.map(c => {
-      const slug = slugify(c.name);
-      const cnt = counts[slug] || 0;
-      const adminBtns = IS_ADMIN ? (
-        '<div class="tg-cat-admin">' +
-          '<button class="tg-cat-admin-btn" onclick="event.stopPropagation();event.preventDefault();tgOpenEditModal(\'' + esc(c.id) + '\')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
-          '<button class="tg-cat-admin-btn danger" onclick="event.stopPropagation();event.preventDefault();tgOpenDelModal(\'' + esc(c.id) + '\',\'' + esc(c.name).replace(/'/g,"&#39;") + '\')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>' +
-        '</div>'
-      ) : '';
-      return '<div class="tg-cat-card" onclick="tgPickTab(\'' + slug + '\')">' +
-        adminBtns +
-        (c.badge ? '<div class="tg-cat-badge">' + esc(c.badge) + '</div>' : '') +
-        (c.image ? '<div class="tg-cat-img" style="background-image:url(\'' + esc(c.image) + '\')"></div>' : '<div class="tg-cat-emoji">' + esc(c.icon || '📦') + '</div>') +
-        '<div class="tg-cat-overlay"></div>' +
-        '<div class="tg-cat-body">' +
-          '<div class="tg-cat-name">' + esc(c.name) + '</div>' +
-          (c.discount ? '<div class="tg-cat-off">' + esc(c.discount) + '</div>' : '') +
-          (cnt > 0 ? '<div class="tg-cat-count">' + cnt + ' item' + (cnt > 1 ? 's' : '') + '</div>' : '') +
-        '</div>' +
-      '</div>';
-    }).join('');
-  }
-
-  function renderRecent() {
-    const sec = document.getElementById('tg-recent-sec');
-    const row = document.getElementById('tg-recent-row');
-    if (!sec || !row) return;
-    if (!RECENT_VIEWED.length || !allProducts.length) { sec.style.display = 'none'; return; }
-    const items = RECENT_VIEWED.map(id => allProducts.find(p => p.id === id)).filter(Boolean).slice(0, 10);
-    if (!items.length) { sec.style.display = 'none'; return; }
-    sec.style.display = 'block';
-    row.innerHTML = items.map(p => {
-      const img = p.image || (p.images && p.images[0]) || '';
-      return '<div class="tg-recent-card" onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'">' +
-        '<div class="tg-recent-img"><img src="' + esc(img) + '" loading="lazy" /></div>' +
-        '<div class="tg-recent-info"><div class="tg-recent-name">' + esc(p.name || 'Product') + '</div><div class="tg-recent-price">' + fmtINR(p.price) + '</div></div>' +
-      '</div>';
-    }).join('');
-  }
-
-  function trackView(id) {
-    const sid = String(id);
-    RECENT_VIEWED = RECENT_VIEWED.filter(x => x !== sid);
-    RECENT_VIEWED.unshift(sid);
-    RECENT_VIEWED = RECENT_VIEWED.slice(0, 12);
-    saveRecent();
-    renderRecent();
-  }
-
-  function productCardHtml(p) {
-    const price = Number(p.price || 0);
-    const old = Number(p.compareAtPrice || p.mrp || 0);
-    const disc = old > price ? Math.round((1 - price/old)*100) : 0;
-    const img = p.image || (p.images && p.images[0]) || '';
-    const rating = Number(p.rating || 0);
-    const ratingCount = Number(p.ratingCount || p.reviewCount || 0);
-    const isWished = WISHLIST.has(String(p.id));
-    const stock = Number(p.stock || 0);
-    const isLowStock = stock > 0 && stock < 10;
-    const isFreeDeliv = p.freeDelivery === true;
-    return '<div class="tg-pg-card" onclick="tgClickProduct(\'' + esc(p.id) + '\')">' +
-      '<div class="tg-pg-img">' +
-        (disc > 0 ? '<div class="tg-pg-discount">' + disc + '% OFF</div>' : '') +
-        '<button class="tg-pg-wish ' + (isWished ? 'active' : '') + '" onclick="event.stopPropagation();tgToggleWish(\'' + esc(p.id) + '\', this)" aria-label="Wishlist">' +
-          '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
-        '</button>' +
-        '<button class="tg-pg-qv" onclick="event.stopPropagation();tgOpenQV(\'' + esc(p.id) + '\')" aria-label="Quick view">' +
-          '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
-        '</button>' +
-        (img ? '<img src="' + esc(img) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" />' : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#eef3ff,#e0eaff);display:flex;align-items:center;justify-content:center;font-size:32px;">📦</div>') +
-      '</div>' +
-      '<div class="tg-pg-body">' +
-        '<div class="tg-pg-name">' + esc(p.name || 'Product') + '</div>' +
-        '<div class="tg-pg-price-row">' +
-          '<span class="tg-pg-price">' + fmtINR(price) + '</span>' +
-          (old > price ? '<span class="tg-pg-mrp">' + fmtINR(old) + '</span>' : '') +
-        '</div>' +
-        (rating > 0 ? '<div class="tg-pg-rating">⭐ ' + rating.toFixed(1) + (ratingCount > 0 ? ' (' + ratingCount + ')' : '') + '</div>' : '') +
-        (isFreeDeliv || isLowStock ? '<div class="tg-pg-tags">' +
-          (isFreeDeliv ? '<span class="tg-pg-tag free">🚚 Free Delivery</span>' : '') +
-          (isLowStock ? '<span class="tg-pg-tag low">🔥 ' + stock + ' left</span>' : '') +
-        '</div>' : '') +
-      '</div>' +
-    '</div>';
-  }
-
-  window.tgClickProduct = function(id) {
-    trackView(id);
-    location.href = 'product.html?id=' + encodeURIComponent(id);
-  };
-
-  function renderProductsSection() {
-    const grid = document.getElementById('tg-prod-grid');
-    const empty = document.getElementById('tg-prod-empty');
-    const title = document.getElementById('tg-prod-title');
-    const sub = document.getElementById('tg-prod-sub');
-    const loadMoreWrap = document.getElementById('tg-prod-loadmore');
-    if (!grid) return;
-
-    let filtered = allProducts;
-    if (currentCat !== 'all') filtered = allProducts.filter(p => productMatchesCategory(p, currentCat, currentSub));
-    const priceMin = Number(F.priceMin || 0);
-    const priceMax = Number(F.priceMax || 999999);
-    if (priceMin > 0 || priceMax < 999999) {
-      filtered = filtered.filter(p => { const price = productPrice(p); return price >= priceMin && price <= priceMax; });
-    }
-    if (F.rating > 0) filtered = filtered.filter(p => productRating(p) >= F.rating);
-    if (F.discount > 0) filtered = filtered.filter(p => productDiscount(p) >= F.discount);
-    if (inlineQuery) {
-      const q = inlineQuery.toLowerCase();
-      filtered = filtered.filter(p => String(p.name || '').toLowerCase().includes(q) || String(p.brand || '').toLowerCase().includes(q));
-    }
-    if (F.sort === 'price-low') filtered = filtered.slice().sort((a,b) => productPrice(a) - productPrice(b));
-    else if (F.sort === 'price-high') filtered = filtered.slice().sort((a,b) => productPrice(b) - productPrice(a));
-    else if (F.sort === 'newest') filtered = filtered.slice().sort((a,b) => tsToMs(b.createdAt) - tsToMs(a.createdAt));
-    else if (F.sort === 'discount') filtered = filtered.slice().sort((a,b) => productDiscount(b) - productDiscount(a));
-
-    filteredProducts = filtered;
-    currentPage = 1;
-    displayedProducts = filteredProducts.slice(0, PRODUCTS_PER_PAGE);
-
-    if (currentCat === 'all') {
-      title.innerHTML = 'All <em>Products</em>';
-    } else {
-      const catObj = ALL_CATEGORIES.find(c => slugify(c.name) === currentCat);
-      const catName = catObj ? catObj.name : currentCat;
-      if (currentSub !== 'all') {
-        const subObj = (catObj && catObj.subcategories || []).find(s => slugify(typeof s === 'string' ? s : s.name) === currentSub);
-        const subName = subObj ? (typeof subObj === 'string' ? subObj : subObj.name) : currentSub;
-        title.innerHTML = esc(catName) + ' → <em>' + esc(subName) + '</em>';
-      } else {
-        title.innerHTML = 'All in <em>' + esc(catName) + '</em>';
+  // --- DATA LOADING (CACHE FIRST) ---
+  function loadCache() {
+    try {
+      const c = JSON.parse(localStorage.getItem(CACHE_CATS));
+      const p = JSON.parse(localStorage.getItem(CACHE_PRODS));
+      if (c && c.length && p && p.length) {
+        ALL_CATEGORIES = c;
+        ALL_PRODUCTS = p;
+        if (ALL_CATEGORIES.length > 0 && !currentCatId) currentCatId = ALL_CATEGORIES[0].id;
+        renderSidebar();
+        renderSubcats();
+        renderProducts();
       }
-    }
-
-    const cnt = filteredProducts.length;
-    sub.textContent = cnt === 0 ? 'No products found' : cnt + ' product' + (cnt > 1 ? 's' : '') + ' found';
-
-    if (!filteredProducts.length) {
-      grid.innerHTML = '';
-      empty.style.display = 'block';
-      loadMoreWrap.style.display = 'none';
-    } else {
-      empty.style.display = 'none';
-      grid.innerHTML = displayedProducts.map(productCardHtml).join('');
-      loadMoreWrap.style.display = filteredProducts.length > displayedProducts.length ? 'block' : 'none';
-      const btn = document.getElementById('tg-loadmore-btn');
-      if (btn) btn.textContent = 'Load More (' + (filteredProducts.length - displayedProducts.length) + ' more)';
-    }
-    updateFilterBarUI();
-    updateActiveChips();
+    } catch(e) {}
   }
 
-  window.tgLoadMore = function() {
-    const prev = displayedProducts.length;
-    currentPage++;
-    displayedProducts = filteredProducts.slice(0, currentPage * PRODUCTS_PER_PAGE);
-    const grid = document.getElementById('tg-prod-grid');
-    if (grid) grid.insertAdjacentHTML('beforeend', displayedProducts.slice(prev).map(productCardHtml).join(''));
-    const loadMoreWrap = document.getElementById('tg-prod-loadmore');
-    if (loadMoreWrap) loadMoreWrap.style.display = filteredProducts.length > displayedProducts.length ? 'block' : 'none';
-    const btn = document.getElementById('tg-loadmore-btn');
-    if (btn) btn.textContent = 'Load More (' + (filteredProducts.length - displayedProducts.length) + ' more)';
-  };
-
-  window.tgToggleWish = function(id, btn) {
-    const sid = String(id);
-    if (WISHLIST.has(sid)) { WISHLIST.delete(sid); btn.classList.remove('active'); toast('Removed'); }
-    else { WISHLIST.add(sid); btn.classList.add('active'); toast('Added ❤️', 'success'); }
-    saveWishlist();
-  };
-
-  window.tgInlineSearch = function() {
-    inlineQuery = (document.getElementById('tg-inline-search')?.value || '').trim();
-    renderProductsSection();
-  };
-
-  window.tgToggleView = function() {
-    VIEW_DENSITY = VIEW_DENSITY === '2' ? '3' : '2';
-    try { localStorage.setItem('toego_view_density', VIEW_DENSITY); } catch(e) {}
-    applyViewDensity();
-    toast(VIEW_DENSITY === '3' ? '3 columns' : '2 columns', 'info');
-  };
-  function applyViewDensity() {
-    const grid = document.getElementById('tg-prod-grid');
-    const icon = document.getElementById('tg-view-icon');
-    if (grid) grid.classList.toggle('density-3', VIEW_DENSITY === '3');
-    if (icon) icon.innerHTML = VIEW_DENSITY === '3'
-      ? '<rect x="3" y="3" width="5" height="5"/><rect x="10" y="3" width="5" height="5"/><rect x="17" y="3" width="4" height="5"/><rect x="3" y="10" width="5" height="5"/><rect x="10" y="10" width="5" height="5"/><rect x="17" y="10" width="4" height="5"/><rect x="3" y="17" width="5" height="4"/><rect x="10" y="17" width="5" height="4"/><rect x="17" y="17" width="4" height="4"/>'
-      : '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>';
-  }
-
-  window.tgOpenQV = function(id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-    const price = Number(p.price || 0);
-    const old = Number(p.compareAtPrice || p.mrp || 0);
-    const disc = old > price ? Math.round((1 - price/old)*100) : 0;
-    const img = p.image || (p.images && p.images[0]) || '';
-    const rating = Number(p.rating || 0);
-    const ratingCount = Number(p.ratingCount || p.reviewCount || 0);
-    document.getElementById('tg-qv-body').innerHTML =
-      '<div class="tg-qv-img"><img src="' + esc(img) + '" alt="' + esc(p.name || '') + '" /></div>' +
-      '<div class="tg-qv-title">' + esc(p.name || 'Product') + '</div>' +
-      (rating > 0 ? '<div class="tg-qv-rating">⭐ ' + rating.toFixed(1) + (ratingCount > 0 ? ' · ' + ratingCount + ' reviews' : '') + '</div>' : '') +
-      '<div class="tg-qv-price-row">' +
-        '<span class="tg-qv-price">' + fmtINR(price) + '</span>' +
-        (old > price ? '<span class="tg-qv-mrp">' + fmtINR(old) + '</span>' : '') +
-        (disc > 0 ? '<span class="tg-qv-off">' + disc + '% OFF</span>' : '') +
-      '</div>' +
-      '<div class="tg-qv-desc">' + esc((p.description || 'Product').toString().slice(0, 200)) + '</div>' +
-      '<div class="tg-qv-actions">' +
-        '<button class="tg-qv-btn ghost" onclick="tgShareProduct(\'' + esc(p.id) + '\')">Share</button>' +
-        '<button class="tg-qv-btn primary" onclick="tgClickProduct(\'' + esc(p.id) + '\')">View Details</button>' +
-      '</div>';
-    document.getElementById('tg-qv-modal').classList.add('show');
-    document.body.style.overflow = 'hidden';
-    trackView(id);
-  };
-  window.tgCloseQV = function() {
-    document.getElementById('tg-qv-modal').classList.remove('show');
-    document.body.style.overflow = '';
-  };
-
-  window.tgShareProduct = function(id) {
-    const url = location.origin + location.pathname.replace('categories.html', 'product.html') + '?id=' + id;
-    if (navigator.share) navigator.share({ title: 'Product', url }).catch(() => {});
-    else if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => toast('Copied ✓', 'success')).catch(() => prompt('Copy:', url));
-    else prompt('Copy:', url);
-  };
-
-  function updateFilterBarUI() {
-    const sortLabel = document.getElementById('tg-fb-sort-label');
-    const sortBtn = document.getElementById('tg-fb-sort');
-    const sortMap = { 'relevance': 'Sort', 'price-low': 'Price ↑', 'price-high': 'Price ↓', 'newest': 'Newest', 'discount': 'Discount' };
-    if (sortLabel) sortLabel.textContent = sortMap[F.sort] || 'Sort';
-    if (sortBtn) sortBtn.classList.toggle('active', F.sort !== 'relevance');
-    const c = countActiveFilters();
-    const countEl = document.getElementById('tg-fb-count');
-    const filterBtn = document.getElementById('tg-fb-filter');
-    if (countEl) { countEl.textContent = c; countEl.style.display = c > 0 ? 'flex' : 'none'; }
-    if (filterBtn) filterBtn.classList.toggle('active', c > 0);
-    const lbl = document.getElementById('tg-filter-count-lbl');
-    if (lbl) lbl.textContent = c > 0 ? c + ' filter' + (c > 1 ? 's' : '') + ' applied' : 'No filters';
-  }
-
-  function updateActiveChips() {
-    const wrap = document.getElementById('tg-active-chips-wrap');
-    const el = document.getElementById('tg-active-chips');
-    if (!wrap || !el) return;
-    const chips = [];
-    if (F.priceMin > 0 || F.priceMax < 999999) {
-      let lbl;
-      if (F.priceMin === 0) lbl = 'Under ' + fmtINR(F.priceMax);
-      else if (F.priceMax === 999999) lbl = 'Above ' + fmtINR(F.priceMin);
-      else lbl = fmtINR(F.priceMin) + ' - ' + fmtINR(F.priceMax);
-      chips.push({ label: '💰 ' + lbl, type: 'price' });
-    }
-    if (F.rating > 0) chips.push({ label: '⭐ ' + F.rating + '★+', type: 'rating' });
-    if (F.discount > 0) chips.push({ label: '🏷️ ' + F.discount + '%+', type: 'discount' });
-    if (!chips.length) { wrap.style.display = 'none'; return; }
-    wrap.style.display = 'block';
-    el.innerHTML = chips.map(ch => '<span class="tg-ac">' + esc(ch.label) + '<button onclick="tgRemoveFilter(\'' + ch.type + '\')">✕</button></span>').join('') +
-      '<span class="tg-ac" style="background:#fff0f0;border-color:#ffcdd2;color:#d32f2f;cursor:pointer;" onclick="tgClearAllFilters()">Clear All</span>';
-  }
-
-  window.tgRemoveFilter = function(type) {
-    if (type === 'price') { F.priceMin = 0; F.priceMax = 999999; }
-    else if (type === 'rating') F.rating = 0;
-    else if (type === 'discount') F.discount = 0;
-    syncFilterSheetUI();
-    renderProductsSection();
-  };
-
-  window.tgOpenSortSheet = function() { document.getElementById('tg-sort-sheet').classList.add('show'); syncSortOptions(); };
-  window.tgCloseSortSheet = function() { document.getElementById('tg-sort-sheet').classList.remove('show'); };
-  function syncSortOptions() {
-    document.querySelectorAll('#tg-sort-options .tg-fs-opt').forEach(o => {
-      const active = o.dataset.sort === F.sort;
-      o.classList.toggle('active', active);
-      const icon = o.querySelector('.tg-fs-sort-icon');
-      if (icon) icon.textContent = active ? '✓' : '';
-    });
-  }
-  window.tgPickSort = function(sort) { F.sort = sort; syncSortOptions(); renderProductsSection(); setTimeout(tgCloseSortSheet, 100); };
-
-  window.tgOpenFilterSheet = function() { syncFilterSheetUI(); document.getElementById('tg-filter-sheet').classList.add('show'); };
-  window.tgCloseFilterSheet = function() { document.getElementById('tg-filter-sheet').classList.remove('show'); };
-  function syncFilterSheetUI() {
-    const minEl = document.getElementById('tg-price-min');
-    const maxEl = document.getElementById('tg-price-max');
-    if (minEl) minEl.value = F.priceMin > 0 ? F.priceMin : '';
-    if (maxEl) maxEl.value = F.priceMax < 999999 ? F.priceMax : '';
-    document.querySelectorAll('#tg-price-presets .tg-fs-preset').forEach(b => {
-      b.classList.toggle('active', Number(b.dataset.min) === F.priceMin && Number(b.dataset.max) === F.priceMax);
-    });
-    document.querySelectorAll('[data-rating]').forEach(o => o.classList.toggle('active', Number(o.dataset.rating) === F.rating));
-    document.querySelectorAll('[data-discount]').forEach(o => o.classList.toggle('active', Number(o.dataset.discount) === F.discount));
-    const lbl = document.getElementById('tg-filter-count-lbl');
-    if (lbl) { const c = countActiveFilters(); lbl.textContent = c > 0 ? c + ' filter' + (c > 1 ? 's' : '') + ' applied' : 'No filters'; }
-  }
-  window.tgPickPricePreset = function(btn, min, max) {
-    F.priceMin = min; F.priceMax = max;
-    const minEl = document.getElementById('tg-price-min'); if (minEl) minEl.value = min > 0 ? min : '';
-    const maxEl = document.getElementById('tg-price-max'); if (maxEl) maxEl.value = max < 999999 ? max : '';
-    document.querySelectorAll('#tg-price-presets .tg-fs-preset').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  };
-  window.tgPickRating = function(r) { F.rating = r; document.querySelectorAll('[data-rating]').forEach(o => o.classList.toggle('active', Number(o.dataset.rating) === r)); };
-  window.tgPickDiscount = function(d) { F.discount = d; document.querySelectorAll('[data-discount]').forEach(o => o.classList.toggle('active', Number(o.dataset.discount) === d)); };
-  window.tgApplyFilters = function() {
-    const minEl = document.getElementById('tg-price-min');
-    const maxEl = document.getElementById('tg-price-max');
-    let mn = Number(minEl?.value || 0), mx = Number(maxEl?.value || 999999);
-    if (!mn || mn < 0) mn = 0;
-    if (!mx || mx <= 0) mx = 999999;
-    if (mx < mn) [mn, mx] = [mx, mn];
-    F.priceMin = mn; F.priceMax = mx;
-    renderProductsSection();
-    tgCloseFilterSheet();
-    toast('Applied ✓', 'success');
-  };
-  window.tgClearAllFilters = function() {
-    F.priceMin = 0; F.priceMax = 999999; F.rating = 0; F.discount = 0;
-    syncFilterSheetUI(); renderProductsSection(); toast('Cleared', 'info');
-  };
-  window.tgClearAllFiltersAndCategory = function() {
-    F.priceMin = 0; F.priceMax = 999999; F.rating = 0; F.discount = 0;
-    currentCat = 'all'; currentSub = 'all'; inlineQuery = '';
-    const inp = document.getElementById('tg-inline-search'); if (inp) inp.value = '';
-    document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'all'));
-    renderCategoryGrid(); renderChips(); syncFilterSheetUI(); renderProductsSection();
-    toast('Cleared', 'success');
-  };
-
-  window.tgPickTab = function(slug) {
-    currentCat = slug || 'all';
-    currentSub = 'all';
-    document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === currentCat));
-    scheduleRender('cat-grid', 'chips', 'prods');
-    setTimeout(() => {
-      const el = document.getElementById('tg-prod-sec');
-      if (el) { const top = el.getBoundingClientRect().top + window.pageYOffset - 100; try { window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' }); } catch(e) {} }
-    }, 50);
-  };
-  window.tgPickSub = function(slug) {
-    currentSub = slug || 'all';
-    document.querySelectorAll('#tg-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.sub === currentSub || (currentSub==='all' && !c.dataset.sub)));
-    renderProductsSection();
-  };
-
-  window.tgSearch = function() {
-    const q = (document.getElementById('tg-search-input').value || '').trim();
-    if (!q) { toast('Type something'); return; }
-    location.href = 'products.html?q=' + encodeURIComponent(q);
-  };
-
-  window.tgRefresh = function() {
-    const btn = document.getElementById('tg-refresh-btn');
-    if (btn) { btn.classList.add('spin'); setTimeout(() => btn.classList.remove('spin'), 800); }
-    toast('Refreshing...', 'info');
-    loadData();
-  };
-
-  /* ⚡⚡ SINGLE FETCH — no onSnapshot, no lag ⚡⚡ */
-  async function loadData() {
+  async function fetchData() {
     try {
       const [catsSnap, prodsSnap] = await Promise.all([
-        db.collection('categories').get({ source: 'server' }).catch(() => db.collection('categories').get()),
-        db.collection('products').limit(150).get({ source: 'server' }).catch(() => db.collection('products').limit(150).get())
+        db.collection('categories').get(),
+        db.collection('products').limit(200).get()
       ]);
 
       ALL_CATEGORIES = catsSnap.docs.map(d => {
         const data = d.data();
+        let subs = data.subcategories || data.subs || [];
+        subs = subs.map(s => typeof s === 'string' ? { name: s, icon: '📦' } : s);
         return {
           id: d.id, name: data.name || '', icon: data.icon || '📦',
-          image: data.image || '', discount: data.discount || data.offer || '',
-          badge: data.badge || '', order: Number(data.order) || 9999,
-          createdAt: data.createdAt,
-          subcategories: data.subcategories || data.subs || [],
-          featured: data.featured === true
+          image: data.image || '', order: Number(data.order) || 9999,
+          subcategories: subs
         };
       }).filter(c => c.name);
+      
+      ALL_CATEGORIES.sort((a,b) => a.order - b.order);
 
-      ALL_CATEGORIES.sort((a,b) => {
-        if (a.order !== b.order) return a.order - b.order;
-        return tsToMs(b.createdAt) - tsToMs(a.createdAt);
-      });
-
-      ALL_FEATURED = ALL_CATEGORIES.filter(c => c.featured);
-      if (ALL_FEATURED.length === 0) ALL_FEATURED = ALL_CATEGORIES.slice(0, 6);
-
-      allProducts = prodsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+      ALL_PRODUCTS = prodsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
         .filter(p => p.active !== false && p.rejectionStatus !== 'rejected' && p.hidden !== true);
 
-      _dataReady = true;
-      scheduleRender('all');
-      saveCache();
-    } catch (err) {
-      console.error('[loadData]', err);
-      if (!_dataReady) {
-        document.getElementById('tg-cat-grid').innerHTML = '<div class="tg-empty" style="grid-column:1/-1;margin:0;"><div class="tg-empty-icon">📦</div><h3>Load failed</h3><p>Tap refresh</p></div>';
-        document.getElementById('tg-cat-sub').textContent = 'Failed';
-        document.getElementById('tg-prod-grid').innerHTML = '';
-        document.getElementById('tg-prod-empty').style.display = 'block';
-        document.getElementById('tg-prod-sub').textContent = 'Failed';
+      if (ALL_CATEGORIES.length > 0 && !currentCatId) {
+        currentCatId = ALL_CATEGORIES[0].id;
       }
+      
+      try {
+        localStorage.setItem(CACHE_CATS, JSON.stringify(ALL_CATEGORIES));
+        localStorage.setItem(CACHE_PRODS, JSON.stringify(ALL_PRODUCTS));
+      } catch(e) {}
+
+      renderSidebar();
+      renderSubcats();
+      renderProducts();
+    } catch (err) {
+      console.error(err);
+      toast('Failed to load fresh data', 'error');
     }
   }
 
-  function resetModal() {
-    document.getElementById('tg-cat-id').value = '';
-    document.getElementById('tg-cat-name').value = '';
-    document.getElementById('tg-cat-icon').value = '';
-    document.getElementById('tg-cat-order').value = '10';
-    document.getElementById('tg-cat-image').value = '';
-    document.getElementById('tg-cat-discount').value = '';
-    document.getElementById('tg-cat-badge').value = '';
-    document.getElementById('tg-cat-subs-input').value = '';
-    document.getElementById('tg-cat-featured').checked = false;
-    pendingSubs = []; renderSubPreview();
-  }
-  function renderSubPreview() {
-    const el = document.getElementById('tg-sub-preview');
-    if (!el) return;
-    if (!pendingSubs.length) { el.innerHTML = ''; return; }
-    el.innerHTML = pendingSubs.map((s, i) => '<span class="tg-sub-pill">' + esc(s) + '<button onclick="tgRemoveSub(' + i + ')">✕</button></span>').join('');
-  }
-  window.tgRemoveSub = function(i) { pendingSubs.splice(i, 1); renderSubPreview(); };
-  window.tgOpenAddModal = function() {
-    if (!IS_ADMIN) return;
-    resetModal();
-    document.getElementById('tg-modal-title').textContent = 'Add Category';
-    document.getElementById('tg-modal-save-text').textContent = 'Save';
-    document.getElementById('tg-modal').classList.add('show');
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => document.getElementById('tg-cat-name').focus(), 150);
-  };
-  window.tgOpenEditModal = function(id) {
-    if (!IS_ADMIN) return;
-    const cat = ALL_CATEGORIES.find(c => c.id === id);
-    if (!cat) return;
-    resetModal();
-    document.getElementById('tg-modal-title').textContent = 'Edit';
-    document.getElementById('tg-modal-save-text').textContent = 'Update';
-    document.getElementById('tg-cat-id').value = id;
-    document.getElementById('tg-cat-name').value = cat.name || '';
-    document.getElementById('tg-cat-icon').value = cat.icon || '';
-    document.getElementById('tg-cat-order').value = cat.order || 10;
-    document.getElementById('tg-cat-image').value = cat.image || '';
-    document.getElementById('tg-cat-discount').value = cat.discount || '';
-    document.getElementById('tg-cat-badge').value = cat.badge || '';
-    document.getElementById('tg-cat-featured').checked = cat.featured === true;
-    pendingSubs = (cat.subcategories || []).map(s => typeof s === 'string' ? s : (s.name || ''));
-    renderSubPreview();
-    document.getElementById('tg-modal').classList.add('show');
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => document.getElementById('tg-cat-name').focus(), 150);
-  };
-  window.tgCloseModal = function() { document.getElementById('tg-modal').classList.remove('show'); document.body.style.overflow = ''; };
+  // --- RENDERERS ---
+  function renderSidebar() {
+    const el = document.getElementById('tg-sidebar');
+    if (!ALL_CATEGORIES.length) {
+      el.innerHTML = '<div style="text-align:center;padding:20px 10px;font-size:12px;color:#666;">No categories</div>';
+      return;
+    }
 
-  (function subInputHandler() {
-    const inp = document.getElementById('tg-cat-subs-input');
-    if (!inp) return;
-    inp.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ',') {
-        e.preventDefault();
-        const v = inp.value.trim().replace(/,+$/, '');
-        if (v) { pendingSubs.push(v); inp.value = ''; renderSubPreview(); }
+    el.innerHTML = ALL_CATEGORIES.map(c => {
+      const active = currentCatId === c.id ? 'active' : '';
+      const imgTag = c.image ? `<img src="${esc(c.image)}">` : esc(c.icon);
+      
+      const adminBtns = IS_ADMIN ? `
+        <div class="tg-admin-btn-wrap">
+          <button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenCatModal('${esc(c.id)}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="tg-adm-btn del" onclick="event.stopPropagation();tgOpenDelModal('cat', '${esc(c.id)}')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
+      ` : '';
+
+      return `
+        <div class="tg-side-item ${active}" onclick="tgSelectCat('${esc(c.id)}')">
+          ${adminBtns}
+          <div class="tg-side-icon">${imgTag}</div>
+          <div class="tg-side-text">${esc(c.name)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderSubcats() {
+    const catObj = ALL_CATEGORIES.find(c => c.id === currentCatId);
+    const wrap = document.getElementById('tg-subcats-wrap');
+    const scroll = document.getElementById('tg-subcats-scroll');
+
+    if (!catObj) { wrap.style.display = 'none'; return; }
+    
+    const subs = catObj.subcategories || [];
+    if (subs.length === 0 && !IS_ADMIN) { wrap.style.display = 'none'; return; }
+    
+    wrap.style.display = 'block';
+    
+    let html = '';
+    if (subs.length > 0) {
+      html += `
+        <div class="tg-subcat-chip" onclick="tgSelectSubcat('all')">
+          <div class="tg-subcat-img" style="${currentSubName === 'all' ? 'border:2px solid var(--primary); background:var(--primary-light);' : ''}">📦</div>
+          <div class="tg-subcat-name" style="color:${currentSubName === 'all' ? 'var(--primary)' : 'inherit'};font-weight:${currentSubName === 'all' ? '700' : '500'}">All</div>
+        </div>
+      `;
+    }
+
+    subs.forEach((s, i) => {
+      const name = s.name || '';
+      const icon = s.icon || '📦';
+      const isActive = currentSubName === name;
+      
+      const adminBtns = IS_ADMIN ? `
+        <div class="tg-admin-btn-wrap">
+          <button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenSubcatModal(${i})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="tg-adm-btn del" onclick="event.stopPropagation();tgOpenDelModal('sub', '${esc(catObj.id)}', ${i})"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
+      ` : '';
+
+      html += `
+        <div class="tg-subcat-chip" onclick="tgSelectSubcat('${esc(name)}')">
+          ${adminBtns}
+          <div class="tg-subcat-img" style="${isActive ? 'border:2px solid var(--primary); background:var(--primary-light);' : ''}">${icon}</div>
+          <div class="tg-subcat-name" style="color:${isActive ? 'var(--primary)' : 'inherit'};font-weight:${isActive ? '700' : '500'}">${esc(name)}</div>
+        </div>
+      `;
+    });
+
+    if (IS_ADMIN) {
+      html += `
+        <div class="tg-add-subcat" onclick="tgOpenSubcatModal(-1)">
+          <div class="tg-subcat-img">+</div>
+          <div class="tg-subcat-name">Add</div>
+        </div>
+      `;
+    }
+
+    scroll.innerHTML = html;
+  }
+
+  function renderProducts() {
+    const catObj = ALL_CATEGORIES.find(c => c.id === currentCatId);
+    const grid = document.getElementById('tg-prod-grid');
+    
+    if (!catObj) { grid.innerHTML = '<div class="tg-empty">Select a category</div>'; return; }
+
+    let filtered = ALL_PRODUCTS.filter(p => {
+      const pCats = [p.category, p.categoryName, p.cat].filter(Boolean).map(slugify);
+      if (Array.isArray(p.categories)) p.categories.forEach(c => pCats.push(slugify(typeof c === 'string' ? c : c.name)));
+      if (!pCats.includes(slugify(catObj.name))) return false;
+
+      if (currentSubName !== 'all') {
+        const pSubs = [p.subCategory, p.subcategory, p.sub_cat].filter(Boolean).map(slugify);
+        if (!pSubs.includes(slugify(currentSubName))) return false;
       }
+
+      if (searchQuery) {
+        const pName = String(p.name || '').toLowerCase();
+        if (!pName.includes(searchQuery.toLowerCase())) return false;
+      }
+
+      const price = Number(p.price || 0);
+      if (price < filterMinPrice || price > filterMaxPrice) return false;
+
+      const rating = Number(p.rating || 0);
+      if (rating < filterRating) return false;
+
+      return true;
     });
-    inp.addEventListener('blur', () => {
-      const v = inp.value.trim().replace(/,+$/, '');
-      if (v) { pendingSubs.push(v); inp.value = ''; renderSubPreview(); }
+
+    if (sortBy === 'price-low') filtered.sort((a,b) => Number(a.price||0) - Number(b.price||0));
+    else if (sortBy === 'price-high') filtered.sort((a,b) => Number(b.price||0) - Number(a.price||0));
+    else if (sortBy === 'newest') filtered.sort((a,b) => tsToMs(b.createdAt) - tsToMs(a.createdAt));
+    else if (sortBy === 'discount') {
+      filtered.sort((a,b) => {
+        const discA = a.compareAtPrice > a.price ? (1 - a.price/a.compareAtPrice) : 0;
+        const discB = b.compareAtPrice > b.price ? (1 - b.price/b.compareAtPrice) : 0;
+        return discB - discA;
+      });
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="tg-empty">No products match your search/filters.</div>';
+    } else {
+      grid.innerHTML = filtered.map(p => {
+        const img = p.image || (p.images && p.images[0]) || '';
+        const price = Number(p.price || 0);
+        const old = Number(p.compareAtPrice || p.mrp || 0);
+        const disc = old > price ? Math.round((1 - price/old)*100) : 0;
+        const tag = p.saleTag || p.tag || '';
+        
+        let tagHtml = '';
+        if (tag) {
+          let tagClass = 'sale';
+          const lower = tag.toLowerCase();
+          if (lower.includes('hot')) tagClass = 'hot';
+          else if (lower.includes('new')) tagClass = 'new';
+          tagHtml = `<div class="tg-prod-tag-badge ${tagClass}">${esc(tag)}</div>`;
+        }
+
+        const adminTagBtn = IS_ADMIN ? `
+          <div class="tg-admin-btn-wrap" style="top:auto; bottom: 8px; right: 8px; flex-direction: row;">
+            <button class="tg-adm-btn tag" onclick="event.stopPropagation();tgOpenTagModal('${p.id}', '${esc(tag)}')" title="Add Tag">
+              <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            </button>
+          </div>
+        ` : '';
+
+        return `
+          <div class="tg-prod-card" onclick="location.href='product.html?id=${p.id}'">
+            <div class="tg-prod-img">
+              ${tagHtml}
+              ${img ? `<img src="${esc(img)}" loading="lazy">` : `<span style="font-size:30px;">📦</span>`}
+              ${adminTagBtn}
+            </div>
+            <div class="tg-prod-body">
+              <div class="tg-prod-name">${esc(p.name)}</div>
+              <div class="tg-prod-price-row">
+                <span class="tg-prod-price">₹${price.toLocaleString('en-IN')}</span>
+                ${old > price ? `<span class="tg-prod-mrp">₹${old.toLocaleString('en-IN')}</span>` : ''}
+              </div>
+              ${disc > 0 ? `<span class="tg-prod-discount">${disc}% off</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    updateFilterUI();
+  }
+
+  // --- EVENT HANDLERS ---
+  window.tgSelectCat = function(id) {
+    currentCatId = id;
+    currentSubName = 'all';
+    searchQuery = '';
+    document.getElementById('tg-search-input').value = '';
+    renderSidebar();
+    renderSubcats();
+    renderProducts();
+    document.querySelector('.tg-prod-scroll').scrollTop = 0;
+  };
+
+  window.tgSelectSubcat = function(name) {
+    currentSubName = name;
+    renderSubcats();
+    renderProducts();
+    document.querySelector('.tg-prod-scroll').scrollTop = 0;
+  };
+
+  window.tgHandleSearch = function() {
+    searchQuery = document.getElementById('tg-search-input').value.trim();
+    renderProducts();
+  };
+
+  // --- FILTER & SORT LOGIC ---
+  window.tgOpenSortSheet = function() {
+    document.querySelectorAll('#tg-sort-modal .tg-fs-opt').forEach(el => {
+      el.classList.toggle('active', el.dataset.sort === sortBy);
     });
-  })();
+    document.getElementById('tg-sort-modal').classList.add('show');
+  };
+
+  window.tgApplySort = function(val) {
+    sortBy = val;
+    document.getElementById('tg-sort-label').textContent = 
+      val === 'relevance' ? 'Sort By' : 
+      val === 'price-low' ? 'Price: Low' : 
+      val === 'price-high' ? 'Price: High' : 
+      val === 'newest' ? 'Newest' : 'Discount';
+    
+    document.getElementById('tg-btn-sort').classList.toggle('active', val !== 'relevance');
+    tgCloseModal('tg-sort-modal');
+    renderProducts();
+  };
+
+  window.tgOpenFilterSheet = function() {
+    document.querySelectorAll('#tg-price-options .tg-fs-opt').forEach(el => {
+      el.classList.toggle('active', Number(el.dataset.min) === filterMinPrice && Number(el.dataset.max) === filterMaxPrice);
+    });
+    document.querySelectorAll('#tg-rating-options .tg-fs-opt').forEach(el => {
+      el.classList.toggle('active', Number(el.dataset.rating) === filterRating);
+    });
+    document.getElementById('tg-filter-modal').classList.add('show');
+  };
+
+  window.tgSetPrice = function(min, max, btn) {
+    filterMinPrice = min;
+    filterMaxPrice = max;
+    document.querySelectorAll('#tg-price-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+  };
+
+  window.tgSetRating = function(val, btn) {
+    filterRating = val;
+    document.querySelectorAll('#tg-rating-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+  };
+
+  window.tgApplyFilters = function() {
+    tgCloseModal('tg-filter-modal');
+    renderProducts();
+  };
+
+  window.tgClearFilters = function() {
+    filterMinPrice = 0;
+    filterMaxPrice = 999999;
+    filterRating = 0;
+    document.querySelectorAll('#tg-price-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#tg-rating-options .tg-fs-opt').forEach(el => el.classList.remove('active'));
+    renderProducts();
+    tgCloseModal('tg-filter-modal');
+  };
+
+  function updateFilterUI() {
+    let count = 0;
+    let chipsHtml = '';
+    
+    if (filterMinPrice > 0 || filterMaxPrice < 999999) {
+      count++;
+      chipsHtml += `<div class="tg-ac">₹${filterMinPrice}-₹${filterMaxPrice === 999999 ? 'Max' : filterMaxPrice} <button onclick="tgRemoveFilter('price')">✕</button></div>`;
+    }
+    if (filterRating > 0) {
+      count++;
+      chipsHtml += `<div class="tg-ac">${filterRating}★ & above <button onclick="tgRemoveFilter('rating')">✕</button></div>`;
+    }
+
+    const countEl = document.getElementById('tg-filter-count');
+    countEl.style.display = count > 0 ? 'flex' : 'none';
+    countEl.textContent = count;
+    document.getElementById('tg-btn-filter').classList.toggle('active', count > 0);
+
+    const chipsWrap = document.getElementById('tg-active-chips-wrap');
+    const chipsCont = document.getElementById('tg-active-chips');
+    if (count > 0) {
+      chipsWrap.style.display = 'block';
+      chipsCont.innerHTML = chipsHtml + `<div class="tg-ac" style="background:#fff;border-color:#eee;color:#d32f2f;cursor:pointer;" onclick="tgClearFilters()">Clear All</div>`;
+    } else {
+      chipsWrap.style.display = 'none';
+    }
+  }
+
+  window.tgRemoveFilter = function(type) {
+    if (type === 'price') { filterMinPrice = 0; filterMaxPrice = 999999; }
+    if (type === 'rating') { filterRating = 0; }
+    renderProducts();
+  };
+
+  // --- PRODUCT TAG MODAL ---
+  window.tgOpenTagModal = function(prodId, currentTag) {
+    if (!IS_ADMIN) return;
+    document.getElementById('tg-tag-prod-id').value = prodId;
+    document.getElementById('tg-tag-input').value = currentTag || '';
+    document.getElementById('tg-tag-modal').classList.add('show');
+  };
+
+  window.tgSaveProductTag = async function() {
+    if (!IS_ADMIN) return;
+    const prodId = document.getElementById('tg-tag-prod-id').value;
+    const tag = document.getElementById('tg-tag-input').value.trim().toUpperCase();
+    
+    try {
+      await db.collection('products').doc(prodId).update({ saleTag: tag });
+      toast('Tag Saved!', 'success');
+      tgCloseModal('tg-tag-modal');
+      
+      // Update local cache to reflect instantly
+      const pIndex = ALL_PRODUCTS.findIndex(p => p.id === prodId);
+      if (pIndex > -1) ALL_PRODUCTS[pIndex].saleTag = tag;
+      try { localStorage.setItem(CACHE_PRODS, JSON.stringify(ALL_PRODUCTS)); } catch(e) {}
+      
+      renderProducts();
+    } catch(e) {
+      toast('Error saving tag', 'error');
+    }
+  };
+
+  // --- ADMIN CRUD (Category/Subcat) ---
+  window.tgOpenCatModal = function(id) {
+    if (!IS_ADMIN) return;
+    const title = document.getElementById('tg-cat-modal-title');
+    const inpId = document.getElementById('tg-cat-id');
+    const inpName = document.getElementById('tg-cat-name');
+    const inpIcon = document.getElementById('tg-cat-icon');
+    const inpOrder = document.getElementById('tg-cat-order');
+    const inpImage = document.getElementById('tg-cat-image');
+
+    if (id) {
+      const cat = ALL_CATEGORIES.find(c => c.id === id);
+      if (!cat) return;
+      title.textContent = 'Edit Category';
+      inpId.value = id;
+      inpName.value = cat.name || '';
+      inpIcon.value = cat.icon || '';
+      inpOrder.value = cat.order || 1;
+      inpImage.value = cat.image || '';
+    } else {
+      title.textContent = 'Add Category';
+      inpId.value = '';
+      inpName.value = '';
+      inpIcon.value = '';
+      inpOrder.value = ALL_CATEGORIES.length + 1;
+      inpImage.value = '';
+    }
+    document.getElementById('tg-cat-modal').classList.add('show');
+  };
 
   window.tgSaveCategory = async function() {
-    if (!IS_ADMIN) { toast('Admin only', 'error'); return; }
-    const name = (document.getElementById('tg-cat-name').value || '').trim();
-    if (!name) { toast('Name required', 'error'); return; }
     const id = document.getElementById('tg-cat-id').value;
+    const name = document.getElementById('tg-cat-name').value.trim();
+    if (!name) { toast('Name required', 'error'); return; }
+    
     const payload = {
       name,
-      icon: (document.getElementById('tg-cat-icon').value || '').trim() || '📦',
-      order: Number(document.getElementById('tg-cat-order').value) || 10,
-      image: (document.getElementById('tg-cat-image').value || '').trim(),
-      discount: (document.getElementById('tg-cat-discount').value || '').trim(),
-      badge: (document.getElementById('tg-cat-badge').value || '').trim(),
-      featured: document.getElementById('tg-cat-featured').checked,
-      subcategories: pendingSubs.slice(),
+      icon: document.getElementById('tg-cat-icon').value.trim() || '📦',
+      order: Number(document.getElementById('tg-cat-order').value) || 1,
+      image: document.getElementById('tg-cat-image').value.trim(),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-    const subInp = document.getElementById('tg-cat-subs-input');
-    if (subInp && subInp.value.trim()) payload.subcategories.push(subInp.value.trim());
-    const btn = document.getElementById('tg-modal-save');
-    const txt = document.getElementById('tg-modal-save-text');
-    btn.disabled = true;
-    const orig = txt.textContent;
-    txt.textContent = id ? 'Updating…' : 'Saving…';
+
     try {
-      if (id) await db.collection('categories').doc(id).set(payload, { merge: true });
-      else {
+      if (id) {
+        await db.collection('categories').doc(id).update(payload);
+      } else {
+        payload.subcategories = [];
         payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
         await db.collection('categories').add(payload);
       }
-      toast('✓ Saved', 'success');
-      tgCloseModal();
-      loadData();
-    } catch (err) {
-      toast('Failed: ' + err.message, 'error');
-      btn.disabled = false; txt.textContent = orig;
-    }
+      toast('Saved!', 'success');
+      tgCloseModal('tg-cat-modal');
+      fetchData();
+    } catch(e) { toast('Error saving', 'error'); }
   };
 
-  window.tgOpenDelModal = function(id, name) {
+  window.tgOpenSubcatModal = function(index) {
+    if (!IS_ADMIN || !currentCatId) return;
+    const cat = ALL_CATEGORIES.find(c => c.id === currentCatId);
+    if (!cat) return;
+
+    const title = document.getElementById('tg-subcat-modal-title');
+    const inpIndex = document.getElementById('tg-subcat-index');
+    const inpName = document.getElementById('tg-subcat-name');
+    const inpIcon = document.getElementById('tg-subcat-icon');
+
+    if (index > -1) {
+      const sub = cat.subcategories[index];
+      title.textContent = 'Edit Sub-category';
+      inpIndex.value = index;
+      inpName.value = sub.name || '';
+      inpIcon.value = sub.icon || '';
+    } else {
+      title.textContent = 'Add Sub-category';
+      inpIndex.value = -1;
+      inpName.value = '';
+      inpIcon.value = '';
+    }
+    document.getElementById('tg-subcat-modal').classList.add('show');
+  };
+
+  window.tgSaveSubcategory = async function() {
+    const cat = ALL_CATEGORIES.find(c => c.id === currentCatId);
+    if (!cat) return;
+
+    const index = Number(document.getElementById('tg-subcat-index').value);
+    const name = document.getElementById('tg-subcat-name').value.trim();
+    const icon = document.getElementById('tg-subcat-icon').value.trim() || '📦';
+    
+    if (!name) { toast('Name required', 'error'); return; }
+
+    const subs = Array.isArray(cat.subcategories) ? [...cat.subcategories] : [];
+    const newSub = { name, icon };
+
+    if (index > -1) subs[index] = newSub;
+    else subs.push(newSub);
+
+    try {
+      await db.collection('categories').doc(cat.id).update({ subcategories: subs });
+      toast('Saved!', 'success');
+      tgCloseModal('tg-subcat-modal');
+      fetchData();
+    } catch(e) { toast('Error saving', 'error'); }
+  };
+
+  window.tgOpenDelModal = function(type, catId, subIndex) {
     if (!IS_ADMIN) return;
-    deleteTarget = id;
-    document.getElementById('tg-del-name').textContent = name || 'this';
+    deleteAction = { type, catId, subIndex: subIndex !== undefined ? Number(subIndex) : null };
+    
+    const text = document.getElementById('tg-del-text');
+    if (type === 'cat') text.textContent = 'Delete this entire category? Products will remain but won\'t show here.';
+    else text.textContent = 'Delete this sub-category?';
+    
     document.getElementById('tg-del-modal').classList.add('show');
-    document.body.style.overflow = 'hidden';
   };
-  window.tgCloseDelModal = function() { document.getElementById('tg-del-modal').classList.remove('show'); document.body.style.overflow = ''; deleteTarget = null; };
+
   window.tgConfirmDelete = async function() {
-    if (!IS_ADMIN || !deleteTarget) return;
+    if (!deleteAction) return;
     const btn = document.getElementById('tg-del-btn');
-    const txt = document.getElementById('tg-del-btn-text');
-    btn.disabled = true; txt.textContent = 'Deleting…';
+    btn.disabled = true;
+
     try {
-      await db.collection('categories').doc(deleteTarget).delete();
-      toast('✓ Deleted', 'success');
-      tgCloseDelModal();
-      loadData();
-    } catch (err) {
-      toast('Failed', 'error');
-      btn.disabled = false; txt.textContent = 'Delete';
-    }
+      if (deleteAction.type === 'cat') {
+        await db.collection('categories').doc(deleteAction.catId).delete();
+        if (currentCatId === deleteAction.catId) currentCatId = null;
+      } else if (deleteAction.type === 'sub') {
+        const cat = ALL_CATEGORIES.find(c => c.id === deleteAction.catId);
+        if (cat) {
+          const subs = [...cat.subcategories];
+          subs.splice(deleteAction.subIndex, 1);
+          await db.collection('categories').doc(cat.id).update({ subcategories: subs });
+        }
+      }
+      toast('Deleted', 'success');
+      tgCloseModal('tg-del-modal');
+      fetchData();
+    } catch(e) { toast('Failed to delete', 'error'); } 
+    finally { btn.disabled = false; deleteAction = null; }
   };
 
-  async function updateCartBadge() {
-    let count = 0;
-    try {
-      const u = auth.currentUser;
-      if (u) {
-        const snap = await db.collection('carts').doc(u.uid).collection('items').get();
-        snap.forEach(d => { count += Number(d.data().qty || 1); });
-      } else {
-        const gc = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
-        gc.forEach(i => { count += Number(i.qty || 1); });
-      }
-    } catch(e) {}
-    ['tg-cart-badge','tg-cart-badge-m'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = count;
-      el.style.display = count > 0 ? 'flex' : 'none';
-    });
-  }
-
-  let _topBtnShown = false;
-  window.addEventListener('scroll', () => {
-    const shouldShow = window.scrollY > 500;
-    if (shouldShow !== _topBtnShown) {
-      _topBtnShown = shouldShow;
-      const btn = document.getElementById('tg-top-btn');
-      if (btn) btn.classList.toggle('show', shouldShow);
-    }
-  }, { passive: true });
-  window.tgScrollTop = function() {
-    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0,0); }
-  };
-
-  /* ⚡⚡ BOOT ⚡⚡ */
-  loadData();
-  applyViewDensity();
-  setTimeout(updateCartBadge, 100); // defer cart badge
-
-  auth.onAuthStateChanged((u) => {
-    checkAdmin(u);
-    if (u) updateCartBadge();
-  });
-
-  document.querySelectorAll('.tg-sheet, .tg-modal').forEach(m => {
-    m.addEventListener('click', (e) => {
-      if (e.target === m) {
-        m.classList.remove('show');
-        document.body.style.overflow = '';
-      }
-    });
-  });
+  // --- INIT ---
+  loadCache(); // Instant load from local storage
+  fetchData(); // Background fetch from Firebase
+  auth.onAuthStateChanged(u => checkAdmin(u));
 
 })();
 </script>
