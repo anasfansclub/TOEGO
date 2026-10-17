@@ -678,7 +678,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     try { visited = sessionStorage.getItem('toego_splash_seen') === '1'; } catch(e) {}
     if (visited) { el.classList.add('gone'); return; }
     try { sessionStorage.setItem('toego_splash_seen', '1'); } catch(e) {}
-    /* ✅ FAST: 250ms splash */
     setTimeout(() => { el.classList.add('hide'); setTimeout(() => el.classList.add('gone'), 250); }, 250);
   })();
 
@@ -696,7 +695,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  /* ✅ FAST: Cache-first reads for the initial load */
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
   const FV = firebase.firestore.FieldValue;
@@ -731,7 +729,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   const RECENT_GUEST = 'toego_recent_guest_v2';
   const GUEST_CART = 'toego_cart_guest';
-  /* ✅ FAST: Bumped cache versions — old stale flushed */
   const CFG_CACHE = 'toego_home_cfg_v23';
   const PROD_CACHE = 'toego_home_prod_v23';
   const CATS_CACHE = 'toego_home_cats_v23';
@@ -915,7 +912,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   }
 
   function bannerHash() {
-    return getAllAdminBanners().map(b => (b.image||'') + '|' + (b.title||'') + '|' + (b.link||'') + '|' + (b.buttonText||'')).join('##');
+    return getAllAdminBanners().map(b => (b.image||'') + '|' + (b.title||'') + '|' + (b.subtitle||'') + '|' + (b.link||'') + '|' + (b.buttonText||'')).join('##');
   }
 
   function renderBannerSlider(force) {
@@ -1246,7 +1243,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   /* ══════════════════ FAST CONFIG LOAD ══════════════════ */
   function loadConfig() {
-    /* ✅ FAST: Render from cache SYNCHRONOUSLY first */
     const bannerCache = loadBannersCache();
     if (bannerCache) {
       ALL_BANNERS = bannerCache.byId || {};
@@ -1265,9 +1261,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       renderAll();
     }
 
-    /* Then async updates in parallel */
-    Promise.allSettled([
-      /* Categories listener */
+    return Promise.allSettled([
       (function() {
         return new Promise(res => {
           try {
@@ -1285,7 +1279,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           res();
         });
       })(),
-      /* Config fetch + listener */
       (async function() {
         try {
           const s = await db.collection('siteSettings').doc('shopHome').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('shopHome').get());
@@ -1307,7 +1300,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           }, () => {});
         } catch(e) {}
       })(),
-      /* Banners listener */
       (function() {
         return new Promise(res => {
           try {
@@ -1396,12 +1388,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!CONFIG) return;
     const main = document.getElementById('tg-mmain'); if (!main) return;
 
-    const sig = JSON.stringify({
-      s: CONFIG.sections,
-      m: (CONFIG.midBanners||[]).length,
-      f: (CONFIG.featured||[]).length,
-      fs: CONFIG.flashSale?.title || ''
-    });
+    const secs = CONFIG.sections || {};
+    const midBanners = CONFIG.midBanners || [];
+    const featured = CONFIG.featured || [];
+    const flashSale = CONFIG.flashSale || {};
+
+    const sig = JSON.stringify({ s: secs, m: midBanners, f: featured, fs: flashSale });
     if (sig === _renderAllSig && main.children.length > 0) return;
     _renderAllSig = sig;
 
@@ -1409,42 +1401,42 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     html += '<div id="tg-banner-wrap"></div>';
     html += '<div id="tg-mflash-container"></div>';
 
-    if (CONFIG.sections?.quickPicks?.enabled !== false) {
+    if (secs.quickPicks?.enabled !== false) {
       html += '<div class="tg-msec">' +
-        '<div class="tg-msec-head"><div><h3>' + esc(CONFIG.sections.quickPicks.title) + '</h3><div class="tg-msec-head-sub">Fast delivery</div></div><a href="' + esc(CONFIG.sections.quickPicks.link) + '" class="tg-msec-btn">View All</a></div>' +
+        '<div class="tg-msec-head"><div><h3>' + esc(secs.quickPicks?.title || '⚡ Quick Picks') + '</h3><div class="tg-msec-head-sub">Fast delivery</div></div><a href="' + esc(secs.quickPicks?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
         '<div class="tg-mmini" id="tg-mquick">' + miniSkel(6) + '</div>' +
       '</div>';
     }
 
     html += '<div class="tg-mchips" id="tg-mhome-chips">' + sortChipsHtml() + '</div>';
 
-    if (CONFIG.sections?.trending?.enabled !== false) {
+    if (secs.trending?.enabled !== false) {
       html += '<div class="tg-msec">' +
-        '<div class="tg-msec-head"><div><h3>' + esc(CONFIG.sections.trending.title) + '</h3><div class="tg-msec-head-sub">Most viewed</div></div><a href="' + esc(CONFIG.sections.trending.link) + '" class="tg-msec-btn">View All</a></div>' +
+        '<div class="tg-msec-head"><div><h3>' + esc(secs.trending?.title || 'Trending Now') + '</h3><div class="tg-msec-head-sub">Most viewed</div></div><a href="' + esc(secs.trending?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
         '<div class="tg-mgrid scroll" id="tg-mtrending">' + skelGrid(6) + '</div>' +
       '</div>';
     }
 
-    if (Array.isArray(CONFIG.midBanners) && CONFIG.midBanners.length) {
+    if (midBanners.length) {
       html += '<div class="tg-mmid">';
-      CONFIG.midBanners.forEach(b => {
+      midBanners.forEach(b => {
         const style = b.image ? 'background-image:url(\'' + esc(b.image) + '\')' : 'background:' + esc(b.gradient||'#2874f0');
         html += '<div class="tg-mmid-banner" style="' + style + '" onclick="location.href=\'' + esc(b.link||'products.html') + '\'"><h4>' + esc(b.title||'') + '</h4><p>' + esc(b.subtitle||'') + '</p></div>';
       });
       html += '</div>';
     }
 
-    if (CONFIG.sections?.bestsellers?.enabled !== false) {
+    if (secs.bestsellers?.enabled !== false) {
       html += '<div class="tg-msec">' +
-        '<div class="tg-msec-head"><div><h3>' + esc(CONFIG.sections.bestsellers.title) + '</h3><div class="tg-msec-head-sub">Top selling</div></div><a href="' + esc(CONFIG.sections.bestsellers.link) + '" class="tg-msec-btn">View All</a></div>' +
+        '<div class="tg-msec-head"><div><h3>' + esc(secs.bestsellers?.title || 'Bestsellers') + '</h3><div class="tg-msec-head-sub">Top selling</div></div><a href="' + esc(secs.bestsellers?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
         '<div class="tg-mgrid scroll" id="tg-mbest">' + skelGrid(6) + '</div>' +
       '</div>';
     }
 
-    if (Array.isArray(CONFIG.featured) && CONFIG.featured.length) {
-      const cls = CONFIG.featured.length >= 3 ? 'tg-mfeat-3' : '';
+    if (featured.length) {
+      const cls = featured.length >= 3 ? 'tg-mfeat-3' : '';
       html += '<div class="tg-mfeat ' + cls + '">';
-      CONFIG.featured.forEach(b => {
+      featured.forEach(b => {
         const style = b.image ? 'background-image:url(\'' + esc(b.image) + '\')' : 'background:' + esc(b.gradient||'linear-gradient(135deg,#2874f0,#1a5dc7)');
         html += '<div class="tg-mfeat-card" style="' + style + '" onclick="location.href=\'' + esc(b.link||'products.html') + '\'"><div class="tg-mfeat-card-content">' + (b.tag ? '<div class="tg-mfeat-card-tag">' + esc(b.tag) + '</div>' : '') + '<h3>' + esc(b.title||'') + '</h3><p>' + esc(b.subtitle||'') + '</p></div></div>';
       });
@@ -1453,16 +1445,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
     html += '<div class="tg-mrecent" id="tg-mrecent" style="display:none;"><div class="tg-msec-head"><div><h3>Recently Viewed</h3></div></div><div class="tg-mrecent-inner" id="tg-mrecent-inner"></div></div>';
 
-    if (CONFIG.sections?.newArrivals?.enabled !== false) {
+    if (secs.newArrivals?.enabled !== false) {
       html += '<div class="tg-msec">' +
-        '<div class="tg-msec-head"><div><h3>' + esc(CONFIG.sections.newArrivals.title) + '</h3><div class="tg-msec-head-sub">Fresh styles</div></div><a href="' + esc(CONFIG.sections.newArrivals.link) + '" class="tg-msec-btn">View All</a></div>' +
+        '<div class="tg-msec-head"><div><h3>' + esc(secs.newArrivals?.title || 'New Arrivals') + '</h3><div class="tg-msec-head-sub">Fresh styles</div></div><a href="' + esc(secs.newArrivals?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
         '<div class="tg-mgrid scroll" id="tg-mnew">' + skelGrid(6) + '</div>' +
       '</div>';
     }
 
-    if (CONFIG.sections?.allProducts?.enabled !== false) {
+    if (secs.allProducts?.enabled !== false) {
       html += '<div class="tg-msec">' +
-        '<div class="tg-msec-head"><div><h3>' + esc(CONFIG.sections.allProducts.title) + '</h3><div class="tg-msec-head-sub">Explore collection</div></div><a href="' + esc(CONFIG.sections.allProducts.link) + '" class="tg-msec-btn">View All</a></div>' +
+        '<div class="tg-msec-head"><div><h3>' + esc(secs.allProducts?.title || 'All Products') + '</h3><div class="tg-msec-head-sub">Explore collection</div></div><a href="' + esc(secs.allProducts?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
         '<div class="tg-mgrid-lg" id="tg-mall">' + skelGrid(8) + '</div>' +
       '</div>';
     }
@@ -1475,10 +1467,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
         '</div>' +
       '</div>';
 
+    _productsSig = ''; 
     renderBannerSlider(false);
     renderFlashSale();
+    renderProducts(true);
     loadProducts();
-    /* ✅ FAST: Defer tracker to 3s */
     setTimeout(() => { loadTracker(); }, 3000);
     if (currentSearch) {
       const home = document.getElementById('tg-mhome'), wrap = document.getElementById('tg-msearch-wrap');
@@ -1605,7 +1598,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return parts.join(';');
   }
 
-  /* ✅ FAST: Products load with cache-first */
   function loadProducts() {
     let cached = getCache(PROD_CACHE, PROD_TTL);
     if (cached && cached.length) {
@@ -1617,31 +1609,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
     if (unsubProducts) { try { unsubProducts(); } catch(e){} unsubProducts = null; }
 
-    let reviewsScheduled = false;
-    let currentUnsub = null;
-
-    const scheduleReviews = () => {
-      if (reviewsScheduled) return;
-      reviewsScheduled = true;
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(() => loadReviewsForProducts().catch(() => {}), { timeout: 5000 });
-      } else {
-        setTimeout(() => loadReviewsForProducts().catch(() => {}), 3000);
-      }
-    };
+    let isFirstLoad = true;
 
     const applySnap = (snap) => {
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
         .filter(p => p && p.active !== false && p.approved !== false);
-      if (!data.length) return false;
-
+      
       const newSig = _productsContentSig(data);
       const oldSig = _productsContentSig(allProducts);
-
-      if (newSig === oldSig) {
-        scheduleReviews();
-        return true;
-      }
+      if (newSig === oldSig) return true;
 
       allProducts = data;
       setCache(PROD_CACHE, allProducts);
@@ -1649,63 +1625,28 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       renderProducts(true);
       loadRecentlyViewed();
       preloadProductImages(data, 8);
-      scheduleReviews();
       return true;
     };
 
-    const tryQuery = (qBuilder, onFail) => {
-      try {
-        const q = qBuilder();
-        const unsub = q.onSnapshot(
-          snap => {
-            if (snap.empty) { try { unsub(); } catch(e){} if (onFail) onFail(); return; }
-            const ok = applySnap(snap);
-            if (!ok && onFail) { try { unsub(); } catch(e){} onFail(); }
-          },
-          err => {
-            try { unsub(); } catch(e){}
-            if (onFail) onFail();
-          }
-        );
-        currentUnsub = unsub;
-        return unsub;
-      } catch(e) {
-        if (onFail) onFail();
-        return null;
+    // Ultra-fast initial fetch
+    db.collection('products').limit(60).get().then(snap => {
+      if (isFirstLoad) {
+        if (snap.empty) { renderProducts(true); return; }
+        applySnap(snap);
+        isFirstLoad = false;
       }
-    };
+    }).catch(() => {
+      if (isFirstLoad) { renderProducts(true); isFirstLoad = false; }
+    });
 
-    const fallbackGet = () => {
-      try {
-        db.collection('products').limit(60).get()
-          .then(snap => {
-            if (snap.empty) { renderProducts(true); return; }
-            applySnap(snap);
-          })
-          .catch(() => { renderProducts(true); });
-      } catch(e) { renderProducts(true); }
-    };
-
-    const fallbackBare = () => {
-      tryQuery(
-        () => db.collection('products').limit(60),
-        fallbackGet
-      );
-    };
-
-    const fallbackActive = () => {
-      tryQuery(
-        () => db.collection('products').where('active','==',true).limit(60),
-        fallbackBare
-      );
-    };
-
-    tryQuery(
-      () => db.collection('products').where('active','==',true).where('approved','==',true).limit(60),
-      fallbackActive
-    );
-
-    unsubProducts = () => { try { if (currentUnsub) currentUnsub(); } catch(e){} };
+    // Live listener
+    try {
+      const q = db.collection('products').limit(60);
+      unsubProducts = q.onSnapshot(snap => {
+        isFirstLoad = false; 
+        applySnap(snap);
+      }, err => {});
+    } catch(e) {}
   }
 
   async function loadReviewsForProducts() {
@@ -2476,17 +2417,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   try { initialQ = new URLSearchParams(window.location.search).get('q') || ''; } catch(e) {}
 
   /* ══════════════════ BOOT — Ultra Fast ══════════════════ */
-  /* ✅ FAST: Categories instantly */
   renderCategories();
-  /* ✅ FAST: Cart badge from cache */
   updateCartBadge();
-  /* ✅ FAST: Theme (cached synchronously before) */
   loadTheme();
-  /* ✅ FAST: Config from cache first, then async */
   loadConfig().then(() => {
     if (initialQ) setTimeout(() => tgMDoSearch(initialQ), 350);
   });
-  /* ✅ FAST: Defer notifications to 5s */
   setTimeout(() => { loadNotifs().catch(() => {}); }, 5000);
   setTimeout(() => { watchNotifs(); }, 6000);
 
