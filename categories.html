@@ -27,7 +27,6 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 input { font: inherit; }
 a { color: inherit; text-decoration: none; }
 
-/* Header */
 .tg-hd { background: #fff; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.08); height: 58px; display: flex; align-items: center; padding: 0 16px; gap: 12px; }
 .tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--text-main); flex-shrink: 0; }
 .tg-hd-back svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.2; }
@@ -43,24 +42,19 @@ a { color: inherit; text-decoration: none; }
 .tg-hd-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
 .tg-hd-badge { position: absolute; top: 0px; right: 0px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #fff; }
 
-/* Progress */
 .tg-progress { position: fixed; top: 58px; left: 0; height: 2px; width: 0; background: var(--primary); z-index: 1002; opacity: 0; transition: width 0.3s ease, opacity 0.3s ease; box-shadow: 0 0 6px rgba(40,116,240,0.5); }
 
-/* Offline */
 .tg-offline { position: fixed; top: 58px; left: 0; right: 0; z-index: 998; background: #f57c00; color: #fff; text-align: center; font-size: 12px; font-weight: 600; padding: 5px; display: none; }
 .tg-offline.show { display: block; }
 
-/* Admin Bar */
 .tg-admin-bar { display: none; position: fixed; top: 58px; left: 0; right: 0; height: 40px; z-index: 999; background: #0f1729; color: #fff; padding: 0 16px; align-items: center; justify-content: space-between; }
 .tg-admin-bar.show { display: flex; }
 .tg-admin-bar-info { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .tg-admin-bar-btn { background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 4px; display: flex; align-items: center; gap: 4px; }
 
-/* Layout */
 .tg-container { display: flex; height: calc(100vh - 58px - var(--nav-h) - env(safe-area-inset-bottom, 0px)); margin-top: 58px; background: #fff; }
 .tg-admin-mode .tg-container { height: calc(100vh - 98px - var(--nav-h) - env(safe-area-inset-bottom, 0px)); margin-top: 98px; }
 
-/* Sidebar */
 .tg-sidebar { width: 100px; background: var(--bg-sec); overflow-y: auto; -webkit-overflow-scrolling: touch; border-right: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none; }
 .tg-sidebar::-webkit-scrollbar { display: none; }
 .tg-side-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 6px; gap: 8px; cursor: pointer; font-size: 11px; font-weight: 500; color: var(--text-muted); text-align: center; position: relative; border-bottom: 1px solid #e8e8e8; transition: background 0.15s; }
@@ -71,10 +65,8 @@ a { color: inherit; text-decoration: none; }
 .tg-side-item.active .tg-side-icon img { border-color: var(--primary-light); box-shadow: 0 1px 6px rgba(40,116,240,0.25); }
 .tg-side-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
 
-/* Content */
 .tg-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; position: relative; }
 
-/* Subcats */
 .tg-subcats-wrap { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; background: #fff; flex-shrink: 0; }
 .tg-subcats-scroll { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
 .tg-subcats-scroll::-webkit-scrollbar { display: none; }
@@ -84,23 +76,20 @@ a { color: inherit; text-decoration: none; }
 .tg-subcat-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .tg-subcat-name { font-size: 11px; font-weight: 500; color: var(--text-main); text-align: center; line-height: 1.2; }
 
-/* Filter Bar */
 .tg-filter-bar { position: sticky; top: 0; z-index: 90; background: #fff; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; padding: 10px 16px; gap: 12px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 .tg-fb-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; background: #fff; font-size: 13px; font-weight: 500; color: var(--text-main); position: relative; }
 .tg-fb-btn.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); font-weight: 700; }
 .tg-fb-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
 .tg-fb-count { position: absolute; top: -6px; right: -6px; background: #ff6161; color: #fff; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #fff; }
 
-/* Chips */
 .tg-active-chips-wrap { background: #fff; overflow-x: auto; scrollbar-width: none; padding: 8px 16px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0; }
 .tg-active-chips-wrap::-webkit-scrollbar { display: none; }
 .tg-active-chips { display: flex; gap: 8px; width: max-content; }
 .tg-ac { display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); border: 1px solid #d0e2ff; color: var(--primary); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; white-space: nowrap; }
 .tg-ac button { width: 16px; height: 16px; border-radius: 50%; background: rgba(40,116,240,0.15); color: var(--primary); font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
 
-/* Products */
 .tg-prod-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 90px; }
-.tg-prod-count { padding: 12px 16px 0; font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.tg-prod-count { padding: 12px 16px 0; font-size: 12px; color: var(--text-muted); font-weight: 500; min-height: 20px; }
 .tg-prod-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px 16px 16px; }
 .tg-prod-card { border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; background: #fff; cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s; position: relative; }
 .tg-prod-card:active { transform: scale(0.98); }
@@ -120,13 +109,11 @@ a { color: inherit; text-decoration: none; }
 .tg-prod-price { font-size: 15px; font-weight: 800; color: #212121; }
 .tg-prod-mrp { font-size: 11px; color: #878787; text-decoration: line-through; font-weight: 500; }
 
-/* Empty & Skeleton */
 .tg-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); grid-column: 1/-1; font-size: 13px; }
 .tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 4px; }
 @keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .tg-skel-card { aspect-ratio: 4/5.5; }
 
-/* Admin Buttons */
 .tg-admin-btn-wrap { position: absolute; bottom: 8px; right: 8px; display: none; gap: 6px; z-index: 10; flex-direction: row; }
 .tg-admin-mode .tg-admin-btn-wrap { display: flex; }
 .tg-adm-btn { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.9); color: #333; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); border: 1px solid #eee; backdrop-filter: blur(4px); }
@@ -141,12 +128,10 @@ a { color: inherit; text-decoration: none; }
 .tg-subcat-chip .tg-adm-btn { width: 20px; height: 20px; }
 .tg-subcat-chip .tg-adm-btn svg { width: 10px; height: 10px; }
 
-/* Add Subcat */
 .tg-add-subcat { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 76px; cursor: pointer; opacity: 0.85; }
 .tg-add-subcat .tg-subcat-img { border: 1.5px dashed var(--primary); color: var(--primary); background: transparent; }
 .tg-add-subcat .tg-subcat-name { color: var(--primary); font-weight: 600; }
 
-/* Modals */
 .tg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; display: none; align-items: flex-end; justify-content: center; }
 .tg-modal.show { display: flex; }
 .tg-sheet { width: 100%; max-width: 500px; background: #fff; border-radius: 16px 16px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto; animation: tgSlideUp .2s; }
@@ -172,7 +157,6 @@ a { color: inherit; text-decoration: none; }
 .tg-field input:focus { border-color: var(--primary); }
 .tg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-/* FABs */
 .tg-fab { position: fixed; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px)); right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(40,116,240,0.4); z-index: 1000; }
 .tg-admin-mode .tg-fab { display: flex; }
 .tg-fab svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; }
@@ -182,7 +166,7 @@ a { color: inherit; text-decoration: none; }
 .tg-top-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 .tg-admin-mode .tg-top-btn { display: none !important; }
 
-/* ✅ BOTTOM NAVIGATION — exactly like shop-home (tg-mbnav) */
+/* ✅ BOTTOM NAV — shop-home style */
 .tg-mbnav { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -1px 4px rgba(0,0,0,0.05); padding-bottom: env(safe-area-inset-bottom, 0); }
 .tg-mbnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; text-decoration: none; transition: color 0.15s; }
 .tg-mbnav-item.active { color: var(--tg-primary); }
@@ -190,7 +174,6 @@ a { color: inherit; text-decoration: none; }
 .tg-mbnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; }
 .tg-mbnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid #fff; }
 
-/* Toasts */
 .tg-toasts { position: fixed; bottom: calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); z-index: 100000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
 .tg-toast { padding: 10px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 4px; font-weight: 500; animation: tgToastIn .2s; }
 @keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -290,7 +273,6 @@ a { color: inherit; text-decoration: none; }
   <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
-<!-- ✅ BOTTOM NAVIGATION — exactly like shop-home -->
 <nav class="tg-mbnav" aria-label="Main navigation">
   <a href="shop-home.html" class="tg-mbnav-item">
     <svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path></svg>
@@ -315,7 +297,6 @@ a { color: inherit; text-decoration: none; }
   </a>
 </nav>
 
-<!-- Sort Sheet -->
 <div class="tg-modal" id="tg-sort-modal">
   <div class="tg-sheet">
     <div class="tg-sheet-head">
@@ -332,7 +313,6 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 
-<!-- Filter Sheet -->
 <div class="tg-modal" id="tg-filter-modal">
   <div class="tg-sheet">
     <div class="tg-sheet-head">
@@ -362,7 +342,6 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 
-<!-- Category Modal -->
 <div class="tg-modal" id="tg-cat-modal">
   <div class="tg-sheet">
     <div class="tg-sheet-head">
@@ -383,7 +362,6 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 
-<!-- Subcategory Modal -->
 <div class="tg-modal" id="tg-subcat-modal">
   <div class="tg-sheet">
     <div class="tg-sheet-head">
@@ -400,7 +378,6 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 
-<!-- Product Tag Modal -->
 <div class="tg-modal" id="tg-tag-modal">
   <div class="tg-sheet">
     <div class="tg-sheet-head">
@@ -419,7 +396,6 @@ a { color: inherit; text-decoration: none; }
   </div>
 </div>
 
-<!-- Delete Modal -->
 <div class="tg-modal" id="tg-del-modal">
   <div class="tg-sheet" style="max-width:340px;">
     <div class="tg-sheet-head">
@@ -468,6 +444,10 @@ a { color: inherit; text-decoration: none; }
   let unsubCats = null;
   let unsubProds = null;
   let hasCache = false;
+
+  // ✅ CRITICAL: productsReady prevents "No products found" flash during initial load
+  // Skeleton stays until products arrive (from cache or Firestore)
+  let productsReady = false;
 
   // ✅ Read ?cat= URL param from shop-home category click
   let pendingCatSlug = null;
@@ -549,9 +529,6 @@ a { color: inherit; text-decoration: none; }
     try { recognition.start(); } catch(e) {}
   };
 
-  // ============================================
-  // Robust cart count detector
-  // ============================================
   function extractCartCount(raw) {
     if (!raw) return 0;
     let c;
@@ -696,7 +673,12 @@ a { color: inherit; text-decoration: none; }
       const p = JSON.parse(localStorage.getItem(CACHE_PRODS) || 'null');
       if (Array.isArray(c) && c.length) {
         ALL_CATEGORIES = c;
-        if (Array.isArray(p)) ALL_PRODUCTS = p;
+        // ✅ Only mark productsReady if products cache exists AND has items
+        const hasCachedProducts = Array.isArray(p) && p.length > 0;
+        if (hasCachedProducts) {
+          ALL_PRODUCTS = p;
+          productsReady = true;
+        }
 
         // ✅ Resolve pending category from URL (against cache)
         if (pendingCatSlug) {
@@ -716,7 +698,7 @@ a { color: inherit; text-decoration: none; }
         hasCache = true;
         renderSidebar();
         renderSubcats();
-        renderProducts();
+        renderProducts();  // internally guards based on productsReady
         return true;
       }
     } catch(e) {}
@@ -738,7 +720,6 @@ a { color: inherit; text-decoration: none; }
   }
 
   function applyCategories(cats) {
-    // ✅ Resolve pending category from URL (against fresh data)
     if (pendingCatSlug && cats.length) {
       const s = slugify(pendingCatSlug);
       const m = cats.find(c => slugify(c.name) === s || slugify(c.id) === s);
@@ -757,7 +738,7 @@ a { color: inherit; text-decoration: none; }
     ALL_CATEGORIES = cats;
     renderSidebar();
     renderSubcats();
-    renderProducts();
+    renderProducts();  // guarded — won't show "no products" until ready
   }
 
   function setupListeners() {
@@ -782,16 +763,18 @@ a { color: inherit; text-decoration: none; }
 
     unsubProds = db.collection('products').limit(500).onSnapshot(snap => {
       const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
-      const isServer = !snap.metadata.fromCache;
-      if (prods.length > 0 || isServer) {
-        ALL_PRODUCTS = prods;
-        persistCache();
-        renderProducts();
-      }
+      ALL_PRODUCTS = prods;
+      // ✅ Mark products ready after first snapshot (cache or server)
+      productsReady = true;
+      persistCache();
+      renderProducts();
       if (!snap.metadata.fromCache) setProgress(false);
     }, err => {
       console.warn('prods listener error', err);
+      // ✅ Even on error, unblock the grid after Firestore fails
+      productsReady = true;
       setProgress(false);
+      renderProducts();
     });
 
     setTimeout(() => {
@@ -811,6 +794,7 @@ a { color: inherit; text-decoration: none; }
 
   window.tgRetry = function() {
     hasCache = false;
+    productsReady = false;
     setProgress(true);
     setupListeners();
   };
@@ -886,7 +870,16 @@ a { color: inherit; text-decoration: none; }
     const countEl = document.getElementById('tg-prod-count');
 
     if (!catObj) {
-      grid.innerHTML = '<div class="tg-empty">Select a category</div>';
+      // Don't wipe skeleton if we don't even have categories yet
+      if (ALL_CATEGORIES.length > 0) {
+        grid.innerHTML = '<div class="tg-empty">Select a category</div>';
+      }
+      if (countEl) countEl.textContent = '';
+      return;
+    }
+
+    // ✅ CRITICAL FIX: if products haven't loaded yet, KEEP skeleton — no "no products" flash
+    if (!productsReady) {
       if (countEl) countEl.textContent = '';
       return;
     }
