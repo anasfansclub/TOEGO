@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#0a0e1a">
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;}
 html,body{margin:0;padding:0;width:100%;max-width:100vw;overflow-x:hidden;background:#0a0e1a;font-family:'Roboto',Arial,sans-serif;color:#e2e8f0;-webkit-font-smoothing:antialiased;}
@@ -286,6 +287,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-scan-status.success::before{background:#22c55e;box-shadow:0 0 8px #22c55e;}
 .tg-scan-status.error{border-color:rgba(239,68,68,0.5);color:#f87171;}
 .tg-scan-status.error::before{background:#ef4444;box-shadow:0 0 8px #ef4444;}
+.tg-scan-status.processing{border-color:rgba(250,204,21,0.5);color:#facc15;}
+.tg-scan-status.processing::before{background:#facc15;box-shadow:0 0 8px #facc15;}
 
 .tg-cam-err{background:rgba(239,68,68,0.12);border:1.5px solid rgba(239,68,68,0.4);border-radius:12px;padding:14px;color:#f87171;font-size:12.5px;line-height:1.6;text-align:center;margin-bottom:12px;}
 .tg-cam-err b{color:#fff;}
@@ -316,6 +319,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-fld input:focus,.tg-fld select:focus,.tg-fld textarea:focus{border-color:#00d4ff;background:rgba(0,212,255,0.06);box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
 .tg-fld select option{background:#0f1729;color:#fff;}
 .tg-fld textarea{min-height:80px;resize:vertical;}
+.tg-fld input[type="date"]{color-scheme:dark;}
 .tg-fld-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 @media (max-width:480px){.tg-fld-row{grid-template-columns:1fr;gap:0;}}
 .tg-fld-h{font-size:11px;color:#64748b;margin-top:5px;line-height:1.4;}
@@ -466,6 +470,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-select-bar .sel-count{font-size:11.5px;color:#8892a6;font-weight:700;margin-left:auto;}
 .tg-select-bar .tg-btn{padding:8px 14px;font-size:11.5px;}
 
+.tg-export-card{background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(0,212,255,0.08));border:1.5px solid rgba(34,197,94,0.3);border-radius:14px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.tg-export-card::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;background:radial-gradient(circle,rgba(34,197,94,0.15),transparent 70%);border-radius:50%;}
+.tg-export-title{font-size:15px;font-weight:900;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;position:relative;z-index:2;}
+.tg-export-sub{font-size:11.5px;color:#8892a6;margin-bottom:14px;position:relative;z-index:2;}
+.tg-export-body{position:relative;z-index:2;}
+.tg-export-date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+@media(max-width:480px){.tg-export-date-row{grid-template-columns:1fr;}}
+.tg-export-date-row label{font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;display:block;}
+.tg-export-date-row input{width:100%;background:rgba(0,0,0,0.3);border:1.5px solid rgba(255,255,255,0.1);color:#fff;padding:11px 12px;border-radius:10px;font-size:13.5px;font-weight:700;outline:none;font-family:inherit;color-scheme:dark;}
+.tg-export-date-row input:focus{border-color:#00d4ff;box-shadow:0 0 0 3px rgba(0,212,255,0.12);}
+.tg-export-btn-row{display:grid;grid-template-columns:auto 1fr;gap:8px;}
+.tg-export-btn-row .tg-btn{padding:12px 16px;font-size:12px;justify-content:center;}
+.tg-export-btn-row .tg-btn.suc{flex:1;}
+
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:3px;}
@@ -517,7 +535,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div class="tg-f"><div class="tg-f-ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><input type="password" id="tg-lp" placeholder="Password" autocomplete="current-password" required><button type="button" class="tg-f-toggle" id="tg-pt">Show</button></div>
       <button type="submit" class="tg-login-btn" id="tg-lb"><span>Sign In</span></button>
     </form>
-    <div class="tg-login-hint"><b>🔐 Admin Only</b><br>Authorized: <b>anasfansclub@toego.in</b></div>
+    <div class="tg-login-hint"><b>🔐 Admin Access Only</b><br>Sirf authorized admins hi access kar sakte hain</div>
     <a href="shop-home.html" class="tg-login-back">← Back to Shop</a>
   </div>
 </div>
@@ -614,10 +632,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     </div>
     <div class="tg-dr-i" data-v="history" onclick="tgNav('history')">
       <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      <div class="tg-dr-il">History</div>
+      <div class="tg-dr-il">History & Export</div>
     </div>
   </div>
-  <div class="tg-dr-f">Pickup Command v4.2 LIVE · Made in India 🇮🇳</div>
+  <div class="tg-dr-f">Pickup Command v4.3 LIVE · Made in India 🇮🇳</div>
 </aside>
 
 <div class="tg-w" id="tg-w">
@@ -687,7 +705,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
     </div>
 
-    <!-- NEW: READY FOR PICKUP -->
     <div class="tg-v" id="v-pickups">
       <div class="tg-sec">
         <div class="tg-sh">
@@ -873,6 +890,29 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     </div>
 
     <div class="tg-v" id="v-history">
+      <div class="tg-export-card">
+        <div class="tg-export-title">📥 Export Daily Orders</div>
+        <div class="tg-export-sub">Date range select karo · Excel me sab pickup data download hoga</div>
+        <div class="tg-export-body">
+          <div class="tg-export-date-row">
+            <div>
+              <label>From Date</label>
+              <input type="date" id="export-from">
+            </div>
+            <div>
+              <label>To Date</label>
+              <input type="date" id="export-to">
+            </div>
+          </div>
+          <div class="tg-export-btn-row">
+            <button class="tg-btn gho" onclick="tgQuickExportToday()">📅 Today</button>
+            <button class="tg-btn suc" onclick="tgExportOrders()">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Excel
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="tg-sec">
         <div class="tg-sh">
           <div><div class="tg-st"><span class="ic">📜</span>Complete History</div><div class="tg-ss">All pickup & settlement records</div></div>
@@ -929,7 +969,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<!-- QUICK ASSIGN MODAL -->
 <div class="tg-mod" id="mod-quick-assign">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
@@ -1087,6 +1126,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let SCAN_MODE = 'bulk';
   let SCAN_SESSION = { count: 0, value: 0, recent: [] };
   let SCANNER_DEBUG = false;
+  let _scanProcessing = false;
+  let _scannerCleanupTimer = null;
 
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function inr(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
@@ -1099,7 +1140,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function openMod(id) { document.getElementById(id).classList.add('show'); document.body.style.overflow='hidden'; }
   window.tgCloseMod = function(id) { document.getElementById(id).classList.remove('show'); document.body.style.overflow=''; };
 
-  /* ⭐ Order ID extraction - handles QR + plain barcode */
   function extractOrderIdFromScan(rawCode) {
     let clean = String(rawCode || '').trim().toUpperCase();
     if (!clean) return '';
@@ -1320,7 +1360,23 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const snd = document.getElementById('tg-snd-btn');
     snd.classList.toggle('on', soundEnabled);
     snd.classList.toggle('off', !soundEnabled);
+    initHistory();
     initListeners();
+  }
+
+  /* ⭐ NEW: History management for back button */
+  function initHistory() {
+    try {
+      const hash = (location.hash || '').replace('#', '');
+      const validViews = ['dash','apps','boys','pickups','assign','tasks','receive','settle','history'];
+      const initialView = validViews.includes(hash) ? hash : 'dash';
+      history.replaceState({ pickupView: initialView }, '', '#' + initialView);
+      if (initialView !== 'dash') {
+        tgNavInternal(initialView, true);
+      }
+    } catch(e) {
+      try { history.replaceState({ pickupView: 'dash' }, '', '#dash'); } catch(e2) {}
+    }
   }
 
   window.tgOpenDrawer = function() {
@@ -1334,8 +1390,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     document.getElementById('tg-ov').classList.remove('show');
     document.body.style.overflow='';
   };
+
+  /* ⭐ FIXED: Nav with history push */
   window.tgNav = function(v) {
     tgCloseDrawer();
+    if (v !== CUR_VIEW) {
+      try { history.pushState({ pickupView: v }, '', '#' + v); } catch(e) {}
+    }
+    tgNavInternal(v, false);
+  };
+
+  function tgNavInternal(v, skipHistory) {
     setTimeout(() => {
       CUR_VIEW = v;
       document.querySelectorAll('.tg-v').forEach(el => el.classList.remove('active'));
@@ -1350,10 +1415,16 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       if (v === 'tasks') renderTasks();
       if (v === 'receive') renderReceive();
       if (v === 'settle') { renderSettle(); renderSettleHistory(); }
-      if (v === 'history') renderHistory();
+      if (v === 'history') { initExportDates(); renderHistory(); }
       if (v === 'assign') renderAssignSellers();
     }, 100);
-  };
+  }
+
+  /* ⭐ NEW: Back button handler - goes back one page */
+  window.addEventListener('popstate', (e) => {
+    const v = (e.state && e.state.pickupView) ? e.state.pickupView : 'dash';
+    tgNavInternal(v, true);
+  });
 
   function initListeners() {
     if (unsubPartners) try { unsubPartners(); } catch(e){}
@@ -1428,7 +1499,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       renderDash();
     }, err => console.warn('Settle listener err:', err && err.message));
 
-    /* ⭐ NEW: Listen to orders ready for pickup (label_generated / processing) */
     if (unsubPendingOrders) try { unsubPendingOrders(); } catch(e){}
     unsubPendingOrders = db.collection('orders')
       .where('status', 'in', ['label_generated', 'processing'])
@@ -1453,7 +1523,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         renderTicker();
       }, err => {
         console.warn('Pending orders listener err:', err && err.message);
-        // Fallback: fetch all and filter client-side
         db.collection('orders').limit(200).get().then(snap => {
           let orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
             .filter(o => ['label_generated', 'processing'].includes(String(o.status || '').toLowerCase()));
@@ -1488,7 +1557,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return { assigned:'ylw', collected:'blu', received:'grn', settled:'gry' }[normStatus(s)] || 'ylw';
   }
 
-  /* ⭐ Get pending pickup orders (not yet assigned to any task) */
   function getPendingPickupOrders() {
     const assignedOrderIds = new Set();
     ALL_TASKS.forEach(t => {
@@ -1605,20 +1673,16 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   }
 
-  /* ⭐ NEW: Render pending pickup orders */
   function renderPendingPickups() {
     const el = document.getElementById('pickups-list');
     if (!el) return;
     const list = getPendingPickupOrders();
-    setText('pickups-count', list.length);
-
     if (!list.length) {
       el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📭</div><div class="tg-empty-t">No orders ready for pickup</div><div class="tg-empty-d">Jab seller label generate karega, order yahan automatic aayega</div></div>';
       document.getElementById('tg-bulk-pickup-btn').style.display = 'none';
       return;
     }
 
-    // Clean up selected IDs that no longer exist
     const validIds = new Set(list.map(o => o.id));
     SELECTED_ORDER_IDS.forEach(id => { if (!validIds.has(id)) SELECTED_ORDER_IDS.delete(id); });
 
@@ -1632,22 +1696,18 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const itemCount = items.length || Number(o.itemCount || 0);
     const total = Number(o.total || 0);
     const sellerName = o.sellerName || o.shopName || '';
-    const sellerPhone = o.sellerPhone || o.sellerPhoneNumber || '';
     const buyerName = o.userName || (o.address && o.address.name) || 'Customer';
     const buyerCity = (o.address && o.address.city) || '';
     const status = String(o.status || '').toLowerCase().replace(/_/g, ' ');
     const selected = SELECTED_ORDER_IDS.has(o.id);
     const payMode = String(o.paymentMethod || 'cod').toUpperCase();
 
-    // Try to find seller name from ALL_SELLERS
     let displaySeller = sellerName;
     if (!displaySeller && Array.isArray(o.sellerIds) && o.sellerIds.length) {
       const s = ALL_SELLERS.find(x => x.id === o.sellerIds[0]);
       if (s) displaySeller = s.shopName || '';
     }
-    if (!displaySeller && items.length && items[0].sellerName) {
-      displaySeller = items[0].sellerName;
-    }
+    if (!displaySeller && items.length && items[0].sellerName) displaySeller = items[0].sellerName;
     if (!displaySeller) displaySeller = 'Seller';
 
     return '<div class="tg-row" style="padding-left:44px;position:relative;">' +
@@ -1706,7 +1766,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     tgQuickAssignOrders(Array.from(SELECTED_ORDER_IDS));
   };
 
-  /* ⭐ Quick assign modal */
   window.tgQuickAssignOrders = function(orderIds) {
     const orders = PENDING_PICKUP_ORDERS.filter(o => orderIds.includes(o.id));
     if (!orders.length) { toast('No orders found', 'error'); return; }
@@ -1891,7 +1950,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
       await batch.commit();
 
-      // Mark orders as pickup-assigned
       try {
         const updateBatch = db.batch();
         for (const order of orders) {
@@ -1958,7 +2016,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       return;
     }
 
-    const vMap = { bicycle:'🚲 Bicycle', bike:'🏍️ Bike', auto:'🛺 Auto', car:'🚗 Car', cycle_rickshaw:'🛺 Cycle Rickshaw', other:'🚶 Other' };
     el.innerHTML = list.map(a => {
       const st = (a.status || 'pending').toLowerCase();
       const isApproved = st === 'approved' || a.approved === true;
@@ -2606,6 +2663,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     RECENT_SCAN_CODES.clear();
     RECENTLY_RECEIVED.clear();
     lastScanTime = 0;
+    _scanProcessing = false;
 
     const title = document.getElementById('scanner-title');
     if (title) title.textContent = SCAN_MODE === 'bulk' ? '📷 Bulk Receive' : '📷 Single Receive';
@@ -2637,9 +2695,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const el = document.getElementById('tg-scan-status');
     if (!el) return;
     el.textContent = txt;
-    el.classList.remove('success', 'error');
+    el.classList.remove('success', 'error', 'processing');
     if (cls === 'success') el.classList.add('success');
     if (cls === 'error') el.classList.add('error');
+    if (cls === 'processing') el.classList.add('processing');
   }
 
   async function startScanner() {
@@ -2687,6 +2746,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       scannerRunning = true;
       setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', '');
       errEl.style.display = 'none';
+
+      // Start periodic cleanup of RECENT_SCAN_CODES
+      if (_scannerCleanupTimer) clearInterval(_scannerCleanupTimer);
+      _scannerCleanupTimer = setInterval(() => {
+        const now = Date.now();
+        const toDelete = [];
+        RECENT_SCAN_CODES.forEach((ts, code) => {
+          if (now - ts > 60000) toDelete.push(code);
+        });
+        toDelete.forEach(c => RECENT_SCAN_CODES.delete(c));
+      }, 30000);
     } catch(e) {
       scannerRunning = false;
       let msg = '';
@@ -2706,36 +2776,75 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   }
 
   async function stopScanner() {
+    if (_scannerCleanupTimer) { clearInterval(_scannerCleanupTimer); _scannerCleanupTimer = null; }
     if (scanner) {
       try { if (scannerRunning) await scanner.stop(); } catch(e) {}
       try { scanner.clear(); } catch(e) {}
       scanner = null;
       scannerRunning = false;
     }
+    _scanProcessing = false;
     const reader = document.getElementById('tg-reader');
     if (reader) reader.innerHTML = '';
   }
 
+  /* ⭐ FIXED: No duplicate scans — flag + pause/resume + longer cooldowns */
   function onScanSuccess(decodedText) {
+    // Block re-entry while processing
+    if (_scanProcessing) return;
     const now = Date.now();
-    if (now - lastScanTime < 600) return;
-    lastScanTime = now;
+    if (now - lastScanTime < 1500) return;
+
     const clean = extractOrderIdFromScan(decodedText);
     if (!clean || clean.length < 3) return;
+
+    // Same barcode blocked for 20 seconds
     const recentTs = RECENT_SCAN_CODES.get(clean);
-    if (recentTs && (now - recentTs) < 5000) return;
+    if (recentTs && (now - recentTs) < 20000) return;
+
+    _scanProcessing = true;
+    lastScanTime = now;
+
+    // Pause camera briefly (smooth — video keeps playing but no detection)
+    try {
+      if (scanner && scannerRunning && typeof scanner.pause === 'function') {
+        scanner.pause(false);
+      }
+    } catch(e) {}
+
+    setScanStatus('⏳ Processing...', 'processing');
     vibrate([50, 30, 50]);
-    tgProcessScan(clean);
+
+    // Process, then resume
+    Promise.resolve().then(() => tgProcessScan(clean)).finally(() => {
+      setTimeout(() => {
+        try {
+          if (scanner && scannerRunning && typeof scanner.resume === 'function') {
+            scanner.resume();
+          }
+        } catch(e) {}
+        _scanProcessing = false;
+        if (scannerRunning && document.getElementById('tg-scan-status')?.classList.contains('processing')) {
+          setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', '');
+        }
+      }, 1200);
+    });
   }
 
   function onScanFailure(err) { if (SCANNER_DEBUG) console.log('[scan fail]', err); }
 
   window.tgManualScan = function() {
+    if (_scanProcessing) { toast('Please wait...', 'info'); return; }
     const v = (document.getElementById('tg-manual-scan').value || '').trim().toUpperCase();
     if (!v) { toast('Order ID daalo', 'error'); return; }
     const clean = extractOrderIdFromScan(v);
     if (!clean) { toast('Invalid ID', 'error'); return; }
-    tgProcessScan(clean);
+    const recentTs = RECENT_SCAN_CODES.get(clean);
+    if (recentTs && (Date.now() - recentTs) < 20000) { toast('Ye already scan ho chuka hai', 'info'); return; }
+    _scanProcessing = true;
+    Promise.resolve().then(() => tgProcessScan(clean)).finally(() => {
+      setTimeout(() => { _scanProcessing = false; }, 400);
+    });
   };
 
   async function tgProcessScan(code) {
@@ -2761,7 +2870,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }
       tgAddRecent({ code: clean, ok: false, msg: 'Not found' });
       toast('❌ No match', 'error');
-      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', ''); }, 1500);
+      setTimeout(() => { if (scannerRunning && !_scanProcessing) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', ''); }, 1500);
       return;
     }
 
@@ -2790,7 +2899,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         setText('bulk-count', SCAN_SESSION.count);
         setText('bulk-earn', '₹' + SCAN_SESSION.value);
         setScanStatus('✓ Received', 'success');
-        setTimeout(() => { if (scannerRunning) setScanStatus('🎯 Scanning...', ''); }, 1200);
       } else {
         setScanStatus('✓ Received', 'success');
         showResultCard('success', 'Received!', 'Packet: <b>#' + esc(getTaskDisplayId(task)) + '</b><br>From: <b>' + esc(task.pickupBoyName || '—') + '</b>', '₹' + earn);
@@ -2798,13 +2906,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       }
       tgAddRecent({ code: clean, ok: true, packet: getTaskDisplayId(task), seller: task.pickupBoyName || 'Boy', earn: earn });
       document.getElementById('tg-manual-scan').value = '';
-      lastScanTime = Date.now() - 400;
     } catch(e) {
       playErrBeep(); flashError();
       tgAddRecent({ code: clean, ok: false, msg: 'Error' });
       toast('Failed: ' + e.message, 'error');
       if (scannerRunning) setScanStatus('❌ Error', 'error');
-      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', ''); }, 1500);
+      setTimeout(() => { if (scannerRunning && !_scanProcessing) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', ''); }, 1500);
     }
   }
 
@@ -3002,6 +3109,133 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       '</div>';
     }).join('');
   }
+
+  /* ⭐ NEW: Export functions */
+  function initExportDates() {
+    const today = new Date().toISOString().slice(0,10);
+    const fromEl = document.getElementById('export-from');
+    const toEl = document.getElementById('export-to');
+    if (fromEl && !fromEl.value) fromEl.value = today;
+    if (toEl && !toEl.value) toEl.value = today;
+  }
+
+  window.tgQuickExportToday = function() {
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('export-from').value = today;
+    document.getElementById('export-to').value = today;
+    tgExportOrders();
+  };
+
+  window.tgExportOrders = function() {
+    const fromStr = (document.getElementById('export-from')?.value || '').trim();
+    const toStr = (document.getElementById('export-to')?.value || '').trim();
+    if (!fromStr || !toStr) { toast('Select date range', 'error'); return; }
+
+    const fromDate = new Date(fromStr + 'T00:00:00');
+    const toDate = new Date(toStr + 'T23:59:59');
+    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) { toast('Invalid dates', 'error'); return; }
+    if (fromDate > toDate) { toast('From date > To date', 'error'); return; }
+
+    // Filter tasks whose assignedAt/createdAt falls in range
+    const filtered = ALL_TASKS.filter(t => {
+      const d = t.assignedAt?.toDate?.() || t.createdAt?.toDate?.();
+      if (!d) return false;
+      return d >= fromDate && d <= toDate;
+    });
+
+    if (!filtered.length) {
+      toast('No orders found in this range', 'error');
+      return;
+    }
+
+    // Sort by assigned date
+    filtered.sort((a,b) => {
+      const at = a.assignedAt?.toDate?.()?.getTime?.() || a.createdAt?.toDate?.()?.getTime?.() || 0;
+      const bt = b.assignedAt?.toDate?.()?.getTime?.() || b.createdAt?.toDate?.()?.getTime?.() || 0;
+      return at - bt;
+    });
+
+    const rows = filtered.map(t => {
+      const assignedDt = t.assignedAt?.toDate?.();
+      const collectedDt = t.collectedAt?.toDate?.();
+      const receivedDt = t.receivedAt?.toDate?.();
+      const settledDt = t.settledAt?.toDate?.();
+      const fmtDT = (d) => d ? d.toLocaleString('en-IN') : '';
+
+      return {
+        'Order ID': getTaskDisplayId(t),
+        'Full Order ID': t.orderFullId || '',
+        'Seller Name': t.sellerName || '',
+        'Seller Phone': t.sellerPhone || '',
+        'Seller Pincode': t.sellerPincode || '',
+        'Pickup Boy': t.pickupBoyName || '',
+        'Boy Phone': t.pickupBoyPhone || '',
+        'Buyer Name': t.buyerName || '',
+        'Buyer Phone': t.buyerPhone || '',
+        'Buyer City': t.buyerCity || '',
+        'Buyer Pincode': t.buyerPincode || '',
+        'Items Count': t.itemCount || 0,
+        'Order Value (₹)': t.orderValue || 0,
+        'Earning (₹)': t.earning || 0,
+        'Payment Mode': (t.paymentMode || 'COD').toUpperCase(),
+        'Status': stLabel(t.status),
+        'Assigned At': fmtDT(assignedDt),
+        'Collected At': fmtDT(collectedDt),
+        'Received At': fmtDT(receivedDt),
+        'Settled At': fmtDT(settledDt)
+      };
+    });
+
+    try {
+      const ws = XLSX.utils.json_to_sheet(rows);
+      // Column widths
+      ws['!cols'] = [
+        { wch: 16 }, { wch: 20 }, { wch: 22 }, { wch: 14 }, { wch: 12 },
+        { wch: 18 }, { wch: 14 }, { wch: 20 }, { wch: 14 }, { wch: 14 },
+        { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
+        { wch: 14 }, { wch: 20 }, { wch: 20 }, { wch: 20 }, { wch: 20 }
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Pickup Orders');
+
+      // Summary sheet
+      const totalEarning = filtered.reduce((s,t) => s + Number(t.earning||0), 0);
+      const totalOrders = filtered.length;
+      const statusCounts = {};
+      filtered.forEach(t => {
+        const lbl = stLabel(t.status);
+        statusCounts[lbl] = (statusCounts[lbl] || 0) + 1;
+      });
+
+      const summaryRows = [
+        { 'Metric': 'Report Range', 'Value': fromStr + ' to ' + toStr },
+        { 'Metric': 'Total Orders', 'Value': totalOrders },
+        { 'Metric': 'Total Earning (₹)', 'Value': totalEarning },
+        { 'Metric': '', 'Value': '' },
+        { 'Metric': '— STATUS BREAKDOWN —', 'Value': '' }
+      ];
+      Object.keys(statusCounts).forEach(k => {
+        summaryRows.push({ 'Metric': k, 'Value': statusCounts[k] });
+      });
+      summaryRows.push({ 'Metric': '', 'Value': '' });
+      summaryRows.push({ 'Metric': 'Generated At', 'Value': new Date().toLocaleString('en-IN') });
+      summaryRows.push({ 'Metric': 'Generated By', 'Value': USER.email || '' });
+
+      const wsSum = XLSX.utils.json_to_sheet(summaryRows);
+      wsSum['!cols'] = [{ wch: 30 }, { wch: 40 }];
+      XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
+
+      const filename = 'TOEGO_Pickup_' + fromStr + '_to_' + toStr + '.xlsx';
+      XLSX.writeFile(wb, filename);
+
+      toast('✓ ' + totalOrders + ' orders exported', 'success');
+      playBeep();
+    } catch(e) {
+      console.error('Export error:', e);
+      toast('Export failed: ' + e.message, 'error');
+    }
+  };
 
   function updateBadges() {
     const pendingApps = ALL_APPS.filter(a => {
