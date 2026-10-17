@@ -703,7 +703,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return null;
   }
 
-  /* ✅ FIX #1: enrich now copies gst + gstIncluded from product */
   function enrichFromCacheSync(items) {
     return items.map(it => {
       const p = _pGet(it.productId);
@@ -715,7 +714,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         sellerName: it.sellerName || p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '',
         rating: (it.rating != null) ? it.rating : _pickNum(p, ['rating','avgRating','averageRating','stars','ratingAvg']),
         ratingCount: (it.ratingCount != null) ? it.ratingCount : _pickCount(p, ['ratingCount','reviewCount','numReviews','ratingsCount','totalRatings','totalReviews','reviewsCount']),
-        /* ✅ GST copied from product — fallback to item's own value */
         gst: (it.gst != null && Number(it.gst) >= 0) ? Number(it.gst) : productGst,
         gstIncluded: (it.gstIncluded != null) ? it.gstIncluded : (p.gstIncluded === true)
       };
@@ -799,7 +797,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     updateTotals();
   }
 
-  /* ✅ NEW: Live listener for payment settings — no refresh needed */
   function watchPaymentSettings() {
     try {
       db.collection('siteSettings').doc('payment').onSnapshot(snap => {
@@ -971,7 +968,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (c) c.textContent = n > 0 ? '(' + n + ')' : '';
   }
 
-  /* ✅ FIX #2: getItemGstPct uses item.gst first, fallback to SETTINGS only if truly missing */
   function getItemGstPct(item) {
     if (!SETTINGS.gstEnabled) return 0;
     if (item && item.gst != null && !isNaN(Number(item.gst)) && Number(item.gst) >= 0) {
@@ -1208,14 +1204,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return Math.max(0, Math.round(disc));
   }
 
-  /* ✅ FIX #3: calcTotals tracks per-rate GST breakdown */
   function calcTotals() {
     const sel = getSelectedItems();
     let mrpTotal = 0, finalTotal = 0;
     let gstIncludedAmt = 0, gstAddedAmt = 0, qtyCount = 0;
 
-    /* ✅ NEW: per-rate breakdown */
-    const gstByRate = {}; // { rate: { added, included, hasAdded, hasIncluded, count } }
+    const gstByRate = {};
 
     sel.forEach(it => {
       const q = Number(it.qty || 1);
@@ -1270,7 +1264,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       gstIncludedAmt,
       gstAddedAmt,
       gstPayable: gstAddedAmt,
-      gstByRate,          /* ✅ NEW */
+      gstByRate,
       delivery,
       deliverySource,
       cartCommission,
@@ -1284,11 +1278,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     };
   }
 
-  /* ✅ FIX #4: buildChargeTags shows per-rate GST tags */
   function buildChargeTags(t) {
     const tags = [];
 
-    /* Commission tag */
     if (t.cartCommission !== 0) {
       if (t.cartCommission > 0) {
         tags.push(`<span class="tg-tag handling">
@@ -1301,7 +1293,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     }
 
-    /* ✅ GST tags — one per unique rate */
     if (SETTINGS.gstEnabled && t.gstByRate) {
       const rates = Object.keys(t.gstByRate).map(Number).sort((a, b) => a - b);
       rates.forEach(rate => {
@@ -1323,7 +1314,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return tags.join('');
   }
 
-  /* ✅ FIX #5: Dynamic GST row label */
   function updateGstLabel(t) {
     const label = document.getElementById('tg-gst-pct-label');
     if (!label) return;
@@ -1336,7 +1326,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         ? '(' + rates[0] + '% included)'
         : '(' + rates[0] + '%)';
     } else {
-      /* Multiple rates — show range or "mixed" */
       const minR = rates[0];
       const maxR = rates[rates.length - 1];
       const allIncluded = rates.every(r => {
@@ -1386,7 +1375,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (cpRow) cpRow.style.display = 'none';
     }
 
-    /* ✅ FIX: Dynamic GST row label + value */
     updateGstLabel(t);
     if (!SETTINGS.gstEnabled) {
       setText('tg-price-gst', fmtINR(0));
@@ -1497,10 +1485,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  window.tgRemoveItem = async function(docId) {
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ FIX #1: tgRemoveItem — skipConfirm param + immediate pending clear
+     ═══════════════════════════════════════════════════════════════ */
+  window.tgRemoveItem = async function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
-    if (!confirm('Remove "' + (item.name || 'this item') + '" from cart?')) return;
+    if (!skipConfirm && !confirm('Remove "' + (item.name || 'this item') + '" from cart?')) return;
+
     const node = _itemNodeMap.get(docId);
     if (node) node.classList.add('removing');
     _pendingCartDeletes.add(docId);
@@ -1515,8 +1507,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (currentUser) {
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
-        setTimeout(() => _pendingCartDeletes.delete(docId), 3000);
-        toast('Removed from cart', 'success');
+        /* ✅ Clear pending IMMEDIATELY after successful delete */
+        _pendingCartDeletes.delete(docId);
+        if (!skipConfirm) toast('Removed from cart', 'success');
       } catch(err) {
         _pendingCartDeletes.delete(docId);
         toast('Could not remove item', 'error');
@@ -1524,10 +1517,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     } else {
       setGuestCart(cartItems);
-      toast('Removed from cart', 'success');
+      if (!skipConfirm) toast('Removed from cart', 'success');
     }
   };
 
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ FIX #3: tgRemoveSelected — immediate pending clear
+     ═══════════════════════════════════════════════════════════════ */
   window.tgRemoveSelected = async function() {
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
@@ -1550,7 +1546,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const col = db.collection('carts').doc(currentUser.uid).collection('items');
         idsToRemove.forEach(id => batch.delete(col.doc(id)));
         await batch.commit();
-        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 3000);
+        /* ✅ Clear pending IMMEDIATELY after successful batch delete */
+        idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
         toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
       } catch(err) {
         idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
@@ -1563,6 +1560,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ FIX #2: tgMoveToWishlist — no confirm dialog
+     ═══════════════════════════════════════════════════════════════ */
   window.tgMoveToWishlist = async function(docId) {
     if (!currentUser) {
       toast('Please log in to save to wishlist', 'info');
@@ -1573,10 +1573,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!item) return;
     try {
       const pid = item.productId || item.id;
-      await db.collection('wishlists').doc(currentUser.uid).set({ items: FV.arrayUnion(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
-      await window.tgRemoveItem(docId);
+      await db.collection('wishlists').doc(currentUser.uid).set({
+        items: FV.arrayUnion(pid),
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
+      /* ✅ Skip confirm — user already committed by clicking "Save for later" */
+      await window.tgRemoveItem(docId, true);
       toast('Saved for later ❤', 'success');
-    } catch(err) { toast('Could not save', 'error'); }
+    } catch(err) {
+      toast('Could not save to wishlist', 'error');
+    }
   };
 
   function isCouponNotExpired(c) {
@@ -2474,7 +2480,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   loadCoupons();
   loadSellerGlobal();
   watchSellerGlobal();
-  /* ✅ NEW: Live payment listener */
   watchPaymentSettings();
 
   document.getElementById('tg-coupon-input').addEventListener('keydown', function(e) {
