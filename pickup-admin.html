@@ -152,7 +152,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-hs-l{font-size:10px;color:#8892a6;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;}
 
 .tg-sg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
-@media (min-width:700px){.tg-sg{grid-template-columns:repeat(5,1fr);}}
+@media (min-width:700px){.tg-sg{grid-template-columns:repeat(6,1fr);}}
 .tg-sc{background:rgba(20,27,45,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;backdrop-filter:blur(8px);}
 .tg-sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#00d4ff,transparent);opacity:0;transition:opacity .2s;}
 .tg-sc:hover{border-color:rgba(0,212,255,0.3);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,212,255,0.15);}
@@ -459,6 +459,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 .tg-fetched-order-meta{font-size:10.5px;color:#8892a6;}
 .tg-fetched-order-amt{font-size:12px;font-weight:900;color:#00d4ff;font-family:'JetBrains Mono',monospace;flex-shrink:0;}
 
+.tg-order-cb{width:20px;height:20px;accent-color:#00d4ff;cursor:pointer;flex-shrink:0;margin:0;}
+
+.tg-select-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,212,255,0.06);border-radius:10px;margin:0 14px 10px;border:1.5px solid rgba(0,212,255,0.2);flex-wrap:wrap;}
+.tg-select-bar label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#cbd5e1;cursor:pointer;}
+.tg-select-bar .sel-count{font-size:11.5px;color:#8892a6;font-weight:700;margin-left:auto;}
+.tg-select-bar .tg-btn{padding:8px 14px;font-size:11.5px;}
+
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,0.02);}
 ::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.3);border-radius:3px;}
@@ -488,6 +495,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   .tg-app-name{font-size:17px;}
   .tg-flash-icon{font-size:80px;}
   #tg-reader{min-height:220px;}
+  .tg-sg{grid-template-columns:repeat(2,1fr);}
 }
 </style>
 </head>
@@ -536,6 +544,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
   <div class="tg-ticker">
     <div class="tg-tk"><span class="dot pink"></span>New Apps <b class="pink" id="tk-apps">0</b></div>
+    <div class="tg-tk"><span class="dot yellow"></span>Ready Pickup <b class="yellow" id="tk-ready">0</b></div>
     <div class="tg-tk"><span class="dot blue"></span>Assigned <b class="blue" id="tk-assigned">0</b></div>
     <div class="tg-tk"><span class="dot yellow"></span>Collected <b class="yellow" id="tk-collected">0</b></div>
     <div class="tg-tk"><span class="dot green"></span>Received <b class="green" id="tk-received">0</b></div>
@@ -578,9 +587,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <span class="tg-dr-ib" id="dr-b-boys" style="display:none;">0</span>
     </div>
     <div class="tg-dr-s">Operations</div>
+    <div class="tg-dr-i" data-v="pickups" onclick="tgNav('pickups')">
+      <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+      <div class="tg-dr-il">📦 Ready for Pickup</div>
+      <span class="tg-dr-ib pink" id="dr-b-pickups" style="display:none;">0</span>
+    </div>
     <div class="tg-dr-i" data-v="assign" onclick="tgNav('assign')">
       <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
-      <div class="tg-dr-il">Assign Pickup</div>
+      <div class="tg-dr-il">Manual Assign</div>
     </div>
     <div class="tg-dr-i" data-v="tasks" onclick="tgNav('tasks')">
       <div class="tg-dr-ic"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg></div>
@@ -603,7 +617,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div class="tg-dr-il">History</div>
     </div>
   </div>
-  <div class="tg-dr-f">Pickup Command v4.1 LIVE · Made in India 🇮🇳</div>
+  <div class="tg-dr-f">Pickup Command v4.2 LIVE · Made in India 🇮🇳</div>
 </aside>
 
 <div class="tg-w" id="tg-w">
@@ -615,8 +629,8 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <div class="tg-hero-t">Pickup <span>Command Center</span> 🎯</div>
           <div class="tg-hero-s">Real-time · Seller → Admin</div>
           <div class="tg-hero-stats">
-            <div class="tg-hs"><div class="tg-hs-n pink" id="d-apps">0</div><div class="tg-hs-l">New Apps</div></div>
-            <div class="tg-hs"><div class="tg-hs-n yellow" id="d-pending">0</div><div class="tg-hs-l">Assigned</div></div>
+            <div class="tg-hs"><div class="tg-hs-n yellow" id="d-ready">0</div><div class="tg-hs-l">Ready Pickup</div></div>
+            <div class="tg-hs"><div class="tg-hs-n blue" id="d-assigned">0</div><div class="tg-hs-l">Assigned</div></div>
             <div class="tg-hs"><div class="tg-hs-n green" id="d-received">0</div><div class="tg-hs-l">Received</div></div>
             <div class="tg-hs"><div class="tg-hs-n red" id="d-pending-settle">₹0</div><div class="tg-hs-l">Settle Pending</div></div>
           </div>
@@ -624,6 +638,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       </div>
 
       <div class="tg-sg">
+        <div class="tg-sc" style="border-color:rgba(250,204,21,0.4);" onclick="tgNav('pickups')">
+          <div class="tg-sci yellow"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+          <div class="tg-scn" id="s-ready">0</div>
+          <div class="tg-scl">Ready Pickup</div>
+        </div>
         <div class="tg-sc pink" onclick="tgNav('apps')">
           <div class="tg-sci pink"><svg viewBox="0 0 24 24"><path d="M9 11H15M9 15H15M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div>
           <div class="tg-scn" id="s-apps">0</div>
@@ -634,7 +653,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <div class="tg-scn" id="s-boys">0</div>
           <div class="tg-scl">Pickup Boys</div>
         </div>
-        <div class="tg-sc" onclick="tgNav('assign')">
+        <div class="tg-sc" onclick="tgNav('tasks')">
           <div class="tg-sci yellow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <div class="tg-scn" id="s-assigned">0</div>
           <div class="tg-scl">Assigned</div>
@@ -665,6 +684,25 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <button class="tg-btn out" onclick="tgNav('boys')">View All</button>
         </div>
         <div id="d-boys-active"></div>
+      </div>
+    </div>
+
+    <!-- NEW: READY FOR PICKUP -->
+    <div class="tg-v" id="v-pickups">
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st"><span class="ic">📦</span>Ready for Pickup</div><div class="tg-ss">Seller ne label generate kiya — pickup boy assign karo</div></div>
+          <span class="tg-pill grn"><span class="tg-live-dot"></span>LIVE</span>
+        </div>
+        <div class="tg-select-bar" id="pickups-select-bar">
+          <label>
+            <input type="checkbox" id="tg-select-all-pickups" onchange="tgToggleAllPickups(this.checked)" style="width:18px;height:18px;accent-color:#00d4ff;cursor:pointer;">
+            Select All
+          </label>
+          <span class="sel-count" id="pickups-sel-count">0 selected</span>
+          <button class="tg-btn suc" id="tg-bulk-pickup-btn" onclick="tgBulkAssignFromQueue()" style="margin-left:auto;display:none;">✓ Assign Selected</button>
+        </div>
+        <div id="pickups-list"></div>
       </div>
     </div>
 
@@ -723,15 +761,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         </div>
         <div style="padding:14px 18px;">
           <div class="tg-order-id-box">
-            <div class="hint">📋 <b>Seller ke label se order IDs paste karo</b> — barcode/QR se jo ID scan hota hai. Multiple order IDs new line ya comma se separate. Ye zaroori hai taaki boy label scan kar sake.</div>
-            <textarea id="as-order-ids" placeholder="ABC123DEF456&#10;XYZ789ABC123&#10;(one per line or comma-separated)" oninput="tgUpdateOrderIdCount()"></textarea>
+            <div class="hint">📋 <b>Seller ke label se order IDs paste karo</b> — barcode/QR se jo ID scan hota hai. Multiple order IDs new line ya comma se separate.</div>
+            <textarea id="as-order-ids" placeholder="ABC123DEF456&#10;XYZ789ABC123" oninput="tgUpdateOrderIdCount()"></textarea>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-wrap:wrap;gap:8px;">
               <div style="font-size:11.5px;color:#8892a6;">
-                <span id="as-oid-count" style="color:#00d4ff;font-weight:900;">0</span> order ID(s) — Packet count auto-set hoga
+                <span id="as-oid-count" style="color:#00d4ff;font-weight:900;">0</span> order ID(s)
               </div>
               <button class="tg-fetch-btn" id="as-fetch-btn" onclick="tgFetchSellerOrders()">
                 <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></svg>
-                Auto-fetch from seller
+                Auto-fetch
               </button>
             </div>
             <div class="tg-fetched-orders" id="as-fetched-orders" style="display:none;"></div>
@@ -857,21 +895,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div class="tg-mod-t" id="scanner-title">📷 Scan to Receive</div>
       <button class="tg-mod-x" onclick="tgCloseScanner()">✕</button>
     </div>
-
     <div class="tg-bulk-bar" id="tg-bulk-bar" style="display:none;">
       <div class="tg-bulk-cnt">
-        <div>
-          <div class="tg-bulk-cnt-num" id="bulk-count">0</div>
-          <div class="tg-bulk-cnt-lbl">Received</div>
-        </div>
-        <div>
-          <div class="tg-bulk-cnt-earn" id="bulk-earn">₹0</div>
-          <div class="tg-bulk-cnt-lbl">To Settle</div>
-        </div>
+        <div><div class="tg-bulk-cnt-num" id="bulk-count">0</div><div class="tg-bulk-cnt-lbl">Received</div></div>
+        <div><div class="tg-bulk-cnt-earn" id="bulk-earn">₹0</div><div class="tg-bulk-cnt-lbl">To Settle</div></div>
       </div>
       <button class="tg-bulk-done" onclick="tgCloseScanner()">✓ Done</button>
     </div>
-
     <div class="tg-scanner-wrap">
       <div class="tg-scan-status" id="tg-scan-status">Initializing...</div>
       <div id="tg-reader"></div>
@@ -881,17 +911,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       <div class="tg-corner bl"></div>
       <div class="tg-corner br"></div>
     </div>
-
     <div style="text-align:center;font-size:11px;color:#8892a6;padding:6px 0 4px;font-weight:600;letter-spacing:0.3px;" id="scan-hint-text">
       📸 Barcode ko frame ke andar rakho · Auto-receive hoga
     </div>
-
     <div id="tg-scan-err" style="display:none;"></div>
-
     <div class="tg-recent-list" id="tg-recent-list">
       <div class="tg-recent-empty">Recent scans yahan dikhenge...</div>
     </div>
-
     <div class="tg-manual-box">
       <label>🔢 Ya Order ID manually daalo</label>
       <input type="text" id="tg-manual-scan" placeholder="ABC123DEF456" autocomplete="off" onkeypress="if(event.key==='Enter')tgManualScan()">
@@ -903,22 +929,27 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   </div>
 </div>
 
-<div class="tg-mod" id="mod-app-detail">
+<!-- QUICK ASSIGN MODAL -->
+<div class="tg-mod" id="mod-quick-assign">
   <div class="tg-mod-c">
     <div class="tg-mod-h">
-      <div class="tg-mod-t">📩 Application Detail</div>
-      <button class="tg-mod-x" onclick="tgCloseMod('mod-app-detail')">✕</button>
+      <div class="tg-mod-t">🏍️ Assign Pickup Boy</div>
+      <button class="tg-mod-x" onclick="tgCloseMod('mod-quick-assign')">✕</button>
     </div>
+    <div id="qa-body"></div>
+  </div>
+</div>
+
+<div class="tg-mod" id="mod-app-detail">
+  <div class="tg-mod-c">
+    <div class="tg-mod-h"><div class="tg-mod-t">📩 Application Detail</div><button class="tg-mod-x" onclick="tgCloseMod('mod-app-detail')">✕</button></div>
     <div id="app-detail-body"></div>
   </div>
 </div>
 
 <div class="tg-mod" id="mod-approve">
   <div class="tg-mod-c">
-    <div class="tg-mod-h">
-      <div class="tg-mod-t">✅ Approve Partner</div>
-      <button class="tg-mod-x" onclick="tgCloseMod('mod-approve')">✕</button>
-    </div>
+    <div class="tg-mod-h"><div class="tg-mod-t">✅ Approve Partner</div><button class="tg-mod-x" onclick="tgCloseMod('mod-approve')">✕</button></div>
     <input type="hidden" id="ap-id">
     <div id="ap-body"></div>
   </div>
@@ -926,15 +957,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
 <div class="tg-mod" id="mod-reject">
   <div class="tg-mod-c">
-    <div class="tg-mod-h">
-      <div class="tg-mod-t">❌ Reject Application</div>
-      <button class="tg-mod-x" onclick="tgCloseMod('mod-reject')">✕</button>
-    </div>
+    <div class="tg-mod-h"><div class="tg-mod-t">❌ Reject Application</div><button class="tg-mod-x" onclick="tgCloseMod('mod-reject')">✕</button></div>
     <input type="hidden" id="rj-id">
     <div class="tg-fld">
       <label>Rejection Reason <span class="rq">*</span></label>
-      <textarea id="rj-reason" placeholder="e.g. Incomplete details, Invalid UPI..." maxlength="300" style="min-height:100px;"></textarea>
-      <div class="tg-fld-h">Ye reason user ko dikhega — clear rakho</div>
+      <textarea id="rj-reason" placeholder="e.g. Incomplete details..." maxlength="300" style="min-height:100px;"></textarea>
     </div>
     <div class="tg-mod-a">
       <button class="tg-mod-b gho" onclick="tgCloseMod('mod-reject')">Cancel</button>
@@ -945,24 +972,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
 <div class="tg-mod" id="mod-boy">
   <div class="tg-mod-c">
-    <div class="tg-mod-h">
-      <div class="tg-mod-t" id="mb-title">Add Pickup Boy</div>
-      <button class="tg-mod-x" onclick="tgCloseMod('mod-boy')">✕</button>
-    </div>
+    <div class="tg-mod-h"><div class="tg-mod-t" id="mb-title">Add Pickup Boy</div><button class="tg-mod-x" onclick="tgCloseMod('mod-boy')">✕</button></div>
     <input type="hidden" id="mb-id">
-    <div class="tg-fld">
-      <label>Full Name <span class="rq">*</span></label>
-      <input type="text" id="mb-name" maxlength="60" placeholder="e.g. Rahul Kumar">
-    </div>
+    <div class="tg-fld"><label>Full Name <span class="rq">*</span></label><input type="text" id="mb-name" maxlength="60" placeholder="e.g. Rahul Kumar"></div>
     <div class="tg-fld-row">
-      <div class="tg-fld">
-        <label>Phone <span class="rq">*</span></label>
-        <input type="tel" id="mb-phone" maxlength="10" inputmode="numeric" placeholder="10-digit">
-      </div>
-      <div class="tg-fld">
-        <label>Zone</label>
-        <input type="text" id="mb-zone" maxlength="30" placeholder="e.g. Kanpur Central">
-      </div>
+      <div class="tg-fld"><label>Phone <span class="rq">*</span></label><input type="tel" id="mb-phone" maxlength="10" inputmode="numeric" placeholder="10-digit"></div>
+      <div class="tg-fld"><label>Zone</label><input type="text" id="mb-zone" maxlength="30" placeholder="e.g. Kanpur Central"></div>
     </div>
     <div class="tg-fld">
       <label>Rate Per Packet (₹) <span class="rq">*</span></label>
@@ -972,10 +987,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         <button type="button" onclick="tgAdjustRate(5)">+</button>
       </div>
     </div>
-    <div class="tg-fld">
-      <label>Notes (optional)</label>
-      <textarea id="mb-notes" maxlength="200" placeholder="Kuch bhi..." style="min-height:70px;"></textarea>
-    </div>
+    <div class="tg-fld"><label>Notes (optional)</label><textarea id="mb-notes" maxlength="200" placeholder="Kuch bhi..." style="min-height:70px;"></textarea></div>
     <div class="tg-mod-a">
       <button class="tg-mod-b gho" onclick="tgCloseMod('mod-boy')">Cancel</button>
       <button class="tg-mod-b pri" onclick="tgSaveBoy()">Save</button>
@@ -985,20 +997,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
 <div class="tg-mod" id="mod-boy-detail">
   <div class="tg-mod-c">
-    <div class="tg-mod-h">
-      <div class="tg-mod-t" id="mbd-title">Boy Details</div>
-      <button class="tg-mod-x" onclick="tgCloseMod('mod-boy-detail')">✕</button>
-    </div>
+    <div class="tg-mod-h"><div class="tg-mod-t" id="mbd-title">Boy Details</div><button class="tg-mod-x" onclick="tgCloseMod('mod-boy-detail')">✕</button></div>
     <div id="mbd-body"></div>
   </div>
 </div>
 
 <div class="tg-mod" id="mod-settle">
   <div class="tg-mod-c">
-    <div class="tg-mod-h">
-      <div class="tg-mod-t">💸 Settle Earnings</div>
-      <button class="tg-mod-x" onclick="tgCloseMod('mod-settle')">✕</button>
-    </div>
+    <div class="tg-mod-h"><div class="tg-mod-t">💸 Settle Earnings</div><button class="tg-mod-x" onclick="tgCloseMod('mod-settle')">✕</button></div>
     <input type="hidden" id="ms-boy-id">
     <div id="ms-body"></div>
   </div>
@@ -1054,7 +1060,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let ALL_TASKS = [];
   let ALL_SELLERS = [];
   let ALL_SETTLEMENTS = [];
+  let PENDING_PICKUP_ORDERS = [];
   let FETCHED_SELLER_ORDERS = [];
+  let SELECTED_ORDER_IDS = new Set();
+  let QUICK_ASSIGN_ORDERS = [];
+  let QA_SELECTED_BOY = null;
   let CUR_VIEW = 'dash';
   let APP_FILTER = 'pending';
   let BOY_FILTER = 'all';
@@ -1067,8 +1077,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   let audioCtx = null;
   let soundEnabled = true;
   try { soundEnabled = localStorage.getItem('tg_pickup_admin_sound') !== '0'; } catch(e) {}
-  let unsubPartners = null, unsubTasks = null, unsubSellers = null, unsubSettle = null;
+  let unsubPartners = null, unsubTasks = null, unsubSellers = null, unsubSettle = null, unsubPendingOrders = null;
   let prevPendingApps = -1;
+  let prevPendingPickups = -1;
   let prevAssignedCount = -1;
   let lastScanTime = 0;
   let RECENT_SCAN_CODES = new Map();
@@ -1088,11 +1099,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function openMod(id) { document.getElementById(id).classList.add('show'); document.body.style.overflow='hidden'; }
   window.tgCloseMod = function(id) { document.getElementById(id).classList.remove('show'); document.body.style.overflow=''; };
 
-  /* ⭐ NEW: Order ID extraction + matching helpers */
+  /* ⭐ Order ID extraction - handles QR + plain barcode */
   function extractOrderIdFromScan(rawCode) {
     let clean = String(rawCode || '').trim().toUpperCase();
     if (!clean) return '';
-    // Handle QR format: TOEGO|ORDER_ID|PINCODE|AMOUNT|MODE
     if (clean.startsWith('TOEGO|')) {
       const parts = clean.split('|');
       if (parts[1]) clean = parts[1].trim();
@@ -1103,13 +1113,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
   function getTaskCandidates(t) {
     const out = new Set();
-    const fields = ['id', 'orderId', 'order_id', 'orderDisplayId', 'displayId', 'trackingId', 'awb', 'awbNumber'];
+    const fields = ['id', 'orderId', 'order_id', 'orderFullId', 'labelId', 'orderDisplayId', 'displayId', 'trackingId', 'awb', 'awbNumber'];
     fields.forEach(f => {
       const v = t[f];
       if (v != null && v !== '') {
         const s = String(v).toUpperCase().trim();
         out.add(s);
-        // Also add truncated version (for Code39 label which uses first 12 chars)
         if (s.length > 12) out.add(s.slice(0, 12));
       }
     });
@@ -1121,7 +1130,6 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (!clean || clean.length < 3) return false;
     const candidates = getTaskCandidates(t);
     if (candidates.includes(clean)) return true;
-    // Partial match (min 6 chars to avoid false positives)
     if (clean.length >= 6) {
       for (const c of candidates) {
         if (c.length >= 6 && (c.includes(clean) || clean.includes(c))) return true;
@@ -1132,9 +1140,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
   function getTaskDisplayId(t) {
     if (!t) return '';
-    if (t.orderId) return String(t.orderId).slice(0, 12).toUpperCase();
+    if (t.orderId) return String(t.orderId).slice(0, 14).toUpperCase();
     if (t.orderDisplayId) return String(t.orderDisplayId).slice(0, 14).toUpperCase();
-    return String(t.id || '').slice(0, 12).toUpperCase();
+    return String(t.id || '').slice(0, 14).toUpperCase();
   }
 
   function toast(msg, type) {
@@ -1336,6 +1344,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       document.querySelectorAll('.tg-dr-i').forEach(i => i.classList.toggle('active', i.dataset.v === v));
       window.scrollTo({top:0, behavior:'smooth'});
       if (v === 'dash') renderDash();
+      if (v === 'pickups') renderPendingPickups();
       if (v === 'apps') renderApps();
       if (v === 'boys') renderBoys();
       if (v === 'tasks') renderTasks();
@@ -1374,6 +1383,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       renderBoys();
       renderDash();
       renderAssignBoys();
+      renderPendingPickups();
       updateBadges();
       renderTicker();
     }, err => console.warn('Partners listener err:', err && err.message));
@@ -1395,6 +1405,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       renderDash();
       renderReceive();
       renderSettle();
+      renderPendingPickups();
       updateBadges();
       renderTicker();
     }, err => console.warn('Tasks listener err:', err && err.message));
@@ -1416,6 +1427,48 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       renderSettleHistory();
       renderDash();
     }, err => console.warn('Settle listener err:', err && err.message));
+
+    /* ⭐ NEW: Listen to orders ready for pickup (label_generated / processing) */
+    if (unsubPendingOrders) try { unsubPendingOrders(); } catch(e){}
+    unsubPendingOrders = db.collection('orders')
+      .where('status', 'in', ['label_generated', 'processing'])
+      .onSnapshot(snap => {
+        let orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        orders.sort((a,b) => {
+          const at = a.labelGeneratedAt?.toDate?.()?.getTime?.() || a.processingAt?.toDate?.()?.getTime?.() || a.createdAt?.toDate?.()?.getTime?.() || 0;
+          const bt = b.labelGeneratedAt?.toDate?.()?.getTime?.() || b.processingAt?.toDate?.()?.getTime?.() || b.createdAt?.toDate?.()?.getTime?.() || 0;
+          return bt - at;
+        });
+        PENDING_PICKUP_ORDERS = orders;
+        const pendingCount = getPendingPickupOrders().length;
+        if (prevPendingPickups >= 0 && pendingCount > prevPendingPickups) {
+          playNewTask(); vibrate([60,40,120]);
+          const diff = pendingCount - prevPendingPickups;
+          toast('🔔 ' + diff + ' new order(s) ready for pickup!', 'success');
+        }
+        prevPendingPickups = pendingCount;
+        renderPendingPickups();
+        renderDash();
+        updateBadges();
+        renderTicker();
+      }, err => {
+        console.warn('Pending orders listener err:', err && err.message);
+        // Fallback: fetch all and filter client-side
+        db.collection('orders').limit(200).get().then(snap => {
+          let orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+            .filter(o => ['label_generated', 'processing'].includes(String(o.status || '').toLowerCase()));
+          orders.sort((a,b) => {
+            const at = a.labelGeneratedAt?.toDate?.()?.getTime?.() || 0;
+            const bt = b.labelGeneratedAt?.toDate?.()?.getTime?.() || 0;
+            return bt - at;
+          });
+          PENDING_PICKUP_ORDERS = orders;
+          renderPendingPickups();
+          renderDash();
+          updateBadges();
+          renderTicker();
+        }).catch(() => {});
+      });
   }
 
   function normStatus(s) {
@@ -1435,17 +1488,35 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     return { assigned:'ylw', collected:'blu', received:'grn', settled:'gry' }[normStatus(s)] || 'ylw';
   }
 
+  /* ⭐ Get pending pickup orders (not yet assigned to any task) */
+  function getPendingPickupOrders() {
+    const assignedOrderIds = new Set();
+    ALL_TASKS.forEach(t => {
+      if (t.orderId) assignedOrderIds.add(String(t.orderId).toUpperCase());
+      if (t.orderFullId) assignedOrderIds.add(String(t.orderFullId).toUpperCase());
+      if (t.labelId) assignedOrderIds.add(String(t.labelId).toUpperCase());
+    });
+    return PENDING_PICKUP_ORDERS.filter(o => {
+      if (o.pickupAssignedTo) return false;
+      const labelId = String(o.id).slice(0, 12).toUpperCase();
+      const fullId = String(o.id).toUpperCase();
+      return !assignedOrderIds.has(labelId) && !assignedOrderIds.has(fullId);
+    });
+  }
+
   function renderTicker() {
     const pendingApps = ALL_APPS.filter(a => {
       const st = (a.status||'pending').toLowerCase();
       return st !== 'approved' && st !== 'rejected' && a.approved !== true;
     }).length;
+    const ready = getPendingPickupOrders().length;
     const assigned = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
     const collected = ALL_TASKS.filter(t => normStatus(t.status) === 'collected').length;
     const received = ALL_TASKS.filter(t => normStatus(t.status) === 'received').length;
     const pendingSettle = ALL_TASKS.filter(t => normStatus(t.status) === 'received')
       .reduce((s,t) => s + Number(t.earning||0), 0);
     setText('tk-apps', pendingApps);
+    setText('tk-ready', ready);
     setText('tk-assigned', assigned);
     setText('tk-collected', collected);
     setText('tk-received', received);
@@ -1459,16 +1530,18 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const st = (a.status||'pending').toLowerCase();
       return st !== 'approved' && st !== 'rejected' && a.approved !== true;
     }).length;
+    const ready = getPendingPickupOrders().length;
     const assigned = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
     const collected = ALL_TASKS.filter(t => normStatus(t.status) === 'collected').length;
     const received = ALL_TASKS.filter(t => normStatus(t.status) === 'received').length;
     const pendingSettle = ALL_TASKS.filter(t => normStatus(t.status) === 'received')
       .reduce((s,t) => s + Number(t.earning||0), 0);
 
-    setText('d-apps', pendingApps);
-    setText('d-pending', assigned);
+    setText('d-ready', ready);
+    setText('d-assigned', assigned);
     setText('d-received', received);
     setText('d-pending-settle', inr(pendingSettle));
+    setText('s-ready', ready);
     setText('s-apps', pendingApps);
     setText('s-boys', ALL_BOYS.length);
     setText('s-assigned', assigned);
@@ -1532,6 +1605,319 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   }
 
+  /* ⭐ NEW: Render pending pickup orders */
+  function renderPendingPickups() {
+    const el = document.getElementById('pickups-list');
+    if (!el) return;
+    const list = getPendingPickupOrders();
+    setText('pickups-count', list.length);
+
+    if (!list.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📭</div><div class="tg-empty-t">No orders ready for pickup</div><div class="tg-empty-d">Jab seller label generate karega, order yahan automatic aayega</div></div>';
+      document.getElementById('tg-bulk-pickup-btn').style.display = 'none';
+      return;
+    }
+
+    // Clean up selected IDs that no longer exist
+    const validIds = new Set(list.map(o => o.id));
+    SELECTED_ORDER_IDS.forEach(id => { if (!validIds.has(id)) SELECTED_ORDER_IDS.delete(id); });
+
+    el.innerHTML = list.map(o => renderPendingOrderCard(o)).join('');
+    updatePickupBulkBar();
+  }
+
+  function renderPendingOrderCard(o) {
+    const labelId = String(o.id).slice(0, 12).toUpperCase();
+    const items = Array.isArray(o.items) ? o.items : [];
+    const itemCount = items.length || Number(o.itemCount || 0);
+    const total = Number(o.total || 0);
+    const sellerName = o.sellerName || o.shopName || '';
+    const sellerPhone = o.sellerPhone || o.sellerPhoneNumber || '';
+    const buyerName = o.userName || (o.address && o.address.name) || 'Customer';
+    const buyerCity = (o.address && o.address.city) || '';
+    const status = String(o.status || '').toLowerCase().replace(/_/g, ' ');
+    const selected = SELECTED_ORDER_IDS.has(o.id);
+    const payMode = String(o.paymentMethod || 'cod').toUpperCase();
+
+    // Try to find seller name from ALL_SELLERS
+    let displaySeller = sellerName;
+    if (!displaySeller && Array.isArray(o.sellerIds) && o.sellerIds.length) {
+      const s = ALL_SELLERS.find(x => x.id === o.sellerIds[0]);
+      if (s) displaySeller = s.shopName || '';
+    }
+    if (!displaySeller && items.length && items[0].sellerName) {
+      displaySeller = items[0].sellerName;
+    }
+    if (!displaySeller) displaySeller = 'Seller';
+
+    return '<div class="tg-row" style="padding-left:44px;position:relative;">' +
+      '<input type="checkbox" class="tg-order-cb" ' + (selected?'checked':'') + ' ' +
+        'style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;accent-color:#00d4ff;cursor:pointer;" ' +
+        'onchange="tgTogglePickupOrder(\'' + esc(o.id) + '\', this.checked)">' +
+      '<div class="tg-row-av sq" style="font-size:16px;">📦</div>' +
+      '<div class="tg-row-b">' +
+        '<div class="tg-row-t">#' + esc(labelId) + ' <span class="tg-pill ylw" style="font-size:9px;">' + esc(status) + '</span></div>' +
+        '<div class="tg-row-s">' +
+          '<span>🏪 ' + esc(displaySeller) + '</span>' +
+          '<span>👤 ' + esc(buyerName) + '</span>' +
+          (buyerCity ? '<span>📍 ' + esc(buyerCity) + '</span>' : '') +
+        '</div>' +
+        '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<span class="tg-pill grn">' + itemCount + ' item(s)</span>' +
+          '<span class="tg-pill blu">' + inr(total) + '</span>' +
+          '<span class="tg-pill gry">' + esc(payMode) + '</span>' +
+          '<span style="font-size:10.5px;color:#8892a6;font-weight:600;">' + esc(tago(o.labelGeneratedAt || o.processingAt || o.createdAt)) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tg-row-a">' +
+        '<button class="tg-btn suc" onclick="tgQuickAssignOrders([\'' + esc(o.id) + '\'])" style="padding:8px 14px;font-size:11px;">✓ Assign</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  window.tgTogglePickupOrder = function(oid, checked) {
+    if (checked) SELECTED_ORDER_IDS.add(oid);
+    else SELECTED_ORDER_IDS.delete(oid);
+    updatePickupBulkBar();
+  };
+
+  window.tgToggleAllPickups = function(checked) {
+    const list = getPendingPickupOrders();
+    if (checked) list.forEach(o => SELECTED_ORDER_IDS.add(o.id));
+    else SELECTED_ORDER_IDS.clear();
+    renderPendingPickups();
+  };
+
+  function updatePickupBulkBar() {
+    const n = SELECTED_ORDER_IDS.size;
+    setText('pickups-sel-count', n + ' selected');
+    const btn = document.getElementById('tg-bulk-pickup-btn');
+    if (btn) btn.style.display = n > 0 ? 'inline-flex' : 'none';
+    const allCb = document.getElementById('tg-select-all-pickups');
+    if (allCb) {
+      const list = getPendingPickupOrders();
+      allCb.checked = list.length > 0 && list.every(o => SELECTED_ORDER_IDS.has(o.id));
+      allCb.indeterminate = !allCb.checked && list.some(o => SELECTED_ORDER_IDS.has(o.id));
+    }
+  }
+
+  window.tgBulkAssignFromQueue = function() {
+    if (!SELECTED_ORDER_IDS.size) { toast('Select orders first', 'error'); return; }
+    tgQuickAssignOrders(Array.from(SELECTED_ORDER_IDS));
+  };
+
+  /* ⭐ Quick assign modal */
+  window.tgQuickAssignOrders = function(orderIds) {
+    const orders = PENDING_PICKUP_ORDERS.filter(o => orderIds.includes(o.id));
+    if (!orders.length) { toast('No orders found', 'error'); return; }
+    QUICK_ASSIGN_ORDERS = orders;
+    QA_SELECTED_BOY = null;
+
+    const total = orders.length;
+    let summaryHtml = '';
+    if (total === 1) {
+      const o = orders[0];
+      const labelId = String(o.id).slice(0, 12).toUpperCase();
+      const items = Array.isArray(o.items) ? o.items : [];
+      const sellerName = o.sellerName || o.shopName || 'Seller';
+      summaryHtml = 
+        '<div style="font-size:12px;color:#cbd5e1;line-height:1.7;">' +
+          '<b style="color:#00d4ff;font-family:monospace;">#' + esc(labelId) + '</b><br>' +
+          'Seller: ' + esc(sellerName) + '<br>' +
+          'Items: ' + items.length + ' · Total: ' + inr(o.total || 0) +
+        '</div>';
+    } else {
+      summaryHtml = 
+        '<div style="font-size:13px;color:#cbd5e1;line-height:1.7;">' +
+          '<b style="color:#00d4ff;font-size:16px;">' + total + ' orders</b> selected<br>' +
+          '<span style="font-size:11.5px;color:#8892a6;">Sabhi orders ek pickup boy ko assign honge</span>' +
+        '</div>';
+    }
+
+    document.getElementById('qa-body').innerHTML = 
+      '<div class="tg-info-box success">' +
+        '<div style="display:flex;gap:12px;align-items:flex-start;">' +
+          '<span class="ic" style="font-size:22px;">📦</span>' +
+          '<div style="flex:1;">' + summaryHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tg-fld">' +
+        '<label>Select Pickup Boy <span class="rq">*</span></label>' +
+        '<div id="qa-boys-list" style="max-height:260px;overflow-y:auto;"></div>' +
+      '</div>' +
+      '<div class="tg-fld">' +
+        '<label>Rate Per Packet (₹) <span class="rq">*</span></label>' +
+        '<div class="tg-rate-input">' +
+          '<button type="button" onclick="tgQARateAdj(-5)">−</button>' +
+          '<input type="number" id="qa-rate" value="10" min="0" max="500" oninput="tgQACalcTotal()">' +
+          '<button type="button" onclick="tgQARateAdj(5)">+</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tg-info-box" style="background:rgba(0,212,255,0.08);border-color:rgba(0,212,255,0.25);">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+          '<span style="font-size:12px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Total Earning</span>' +
+          '<span style="font-size:22px;font-weight:900;color:#00d4ff;font-family:monospace;" id="qa-total">₹' + (total * 10) + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tg-mod-a">' +
+        '<button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-quick-assign\')">Cancel</button>' +
+        '<button class="tg-mod-b suc" id="qa-confirm-btn" onclick="tgQAConfirm()">' +
+          '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.6;"><path d="M20 6 9 17l-5-5"/></svg>' +
+          'Assign Now' +
+        '</button>' +
+      '</div>';
+
+    renderQABoys();
+    openMod('mod-quick-assign');
+  };
+
+  function renderQABoys() {
+    const el = document.getElementById('qa-boys-list');
+    if (!el) return;
+    const list = ALL_BOYS.slice().sort((a,b) => {
+      const aAct = ALL_TASKS.filter(t => t.pickupBoyId === a.id && normStatus(t.status) === 'collected').length;
+      const bAct = ALL_TASKS.filter(t => t.pickupBoyId === b.id && normStatus(t.status) === 'collected').length;
+      return aAct - bAct;
+    });
+    if (!list.length) {
+      el.innerHTML = '<div style="padding:14px;color:#8892a6;text-align:center;font-size:12.5px;">No pickup boys available. Pehle applications approve karo.</div>';
+      return;
+    }
+    el.innerHTML = list.map(b => {
+      const active = QA_SELECTED_BOY === b.id;
+      const withBoy = ALL_TASKS.filter(t => t.pickupBoyId === b.id && normStatus(t.status) === 'collected').length;
+      const rate = Number(b.ratePerPacket || b.rate || 10);
+      return '<div class="tg-sel ' + (active?'active':'') + '" onclick="tgQAPickBoy(\'' + esc(b.id) + '\')">' +
+        '<div class="tg-sel-radio"></div>' +
+        '<div class="tg-sel-body">' +
+          '<div class="tg-sel-t">' + esc(b.name||'Boy') + ' ' + (withBoy > 0 ? '<span class="tg-pill blu" style="font-size:9px;padding:2px 7px;">' + withBoy + ' with boy</span>' : '<span class="tg-pill grn" style="font-size:9px;padding:2px 7px;">IDLE</span>') + '</div>' +
+          '<div class="tg-sel-s"><span>📞 ' + esc(b.phone||'—') + '</span>' + (b.zone ? '<span>📍 ' + esc(b.zone) + '</span>' : '') + '</div>' +
+        '</div>' +
+        '<div class="tg-sel-r">' + inr(rate) + '/pkt</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.tgQAPickBoy = function(bid) {
+    QA_SELECTED_BOY = bid;
+    const b = ALL_BOYS.find(x => x.id === bid);
+    if (b) {
+      const rateEl = document.getElementById('qa-rate');
+      if (rateEl) rateEl.value = b.ratePerPacket || b.rate || 10;
+      tgQACalcTotal();
+    }
+    renderQABoys();
+  };
+
+  window.tgQARateAdj = function(delta) {
+    const inp = document.getElementById('qa-rate');
+    if (!inp) return;
+    let v = Number(inp.value || 0) + delta;
+    if (v < 0) v = 0;
+    if (v > 500) v = 500;
+    inp.value = v;
+    tgQACalcTotal();
+  };
+
+  window.tgQACalcTotal = function() {
+    const rate = Number(document.getElementById('qa-rate')?.value || 10);
+    const total = QUICK_ASSIGN_ORDERS.length * rate;
+    setText('qa-total', '₹' + total);
+  };
+
+  window.tgQAConfirm = async function() {
+    if (!QA_SELECTED_BOY) { toast('Select pickup boy', 'error'); return; }
+    const boy = ALL_BOYS.find(x => x.id === QA_SELECTED_BOY);
+    if (!boy) { toast('Boy not found', 'error'); return; }
+    const rate = Number(document.getElementById('qa-rate').value || 10);
+    const orders = QUICK_ASSIGN_ORDERS;
+    if (!orders.length) { toast('No orders', 'error'); return; }
+
+    const btn = document.getElementById('qa-confirm-btn');
+    btn.disabled = true;
+    btn.innerHTML = 'Assigning...';
+
+    try {
+      const batch = db.batch();
+      const now = FV.serverTimestamp();
+
+      for (const order of orders) {
+        const labelId = String(order.id).slice(0, 12).toUpperCase();
+        const ref = db.collection('pickupTasks').doc();
+        const items = Array.isArray(order.items) ? order.items : [];
+        const sellerId = (Array.isArray(order.sellerIds) && order.sellerIds[0]) || (items[0] && items[0].sellerId) || '';
+        const seller = ALL_SELLERS.find(s => s.id === sellerId);
+        const sellerName = order.sellerName || order.shopName || (seller && seller.shopName) || (items[0] && items[0].sellerName) || '';
+        const sellerPhone = order.sellerPhone || (seller && seller.phone) || '';
+        const sellerAddress = order.sellerAddress || (seller && seller.address) || '';
+        const sellerPincode = order.sellerPincode || (seller && seller.pincode) || (order.address && order.address.pincode) || '';
+
+        batch.set(ref, {
+          sellerId: sellerId,
+          sellerName: sellerName,
+          sellerPhone: sellerPhone,
+          sellerAddress: sellerAddress,
+          sellerPincode: sellerPincode,
+
+          orderId: labelId,
+          labelId: labelId,
+          orderFullId: order.id,
+          orderDisplayId: labelId,
+
+          items: items,
+          itemCount: items.length,
+          orderValue: Number(order.total || 0),
+          paymentMode: order.paymentMethod || 'cod',
+
+          buyerName: order.userName || (order.address && order.address.name) || '',
+          buyerPhone: order.userPhone || (order.address && order.address.phone) || '',
+          buyerCity: (order.address && order.address.city) || '',
+          buyerPincode: (order.address && order.address.pincode) || '',
+
+          pickupBoyId: boy.id,
+          pickupBoyName: boy.name || '',
+          pickupBoyPhone: boy.phone || '',
+          packetIndex: 1,
+          packetCount: 1,
+          ratePerPacket: rate,
+          earning: rate,
+          status: 'assigned',
+          assignedAt: now,
+          assignedBy: USER.uid,
+          createdAt: now,
+          updatedAt: now
+        });
+      }
+
+      await batch.commit();
+
+      // Mark orders as pickup-assigned
+      try {
+        const updateBatch = db.batch();
+        for (const order of orders) {
+          updateBatch.update(db.collection('orders').doc(order.id), {
+            pickupAssignedTo: boy.id,
+            pickupBoyName: boy.name,
+            pickupAssignedAt: now,
+            updatedAt: now
+          });
+        }
+        await updateBatch.commit();
+      } catch(e) { console.warn('Order update failed:', e); }
+
+      playBeep(); vibrate([40,30,80]);
+      toast('✓ ' + orders.length + ' order(s) assigned to ' + esc(boy.name), 'success');
+      tgCloseMod('mod-quick-assign');
+      SELECTED_ORDER_IDS.clear();
+      renderPendingPickups();
+    } catch(e) {
+      console.error(e);
+      toast('Failed: ' + e.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = 'Assign Now';
+    }
+  };
+
   window.tgFilterApps = function(f) {
     APP_FILTER = f;
     document.querySelectorAll('#apps-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.f === f));
@@ -1568,7 +1954,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     });
 
     if (!list.length) {
-      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📭</div><div class="tg-empty-t">No ' + APP_FILTER + ' applications</div><div class="tg-empty-d">' + (APP_FILTER === 'pending' ? 'Naye applications yahan aayenge' : '') + '</div></div>';
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📭</div><div class="tg-empty-t">No ' + APP_FILTER + ' applications</div></div>';
       return;
     }
 
@@ -1584,14 +1970,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div class="tg-row-av pink">' + esc(ini(a.name)) + '</div>' +
         '<div class="tg-row-b">' +
           '<div class="tg-row-t">' + esc(a.name || 'Applicant') + '</div>' +
-          '<div class="tg-row-s"><span>📞 ' + esc(a.phone||'—') + '</span>' + (a.zone ? '<span>📍 ' + esc(a.zone) + '</span>' : '') + (a.vehicleType ? '<span>' + esc(vMap[a.vehicleType] || a.vehicleType) + '</span>' : '') + '</div>' +
+          '<div class="tg-row-s"><span>📞 ' + esc(a.phone||'—') + '</span>' + (a.zone ? '<span>📍 ' + esc(a.zone) + '</span>' : '') + '</div>' +
           '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' +
             '<span class="tg-pill ' + pillCls + '">' + pillLabel + '</span>' +
             (payInfo !== '—' ? '<span class="tg-pill gry">' + payInfo + '</span>' : '') +
             '<span style="font-size:10.5px;color:#8892a6;font-weight:600;">' + esc(tago(a.appliedAt || a.createdAt)) + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="tg-row-a" onclick="event.stopPropagation();">' +
+        '<div class="tg-row-a">' +
           '<button class="tg-btn out" onclick="tgOpenAppDetail(\'' + esc(a.id) + '\')">View</button>' +
         '</div>' +
       '</div>';
@@ -1613,9 +1999,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     } else if (a.bankAcc) {
       const masked = '•'.repeat(Math.max(0, a.bankAcc.length - 4)) + a.bankAcc.slice(-4);
       const formatted = masked.match(/.{1,4}/g)?.join(' ') || masked;
-      payCard = '<div class="tg-pay-card"><div class="tg-pay-lbl">BANK ACCOUNT</div><div class="tg-pay-name">' + esc((a.bankName||'').toUpperCase()) + '</div><div class="tg-pay-value">' + esc(formatted) + '</div><div class="tg-pay-footer"><div><div style="font-size:9px;opacity:0.6;letter-spacing:1.5px;">IFSC</div><div style="font-size:12px;font-family:\'JetBrains Mono\',monospace;font-weight:700;margin-top:2px;">' + esc(a.ifsc||'—') + '</div></div><div style="font-size:11px;opacity:0.75;">' + (a.bankBrand ? esc(a.bankBrand) + ' ' : '') + '🇮🇳</div></div></div>';
+      payCard = '<div class="tg-pay-card"><div class="tg-pay-lbl">BANK ACCOUNT</div><div class="tg-pay-name">' + esc((a.bankName||'').toUpperCase()) + '</div><div class="tg-pay-value">' + esc(formatted) + '</div><div class="tg-pay-footer"><div><div style="font-size:9px;opacity:0.6;letter-spacing:1.5px;">IFSC</div><div style="font-size:12px;font-family:\'JetBrains Mono\',monospace;font-weight:700;margin-top:2px;">' + esc(a.ifsc||'—') + '</div></div><div style="font-size:11px;opacity:0.75;">🇮🇳</div></div></div>';
     } else {
-      payCard = '<div class="tg-info-box danger"><span class="ic">⚠️</span><b style="color:#f87171;">Payment details missing!</b><br>User ne UPI ya Bank details nahi di.</div>';
+      payCard = '<div class="tg-info-box danger"><span class="ic">⚠️</span><b style="color:#f87171;">Payment details missing!</b></div>';
     }
 
     document.getElementById('app-detail-body').innerHTML =
@@ -1630,37 +2016,22 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           '</div>' +
         '</div>' +
       '</div>' +
-      (isApproved ? '<div class="tg-info-box success"><span class="ic">✅</span><b>Approved Partner</b> · Rate: ' + inr(a.ratePerPacket||a.rate||10) + '/packet' + (a.approvedAt ? ' · ' + fdate(a.approvedAt) : '') + '</div>' : '') +
+      (isApproved ? '<div class="tg-info-box success"><span class="ic">✅</span><b>Approved Partner</b> · Rate: ' + inr(a.ratePerPacket||a.rate||10) + '/packet</div>' : '') +
       (isRejected ? '<div class="tg-info-box danger"><span class="ic">❌</span><b style="color:#f87171;">Rejected</b><br>' + esc(a.rejectionReason || 'No reason provided') + '</div>' : '') +
       (!isApproved && !isRejected ? '<div class="tg-info-box warn"><span class="ic">⏳</span><b>Pending Review</b> · Applied ' + esc(tago(a.appliedAt || a.createdAt)) + '</div>' : '') +
-
       '<div class="tg-detail-section">' +
         '<div class="tg-detail-title"><span class="ic">👤</span> Personal Details</div>' +
         '<div class="tg-detail-row"><span class="tg-detail-k">Full Name</span><span class="tg-detail-v">' + esc(a.name||'—') + '</span></div>' +
         '<div class="tg-detail-row"><span class="tg-detail-k">Phone</span><span class="tg-detail-v">' + esc(a.phone||'—') + '</span></div>' +
         '<div class="tg-detail-row"><span class="tg-detail-k">Email</span><span class="tg-detail-v" style="font-size:11px;">' + esc(a.email||'—') + '</span></div>' +
         '<div class="tg-detail-row"><span class="tg-detail-k">Zone</span><span class="tg-detail-v hl">' + esc(a.zone||'—') + '</span></div>' +
-        '<div class="tg-detail-row"><span class="tg-detail-k">City</span><span class="tg-detail-v">' + esc(a.city||'—') + '</span></div>' +
         '<div class="tg-detail-row"><span class="tg-detail-k">Pincode</span><span class="tg-detail-v">' + esc(a.pincode||'—') + '</span></div>' +
         '<div class="tg-detail-row"><span class="tg-detail-k">Address</span><span class="tg-detail-v address">' + esc(a.address||'—') + '</span></div>' +
       '</div>' +
-
-      '<div class="tg-detail-section">' +
-        '<div class="tg-detail-title"><span class="ic">🏍️</span> Vehicle Details</div>' +
-        '<div class="tg-detail-row"><span class="tg-detail-k">Vehicle</span><span class="tg-detail-v">' + esc(vMap[a.vehicleType] || a.vehicleType || '—') + '</span></div>' +
-        (a.vehicleNumber ? '<div class="tg-detail-row"><span class="tg-detail-k">Vehicle No</span><span class="tg-detail-v">' + esc(a.vehicleNumber) + '</span></div>' : '') +
-        (a.dl ? '<div class="tg-detail-row"><span class="tg-detail-k">DL No</span><span class="tg-detail-v">' + esc(a.dl) + '</span></div>' : '') +
-      '</div>' +
-
-      '<div class="tg-detail-title" style="margin-top:14px;"><span class="ic">💳</span> Payment Details (for settlement)</div>' +
+      '<div class="tg-detail-title" style="margin-top:14px;"><span class="ic">💳</span> Payment Details</div>' +
       payCard +
-
-      '<div class="tg-detail-section" style="background:transparent;border:none;padding:6px 0;">' +
-        '<div class="tg-detail-row"><span class="tg-detail-k">Applied At</span><span class="tg-detail-v" style="font-size:11px;">' + esc(fdatetime(a.appliedAt || a.createdAt)) + '</span></div>' +
-      '</div>' +
-
       '<div class="tg-mod-a">' +
-        (isApproved ? 
+        (isApproved ?
           '<button class="tg-mod-b suc" onclick="tgCloseMod(\'mod-app-detail\');tgOpenBoyDetail(\'' + esc(uid) + '\')">👁 View as Boy</button>'
           : isRejected ?
           '<button class="tg-mod-b pri" onclick="tgCloseMod(\'mod-app-detail\');tgOpenApprove(\'' + esc(uid) + '\')">🔄 Re-approve</button>'
@@ -1680,23 +2051,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const defaultRate = Number(a.ratePerPacket || 10);
 
     document.getElementById('ap-body').innerHTML =
-      '<div class="tg-app-hero" style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.08));border-color:rgba(34,197,94,0.3);">' +
-        '<div class="tg-app-hero-content">' +
-          '<div class="tg-app-avatar" style="background:linear-gradient(135deg,#22c55e,#16a34a);">' + esc(ini(a.name)) + '</div>' +
-          '<div class="tg-app-info">' +
-            '<div class="tg-app-name">' + esc(a.name || 'Partner') + '</div>' +
-            '<div class="tg-app-meta">📞 ' + esc(a.phone || '—') + '</div>' +
-            '<div class="tg-app-meta">📍 ' + esc(a.zone || '—') + '</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-
       '<div class="tg-info-box success" style="margin-bottom:14px;">' +
-        '<span class="ic">✅</span>Approve karne ke baad ye partner <b>pickup boys list</b> me aayega aur pickup kar sakta hai.' +
+        '<span class="ic">✅</span>Approve karne ke baad ye partner <b>pickup boys list</b> me aayega.' +
       '</div>' +
-
       '<div class="tg-fld">' +
-        '<label>Set Rate Per Packet (₹) <span class="rq">*</span></label>' +
+        '<label>Rate Per Packet (₹)</label>' +
         '<div class="tg-rate-pick">' +
           [5,8,10,12,15,20,25].map(v => 
             '<button type="button" class="tg-rate-pick-btn ' + (v === defaultRate ? 'active' : '') + '" onclick="tgPickAppRate(' + v + ')">₹' + v + '</button>'
@@ -1707,22 +2066,12 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           '<input type="number" id="ap-rate" value="' + defaultRate + '" min="0" max="500">' +
           '<button type="button" onclick="tgAdjustApRate(1)">+</button>' +
         '</div>' +
-        '<div class="tg-fld-h">Ye rate har assignment me auto-fill ho jaayega. Baad me change bhi kar sakte ho.</div>' +
       '</div>' +
-
-      '<div class="tg-fld">' +
-        '<label>Admin Notes (optional)</label>' +
-        '<textarea id="ap-notes" placeholder="e.g. Good candidate, verify DL next time" maxlength="200" style="min-height:70px;"></textarea>' +
-      '</div>' +
-
+      '<div class="tg-fld"><label>Admin Notes (optional)</label><textarea id="ap-notes" maxlength="200" style="min-height:70px;"></textarea></div>' +
       '<div class="tg-mod-a">' +
         '<button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-approve\')">Cancel</button>' +
-        '<button class="tg-mod-b suc" id="ap-confirm-btn" onclick="tgConfirmApprove()">' +
-          '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.6;"><path d="M20 6 9 17l-5-5"/></svg>' +
-          'Approve & Add to Team' +
-        '</button>' +
+        '<button class="tg-mod-b suc" id="ap-confirm-btn" onclick="tgConfirmApprove()">✓ Approve</button>' +
       '</div>';
-
     openMod('mod-approve');
   };
 
@@ -1744,37 +2093,23 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (!uid) return;
     const rate = Number(document.getElementById('ap-rate').value || 10);
     const notes = (document.getElementById('ap-notes').value || '').trim();
-    if (rate < 0) { toast('Rate must be ≥ 0', 'error'); return; }
     const btn = document.getElementById('ap-confirm-btn');
-    btn.disabled = true; btn.innerHTML = 'Approving...';
+    btn.disabled = true; btn.textContent = 'Approving...';
     try {
       await db.collection('deliveryPartners').doc(uid).update({
-        status: 'approved',
-        approved: true,
-        ratePerPacket: rate,
-        adminNotes: notes,
-        approvedAt: FV.serverTimestamp(),
-        approvedBy: USER.uid,
-        approvedByEmail: USER.email || '',
-        rejectionReason: FV.delete(),
-        rejectedAt: FV.delete(),
-        updatedAt: FV.serverTimestamp()
+        status: 'approved', approved: true, ratePerPacket: rate, adminNotes: notes,
+        approvedAt: FV.serverTimestamp(), approvedBy: USER.uid, approvedByEmail: USER.email || '',
+        rejectionReason: FV.delete(), rejectedAt: FV.delete(), updatedAt: FV.serverTimestamp()
       });
       try {
-        await db.collection('users').doc(uid).set({
-          role: 'pickup_partner',
-          pickupApplicationStatus: 'approved',
-          updatedAt: FV.serverTimestamp()
-        }, { merge: true });
+        await db.collection('users').doc(uid).set({ role: 'pickup_partner', pickupApplicationStatus: 'approved', updatedAt: FV.serverTimestamp() }, { merge: true });
       } catch(e) {}
       playBeep(); vibrate([60,40,120]);
       toast('✓ Approved! Partner added to team', 'success');
       tgCloseMod('mod-approve');
     } catch(e) {
-      console.error(e);
       toast('Failed: ' + e.message, 'error');
-      btn.disabled = false;
-      btn.innerHTML = 'Approve & Add to Team';
+      btn.disabled = false; btn.textContent = '✓ Approve';
     }
   };
 
@@ -1787,40 +2122,24 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.tgConfirmReject = async function() {
     const uid = document.getElementById('rj-id').value;
     const reason = (document.getElementById('rj-reason').value || '').trim();
-    if (!uid) return;
-    if (!reason) { toast('Enter rejection reason', 'error'); return; }
+    if (!reason) { toast('Enter reason', 'error'); return; }
     try {
       await db.collection('deliveryPartners').doc(uid).update({
-        status: 'rejected',
-        approved: false,
-        rejectionReason: reason,
-        rejectedAt: FV.serverTimestamp(),
-        rejectedBy: USER.uid,
-        updatedAt: FV.serverTimestamp()
+        status: 'rejected', approved: false, rejectionReason: reason,
+        rejectedAt: FV.serverTimestamp(), rejectedBy: USER.uid, updatedAt: FV.serverTimestamp()
       });
-      try {
-        await db.collection('users').doc(uid).set({
-          pickupApplicationStatus: 'rejected',
-          updatedAt: FV.serverTimestamp()
-        }, { merge: true });
-      } catch(e) {}
       toast('Application rejected', 'info');
       tgCloseMod('mod-reject');
-    } catch(e) {
-      toast('Failed: ' + e.message, 'error');
-    }
+    } catch(e) { toast('Failed: ' + e.message, 'error'); }
   };
 
   function boyStats(boyId) {
     const tasks = ALL_TASKS.filter(t => t.pickupBoyId === boyId);
     const withBoy = tasks.filter(t => normStatus(t.status) === 'collected').length;
-    const settled = tasks.filter(t => normStatus(t.status) === 'settled').length;
-    const totalEarned = tasks.filter(t => normStatus(t.status) === 'settled')
-      .reduce((s,t) => s + Number(t.earning||0), 0);
-    const pendingSettle = tasks.filter(t => normStatus(t.status) === 'received')
-      .reduce((s,t) => s + Number(t.earning||0), 0);
+    const totalEarned = tasks.filter(t => normStatus(t.status) === 'settled').reduce((s,t) => s + Number(t.earning||0), 0);
+    const pendingSettle = tasks.filter(t => normStatus(t.status) === 'received').reduce((s,t) => s + Number(t.earning||0), 0);
     const totalPickups = tasks.filter(t => normStatus(t.status) !== 'assigned').length;
-    return { withBoy, settled, totalEarned, pendingSettle, totalPickups, total: tasks.length };
+    return { withBoy, totalEarned, pendingSettle, totalPickups, total: tasks.length };
   }
 
   window.tgFilterBoys = function(f) {
@@ -1850,7 +2169,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     else if (BOY_FILTER === 'due') list = list.filter(b => boyStats(b.id).pendingSettle > 0);
 
     if (!list.length) {
-      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">🏍️</div><div class="tg-empty-t">No pickup boys</div><div class="tg-empty-d">Applications approve karo ya "Add Boy" se manually add karo</div></div>';
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">🏍️</div><div class="tg-empty-t">No pickup boys</div></div>';
       return;
     }
 
@@ -1858,20 +2177,19 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const st = boyStats(b.id);
       const rate = Number(b.ratePerPacket || b.rate || 10);
       const isActive = st.withBoy > 0;
-      const dueAmt = st.pendingSettle;
       return '<div class="tg-row">' +
         '<div class="tg-row-av">' + esc(ini(b.name)) + '</div>' +
         '<div class="tg-row-b">' +
           '<div class="tg-row-t">' + esc(b.name || 'Boy') + (isActive ? ' <span class="tg-pill blu"><span class="tg-live-dot"></span>ACTIVE</span>' : '') + '</div>' +
-          '<div class="tg-row-s"><span>📞 ' + esc(b.phone||'—') + '</span>' + (b.zone ? '<span>📍 ' + esc(b.zone) + '</span>' : '') + '<span>💰 Rate: ' + inr(rate) + '</span></div>' +
+          '<div class="tg-row-s"><span>📞 ' + esc(b.phone||'—') + '</span>' + (b.zone ? '<span>📍 ' + esc(b.zone) + '</span>' : '') + '<span>💰 ' + inr(rate) + '/pkt</span></div>' +
           '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
             (st.withBoy > 0 ? '<span class="tg-pill blu">' + st.withBoy + ' With Boy</span>' : '') +
-            (dueAmt > 0 ? '<span class="tg-pill red">Due: ' + inr(dueAmt) + '</span>' : '') +
+            (st.pendingSettle > 0 ? '<span class="tg-pill red">Due: ' + inr(st.pendingSettle) + '</span>' : '') +
             '<span class="tg-pill grn">Paid: ' + inr(st.totalEarned) + '</span>' +
             '<span class="tg-pill gry">Total: ' + st.totalPickups + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="tg-row-a" onclick="event.stopPropagation();">' +
+        '<div class="tg-row-a">' +
           '<button class="tg-btn out" onclick="tgOpenBoyDetail(\'' + esc(b.id) + '\')">View</button>' +
         '</div>' +
       '</div>';
@@ -1906,19 +2224,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const notes = (document.getElementById('mb-notes').value || '').trim();
     if (!name) { toast('Enter name', 'error'); return; }
     if (!/^\d{10}$/.test(phone)) { toast('Enter valid 10-digit phone', 'error'); return; }
-    if (rate < 0) { toast('Rate must be ≥ 0', 'error'); return; }
     try {
-      const payload = {
+      await db.collection('deliveryPartners').doc().set({
         name, phone, zone, ratePerPacket: rate, notes,
-        role: 'pickup_partner',
-        partnerType: 'pickup',
-        status: 'approved',
-        approved: true,
-        createdByAdmin: true,
-        createdAt: FV.serverTimestamp(),
-        updatedAt: FV.serverTimestamp()
-      };
-      await db.collection('deliveryPartners').doc().set(payload);
+        role: 'pickup_partner', partnerType: 'pickup',
+        status: 'approved', approved: true, createdByAdmin: true,
+        createdAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
+      });
       toast('✓ Pickup boy added', 'success');
       tgCloseMod('mod-boy');
     } catch(e) { toast('Failed: ' + e.message, 'error'); }
@@ -1932,44 +2244,39 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const tasks = ALL_TASKS.filter(t => t.pickupBoyId === bid).slice(0, 30);
     let payCard = '';
     if (b.upiId) {
-      payCard = '<div class="tg-pay-card"><div class="tg-pay-lbl">UPI ID</div><div class="tg-pay-name">' + esc((b.name||'').toUpperCase()) + '</div><div class="tg-pay-value">' + esc(b.upiId) + '</div></div>';
+      payCard = '<div class="tg-pay-card"><div class="tg-pay-lbl">UPI ID</div><div class="tg-pay-value">' + esc(b.upiId) + '</div></div>';
     } else if (b.bankAcc) {
       const masked = '•'.repeat(Math.max(0, b.bankAcc.length - 4)) + b.bankAcc.slice(-4);
-      payCard = '<div class="tg-pay-card"><div class="tg-pay-lbl">BANK</div><div class="tg-pay-name">' + esc((b.bankName||'').toUpperCase()) + '</div><div class="tg-pay-value">' + esc(masked) + '</div><div class="tg-pay-footer"><div style="font-size:11px;">IFSC: ' + esc(b.ifsc||'—') + '</div></div></div>';
+      payCard = '<div class="tg-pay-card"><div class="tg-pay-lbl">BANK</div><div class="tg-pay-value">' + esc(masked) + '</div></div>';
     }
 
     document.getElementById('mbd-body').innerHTML =
-      '<div class="tg-app-hero">' +
-        '<div class="tg-app-hero-content">' +
-          '<div class="tg-app-avatar">' + esc(ini(b.name)) + '</div>' +
-          '<div class="tg-app-info">' +
-            '<div class="tg-app-name">' + esc(b.name || 'Boy') + '</div>' +
-            '<div class="tg-app-meta">📞 ' + esc(b.phone||'—') + '</div>' +
-            (b.zone ? '<div class="tg-app-meta">📍 ' + esc(b.zone) + '</div>' : '') +
-          '</div>' +
+      '<div class="tg-app-hero"><div class="tg-app-hero-content">' +
+        '<div class="tg-app-avatar">' + esc(ini(b.name)) + '</div>' +
+        '<div class="tg-app-info">' +
+          '<div class="tg-app-name">' + esc(b.name || 'Boy') + '</div>' +
+          '<div class="tg-app-meta">📞 ' + esc(b.phone||'—') + '</div>' +
+          (b.zone ? '<div class="tg-app-meta">📍 ' + esc(b.zone) + '</div>' : '') +
         '</div>' +
-      '</div>' +
+      '</div></div>' +
       '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px;background:rgba(0,0,0,0.25);border-radius:12px;margin-bottom:14px;">' +
-        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Rate/Packet</div><div style="font-size:18px;font-weight:900;color:#00d4ff;font-family:monospace;margin-top:4px;">' + inr(b.ratePerPacket||b.rate||10) + '</div></div>' +
-        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Total Pickups</div><div style="font-size:18px;font-weight:900;color:#fff;font-family:monospace;margin-top:4px;">' + st.totalPickups + '</div></div>' +
-        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">With Boy</div><div style="font-size:18px;font-weight:900;color:#facc15;font-family:monospace;margin-top:4px;">' + st.withBoy + '</div></div>' +
-        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Pending Settle</div><div style="font-size:18px;font-weight:900;color:#f87171;font-family:monospace;margin-top:4px;">' + inr(st.pendingSettle) + '</div></div>' +
-        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Total Paid</div><div style="font-size:18px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:4px;">' + inr(st.totalEarned) + '</div></div>' +
-        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;">Total Tasks</div><div style="font-size:18px;font-weight:900;color:#fff;font-family:monospace;margin-top:4px;">' + st.total + '</div></div>' +
+        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;">Rate</div><div style="font-size:18px;font-weight:900;color:#00d4ff;font-family:monospace;margin-top:4px;">' + inr(b.ratePerPacket||b.rate||10) + '</div></div>' +
+        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;">With Boy</div><div style="font-size:18px;font-weight:900;color:#facc15;font-family:monospace;margin-top:4px;">' + st.withBoy + '</div></div>' +
+        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;">Pending</div><div style="font-size:18px;font-weight:900;color:#f87171;font-family:monospace;margin-top:4px;">' + inr(st.pendingSettle) + '</div></div>' +
+        '<div><div style="font-size:10.5px;color:#8892a6;font-weight:800;text-transform:uppercase;">Paid</div><div style="font-size:18px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:4px;">' + inr(st.totalEarned) + '</div></div>' +
       '</div>' +
       payCard +
       (st.pendingSettle > 0 ? '<button class="tg-btn suc" style="width:100%;padding:12px;justify-content:center;margin-bottom:14px;" onclick="tgCloseMod(\'mod-boy-detail\');tgOpenSettleModal(\'' + esc(bid) + '\')">💰 Settle ' + inr(st.pendingSettle) + '</button>' : '') +
-      '<div style="font-size:12px;color:#8892a6;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;">Recent Tasks</div>' +
+      '<div style="font-size:12px;color:#8892a6;font-weight:800;text-transform:uppercase;margin-bottom:10px;">Recent Tasks</div>' +
       (tasks.length ? tasks.map(t =>
         '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;">' +
-          '<div style="width:40px;height:40px;border-radius:10px;background:rgba(0,212,255,0.12);color:#00d4ff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">' + (normStatus(t.status) === 'settled' ? '💰' : normStatus(t.status) === 'received' ? '✓' : normStatus(t.status) === 'collected' ? '📦' : '⏳') + '</div>' +
           '<div style="flex:1;min-width:0;">' +
-            '<div style="font-size:13.5px;font-weight:800;color:#fff;margin-bottom:3px;">#' + esc(getTaskDisplayId(t)) + '</div>' +
-            '<div style="font-size:11.5px;color:#8892a6;display:flex;gap:10px;flex-wrap:wrap;"><span>' + esc(t.sellerName || 'Seller') + '</span><span>' + stLabel(t.status) + '</span></div>' +
+            '<div style="font-size:13.5px;font-weight:800;color:#fff;">#' + esc(getTaskDisplayId(t)) + '</div>' +
+            '<div style="font-size:11.5px;color:#8892a6;">' + esc(t.sellerName || 'Seller') + ' · ' + stLabel(t.status) + '</div>' +
           '</div>' +
-          '<div style="font-size:15px;font-weight:900;color:#00d4ff;font-family:monospace;white-space:nowrap;">' + inr(t.earning||0) + '</div>' +
+          '<div style="font-size:15px;font-weight:900;color:#00d4ff;font-family:monospace;">' + inr(t.earning||0) + '</div>' +
         '</div>'
-      ).join('') : '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:40px;">📋</div><div class="tg-empty-t">No tasks yet</div></div>');
+      ).join('') : '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:40px;">📋</div><div class="tg-empty-t">No tasks</div></div>');
 
     openMod('mod-boy-detail');
   };
@@ -1981,7 +2288,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     let list = ALL_SELLERS.slice();
     if (q) list = list.filter(s => [(s.shopName||''),(s.ownerName||''),(s.phone||''),(s.pincode||'')].join(' ').toLowerCase().includes(q));
     if (!list.length) {
-      el.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:40px;">🏪</div><div class="tg-empty-t">No sellers found</div></div>';
+      el.innerHTML = '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i" style="font-size:40px;">🏪</div><div class="tg-empty-t">No sellers</div></div>';
       return;
     }
     el.innerHTML = list.slice(0, 50).map(s => {
@@ -1991,7 +2298,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div class="tg-sel-radio"></div>' +
         '<div class="tg-sel-body">' +
           '<div class="tg-sel-t">' + esc(s.shopName || 'Shop') + '</div>' +
-          '<div class="tg-sel-s"><span>📞 ' + esc(s.phone||'—') + '</span>' + (s.pincode ? '<span>📍 ' + esc(s.pincode) + '</span>' : '') + (pendingTasks > 0 ? '<span class="tg-pill ylw" style="font-size:9px;padding:2px 7px;">' + pendingTasks + ' Active</span>' : '') + '</div>' +
+          '<div class="tg-sel-s"><span>📞 ' + esc(s.phone||'—') + '</span>' + (s.pincode ? '<span>📍 ' + esc(s.pincode) + '</span>' : '') + '</div>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -2006,10 +2313,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     FETCHED_SELLER_ORDERS = [];
     renderAssignSellers();
     document.getElementById('as-assign-box').style.display = 'block';
-    document.getElementById('as-selected-seller-info').innerHTML = '📍 ' + esc(s.shopName || '') + ' · ' + esc(s.phone || '') + (s.pincode ? ' · ' + esc(s.pincode) : '');
+    document.getElementById('as-selected-seller-info').innerHTML = '📍 ' + esc(s.shopName || '') + ' · ' + esc(s.phone || '');
     document.getElementById('as-order-ids').value = '';
     document.getElementById('as-fetched-orders').style.display = 'none';
-    document.getElementById('as-fetched-orders').innerHTML = '';
     renderAssignBoys();
     tgUpdateOrderIdCount();
     tgCalcAssignTotal();
@@ -2026,12 +2332,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     renderAssignSellers();
   };
 
-  /* ⭐ NEW: Parse order IDs from textarea */
   window.tgUpdateOrderIdCount = function() {
     const raw = (document.getElementById('as-order-ids')?.value || '').trim();
     const ids = raw.split(/[\n,]/).map(s => s.trim().toUpperCase()).filter(Boolean);
     setText('as-oid-count', ids.length);
-    // Auto-update packet count if IDs provided
     if (ids.length > 0) {
       const pc = document.getElementById('as-packet-count');
       if (pc) pc.value = ids.length;
@@ -2039,58 +2343,46 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     }
   };
 
-  /* ⭐ NEW: Auto-fetch seller's pending orders */
   window.tgFetchSellerOrders = async function() {
-    if (!SELECTED_SELLER) { toast('Select a seller first', 'error'); return; }
+    if (!SELECTED_SELLER) { toast('Select seller first', 'error'); return; }
     const btn = document.getElementById('as-fetch-btn');
     btn.disabled = true;
     const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<svg viewBox="0 0 24 24" style="animation:tgSpin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></svg> Fetching...';
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></svg> Fetching...';
 
     try {
-      // Query orders for this seller. Use both sellerIds array and sellerId scalar
       const results = new Map();
       try {
-        const s1 = await db.collection('orders')
-          .where('sellerIds', 'array-contains', SELECTED_SELLER.id)
-          .limit(100).get();
+        const s1 = await db.collection('orders').where('sellerIds', 'array-contains', SELECTED_SELLER.id).limit(100).get();
         s1.docs.forEach(d => results.set(d.id, { id: d.id, ...d.data() }));
-      } catch(e) { console.warn('sellerIds query failed:', e); }
+      } catch(e) {}
       try {
-        const s2 = await db.collection('orders')
-          .where('sellerId', '==', SELECTED_SELLER.id)
-          .limit(100).get();
+        const s2 = await db.collection('orders').where('sellerId', '==', SELECTED_SELLER.id).limit(100).get();
         s2.docs.forEach(d => results.set(d.id, { id: d.id, ...d.data() }));
-      } catch(e) { console.warn('sellerId query failed:', e); }
+      } catch(e) {}
 
-      // Filter to orders that need pickup (not cancelled/delivered/returned/pending-admin)
-      const pickupStatuses = ['seller_accepted', 'admin_approved', 'label_generated', 'processing'];
-      const filtered = [];
+      const pickupStatuses = ['label_generated', 'processing'];
+      FETCHED_SELLER_ORDERS = [];
       results.forEach((o, id) => {
-        const st = String(o.status || '').toLowerCase().trim().replace(/[\s-]/g, '_');
-        // Include if status is one of pickup statuses OR if it's ambiguous (pending confirmation)
-        if (pickupStatuses.some(ps => st.includes(ps.replace('_', '')))) filtered.push(o);
-        else if (st === 'admin_approved' || st === 'label_generated' || st === 'processing' || st === 'seller_accepted') filtered.push(o);
-        else if (!st || st === 'confirmed') filtered.push(o); // include if status unclear
+        const st = String(o.status || '').toLowerCase().trim();
+        if (pickupStatuses.includes(st)) FETCHED_SELLER_ORDERS.push(o);
       });
 
-      // Dedupe by order ID
-      FETCHED_SELLER_ORDERS = filtered.sort((a,b) => {
-        const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
-        const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+      FETCHED_SELLER_ORDERS.sort((a,b) => {
+        const at = a.labelGeneratedAt?.toDate?.()?.getTime?.() || a.createdAt?.toDate?.()?.getTime?.() || 0;
+        const bt = b.labelGeneratedAt?.toDate?.()?.getTime?.() || b.createdAt?.toDate?.()?.getTime?.() || 0;
         return bt - at;
       });
 
       if (!FETCHED_SELLER_ORDERS.length) {
-        toast('Koi pending orders nahi mile is seller ke', 'info');
+        toast('Koi label-generated orders nahi mile', 'info');
         document.getElementById('as-fetched-orders').style.display = 'none';
         return;
       }
 
       renderFetchedOrders();
-      toast('✓ ' + FETCHED_SELLER_ORDERS.length + ' order(s) found — select to add', 'success');
+      toast('✓ ' + FETCHED_SELLER_ORDERS.length + ' order(s) found', 'success');
     } catch(e) {
-      console.error(e);
       toast('Fetch failed: ' + e.message, 'error');
     } finally {
       btn.disabled = false;
@@ -2101,23 +2393,18 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function renderFetchedOrders() {
     const el = document.getElementById('as-fetched-orders');
     if (!el) return;
-    if (!FETCHED_SELLER_ORDERS.length) {
-      el.style.display = 'none';
-      return;
-    }
+    if (!FETCHED_SELLER_ORDERS.length) { el.style.display = 'none'; return; }
     el.style.display = 'block';
     el.innerHTML = FETCHED_SELLER_ORDERS.map(o => {
       const oid = String(o.id).toUpperCase();
       const shortId = oid.slice(0, 12);
       const items = Array.isArray(o.items) ? o.items : [];
-      const itemCount = items.length || Number(o.itemCount || 0);
-      const total = Number(o.total || o.grandTotal || 0);
-      const status = String(o.status || '').toLowerCase().replace(/_/g, ' ');
+      const total = Number(o.total || 0);
       return '<div class="tg-fetched-order">' +
         '<input type="checkbox" class="tg-fetched-order-cb" data-oid="' + esc(shortId) + '" onchange="tgSyncFetchedSelection()">' +
         '<div class="tg-fetched-order-info">' +
           '<div class="tg-fetched-order-id">#' + esc(shortId) + '</div>' +
-          '<div class="tg-fetched-order-meta">' + itemCount + ' item(s) · ' + esc(status) + ' · ' + esc(fdate(o.createdAt)) + '</div>' +
+          '<div class="tg-fetched-order-meta">' + items.length + ' items · ' + fdate(o.createdAt) + '</div>' +
         '</div>' +
         '<div class="tg-fetched-order-amt">' + inr(total) + '</div>' +
       '</div>';
@@ -2135,26 +2422,20 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   function renderAssignBoys() {
     const el = document.getElementById('as-boys-list');
     if (!el) return;
-    const list = ALL_BOYS.slice().sort((a,b) => {
-      const aAct = ALL_TASKS.filter(t => t.pickupBoyId === a.id && normStatus(t.status) === 'collected').length;
-      const bAct = ALL_TASKS.filter(t => t.pickupBoyId === b.id && normStatus(t.status) === 'collected').length;
-      return aAct - bAct;
-    });
+    const list = ALL_BOYS.slice();
     if (!list.length) {
-      el.innerHTML = '<div style="padding:14px;color:#8892a6;text-align:center;font-size:12.5px;">No pickup boys available. Pehle applications approve karo.</div>';
+      el.innerHTML = '<div style="padding:14px;color:#8892a6;text-align:center;font-size:12.5px;">No pickup boys. Pehle approve karo.</div>';
       return;
     }
     el.innerHTML = list.map(b => {
-      const active = SELECTED_BOY_FOR_ASSIGN && SELECTED_BOY_FOR_ASSIGN === b.id;
-      const withBoy = ALL_TASKS.filter(t => t.pickupBoyId === b.id && normStatus(t.status) === 'collected').length;
-      const rate = Number(b.ratePerPacket || b.rate || 10);
+      const active = SELECTED_BOY_FOR_ASSIGN === b.id;
       return '<div class="tg-sel ' + (active?'active':'') + '" onclick="tgPickBoyForAssign(\'' + esc(b.id) + '\')">' +
         '<div class="tg-sel-radio"></div>' +
         '<div class="tg-sel-body">' +
-          '<div class="tg-sel-t">' + esc(b.name||'Boy') + ' ' + (withBoy > 0 ? '<span class="tg-pill blu" style="font-size:9px;padding:2px 7px;">' + withBoy + ' With Boy</span>' : '<span class="tg-pill grn" style="font-size:9px;padding:2px 7px;">IDLE</span>') + '</div>' +
-          '<div class="tg-sel-s"><span>📞 ' + esc(b.phone||'—') + '</span>' + (b.zone ? '<span>📍 ' + esc(b.zone) + '</span>' : '') + '</div>' +
+          '<div class="tg-sel-t">' + esc(b.name||'Boy') + '</div>' +
+          '<div class="tg-sel-s"><span>📞 ' + esc(b.phone||'—') + '</span></div>' +
         '</div>' +
-        '<div class="tg-sel-r">' + inr(rate) + '/pkt</div>' +
+        '<div class="tg-sel-r">' + inr(b.ratePerPacket || b.rate || 10) + '/pkt</div>' +
       '</div>';
     }).join('');
   }
@@ -2162,10 +2443,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.tgPickBoyForAssign = function(bid) {
     SELECTED_BOY_FOR_ASSIGN = bid;
     const b = ALL_BOYS.find(x => x.id === bid);
-    if (b) {
-      const rate = Number(b.ratePerPacket || b.rate || 10);
-      document.getElementById('as-rate').value = rate;
-    }
+    if (b) document.getElementById('as-rate').value = b.ratePerPacket || b.rate || 10;
     renderAssignBoys();
     tgCalcAssignTotal();
   };
@@ -2176,43 +2454,27 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     setText('as-total', '₹' + (count * rate));
   };
 
-  /* ⭐ FIXED: Add orderId to pickupTask for label matching */
   window.tgConfirmAssign = async function() {
     if (!SELECTED_SELLER) { toast('Select seller', 'error'); return; }
     if (!SELECTED_BOY_FOR_ASSIGN) { toast('Select pickup boy', 'error'); return; }
-
-    // Parse order IDs
     const orderIdsRaw = (document.getElementById('as-order-ids').value || '').trim();
     const orderIds = orderIdsRaw.split(/[\n,]/).map(s => s.trim().toUpperCase()).filter(Boolean);
-
     const packetCount = Number(document.getElementById('as-packet-count').value || 1);
     const rate = Number(document.getElementById('as-rate').value || 10);
     const notes = (document.getElementById('as-notes').value || '').trim();
-
     if (packetCount < 1) { toast('Packet count ≥ 1', 'error'); return; }
-    if (rate < 0) { toast('Rate ≥ 0', 'error'); return; }
-
-    // Warn if no order IDs - pickup boy won't be able to scan seller labels
-    if (!orderIds.length) {
-      const ok = confirm('⚠️ Aapne order IDs nahi daale!\n\nBina order IDs ke, pickup boy seller ke label ko scan NAHI kar payega (kyunki physical packet pe seller ka order ID hota hai).\n\nKya aap phir bhi assign karna chahte ho?');
-      if (!ok) return;
-    }
-
-    // If order IDs given but count doesn't match, use orderIds.length
     const finalCount = orderIds.length > 0 ? orderIds.length : packetCount;
-
     const boy = ALL_BOYS.find(x => x.id === SELECTED_BOY_FOR_ASSIGN);
     if (!boy) { toast('Boy not found', 'error'); return; }
     const btn = document.getElementById('as-confirm-btn');
     btn.disabled = true; btn.textContent = 'Assigning...';
     try {
-      const totalEarning = finalCount * rate;
       const batch = db.batch();
       const now = FV.serverTimestamp();
       for (let i = 0; i < finalCount; i++) {
         const ref = db.collection('pickupTasks').doc();
-        // ⭐ NEW: Include orderId for label matching
-        const orderId = orderIds[i] || '';
+        const rawId = orderIds[i] || '';
+        const labelId = rawId.length > 12 ? rawId.slice(0, 12) : rawId;
         const payload = {
           sellerId: SELECTED_SELLER.id,
           sellerName: SELECTED_SELLER.shopName || '',
@@ -2232,19 +2494,21 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           assignedBy: USER.uid,
           createdAt: now,
           updatedAt: now,
-          orderDisplayId: orderId || ('PKP-' + Date.now().toString(36).toUpperCase() + '-' + (i+1))
+          orderDisplayId: labelId || ('PKP-' + Date.now().toString(36).toUpperCase() + '-' + (i+1))
         };
-        // Only add orderId if provided (so scans match seller's actual labels)
-        if (orderId) payload.orderId = orderId;
+        if (labelId) {
+          payload.orderId = labelId;
+          payload.labelId = labelId;
+          if (rawId && rawId !== labelId) payload.orderFullId = rawId;
+        }
         batch.set(ref, payload);
       }
       await batch.commit();
-      toast('✓ Assigned ' + finalCount + ' packet(s) to ' + esc(boy.name) + ' · Total ' + inr(totalEarning), 'success');
+      toast('✓ ' + finalCount + ' packet(s) assigned to ' + esc(boy.name), 'success');
       playBeep(); vibrate([40,30,80]);
       tgCancelAssign();
       tgNav('tasks');
     } catch(e) {
-      console.error(e);
       toast('Failed: ' + e.message, 'error');
       btn.disabled = false; btn.textContent = 'Assign Now';
     }
@@ -2271,7 +2535,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (TASK_FILTER !== 'all') list = list.filter(t => normStatus(t.status) === TASK_FILTER);
 
     if (!list.length) {
-      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📋</div><div class="tg-empty-t">No tasks</div><div class="tg-empty-d">Naya pickup assign karo</div></div>';
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📋</div><div class="tg-empty-t">No tasks</div></div>';
       return;
     }
 
@@ -2279,11 +2543,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const s = normStatus(t.status);
       const cls = stClass(t.status);
       const lbl = stLabel(t.status);
-      const hasOrderId = !!(t.orderId || t.order_id);
+      const hasLabelId = !!(t.orderId || t.labelId);
       return '<div class="tg-row">' +
         '<div class="tg-row-av sq" style="font-size:16px;">' + (s==='received'?'✓':s==='settled'?'💰':s==='collected'?'📦':'⏳') + '</div>' +
         '<div class="tg-row-b">' +
-          '<div class="tg-row-t">#' + esc(getTaskDisplayId(t)) + (hasOrderId ? '' : ' <span class="tg-pill ylw" style="font-size:9px;">No Label ID</span>') + '</div>' +
+          '<div class="tg-row-t">#' + esc(getTaskDisplayId(t)) + (hasLabelId ? '' : ' <span class="tg-pill ylw" style="font-size:9px;">No Label ID</span>') + '</div>' +
           '<div class="tg-row-s"><span>🏪 ' + esc(t.sellerName||'Seller') + '</span><span>🏍️ ' + esc(t.pickupBoyName||'Boy') + '</span><span>' + esc(tago(t.createdAt)) + '</span></div>' +
           '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
             '<span class="tg-pill ' + cls + '">' + lbl + '</span>' +
@@ -2315,22 +2579,22 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           '<div class="tg-row-av">' + esc(ini(g.name)) + '</div>' +
           '<div style="flex:1;min-width:0;">' +
             '<div style="font-size:14px;font-weight:800;color:#fff;">' + esc(g.name) + '</div>' +
-            '<div style="font-size:11.5px;color:#8892a6;margin-top:2px;">📞 ' + esc(g.phone||'—') + ' · ' + g.tasks.length + ' packet(s) · ' + inr(total) + '</div>' +
+            '<div style="font-size:11.5px;color:#8892a6;">📞 ' + esc(g.phone||'—') + ' · ' + g.tasks.length + ' packet · ' + inr(total) + '</div>' +
           '</div>' +
           '<span class="tg-pill blu">' + g.tasks.length + '</span>' +
         '</div>' +
         g.tasks.slice(0, 5).map(t =>
-          '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;">' +
+          '<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:6px;">' +
             '<div style="width:36px;height:36px;border-radius:9px;background:rgba(0,212,255,0.12);color:#00d4ff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📦</div>' +
             '<div style="flex:1;min-width:0;">' +
-              '<div style="font-size:12px;font-weight:800;color:#fff;font-family:monospace;letter-spacing:0.3px;">#' + esc(getTaskDisplayId(t)) + '</div>' +
+              '<div style="font-size:12px;font-weight:800;color:#fff;font-family:monospace;">#' + esc(getTaskDisplayId(t)) + '</div>' +
               '<div style="font-size:11px;color:#8892a6;">🏪 ' + esc(t.sellerName||'Seller') + '</div>' +
             '</div>' +
             '<div style="font-size:14px;font-weight:900;color:#00d4ff;font-family:monospace;">' + inr(t.earning||0) + '</div>' +
           '</div>'
         ).join('') +
-        (g.tasks.length > 5 ? '<div style="font-size:11.5px;color:#00d4ff;font-weight:700;padding:6px 0;">+ ' + (g.tasks.length - 5) + ' more — scan to receive</div>' : '') +
-        '<button class="tg-btn suc" style="width:100%;padding:11px;justify-content:center;margin-top:8px;" onclick="tgOpenScanner(\'bulk\')">📷 Bulk Receive All</button>' +
+        (g.tasks.length > 5 ? '<div style="font-size:11.5px;color:#00d4ff;font-weight:700;padding:6px 0;">+ ' + (g.tasks.length - 5) + ' more</div>' : '') +
+        '<button class="tg-btn suc" style="width:100%;padding:11px;justify-content:center;margin-top:8px;" onclick="tgOpenScanner(\'bulk\')">📷 Bulk Receive</button>' +
       '</div>';
     }).join('');
   }
@@ -2344,20 +2608,15 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     lastScanTime = 0;
 
     const title = document.getElementById('scanner-title');
-    if (title) title.textContent = SCAN_MODE === 'bulk' ? '📷 Bulk Receive · Auto' : '📷 Single Receive';
+    if (title) title.textContent = SCAN_MODE === 'bulk' ? '📷 Bulk Receive' : '📷 Single Receive';
     const hint = document.getElementById('scan-hint-text');
-    if (hint) hint.textContent = SCAN_MODE === 'bulk'
-      ? '📸 Continuous scanning · Auto-receive · No confirm'
-      : '📸 Ek packet scan karo · Result dekho';
+    if (hint) hint.textContent = SCAN_MODE === 'bulk' ? '📸 Continuous · Auto-receive' : '📸 Ek packet scan karo';
 
     const bulkBar = document.getElementById('tg-bulk-bar');
     if (bulkBar) bulkBar.style.display = SCAN_MODE === 'bulk' ? 'flex' : 'none';
     setText('bulk-count', 0);
     setText('bulk-earn', '₹0');
-
-    const recentEl = document.getElementById('tg-recent-list');
-    if (recentEl) recentEl.innerHTML = '<div class="tg-recent-empty">Recent scans yahan dikhenge...</div>';
-
+    document.getElementById('tg-recent-list').innerHTML = '<div class="tg-recent-empty">Recent scans yahan dikhenge...</div>';
     document.getElementById('tg-scan-err').style.display = 'none';
     document.getElementById('tg-manual-scan').value = '';
 
@@ -2368,7 +2627,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
   window.tgCloseScanner = function() {
     if (SCAN_MODE === 'bulk' && SCAN_SESSION.count > 0) {
-      toast('✓ Bulk receive · ' + SCAN_SESSION.count + ' packets · ' + inr(SCAN_SESSION.value), 'success');
+      toast('✓ Bulk · ' + SCAN_SESSION.count + ' packets · ' + inr(SCAN_SESSION.value), 'success');
     }
     stopScanner();
     tgCloseMod('mod-scanner');
@@ -2386,11 +2645,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   async function startScanner() {
     if (scannerRunning) return;
     const errEl = document.getElementById('tg-scan-err');
-
     if (typeof Html5Qrcode === 'undefined') {
       errEl.style.display = 'block';
       errEl.className = 'tg-cam-err';
-      errEl.innerHTML = '⚠ <b>Scanner library load nahi hui</b><br>Internet check karo.';
+      errEl.innerHTML = '⚠ <b>Scanner library load nahi hui</b>';
       setScanStatus('Library error', 'error');
       return;
     }
@@ -2404,7 +2662,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       errEl.style.display = 'block';
       errEl.className = 'tg-cam-err';
-      errEl.innerHTML = '⚠ <b>Camera API not supported</b>';
+      errEl.innerHTML = '⚠ <b>Camera not supported</b>';
       setScanStatus('Not supported', 'error');
       return;
     }
@@ -2412,73 +2670,35 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     try {
       setScanStatus('Requesting permission...', '');
       document.getElementById('tg-reader').innerHTML = '';
-
       scanner = new Html5Qrcode("tg-reader", {
-        formatsToSupport: [
-          Html5QrcodeSupportedFormats.QR_CODE,
-          Html5QrcodeSupportedFormats.CODE_39,
-          Html5QrcodeSupportedFormats.CODE_93,
-          Html5QrcodeSupportedFormats.CODE_128,
-          Html5QrcodeSupportedFormats.EAN_13,
-          Html5QrcodeSupportedFormats.EAN_8,
-          Html5QrcodeSupportedFormats.UPC_A,
-          Html5QrcodeSupportedFormats.UPC_E,
-          Html5QrcodeSupportedFormats.ITF,
-          Html5QrcodeSupportedFormats.CODABAR
-        ],
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.CODE_39, Html5QrcodeSupportedFormats.CODE_93, Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.UPC_E, Html5QrcodeSupportedFormats.ITF, Html5QrcodeSupportedFormats.CODABAR],
         verbose: SCANNER_DEBUG,
         experimentalFeatures: { useBarCodeDetectorIfSupported: true }
       });
-
       const config = {
         fps: 15,
-        qrbox: function(vw, vh) {
-          const min = Math.min(vw, vh);
-          const size = Math.floor(min * 0.7);
-          return { width: size, height: Math.max(120, Math.floor(size * 0.5)) };
-        },
+        qrbox: function(vw, vh) { const min = Math.min(vw, vh); const size = Math.floor(min * 0.7); return { width: size, height: Math.max(120, Math.floor(size * 0.5)) }; },
         aspectRatio: 1.2,
         disableFlip: false,
-        videoConstraints: {
-          facingMode: { ideal: 'environment' },
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        }
+        videoConstraints: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
       };
-
       setScanStatus('Starting camera...', '');
-
-      await scanner.start(
-        { facingMode: { ideal: 'environment' } },
-        config,
-        onScanSuccess,
-        onScanFailure
-      );
-
+      await scanner.start({ facingMode: { ideal: 'environment' } }, config, onScanSuccess, onScanFailure);
       scannerRunning = true;
-      setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', '');
+      setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', '');
       errEl.style.display = 'none';
     } catch(e) {
       scannerRunning = false;
-      console.error('[Scanner start error]', e);
       let msg = '';
       const em = String(e && e.message || e || '');
-      if (em.includes('NotAllowedError') || em.includes('Permission') || em.includes('denied')) {
-        msg = '⚠ <b>Camera permission denied</b><br>Browser me camera allow karo.';
-        setScanStatus('Permission denied', 'error');
-      } else if (em.includes('NotFoundError') || em.includes('no camera')) {
-        msg = '⚠ <b>Camera not found</b>';
-        setScanStatus('No camera', 'error');
-      } else if (em.includes('NotReadableError') || em.includes('in use')) {
-        msg = '⚠ <b>Camera busy</b>';
-        setScanStatus('Camera busy', 'error');
-      } else {
-        msg = '⚠ <b>Camera error</b><br>' + esc(em || 'Unknown error');
-        setScanStatus('Error', 'error');
-      }
+      if (em.includes('NotAllowedError') || em.includes('Permission')) msg = '⚠ <b>Camera denied</b><br>Browser me allow karo.';
+      else if (em.includes('NotFoundError') || em.includes('no camera')) msg = '⚠ <b>No camera</b>';
+      else if (em.includes('NotReadableError') || em.includes('in use')) msg = '⚠ <b>Camera busy</b>';
+      else msg = '⚠ <b>Error:</b> ' + esc(em);
       errEl.style.display = 'block';
       errEl.className = 'tg-cam-err';
       errEl.innerHTML = msg;
+      setScanStatus('Error', 'error');
       try { await scanner.stop(); } catch(e2){}
       try { scanner.clear(); } catch(e2){}
       scanner = null;
@@ -2496,18 +2716,14 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (reader) reader.innerHTML = '';
   }
 
-  /* ⭐ FIXED: Parse QR format + better dedupe */
   function onScanSuccess(decodedText) {
     const now = Date.now();
     if (now - lastScanTime < 600) return;
     lastScanTime = now;
-
     const clean = extractOrderIdFromScan(decodedText);
     if (!clean || clean.length < 3) return;
-
     const recentTs = RECENT_SCAN_CODES.get(clean);
     if (recentTs && (now - recentTs) < 5000) return;
-
     vibrate([50, 30, 50]);
     tgProcessScan(clean);
   }
@@ -2522,17 +2738,13 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     tgProcessScan(clean);
   };
 
-  /* ⭐ FULLY FIXED: Match against orderId, orderDisplayId, id, tracking, etc. */
   async function tgProcessScan(code) {
     const clean = extractOrderIdFromScan(code);
     if (!clean || clean.length < 3) {
       playErrBeep(); flashError();
-      setScanStatus('❌ Invalid barcode', 'error');
-      toast('Invalid barcode', 'error');
+      setScanStatus('❌ Invalid', 'error');
       return;
     }
-
-    // Find matching collected task (with all possible ID fields)
     const task = ALL_TASKS.find(t => {
       if (normStatus(t.status) !== 'collected') return false;
       if (RECENTLY_RECEIVED.has(t.id)) return false;
@@ -2543,39 +2755,27 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       playErrBeep(); vibrate([100, 60, 100]); flashError();
       if (SCAN_MODE === 'single') {
         setScanStatus('❌ Not found', 'error');
-        showResultCard('error', 'Not Found', 'Scanned: <b>' + esc(clean) + '</b><br>Koi matching packet nahi mila.', '');
+        showResultCard('error', 'Not Found', 'Scanned: <b>' + esc(clean) + '</b><br>No matching packet.', '');
       } else {
-        setScanStatus('❌ Not found — retry', 'error');
+        setScanStatus('❌ Not found', 'error');
       }
       tgAddRecent({ code: clean, ok: false, msg: 'Not found' });
-      toast('❌ No matching packet', 'error');
-      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1500);
+      toast('❌ No match', 'error');
+      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', ''); }, 1500);
       return;
     }
 
     try {
       const earn = Number(task.earning || 0);
       const now = FV.serverTimestamp();
-
       await db.collection('pickupTasks').doc(task.id).update({
-        status: 'received',
-        receivedAt: now,
-        receivedBy: USER.uid,
-        receivedScanCode: clean,
-        updatedAt: now
+        status: 'received', receivedAt: now, receivedBy: USER.uid, receivedScanCode: clean, updatedAt: now
       });
-
       try {
         await db.collection('scanLogs').add({
-          boyId: USER.uid,
-          boyName: (USER.displayName || 'Admin') + ' (Admin)',
-          type: 'admin_receive',
-          pickupTaskId: task.id,
-          orderId: task.orderId || '',
-          orderDisplayId: task.orderDisplayId || '',
-          scannedCode: clean,
-          earning: 0,
-          createdAt: now
+          boyId: USER.uid, boyName: (USER.displayName || 'Admin') + ' (Admin)',
+          type: 'admin_receive', pickupTaskId: task.id, orderId: task.orderId || '',
+          orderDisplayId: task.orderDisplayId || '', scannedCode: clean, earning: 0, createdAt: now
         });
       } catch(e) {}
 
@@ -2583,41 +2783,28 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       RECENTLY_RECEIVED.add(task.id);
       SCAN_SESSION.count++;
       SCAN_SESSION.value += earn;
-      SCAN_SESSION.recent.push(task.id);
 
-      playBeep();
-      vibrate([60, 30, 100]);
-      flashSuccess();
+      playBeep(); vibrate([60, 30, 100]); flashSuccess();
 
       if (SCAN_MODE === 'bulk') {
         setText('bulk-count', SCAN_SESSION.count);
         setText('bulk-earn', '₹' + SCAN_SESSION.value);
-        setScanStatus('✓ Received · scanning...', 'success');
-        setTimeout(() => { if (scannerRunning) setScanStatus('🎯 Bulk scanning...', ''); }, 1200);
+        setScanStatus('✓ Received', 'success');
+        setTimeout(() => { if (scannerRunning) setScanStatus('🎯 Scanning...', ''); }, 1200);
       } else {
         setScanStatus('✓ Received', 'success');
-        showResultCard('success', 'Received!',
-          'Packet: <b>#' + esc(getTaskDisplayId(task)) + '</b><br>From: <b>' + esc(task.pickupBoyName || '—') + '</b>',
-          '₹' + earn);
+        showResultCard('success', 'Received!', 'Packet: <b>#' + esc(getTaskDisplayId(task)) + '</b><br>From: <b>' + esc(task.pickupBoyName || '—') + '</b>', '₹' + earn);
         setTimeout(() => tgCloseScanner(), 1800);
       }
-
-      tgAddRecent({
-        code: clean, ok: true,
-        packet: getTaskDisplayId(task),
-        seller: task.pickupBoyName || 'Boy',
-        earn: earn
-      });
-
+      tgAddRecent({ code: clean, ok: true, packet: getTaskDisplayId(task), seller: task.pickupBoyName || 'Boy', earn: earn });
       document.getElementById('tg-manual-scan').value = '';
       lastScanTime = Date.now() - 400;
     } catch(e) {
-      console.error('[processScan error]', e);
       playErrBeep(); flashError();
-      tgAddRecent({ code: clean, ok: false, msg: 'Error: ' + (e.message || 'Network') });
+      tgAddRecent({ code: clean, ok: false, msg: 'Error' });
       toast('Failed: ' + e.message, 'error');
-      if (scannerRunning) setScanStatus('❌ Error — retry', 'error');
-      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Bulk scanning...' : '🎯 Ready to scan', ''); }, 1500);
+      if (scannerRunning) setScanStatus('❌ Error', 'error');
+      setTimeout(() => { if (scannerRunning) setScanStatus(SCAN_MODE === 'bulk' ? '🎯 Scanning...' : '🎯 Ready', ''); }, 1500);
     }
   }
 
@@ -2630,13 +2817,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     el.style.background = isOk ? 'linear-gradient(135deg,rgba(34,197,94,0.15),rgba(0,212,255,0.08))' : 'rgba(239,68,68,0.12)';
     el.style.borderColor = isOk ? 'rgba(34,197,94,0.5)' : 'rgba(239,68,68,0.4)';
     el.style.color = isOk ? '#4ade80' : '#f87171';
-    el.innerHTML =
-      '<div style="text-align:center;">' +
-        '<div style="font-size:22px;margin-bottom:6px;">' + (isOk ? '✓' : '✕') + '</div>' +
-        '<div style="font-size:15px;font-weight:900;margin-bottom:6px;color:' + (isOk ? '#4ade80' : '#f87171') + ';">' + title + '</div>' +
-        '<div style="font-size:12px;color:#cbd5e1;line-height:1.6;">' + info + '</div>' +
-        (amount ? '<div style="font-size:20px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:8px;">' + amount + '</div>' : '') +
-      '</div>';
+    el.innerHTML = '<div style="text-align:center;"><div style="font-size:22px;margin-bottom:6px;">' + (isOk ? '✓' : '✕') + '</div><div style="font-size:15px;font-weight:900;margin-bottom:6px;color:' + (isOk ? '#4ade80' : '#f87171') + ';">' + title + '</div><div style="font-size:12px;color:#cbd5e1;line-height:1.6;">' + info + '</div>' + (amount ? '<div style="font-size:20px;font-weight:900;color:#4ade80;font-family:monospace;margin-top:8px;">' + amount + '</div>' : '') + '</div>';
     setTimeout(() => { el.style.display = 'none'; }, isOk ? 1600 : 2800);
   }
 
@@ -2648,21 +2829,9 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const item = document.createElement('div');
     item.className = 'tg-recent-item';
     if (data.ok) {
-      item.innerHTML =
-        '<div class="tg-recent-ic">✓</div>' +
-        '<div class="tg-recent-b">' +
-          '<div class="tg-recent-t">#' + esc(data.packet || data.code) + '</div>' +
-          '<div class="tg-recent-s">' + esc(data.seller || 'Boy') + '</div>' +
-        '</div>' +
-        '<div class="tg-recent-v">₹' + (data.earn || 0) + '</div>';
+      item.innerHTML = '<div class="tg-recent-ic">✓</div><div class="tg-recent-b"><div class="tg-recent-t">#' + esc(data.packet || data.code) + '</div><div class="tg-recent-s">' + esc(data.seller || 'Boy') + '</div></div><div class="tg-recent-v">₹' + (data.earn || 0) + '</div>';
     } else {
-      item.innerHTML =
-        '<div class="tg-recent-ic err">✕</div>' +
-        '<div class="tg-recent-b">' +
-          '<div class="tg-recent-t">' + esc(data.code || '') + '</div>' +
-          '<div class="tg-recent-s">' + esc(data.msg || 'Error') + '</div>' +
-        '</div>' +
-        '<div class="tg-recent-v" style="color:#f87171;">—</div>';
+      item.innerHTML = '<div class="tg-recent-ic err">✕</div><div class="tg-recent-b"><div class="tg-recent-t">' + esc(data.code || '') + '</div><div class="tg-recent-s">' + esc(data.msg || 'Error') + '</div></div><div class="tg-recent-v" style="color:#f87171;">—</div>';
     }
     el.insertBefore(item, el.firstChild);
     while (el.children.length > 15) el.removeChild(el.lastChild);
@@ -2680,7 +2849,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     });
     const list = Object.values(groups);
     if (!list.length) {
-      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">✓</div><div class="tg-empty-t">All settled!</div><div class="tg-empty-d">Koi pending settlement nahi hai</div></div>';
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">✓</div><div class="tg-empty-t">All settled!</div></div>';
       return;
     }
     el.innerHTML = list.sort((a,b) => b.tasks.length - a.tasks.length).map(g => {
@@ -2692,7 +2861,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           '<div class="tg-row-s"><span>📞 ' + esc(g.phone||'—') + '</span><span>' + g.tasks.length + ' packet(s)</span></div>' +
           '<div style="margin-top:8px;"><span class="tg-pill red" style="font-size:12px;padding:5px 12px;">' + inr(total) + ' PENDING</span></div>' +
         '</div>' +
-        '<div class="tg-row-a" onclick="event.stopPropagation();">' +
+        '<div class="tg-row-a">' +
           '<button class="tg-btn suc" onclick="tgOpenSettleModal(\'' + esc(g.boyId) + '\')">Settle</button>' +
         '</div>' +
       '</div>';
@@ -2702,17 +2871,11 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
   window.tgOpenSettleModal = function(bid) {
     const b = ALL_APPS.find(x => x.id === bid);
     const tasks = ALL_TASKS.filter(t => t.pickupBoyId === bid && normStatus(t.status) === 'received');
-    if (!tasks.length) { toast('No pending tasks', 'error'); return; }
+    if (!tasks.length) { toast('No pending', 'error'); return; }
     const total = tasks.reduce((s,t) => s + Number(t.earning||0), 0);
-
     let payInfo = '';
-    if (b?.upiId) {
-      payInfo = '<div class="tg-info-box success"><span class="ic">📱</span><b>UPI:</b> ' + esc(b.upiId) + '</div>';
-    } else if (b?.bankAcc) {
-      payInfo = '<div class="tg-info-box success"><span class="ic">🏦</span><b>Bank:</b> ' + esc(b.bankName||'') + ' ••••' + esc(b.bankAcc.slice(-4)) + '<br><b>IFSC:</b> ' + esc(b.ifsc||'') + '</div>';
-    } else {
-      payInfo = '<div class="tg-info-box danger"><span class="ic">⚠️</span><b style="color:#f87171;">Payment details missing!</b><br>Is boy ne UPI ya bank details nahi di. Pehle collect karo.</div>';
-    }
+    if (b?.upiId) payInfo = '<div class="tg-info-box success"><span class="ic">📱</span><b>UPI:</b> ' + esc(b.upiId) + '</div>';
+    else if (b?.bankAcc) payInfo = '<div class="tg-info-box success"><span class="ic">🏦</span><b>Bank:</b> ••••' + esc(b.bankAcc.slice(-4)) + '</div>';
 
     document.getElementById('ms-boy-id').value = bid;
     document.getElementById('ms-body').innerHTML =
@@ -2722,24 +2885,19 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
         '<div class="tg-settle-sub">' + esc(b?.name || 'Boy') + ' · ' + tasks.length + ' packet(s)</div>' +
       '</div>' +
       payInfo +
-      '<div class="tg-info-box warn"><span class="ic">⚠️</span>Yahan amount transfer karne ke baad <b>reference</b> daal ke settle karo — tab hi boy ki earning count hogi.</div>' +
-      '<div class="tg-fld"><label>Payment Reference / UTR <span class="rq">*</span></label><input type="text" id="ms-ref" maxlength="40" placeholder="e.g. UPI ref, transaction ID"></div>' +
-      '<div class="tg-fld"><label>Note (optional)</label><input type="text" id="ms-note" maxlength="120" placeholder="Kuch remark"></div>' +
-      '<div class="tg-fld"><label>Adjust Amount (optional)</label><input type="number" id="ms-adjust" value="0" min="0" max="' + total + '" oninput="tgCalcSettle(' + total + ')"><div class="tg-fld-h">Kuch deduct karna ho toh adjust amount daalo</div></div>' +
-      '<div style="background:rgba(0,212,255,0.08);border:1.5px solid rgba(0,212,255,0.25);border-radius:12px;padding:14px 16px;margin-bottom:14px;">' +
-        '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span style="color:#8892a6;">Packets</span><b style="color:#fff;">' + tasks.length + '</b></div>' +
+      '<div class="tg-info-box warn"><span class="ic">⚠️</span>Transfer karne ke baad reference daalo.</div>' +
+      '<div class="tg-fld"><label>Payment Reference / UTR <span class="rq">*</span></label><input type="text" id="ms-ref" maxlength="40" placeholder="e.g. UPI ref"></div>' +
+      '<div class="tg-fld"><label>Note (optional)</label><input type="text" id="ms-note" maxlength="120"></div>' +
+      '<div class="tg-fld"><label>Adjust Amount</label><input type="number" id="ms-adjust" value="0" min="0" max="' + total + '" oninput="tgCalcSettle(' + total + ')"></div>' +
+      '<div style="background:rgba(0,212,255,0.08);border-radius:12px;padding:14px 16px;margin-bottom:14px;">' +
         '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span style="color:#8892a6;">Gross</span><b style="color:#fff;">' + inr(total) + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span style="color:#8892a6;">Adjustment</span><b style="color:#f87171;">− ₹<span id="ms-adj-val">0</span></b></div>' +
-        '<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:900;padding-top:8px;border-top:1px dashed rgba(0,212,255,0.3);"><span style="color:#8892a6;">Final Amount</span><b style="color:#4ade80;font-family:monospace;font-size:18px;" id="ms-final">' + inr(total) + '</b></div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span style="color:#8892a6;">Adjust</span><b style="color:#f87171;">− ₹<span id="ms-adj-val">0</span></b></div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:15px;padding-top:8px;border-top:1px dashed rgba(0,212,255,0.3);"><span style="color:#8892a6;">Final</span><b style="color:#4ade80;font-family:monospace;font-size:18px;" id="ms-final">' + inr(total) + '</b></div>' +
       '</div>' +
       '<div class="tg-mod-a">' +
         '<button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-settle\')">Cancel</button>' +
-        '<button class="tg-mod-b suc" id="ms-confirm-btn" onclick="tgDoSettle()">' +
-          '<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.6;"><path d="M20 6 9 17l-5-5"/></svg>' +
-          'Settle Now' +
-        '</button>' +
+        '<button class="tg-mod-b suc" id="ms-confirm-btn" onclick="tgDoSettle()">✓ Settle Now</button>' +
       '</div>';
-
     openMod('mod-settle');
   };
 
@@ -2761,54 +2919,30 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     const final = Math.max(0, gross - adj);
     const ref = (document.getElementById('ms-ref').value || '').trim();
     const note = (document.getElementById('ms-note').value || '').trim();
-    if (!ref) { toast('Enter payment reference', 'error'); return; }
-
+    if (!ref) { toast('Enter reference', 'error'); return; }
     const btn = document.getElementById('ms-confirm-btn');
-    btn.disabled = true;
-    btn.innerHTML = 'Processing...';
-
+    btn.disabled = true; btn.textContent = 'Processing...';
     try {
       const settleRef = db.collection('settlements').doc();
       await settleRef.set({
-        boyId: bid,
-        boyName: b?.name || 'Boy',
-        pickupBoyId: bid,
-        pickupBoyName: b?.name || 'Boy',
-        amount: final,
-        grossAmount: gross,
-        adjustment: adj,
-        reference: ref,
-        note,
-        type: 'pickup_earning',
-        status: 'settled',
-        taskIds: tasks.map(t => t.id),
-        packetCount: tasks.length,
-        settledBy: USER.uid,
-        settledByEmail: USER.email || '',
-        settledAt: FV.serverTimestamp(),
-        createdAt: FV.serverTimestamp()
+        boyId: bid, boyName: b?.name || 'Boy', pickupBoyId: bid, pickupBoyName: b?.name || 'Boy',
+        amount: final, grossAmount: gross, adjustment: adj, reference: ref, note,
+        type: 'pickup_earning', status: 'settled', taskIds: tasks.map(t => t.id), packetCount: tasks.length,
+        settledBy: USER.uid, settledByEmail: USER.email || '', settledAt: FV.serverTimestamp(), createdAt: FV.serverTimestamp()
       });
-
       const batch = db.batch();
       tasks.forEach(t => {
         batch.update(db.collection('pickupTasks').doc(t.id), {
-          status: 'settled',
-          settledAt: FV.serverTimestamp(),
-          settledBy: USER.uid,
-          settlementId: settleRef.id,
-          updatedAt: FV.serverTimestamp()
+          status: 'settled', settledAt: FV.serverTimestamp(), settledBy: USER.uid, settlementId: settleRef.id, updatedAt: FV.serverTimestamp()
         });
       });
       await batch.commit();
-
       playBeep(); vibrate([60,40,120]);
-      toast('✓ Settled ' + inr(final) + ' to ' + esc(b?.name||'Boy'), 'success');
+      toast('✓ Settled ' + inr(final), 'success');
       tgCloseMod('mod-settle');
     } catch(e) {
-      console.error(e);
       toast('Failed: ' + e.message, 'error');
-      btn.disabled = false;
-      btn.innerHTML = 'Settle Now';
+      btn.disabled = false; btn.textContent = '✓ Settle Now';
     }
   };
 
@@ -2817,7 +2951,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
     if (!el) return;
     setText('settle-hist-count', ALL_SETTLEMENTS.length);
     if (!ALL_SETTLEMENTS.length) {
-      el.innerHTML = '<div class="tg-empty" style="padding:40px 20px;"><div class="tg-empty-i" style="font-size:44px;">💸</div><div class="tg-empty-t">No settlements yet</div><div class="tg-empty-d">Pehla settle karne pe yahan dikhega</div></div>';
+      el.innerHTML = '<div class="tg-empty" style="padding:40px 20px;"><div class="tg-empty-i" style="font-size:44px;">💸</div><div class="tg-empty-t">No settlements yet</div></div>';
       return;
     }
     el.innerHTML = ALL_SETTLEMENTS.slice(0, 50).map(s => {
@@ -2850,10 +2984,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const cls = stClass(t.status);
       const lbl = stLabel(t.status);
       const events = [];
-      if (t.assignedAt) events.push('📋 ' + fdate(t.assignedAt) + ' ' + ftime(t.assignedAt));
-      if (t.collectedAt) events.push('📦 ' + fdate(t.collectedAt) + ' ' + ftime(t.collectedAt));
-      if (t.receivedAt) events.push('✓ ' + fdate(t.receivedAt) + ' ' + ftime(t.receivedAt));
-      if (t.settledAt) events.push('💰 ' + fdate(t.settledAt) + ' ' + ftime(t.settledAt));
+      if (t.assignedAt) events.push('📋 ' + fdate(t.assignedAt));
+      if (t.collectedAt) events.push('📦 ' + fdate(t.collectedAt));
+      if (t.receivedAt) events.push('✓ ' + fdate(t.receivedAt));
+      if (t.settledAt) events.push('💰 ' + fdate(t.settledAt));
       return '<div class="tg-row">' +
         '<div class="tg-row-av sq" style="font-size:16px;">' + (s==='received'?'✓':s==='settled'?'💰':s==='collected'?'📦':'⏳') + '</div>' +
         '<div class="tg-row-b">' +
@@ -2863,7 +2997,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
             '<span class="tg-pill ' + cls + '">' + lbl + '</span>' +
             '<span class="tg-pill grn">' + inr(t.earning||0) + '</span>' +
           '</div>' +
-          (events.length ? '<div style="font-size:10.5px;color:#64748b;font-family:monospace;margin-top:6px;line-height:1.6;">' + events.join(' → ') + '</div>' : '') +
+          (events.length ? '<div style="font-size:10.5px;color:#64748b;font-family:monospace;margin-top:6px;">' + events.join(' → ') + '</div>' : '') +
         '</div>' +
       '</div>';
     }).join('');
@@ -2874,14 +3008,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       const st = (a.status||'pending').toLowerCase();
       return st !== 'approved' && st !== 'rejected' && a.approved !== true;
     }).length;
+    const readyPickup = getPendingPickupOrders().length;
     const assigned = ALL_TASKS.filter(t => normStatus(t.status) === 'assigned').length;
     const collected = ALL_TASKS.filter(t => normStatus(t.status) === 'collected').length;
     const received = ALL_TASKS.filter(t => normStatus(t.status) === 'received').length;
 
     const hb = document.getElementById('tg-app-badge');
-    if (hb) { hb.textContent = pendingApps; hb.style.display = pendingApps > 0 ? 'flex' : 'none'; }
+    if (hb) { hb.textContent = pendingApps + readyPickup; hb.style.display = (pendingApps + readyPickup) > 0 ? 'flex' : 'none'; }
     const bApps = document.getElementById('dr-b-apps');
     if (bApps) { bApps.textContent = pendingApps; bApps.style.display = pendingApps > 0 ? 'inline-block' : 'none'; }
+    const bPickups = document.getElementById('dr-b-pickups');
+    if (bPickups) { bPickups.textContent = readyPickup; bPickups.style.display = readyPickup > 0 ? 'inline-block' : 'none'; }
     const bBoys = document.getElementById('dr-b-boys');
     if (bBoys) { bBoys.textContent = ALL_BOYS.length; bBoys.style.display = ALL_BOYS.length > 0 ? 'inline-block' : 'none'; }
     const bTasks = document.getElementById('dr-b-tasks');
