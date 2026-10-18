@@ -453,14 +453,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-so-stat-label{font-size:9.5px;opacity:0.85;font-weight:700;text-transform:uppercase;margin-top:4px;letter-spacing:0.4px;}
 #ord-bulk-actions{display:flex;gap:8px;flex-wrap:wrap;}
 #ord-bulk-actions .tg-btn{padding:10px 18px;font-size:12.5px;font-weight:800;letter-spacing:0.4px;}
-/* NEW: Courier info card */
 .tg-courier-info-card{background:linear-gradient(135deg,#e8f0ff,#d0e2ff);border:1.5px solid #2874f0;border-radius:12px;padding:14px;margin-bottom:14px;}
 .tg-courier-info-title{font-size:11px;font-weight:800;color:#2874f0;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
 .tg-courier-info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(40,116,240,0.2);font-size:13px;gap:10px;flex-wrap:wrap;}
 .tg-courier-info-row:last-child{border-bottom:none;}
 .tg-courier-info-k{color:#666;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;flex-shrink:0;}
 .tg-courier-info-v{font-weight:800;color:#212121;text-align:right;word-break:break-all;font-size:13.5px;}
-/* NEW: Save orders view */
 .tg-save-toolbar{display:flex;gap:8px;padding:10px 12px 0;flex-wrap:wrap;align-items:center;}
 .tg-save-toolbar .tg-srch{flex:1;min-width:200px;margin-bottom:0;}
 </style>
@@ -1008,13 +1006,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   </div>
 </div>
 
-<!-- ═══ NEW: Courier Form Modal ═══ -->
+<!-- ═══ Courier Form Modal ═══ -->
 <div class="tg-mod" id="mod-courier">
   <div class="tg-mod-c" style="max-width:460px;">
     <div class="tg-mod-h"><div class="tg-mod-t" id="mc-title">Mark as Delivered</div><button class="tg-mod-x" onclick="tgCloseMod('mod-courier')">✕</button></div>
     <div style="background:#e8f0ff;border:1.5px solid #2874f0;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12.5px;color:#1565c0;display:flex;gap:8px;align-items:center;">
       <span style="font-size:22px;">📦</span>
-      <div><b id="mc-count">1</b> order(s) will be marked as <b>Delivered</b></div>
+      <div id="mc-action-label"><b id="mc-count">1</b> order(s) will be marked as <b>Delivered</b></div>
     </div>
     <div class="tg-fld">
       <label>Courier Name <span class="rq">*</span></label>
@@ -1365,8 +1363,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   try { _ringEnabled = localStorage.getItem('toego_admin_ring') !== '0'; } catch(e) {}
   let _prevPendingCount = -1;
 
-  // NEW: courier form queue
+  // Courier form queue + mode
   let _courierOrderIds = [];
+  let _courierMode = 'deliver';
 
   const BANNER_SLOTS = [
     { id:'slot1', name:'Hero Top', desc:'Main slider top' },
@@ -1687,7 +1686,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     _prevPendingCount = pendingCount;
   }
 
-  /* ═══ NORM STATUS — UPDATED: label_generated + processing → dispatched ═══ */
+  /* ═══ NORM STATUS — Label/Processing → RTD so admin can enter courier & dispatch ═══ */
   function normStatus(s){
     s = String(s||'pending').toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_');
     if (!s || s==='new' || s==='placed' || s==='created' || s==='confirmed') return 'pending';
@@ -1696,9 +1695,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (s.includes('return') || s.includes('refund') || s === 'rto') return 'returned';
     if (s.includes('deliver') || s === 'completed') return 'delivered';
     if (s.includes('dispatch') || s.includes('shipped') || s === 'in_transit' || s === 'ofd' || s === 'out_for_delivery') return 'dispatched';
-    // NEW: label_generated and processing both go to dispatched
-    if (s.includes('label_generat') || s === 'label_created') return 'dispatched';
-    if (s.includes('process') || s.includes('packing') || s === 'packed' || s === 'ready_to_ship' || s === 'preparing') return 'dispatched';
+    // label_generated and processing now go to RTD (admin enters courier & dispatches)
+    if (s.includes('label_generat') || s === 'label_created') return 'rtd';
+    if (s.includes('process') || s.includes('packing') || s === 'packed' || s === 'ready_to_ship' || s === 'preparing') return 'rtd';
     // admin_approved (RTD)
     if (s.includes('admin_approv') || s === 'approved' || s === 'admin_ok' || s === 'adminok' || s === 'rtd' || s.includes('ready_to_dispatch') || s.includes('ready_for_label') || s === 'admin-accepted') return 'rtd';
     // seller accepted
@@ -2052,7 +2051,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     return '<div class="tg-row'+(sel?' selected':'')+'" onclick="tgOpenOrder(\''+esc(o.id)+'\')">'+cb+'<div class="tg-row-av">'+esc(ini(o.userName||o.customerName||'U'))+'</div><div class="tg-row-b"><div class="tg-row-t">#'+esc((o.id||'').slice(0,10).toUpperCase())+'</div><div class="tg-row-s"><span>'+esc(o.userName||o.customerName||'Customer')+'</span><span>'+inr(o.total||0)+'</span><span>'+(itemCount||0)+' items</span><span>'+fdate(o.createdAt)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill '+cls+'">'+statusLabel(o.status)+'</span>'+courierBadge+'</div></div><div class="tg-row-a" onclick="event.stopPropagation();"><button class="tg-btn out" onclick="tgOpenOrder(\''+esc(o.id)+'\')">View</button></div></div>';
   }
 
-  /* ═══ ORDERS BULK: single button per tab + courier for dispatched ═══ */
+  /* ═══ ORDERS BULK: RTD = courier+dispatch, Dispatch = deliver, Accepted = RTD ═══ */
   window.tgToggleSelectOrder = function(id, c){
     if (c) SELECTED_ORDERS.add(id); else SELECTED_ORDERS.delete(id);
     renderOrders();
@@ -2065,10 +2064,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   };
   function getBulkConfig() {
     const map = {
-      'pending':    { label: '✓ ACCEPT SELECTED',    status: 'seller_accepted', cls: 'out', nextFilter: 'accepted', action: 'normal' },
-      'accepted':   { label: '🚀 RTD SELECTED',       status: 'admin_approved',  cls: 'rtd', nextFilter: 'rtd',      action: 'normal' },
-      'rtd':        { label: '📦 MARK DISPATCHED',    status: 'dispatched',      cls: 'pri', nextFilter: 'dispatched', action: 'normal' },
-      'dispatched': { label: '✓ MARK DELIVERED',      status: 'delivered',       cls: 'suc', nextFilter: 'delivered', action: 'courier' }
+      'pending':    { label: '✓ ACCEPT SELECTED',           status: 'seller_accepted', cls: 'out', nextFilter: 'accepted',   action: 'normal' },
+      'accepted':   { label: '🚀 RTD SELECTED',              status: 'admin_approved',  cls: 'rtd', nextFilter: 'rtd',        action: 'normal' },
+      'rtd':        { label: '📦 ENTER COURIER & DISPATCH',  cls: 'pri', nextFilter: 'dispatched', action: 'courier_dispatch' },
+      'dispatched': { label: '✓ MARK DELIVERED',             status: 'delivered',       cls: 'suc', nextFilter: 'delivered',  action: 'normal' }
     };
     return map[ORDER_FILTER] || null;
   }
@@ -2096,9 +2095,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const ids = Array.from(SELECTED_ORDERS);
     if (!ids.length) { toast('No orders selected', 'err'); return; }
 
-    // Courier form for dispatched → delivered
-    if (cfg.action === 'courier') {
-      tgOpenCourierForm(ids);
+    // Courier form for RTD → dispatched
+    if (cfg.action === 'courier_dispatch') {
+      tgOpenCourierForm(ids, 'dispatch');
       return;
     }
 
@@ -2133,11 +2132,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   };
 
-  /* ═══ COURIER FORM ═══ */
-  window.tgOpenCourierForm = function(ids){
+  /* ═══ COURIER FORM — dispatch & deliver modes ═══ */
+  window.tgOpenCourierForm = function(ids, mode){
     _courierOrderIds = Array.isArray(ids) ? ids.slice() : [ids];
+    _courierMode = (mode === 'dispatch') ? 'dispatch' : 'deliver';
     if (!_courierOrderIds.length) return;
-    document.getElementById('mc-count').textContent = _courierOrderIds.length;
     document.getElementById('mc-courier').value = '';
     document.getElementById('mc-hub').value = '';
     document.getElementById('mc-tracking').value = '';
@@ -2148,9 +2147,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         if (o.courierName) document.getElementById('mc-courier').value = o.courierName;
         if (o.courierHub) document.getElementById('mc-hub').value = o.courierHub;
       }
-      document.getElementById('mc-title').textContent = 'Mark as Delivered';
+    }
+    if (_courierMode === 'dispatch') {
+      document.getElementById('mc-title').textContent = _courierOrderIds.length === 1 ? 'Enter Courier & Dispatch' : 'Bulk Dispatch with Courier';
+      document.getElementById('mc-action-label').innerHTML = '<b id="mc-count">' + _courierOrderIds.length + '</b> order(s) will be marked as <b>Dispatched</b>';
+      document.getElementById('mc-confirm-btn').innerHTML = '📦 Mark Dispatched';
     } else {
-      document.getElementById('mc-title').textContent = 'Bulk Mark as Delivered';
+      document.getElementById('mc-title').textContent = _courierOrderIds.length === 1 ? 'Mark as Delivered' : 'Bulk Mark as Delivered';
+      document.getElementById('mc-action-label').innerHTML = '<b id="mc-count">' + _courierOrderIds.length + '</b> order(s) will be marked as <b>Delivered</b>';
+      document.getElementById('mc-confirm-btn').innerHTML = '✓ Mark Delivered';
     }
     document.getElementById('mod-courier').classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -2164,33 +2169,41 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!hub) { toast('Enter hub name', 'err'); return; }
     const ids = _courierOrderIds.slice();
     if (!ids.length) return;
+    const mode = _courierMode || 'deliver';
     const btn = document.getElementById('mc-confirm-btn');
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Processing...'; }
-    toast('Marking ' + ids.length + ' delivered...', 'inf');
+    toast('Updating ' + ids.length + ' order(s)...', 'inf');
     let ok = 0, fail = 0;
     for (const id of ids) {
       try {
         const payload = {
-          status: 'delivered',
           courierName: courier,
           courierHub: hub,
-          deliveredAt: FV.serverTimestamp(),
-          deliveredBy: USER.uid,
           updatedAt: FV.serverTimestamp(),
           updatedBy: USER.uid
         };
         if (tracking) payload.trackingId = tracking;
+        if (mode === 'dispatch') {
+          payload.status = 'dispatched';
+          payload.dispatchedAt = FV.serverTimestamp();
+          payload.dispatchedBy = USER.uid;
+        } else {
+          payload.status = 'delivered';
+          payload.deliveredAt = FV.serverTimestamp();
+          payload.deliveredBy = USER.uid;
+        }
         await db.collection('orders').doc(id).update(payload);
         ok++;
       } catch(e) { fail++; console.warn('Courier fail:', e); }
     }
-    toast('✓ ' + ok + ' delivered' + (fail ? ', ' + fail + ' failed' : ''), 'suc');
-    if (btn) { btn.disabled = false; btn.textContent = '✓ Mark Delivered'; }
+    const word = mode === 'dispatch' ? 'dispatched' : 'delivered';
+    toast('✓ ' + ok + ' ' + word + (fail ? ', ' + fail + ' failed' : ''), 'suc');
+    if (btn) { btn.disabled = false; btn.innerHTML = mode === 'dispatch' ? '📦 Mark Dispatched' : '✓ Mark Delivered'; }
     _courierOrderIds = [];
+    _courierMode = 'deliver';
     tgCloseMod('mod-courier');
     SELECTED_ORDERS.clear();
     renderOrders();
-    // If we came from order modal, close it too
     const orderMod = document.getElementById('mod-order');
     if (orderMod && orderMod.classList.contains('show')) {
       orderMod.classList.remove('show');
@@ -2428,7 +2441,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const newStatus = document.getElementById('lbl-bulk-status').value;
     if (!newStatus) { toast('Please select a status', 'err'); return; }
     if (newStatus === 'delivered') {
-      tgOpenCourierForm(ids);
+      tgOpenCourierForm(ids, 'deliver');
       return;
     }
     const niceStatus = statusLabel(newStatus);
@@ -3960,14 +3973,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const addr = o.address || o.shippingAddress || o.deliveryAddress || {};
     const addrStr = typeof addr==='string' ? addr : [addr.line1||addr.address||addr.street||'', addr.city||'', addr.state||'', addr.pincode||addr.zip||''].filter(Boolean).join(', ');
     const canRTD = st==='accepted' || st==='pending';
-    const canDispatch = st==='rtd';
-    const canCourier = st==='dispatched';
+    const canCourierDispatch = st==='rtd';
+    const canDeliver = st==='dispatched';
     const canCancel = !['cancelled','returned','delivered'].includes(st);
     const isPendingReturn = st === 'return_requested';
     let actionBtns = '';
     if (canRTD) actionBtns += '<button class="tg-btn rtd" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkRTD(\''+esc(oid)+'\')">🚀 MARK RTD</button>';
-    if (canDispatch) actionBtns += '<button class="tg-btn pri" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgUpdateOrderStatus(\''+esc(oid)+'\',\'dispatched\')">📦 Mark Dispatched</button>';
-    if (canCourier) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkDeliveredFromOrder(\''+esc(oid)+'\')">📦 Enter Courier & Mark Delivered</button>';
+    if (canCourierDispatch) actionBtns += '<button class="tg-btn pri" style="flex:1;min-width:160px;padding:12px;justify-content:center;font-size:12px;" onclick="tgOpenCourierFromOrder(\''+esc(oid)+'\',\'dispatch\')">📦 Enter Courier & Dispatch</button>';
+    if (canDeliver) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkDeliveredDirect(\''+esc(oid)+'\')">✓ Mark Delivered</button>';
     if (isPendingReturn) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgApproveReturn(\''+esc(oid)+'\')">✓ Approve Return</button><button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgRejectReturn(\''+esc(oid)+'\')">✕ Reject Return</button>';
     if (canCancel && !isPendingReturn) actionBtns += '<button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCancelOrder(\''+esc(oid)+'\')">✕ Cancel</button>';
     const courierHtml = (o.courierName || o.courierHub || o.trackingId) ? (
@@ -4019,8 +4032,30 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!skipHistory) pushHistory({ view: CUR_VIEW, modal: 'order', orderId: oid });
   };
 
+  // Open courier form from order modal
+  window.tgOpenCourierFromOrder = function(oid, mode) {
+    document.getElementById('mod-order').classList.remove('show');
+    document.body.style.overflow = '';
+    try { history.replaceState({ view: CUR_VIEW, modal: null }, '', '#' + CUR_VIEW); } catch(e) {}
+    setTimeout(() => tgOpenCourierForm([oid], mode || 'dispatch'), 40);
+  };
+
+  // Direct mark delivered from order modal (no courier form needed)
+  window.tgMarkDeliveredDirect = async function(oid) {
+    try {
+      await db.collection('orders').doc(oid).update({
+        status: 'delivered',
+        deliveredAt: FV.serverTimestamp(),
+        deliveredBy: USER.uid,
+        updatedAt: FV.serverTimestamp(),
+        updatedBy: USER.uid
+      });
+      toast('✓ Order delivered', 'suc');
+      tgCloseMod('mod-order');
+    } catch(e) { toast('Failed: ' + e.message, 'err'); }
+  };
+
   window.tgMarkDeliveredFromOrder = function(oid) {
-    // Close order modal WITHOUT history pop (we're opening another modal)
     document.getElementById('mod-order').classList.remove('show');
     document.body.style.overflow = '';
     try { history.replaceState({ view: CUR_VIEW, modal: null }, '', '#' + CUR_VIEW); } catch(e) {}
@@ -4038,10 +4073,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   window.tgSaveOrderStatus = async function(oid){
     const newStatus = document.getElementById('ord-status-sel').value;
     const tracking = (document.getElementById('ord-track').value||'').trim();
-    if (newStatus === 'delivered') {
-      tgMarkDeliveredFromOrder(oid);
-      return;
-    }
     let realStatus = newStatus;
     if (newStatus === 'rtd') realStatus = 'admin_approved';
     await applyOrderStatus(oid, realStatus, tracking);
@@ -4896,7 +4927,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const pend = ALL_ORDERS.filter(o => normStatus(o.status) === 'pending').length;
     const ready = ALL_ORDERS.filter(o => normStatus(o.status) === 'rtd').length;
     if (pend > 0) { toast(pend + ' new order(s)!', 'inf'); tgNav('orders'); tgFilterOrders('pending'); }
-    else if (ready > 0) { toast(ready + ' ready for label!', 'suc'); tgNav('orders'); tgFilterOrders('rtd'); }
+    else if (ready > 0) { toast(ready + ' ready for courier!', 'suc'); tgNav('orders'); tgFilterOrders('rtd'); }
     else toast('No new notifications', 'inf');
   };
 
