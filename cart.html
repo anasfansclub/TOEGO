@@ -446,7 +446,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
 </nav>
 
-<!-- ✅ NEW: Pincode modal (replaces prompt for mobile reliability) -->
 <div class="tg-modal" id="tg-pin-modal">
   <div class="tg-modal-card">
     <div class="tg-modal-head">
@@ -458,7 +457,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <input type="tel" id="tg-pin-input" placeholder="e.g. 208001" maxlength="6" inputmode="numeric" autocomplete="postal-code">
     </div>
     <p style="font-size:12.5px;color:#666;margin:8px 0 16px;line-height:1.5;">
-      Enter your delivery pincode to check availability and delivery time. Kanpur pincodes get <b style="color:#fb641b;">Same Day Delivery</b>.
+      Kanpur pincodes (208xxx, 209xxx) get <b style="color:#fb641b;">Same Day Delivery</b>. All other pincodes get delivery in <b>3-6 days</b>.
     </p>
     <button class="tg-modal-save" onclick="tgSavePinFromModal()">Check Delivery</button>
   </div>
@@ -620,6 +619,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const ADDR_KEY = 'toego_last_address';
   const ADDR_LIST_KEY = 'toego_saved_addresses';
   const ADDR_LAST_IDX = 'toego_last_addr_index';
+  const LAST_UID_KEY = 'toego_last_uid';
   const BUY_NOW_KEY = 'toego_buy_now_doc';
   const BUY_NOW_KEYS = ['toego_buy_now_doc','toego_buynow','buy_now','toego_buy_now'];
   const PCACHE_KEY = 'toego_pcache_v2';
@@ -653,9 +653,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     codEnabled: true, freeDeliveryAbove: 0, deliveryCharge: 0
   };
 
-  let SELLER_GLOBAL = {
-    commissionPercent: 0
-  };
+  let SELLER_GLOBAL = { commissionPercent: 0 };
 
   const _pCache = new Map();
   let _pCacheDirty = false;
@@ -917,7 +915,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:2}); }
-  function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
+
+  // ✅ IMPROVED: Proper JS-in-HTML-attribute escaping
+  function escapeAttr(s) {
+    return String(s||'')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, "\\'");
+  }
 
   let cartItems = [];
   let selectedIds = new Set();
@@ -935,6 +942,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let _pendingCartDeletes = new Set();
   let _activeBuyNowId = null;
   const _pendingQty = new Map();
+  let _bootRendered = false;
 
   let availableCoupons = [];
   let appliedCoupon = null;
@@ -1019,7 +1027,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  /* ⭐ Kanpur pincode detection — 208xxx and 209xxx */
   function isKanpurPincode(pin) {
     if (!pin) return false;
     const p = String(pin).trim().replace(/\s+/g, '');
@@ -1030,24 +1037,28 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return false;
   }
 
-  /* ⭐ Delivery info — Kanpur = Same Day, others = 3-6 days */
+  /* ⭐ FIX: PIN has priority — if valid pin exists, ONLY check pin (ignore stale city) */
   function getDeliveryInfo() {
     let pin = String(getPin() || '').trim();
     const a = getAddr();
-    let city = String(a.city || '').trim();
-    if (!pin && a.pin) pin = String(a.pin).trim();
-    const cityL = city.toLowerCase();
+    if (!pin && a && a.pin) pin = String(a.pin).trim();
 
-    if (cityL.includes('kanpur')) {
-      return { text: 'Same Day Delivery', cls: 'same-day' };
+    // PIN PRIORITY: valid 6-digit pin → use pin only
+    if (/^\d{6}$/.test(pin)) {
+      if (isKanpurPincode(pin)) {
+        return { text: 'Same Day Delivery', cls: 'same-day' };
+      }
+      return { text: 'Delivery in 3-6 days', cls: '' };
     }
-    if (isKanpurPincode(pin)) {
+
+    // No valid pin — fallback to city check
+    const city = String((a && a.city) || '').toLowerCase();
+    if (city.includes('kanpur')) {
       return { text: 'Same Day Delivery', cls: 'same-day' };
     }
     return { text: 'Delivery in 3-6 days', cls: '' };
   }
 
-  /* ⭐ Directly refresh delivery tag inside every product card */
   function refreshDeliveryTagsInPlace() {
     if (!_itemNodeMap || !_itemNodeMap.size) return;
     const dInfo = getDeliveryInfo();
@@ -1065,13 +1076,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
   }
 
-  /* ✅ FIXED: tgChangePin now opens modal instead of prompt() for mobile reliability */
   window.tgChangePin = function() {
     const inp = document.getElementById('tg-pin-input');
     if (inp) inp.value = getPin() || '';
     document.getElementById('tg-pin-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
-    setTimeout(() => { if (inp) inp.focus(); }, 150);
+    setTimeout(() => { if (inp) { inp.focus(); inp.select(); } }, 150);
   };
 
   window.tgClosePinModal = function() {
@@ -1080,7 +1090,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     refreshDeliveryTagsInPlace();
   };
 
-  /* ✅ FIXED: Save pin from modal (mobile-friendly, no prompt) */
   window.tgSavePinFromModal = function() {
     const inp = document.getElementById('tg-pin-input');
     if (!inp) return;
@@ -1225,9 +1234,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       toRemove.forEach(id => {
         const node = _itemNodeMap.get(id);
         if (node) {
-          node.style.transition = 'opacity .18s ease, transform .18s ease';
-          node.style.opacity = '0';
-          node.style.transform = 'translateX(-20px)';
+          node.classList.add('removing');
           setTimeout(() => { if (node.parentNode) node.remove(); }, 180);
         }
         _itemNodeMap.delete(id);
@@ -1477,39 +1484,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
 
     const discount = mrpTotal - finalTotal;
-    const delivery = 0;
-    const deliverySource = 'seller';
-
     const commPct = Number(SELLER_GLOBAL.commissionPercent || 0);
     const cartCommission = commPct !== 0 ? Math.round(finalTotal * commPct / 100) : 0;
-
     const couponDiscount = calcCouponDiscount(finalTotal);
-
-    const grand = Math.max(0,
-      finalTotal + gstAddedAmt + cartCommission - couponDiscount
-    );
-
+    const grand = Math.max(0, finalTotal + gstAddedAmt + cartCommission - couponDiscount);
     const gstTotal = gstIncludedAmt + gstAddedAmt;
 
     return {
-      mrpTotal,
-      finalTotal,
-      discount,
-      gstTotal,
-      gstIncludedAmt,
-      gstAddedAmt,
-      gstPayable: gstAddedAmt,
-      gstByRate,
-      delivery,
-      deliverySource,
-      cartCommission,
-      cartCommissionPct: commPct,
-      couponDiscount,
-      appliedCode: appliedCoupon?.code || '',
-      grand,
-      itemCount: qtyCount,
-      count: sel.length,
-      sel
+      mrpTotal, finalTotal, discount,
+      gstTotal, gstIncludedAmt, gstAddedAmt, gstPayable: gstAddedAmt, gstByRate,
+      delivery: 0, deliverySource: 'seller',
+      cartCommission, cartCommissionPct: commPct,
+      couponDiscount, appliedCode: appliedCoupon?.code || '',
+      grand, itemCount: qtyCount, count: sel.length, sel
     };
   }
 
@@ -1557,21 +1544,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!rates.length) { label.textContent = ''; return; }
     if (rates.length === 1) {
       const g = t.gstByRate[String(rates[0])];
-      label.textContent = g.hasIncluded && !g.hasAdded
-        ? '(' + rates[0] + '% included)'
-        : '(' + rates[0] + '%)';
+      label.textContent = g.hasIncluded && !g.hasAdded ? '(' + rates[0] + '% included)' : '(' + rates[0] + '%)';
     } else {
-      const minR = rates[0];
-      const maxR = rates[rates.length - 1];
-      const allIncluded = rates.every(r => {
-        const g = t.gstByRate[String(r)];
-        return g.hasIncluded && !g.hasAdded;
-      });
-      if (allIncluded) {
-        label.textContent = '(' + minR + '-' + maxR + '% included)';
-      } else {
-        label.textContent = '(' + minR + '-' + maxR + '%)';
-      }
+      const minR = rates[0], maxR = rates[rates.length - 1];
+      const allIncluded = rates.every(r => { const g = t.gstByRate[String(r)]; return g.hasIncluded && !g.hasAdded; });
+      label.textContent = allIncluded ? '(' + minR + '-' + maxR + '% included)' : '(' + minR + '-' + maxR + '%)';
     }
   }
 
@@ -1583,9 +1560,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const minOrder = Number(appliedCoupon.minOrder || 0);
       const stillValid = base >= minOrder && isCouponNotExpired(appliedCoupon);
       if (!stillValid) {
-        const reason = !isCouponNotExpired(appliedCoupon)
-          ? 'Coupon expired'
-          : ('Min order ' + fmtINR(minOrder) + ' required');
+        const reason = !isCouponNotExpired(appliedCoupon) ? 'Coupon expired' : ('Min order ' + fmtINR(minOrder) + ' required');
         appliedCoupon = null;
         try { localStorage.removeItem(COUPON_KEY); } catch(e) {}
         updateCouponCard();
@@ -1611,15 +1586,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
 
     updateGstLabel(t);
-    if (!SETTINGS.gstEnabled) {
-      setText('tg-price-gst', fmtINR(0));
-    } else if (t.gstAddedAmt > 0) {
-      setText('tg-price-gst', fmtINR(t.gstAddedAmt));
-    } else if (t.gstIncludedAmt > 0) {
-      setText('tg-price-gst', 'Included');
-    } else {
-      setText('tg-price-gst', fmtINR(0));
-    }
+    if (!SETTINGS.gstEnabled) setText('tg-price-gst', fmtINR(0));
+    else if (t.gstAddedAmt > 0) setText('tg-price-gst', fmtINR(t.gstAddedAmt));
+    else if (t.gstIncludedAmt > 0) setText('tg-price-gst', 'Included');
+    else setText('tg-price-gst', fmtINR(0));
 
     const ccRow = document.getElementById('tg-price-cartcharge-row');
     const ccVal = document.getElementById('tg-price-cartcharge');
@@ -1732,56 +1702,67 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* ✅ FIXED: Remove without confirm (mobile-friendly), extended pendingCartDeletes to prevent reappear */
+  /* ⭐ CRITICAL FIX: Single remove — DON'T delete from _itemNodeMap before renderCart.
+     Let renderCart find the node in map and animate removal via toRemove. */
   window.tgRemoveItem = async function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
-    if (!item) return;
+    if (!item) {
+      // Safety net: clean up orphan node
+      const orphan = _itemNodeMap.get(docId);
+      if (orphan && orphan.parentNode) orphan.remove();
+      _itemNodeMap.delete(docId);
+      return;
+    }
 
-    const node = _itemNodeMap.get(docId);
-    if (node) node.classList.add('removing');
+    // Optimistic update — add to pending deletes, remove from cartItems
     _pendingCartDeletes.add(docId);
     _pendingQty.delete(docId);
     cartItems = cartItems.filter(it => it.id !== docId);
     selectedIds.delete(docId);
     selectedIds.delete(NS_MARK + docId);
-    _itemNodeMap.delete(docId);
     saveSelected();
     _persistCartToMirror();
-    setTimeout(() => renderCart(true), 200);
 
+    // ⭐ FIX: Let renderCart handle node removal (finds node in _itemNodeMap, adds .removing, then removes after 180ms)
+    renderCart(true);
+
+    // Background Firestore delete
     if (currentUser) {
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
-        // ✅ Keep in pending for 5s so stale snapshot doesn't re-add it
-        setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
-        toast('Removed from cart', 'success');
+        setTimeout(() => _pendingCartDeletes.delete(docId), 3000);
+        if (!skipConfirm) toast('Removed from cart', 'success');
       } catch(err) {
         _pendingCartDeletes.delete(docId);
         toast('Could not remove item', 'error');
+        cartItems = [];
         loadCart();
       }
     } else {
       setGuestCart(cartItems);
-      toast('Removed from cart', 'success');
+      if (!skipConfirm) toast('Removed from cart', 'success');
     }
   };
 
-  /* ✅ FIXED: Remove selected without confirm (mobile-friendly) */
+  /* ⭐ CRITICAL FIX: Remove selected — same fix, don't delete from _itemNodeMap */
   window.tgRemoveSelected = async function() {
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
 
     const idsToRemove = sel.map(it => it.id);
     idsToRemove.forEach(id => _pendingCartDeletes.add(id));
+
     cartItems = cartItems.filter(it => !selectedIds.has(it.id));
     idsToRemove.forEach(id => {
       selectedIds.delete(id);
       selectedIds.delete(NS_MARK + id);
-      _itemNodeMap.delete(id);
+      // ⭐ Don't delete from _itemNodeMap — let renderCart handle it
       _pendingQty.delete(id);
     });
     saveSelected();
     _persistCartToMirror();
+
+    // ⭐ Immediate render — renderCart finds nodes and removes them via toRemove
     renderCart(true);
 
     if (currentUser) {
@@ -1790,11 +1771,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const col = db.collection('carts').doc(currentUser.uid).collection('items');
         idsToRemove.forEach(id => batch.delete(col.doc(id)));
         await batch.commit();
-        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 5000);
+        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 3000);
         toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
       } catch(err) {
         idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
         toast('Could not remove items', 'error');
+        cartItems = [];
         loadCart();
       }
     } else {
@@ -1826,136 +1808,59 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
   async function ensureBuyNowItem(buyNowId) {
     if (!buyNowId || !currentUser) return false;
-
     const candidateIds = new Set();
     candidateIds.add(buyNowId);
     if (String(buyNowId).includes('|')) {
       const parts = String(buyNowId).split('|');
       if (parts[0]) candidateIds.add(parts[0]);
     }
-
     for (const cid of candidateIds) {
       const found = cartItems.find(it => it.id === cid || it.productId === cid);
-      if (found) {
-        selectedIds.add(found.id);
-        saveSelected();
-        renderCart(false);
-        return true;
-      }
+      if (found) { selectedIds.add(found.id); saveSelected(); renderCart(false); return true; }
     }
-
     for (const cid of candidateIds) {
       try {
-        const cartDoc = await db.collection('carts').doc(currentUser.uid)
-          .collection('items').doc(cid).get({ source: 'server' });
+        const cartDoc = await db.collection('carts').doc(currentUser.uid).collection('items').doc(cid).get({ source: 'server' });
         if (cartDoc.exists) {
           const data = cartDoc.data();
           const item = { ...data, id: cartDoc.id, productId: data.productId || cartDoc.id };
-          if (!cartItems.find(it => it.id === item.id)) {
-            cartItems = [...cartItems, ...enrichFromCacheSync([item])];
-          }
+          if (!cartItems.find(it => it.id === item.id)) cartItems = [...cartItems, ...enrichFromCacheSync([item])];
           selectedIds.add(item.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
           renderCart(false);
           return true;
         }
-      } catch(e) { }
+      } catch(e) {}
     }
-
-    for (const cid of candidateIds) {
-      try {
-        const q = await db.collection('carts').doc(currentUser.uid)
-          .collection('items').where('productId', '==', cid).limit(1).get({ source: 'server' });
-        if (!q.empty) {
-          const d = q.docs[0];
-          const data = d.data();
-          const item = { ...data, id: d.id, productId: data.productId || d.id };
-          if (!cartItems.find(it => it.id === item.id)) {
-            cartItems = [...cartItems, ...enrichFromCacheSync([item])];
-          }
-          selectedIds.add(item.id);
-          saveSelected();
-          _saveMirror(currentUser.uid, cartItems);
-          renderCart(false);
-          return true;
-        }
-      } catch(e) { }
-    }
-
     for (const cid of candidateIds) {
       try {
         const prodDoc = await db.collection('products').doc(cid).get();
         if (prodDoc.exists) {
           const p = prodDoc.data();
           const newItem = {
-            productId: prodDoc.id,
-            name: p.name || '',
+            productId: prodDoc.id, name: p.name || '',
             image: p.image || (p.images && p.images[0]) || '',
-            price: Number(p.price || 0),
-            mrp: Number(p.compareAtPrice || p.mrp || 0),
+            price: Number(p.price || 0), mrp: Number(p.compareAtPrice || p.mrp || 0),
             qty: 1, size: '', color: '',
-            sellerId: p.sellerId || p.seller_id || '',
-            sellerName: p.sellerName || '',
-            rating: p.rating || null,
-            ratingCount: p.ratingCount || null,
-            gst: Number(p.gst || 18),
-            gstIncluded: p.gstIncluded === true,
+            sellerId: p.sellerId || p.seller_id || '', sellerName: p.sellerName || '',
+            rating: p.rating || null, ratingCount: p.ratingCount || null,
+            gst: Number(p.gst || 18), gstIncluded: p.gstIncluded === true,
             addedAt: FV.serverTimestamp()
           };
           const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(prodDoc.id);
           const existing = await ref.get();
           if (!existing.exists) await ref.set(newItem);
           const item = { ...newItem, id: prodDoc.id };
-          if (!cartItems.find(it => it.id === item.id)) {
-            cartItems = [...cartItems, ...enrichFromCacheSync([item])];
-          }
+          if (!cartItems.find(it => it.id === item.id)) cartItems = [...cartItems, ...enrichFromCacheSync([item])];
           selectedIds.add(prodDoc.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
           renderCart(false);
           return true;
         }
-      } catch(e) { }
+      } catch(e) {}
     }
-
-    for (const cid of candidateIds) {
-      try {
-        const q = await db.collection('products').where('productId', '==', cid).limit(1).get();
-        if (!q.empty) {
-          const d = q.docs[0];
-          const p = d.data();
-          const newItem = {
-            productId: d.id,
-            name: p.name || '',
-            image: p.image || (p.images && p.images[0]) || '',
-            price: Number(p.price || 0),
-            mrp: Number(p.compareAtPrice || p.mrp || 0),
-            qty: 1, size: '', color: '',
-            sellerId: p.sellerId || p.seller_id || '',
-            sellerName: p.sellerName || '',
-            rating: p.rating || null,
-            ratingCount: p.ratingCount || null,
-            gst: Number(p.gst || 18),
-            gstIncluded: p.gstIncluded === true,
-            addedAt: FV.serverTimestamp()
-          };
-          const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(d.id);
-          const existing = await ref.get();
-          if (!existing.exists) await ref.set(newItem);
-          const item = { ...newItem, id: d.id };
-          if (!cartItems.find(it => it.id === item.id)) {
-            cartItems = [...cartItems, ...enrichFromCacheSync([item])];
-          }
-          selectedIds.add(d.id);
-          saveSelected();
-          _saveMirror(currentUser.uid, cartItems);
-          renderCart(false);
-          return true;
-        }
-      } catch(e) { }
-    }
-
     return false;
   }
 
@@ -1974,8 +1879,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try {
       const exp = new Date(c.expiry);
       if (isNaN(exp.getTime())) return null;
-      const diff = exp.getTime() - Date.now();
-      return Math.ceil(diff / 86400000);
+      return Math.ceil((exp.getTime() - Date.now()) / 86400000);
     } catch(e) { return null; }
   }
 
@@ -2096,15 +2000,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (a.isApplied !== b.isApplied) return a.isApplied ? -1 : 1;
       if (a.expired !== b.expired) return a.expired ? 1 : -1;
       if (a.used !== b.used) return a.used ? 1 : -1;
-      const al = a.left == null ? 9999 : a.left;
-      const bl = b.left == null ? 9999 : b.left;
-      return al - bl;
+      return (a.left == null ? 9999 : a.left) - (b.left == null ? 9999 : b.left);
     });
     el.innerHTML = enriched.map(({ c, expired, left, used, isApplied }) => {
       const code = String(c.code || c.id || '').toUpperCase();
       const type = String(c.discountType || 'flat').toLowerCase();
       const val = Number(c.value || 0);
-      let discHtml = type === 'percent'
+      const discHtml = type === 'percent'
         ? '<div class="tg-coupon-ticket-discount">' + val + '<small>%</small></div>'
         : '<div class="tg-coupon-ticket-discount">₹' + val + '</div>';
       const labelTxt = type === 'percent' ? 'OFF' : 'FLAT';
@@ -2226,43 +2128,69 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   function startBuyNowLoop(buyNowId) {
     if (!buyNowId || !currentUser) return;
     _activeBuyNowId = buyNowId;
-
     let attempt = 0;
     const delays = [200, 600, 1200, 2200, 4000];
     const MAX = delays.length;
-
     const isFound = () => cartItems.some(it => it.id === buyNowId || it.productId === buyNowId ||
       (String(buyNowId).includes('|') && (it.id === String(buyNowId).split('|')[0] || it.productId === String(buyNowId).split('|')[0]))
     );
-
     const attemptFn = async () => {
       if (!_activeBuyNowId) return;
       if (isFound()) return;
       attempt++;
       const ok = await ensureBuyNowItem(buyNowId);
       if (ok) return;
-      if (attempt < MAX) {
-        setTimeout(attemptFn, delays[attempt] || 4000);
-      } else {
-        toast('Unable to load this product. Please add it to cart from the product page.', 'error');
-      }
+      if (attempt < MAX) setTimeout(attemptFn, delays[attempt] || 4000);
+      else toast('Unable to load this product. Please add it to cart from the product page.', 'error');
     };
-
     setTimeout(attemptFn, delays[0]);
   }
 
+  /* ⭐ SUPER-FAST BOOT: Render from cache BEFORE auth resolves */
+  function _quickBootRender() {
+    try {
+      // Priority 1: last logged-in user's mirror
+      const lastUid = localStorage.getItem(LAST_UID_KEY);
+      if (lastUid) {
+        const mirror = _loadMirror(lastUid);
+        if (mirror.length) {
+          cartItems = enrichFromCacheSync(dedupeCart(mirror.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
+          const loading = document.getElementById('tg-loading');
+          if (loading) loading.style.display = 'none';
+          renderCart(true);
+          _bootRendered = true;
+          return true;
+        }
+      }
+      // Priority 2: guest cart
+      const guestRaw = getGuestCart();
+      if (guestRaw.length) {
+        cartItems = enrichFromCacheSync(guestRaw);
+        const loading = document.getElementById('tg-loading');
+        if (loading) loading.style.display = 'none';
+        renderCart(true);
+        _bootRendered = true;
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  }
+
   function loadCart() {
-    document.getElementById('tg-loading').style.display = 'block';
-    document.getElementById('tg-items').style.display = 'none';
-    document.getElementById('tg-empty').style.display = 'none';
-    document.getElementById('tg-selectall').style.display = 'none';
-    document.getElementById('tg-right').style.display = 'none';
-    document.getElementById('tg-mobile-order').style.display = 'none';
-    const mt = document.getElementById('tg-mobile-tags');
-    if (mt) { mt.classList.remove('has-tags'); mt.innerHTML = ''; }
-    _itemNodeMap.clear();
-    _lastRenderSig = '';
-    _lastIdsKey = '';
+    // ⚡ Only show skeleton if we DON'T already have items rendered
+    if (cartItems.length === 0) {
+      document.getElementById('tg-loading').style.display = 'block';
+      document.getElementById('tg-items').style.display = 'none';
+      document.getElementById('tg-empty').style.display = 'none';
+      document.getElementById('tg-selectall').style.display = 'none';
+      document.getElementById('tg-right').style.display = 'none';
+      document.getElementById('tg-mobile-order').style.display = 'none';
+      const mt = document.getElementById('tg-mobile-tags');
+      if (mt) { mt.classList.remove('has-tags'); mt.innerHTML = ''; }
+      _itemNodeMap.clear();
+      _lastRenderSig = '';
+      _lastIdsKey = '';
+    }
 
     try {
       const validIds = new Set((cartItems || []).map(it => it.id));
@@ -2289,8 +2217,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         saveSelected();
         clearBuyNowKeys();
       }
-      cartItems = enrichFromCacheSync(raw);
-      renderCart(true);
+      if (!cartItems.length && raw.length) {
+        cartItems = enrichFromCacheSync(raw);
+        renderCart(true);
+      }
       enrichCartItemsFast(raw).then(enriched => {
         if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
         else cartItems = enriched;
@@ -2299,7 +2229,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
 
     const mirror = _loadMirror(currentUser.uid);
-    if (mirror.length) {
+    if (mirror.length && !cartItems.length) {
       cartItems = enrichFromCacheSync(dedupeCart(mirror.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
       renderCart(true);
     }
@@ -2324,23 +2254,23 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         return { ...data, id: d.id, productId: data.productId || d.id };
       }).filter(it => !_pendingCartDeletes.has(it.id));
 
+      // ⭐ Clean up confirmed deletes (no longer in snapshot)
+      const snapIds = new Set(snap.docs.map(d => d.id));
+      _pendingCartDeletes.forEach(id => {
+        if (!snapIds.has(id)) _pendingCartDeletes.delete(id);
+      });
+
       const now = Date.now();
       raw = raw.map(it => {
         const pending = _pendingQty.get(it.id);
-        if (pending && (now - pending.ts) < PENDING_QTY_TTL) {
-          return { ...it, qty: pending.qty };
-        }
+        if (pending && (now - pending.ts) < PENDING_QTY_TTL) return { ...it, qty: pending.qty };
         for (const [pid, p] of _pendingQty) {
-          if ((now - p.ts) < PENDING_QTY_TTL && it.productId === pid) {
-            return { ...it, qty: p.qty };
-          }
+          if ((now - p.ts) < PENDING_QTY_TTL && it.productId === pid) return { ...it, qty: p.qty };
         }
         return it;
       });
 
-      _pendingQty.forEach((v, k) => {
-        if (now - v.ts > PENDING_QTY_TTL) _pendingQty.delete(k);
-      });
+      _pendingQty.forEach((v, k) => { if (now - v.ts > PENDING_QTY_TTL) _pendingQty.delete(k); });
 
       raw = dedupeCart(raw);
       _saveMirror(currentUser.uid, raw);
@@ -2362,10 +2292,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           selectedIds.add(found.id);
           saveSelected();
           const node = _itemNodeMap.get(found.id);
-          if (node) {
-            const cb = node.querySelector('.tg-item-check input');
-            if (cb) cb.checked = true;
-          }
+          if (node) { const cb = node.querySelector('.tg-item-check input'); if (cb) cb.checked = true; }
           updateTotals();
           updateSelectAllState();
         }
@@ -2374,13 +2301,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     unsubscribe = cartRef.onSnapshot(async snap => {
       _latestSnap = snap;
-
       if (!_firstSnapshotDone) {
         _firstSnapshotDone = true;
         await processSnapshot(snap);
         return;
       }
-
       if (_snapDebounceTimer) clearTimeout(_snapDebounceTimer);
       _snapDebounceTimer = setTimeout(async () => {
         _snapDebounceTimer = null;
@@ -2394,9 +2319,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     });
 
-    if (buyNowDoc) {
-      startBuyNowLoop(buyNowDoc);
-    }
+    if (buyNowDoc) startBuyNowLoop(buyNowDoc);
   }
 
   async function loadProfile(u) {
@@ -2534,9 +2457,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (addr.pin) setPin(addr.pin);
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
-
     refreshDeliveryTagsInPlace();
-
     tgCloseAddrList();
     tgOpenPayModal();
   };
@@ -2562,13 +2483,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   window.tgOpenNewAddr = function() {
     const listModal = document.getElementById('tg-addr-list-modal');
     if (listModal) listModal.classList.remove('show');
-
     pendingAddrType = 'home';
     document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => {
       b.classList.toggle('active', b.dataset.type === 'home');
     });
     document.getElementById('tg-addr-default').checked = false;
-
     try {
       const saved = getAddr();
       if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
@@ -2586,7 +2505,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const emailEl = document.getElementById('tg-addr-email');
       if (!emailEl.value) emailEl.value = currentUser.email;
     }
-
     ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
@@ -2630,9 +2548,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     setPin(pin);
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = city + ' - ' + pin;
-
     refreshDeliveryTagsInPlace();
-
     try {
       const list = await addAddressToList(pendingAddress);
       const key = (pendingAddress.line||'').toLowerCase() + '|' + (pendingAddress.pin||'') + '|' + (pendingAddress.phone||'');
@@ -2641,7 +2557,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       pendingAddrIndex = idx;
       try { localStorage.setItem(ADDR_LAST_IDX, String(idx)); } catch(e) {}
     } catch(e) {}
-
     tgCloseAddr();
     toast('Address saved', 'success');
     tgOpenPayModal();
@@ -2720,8 +2635,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       },
       theme: { color: '#2874f0' },
       notes: {
-        uid: currentUser.uid,
-        items: t.itemCount,
+        uid: currentUser.uid, items: t.itemCount,
         gstIncluded: t.gstIncludedAmt.toFixed(2),
         gstAdded: t.gstAddedAmt.toFixed(2),
         cartCommission: t.cartCommission.toFixed(2),
@@ -2736,8 +2650,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try {
       const rzp = new Razorpay(options);
       rzp.on('payment.failed', function(resp) {
-        const err = (resp && resp.error && resp.error.description) || 'Payment failed';
-        toast(err, 'error');
+        toast((resp && resp.error && resp.error.description) || 'Payment failed', 'error');
       });
       rzp.open();
     } catch(err) { toast('Could not open payment gateway', 'error'); }
@@ -2749,8 +2662,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (!Ctx) return;
       const ctx = new Ctx();
       const now = ctx.currentTime;
-      const notes = [523.25, 659.25, 783.99, 1046.50];
-      notes.forEach((freq, i) => {
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
         const o = ctx.createOscillator();
         const g = ctx.createGain();
         o.type = 'sine'; o.frequency.value = freq;
@@ -2799,7 +2711,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   async function tgCreateOrder(t, payInfo) {
     const docsToDelete = t.sel.map(it => it.id);
     const placeBtns = ['tg-place-order', 'tg-m-btn'].map(id => document.getElementById(id)).filter(Boolean);
-
     placeBtns.forEach(b => {
       b.dataset.origText = b.textContent;
       b.disabled = true;
@@ -2817,19 +2728,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           ? (gstIncluded ? (p*q) - ((p*q)/(1+gstPct/100)) : (p*q)*gstPct/100)
           : 0;
         return {
-          productId: it.productId || it.id,
-          name: it.name || '',
-          image: it.image || '',
-          price: p, mrp: m, qty: q,
-          size: it.size || '',
-          color: it.color || '',
+          productId: it.productId || it.id, name: it.name || '', image: it.image || '',
+          price: p, mrp: m, qty: q, size: it.size || '', color: it.color || '',
           rating: (it.rating != null) ? Number(it.rating) : null,
           ratingCount: (it.ratingCount != null) ? Number(it.ratingCount) : null,
-          gst: gstPct,
-          gstIncluded: gstIncluded,
-          gstAmount: Number(gstAmt.toFixed(2)),
-          sellerId: it.sellerId || '',
-          sellerName: it.sellerName || it.seller || ''
+          gst: gstPct, gstIncluded: gstIncluded, gstAmount: Number(gstAmt.toFixed(2)),
+          sellerId: it.sellerId || '', sellerName: it.sellerName || it.seller || ''
         };
       });
 
@@ -2843,16 +2747,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const deliveryType = dInfo.cls === 'same-day' ? 'same_day' : 'standard_3_6_days';
 
       const orderPayload = {
-        customerId: currentUser.uid,
-        userId: currentUser.uid,
-        uid: currentUser.uid,
+        customerId: currentUser.uid, userId: currentUser.uid, uid: currentUser.uid,
         userName: pendingAddress.name,
         userEmail: pendingAddress.email || currentUser.email || '',
         userPhone: pendingAddress.phone,
-        items: orderItems,
-        itemCount: t.itemCount,
-        address: pendingAddress,
-        shippingAddress: pendingAddress,
+        items: orderItems, itemCount: t.itemCount,
+        address: pendingAddress, shippingAddress: pendingAddress,
         subtotal: Number(t.finalTotal.toFixed(2)),
         mrpTotal: Number(t.mrpTotal.toFixed(2)),
         discount: Number(t.discount.toFixed(2)),
@@ -2861,27 +2761,21 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         gstAdded: Number(t.gstAddedAmt.toFixed(2)),
         cartCommission: Number(t.cartCommission.toFixed(2)),
         cartCommissionPct: Number(t.cartCommissionPct || 0),
-        delivery: 0,
-        deliverySource: 'seller',
+        delivery: 0, deliverySource: 'seller',
         total: Number(t.grand.toFixed(2)),
         couponCode: appliedCoupon ? appliedCoupon.code : '',
         couponDiscount: Number(t.couponDiscount || 0),
         coupon: appliedCoupon ? {
-          code: appliedCoupon.code,
-          type: appliedCoupon.discountType,
-          value: appliedCoupon.value,
-          minOrder: appliedCoupon.minOrder,
+          code: appliedCoupon.code, type: appliedCoupon.discountType,
+          value: appliedCoupon.value, minOrder: appliedCoupon.minOrder,
           maxDiscount: appliedCoupon.maxDiscount
         } : null,
         paymentMethod: payInfo.paymentMethod,
         paymentId: payInfo.paymentId || '',
         paymentStatus: payInfo.paymentStatus,
-        deliveryType: deliveryType,
-        deliveryEstimate: dInfo.text,
-        status: 'pending',
-        sellerIds: sellerIds,
-        createdAt: FV.serverTimestamp(),
-        updatedAt: FV.serverTimestamp()
+        deliveryType: deliveryType, deliveryEstimate: dInfo.text,
+        status: 'pending', sellerIds: sellerIds,
+        createdAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
       };
 
       const orderPromise = db.collection('orders').add(orderPayload);
@@ -2892,7 +2786,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       docsToDelete.forEach(id => {
         selectedIds.delete(id);
         selectedIds.delete(NS_MARK + id);
-        _itemNodeMap.delete(id);
         _pendingQty.delete(id);
       });
       saveSelected();
@@ -2912,20 +2805,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
             loadCart();
           });
       } else {
-        const newGuest = getGuestCart().filter(i => !docsToDelete.includes(i.id));
-        setGuestCart(newGuest);
+        setGuestCart(getGuestCart().filter(i => !docsToDelete.includes(i.id)));
       }
 
       showSuccess('');
 
       const [ref] = await Promise.all([orderPromise, cartCleanupPromise]);
-      const orderId = ref.id;
-      document.getElementById('tg-success-order').textContent = 'Order ID: #' + orderId.slice(0, 10).toUpperCase();
+      document.getElementById('tg-success-order').textContent = 'Order ID: #' + ref.id.slice(0, 10).toUpperCase();
 
-      docsToDelete.forEach(id => {
-        selectedIds.delete(id);
-        selectedIds.delete(NS_MARK + id);
-      });
+      docsToDelete.forEach(id => { selectedIds.delete(id); selectedIds.delete(NS_MARK + id); });
       saveSelected();
 
       if (appliedCoupon) {
@@ -2953,7 +2841,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   window.tgDebugDelivery = function() {
     console.log('═══ DELIVERY DEBUG ═══');
     console.log('Memory pin:', _memStore.pin);
-    try { console.log('localStorage pin:', localStorage.getItem('toego_delivery_pin')); } catch(e) { console.log('localStorage pin: (blocked)'); }
+    try { console.log('localStorage pin:', localStorage.getItem('toego_delivery_pin')); } catch(e) {}
     console.log('getPin() returns:', getPin());
     console.log('isKanpurPincode:', isKanpurPincode(getPin()));
     console.log('Address:', getAddr());
@@ -2988,6 +2876,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   loadAppliedCouponFromStorage();
   updateCouponCard();
 
+  // ⚡ SUPER-FAST: Render from cache IMMEDIATELY (before auth resolves)
+  _quickBootRender();
+
   loadPaymentSettings();
   loadCoupons();
   loadSellerGlobal();
@@ -2998,12 +2889,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (e.key === 'Enter') { e.preventDefault(); window.tgApplyCouponManual(); }
   });
 
-  // Pin input: auto-submit on Enter
   (function() {
     const pinInp = document.getElementById('tg-pin-input');
     if (pinInp) {
       pinInp.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') { e.preventDefault(); window.tgSavePinFromModal(); }
+      });
+      pinInp.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 6);
       });
     }
   })();
@@ -3011,6 +2904,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   auth.onAuthStateChanged(async (u) => {
     const prevUser = currentUser;
     currentUser = u;
+    if (u) {
+      try { localStorage.setItem(LAST_UID_KEY, u.uid); } catch(e) {}
+    }
     if (prevUser && !u) { selectedIds = new Set(); saveSelected(); }
     loadCart();
     if (u) {
@@ -3030,7 +2926,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (e.target === m) {
         m.classList.remove('show');
         document.body.style.overflow = '';
-        // Refresh delivery tags if pin modal closed
         if (m.id === 'tg-pin-modal') refreshDeliveryTagsInPlace();
       }
     });
