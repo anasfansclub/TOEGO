@@ -664,42 +664,61 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<!-- ✅ FIX: Firebase scripts loaded with defer (non-blocking) -->
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
+/* ══════════════════ IMMEDIATE: SPLASH ══════════════════ */
+(function() {
+  var el = document.getElementById('tg-splash');
+  if (!el) return;
+  var visited = false;
+  try {
+    if (sessionStorage.getItem('toego_splash_seen') === '1') visited = true;
+    else {
+      var ts = parseInt(localStorage.getItem('toego_splash_ts') || '0', 10);
+      if (ts && (Date.now() - ts) < 5 * 60 * 1000) visited = true;
+    }
+  } catch(e) {}
+  if (visited) { el.classList.add('gone'); return; }
+  try {
+    sessionStorage.setItem('toego_splash_seen', '1');
+    localStorage.setItem('toego_splash_ts', String(Date.now()));
+  } catch(e) {}
+  var hideNow = function() {
+    if (!el || el.classList.contains('gone')) return;
+    el.classList.add('hide');
+    setTimeout(function() { if (el) el.classList.add('gone'); }, 200);
+  };
+  setTimeout(hideNow, 300);
+  if (document.readyState === 'complete') setTimeout(hideNow, 0);
+  else window.addEventListener('load', function() { setTimeout(hideNow, 0); }, { once: true });
+})();
+
+/* ══════════════════ IMMEDIATE: THEME FROM CACHE ══════════════════ */
+(function() {
+  try {
+    var c = localStorage.getItem('toego_theme_colors');
+    if (!c) return;
+    var t = JSON.parse(c);
+    if (!t || !t.primary) return;
+    document.documentElement.style.setProperty('--tg-primary', t.primary);
+    if (t.dark) document.documentElement.style.setProperty('--tg-primary-dark', t.dark);
+    document.documentElement.style.backgroundColor = t.primary;
+    var metas = document.querySelectorAll('meta[name="theme-color"]');
+    for (var i = 0; i < metas.length; i++) metas[i].setAttribute('content', t.primary);
+    var hd = document.getElementById('tg-mhd');
+    if (hd) hd.style.background = t.primary;
+  } catch(e) {}
+})();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 (function() {
   'use strict';
-
-  /* ══════════════════ ULTRA-FAST SPLASH ══════════════════ */
-  (function() {
-    const el = document.getElementById('tg-splash');
-    if (!el) return;
-    const hideNow = () => {
-      if (!el || el.classList.contains('gone')) return;
-      el.classList.add('hide');
-      setTimeout(() => { if (el) el.classList.add('gone'); }, 200);
-    };
-    let visited = false;
-    try {
-      if (sessionStorage.getItem('toego_splash_seen') === '1') visited = true;
-      else {
-        const ts = parseInt(localStorage.getItem('toego_splash_ts') || '0', 10);
-        if (ts && (Date.now() - ts) < 5 * 60 * 1000) visited = true;
-      }
-    } catch(e) {}
-    if (visited) { el.classList.add('gone'); return; }
-    try {
-      sessionStorage.setItem('toego_splash_seen', '1');
-      localStorage.setItem('toego_splash_ts', String(Date.now()));
-    } catch(e) {}
-    setTimeout(hideNow, 250);
-    setTimeout(hideNow, 1000);
-    setTimeout(() => { if (el) el.classList.add('gone'); }, 1500);
-    if (document.readyState === 'complete') setTimeout(hideNow, 50);
-    else window.addEventListener('load', () => setTimeout(hideNow, 50), { once: true });
-  })();
 
   /* ══════════════════ FIREBASE ══════════════════ */
   if (!window.__TOEGO_FB__) {
@@ -815,24 +834,23 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     }
   }
 
+  /* ✅ FIX 3: Banner image — w_1600 → w_900 (mobile pe 3-4x chhota) */
   function optimizeImgUrl(url) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') !== -1 && url.indexOf('/upload/') !== -1) {
       if (url.indexOf('/upload/q_auto') === -1 && url.indexOf('/upload/w_') === -1 && url.indexOf('/upload/c_') === -1) {
-        return url.replace('/upload/', '/upload/f_auto,q_auto:good,w_1600,c_limit,dpr_auto/');
+        return url.replace('/upload/', '/upload/f_auto,q_auto:good,w_900,c_limit/');
       }
     }
     return url;
   }
 
-  /* ✅ PATCH: cardImgUrl — no dpr_auto for small sizes (halves bytes) */
+  /* ✅ FIX 1: cardImgUrl — ALWAYS w_400 (mini/card/large sab same URL share karte hain) */
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
     if (/\/upload\/[^/]*[qwfcs]_/.test(url)) return url;
-    const w = width || 400;
-    const dprPart = w <= 400 ? '' : ',dpr_auto';
-    return url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit' + dprPart + '/');
+    return url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_400,c_limit/');
   }
 
   function preloadBannerImages(banners) {
@@ -850,23 +868,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     });
   }
 
-  /* ✅ PATCH: preloadProductImages — instant (no requestIdleCallback delay) */
-  function preloadProductImages(products, max) {
-    if (!products || !products.length) return;
-    max = max || 8;
-    const slice = products.slice(0, max);
-    _preloadProdImgs(slice);
-  }
-  function _preloadProdImgs(products) {
-    products.forEach((p, i) => {
-      const raw = p.image || (p.images && p.images[0]);
-      if (!raw) return;
-      const img = new Image();
-      img.decoding = 'async';
-      if (i < 6) img.fetchPriority = 'high';
-      img.src = cardImgUrl(raw, 400);
-    });
-  }
+  /* ✅ FIX 6: preloadProductImages — DISABLED (browser khud handle karega) */
+  function preloadProductImages() { /* disabled */ }
 
   function saveBannersCache(data) {
     try { localStorage.setItem(BANNER_CACHE, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
@@ -957,7 +960,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       const link = b.link || 'products.html';
       const hasContent = (b.title || b.subtitle || b.buttonText);
       const imgUrl = optimizeImgUrl(b.image);
-      /* ✅ PATCH: first 2 slides eager */
       const eager = i < 2 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
       slidesHtml += '<div class="tg-mabanner-slide ' + (i===0?'active':'') + '" data-idx="' + i + '" onclick="location.href=\'' + esc(link) + '\'">' +
         '<img src="' + esc(imgUrl) + '" alt="' + esc(b.title||'Banner') + '" ' + eager + ' decoding="async" />' +
@@ -1151,10 +1153,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
     try { localStorage.setItem(THEME_KEY, JSON.stringify({ primary, dark })); } catch(e) {}
   }
-
-  (function() {
-    try { const c = localStorage.getItem(THEME_KEY); if (c) { const { primary, dark } = JSON.parse(c); applyTheme(primary, dark); } } catch(e) {}
-  })();
 
   window.addEventListener('pageshow', (e) => {
     if (e.persisted) {
@@ -1738,7 +1736,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
         allProducts = cached;
         renderProducts(true);
         loadRecentlyViewed();
-        preloadProductImages(cached, 8);
       }
     }
 
@@ -1758,14 +1755,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           _productsSig = '';
           renderProducts(true);
           loadRecentlyViewed();
-          preloadProductImages(data, 8);
         }
       } else if (!allProducts.length) {
         renderProducts(true);
       }
       if (!_reviewsLoaded && allProducts.length) {
         _reviewsLoaded = true;
-        setTimeout(() => { loadReviewsForProducts().catch(() => {}); }, 1500);
+        setTimeout(() => { loadReviewsForProducts().catch(() => {}); }, 4000);
       }
     };
 
@@ -1784,12 +1780,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     }, 8000);
 
     try {
-      db.collection('products').limit(60).get()
+      /* ✅ FIX 5: limit 60 → 30 */
+      db.collection('products').limit(30).get()
         .then(snap => {
           clearTimeout(safetyTimer);
           applySnap(snap);
           try {
-            unsubProducts = db.collection('products').limit(60).onSnapshot(
+            unsubProducts = db.collection('products').limit(30).onSnapshot(
               s => {
                 const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
                   .filter(p => p && p.active !== false && p.approved !== false);
@@ -1811,7 +1808,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
         .catch(() => {
           clearTimeout(safetyTimer);
           try {
-            unsubProducts = db.collection('products').limit(60).onSnapshot(
+            unsubProducts = db.collection('products').limit(30).onSnapshot(
               s => applySnap(s),
               () => {
                 _productsLoading = false;
@@ -1838,13 +1835,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   async function loadReviewsForProducts() {
     try {
-      const pids = allProducts.slice(0, 30).map(p => p.id).filter(Boolean);
+      /* ✅ FIX 8: 30 → 15 pids */
+      const pids = allProducts.slice(0, 15).map(p => p.id).filter(Boolean);
       if (!pids.length) return;
       const all = [];
       for (let i = 0; i < pids.length; i += 10) {
         const chunk = pids.slice(i, i + 10);
         try {
-          const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(300).get();
+          /* ✅ FIX 8: limit 300 → 120 */
+          const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(120).get();
           snap.forEach(d => all.push({ id: d.id, ...d.data() }));
         } catch(e) {}
       }
@@ -1984,9 +1983,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     const trendingArr = applySortWithTimer(filtered, 10);
     const bestArr = applySortWithTimer(filtered, 10);
     const newArr = applySortWithTimer(filtered, 10);
-    const allArr = applySortWithTimer(filtered, 40);
+    /* ✅ FIX 5: allArr 40 → 20 */
+    const allArr = applySortWithTimer(filtered, 20);
 
-    /* ✅ PATCH: pass index to fn so eager loading works */
     const set = (id, arr, fn) => { 
       const el = document.getElementById(id); 
       if (el) el.innerHTML = arr.length ? arr.map((p, i) => fn(p, i)).join('') : emptyBox(); 
@@ -1999,22 +1998,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     const allEl = document.getElementById('tg-mall');
     if (allEl) allEl.innerHTML = allArr.length ? allArr.map((p, i) => largeCard(p, i)).join('') : emptyBox();
 
+    /* ✅ FIX 7: refresh cached timer elements after render */
+    _refreshTimerEls();
     updateAllWishStates();
     if (currentSearch) renderSearchResults();
   }
 
   function emptyBox() { return '<div class="tg-mempty"><div class="tg-mempty-icon">📦</div><h3 style="margin:0 0 4px;color:#212121;font-size:14px;">No products</h3></div>'; }
 
-  /* ✅ PATCH: miniCard — first 6 eager for instant above-fold load */
+  /* ✅ FIX 2: miniCard — first 2 eager only (was 6) */
   function miniCard(p, i) {
     i = i || 0;
-    const isAboveFold = i < 6;
+    const isAboveFold = i < 2;
     const loadingAttr = isAboveFold ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
     const price = Number(p.price||0);
     const old = Number(p.compareAtPrice||p.mrp||0);
     const disc = old > price ? Math.round((1 - price/old)*100) : 0;
     const img = p.image || (Array.isArray(p.images) && p.images[0]) || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=T';
-    const imgUrl = cardImgUrl(img, 220);
+    const imgUrl = cardImgUrl(img);
     const isOOS = getProductStock(p) <= 0;
     const oosCls = isOOS ? ' out-of-stock' : '';
     const clickAttr = isOOS ? '' : 'onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'"';
@@ -2068,15 +2069,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return '<span class="tg-tmr-ic">⚡</span>' + segs;
   }
 
-  /* ✅ PATCH: productCard — first 3 eager for instant trending load */
+  /* ✅ FIX 2: productCard — first 2 eager only (was 3) */
   function productCard(p, i) {
     i = i || 0;
-    const loadingAttr = i < 3 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+    const loadingAttr = i < 2 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
     const price = Number(p.price||0);
     const old = Number(p.compareAtPrice||p.mrp||0);
     const disc = old > price ? Math.round((1 - price/old)*100) : 0;
     const img = p.image || (Array.isArray(p.images) && p.images[0]) || 'https://via.placeholder.com/300x300/f1f3f6/878787?text=TOEGO';
-    const imgUrl = cardImgUrl(img, 400);
+    const imgUrl = cardImgUrl(img);
 
     const ratingInfo = getProductRating(p.id);
     let ratingHtml = '';
@@ -2120,13 +2121,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     '</div>';
   }
 
-  /* largeCard stays lazy — below fold */
   function largeCard(p) {
     const price = Number(p.price||0);
     const old = Number(p.compareAtPrice||p.mrp||0);
     const disc = old > price ? Math.round((1 - price/old)*100) : 0;
     const img = p.image || (Array.isArray(p.images) && p.images[0]) || 'https://via.placeholder.com/400x400/f1f3f6/878787?text=TOEGO';
-    const imgUrl = cardImgUrl(img, 500);
+    const imgUrl = cardImgUrl(img);
 
     const ratingInfo = getProductRating(p.id);
     let ratingHtml = '';
@@ -2169,17 +2169,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     '</div>';
   }
 
+  /* ✅ FIX 7: cached timer elements — querySelectorAll ek baar per render */
+  let _timerEls = [];
+  function _refreshTimerEls() {
+    _timerEls = document.querySelectorAll('.tg-mcard-timer[data-end]');
+  }
+
   setInterval(() => {
-    if (document.hidden) return;
-    const timers = document.querySelectorAll('.tg-mcard-timer[data-end]');
-    if (!timers.length) return;
+    if (document.hidden || !_timerEls.length) return;
     const now = Date.now();
     const pad = n => String(n).padStart(2, '0');
-    timers.forEach(el => {
+    const len = _timerEls.length;
+    for (let i = 0; i < len; i++) {
+      const el = _timerEls[i];
+      if (!el.isConnected) continue;
       const end = Number(el.dataset.end);
-      if (!end) return;
+      if (!end) continue;
       const diff = end - now;
-      if (diff <= 0) { el.remove(); return; }
+      if (diff <= 0) { el.remove(); continue; }
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff % 86400000) / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
@@ -2188,7 +2195,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       if (d > 0) txt = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + d + 'D</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
       else txt = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
       if (el.innerHTML !== txt) el.innerHTML = txt;
-    });
+    }
   }, 1000);
 
   window.tgMShareBtn = function(e) {
@@ -2251,7 +2258,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     el.style.display = 'block';
     inner.innerHTML = items.map(p => {
       const raw = p.image || (Array.isArray(p.images) && p.images[0]) || '';
-      const imgUrl = cardImgUrl(raw, 200);
+      const imgUrl = cardImgUrl(raw);
       return '<div class="tg-mrecent-card" onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'">' +
       '<div class="tg-mrecent-img"><img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/100x100/f1f3f6/878787?text=T\'" /></div>' +
       '<div class="tg-mrecent-name">' + esc(p.name||'') + '</div>' +
@@ -2436,6 +2443,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (title) title.textContent = 'Results for "' + q + '"';
     if (sub) sub.textContent = matches.length ? matches.length + ' product' + (matches.length>1?'s':'') + ' found' : 'No products matched';
     grid.innerHTML = matches.length ? matches.map((p, i) => largeCard(p, i)).join('') : '<div class="tg-mempty"><div class="tg-mempty-icon">🔍</div><h3 style="margin:0 0 4px;color:#212121;font-size:15px;">No products found</h3><p style="margin:0;font-size:13px;">Try a different keyword</p></div>';
+    _refreshTimerEls();
     updateAllWishStates();
   }
 
@@ -2703,6 +2711,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   _startCartTimer();
 
 })();
+});
 </script>
 </body>
 </html>
