@@ -426,8 +426,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-settle-pay-mini-v{font-weight:800;color:#212121;font-family:'JetBrains Mono',monospace;font-size:13px;display:inline-flex;align-items:center;gap:6px;word-break:break-all;text-align:right;}
 .tg-slab-preview{background:#e8f0ff;border:1.5px solid #b3c7f0;border-radius:8px;padding:10px 12px;font-size:12px;color:#1e40af;margin-top:8px;line-height:1.5;}
 .tg-slab-preview b{color:#0d47a1;}
-
-/* ✅ NEW: Seller Dashboard Color Cards */
 .tg-dash-seller-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
 @media (min-width:600px){.tg-dash-seller-grid{grid-template-columns:repeat(3,1fr);}}
 @media (min-width:900px){.tg-dash-seller-grid{grid-template-columns:repeat(4,1fr);}}
@@ -444,8 +442,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-seller-card-stat-num{font-size:15px;font-weight:900;color:#212121;line-height:1.1;}
 .tg-seller-card-stat-label{font-size:9px;color:#888;font-weight:700;text-transform:uppercase;margin-top:3px;letter-spacing:0.3px;}
 .tg-seller-card-pills{display:flex;gap:4px;flex-wrap:wrap;}
-
-/* ✅ NEW: Date-wise order groups */
 .tg-date-group{background:#fff;border-radius:10px;margin-bottom:12px;border:1.5px solid #eef1f6;overflow:hidden;}
 .tg-date-group-head{padding:10px 14px;background:linear-gradient(135deg,#f0f5ff,#e0eaff);border-bottom:1.5px solid #d0e2ff;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
 .tg-date-group-date{font-size:13px;font-weight:800;color:#2874f0;}
@@ -455,10 +451,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-so-stat{text-align:center;}
 .tg-so-stat-num{font-size:18px;font-weight:900;color:#ffe500;line-height:1;}
 .tg-so-stat-label{font-size:9.5px;opacity:0.85;font-weight:700;text-transform:uppercase;margin-top:4px;letter-spacing:0.4px;}
-
-/* ✅ NEW: Orders bulk bar (dynamic single button) */
 #ord-bulk-actions{display:flex;gap:8px;flex-wrap:wrap;}
 #ord-bulk-actions .tg-btn{padding:10px 18px;font-size:12.5px;font-weight:800;letter-spacing:0.4px;}
+/* NEW: Courier info card */
+.tg-courier-info-card{background:linear-gradient(135deg,#e8f0ff,#d0e2ff);border:1.5px solid #2874f0;border-radius:12px;padding:14px;margin-bottom:14px;}
+.tg-courier-info-title{font-size:11px;font-weight:800;color:#2874f0;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.tg-courier-info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(40,116,240,0.2);font-size:13px;gap:10px;flex-wrap:wrap;}
+.tg-courier-info-row:last-child{border-bottom:none;}
+.tg-courier-info-k{color:#666;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;flex-shrink:0;}
+.tg-courier-info-v{font-weight:800;color:#212121;text-align:right;word-break:break-all;font-size:13.5px;}
+/* NEW: Save orders view */
+.tg-save-toolbar{display:flex;gap:8px;padding:10px 12px 0;flex-wrap:wrap;align-items:center;}
+.tg-save-toolbar .tg-srch{flex:1;min-width:200px;margin-bottom:0;}
 </style>
 </head>
 <body>
@@ -501,25 +505,26 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   <div class="tg-dr-h">
     <button class="tg-dr-c" onclick="tgCloseDrawer()">✕</button>
     <div class="tg-dr-hl"><div class="tg-dr-hlm">T</div><div class="tg-dr-hlt">TOE<span>GO</span></div></div>
-    <div class="tg-dr-hb">Super Admin v13</div>
+    <div class="tg-dr-hb">Super Admin v14</div>
     <div class="tg-dr-a"><div class="tg-dr-aav" id="tg-dav">A</div><div class="tg-dr-ai"><div class="tg-dr-an" id="tg-dn">Admin</div><div class="tg-dr-ae" id="tg-de">—</div></div></div>
   </div>
   <div class="tg-dr-b">
     <div class="tg-dr-s">Overview</div>
     <div class="tg-dr-i" data-v="dash" onclick="tgNav('dash')"><div class="tg-dr-ic blue"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg></div><div class="tg-dr-il">Dashboard</div></div>
-    <div class="tg-dr-i" data-v="analytics" onclick="tgNav('analytics')"><div class="tg-dr-ic pur"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div class="tg-dr-il">Analytics</div></div>
+    <div class="tg-dr-i" data-v="analytics" onclick="tgNav('analytics')"><div class="tg-dr-ic purple"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div class="tg-dr-il">Analytics</div></div>
     <div class="tg-dr-s">Users & Sellers</div>
     <div class="tg-dr-i" data-v="sellers" onclick="tgNav('sellers')"><div class="tg-dr-ic orange"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><div class="tg-dr-il">Sellers</div><span class="tg-dr-ib" id="tg-b-sellers" style="display:none;">0</span></div>
     <div class="tg-dr-i" data-v="users" onclick="tgNav('users')"><div class="tg-dr-ic blue"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg></div><div class="tg-dr-il">Users</div></div>
     <div class="tg-dr-i" data-v="settle" onclick="tgNav('settle')"><div class="tg-dr-ic green"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="tg-dr-il">Settlements</div></div>
     <div class="tg-dr-s">Catalog</div>
-    <div class="tg-dr-i" data-v="prods" onclick="tgNav('prods')"><div class="tg-dr-ic pur"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/></svg></div><div class="tg-dr-il">Products</div><span class="tg-dr-ib" id="tg-b-prods" style="display:none;">0</span></div>
+    <div class="tg-dr-i" data-v="prods" onclick="tgNav('prods')"><div class="tg-dr-ic purple"><svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/></svg></div><div class="tg-dr-il">Products</div><span class="tg-dr-ib" id="tg-b-prods" style="display:none;">0</span></div>
     <div class="tg-dr-i" data-v="banners" onclick="tgNav('banners')"><div class="tg-dr-ic pink"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></div><div class="tg-dr-il">6 Home Banners</div></div>
     <div class="tg-dr-i" data-v="cats" onclick="tgNav('cats')"><div class="tg-dr-ic green"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><div class="tg-dr-il">Categories</div></div>
     <div class="tg-dr-i" data-v="pricing" onclick="tgNav('pricing')"><div class="tg-dr-ic orange"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="tg-dr-il">Pricing Rules</div></div>
     <div class="tg-dr-s">Engagement</div>
     <div class="tg-dr-i" data-v="orders" onclick="tgNav('orders')"><div class="tg-dr-ic orange"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/></svg></div><div class="tg-dr-il">Orders</div><span class="tg-dr-ib" id="tg-b-orders" style="display:none;">0</span></div>
-    <div class="tg-dr-i" data-v="labels" onclick="tgNav('labels')"><div class="tg-dr-ic teal"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/></svg></div><div class="tg-dr-il">Order Labels</div><span class="tg-dr-ib" id="tg-b-labels" style="display:none;">0</span></div>
+    <div class="tg-dr-i" data-v="saveorders" onclick="tgNav('saveorders')"><div class="tg-dr-ic green"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div><div class="tg-dr-il">📥 Save All Orders</div></div>
+    <div class="tg-dr-i" data-v="labels" onclick="tgNav('labels')"><div class="tg-dr-ic teal"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="tg-dr-il">Order Labels</div><span class="tg-dr-ib" id="tg-b-labels" style="display:none;">0</span></div>
     <div class="tg-dr-i" data-v="returns" onclick="tgNav('returns')"><div class="tg-dr-ic red"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div><div class="tg-dr-il">Return Requests</div><span class="tg-dr-ib" id="tg-b-returns" style="display:none;">0</span></div>
     <div class="tg-dr-i" data-v="tickets" onclick="tgNav('tickets')"><div class="tg-dr-ic teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="tg-dr-il">Support Tickets</div><span class="tg-dr-ib" id="tg-b-tickets" style="display:none;">0</span></div>
     <div class="tg-dr-i" data-v="promos" onclick="tgNav('promos')"><div class="tg-dr-ic yellow"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="tg-dr-il">Promotions</div></div>
@@ -527,16 +532,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     <div class="tg-dr-i" data-v="notifs" onclick="tgNav('notifs')"><div class="tg-dr-ic red"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></div><div class="tg-dr-il">Notifications</div></div>
     <div class="tg-dr-i" data-v="reviews" onclick="tgNav('reviews')"><div class="tg-dr-ic yellow"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="tg-dr-il">Reviews</div></div>
     <div class="tg-dr-s">Shop Home Manager</div>
-    <div class="tg-dr-i" data-v="shop" onclick="tgNav('shop')"><div class="tg-dr-ic pur"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><div class="tg-dr-il">🎨 Shop Home Content</div></div>
+    <div class="tg-dr-i" data-v="shop" onclick="tgNav('shop')"><div class="tg-dr-ic purple"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><div class="tg-dr-il">🎨 Shop Home Content</div></div>
     <div class="tg-dr-i" data-v="data" onclick="tgNav('data')"><div class="tg-dr-ic blue"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg></div><div class="tg-dr-il">📊 Site Data</div></div>
     <div class="tg-dr-s">Data & Settings</div>
     <div class="tg-dr-i" data-v="backup" onclick="tgNav('backup')"><div class="tg-dr-ic green"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="tg-dr-il">Backup & Import</div></div>
     <div class="tg-dr-i" data-v="theme" onclick="tgNav('theme')"><div class="tg-dr-ic blue"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/></svg></div><div class="tg-dr-il">Theme</div></div>
     <div class="tg-dr-i" data-v="pay" onclick="tgNav('pay')"><div class="tg-dr-ic green"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/></svg></div><div class="tg-dr-il">Payment (Razorpay)</div></div>
-    <div class="tg-dr-i" data-v="cloud" onclick="tgNav('cloud')"><div class="tg-dr-ic pur"><svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div><div class="tg-dr-il">Cloudinary</div></div>
+    <div class="tg-dr-i" data-v="cloud" onclick="tgNav('cloud')"><div class="tg-dr-ic purple"><svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div><div class="tg-dr-il">Cloudinary</div></div>
     <div class="tg-dr-i" data-v="srule" onclick="tgNav('srule')"><div class="tg-dr-ic orange"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/></svg></div><div class="tg-dr-il">💰 Extra Cart Charges</div></div>
   </div>
-  <div class="tg-dr-f">TOEGO Admin v13.0 · Made in India 🇮🇳</div>
+  <div class="tg-dr-f">TOEGO Admin v14.0 · Made in India 🇮🇳</div>
 </aside>
 
 <div class="tg-w" id="tg-w">
@@ -564,8 +569,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         <div class="tg-sc" onclick="tgNav('settle')"><div class="tg-sci green"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/></svg></div><div class="tg-scn" id="s-tr">₹0</div><div class="tg-scl">Total Revenue</div></div>
       </div>
       <div class="tg-sec" id="pending-sec" style="display:none;"><div class="tg-sh"><div><div class="tg-st">⚠ Requires Attention</div></div></div><div id="pending-list"></div></div>
-
-      <!-- ✅ NEW: Sellers Overview with colored cards -->
       <div class="tg-sec" id="sellers-overview-sec">
         <div class="tg-sh">
           <div><div class="tg-st">🏪 Sellers Overview</div><div class="tg-ss">Click any seller to view their date-wise orders</div></div>
@@ -573,7 +576,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         </div>
         <div id="dash-seller-cards" style="padding:0 16px 16px;"></div>
       </div>
-
       <div class="tg-sec"><div class="tg-sh"><div><div class="tg-st">Recent Orders</div></div><button class="tg-btn out" onclick="tgNav('orders')">View All →</button></div><div id="recent-orders"></div></div>
     </div>
 
@@ -631,10 +633,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div class="tg-sec"><div class="tg-sh"><div><div class="tg-st">Seller Settlements</div><div class="tg-ss">Settle seller earnings</div></div></div><div id="settle-list"></div></div>
       <div class="tg-sec">
         <div class="tg-sh">
-          <div>
-            <div class="tg-st">📜 Settlement History</div>
-            <div class="tg-ss">All payments made to sellers (live)</div>
-          </div>
+          <div><div class="tg-st">📜 Settlement History</div><div class="tg-ss">All payments made to sellers (live)</div></div>
           <span class="tg-pill appr" id="settle-hist-count">0</span>
         </div>
         <div id="settle-history-list"></div>
@@ -716,6 +715,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       </div>
 
       <div class="tg-sec"><div id="orders-list"></div></div>
+    </div>
+
+    <div class="tg-v" id="v-saveorders">
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st">📥 Save All Orders</div><div class="tg-ss">Daily orders · Full details Excel export</div></div>
+          <button class="tg-btn suc" onclick="tgExportAllOrdersExcel()">📥 Export All Orders</button>
+        </div>
+        <div class="tg-save-toolbar">
+          <div class="tg-srch">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="save-srch" placeholder="Search orders..." oninput="renderSaveOrders()">
+          </div>
+        </div>
+        <div id="save-orders-list" style="padding:12px;"></div>
+      </div>
     </div>
 
     <div class="tg-v" id="v-labels">
@@ -813,31 +828,26 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               <div class="tg-fld"><label>Policy Text</label><textarea id="sh-rp" placeholder="7-day easy returns..."></textarea></div>
             </div>
           </div>
-
           <div id="shop-tab-hero" style="display:none;">
             <div class="tg-fld-h" style="margin-bottom:12px;">Hero carousel me slides. Image URL ya gradient de sakte ho.</div>
             <div id="shop-hero-list"></div>
             <button class="tg-btn out" style="width:100%;padding:12px;justify-content:center;" onclick="tgShopAddHero()">+ Add Hero Slide</button>
           </div>
-
           <div id="shop-tab-mid" style="display:none;">
             <div class="tg-fld-h" style="margin-bottom:12px;">2-column mid banners (home me beech me dikhte hain).</div>
             <div id="shop-mid-list"></div>
             <button class="tg-btn out" style="width:100%;padding:12px;justify-content:center;" onclick="tgShopAddMid()">+ Add Mid Banner</button>
           </div>
-
           <div id="shop-tab-feat" style="display:none;">
             <div class="tg-fld-h" style="margin-bottom:12px;">Featured cards (3-column layout).</div>
             <div id="shop-feat-list"></div>
             <button class="tg-btn out" style="width:100%;padding:12px;justify-content:center;" onclick="tgShopAddFeat()">+ Add Featured Card</button>
           </div>
-
           <div id="shop-tab-sec" style="display:none;">
             <div class="tg-sgrp"><div class="tg-sgrp-t">Home Page Sections</div>
               <div id="shop-sec-toggles"></div>
             </div>
           </div>
-
           <div id="shop-tab-raw" style="display:none;">
             <div class="tg-fld-h" style="margin-bottom:12px;">⚠ Advanced: Raw JSON edit. Sirf tab use karo jab aapko structure pata ho.</div>
             <div class="tg-fld"><label>Raw JSON</label><textarea id="sh-raw" style="min-height:340px;font-family:monospace;font-size:12px;"></textarea></div>
@@ -846,7 +856,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               <button class="tg-btn wrn" style="flex:1;padding:10px;justify-content:center;" onclick="tgShopApplyRaw()">✓ Apply JSON</button>
             </div>
           </div>
-
           <button class="tg-btn pri" style="width:100%;padding:14px;margin-top:14px;justify-content:center;" onclick="tgShopSave()">💾 Save All Shop Home</button>
         </div>
       </div>
@@ -886,7 +895,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
             <input type="file" id="bk-file" accept=".json" style="display:none;" onchange="tgImportFile(event)">
             <button class="tg-btn wrn" style="width:100%;padding:14px;justify-content:center;" onclick="document.getElementById('bk-file').click()">⬆ Choose JSON & Import</button>
           </div>
-
           <div class="tg-ie-box">
             <div class="tg-ie-box-title">📊 Seller Data (Import / Export)</div>
             <div class="tg-ie-box-desc">Sirf sellers ka data export karo ya JSON backup se import karo</div>
@@ -902,7 +910,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               <input type="file" id="seller-import-file" accept=".json" style="display:none;" onchange="tgImportSellers(event)">
             </div>
           </div>
-
           <div class="tg-danger-zone">
             <div class="tg-danger-zone-title">Danger Zone — Permanent Actions</div>
             <div class="tg-danger-zone-desc">Ye actions <b>permanent</b> hain, <b>undo nahi ho sakte</b>. Sirf tab use karo jab aap 100% sure ho.</div>
@@ -980,28 +987,51 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               Example: <code>5</code> = +5% | <code>-5</code> = -5%
             </div>
           </div>
-
           <div class="tg-sgrp"><div class="tg-sgrp-t">Min Settlement</div>
             <div class="tg-fld"><label>Min Settlement %</label><input type="number" id="sr-ms" min="0" max="100"></div>
           </div>
-
           <div class="tg-sgrp" style="background:linear-gradient(135deg,#eef3ff,#e0eaff);border:1.5px solid #d0e2ff;">
             <div class="tg-sgrp-t" style="color:#2874f0;">🏷️ Seller Brands (Product Form Dropdown)</div>
             <div class="tg-fld"><label>Brands (comma separated)</label><input type="text" id="sr-brands" placeholder="Generic, No Brand, TOEGO, Local"></div>
             <div class="tg-fld-h">Ye brands seller ke product form me dropdown me dikhengi.</div>
           </div>
-
           <div class="tg-sgrp" style="background:linear-gradient(135deg,#fff8e1,#ffecb3);border:1.5px solid #ffe082;">
             <div class="tg-sgrp-t" style="color:#f57c00;">🎨 Seller Colors (Product Form Chips)</div>
             <div class="tg-fld"><label>Colors (comma separated)</label><input type="text" id="sr-colors" placeholder="Red, Blue, Black, White, Green"></div>
             <div class="tg-fld-h">Ye colors seller ke product form me multi-select chips ke liye dikhengi.</div>
           </div>
-
           <button class="tg-btn pri" style="width:100%;padding:14px;justify-content:center;" onclick="tgSaveSellerRules()">💾 Save Extra Cart Charges</button>
         </div>
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ═══ NEW: Courier Form Modal ═══ -->
+<div class="tg-mod" id="mod-courier">
+  <div class="tg-mod-c" style="max-width:460px;">
+    <div class="tg-mod-h"><div class="tg-mod-t" id="mc-title">Mark as Delivered</div><button class="tg-mod-x" onclick="tgCloseMod('mod-courier')">✕</button></div>
+    <div style="background:#e8f0ff;border:1.5px solid #2874f0;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12.5px;color:#1565c0;display:flex;gap:8px;align-items:center;">
+      <span style="font-size:22px;">📦</span>
+      <div><b id="mc-count">1</b> order(s) will be marked as <b>Delivered</b></div>
+    </div>
+    <div class="tg-fld">
+      <label>Courier Name <span class="rq">*</span></label>
+      <input type="text" id="mc-courier" placeholder="Delhivery / DTDC / BlueDart / India Post" maxlength="40">
+    </div>
+    <div class="tg-fld">
+      <label>Hub Name <span class="rq">*</span></label>
+      <input type="text" id="mc-hub" placeholder="Mumbai Central Hub / Delhi South Hub" maxlength="60">
+    </div>
+    <div class="tg-fld">
+      <label>Tracking ID (optional)</label>
+      <input type="text" id="mc-tracking" placeholder="e.g. DTDC123456789" maxlength="40">
+    </div>
+    <div class="tg-mod-a">
+      <button class="tg-mod-b gho" onclick="tgCloseMod('mod-courier')">Cancel</button>
+      <button class="tg-mod-b suc" id="mc-confirm-btn" onclick="tgConfirmCourier()">✓ Mark Delivered</button>
+    </div>
   </div>
 </div>
 
@@ -1058,9 +1088,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div id="ms-pay-body"></div>
     </div>
     <div id="ms-tab-actions" style="display:none;">
-      <div class="tg-actions-warn">
-        ⚠️ Ye actions seller ke account pe immediate asar dalenge. Soch samajh ke click karo.
-      </div>
+      <div class="tg-actions-warn">⚠️ Ye actions seller ke account pe immediate asar dalenge. Soch samajh ke click karo.</div>
       <button class="tg-seller-action-btn blk" id="ms-block-btn" onclick="tgToggleBlockSeller()">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
         <span id="ms-block-btn-text">🚫 Block Seller</span>
@@ -1111,7 +1139,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
 <div class="tg-mod" id="mod-cat">
   <div class="tg-mod-c">
-    <div class="tg-mod-h"><div class="tg-mod-t" id="mc-title">Add Category</div><button class="tg-mod-x" onclick="tgCloseMod('mod-cat')">✕</button></div>
+    <div class="tg-mod-h"><div class="tg-mod-t" id="mc-title2">Add Category</div><button class="tg-mod-x" onclick="tgCloseMod('mod-cat')">✕</button></div>
     <input type="hidden" id="mc-id">
     <div class="tg-fld"><label>Name <span class="rq">*</span></label><input type="text" id="mc-n" maxlength="50"></div>
     <div class="tg-fld-row"><div class="tg-fld"><label>Emoji</label><input type="text" id="mc-e" maxlength="4"></div><div class="tg-fld"><label>Order</label><input type="number" id="mc-o" value="1" min="1"></div></div>
@@ -1125,22 +1153,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
 <div class="tg-mod" id="mod-prod">
   <div class="tg-mod-c" style="max-width:720px;">
-    <div class="tg-mod-h">
-      <div class="tg-mod-t">Edit Product</div>
-      <button class="tg-mod-x" onclick="tgCloseMod('mod-prod')">✕</button>
-    </div>
+    <div class="tg-mod-h"><div class="tg-mod-t">Edit Product</div><button class="tg-mod-x" onclick="tgCloseMod('mod-prod')">✕</button></div>
     <input type="hidden" id="mp-id">
-
     <div class="mp-hero">
-      <div class="mp-hero-img" id="mp-hero-img">
-        <img src="https://via.placeholder.com/100x100/f1f3f6/878787?text=T" alt="">
-      </div>
+      <div class="mp-hero-img" id="mp-hero-img"><img src="https://via.placeholder.com/100x100/f1f3f6/878787?text=T" alt=""></div>
       <div class="mp-hero-body">
         <div class="mp-hero-name" id="mp-hero-name">Product</div>
         <div class="mp-hero-seller">Seller: <b id="mp-seller">—</b></div>
       </div>
     </div>
-
     <div class="mp-section">
       <div class="mp-section-title">📝 Product Info</div>
       <div class="tg-fld"><label>Product Name <span class="rq">*</span></label><input type="text" id="mp-n" maxlength="150"></div>
@@ -1150,14 +1171,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       </div>
       <div class="tg-fld" style="margin-bottom:0;"><label>Description</label><textarea id="mp-d" rows="3"></textarea></div>
     </div>
-
     <div class="mp-section">
       <div class="mp-section-title">📷 Product Images (max 5)</div>
       <div class="mp-img-grid" id="mp-images-grid"></div>
       <input type="file" id="mp-img-input" accept="image/*" multiple style="display:none;">
       <div style="font-size:11px;color:#888;text-align:center;margin-top:8px;">Auto-compressed to 100KB · Cloudinary</div>
     </div>
-
     <div class="mp-section">
       <div class="mp-section-title">💰 Pricing & Details</div>
       <div class="tg-fld-row">
@@ -1169,32 +1188,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         <div class="tg-fld" style="margin-bottom:0;"><label>GST %</label><select id="mp-g"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18">18%</option><option value="28">28%</option></select></div>
       </div>
     </div>
-
     <div class="mp-section">
       <div class="mp-section-title">📏 Sizes & Stock (per size)</div>
       <div style="font-size:11.5px;color:#888;margin-bottom:10px;line-height:1.5;">Har size ka alag stock. Total stock auto-calculate hoga.</div>
       <div id="mp-size-rows"></div>
       <button type="button" class="tg-btn out" style="width:100%;padding:10px;justify-content:center;margin-top:6px;" onclick="mpAddSizeRow('','')">+ Add Size Variant</button>
-      <div class="mp-total-stock">
-        <span>📦 Total Stock:</span>
-        <span id="mp-total-stock">0</span>
-      </div>
+      <div class="mp-total-stock"><span>📦 Total Stock:</span><span id="mp-total-stock">0</span></div>
     </div>
-
     <div class="mp-section">
       <div class="mp-section-title">🎨 Colors</div>
       <div class="mp-colors-wrap" id="mp-colors-wrap"></div>
       <div style="font-size:11px;color:#888;margin-top:8px;">Colors admin ke dwara set kiye gaye hain. Multiple colors select kar sakte ho.</div>
     </div>
-
     <div class="mp-sale-box">
       <div class="mp-sale-title">⚡ Sale Tag & Timer (Meesho Style)</div>
       <div class="tg-fld"><label>Sale Tag Text</label><input type="text" id="mp-saleTag" placeholder="e.g. MEGA SALE, HOT DEAL" maxlength="30"></div>
       <div class="tg-fld" style="margin-bottom:0;"><label>Sale Ends At</label><input type="datetime-local" id="mp-saleEndsAt"></div>
     </div>
-
     <label class="tg-chk"><input type="checkbox" id="mp-a"><span>Active (visible after approval)</span></label>
-
     <div class="tg-mod-a" style="flex-wrap:wrap;">
       <button class="tg-mod-b dan" onclick="tgDeleteProd()">🗑 Delete</button>
       <button class="tg-mod-b pri" onclick="tgSaveProd()">💾 Save Changes</button>
@@ -1354,6 +1365,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   try { _ringEnabled = localStorage.getItem('toego_admin_ring') !== '0'; } catch(e) {}
   let _prevPendingCount = -1;
 
+  // NEW: courier form queue
+  let _courierOrderIds = [];
+
   const BANNER_SLOTS = [
     { id:'slot1', name:'Hero Top', desc:'Main slider top' },
     { id:'slot2', name:'After Trending', desc:'Below trending products' },
@@ -1390,6 +1404,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   function ini(n){ return String(n||'U').trim().charAt(0).toUpperCase(); }
   function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
   function fmtWeightShort(g){ g = Number(g||0); return g >= 1000 ? (g/1000).toFixed(g%1000===0?0:1)+'kg' : g+'g'; }
+  function dateKey(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); return dt.toISOString().slice(0,10); }
 
   /* ═══ HISTORY: ek ek page back ═══ */
   function pushHistory(state) {
@@ -1408,7 +1423,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   window.tgCloseMod = function(id){
     document.getElementById(id).classList.remove('show');
     document.body.style.overflow='';
-    /* If we opened this modal via history, pop the state */
     const type = modalIdToType(id);
     if (type && history.state && history.state.modal === type) {
       try { history.back(); } catch(e) {}
@@ -1432,18 +1446,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (v === 'returns') renderReturns();
     if (v === 'tickets') renderTickets();
     if (v === 'labels') renderLabels();
+    if (v === 'saveorders') renderSaveOrders();
     if (v === 'settle') { renderSettle(); renderSettleHistory(); }
   }
   function handlePopState(e) {
     const state = e.state || { view: 'dash', modal: null };
-    /* Close modals if state has none */
     if (!state.modal) {
       document.querySelectorAll('.tg-mod').forEach(m => m.classList.remove('show'));
       document.body.style.overflow = '';
     }
-    /* Switch view */
     if (state.view && state.view !== CUR_VIEW) switchViewNoHistory(state.view);
-    /* Reopen modal */
     if (state.modal === 'order' && state.orderId) tgOpenOrder(state.orderId, true);
     else if (state.modal === 'seller-orders' && state.sellerId) tgOpenSellerOrders(state.sellerId, true);
     else if (state.modal === 'seller-edit' && state.sellerId) tgOpenSellerEdit(state.sellerId, true);
@@ -1532,10 +1544,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const isActive = payMethod === 'bank';
       html += '<div class="tg-seller-pay-card">' +
         '<div class="tg-seller-pay-label">🏦 Bank Account ' + (isActive ? '<span class="tg-pill pay-bank" style="margin-left:6px;font-size:9px;padding:2px 8px;">✓ ACTIVE</span>' : '') + '</div>' +
-        '<div class="tg-seller-pay-row">' +
-          '<span class="tg-seller-pay-key">Holder Name</span>' +
-          '<span class="tg-seller-pay-val">' + esc(s.bankName || '—') + '</span>' +
-        '</div>' +
+        '<div class="tg-seller-pay-row"><span class="tg-seller-pay-key">Holder Name</span><span class="tg-seller-pay-val">' + esc(s.bankName || '—') + '</span></div>' +
         '<div class="tg-seller-pay-row">' +
           '<span class="tg-seller-pay-key">Account No</span>' +
           '<span class="tg-seller-pay-val big">' + esc(s.bankAcc) +
@@ -1678,6 +1687,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     _prevPendingCount = pendingCount;
   }
 
+  /* ═══ NORM STATUS — UPDATED: label_generated + processing → dispatched ═══ */
   function normStatus(s){
     s = String(s||'pending').toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_');
     if (!s || s==='new' || s==='placed' || s==='created' || s==='confirmed') return 'pending';
@@ -1686,9 +1696,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (s.includes('return') || s.includes('refund') || s === 'rto') return 'returned';
     if (s.includes('deliver') || s === 'completed') return 'delivered';
     if (s.includes('dispatch') || s.includes('shipped') || s === 'in_transit' || s === 'ofd' || s === 'out_for_delivery') return 'dispatched';
-    if (s.includes('process') || s.includes('packing') || s === 'packed' || s === 'ready_to_ship' || s === 'preparing') return 'packed';
-    if (s.includes('label_generat') || s === 'label_created') return 'rtd';
+    // NEW: label_generated and processing both go to dispatched
+    if (s.includes('label_generat') || s === 'label_created') return 'dispatched';
+    if (s.includes('process') || s.includes('packing') || s === 'packed' || s === 'ready_to_ship' || s === 'preparing') return 'dispatched';
+    // admin_approved (RTD)
     if (s.includes('admin_approv') || s === 'approved' || s === 'admin_ok' || s === 'adminok' || s === 'rtd' || s.includes('ready_to_dispatch') || s.includes('ready_for_label') || s === 'admin-accepted') return 'rtd';
+    // seller accepted
     if (s.includes('seller_accept') || s === 'accepted' || s === 'accept' || s.includes('order_accepted')) return 'accepted';
     return 'pending';
   }
@@ -1699,7 +1712,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (s==='pending') return 'pend';
     if (s==='accepted') return 'blu';
     if (s==='rtd') return 'rtd';
-    if (s==='packed') return 'pur';
     if (s==='dispatched') return 'yel';
     if (s==='return_requested') return 'pur';
     return 'pend';
@@ -1708,7 +1720,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     s = normStatus(s);
     return {
       pending:'PENDING', accepted:'SELLER ACCEPTED', rtd:'RTD · READY FOR LABEL',
-      packed:'PACKED', dispatched:'DISPATCHED', delivered:'DELIVERED',
+      dispatched:'DISPATCHED', delivered:'DELIVERED',
       cancelled:'CANCELLED', return_requested:'RETURN REQUESTED', returned:'RETURNED'
     }[s] || s.toUpperCase();
   }
@@ -1788,7 +1800,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setText('tg-dn', name); setText('tg-dav', ini(name));
     setText('tg-de', u.email||'');
     updateRingBtn();
-    /* Init history at dashboard */
     try { history.replaceState({ view: 'dash', modal: null }, '', '#dash'); } catch(e) {}
     loadAll();
   }
@@ -1823,7 +1834,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       ALL_ORDERS.sort((a,b)=>{ const at = a.createdAt?.toDate?.()?.getTime?.()||0; const bt = b.createdAt?.toDate?.()?.getTime?.()||0; return bt-at; });
       checkNewOrders();
       renderDash(); renderOrders(); renderAnalytics(); renderSettle(); renderReturns(); renderSiteData(); renderLabels();
-      /* If seller-orders modal open, refresh it */
+      if (CUR_VIEW === 'saveorders') renderSaveOrders();
       if (document.getElementById('mod-seller-orders').classList.contains('show')) {
         const m = document.getElementById('so-body').dataset.sid;
         if (m) tgOpenSellerOrders(m, true);
@@ -1877,7 +1888,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }, err => console.warn('[sellerCommissions listener]', err && err.message));
     db.collection('siteSettings').doc('sellerDelivery').onSnapshot(s => {
       SELLER_DELIV = s.exists ? (s.data().slabs||{}) : {};
-      console.log('[Listener] sellerDelivery updated —', Object.keys(SELLER_DELIV).length, 'seller(s) with custom slabs');
       try { tgRenderSellers(); } catch(e) {}
       try { renderSettle(); } catch(e) {}
     }, err => {
@@ -1924,7 +1934,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     return { totalRev, deliveredRev, pendingRev, commission, pendingComm, deliveredCount, cancelledCount, totalCount, todayRev, todayOrd, monthRev, monthOrd };
   }
 
-  /* ═══ DASHBOARD SELLER COLOR CARDS ═══ */
   function renderDashboardSellerCards() {
     const el = document.getElementById('dash-seller-cards');
     if (!el) return;
@@ -1954,7 +1963,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const revenue = st.gross || 0;
       const initials = esc(ini(s.shopName || s.ownerName || 'S'));
       const revenueStr = revenue > 0 ? inr(revenue) : '₹0';
-      html += '<div class="tg-seller-card-new" onclick="tgNav(\'sellers\')">' +
+      html += '<div class="tg-seller-card-new" onclick="tgOpenSellerOrders(\'' + jsEsc(s.id) + '\')">' +
         '<div class="tg-seller-card-head" style="background:' + grad + ';">' +
           '<div class="tg-seller-card-avatar">' + initials + '</div>' +
           '<div class="tg-seller-card-name">' + esc(s.shopName || 'Shop') + '</div>' +
@@ -2021,7 +2030,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       if (openTickets>0) h += '<div class="tg-row" onclick="tgNav(\'tickets\')"><div class="tg-row-av">🎫</div><div class="tg-row-b"><div class="tg-row-t">'+openTickets+' open support ticket(s)</div></div></div>';
       list.innerHTML = h;
     } else sec.style.display = 'none';
-    /* Seller cards */
     renderDashboardSellerCards();
     const ro = document.getElementById('recent-orders');
     const recent = ALL_ORDERS.slice(0,5);
@@ -2029,7 +2037,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     else ro.innerHTML = recent.map(o => orderRow(o, false)).join('');
   }
   function countByStatus(){
-    const c = {pending:0, accepted:0, rtd:0, packed:0, dispatched:0, delivered:0, cancelled:0, return_requested:0, returned:0, all:0};
+    const c = {pending:0, accepted:0, rtd:0, dispatched:0, delivered:0, cancelled:0, return_requested:0, returned:0, all:0};
     ALL_ORDERS.forEach(o => { const s = normStatus(o.status); c[s] = (c[s]||0)+1; c.all++; });
     return c;
   }
@@ -2040,10 +2048,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const itemCount = items.reduce((a,i)=>a+Number(i.qty||1),0);
     const sel = showCheckbox && SELECTED_ORDERS.has(o.id);
     const cb = showCheckbox ? '<input type="checkbox" class="tg-row-cb" '+(sel?'checked':'')+' onclick="event.stopPropagation();tgToggleSelectOrder(\''+esc(o.id)+'\', this.checked)">' : '';
-    return '<div class="tg-row'+(sel?' selected':'')+'" onclick="tgOpenOrder(\''+esc(o.id)+'\')">'+cb+'<div class="tg-row-av">'+esc(ini(o.userName||o.customerName||'U'))+'</div><div class="tg-row-b"><div class="tg-row-t">#'+esc((o.id||'').slice(0,10).toUpperCase())+'</div><div class="tg-row-s"><span>'+esc(o.userName||o.customerName||'Customer')+'</span><span>'+inr(o.total||0)+'</span><span>'+(itemCount||0)+' items</span><span>'+fdate(o.createdAt)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill '+cls+'">'+statusLabel(o.status)+'</span></div></div><div class="tg-row-a" onclick="event.stopPropagation();"><button class="tg-btn out" onclick="tgOpenOrder(\''+esc(o.id)+'\')">View</button></div></div>';
+    const courierBadge = (o.courierName ? '<span class="tg-pill blu">🚚 '+esc(o.courierName)+'</span>' : '');
+    return '<div class="tg-row'+(sel?' selected':'')+'" onclick="tgOpenOrder(\''+esc(o.id)+'\')">'+cb+'<div class="tg-row-av">'+esc(ini(o.userName||o.customerName||'U'))+'</div><div class="tg-row-b"><div class="tg-row-t">#'+esc((o.id||'').slice(0,10).toUpperCase())+'</div><div class="tg-row-s"><span>'+esc(o.userName||o.customerName||'Customer')+'</span><span>'+inr(o.total||0)+'</span><span>'+(itemCount||0)+' items</span><span>'+fdate(o.createdAt)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill '+cls+'">'+statusLabel(o.status)+'</span>'+courierBadge+'</div></div><div class="tg-row-a" onclick="event.stopPropagation();"><button class="tg-btn out" onclick="tgOpenOrder(\''+esc(o.id)+'\')">View</button></div></div>';
   }
 
-  /* ═══ ORDERS BULK: single button per tab ═══ */
+  /* ═══ ORDERS BULK: single button per tab + courier for dispatched ═══ */
   window.tgToggleSelectOrder = function(id, c){
     if (c) SELECTED_ORDERS.add(id); else SELECTED_ORDERS.delete(id);
     renderOrders();
@@ -2056,10 +2065,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   };
   function getBulkConfig() {
     const map = {
-      'pending':    { label: '✓ ACCEPT SELECTED',    status: 'seller_accepted', cls: 'out', nextFilter: 'accepted', icon: '✓' },
-      'accepted':   { label: '🚀 RTD SELECTED',       status: 'admin_approved',  cls: 'rtd', nextFilter: 'rtd',      icon: '🚀' },
-      'rtd':        { label: '📦 DISPATCH SELECTED',  status: 'dispatched',      cls: 'pri', nextFilter: 'dispatched', icon: '📦' },
-      'dispatched': { label: '✓ DELIVERED SELECTED', status: 'delivered',       cls: 'suc', nextFilter: 'delivered', icon: '✓' }
+      'pending':    { label: '✓ ACCEPT SELECTED',    status: 'seller_accepted', cls: 'out', nextFilter: 'accepted', action: 'normal' },
+      'accepted':   { label: '🚀 RTD SELECTED',       status: 'admin_approved',  cls: 'rtd', nextFilter: 'rtd',      action: 'normal' },
+      'rtd':        { label: '📦 MARK DISPATCHED',    status: 'dispatched',      cls: 'pri', nextFilter: 'dispatched', action: 'normal' },
+      'dispatched': { label: '✓ MARK DELIVERED',      status: 'delivered',       cls: 'suc', nextFilter: 'delivered', action: 'courier' }
     };
     return map[ORDER_FILTER] || null;
   }
@@ -2086,6 +2095,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!cfg) { toast('No action available for this tab', 'err'); return; }
     const ids = Array.from(SELECTED_ORDERS);
     if (!ids.length) { toast('No orders selected', 'err'); return; }
+
+    // Courier form for dispatched → delivered
+    if (cfg.action === 'courier') {
+      tgOpenCourierForm(ids);
+      return;
+    }
+
     const btn = document.getElementById('ord-bulk-action-btn');
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Updating...'; }
     toast('Updating ' + ids.length + ' order(s) → ' + statusLabel(cfg.status) + '...', 'inf');
@@ -2117,6 +2133,71 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   };
 
+  /* ═══ COURIER FORM ═══ */
+  window.tgOpenCourierForm = function(ids){
+    _courierOrderIds = Array.isArray(ids) ? ids.slice() : [ids];
+    if (!_courierOrderIds.length) return;
+    document.getElementById('mc-count').textContent = _courierOrderIds.length;
+    document.getElementById('mc-courier').value = '';
+    document.getElementById('mc-hub').value = '';
+    document.getElementById('mc-tracking').value = '';
+    if (_courierOrderIds.length === 1) {
+      const o = ALL_ORDERS.find(x => x.id === _courierOrderIds[0]);
+      if (o) {
+        document.getElementById('mc-tracking').value = o.trackingId || '';
+        if (o.courierName) document.getElementById('mc-courier').value = o.courierName;
+        if (o.courierHub) document.getElementById('mc-hub').value = o.courierHub;
+      }
+      document.getElementById('mc-title').textContent = 'Mark as Delivered';
+    } else {
+      document.getElementById('mc-title').textContent = 'Bulk Mark as Delivered';
+    }
+    document.getElementById('mod-courier').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgConfirmCourier = async function(){
+    const courier = (document.getElementById('mc-courier').value || '').trim();
+    const hub = (document.getElementById('mc-hub').value || '').trim();
+    const tracking = (document.getElementById('mc-tracking').value || '').trim();
+    if (!courier) { toast('Enter courier name', 'err'); return; }
+    if (!hub) { toast('Enter hub name', 'err'); return; }
+    const ids = _courierOrderIds.slice();
+    if (!ids.length) return;
+    const btn = document.getElementById('mc-confirm-btn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Processing...'; }
+    toast('Marking ' + ids.length + ' delivered...', 'inf');
+    let ok = 0, fail = 0;
+    for (const id of ids) {
+      try {
+        const payload = {
+          status: 'delivered',
+          courierName: courier,
+          courierHub: hub,
+          deliveredAt: FV.serverTimestamp(),
+          deliveredBy: USER.uid,
+          updatedAt: FV.serverTimestamp(),
+          updatedBy: USER.uid
+        };
+        if (tracking) payload.trackingId = tracking;
+        await db.collection('orders').doc(id).update(payload);
+        ok++;
+      } catch(e) { fail++; console.warn('Courier fail:', e); }
+    }
+    toast('✓ ' + ok + ' delivered' + (fail ? ', ' + fail + ' failed' : ''), 'suc');
+    if (btn) { btn.disabled = false; btn.textContent = '✓ Mark Delivered'; }
+    _courierOrderIds = [];
+    tgCloseMod('mod-courier');
+    SELECTED_ORDERS.clear();
+    renderOrders();
+    // If we came from order modal, close it too
+    const orderMod = document.getElementById('mod-order');
+    if (orderMod && orderMod.classList.contains('show')) {
+      orderMod.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  };
+
   /* ═══ SELLER DATE-WISE ORDERS MODAL ═══ */
   window.tgOpenSellerOrders = function(sid, skipHistory) {
     const seller = ALL_SELLERS.find(x => x.id === sid);
@@ -2133,10 +2214,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     let totalRevenue = 0;
     orders.forEach(o => {
       const dt = o.createdAt?.toDate ? o.createdAt.toDate() : (o.createdAt ? new Date(o.createdAt) : new Date());
-      const dateKey = dt.toISOString().slice(0, 10);
-      if (!groups[dateKey]) groups[dateKey] = { date: dateKey, dateObj: dt, orders: [], total: 0 };
-      groups[dateKey].orders.push(o);
-      groups[dateKey].total += Number(o.total || 0);
+      const dk = dt.toISOString().slice(0, 10);
+      if (!groups[dk]) groups[dk] = { date: dk, dateObj: dt, orders: [], total: 0 };
+      groups[dk].orders.push(o);
+      groups[dk].total += Number(o.total || 0);
       totalRevenue += Number(o.total || 0);
     });
     const sortedGroups = Object.values(groups).sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
@@ -2148,6 +2229,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       '<div class="tg-so-stat"><div class="tg-so-stat-num">' + orders.length + '</div><div class="tg-so-stat-label">Total Orders</div></div>' +
       '<div class="tg-so-stat"><div class="tg-so-stat-num">' + inr(totalRevenue) + '</div><div class="tg-so-stat-label">Total Revenue</div></div>' +
       '<div class="tg-so-stat"><div class="tg-so-stat-num">' + sortedGroups.length + '</div><div class="tg-so-stat-label">Days Active</div></div>' +
+    '</div>';
+    // Export all orders button
+    html += '<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">' +
+      '<button class="tg-btn suc" style="flex:1;padding:12px;justify-content:center;" onclick="tgExportSellerOrders(\'' + jsEsc(sid) + '\')">📥 Export All Orders (Excel)</button>' +
     '</div>';
     if (!sortedGroups.length) {
       html += '<div class="tg-empty" style="padding:40px 20px;"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No orders yet</div><div class="tg-empty-d">This seller has not received any orders</div></div>';
@@ -2169,7 +2254,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return '<div class="tg-date-group">' +
           '<div class="tg-date-group-head">' +
             '<div class="tg-date-group-date">📅 ' + esc(dateStr) + ' <span style="font-size:11px;color:#888;font-weight:600;">(' + esc(weekday) + ')</span></div>' +
-            '<div class="tg-date-group-meta"><b>' + g.orders.length + '</b> orders · <b>' + inr(g.total) + '</b></div>' +
+            '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+              '<div class="tg-date-group-meta"><b>' + g.orders.length + '</b> orders · <b>' + inr(g.total) + '</b></div>' +
+              '<button class="tg-btn suc" style="padding:5px 10px;font-size:11px;" onclick="event.stopPropagation();tgExportSellerDayExcel(\'' + jsEsc(sid) + '\',\'' + jsEsc(g.date) + '\')">📥 Export This Day</button>' +
+            '</div>' +
           '</div>' +
           '<div>' + itemsHtml + '</div>' +
         '</div>';
@@ -2182,25 +2270,78 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   };
 
+  window.tgExportSellerDayExcel = function(sid, dateKey) {
+    const seller = ALL_SELLERS.find(s => s.id === sid);
+    if (!seller) { toast('Seller not found', 'err'); return; }
+    const orders = ALL_ORDERS.filter(o => {
+      const dt = o.createdAt?.toDate ? o.createdAt.toDate() : (o.createdAt ? new Date(o.createdAt) : null);
+      if (!dt) return false;
+      if (dt.toISOString().slice(0,10) !== dateKey) return false;
+      const items = Array.isArray(o.items) ? o.items : [];
+      if (String(o.sellerId||'') === sid || String(o.seller_id||'') === sid) return true;
+      if (Array.isArray(o.sellerIds) && o.sellerIds.some(s => String(s) === sid)) return true;
+      return items.some(it => getItemSellerIds(it).includes(sid));
+    });
+    if (!orders.length) { toast('No orders for this date', 'err'); return; }
+    const rows = orders.map(o => {
+      const items = Array.isArray(o.items) ? o.items : [];
+      const myItems = sellerItemsInOrder(o, sid);
+      const itemsToUse = myItems.length ? myItems : items;
+      const addr = o.address || o.shippingAddress || o.deliveryAddress || {};
+      const addrStr = typeof addr === 'string' ? addr : [addr.line1||addr.line||addr.address, addr.line2, addr.city, addr.state, addr.pincode].filter(Boolean).join(', ');
+      return {
+        'Order ID': o.id,
+        'Date': fdate(o.createdAt),
+        'Time': ftime(o.createdAt),
+        'Customer': o.userName || o.customerName || '',
+        'Phone': o.userPhone || o.phone || '',
+        'Address': addrStr,
+        'Pincode': (typeof addr === 'object' ? addr.pincode : '') || '',
+        'Items': itemsToUse.map(it => `${it.name} (${it.size||'N/A'}) x${it.qty}`).join(' | '),
+        'Qty': itemsToUse.reduce((a,i)=>a+Number(i.qty||1),0),
+        'Total (₹)': Number(o.total||0),
+        'Status': statusLabel(o.status),
+        'Payment': (o.paymentMethod || 'COD').toUpperCase(),
+        'Courier': o.courierName || '',
+        'Courier Hub': o.courierHub || '',
+        'Tracking': o.trackingId || '',
+        'Sellers': itemsToUse.map(it => it.sellerName).filter(Boolean).join(', ')
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+    const fname = 'TOEGO_' + (seller.shopName || 'Seller').replace(/[^a-zA-Z0-9]+/g, '_') + '_' + dateKey + '.xlsx';
+    XLSX.writeFile(wb, fname);
+    toast('✓ Exported ' + rows.length + ' orders', 'suc');
+  };
+
   function isLabelOrder(o) {
     if (!o) return false;
     if (o.labelGeneratedAt) return true;
     const s = normStatus(o.status);
-    return ['rtd', 'packed', 'dispatched', 'delivered'].includes(s);
+    return ['rtd', 'dispatched', 'delivered'].includes(s);
   }
   function getFilteredLabels() {
     let list = ALL_ORDERS.filter(isLabelOrder);
     if (LABEL_FILTER !== 'all') {
       list = list.filter(o => {
         const s = normStatus(o.status);
-        if (LABEL_FILTER === 'label_generated') return s === 'rtd' || (o.labelGeneratedAt && s === 'rtd');
+        if (LABEL_FILTER === 'label_generated') {
+          const raw = String(o.status || '').toLowerCase();
+          return raw.includes('label_generat') || raw === 'label_created';
+        }
+        if (LABEL_FILTER === 'processing') {
+          const raw = String(o.status || '').toLowerCase();
+          return raw.includes('process') || raw === 'packed';
+        }
         return s === LABEL_FILTER;
       });
     }
     const q = (document.getElementById('lbl-srch')?.value || '').toLowerCase().trim();
     if (q) {
       list = list.filter(o => {
-        const hay = [o.id, o.userName, o.customerName, o.userPhone, o.phone, o.trackingId].filter(Boolean).join(' ').toLowerCase();
+        const hay = [o.id, o.userName, o.customerName, o.userPhone, o.phone, o.trackingId, o.courierName].filter(Boolean).join(' ').toLowerCase();
         return hay.includes(q);
       });
     }
@@ -2216,11 +2357,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const allLabels = ALL_ORDERS.filter(isLabelOrder);
     const counts = { all: allLabels.length, label_generated: 0, processing: 0, dispatched: 0, delivered: 0 };
     allLabels.forEach(o => {
-      const s = normStatus(o.status);
-      if (s === 'rtd' || s === 'label_generated') counts.label_generated++;
-      else if (s === 'packed' || s === 'processing') counts.processing++;
-      else if (s === 'dispatched') counts.dispatched++;
-      else if (s === 'delivered') counts.delivered++;
+      const raw = String(o.status || '').toLowerCase();
+      if (raw.includes('label_generat') || raw === 'label_created') counts.label_generated++;
+      else if (raw.includes('process') || raw === 'packed') counts.processing++;
+      else {
+        const s = normStatus(o.status);
+        if (s === 'dispatched') counts.dispatched++;
+        else if (s === 'delivered') counts.delivered++;
+      }
     });
     setText('lbc-all', counts.all);
     setText('lbc-lg', counts.label_generated);
@@ -2241,7 +2385,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const sel = SELECTED_LABELS.has(o.id);
       const img = (items[0] && items[0].image) || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T';
       const sellerNames = [...new Set(items.map(i => i.sellerName).filter(Boolean))].join(', ') || '—';
-      const lblStatusLabel = (o.labelGeneratedAt ? statusLabel(o.status) : 'READY FOR LABEL');
       return '<div class="tg-row ' + (sel ? 'selected' : '') + '" data-lbl-id="' + esc(o.id) + '">' +
         '<input type="checkbox" class="tg-row-cb" ' + (sel ? 'checked' : '') + ' onclick="event.stopPropagation();tgLblToggle(\'' + esc(o.id) + '\', this.checked)">' +
         '<div class="tg-row-av sq" onclick="tgOpenOrder(\'' + esc(o.id) + '\')"><img src="' + esc(img) + '"></div>' +
@@ -2249,8 +2392,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           '<div class="tg-row-t">#' + esc((o.id || '').slice(0, 10).toUpperCase()) + ' · ' + esc(o.userName || o.customerName || 'Customer') + '</div>' +
           '<div class="tg-row-s"><span>' + esc(sellerNames) + '</span><span>' + itemCount + ' items</span><span>' + inr(o.total || 0) + '</span><span>' + fdate(o.labelGeneratedAt || o.createdAt) + '</span></div>' +
           '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">' +
-            '<span class="tg-pill ' + cls + '">' + lblStatusLabel + '</span>' +
+            '<span class="tg-pill ' + cls + '">' + statusLabel(o.status) + '</span>' +
             (o.trackingId ? '<span class="tg-pill gry">' + esc(o.trackingId) + '</span>' : '') +
+            (o.courierName ? '<span class="tg-pill blu">🚚 ' + esc(o.courierName) + '</span>' : '') +
           '</div>' +
         '</div>' +
         '<div class="tg-row-a" onclick="event.stopPropagation();">' +
@@ -2283,6 +2427,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!ids.length) { toast('No orders selected', 'err'); return; }
     const newStatus = document.getElementById('lbl-bulk-status').value;
     if (!newStatus) { toast('Please select a status', 'err'); return; }
+    if (newStatus === 'delivered') {
+      tgOpenCourierForm(ids);
+      return;
+    }
     const niceStatus = statusLabel(newStatus);
     if (!confirm('Change status of ' + ids.length + ' order(s) to "' + niceStatus + '"?\n\nThis will update all selected orders.')) return;
     toast('Updating ' + ids.length + ' orders...', 'inf');
@@ -2294,7 +2442,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       chunk.forEach(id => {
         const payload = { status: newStatus, updatedAt: FV.serverTimestamp(), updatedBy: USER.uid };
         if (newStatus === 'dispatched') payload.dispatchedAt = FV.serverTimestamp();
-        if (newStatus === 'delivered') payload.deliveredAt = FV.serverTimestamp();
         if (newStatus === 'cancelled') payload.cancelledAt = FV.serverTimestamp();
         if (newStatus === 'processing') payload.processingAt = FV.serverTimestamp();
         if (newStatus === 'label_generated') {
@@ -2329,6 +2476,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         'Total (₹)': o.total || 0,
         'Status': statusLabel(o.status),
         'Tracking ID': o.trackingId || '',
+        'Courier': o.courierName || '',
+        'Courier Hub': o.courierHub || '',
         'Label Gen Date': fdate(o.labelGeneratedAt || o.createdAt)
       };
     });
@@ -2338,6 +2487,97 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     XLSX.writeFile(wb, 'TOEGO_Labels_' + LABEL_FILTER + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
     toast('Exported ' + rows.length + ' labels ✓', 'suc');
   };
+
+  /* ═══ SAVE ALL ORDERS VIEW ═══ */
+  window.renderSaveOrders = function() {
+    const el = document.getElementById('save-orders-list');
+    if (!el) return;
+    const q = (document.getElementById('save-srch')?.value || '').toLowerCase().trim();
+    let list = ALL_ORDERS.slice();
+    if (q) {
+      list = list.filter(o => {
+        const hay = [o.id, o.userName, o.customerName, o.userPhone, o.phone, o.courierName, o.trackingId].filter(Boolean).join(' ').toLowerCase();
+        return hay.includes(q);
+      });
+    }
+    if (!list.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No orders</div><div class="tg-empty-d">Orders yahan date-wise dikhenge</div></div>';
+      return;
+    }
+    const groups = {};
+    list.forEach(o => {
+      const dt = o.createdAt?.toDate ? o.createdAt.toDate() : (o.createdAt ? new Date(o.createdAt) : new Date());
+      const dk = dt.toISOString().slice(0, 10);
+      if (!groups[dk]) groups[dk] = { date: dk, dateObj: dt, orders: [], total: 0 };
+      groups[dk].orders.push(o);
+      groups[dk].total += Number(o.total || 0);
+    });
+    const sorted = Object.values(groups).sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
+    el.innerHTML = sorted.map(g => {
+      const dateStr = g.dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      const weekday = g.dateObj.toLocaleDateString('en-IN', { weekday: 'long' });
+      const itemsHtml = g.orders.map(o => orderRow(o, false)).join('');
+      return '<div class="tg-date-group">' +
+        '<div class="tg-date-group-head">' +
+          '<div class="tg-date-group-date">📅 ' + esc(dateStr) + ' <span style="font-size:11px;color:#888;font-weight:600;">(' + esc(weekday) + ')</span></div>' +
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+            '<div class="tg-date-group-meta"><b>' + g.orders.length + '</b> orders · <b>' + inr(g.total) + '</b></div>' +
+            '<button class="tg-btn suc" style="padding:6px 12px;font-size:11.5px;" onclick="event.stopPropagation();tgExportDayExcel(\'' + esc(g.date) + '\')">📥 Export This Day</button>' +
+          '</div>' +
+        '</div>' +
+        '<div>' + itemsHtml + '</div>' +
+      '</div>';
+    }).join('');
+  };
+
+  window.tgExportDayExcel = function(dateKey) {
+    const orders = ALL_ORDERS.filter(o => {
+      const dt = o.createdAt?.toDate ? o.createdAt.toDate() : (o.createdAt ? new Date(o.createdAt) : null);
+      if (!dt) return false;
+      return dt.toISOString().slice(0,10) === dateKey;
+    });
+    tgExportOrdersExcelList(orders, 'TOEGO_Orders_' + dateKey);
+  };
+
+  window.tgExportAllOrdersExcel = function() {
+    tgExportOrdersExcelList(ALL_ORDERS, 'TOEGO_AllOrders_' + new Date().toISOString().slice(0,10));
+  };
+
+  function tgExportOrdersExcelList(list, filename) {
+    if (!list.length) { toast('No orders to export', 'err'); return; }
+    const data = list.map(o => {
+      const items = Array.isArray(o.items) ? o.items : [];
+      const addr = o.address || o.shippingAddress || o.deliveryAddress || {};
+      let addrStr = '';
+      if (typeof addr === 'string') addrStr = addr;
+      else addrStr = [addr.line1||addr.line||addr.address, addr.line2, addr.city, addr.state, addr.pincode].filter(Boolean).join(', ');
+      return {
+        'Order ID': o.id,
+        'Date': fdate(o.createdAt),
+        'Time': ftime(o.createdAt),
+        'Customer Name': o.userName || o.customerName || '',
+        'Phone': o.userPhone || o.phone || '',
+        'Email': o.userEmail || o.email || '',
+        'Shipping Address': addrStr,
+        'Pincode': (typeof addr === 'object' ? addr.pincode : '') || o.pincode || '',
+        'Items': items.map(it => `${it.name} (${it.size||'N/A'}) x${it.qty}`).join(' | '),
+        'Total Items': items.reduce((a,i)=>a+Number(i.qty||1),0),
+        'Total Amount (₹)': Number(o.total||0),
+        'Payment Method': (o.paymentMethod || 'COD').toUpperCase(),
+        'Payment Status': (o.paymentStatus || 'pending').toUpperCase(),
+        'Order Status': statusLabel(o.status),
+        'Sellers': items.map(it => it.sellerName).filter(Boolean).join(', '),
+        'Courier Name': o.courierName || '',
+        'Courier Hub': o.courierHub || '',
+        'Tracking ID': o.trackingId || ''
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+    XLSX.writeFile(wb, filename + '.xlsx');
+    toast(`${data.length} orders exported ✓`, 'suc');
+  }
 
   window.tgClearSellerData = function() {
     const count = ALL_SELLERS.length;
@@ -2390,7 +2630,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   (async () => {
     let totalDeleted = 0, totalFail = 0;
     toast('Starting full data clear...', 'inf');
-
     try {
       const cartSnaps = await db.collection('carts').get();
       for (const cartDoc of cartSnaps.docs) {
@@ -2401,14 +2640,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           const batch = db.batch();
           itemsSnap.docs.forEach(d => batch.delete(d.ref));
           try { await batch.commit(); totalDeleted += itemsSnap.docs.length; }
-          catch (e) { totalFail += itemsSnap.docs.length; console.warn('Cart items clear fail:', e); }
+          catch (e) { totalFail += itemsSnap.docs.length; }
           if (itemsSnap.docs.length < 450) hasMore = false;
         }
-        try { await cartDoc.ref.delete(); totalDeleted++; }
-        catch (e) { console.warn('Cart parent delete fail:', e); }
+        try { await cartDoc.ref.delete(); totalDeleted++; } catch (e) {}
       }
-    } catch(e) { console.warn('Carts clear failed:', e); }
-
+    } catch(e) {}
     try {
       let hasMore = true;
       while (hasMore) {
@@ -2417,11 +2654,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         const batch = db.batch();
         snap.docs.forEach(d => batch.delete(d.ref));
         try { await batch.commit(); totalDeleted += snap.docs.length; }
-        catch (e) { totalFail += snap.docs.length; console.warn('Wishlists clear fail:', e); }
+        catch (e) { totalFail += snap.docs.length; }
         if (snap.docs.length < 450) hasMore = false;
       }
-    } catch(e) { console.warn('Wishlists clear failed:', e); }
-
+    } catch(e) {}
     const cols = ['users', 'sellers', 'products', 'orders', 'categories', 'banners', 'coupons', 'promotions', 'notifications', 'reviews', 'settlements', 'supportTickets'];
     for (const c of cols) {
       try {
@@ -2432,19 +2668,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           const batch = db.batch();
           snap.docs.forEach(d => batch.delete(d.ref));
           try { await batch.commit(); totalDeleted += snap.docs.length; }
-          catch (e) { totalFail += snap.docs.length; console.warn('Clear fail for ' + c, e); }
+          catch (e) { totalFail += snap.docs.length; }
           if (snap.docs.length < 450) hasMore = false;
         }
-      } catch (e) { console.warn('Clear failed for ' + c, e); }
+      } catch (e) {}
     }
-
     try {
       localStorage.removeItem('toego_home_prod_v19');
       localStorage.removeItem('toego_home_cfg_v19');
       localStorage.removeItem('toego_home_banners_v1');
       localStorage.removeItem('toego_products_cache_v1');
     } catch(e) {}
-
     toast('✓ Cleared ' + totalDeleted + ' docs' + (totalFail ? ' (' + totalFail + ' failed)' : ''), 'suc');
   })();
 };
@@ -2574,7 +2808,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     msSlabs = (Array.isArray(existing) && existing.length)
       ? existing.map(x => ({ maxWeight: Number(x.maxWeight) || 0, charge: Number(x.charge) || 0 }))
       : [];
-    console.log('[Open Seller]', sid, 'loaded slabs:', msSlabs);
     renderMsSlabs();
 
     const payBody = document.getElementById('ms-pay-body');
@@ -2642,6 +2875,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           'Commission %': pct, 'Commission (₹)': comm,
           'Payment Method': (o.paymentMethod || 'COD').toUpperCase(),
           'Payment Status': (o.paymentStatus || 'pending').toUpperCase(),
+          'Courier': o.courierName || '', 'Courier Hub': o.courierHub || '',
           'Tracking ID': o.trackingId || '', 'Seller': sellerName
         });
         if (status === 'delivered') { totalGross += itemTotal; totalComm += comm; }
@@ -2695,25 +2929,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const wrap = document.getElementById('ms-slabs');
     if (!wrap) return;
     if (!msSlabs.length) {
-      wrap.innerHTML =
-        '<div style="text-align:center;padding:18px 12px;background:#fff;border:1.5px dashed #e0e0e0;border-radius:10px;font-size:12px;color:#888;line-height:1.5;">' +
-          '📦 No custom slabs set.<br>' +
-          '<b>Global slabs</b> use honge settlement me.<br>' +
-          '<span style="font-size:11px;color:#aaa;">Add karne ke liye niche "+ Add Slab" dabao</span>' +
-        '</div>';
+      wrap.innerHTML = '<div style="text-align:center;padding:18px 12px;background:#fff;border:1.5px dashed #e0e0e0;border-radius:10px;font-size:12px;color:#888;line-height:1.5;">📦 No custom slabs set.<br><b>Global slabs</b> use honge settlement me.<br><span style="font-size:11px;color:#aaa;">Add karne ke liye niche "+ Add Slab" dabao</span></div>';
       updateSlabPreview();
       return;
     }
     wrap.innerHTML = msSlabs.map((s, i) =>
       '<div class="tg-slab" style="grid-template-columns:1fr 1fr 36px;gap:8px;">' +
-        '<div style="position:relative;">' +
-          '<input type="number" class="ms-slab-w" data-i="'+i+'" placeholder="Max weight" value="'+(s.maxWeight || '')+'" min="1" step="1" />' +
-          '<span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:#999;pointer-events:none;">grams</span>' +
-        '</div>' +
-        '<div style="position:relative;">' +
-          '<input type="number" class="ms-slab-c" data-i="'+i+'" placeholder="Charge" value="'+(s.charge || '')+'" min="0" step="1" />' +
-          '<span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:#999;pointer-events:none;">₹</span>' +
-        '</div>' +
+        '<div style="position:relative;"><input type="number" class="ms-slab-w" data-i="'+i+'" placeholder="Max weight" value="'+(s.maxWeight || '')+'" min="1" step="1" /><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:#999;pointer-events:none;">grams</span></div>' +
+        '<div style="position:relative;"><input type="number" class="ms-slab-c" data-i="'+i+'" placeholder="Charge" value="'+(s.charge || '')+'" min="0" step="1" /><span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:#999;pointer-events:none;">₹</span></div>' +
         '<button type="button" class="tg-slab-rm" onclick="tgRemoveMsSlab('+i+')" title="Remove">✕</button>' +
       '</div>'
     ).join('');
@@ -2796,24 +3019,20 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           { merge: true }
         );
         delete SELLER_DELIV[sid];
-        console.log('[Save] Slabs CLEARED for seller:', sid);
       } else {
         await db.collection('siteSettings').doc('sellerDelivery').set(
           { slabs: { [sid]: cleanSlabs }, updatedAt: FV.serverTimestamp() },
           { merge: true }
         );
         SELLER_DELIV[sid] = cleanSlabs.slice();
-        console.log('[Save] Slabs SAVED for seller:', sid, cleanSlabs);
       }
 
-      try { tgRenderSellers(); } catch(e) { console.warn('renderSellers fail', e); }
-      try { renderSettle(); } catch(e) { console.warn('renderSettle fail', e); }
+      try { tgRenderSellers(); } catch(e) {}
+      try { renderSettle(); } catch(e) {}
       try { renderSettleHistory(); } catch(e) {}
 
       if (cleanSlabs.length) {
-        const slabSummary = cleanSlabs.map(x => fmtWeightShort(x.maxWeight)+'→₹'+x.charge).join(', ');
         toast('✓ Saved — ' + cleanSlabs.length + ' slab' + (cleanSlabs.length>1?'s':'') + ' · Commission ' + (pct||'global'), 'suc');
-        console.log('[Save] Success —', slabSummary);
       } else {
         toast('✓ Saved — Global delivery', 'suc');
       }
@@ -2877,7 +3096,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               blockReason: FV.delete(),
               updatedAt: FV.serverTimestamp()
             }, { merge: true });
-          } catch(e) { console.warn('User doc unblock failed:', e); }
+          } catch(e) {}
           const idx = ALL_SELLERS.findIndex(x => x.id === sid);
           if (idx >= 0) { ALL_SELLERS[idx].blocked = false; delete ALL_SELLERS[idx].blockReason; }
           toast('🔓 Seller unblocked — can login again','suc');
@@ -2885,7 +3104,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           tgCloseMod('mod-seller');
           tgRenderSellers();
         } catch(e) {
-          console.error('[unblock failed]', e);
           toast('Failed: ' + (e.message || 'Firestore rules check karo'),'err');
           tgCloseMod('mod-confirm');
         }
@@ -2913,7 +3131,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               blockedAt: FV.serverTimestamp(),
               updatedAt: FV.serverTimestamp()
             }, { merge: true });
-          } catch(e) { console.warn('User doc block failed:', e); }
+          } catch(e) {}
           const idx = ALL_SELLERS.findIndex(x => x.id === sid);
           if (idx >= 0) { ALL_SELLERS[idx].blocked = true; ALL_SELLERS[idx].blockReason = reason; }
           toast('🚫 Seller blocked','suc');
@@ -2921,7 +3139,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           tgCloseMod('mod-seller');
           tgRenderSellers();
         } catch(e) {
-          console.error('[block failed]', e);
           toast('Failed: ' + (e.message || 'Firestore rules check karo'),'err');
           tgCloseMod('mod-confirm');
         }
@@ -3025,20 +3242,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       try {
         toast('Deleting user orders...','inf');
         const found = new Set();
-        try { const s1 = await db.collection('orders').where('userId','==',uid).get(); s1.docs.forEach(d => found.add(d.id)); } catch(e) { console.warn('userId query fail', e); }
-        try { const s2 = await db.collection('orders').where('user_id','==',uid).get(); s2.docs.forEach(d => found.add(d.id)); } catch(e) { console.warn('user_id query fail', e); }
+        try { const s1 = await db.collection('orders').where('userId','==',uid).get(); s1.docs.forEach(d => found.add(d.id)); } catch(e) {}
+        try { const s2 = await db.collection('orders').where('user_id','==',uid).get(); s2.docs.forEach(d => found.add(d.id)); } catch(e) {}
         if (email) {
-          try { const s3 = await db.collection('orders').where('userEmail','==',email).get(); s3.docs.forEach(d => found.add(d.id)); } catch(e) { console.warn('userEmail query fail', e); }
-          try { const s4 = await db.collection('orders').where('email','==',email).get(); s4.docs.forEach(d => found.add(d.id)); } catch(e) { console.warn('email query fail', e); }
+          try { const s3 = await db.collection('orders').where('userEmail','==',email).get(); s3.docs.forEach(d => found.add(d.id)); } catch(e) {}
+          try { const s4 = await db.collection('orders').where('email','==',email).get(); s4.docs.forEach(d => found.add(d.id)); } catch(e) {}
         }
-        try {
-          const all = await db.collection('orders').get();
-          all.docs.forEach(d => {
-            const data = d.data();
-            if (String(data.userId||data.user_id||'') === uid) found.add(d.id);
-            else if (email && String(data.userEmail||data.email||'') === email) found.add(d.id);
-          });
-        } catch(e) { console.warn('full scan fail', e); }
         const refs = Array.from(found).map(id => db.collection('orders').doc(id));
         for (let i = 0; i < refs.length; i += 450) {
           const chunk = refs.slice(i, i + 450);
@@ -3051,7 +3260,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         tgCloseMod('mod-confirm');
         tgCloseMod('mod-user');
       } catch(e) {
-        console.error('[Clear user orders fail]', e);
         toast('Failed: ' + (e.message || 'Unknown'), 'err');
       }
     };
@@ -3071,30 +3279,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       try {
         toast('Clearing wishlist...','inf');
         const found = new Set();
-        try { const s1 = await db.collection('wishlists').where('userId','==',uid).get(); s1.docs.forEach(d => found.add(d.id)); } catch(e) { console.warn('wishlist userId query fail', e); }
-        try { const s2 = await db.collection('wishlists').where('user_id','==',uid).get(); s2.docs.forEach(d => found.add(d.id)); } catch(e) { console.warn('wishlist user_id query fail', e); }
-        try { const s3 = await db.collection('wishlists').where('uid','==',uid).get(); s3.docs.forEach(d => found.add(d.id)); } catch(e) { console.warn('wishlist uid query fail', e); }
-        try {
-          let hasMore = true;
-          let last = null;
-          while (hasMore) {
-            let q = db.collection('wishlists').limit(450);
-            if (last) q = q.startAfter(last);
-            const snap = await q.get();
-            if (snap.empty) { hasMore = false; break; }
-            last = snap.docs[snap.docs.length - 1];
-            snap.docs.forEach(d => {
-              if (found.has(d.id)) return;
-              const data = d.data();
-              if (d.id === uid) { found.add(d.id); return; }
-              if (String(data.userId||'') === uid) { found.add(d.id); return; }
-              if (String(data.user_id||'') === uid) { found.add(d.id); return; }
-              if (String(data.uid||'') === uid) { found.add(d.id); return; }
-              if (email && String(data.userEmail||data.email||'') === email) found.add(d.id);
-            });
-            if (snap.docs.length < 450) hasMore = false;
-          }
-        } catch(e) { console.warn('wishlist full scan fail', e); }
+        try { const s1 = await db.collection('wishlists').where('userId','==',uid).get(); s1.docs.forEach(d => found.add(d.id)); } catch(e) {}
+        try { const s2 = await db.collection('wishlists').where('user_id','==',uid).get(); s2.docs.forEach(d => found.add(d.id)); } catch(e) {}
+        try { const s3 = await db.collection('wishlists').where('uid','==',uid).get(); s3.docs.forEach(d => found.add(d.id)); } catch(e) {}
         const refs = Array.from(found).map(id => db.collection('wishlists').doc(id));
         for (let i = 0; i < refs.length; i += 450) {
           const chunk = refs.slice(i, i + 450);
@@ -3115,12 +3302,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
             if (sub.docs.length < 450) subMore = false;
           }
           try { await db.collection('wishlists').doc(uid).delete(); ok++; } catch(e) {}
-        } catch(e) { console.warn('wishlist subcollection clear fail', e); }
+        } catch(e) {}
         toast('✓ Cleared ' + ok + ' wishlist item(s)' + (fail ? ', ' + fail + ' failed' : ''), 'suc');
         tgCloseMod('mod-confirm');
         tgCloseMod('mod-user');
       } catch(e) {
-        console.error('[Clear user wishlist fail]', e);
         toast('Failed: ' + (e.message || 'Unknown'), 'err');
       }
     };
@@ -3293,7 +3479,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         if (url) _editProdImages.push(url);
         else toast('Upload failed', 'err');
       } catch(err) {
-        console.warn('Upload error:', err);
         toast('Upload failed: ' + f.name, 'err');
       }
       _editProdUploading--;
@@ -3510,7 +3695,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       renderBannerPreview();
       toast('Image ready ✓','suc');
     } catch(err) {
-      console.error('Banner upload failed:', err);
       toast('Image upload failed: ' + (err.message || 'Try again'), 'err');
     }
     this.value = '';
@@ -3560,7 +3744,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
   window.tgOpenCatModal = function(id){
     document.getElementById('mc-id').value = id||'';
-    document.getElementById('mc-title').textContent = id?'Edit Category':'Add Category';
+    document.getElementById('mc-title2').textContent = id?'Edit Category':'Add Category';
     if (id) {
       const c = ALL_CATS.find(x=>x.id===id);
       if (c) {
@@ -3586,7 +3770,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     try {
       catImgData = await processImage(f);
       document.getElementById('mc-prev').innerHTML = '<div class="tg-prev-i"><img src="'+catImgData+'" /><button class="tg-prev-rm" onclick="catImgData=\'\';document.getElementById(\'mc-prev\').innerHTML=\'\';">✕</button></div>';
-    } catch(err) { console.error('Cat image failed:', err); }
+    } catch(err) {}
     this.value='';
   });
   window.tgSaveCat = async function(){
@@ -3630,8 +3814,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (ORDER_FILTER !== 'all') {
       list = list.filter(o => {
         const s = normStatus(o.status);
-        if (ORDER_FILTER === 'accepted') return s === 'accepted' || s === 'packed';
+        if (ORDER_FILTER === 'accepted') return s === 'accepted';
         if (ORDER_FILTER === 'rtd') return s === 'rtd';
+        if (ORDER_FILTER === 'dispatched') return s === 'dispatched';
         if (ORDER_FILTER === 'returned') return s === 'returned' || s === 'return_requested';
         return s === ORDER_FILTER;
       });
@@ -3639,7 +3824,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const q = (document.getElementById('ord-srch')?.value||'').toLowerCase().trim();
     if (q) {
       list = list.filter(o => {
-        const hay = [(o.id||''),(o.userName||''),(o.customerName||''),(o.phone||''),(o.userPhone||''),(o.email||''),(o.userEmail||'')].join(' ').toLowerCase();
+        const hay = [(o.id||''),(o.userName||''),(o.customerName||''),(o.phone||''),(o.userPhone||''),(o.email||''),(o.userEmail||''),(o.courierName||''),(o.trackingId||'')].join(' ').toLowerCase();
         return hay.includes(q);
       });
     }
@@ -3745,33 +3930,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   window.tgExportOrdersExcel = function(){
     const list = getFilteredOrders();
-    if (!list.length) { toast('No orders to export','err'); return; }
-    const data = list.map(o => {
-      const items = Array.isArray(o.items) ? o.items : [];
-      const addr = o.address || o.shippingAddress || o.deliveryAddress || {};
-      let addrStr = '';
-      if (typeof addr === 'string') addrStr = addr;
-      else addrStr = [addr.line1||addr.line||addr.address, addr.line2, addr.city, addr.state, addr.pincode].filter(Boolean).join(', ');
-      return {
-        'Order ID': o.id, 'Date': fdate(o.createdAt), 'Time': ftime(o.createdAt),
-        'Customer Name': o.userName || o.customerName || '', 'Phone': o.userPhone || o.phone || '',
-        'Email': o.userEmail || o.email || '', 'Shipping Address': addrStr,
-        'Pincode': (typeof addr === 'object' ? addr.pincode : '') || o.pincode || '',
-        'Items': items.map(it => `${it.name} (${it.size||'N/A'}) x${it.qty}`).join(' | '),
-        'Total Items': items.reduce((a,i)=>a+Number(i.qty||1),0),
-        'Total Amount (₹)': Number(o.total||0),
-        'Payment Method': (o.paymentMethod || 'COD').toUpperCase(),
-        'Payment Status': (o.paymentStatus || 'pending').toUpperCase(),
-        'Order Status': statusLabel(o.status),
-        'Sellers': items.map(it => it.sellerName).filter(Boolean).join(', '),
-        'Tracking ID': o.trackingId || ''
-      };
-    });
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
-    XLSX.writeFile(wb, `TOEGO_Orders_${ORDER_FILTER}_${new Date().toISOString().slice(0,10)}.xlsx`);
-    toast(`${data.length} orders exported ✓`, 'suc');
+    tgExportOrdersExcelList(list, `TOEGO_Orders_${ORDER_FILTER}_${new Date().toISOString().slice(0,10)}`);
   };
 
   window.tgOpenOrder = function(oid, skipHistory){
@@ -3791,7 +3950,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const tl = [];
     tl.push({t:'Order Placed', s:fdate(o.createdAt)+' '+ftime(o.createdAt)});
     if (st!=='pending'&&st!=='cancelled') tl.push({t:'Seller Accepted', s:o.acceptedAt||o.sellerAcceptedAt?fdate(o.acceptedAt||o.sellerAcceptedAt)+' '+ftime(o.acceptedAt||o.sellerAcceptedAt):'Done'});
-    if (['rtd','packed','dispatched','delivered'].includes(st)) tl.push({t:'RTD (Ready to Dispatch)', s:o.rtdAt?fdate(o.rtdAt)+' '+ftime(o.rtdAt):'Done'});
+    if (['rtd','dispatched','delivered'].includes(st)) tl.push({t:'RTD (Ready to Dispatch)', s:o.rtdAt?fdate(o.rtdAt)+' '+ftime(o.rtdAt):'Done'});
     if (['dispatched','delivered'].includes(st)) tl.push({t:'Dispatched', s:(o.dispatchedAt?fdate(o.dispatchedAt):'Done') + (o.trackingId?' · '+o.trackingId:'')});
     if (st==='delivered') tl.push({t:'Delivered', s:o.deliveredAt?fdate(o.deliveredAt)+' '+ftime(o.deliveredAt):'Done'});
     if (st==='cancelled') tl.push({t:'Cancelled', s:o.cancelledAt?fdate(o.cancelledAt):'—'});
@@ -3801,16 +3960,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const addr = o.address || o.shippingAddress || o.deliveryAddress || {};
     const addrStr = typeof addr==='string' ? addr : [addr.line1||addr.address||addr.street||'', addr.city||'', addr.state||'', addr.pincode||addr.zip||''].filter(Boolean).join(', ');
     const canRTD = st==='accepted' || st==='pending';
-    const canDispatch = st==='rtd' || st==='packed';
-    const canDeliver = st==='dispatched';
+    const canDispatch = st==='rtd';
+    const canCourier = st==='dispatched';
     const canCancel = !['cancelled','returned','delivered'].includes(st);
     const isPendingReturn = st === 'return_requested';
     let actionBtns = '';
-    if (canRTD) actionBtns += '<button class="tg-btn rtd" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkRTD(\''+esc(oid)+'\')">🚀 MARK RTD (Ready to Dispatch)</button>';
+    if (canRTD) actionBtns += '<button class="tg-btn rtd" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkRTD(\''+esc(oid)+'\')">🚀 MARK RTD</button>';
     if (canDispatch) actionBtns += '<button class="tg-btn pri" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgUpdateOrderStatus(\''+esc(oid)+'\',\'dispatched\')">📦 Mark Dispatched</button>';
-    if (canDeliver) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgUpdateOrderStatus(\''+esc(oid)+'\',\'delivered\')">✓ Mark Delivered</button>';
+    if (canCourier) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkDeliveredFromOrder(\''+esc(oid)+'\')">📦 Enter Courier & Mark Delivered</button>';
     if (isPendingReturn) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgApproveReturn(\''+esc(oid)+'\')">✓ Approve Return</button><button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgRejectReturn(\''+esc(oid)+'\')">✕ Reject Return</button>';
     if (canCancel && !isPendingReturn) actionBtns += '<button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCancelOrder(\''+esc(oid)+'\')">✕ Cancel</button>';
+    const courierHtml = (o.courierName || o.courierHub || o.trackingId) ? (
+      '<div class="tg-courier-info-card">' +
+        '<div class="tg-courier-info-title">📦 Courier Details</div>' +
+        (o.courierName ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Courier</span><span class="tg-courier-info-v">'+esc(o.courierName)+'</span></div>' : '') +
+        (o.courierHub ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Hub</span><span class="tg-courier-info-v">'+esc(o.courierHub)+'</span></div>' : '') +
+        (o.trackingId ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Tracking</span><span class="tg-courier-info-v">'+esc(o.trackingId)+'</span></div>' : '') +
+      '</div>'
+    ) : '';
     document.getElementById('order-body').innerHTML =
       '<div class="tg-od-hd">' +
         '<div class="tg-od-hd-id">#'+esc((o.id||'').slice(0,14).toUpperCase())+'</div>' +
@@ -3820,11 +3987,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           (o.paymentStatus?'<span class="tg-pill '+(o.paymentStatus==='paid'?'appr':(o.paymentStatus==='failed'?'rej':'pend'))+'">PAY: '+esc((o.paymentStatus||'').toUpperCase())+'</span>':'') +
         '</div>' +
       '</div>' +
+      courierHtml +
       '<div class="tg-od-info-grid">' +
         '<div class="tg-od-info-card"><div class="tg-od-info-card-t">Customer</div><div class="tg-od-info-card-v">'+esc(o.userName||o.customerName||'—')+'</div><div style="font-size:11.5px;color:#666;margin-top:3px;">'+esc(o.userEmail||o.email||'')+'<br>'+esc(o.userPhone||o.phone||'—')+'</div></div>' +
         '<div class="tg-od-info-card"><div class="tg-od-info-card-t">Shipping</div><div class="tg-od-info-card-v" style="font-size:12px;">'+esc(addrStr||'—')+'</div></div>' +
       '</div>' +
-      (o.trackingId?'<div class="tg-od-info-card" style="margin-bottom:14px;"><div class="tg-od-info-card-t">Tracking ID</div><div class="tg-od-info-card-v" style="font-family:monospace;">'+esc(o.trackingId)+'</div></div>':'') +
       '<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;">Order Timeline</div>' +
       '<div class="tg-od-timeline">'+tlHtml+'</div>' +
       '<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin:14px 0 8px;">Items ('+items.length+')</div>' +
@@ -3840,7 +4007,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         '<option value="pending" '+(st==='pending'?'selected':'')+'>Pending</option>' +
         '<option value="accepted" '+(st==='accepted'?'selected':'')+'>Seller Accepted</option>' +
         '<option value="rtd" '+(st==='rtd'?'selected':'')+'>RTD / Ready for Label</option>' +
-        '<option value="packed" '+(st==='packed'?'selected':'')+'>Packed</option>' +
         '<option value="dispatched" '+(st==='dispatched'?'selected':'')+'>Dispatched</option>' +
         '<option value="delivered" '+(st==='delivered'?'selected':'')+'>Delivered</option>' +
         '<option value="cancelled" '+(st==='cancelled'?'selected':'')+'>Cancelled</option>' +
@@ -3851,6 +4017,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       '<div class="tg-mod-a"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-order\')">Close</button><button class="tg-mod-b pri" onclick="tgSaveOrderStatus(\''+esc(oid)+'\')">Save Status</button></div>';
     openMod('mod-order');
     if (!skipHistory) pushHistory({ view: CUR_VIEW, modal: 'order', orderId: oid });
+  };
+
+  window.tgMarkDeliveredFromOrder = function(oid) {
+    // Close order modal WITHOUT history pop (we're opening another modal)
+    document.getElementById('mod-order').classList.remove('show');
+    document.body.style.overflow = '';
+    try { history.replaceState({ view: CUR_VIEW, modal: null }, '', '#' + CUR_VIEW); } catch(e) {}
+    setTimeout(() => tgOpenCourierForm([oid]), 40);
   };
 
   function buildSellerIdsPayload(o){
@@ -3864,6 +4038,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   window.tgSaveOrderStatus = async function(oid){
     const newStatus = document.getElementById('ord-status-sel').value;
     const tracking = (document.getElementById('ord-track').value||'').trim();
+    if (newStatus === 'delivered') {
+      tgMarkDeliveredFromOrder(oid);
+      return;
+    }
     let realStatus = newStatus;
     if (newStatus === 'rtd') realStatus = 'admin_approved';
     await applyOrderStatus(oid, realStatus, tracking);
@@ -3894,7 +4072,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (o) { const sellerIds = buildSellerIdsPayload(o); if (sellerIds.length) payload.sellerIds = sellerIds; }
     if (normSt==='accepted') payload.acceptedAt = FV.serverTimestamp();
     if (normSt==='rtd') { payload.rtdAt = FV.serverTimestamp(); payload.adminApprovedAt = FV.serverTimestamp(); }
-    if (normSt==='packed') payload.packedAt = FV.serverTimestamp();
     if (normSt==='dispatched') payload.dispatchedAt = FV.serverTimestamp();
     if (normSt==='delivered') payload.deliveredAt = FV.serverTimestamp();
     if (normSt==='cancelled') payload.cancelledAt = FV.serverTimestamp();
@@ -4516,7 +4693,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       try { const s = await db.collection('siteSettings').doc(k).get(); if (s.exists) settings[k] = s.data(); } catch(e) {}
     }
     data._siteSettings = settings;
-    data._meta = { exportedAt: new Date().toISOString(), version: 'v13', exportedBy: USER.email };
+    data._meta = { exportedAt: new Date().toISOString(), version: 'v14', exportedBy: USER.email };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -4725,6 +4902,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   window.tgDoConfirm = async function(){ if (confirmCb) await confirmCb(); };
 
+  function openMod(id) {
+    document.getElementById(id).classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  window.openMod = openMod;
+
   auth.onAuthStateChanged(async (u) => {
     if (!u) return;
     const isSA = u.email === SA;
@@ -4741,7 +4924,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   });
 
   document.querySelectorAll('.tg-mod').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) { m.classList.remove('show'); document.body.style.overflow=''; const t = modalIdToType(m.id); if (t && history.state && history.state.modal === t) { try { history.back(); } catch(e){} } } });
+    m.addEventListener('click', e => {
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow='';
+        const t = modalIdToType(m.id);
+        if (t && history.state && history.state.modal === t) { try { history.back(); } catch(e){} }
+      }
+    });
   });
 
   db.collection('siteSettings').doc('shopHome').onSnapshot(snap => {
