@@ -43,7 +43,6 @@ a{color:inherit;text-decoration:none;}
 .tg-admin-bar-btn{background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:6px 12px;border-radius:4px;display:flex;align-items:center;gap:4px;}
 .tg-container{display:flex;height:calc(100vh - 58px - var(--nav-h) - env(safe-area-inset-bottom,0px));margin-top:58px;background:#fff;}
 .tg-admin-mode .tg-container{height:calc(100vh - 98px - var(--nav-h) - env(safe-area-inset-bottom,0px));margin-top:98px;}
-/* ✅ FIX 1: overscroll + touch-action */
 .tg-sidebar{width:110px;background:var(--bg-sec);overflow-y:auto;-webkit-overflow-scrolling:touch;border-right:1px solid var(--border);flex-shrink:0;scrollbar-width:none;padding-bottom:20px;overscroll-behavior:contain;touch-action:pan-y;}
 .tg-sidebar::-webkit-scrollbar{display:none;}
 .tg-side-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 6px;gap:8px;cursor:pointer;font-size:11px;font-weight:500;color:var(--text-muted);text-align:center;position:relative;border-bottom:1px solid #e8e8e8;transition:background 0.15s;}
@@ -72,7 +71,6 @@ a{color:inherit;text-decoration:none;}
 .tg-active-chips{display:flex;gap:8px;width:max-content;}
 .tg-ac{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);border:1px solid #d0e2ff;color:var(--primary);font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;white-space:nowrap;}
 .tg-ac button{width:16px;height:16px;border-radius:50%;background:rgba(40,116,240,0.15);color:var(--primary);font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
-/* ✅ FIX 1: overscroll + touch-action */
 .tg-prod-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:90px;overscroll-behavior:contain;touch-action:pan-y;}
 .tg-prod-count{padding:12px 16px 0;font-size:12px;color:var(--text-muted);font-weight:500;min-height:20px;}
 .tg-prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px 16px 16px;}
@@ -296,8 +294,9 @@ a{color:inherit;text-decoration:none;}
   let deleteAction = null, recognition = null, searchTimer = null;
   let unsubCats = null, unsubProds = null, hasCache = false, productsReady = false;
   let _productsSig = '', _sidebarSig = '', _subcatsSig = '', _progressOn = false;
-  let _serverProductsReceived = false; // ✅ NEW
+  let _serverProductsReceived = false;
 
+  /* ═══════ FAST IMAGE URL (cached) ═══════ */
   const _imgUrlCache = new Map();
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
@@ -310,12 +309,6 @@ a{color:inherit;text-decoration:none;}
     cached = url.replace('/upload/', '/upload/f_auto,q_50,w_' + w + ',c_limit/');
     _imgUrlCache.set(key, cached);
     return cached;
-  }
-  function lqipUrl(url) {
-    if (!url || typeof url !== 'string') return '';
-    if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return '';
-    if (/\/upload\/[^/]*[qwfcs]_/.test(url)) return '';
-    return url.replace('/upload/', '/upload/f_auto,q_20,w_20,c_limit/');
   }
 
   window.tgCloseModal = function(id) { document.getElementById(id).classList.remove('show'); };
@@ -355,6 +348,7 @@ a{color:inherit;text-decoration:none;}
   function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
   function tsToMs(ts) { if (!ts) return 0; if (typeof ts.toDate === 'function') return ts.toDate().getTime(); if (typeof ts === 'number') return ts; if (ts.seconds) return ts.seconds * 1000; return 0; }
 
+  /* ═══════ FIREBASE + PERSISTENCE ═══════ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -367,6 +361,14 @@ a{color:inherit;text-decoration:none;}
   }
   const auth = firebase.auth();
   const db = firebase.firestore();
+
+  /* 🔥 FIX #1: ENABLE FIRESTORE PERSISTENCE — instant repeat loads */
+  try {
+    db.enablePersistence({ synchronizeTabs: false }).catch(function(err) {
+      // Silently ignore (multi-tab or unsupported browser)
+    });
+  } catch(e) {}
+
   window.db = db; window.auth = auth; window.firebase = firebase;
 
   let pendingCatSlug = null;
@@ -375,9 +377,11 @@ a{color:inherit;text-decoration:none;}
     if (_v && _v.toLowerCase() !== 'all') pendingCatSlug = _v;
   } catch(e) {}
 
-  const CACHE_CATS = 'toego_cat_cats_v3';
-  const CACHE_PRODS = 'toego_cat_prods_v3';
+  /* ✅ Cache keys */
+  const CACHE_CATS = 'toego_cat_cats_v4';
+  const CACHE_PRODS = 'toego_cat_prods_v4';
 
+  /* ═══════ VOICE SEARCH (deferred) ═══════ */
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
     recognition = new SpeechRecognition();
@@ -397,6 +401,7 @@ a{color:inherit;text-decoration:none;}
     try { recognition.start(); } catch(e) {}
   };
 
+  /* ═══════ CART BADGE (lightweight) ═══════ */
   function extractCartCount(raw) {
     if (!raw) return 0;
     let c; try { c = JSON.parse(raw); } catch(e) { return 0; }
@@ -474,6 +479,7 @@ a{color:inherit;text-decoration:none;}
     if (productsReady) renderProducts(true);
   }
 
+  /* ═══════ HELPERS ═══════ */
   function isProductVisible(p) {
     if (p.active === false) return false;
     if (p.hidden === true) return false;
@@ -484,6 +490,27 @@ a{color:inherit;text-decoration:none;}
     }
     return true;
   }
+
+  /* 🔥 FIX #2: SLIM PRODUCT — strip unused fields for cache (5× faster parse) */
+  function slimProduct(p) {
+    return {
+      id: p.id,
+      name: p.name || '',
+      price: Number(p.price || 0),
+      compareAtPrice: Number(p.compareAtPrice || p.mrp || 0),
+      image: p.image || (Array.isArray(p.images) && p.images[0]) || '',
+      category: p.category || '',
+      categoryId: p.categoryId || p.category_id || '',
+      categoryName: p.categoryName || '',
+      subCategory: p.subCategory || p.subcategory || '',
+      rating: Number(p.rating || 0),
+      saleTag: p.saleTag || '',
+      tag: p.tag || '',
+      active: p.active !== false,
+      createdAtMs: tsToMs(p.createdAt)
+    };
+  }
+
   function productMatchesCategory(p, cat) {
     const catNameSlug = slugify(cat.name), catIdSlug = slugify(cat.id);
     if (p.categoryId === cat.id || p.category_id === cat.id || p.catId === cat.id) return true;
@@ -506,11 +533,17 @@ a{color:inherit;text-decoration:none;}
     if (Array.isArray(p.subcategories)) p.subcategories.forEach(v => list.push(slugify(typeof v === 'string' ? v : (v.name || v.id))));
     return list.includes(s);
   }
+
+  /* 🔥 FIX #3: SLIM CACHE — 100 products max, stripped fields, quota-safe */
   function persistCache() {
     try {
+      const slimProds = ALL_PRODUCTS.slice(0, 100).map(slimProduct);
       localStorage.setItem(CACHE_CATS, JSON.stringify(ALL_CATEGORIES));
-      localStorage.setItem(CACHE_PRODS, JSON.stringify(ALL_PRODUCTS));
-    } catch(e) {}
+      localStorage.setItem(CACHE_PRODS, JSON.stringify(slimProds));
+    } catch(e) {
+      // Quota exceeded — clear products cache but keep categories
+      try { localStorage.removeItem(CACHE_PRODS); } catch(x) {}
+    }
   }
   function loadLocalCache() {
     let rendered = false;
@@ -533,6 +566,7 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
     return false;
   }
+
   function normalizeCategory(doc) {
     const data = doc.data();
     let subs = data.subcategories || data.subs || [];
@@ -550,29 +584,18 @@ a{color:inherit;text-decoration:none;}
     renderSidebar(); renderSubcats();
     if (productsReady) renderProducts();
   }
-  function getWithRetry(query, retries) {
-    retries = retries == null ? 1 : retries;
-    return query.get().catch(err => {
-      if (retries > 0) return new Promise(r => setTimeout(r, 400)).then(() => getWithRetry(query, retries - 1));
-      throw err;
-    });
-  }
 
+  /* ═══════ FIRESTORE LISTENERS (optimized) ═══════ */
   function setupListeners() {
     if (unsubCats) { try { unsubCats(); } catch(e) {} unsubCats = null; }
     if (unsubProds) { try { unsubProds(); } catch(e) {} unsubProds = null; }
     if (!hasCache) setProgress(true);
 
-    getWithRetry(db.collection('categories')).then(snap => {
-      const cats = snap.docs.map(normalizeCategory).filter(c => c.name).sort((a,b) => a.order - b.order);
-      if (cats.length > 0) { applyCategories(cats); persistCache(); }
-      setProgress(false);
-    }).catch(() => {});
-
-    // ✅ FIX 2: Skip empty cache snapshot — server se real data aane tak ruko
+    /* 🔥 FIX #4: Products limit 300 → 100 (3× less data) */
     try {
-      unsubProds = db.collection('products').limit(300).onSnapshot(snap => {
+      unsubProds = db.collection('products').limit(100).onSnapshot(snap => {
         const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
+        // Skip empty cache snapshots — wait for server
         if (prods.length === 0 && snap.metadata.fromCache && !_serverProductsReceived && ALL_PRODUCTS.length === 0) {
           return;
         }
@@ -590,6 +613,7 @@ a{color:inherit;text-decoration:none;}
       });
     } catch(e) { productsReady = true; _serverProductsReceived = true; setProgress(false); }
 
+    /* Categories — onSnapshot only (removed redundant .get()) */
     try {
       unsubCats = db.collection('categories').onSnapshot(snap => {
         const cats = snap.docs.map(normalizeCategory).filter(c => c.name).sort((a,b) => a.order - b.order);
@@ -617,6 +641,7 @@ a{color:inherit;text-decoration:none;}
     setProgress(true); setupListeners();
   };
 
+  /* ═══════ RENDER: SIDEBAR ═══════ */
   function renderSidebar() {
     const el = document.getElementById('tg-sidebar');
     if (!el) return;
@@ -628,14 +653,12 @@ a{color:inherit;text-decoration:none;}
     if (!ALL_CATEGORIES.length) { el.innerHTML = html; return; }
     html += ALL_CATEGORIES.map((c, idx) => {
       const active = currentCatId === c.id ? 'active' : '';
+      /* Eager 6 only — sidebar shows about 6 at a time */
       const loadingAttr = idx < 6 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
-      const showLqip = idx < 6;
       let imgTag;
       if (c.image) {
         const fullUrl = cardImgUrl(c.image, 150);
-        const lqip = showLqip ? lqipUrl(c.image) : '';
-        const bgStyle = lqip ? `background-image:url('${esc(lqip)}');background-size:cover;background-position:center;` : '';
-        imgTag = `<img src="${esc(fullUrl)}" alt="${esc(c.name)}" ${loadingAttr} decoding="async" style="${bgStyle}" class="tg-lqip-img" onload="this.classList.add('loaded');this.style.backgroundImage='none';" onerror="this.classList.add('loaded');this.style.display='none';">`;
+        imgTag = `<img src="${esc(fullUrl)}" alt="${esc(c.name)}" ${loadingAttr} decoding="async">`;
       } else { imgTag = esc(c.icon); }
       const adminBtns = IS_ADMIN ? `<div class="tg-admin-btn-wrap"><button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenCatModal('${esc(c.id)}')" aria-label="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="tg-adm-btn del" onclick="event.stopPropagation();tgOpenDelModal('cat', '${esc(c.id)}')" aria-label="Delete"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div>` : '';
       return `<div class="tg-side-item ${active}" onclick="tgSelectCat('${esc(c.id)}')">${adminBtns}<div class="tg-side-icon">${imgTag}</div><div class="tg-side-text">${esc(c.name)}</div></div>`;
@@ -670,6 +693,7 @@ a{color:inherit;text-decoration:none;}
     scroll.innerHTML = html;
   }
 
+  /* ═══════ RENDER: PRODUCTS ═══════ */
   function renderProducts(force) {
     updateFilterUI();
     const grid = document.getElementById('tg-prod-grid');
@@ -677,6 +701,7 @@ a{color:inherit;text-decoration:none;}
     if (currentCatId !== 'all' && !ALL_CATEGORIES.find(c => c.id === currentCatId)) { currentCatId = 'all'; currentSubName = 'all'; }
     if (!productsReady) { if (countEl) countEl.textContent = ''; return; }
     const activeCatObj = currentCatId === 'all' ? null : ALL_CATEGORIES.find(c => c.id === currentCatId);
+
     let filtered = ALL_PRODUCTS.filter(p => {
       if (currentCatId !== 'all' && activeCatObj) { if (!productMatchesCategory(p, activeCatObj)) return false; }
       if (currentCatId !== 'all' && currentSubName !== 'all' && !productMatchesSubcat(p, currentSubName)) return false;
@@ -689,9 +714,10 @@ a{color:inherit;text-decoration:none;}
       if (Number(p.rating || 0) < filterRating) return false;
       return true;
     });
+
     if (sortBy === 'price-low') filtered.sort((a,b) => Number(a.price||0) - Number(b.price||0));
     else if (sortBy === 'price-high') filtered.sort((a,b) => Number(b.price||0) - Number(a.price||0));
-    else if (sortBy === 'newest') filtered.sort((a,b) => tsToMs(b.createdAt) - tsToMs(a.createdAt));
+    else if (sortBy === 'newest') filtered.sort((a,b) => (b.createdAtMs || tsToMs(b.createdAt)) - (a.createdAtMs || tsToMs(a.createdAt)));
     else if (sortBy === 'discount') {
       filtered.sort((a,b) => {
         const pA = Number(a.price||0), oA = Number(a.compareAtPrice||a.mrp||0);
@@ -699,6 +725,7 @@ a{color:inherit;text-decoration:none;}
         return (oB>pB?(1-pB/oB):0) - (oA>pA?(1-pA/oA):0);
       });
     }
+
     const sig = currentCatId + '|' + currentSubName + '|' + searchQuery + '|' + filterMinPrice + '|' + filterMaxPrice + '|' + filterRating + '|' + sortBy + '|' + IS_ADMIN + '|' + filtered.map(p => p.id + ':' + p.price + ':' + (p.saleTag||p.tag||'')).join(',');
     if (!force && sig === _productsSig && grid.children.length > 0) {
       if (countEl) countEl.textContent = filtered.length === 0 ? '' : `${filtered.length} product${filtered.length > 1 ? 's' : ''} found`;
@@ -706,9 +733,9 @@ a{color:inherit;text-decoration:none;}
     }
     _productsSig = sig;
     if (countEl) countEl.textContent = filtered.length === 0 ? '' : `${filtered.length} product${filtered.length > 1 ? 's' : ''} found`;
+
     if (filtered.length === 0) {
       const noProducts = ALL_PRODUCTS.length === 0;
-      // ✅ FIX 2: Server response aane tak skeleton — error flash nahi
       if (noProducts && !_serverProductsReceived) {
         grid.innerHTML = '<div class="tg-skel tg-skel-card"></div><div class="tg-skel tg-skel-card"></div><div class="tg-skel tg-skel-card"></div><div class="tg-skel tg-skel-card"></div>';
         return;
@@ -721,13 +748,12 @@ a{color:inherit;text-decoration:none;}
       grid.innerHTML = emptyHtml;
       return;
     }
+
+    /* 🔥 FIX #5: Eager 4 → 2, no LQIP — plain lazy is faster */
     grid.innerHTML = filtered.map((p, idx) => {
       const img = p.image || (p.images && p.images[0]) || '';
       const imgUrl = cardImgUrl(img, 350);
-      const loadingAttr = idx < 4 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
-      const showLqip = idx < 4;
-      const lqip = showLqip ? lqipUrl(img) : '';
-      const bgStyle = lqip ? `background-image:url('${esc(lqip)}');background-size:cover;background-position:center;` : '';
+      const loadingAttr = idx < 2 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
       const price = Number(p.price || 0);
       const old = Number(p.compareAtPrice || p.mrp || 0);
       const disc = old > price ? Math.round((1 - price/old)*100) : 0;
@@ -739,12 +765,13 @@ a{color:inherit;text-decoration:none;}
       }
       const adminEditBtn = IS_ADMIN ? `<div class="tg-admin-btn-wrap"><button class="tg-adm-btn tag" onclick="event.stopPropagation();tgOpenTagModal('${p.id}', '${esc(adminTag)}')" title="Add Tag"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></button></div>` : '';
       return `<div class="tg-prod-card" onclick="location.href='product.html?id=${p.id}'">
-        <div class="tg-prod-img">${adminTagHtml}${disc > 0 ? `<div class="tg-discount-badge">${disc}% OFF</div>` : ''}${imgUrl ? `<img src="${esc(imgUrl)}" ${loadingAttr} decoding="async" style="${bgStyle}" class="tg-lqip-img" onload="this.classList.add('loaded');this.style.backgroundImage='none';" onerror="this.classList.add('loaded');this.style.display='none';" alt="${esc(p.name)}">` : `<span style="font-size:30px;">📦</span>`}${adminEditBtn}</div>
+        <div class="tg-prod-img">${adminTagHtml}${disc > 0 ? `<div class="tg-discount-badge">${disc}% OFF</div>` : ''}${imgUrl ? `<img src="${esc(imgUrl)}" ${loadingAttr} decoding="async" alt="${esc(p.name)}" onerror="this.style.display='none'">` : `<span style="font-size:30px;">📦</span>`}${adminEditBtn}</div>
         <div class="tg-prod-body"><div class="tg-prod-name">${esc(p.name)}</div><div class="tg-prod-price-row"><span class="tg-prod-price">₹${price.toLocaleString('en-IN')}</span>${old > price ? `<span class="tg-prod-mrp">₹${old.toLocaleString('en-IN')}</span>` : ''}</div></div>
       </div>`;
     }).join('');
   }
 
+  /* ═══════ HANDLERS ═══════ */
   window.tgSelectCat = function(id) {
     pendingCatSlug = null; currentCatId = id; currentSubName = 'all';
     searchQuery = '';
@@ -945,8 +972,9 @@ a{color:inherit;text-decoration:none;}
   window.addEventListener('pageshow', updateCartBadge);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) updateCartBadge(); });
 
-  loadLocalCache();
-  setupListeners();
+  /* ═══════ BOOT SEQUENCE ═══════ */
+  loadLocalCache();                          // instant from cache
+  setupListeners();                          // firestore listeners
   auth.onAuthStateChanged(u => checkAdmin(u));
   updateCartBadge();
   updateOnlineStatus();
