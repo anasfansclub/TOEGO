@@ -687,7 +687,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       if (sessionStorage.getItem('toego_splash_seen') === '1') {
         visited = true;
       } else {
-        // Fallback: localStorage timestamp (5 min window)
         const ts = parseInt(localStorage.getItem('toego_splash_ts') || '0', 10);
         if (ts && (Date.now() - ts) < 5 * 60 * 1000) visited = true;
       }
@@ -700,12 +699,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       localStorage.setItem('toego_splash_ts', String(Date.now()));
     } catch(e) {}
 
-    // Multiple safety nets — NEVER stuck on any browser
     setTimeout(hideNow, 250);
     setTimeout(hideNow, 1000);
     setTimeout(() => { if (el) el.classList.add('gone'); }, 1500);
 
-    // Hide on page ready too
     if (document.readyState === 'complete') setTimeout(hideNow, 50);
     else window.addEventListener('load', () => setTimeout(hideNow, 50), { once: true });
   })();
@@ -724,7 +721,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // ⚡ Safer persistence for non-Chrome (Firefox/Safari)
   try {
     db.enablePersistence({ synchronizeTabs: false }).catch(() => {});
   } catch(e) {}
@@ -745,6 +741,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   let ALL_CATS_FROM_DB = [];
   let MAB_INDEX = 0, MAB_COUNT = 0, MAB_AUTO = null;
   let SLIDER_HASH = '';
+
+  // ⚡ FIX: Prevents flash of DEFAULT_CATEGORIES before Firestore responds
+  let _catsServerConfirmed = false;
 
   const _shuffleSeed = (Date.now() % 1000000007) ^ Math.floor(Math.random() * 2147483647);
   const _hashCache = new Map();
@@ -1297,10 +1296,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
               const raw = snap.docs.map(d => ({ id: d.id, ...d.data() }))
                 .sort((a,b) => (Number(a.order)||999) - (Number(b.order)||999));
               ALL_CATS_FROM_DB = raw;
+              // ⚡ FIX: Mark confirmed so renderCategories can safely fallback to DEFAULT_CATEGORIES if empty
+              _catsServerConfirmed = true;
               setCache(CATS_CACHE, raw);
               renderCategories();
-            }, err => {});
-          } catch(e) {}
+            }, err => {
+              // ⚡ Even on error, stop waiting → allow fallback to defaults
+              _catsServerConfirmed = true;
+              renderCategories();
+            });
+          } catch(e) {
+            _catsServerConfirmed = true;
+          }
           res();
         });
       })(),
@@ -1370,7 +1377,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           image: c.image || ''
         }));
     }
+
+    // ⚡ FIX: Don't flash DEFAULT_CATEGORIES until Firestore confirms empty
     if (!cats.length) {
+      if (!_catsServerConfirmed) {
+        // Still loading — keep "All" only, no flash of defaults
+        return;
+      }
       cats = DEFAULT_CATEGORIES.slice();
     }
 
@@ -1593,7 +1606,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (window.__flashTimer) clearInterval(window.__flashTimer);
     function pad(n) { return String(n).padStart(2,'0'); }
     function tick() {
-      if (document.hidden) return; // ⚡ Skip when tab hidden
+      if (document.hidden) return;
       const end = getFlashEnd();
       const eh = document.getElementById('tg-fh');
       if (!eh || !end) return;
@@ -2030,7 +2043,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     '</div>';
   }
 
-  // ⚡ Timer update — skip when tab hidden
   setInterval(() => {
     if (document.hidden) return;
     const timers = document.querySelectorAll('.tg-mcard-timer[data-end]');
@@ -2125,11 +2137,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   }
 
   const TRACKER_HIDE_KEY = 'toego_tracker_hidden_session';
-  let _trackerInFlight = false;      // ⚡ Prevent parallel loads
-  let _trackerLastLoad = 0;          // ⚡ Staleness check
+  let _trackerInFlight = false;
+  let _trackerLastLoad = 0;
 
   function loadTracker() {
-    // ⚡ Skip if already loading, or loaded <60s ago
     if (_trackerInFlight) return;
     const now = Date.now();
     if (now - _trackerLastLoad < 60000 && _trackerLastLoad > 0) return;
@@ -2202,16 +2213,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     }
   }
 
-  // ⚡ FIXED: visibility change — debounced, stale-checked, no freeze
   let _visDebounce = null;
-  let _visCartOnly = 0;
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       clearTimeout(_visDebounce);
       _visDebounce = setTimeout(() => {
-        // Quick cart refresh (cheap)
         try { updateCartBadge(); } catch(e) {}
-        // Only reload tracker if 60s+ stale
         if (auth.currentUser && Date.now() - _trackerLastLoad > 60000) {
           try { loadTracker(); } catch(e) {}
         }
@@ -2483,7 +2490,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       if (lb) lb.href = 'account.html';
       if (am) am.href = 'account.html';
       watchCart(u.uid); loadWishlist();
-      // ⚡ Only load tracker if 60s+ stale
       if (Date.now() - _trackerLastLoad > 60000) loadTracker();
       loadRecentlyViewed();
     } else {
@@ -2513,7 +2519,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (initialQ) setTimeout(() => tgMDoSearch(initialQ), 350);
   });
 
-  // ⚡ Defer heavy loads (only if visible)
   setTimeout(() => { 
     if (!document.hidden) { try { loadNotifs().catch(() => {}); } catch(e) {} }
   }, 6000);
@@ -2521,7 +2526,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!document.hidden) { try { watchNotifs(); } catch(e) {} }
   }, 8000);
 
-  // ⚡ Cart interval — only when visible, 8s (was 3s)
   let _cartTimer = null;
   function _startCartTimer() {
     if (_cartTimer) return;
