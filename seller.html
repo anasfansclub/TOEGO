@@ -683,7 +683,10 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     <input type="hidden" id="prod-id">
     <div class="tg-prod-form-section">
       <div class="tg-prod-form-section-title">📝 Product Info</div>
-      <div class="tg-field"><label>Product Name *</label><input type="text" id="prod-name" maxlength="150" placeholder="e.g., Stylish EVA Slippers"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="tg-field"><label>Product Name *</label><input type="text" id="prod-name" maxlength="150" placeholder="e.g., Stylish EVA Slippers"></div>
+        <div class="tg-field"><label>Product SKU</label><input type="text" id="prod-sku" maxlength="50" placeholder="e.g., SKU-1234"></div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="tg-field"><label>Brand *</label><select id="prod-brand"><option value="">Select brand</option></select></div>
         <div class="tg-field"><label>Category *</label><select id="prod-category"><option value="">Select category</option></select></div>
@@ -1214,7 +1217,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     return '<div class="tg-order-wrap'+(sel?' selected':'')+'" id="wrap-'+o.id+'" onclick="tgOpenOrderDetail(\''+esc(o.id)+'\')">'+cb+content+'</div>';
   }
 
-  /* ⭐ FIXED: Processing me Download Label button — sirf download, status change nahi */
   function orderActions(o) {
     const s = normStatus(o); const b = [];
     if (s === 'pending') {
@@ -2118,7 +2120,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   };
   window.tgDownloadLabel = function(id) { PENDING_LABELS = [id]; tgOpenLabelModal(); };
 
-  /* ⭐ FIXED: Smart button text — label_generated ke liye "Print → Processing", processing ke liye "Print Label" (no status change) */
   window.tgOpenLabelModal = function() {
     let ids = PENDING_LABELS.length ? PENDING_LABELS : Array.from(SELECTED);
     if (!ids.length) { ids = ORDERS.filter(o => normStatus(o) === 'label_generated').map(o => o.id); }
@@ -2163,84 +2164,65 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     }
   }
 
-  /* ⭐ UPDATED: Label with Size/Color/Qty/Price table + COD/Online status */
   function labelHTML(o) {
     const mi = myItems(o); const di = mi.length ? mi : (Array.isArray(o.items) ? o.items : []);
     const a = addrOf(o); const sid = (o.id||'').slice(0,12).toUpperCase();
-    let tw = 0; di.forEach(it => { tw += Number(it.weight||0)*Number(it.qty||1); });
+    let sellerTotal = 0; di.forEach(it => { sellerTotal += Number(it.price||0) * Number(it.qty||1); });
 
-    let sellerTotal = 0;
-    di.forEach(it => { sellerTotal += Number(it.price||0) * Number(it.qty||1); });
     const payMethodRaw = String(o.paymentMethod || o.payment || 'cod').toLowerCase();
     const isCOD = payMethodRaw.indexOf('cod') !== -1 || payMethodRaw === 'cash' || payMethodRaw === '';
-    const payModeLabel = isCOD ? 'COD' : 'ONLINE';
 
-    /* ⭐ NEW: Items table — Size / Color / Qty / Price */
-    const itemRows = di.map((it) => {
-      const q = Number(it.qty||1);
-      const lineAmt = Number(it.price||0) * q;
-      return '<tr>' +
-        '<td>' + esc(it.size || '—') + '</td>' +
-        '<td>' + esc(it.color || '—') + '</td>' +
-        '<td style="text-align:center;font-weight:700;">' + q + '</td>' +
-        '<td style="text-align:right;font-weight:700;">' + esc(inr(lineAmt)) + '</td>' +
-      '</tr>';
-    }).join('');
+    const qrData = 'TOEGO|' + sid + '|' + (a.pincode || '') + '|' + (isCOD ? sellerTotal : 0) + '|' + (isCOD ? 'COD' : 'ONLINE');
+    const qrSvg = makeQRSvg(qrData, 'lbl-qr-svg');
 
     const sellerName = (SELLER && SELLER.shopName) || 'Seller';
     const sellerLine1 = (SELLER && SELLER.address) || '';
     const sellerCityState = [SELLER && SELLER.city, SELLER && SELLER.state].filter(Boolean).join(', ');
     const sellerPin = (SELLER && SELLER.pincode) ? ' - ' + SELLER.pincode : '';
     const sellerPhone = (SELLER && SELLER.phone) ? '📞 ' + SELLER.phone : '';
+    const sellerGst = (SELLER && SELLER.gst) ? SELLER.gst : '';
 
-    const qrData = 'TOEGO|' + sid + '|' + (a.pincode || '') + '|' + (isCOD ? sellerTotal : 0) + '|' + payModeLabel;
-    const qrSvg = makeQRSvg(qrData, 'lbl-qr-svg');
-
-    const payStatusBlock = isCOD
-      ? '<div class="lbl-pay-status cod">💵 COD · COLLECT ' + esc(inr(sellerTotal)) + '</div>'
-      : '<div class="lbl-pay-status online">✅ ONLINE · PAID ' + esc(inr(sellerTotal)) + '</div>';
+    const itemsHtml = di.map(it => {
+      const skuText = it.sku ? '<br><span style="font-size:9px;color:#555;font-weight:700;">SKU: ' + esc(it.sku) + '</span>' : '';
+      return '<tr>' +
+        '<td>' + esc(it.name || 'Product') + skuText + '</td>' +
+        '<td style="text-align:center;font-weight:700;">' + Number(it.qty||1) + '</td>' +
+      '</tr>';
+    }).join('');
 
     return '<div class="lbl">' +
-      '<div class="lbl-top"><div class="brand">TOE<span>GO</span></div><div class="order-no">#'+esc(sid)+'</div></div>'+
-      '<div class="lbl-barcode-row">'+
-        '<div class="lbl-barcode">'+code39(sid)+'</div>'+
-        '<div class="lbl-qr">'+qrSvg+'</div>'+
-      '</div>'+
-      '<div class="lbl-section"><div class="lbl-section-h">SHIP TO</div><div class="addr"><b>'+esc(a.name)+'</b><br>'+(a.line1?esc(a.line1)+'<br>':'')+(a.line2?esc(a.line2)+'<br>':'')+esc(a.city)+(a.city&&a.state?', ':'')+esc(a.state)+(a.pincode?' - <b>'+esc(a.pincode)+'</b>':'')+'<br>📞 '+esc(a.phone)+'</div></div>'+
-      '<div class="lbl-section"><div class="lbl-section-h">FROM (SELLER)</div><div class="addr" style="font-size:10px;"><b>'+esc(sellerName)+'</b>'+
-        (sellerLine1?'<br>'+esc(sellerLine1):'')+
-        (sellerCityState?'<br>'+esc(sellerCityState)+esc(sellerPin):'')+
-        (sellerPhone?'<br>'+esc(sellerPhone):'')+
-      '</div></div>'+
-      '<div class="lbl-section"><div class="lbl-section-h">ITEMS · ' + di.length + ' item(s) · ' + tw + 'g</div>' +
+      '<div class="lbl-header">' +
+        '<div class="lbl-cod-box">' + (isCOD ? 'COD Collect amount : ' + esc(inr(sellerTotal)) : 'PREPAID') + '</div>' +
+        '<div class="lbl-qr-box">' + qrSvg + '</div>' +
+      '</div>' +
+      '<div class="lbl-addr-box">' +
+        '<div class="lbl-section-h">DELIVERY ADDRESS:</div>' +
+        '<div class="addr">' + esc(a.name) + ', ' + (a.line1 ? esc(a.line1) + ', ' : '') + (a.line2 ? esc(a.line2) + ', ' : '') + esc(a.city) + (a.city && a.state ? ', ' : '') + esc(a.state) + (a.pincode ? ' - <b>' + esc(a.pincode) + '</b>' : '') + '</div>' +
+      '</div>' +
+      '<div class="lbl-soldby-box">' +
+        '<b>Sold By:</b> ' + esc(sellerName) + ', ' + esc(sellerLine1) + ' ' + esc(sellerCityState) + esc(sellerPin) + ' ' + esc(sellerPhone) +
+      '</div>' +
+      (sellerGst ? '<div class="lbl-gst-box"><b>GSTIN No:</b> ' + esc(sellerGst) + '</div>' : '') +
+      '<div class="lbl-table-box">' +
         '<table class="lbl-items-table">' +
-          '<thead><tr>' +
-            '<th>Size</th>' +
-            '<th>Color</th>' +
-            '<th style="text-align:center;">Qty</th>' +
-            '<th style="text-align:right;">Price</th>' +
-          '</tr></thead>' +
-          '<tbody>' + (itemRows || '<tr><td colspan="4" style="text-align:center;color:#888;">No items</td></tr>') + '</tbody>' +
-          '<tfoot><tr>' +
-            '<td colspan="3"><b>TOTAL</b></td>' +
-            '<td style="text-align:right;"><b>' + esc(inr(sellerTotal)) + '</b></td>' +
-          '</tr></tfoot>' +
+          '<thead><tr><th>Product</th><th style="text-align:center;width:40px;">Qty</th></tr></thead>' +
+          '<tbody>' + (itemsHtml || '<tr><td colspan="2" style="text-align:center;">No items</td></tr>') + '</tbody>' +
         '</table>' +
-      '</div>'+
-      payStatusBlock +
-      '<div class="lbl-foot">'+
-        '<div class="lbl-date">' + esc(fdate(o.labelGeneratedAt||o.createdAt)) + '</div>'+
-      '</div></div>';
+      '</div>' +
+      '<div class="lbl-footer">' +
+        '<div class="lbl-barcode">' + code39(sid) + '</div>' +
+        '<div class="lbl-orderid"><b>Order ID:</b> ' + esc(sid) + '</div>' +
+      '</div>' +
+    '</div>';
   }
 
   window.tgPrintLabels = async function() {
     const ids = PENDING_LABELS.slice(); if (!ids.length) { toast('No labels', 'error'); return; }
     const orders = ids.map(id => ORDERS.find(o => o.id === id)).filter(Boolean); if (!orders.length) return;
 
-    /* ⭐ UPDATED CSS — A4 = full bill style, Thermal 4×6 = compact */
     const css = FORMAT === 'a4'
-      ? '@page{size:A4;margin:6mm;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.page-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;width:198mm;height:285mm;gap:2mm;page-break-after:always;}.page-grid:last-child{page-break-after:auto;}.lbl{border:2px solid #000;border-radius:4px;padding:3mm;box-sizing:border-box;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;font-size:10px;line-height:1.3;background:#fff;}.lbl-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #000;padding-bottom:2mm;margin-bottom:2mm;}.brand{font-weight:900;font-style:italic;font-size:18px;color:#2874f0;}.brand span{color:#f43397;}.order-no{font-family:monospace;font-weight:800;font-size:12px;}.lbl-barcode-row{display:flex;gap:3mm;align-items:center;justify-content:space-between;margin-bottom:2mm;padding-bottom:2mm;border-bottom:1px dashed #999;}.lbl-barcode{flex:1;text-align:center;min-width:0;}.lbl-barcode svg{max-width:100%;height:auto;}.lbl-qr{width:68px;height:68px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:1px;background:#fff;border:1px solid #ddd;}.lbl-qr svg{width:100%;height:100%;display:block;}.lbl-section{margin-bottom:2mm;}.lbl-section-h{font-size:8.5px;font-weight:800;color:#666;text-transform:uppercase;margin-bottom:1mm;border-bottom:0.5px solid #ddd;padding-bottom:0.5mm;letter-spacing:0.3px;}.addr{font-size:10.5px;line-height:1.35;}.lbl-items-table{width:100%;border-collapse:collapse;font-size:9px;margin-top:1mm;}.lbl-items-table th{background:#2874f0;color:#fff;padding:1.5mm 1mm;border:0.5px solid #2874f0;text-align:left;font-weight:800;font-size:8.5px;text-transform:uppercase;letter-spacing:0.2px;}.lbl-items-table td{padding:1.3mm 1mm;border:0.5px solid #ccc;font-size:9.5px;}.lbl-items-table tbody tr:nth-child(even){background:#f8f9fb;}.lbl-items-table tfoot td{background:#f0fff4;border-top:1.5px solid #1b8a3a;font-size:10px;color:#1b8a3a;}.lbl-pay-status{margin-top:2mm;padding:2mm 3mm;border-radius:2mm;text-align:center;font-weight:900;font-size:11.5px;letter-spacing:0.4px;}.lbl-pay-status.cod{background:#1b8a3a;color:#fff;}.lbl-pay-status.online{background:#2874f0;color:#fff;}.lbl-foot{margin-top:auto;padding-top:2mm;border-top:1px solid #999;text-align:right;}.lbl-date{color:#666;font-size:9px;}'
-      : '@page{size:102mm 152mm;margin:0;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.lbl{width:102mm;height:152mm;box-sizing:border-box;padding:4mm;page-break-after:always;display:flex;flex-direction:column;font-size:11px;line-height:1.32;background:#fff;}.lbl:last-child{page-break-after:auto;}.lbl-top{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #000;padding-bottom:2.5mm;margin-bottom:2.5mm;}.brand{font-weight:900;font-style:italic;font-size:22px;color:#2874f0;}.brand span{color:#f43397;}.order-no{font-family:monospace;font-weight:800;font-size:13px;}.lbl-barcode-row{display:flex;gap:2.5mm;align-items:center;justify-content:space-between;margin-bottom:2.5mm;padding-bottom:2mm;border-bottom:1px dashed #666;}.lbl-barcode{flex:1;text-align:center;min-width:0;}.lbl-barcode svg{max-width:100%;height:auto;}.lbl-qr{width:90px;height:90px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;background:#fff;border:1px solid #999;}.lbl-qr svg{width:100%;height:100%;display:block;}.lbl-section{margin-bottom:2.5mm;}.lbl-section-h{font-size:9.5px;font-weight:800;color:#666;text-transform:uppercase;margin-bottom:1.2mm;border-bottom:0.5px solid #ddd;padding-bottom:0.8mm;letter-spacing:0.3px;}.addr{font-size:11.5px;line-height:1.38;}.lbl-items-table{width:100%;border-collapse:collapse;font-size:10px;margin-top:1.5mm;}.lbl-items-table th{background:#000;color:#fff;padding:1.8mm 1.5mm;border:0.5px solid #000;text-align:left;font-weight:800;font-size:9px;text-transform:uppercase;letter-spacing:0.2px;}.lbl-items-table td{padding:1.6mm 1.5mm;border:0.5px solid #666;font-size:10.5px;}.lbl-items-table tfoot td{background:#f0fff4;border-top:2px solid #000;font-size:12px;color:#1b8a3a;}.lbl-pay-status{margin-top:2.5mm;padding:2.5mm 4mm;border-radius:2mm;text-align:center;font-weight:900;font-size:13px;letter-spacing:0.4px;}.lbl-pay-status.cod{background:#1b8a3a;color:#fff;}.lbl-pay-status.online{background:#2874f0;color:#fff;}.lbl-foot{margin-top:auto;padding-top:2.5mm;border-top:1.5px solid #999;text-align:right;}.lbl-date{color:#666;font-size:10px;}';
+      ? '@page{size:A4;margin:6mm;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.page-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;width:198mm;height:285mm;gap:2mm;page-break-after:always;}.page-grid:last-child{page-break-after:auto;}.lbl{border:2px dashed #000;padding:3mm;box-sizing:border-box;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;font-size:10px;line-height:1.3;background:#fff;color:#000;position:relative;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2mm;gap:2mm;}.lbl-cod-box{font-weight:900;font-size:12px;flex:1;padding-top:2mm;}.lbl-qr-box{width:80px;height:80px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-addr-box{border-top:1px solid #000;padding-top:1mm;margin-bottom:2mm;}.lbl-section-h{font-weight:900;font-size:10px;margin-bottom:1mm;text-transform:uppercase;}.addr{font-size:11px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:10px;margin-bottom:2mm;border-top:1px solid #000;padding-top:1mm;}.lbl-table-box{margin-bottom:2mm;border:1px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1mm 2mm;font-size:10px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-footer{margin-top:auto;border-top:1px solid #000;padding-top:2mm;display:flex;justify-content:space-between;align-items:flex-end;}.lbl-barcode svg{height:30px;width:auto;max-width:100%;display:block;}.lbl-orderid{font-size:11px;font-weight:900;}'
+      : '@page{size:102mm 152mm;margin:0;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.lbl{width:102mm;height:152mm;box-sizing:border-box;padding:4mm;page-break-after:always;display:flex;flex-direction:column;font-size:11px;line-height:1.3;background:#fff;border:2px dashed #000;color:#000;position:relative;}.lbl:last-child{page-break-after:auto;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5mm;gap:2.5mm;}.lbl-cod-box{font-weight:900;font-size:13px;flex:1;padding-top:2mm;}.lbl-qr-box{width:90px;height:90px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-addr-box{border-top:1.5px solid #000;padding-top:1.5mm;margin-bottom:2.5mm;}.lbl-section-h{font-weight:900;font-size:11px;margin-bottom:1.5mm;text-transform:uppercase;}.addr{font-size:12px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:11px;margin-bottom:2.5mm;border-top:1.5px solid #000;padding-top:1.5mm;}.lbl-table-box{margin-bottom:2.5mm;border:1.5px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1.5mm 2mm;font-size:11px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-footer{margin-top:auto;border-top:1.5px solid #000;padding-top:2.5mm;display:flex;justify-content:space-between;align-items:flex-end;}.lbl-barcode svg{height:35px;width:auto;max-width:100%;display:block;}.lbl-orderid{font-size:12px;font-weight:900;}';
 
     let body = '';
     if (FORMAT === 'a4') {
@@ -2255,7 +2237,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     tgCloseModal('tg-label-modal');
     let moved = 0;
     for (const o of orders) {
-      /* ⭐ Only moves label_generated → processing. Processing/dispatched/delivered orders won't be touched */
       if (normStatus(o) === 'label_generated') {
         try {
           await db.collection('orders').doc(o.id).update({ status: 'processing', processingAt: FV.serverTimestamp(), processingBy: USER.uid, sentToAdminAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
@@ -2444,6 +2425,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     document.getElementById('tg-prod-modal-title').textContent = 'Add New Product';
     document.getElementById('prod-id').value = '';
     document.getElementById('prod-name').value = '';
+    document.getElementById('prod-sku').value = '';
     document.getElementById('prod-desc').value = '';
     document.getElementById('prod-price').value = '';
     document.getElementById('prod-mrp').value = '';
@@ -2482,6 +2464,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     document.getElementById('tg-prod-modal-title').textContent = 'Edit Product';
     document.getElementById('prod-id').value = pid;
     document.getElementById('prod-name').value = p.name || '';
+    document.getElementById('prod-sku').value = p.sku || '';
     document.getElementById('prod-desc').value = p.description || '';
     document.getElementById('prod-price').value = p.price || '';
     document.getElementById('prod-mrp').value = p.compareAtPrice || p.mrp || '';
@@ -2661,6 +2644,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   window.tgSaveProduct = async function() {
     if (!USER) { toast('Please log in', 'error'); return; }
     const name = (document.getElementById('prod-name').value || '').trim();
+    const sku = (document.getElementById('prod-sku').value || '').trim();
     const brand = (document.getElementById('prod-brand').value || '').trim();
     const category = (document.getElementById('prod-category').value || '').trim();
     const price = Number(document.getElementById('prod-price').value || 0);
@@ -2686,7 +2670,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     if (!hasSizes) { toast('Add at least 1 size variant', 'error'); return; }
 
     const payload = {
-      name: name, brand: brand, category: category,
+      name: name, sku: sku, brand: brand, category: category,
       description: (document.getElementById('prod-desc').value || '').trim(),
       price: price,
       compareAtPrice: Number(document.getElementById('prod-mrp').value || 0),
