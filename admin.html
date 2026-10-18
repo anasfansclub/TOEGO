@@ -665,6 +665,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         <div class="tg-chip" data-f="cancelled" onclick="tgFilterOrders('cancelled')">Cancelled <span class="tg-chip-c" id="oc-can">0</span></div>
         <div class="tg-chip" data-f="returned" onclick="tgFilterOrders('returned')">Returned <span class="tg-chip-c" id="oc-ret">0</span></div>
       </div></div>
+
+      <!-- ✅ NEW: Bulk select bar for orders -->
+      <div class="tg-bulk-bar">
+        <label><input type="checkbox" id="ord-select-all" onchange="tgToggleSelectAllOrders(this.checked)"> Select All</label>
+        <span class="cnt" id="ord-sel-count">0 selected</span>
+        <button class="tg-btn out" onclick="tgBulkOrderAction('seller_accepted')">✓ Accept</button>
+        <button class="tg-btn rtd" onclick="tgBulkOrderAction('admin_approved')">🚀 RTD</button>
+        <button class="tg-btn pri" onclick="tgBulkOrderAction('dispatched')">📦 Dispatch</button>
+        <button class="tg-btn suc" onclick="tgBulkOrderAction('delivered')">✓ Delivered</button>
+        <button class="tg-btn dan" onclick="tgBulkOrderAction('cancelled')">✕ Cancel</button>
+      </div>
+
       <div class="tg-sec"><div id="orders-list"></div></div>
     </div>
 
@@ -912,7 +924,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       </div>
     </div>
 
-    <!-- ============ EXTRA CART CHARGES ============ -->
     <div class="tg-v" id="v-srule">
       <div class="tg-sec">
         <div class="tg-sh">
@@ -1280,6 +1291,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   let shopHeroList = [], shopMidList = [], shopFeatList = [];
   let SELECTED_PRODS = new Set();
   let SELECTED_LABELS = new Set();
+  let SELECTED_ORDERS = new Set();   /* ✅ NEW */
   let CURRENT_TICKET = null;
   let ALL_SETTLE_RAW = [];
 
@@ -1852,20 +1864,74 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const ro = document.getElementById('recent-orders');
     const recent = ALL_ORDERS.slice(0,5);
     if (!recent.length) ro.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No orders yet</div></div>';
-    else ro.innerHTML = recent.map(orderRow).join('');
+    else ro.innerHTML = recent.map(o => orderRow(o, false)).join('');
   }
   function countByStatus(){
     const c = {pending:0, accepted:0, rtd:0, packed:0, dispatched:0, delivered:0, cancelled:0, return_requested:0, returned:0, all:0};
     ALL_ORDERS.forEach(o => { const s = normStatus(o.status); c[s] = (c[s]||0)+1; c.all++; });
     return c;
   }
-  function orderRow(o){
+
+  /* ✅ MODIFIED: orderRow accepts showCheckbox */
+  function orderRow(o, showCheckbox){
     const st = normStatus(o.status);
     const cls = statusClass(o.status);
     const items = Array.isArray(o.items)?o.items:[];
     const itemCount = items.reduce((a,i)=>a+Number(i.qty||1),0);
-    return '<div class="tg-row" onclick="tgOpenOrder(\''+esc(o.id)+'\')"><div class="tg-row-av">'+esc(ini(o.userName||o.customerName||'U'))+'</div><div class="tg-row-b"><div class="tg-row-t">#'+esc((o.id||'').slice(0,10).toUpperCase())+'</div><div class="tg-row-s"><span>'+esc(o.userName||o.customerName||'Customer')+'</span><span>'+inr(o.total||0)+'</span><span>'+(itemCount||0)+' items</span><span>'+fdate(o.createdAt)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill '+cls+'">'+statusLabel(o.status)+'</span></div></div><div class="tg-row-a" onclick="event.stopPropagation();"><button class="tg-btn out" onclick="tgOpenOrder(\''+esc(o.id)+'\')">View</button></div></div>';
+    const sel = showCheckbox && SELECTED_ORDERS.has(o.id);
+    const cb = showCheckbox ? '<input type="checkbox" class="tg-row-cb" '+(sel?'checked':'')+' onclick="event.stopPropagation();tgToggleSelectOrder(\''+esc(o.id)+'\', this.checked)">' : '';
+    return '<div class="tg-row'+(sel?' selected':'')+'" onclick="tgOpenOrder(\''+esc(o.id)+'\')">'+cb+'<div class="tg-row-av">'+esc(ini(o.userName||o.customerName||'U'))+'</div><div class="tg-row-b"><div class="tg-row-t">#'+esc((o.id||'').slice(0,10).toUpperCase())+'</div><div class="tg-row-s"><span>'+esc(o.userName||o.customerName||'Customer')+'</span><span>'+inr(o.total||0)+'</span><span>'+(itemCount||0)+' items</span><span>'+fdate(o.createdAt)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill '+cls+'">'+statusLabel(o.status)+'</span></div></div><div class="tg-row-a" onclick="event.stopPropagation();"><button class="tg-btn out" onclick="tgOpenOrder(\''+esc(o.id)+'\')">View</button></div></div>';
   }
+
+  /* ✅ NEW: Order bulk selection helpers */
+  window.tgToggleSelectOrder = function(id, c){
+    if (c) SELECTED_ORDERS.add(id); else SELECTED_ORDERS.delete(id);
+    renderOrders();
+  };
+  window.tgToggleSelectAllOrders = function(c){
+    const list = getFilteredOrders();
+    if (c) list.forEach(o => SELECTED_ORDERS.add(o.id));
+    else list.forEach(o => SELECTED_ORDERS.delete(o.id));
+    renderOrders();
+  };
+  function updateOrdSelAll(){
+    const cb = document.getElementById('ord-select-all'); if (!cb) return;
+    const list = getFilteredOrders();
+    cb.checked = list.length > 0 && list.every(o => SELECTED_ORDERS.has(o.id));
+    cb.indeterminate = !cb.checked && list.some(o => SELECTED_ORDERS.has(o.id));
+    const cnt = document.getElementById('ord-sel-count');
+    if (cnt) cnt.textContent = SELECTED_ORDERS.size + ' selected';
+  }
+  window.tgBulkOrderAction = async function(status){
+    const ids = Array.from(SELECTED_ORDERS);
+    if (!ids.length) { toast('No orders selected', 'err'); return; }
+    const niceStatus = statusLabel(status);
+    if (!confirm('Change status of ' + ids.length + ' order(s) to "' + niceStatus + '"?\n\nOnly selected orders will be updated.')) return;
+    toast('Updating ' + ids.length + ' orders...', 'inf');
+    let ok = 0, fail = 0;
+    const CHUNK = 400;
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const chunk = ids.slice(i, i + CHUNK);
+      const batch = db.batch();
+      chunk.forEach(id => {
+        const o = ALL_ORDERS.find(x => x.id === id);
+        const payload = { status, updatedAt: FV.serverTimestamp(), updatedBy: USER.uid };
+        if (o) { const sellerIds = buildSellerIdsPayload(o); if (sellerIds.length) payload.sellerIds = sellerIds; }
+        const ns = normStatus(status);
+        if (ns === 'accepted') payload.acceptedAt = FV.serverTimestamp();
+        if (ns === 'rtd') { payload.rtdAt = FV.serverTimestamp(); payload.adminApprovedAt = FV.serverTimestamp(); }
+        if (ns === 'packed') payload.packedAt = FV.serverTimestamp();
+        if (ns === 'dispatched') payload.dispatchedAt = FV.serverTimestamp();
+        if (ns === 'delivered') payload.deliveredAt = FV.serverTimestamp();
+        if (ns === 'cancelled') payload.cancelledAt = FV.serverTimestamp();
+        batch.update(db.collection('orders').doc(id), payload);
+      });
+      try { await batch.commit(); ok += chunk.length; } catch(e) { fail += chunk.length; console.warn('Bulk order fail:', e); }
+    }
+    toast('✓ ' + ok + ' updated' + (fail ? ', ' + fail + ' failed' : ''), 'suc');
+    SELECTED_ORDERS.clear();
+    renderOrders();
+  };
 
   function isLabelOrder(o) {
     if (!o) return false;
@@ -2215,7 +2281,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const lbl = st==='approved'?'Approved':st==='rejected'?'Rejected':'Pending';
       const cm = SELLER_COMM[s.id] != null ? SELLER_COMM[s.id]+'%' : 'Global '+GLOBAL_COMMISSION+'%';
 
-      /* ✅ Slab details */
       const slabs = SELLER_DELIV[s.id];
       let dl = 'Global';
       if (Array.isArray(slabs) && slabs.length) {
@@ -2258,7 +2323,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setText('ms-cats', s.categories || '—');
     document.getElementById('ms-pct').value = SELLER_COMM[sid] != null ? SELLER_COMM[sid] : '';
 
-    /* ✅ Load existing slabs properly */
     const existing = SELLER_DELIV[sid];
     msSlabs = (Array.isArray(existing) && existing.length)
       ? existing.map(x => ({ maxWeight: Number(x.maxWeight) || 0, charge: Number(x.charge) || 0 }))
@@ -2379,7 +2443,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (at) at.style.display = tab==='actions'?'block':'none';
   };
 
-  /* ✅ FIXED: renderMsSlabs with proper bindings */
   function renderMsSlabs(){
     const wrap = document.getElementById('ms-slabs');
     if (!wrap) return;
@@ -2407,7 +2470,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       '</div>'
     ).join('');
 
-    /* Bind events — direct listeners (reliable) */
     wrap.querySelectorAll('.ms-slab-w').forEach(inp => {
       inp.addEventListener('input', function() {
         const i = Number(this.dataset.i);
@@ -2446,13 +2508,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     toast('Copied global slabs','suc');
   };
 
-  /* ✅ FIXED: tgSaveSellerEdit with force refresh + logging */
   window.tgSaveSellerEdit = async function(){
     const sid = document.getElementById('ms-id').value;
     if (!sid) { toast('Seller ID missing','err'); return; }
     const pct = document.getElementById('ms-pct').value;
 
-    /* Clean & validate slabs */
     const cleanSlabs = msSlabs
       .filter(x => Number(x.maxWeight) > 0 && Number(x.charge) >= 0 && !isNaN(Number(x.maxWeight)) && !isNaN(Number(x.charge)))
       .map(x => ({ maxWeight: Number(x.maxWeight), charge: Number(x.charge) }))
@@ -2462,7 +2522,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
 
     try {
-      /* ===== COMMISSION ===== */
       if (pct === '' || pct === null) {
         await db.collection('siteSettings').doc('sellerCommissions').set(
           { rates: { [sid]: FV.delete() }, updatedAt: FV.serverTimestamp() },
@@ -2483,7 +2542,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         SELLER_COMM[sid] = num;
       }
 
-      /* ===== DELIVERY SLABS ===== */
       if (!cleanSlabs.length) {
         await db.collection('siteSettings').doc('sellerDelivery').set(
           { slabs: { [sid]: FV.delete() }, updatedAt: FV.serverTimestamp() },
@@ -2500,12 +2558,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         console.log('[Save] Slabs SAVED for seller:', sid, cleanSlabs);
       }
 
-      /* ✅ FORCE UI REFRESH */
       try { tgRenderSellers(); } catch(e) { console.warn('renderSellers fail', e); }
       try { renderSettle(); } catch(e) { console.warn('renderSettle fail', e); }
       try { renderSettleHistory(); } catch(e) {}
 
-      /* Success toast with details */
       if (cleanSlabs.length) {
         const slabSummary = cleanSlabs.map(x => fmtWeightShort(x.maxWeight)+'→₹'+x.charge).join(', ');
         toast('✓ Saved — ' + cleanSlabs.length + ' slab' + (cleanSlabs.length>1?'s':'') + ' · Commission ' + (pct||'global'), 'suc');
@@ -2684,16 +2740,182 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       return '<div class="tg-row" onclick="tgOpenUser(\''+esc(u.id)+'\')"><div class="tg-row-av">'+esc(ini(u.name||u.email))+'</div><div class="tg-row-b"><div class="tg-row-t">'+esc(u.name||'User')+' '+blk+'</div><div class="tg-row-s"><span>'+esc(u.email||'')+'</span><span>'+esc(u.phone||'')+'</span></div><div style="margin-top:6px;"><span class="tg-pill '+cls+'">'+r.toUpperCase()+'</span></div></div></div>';
     }).join('');
   };
+
+  /* ✅ MODIFIED: tgOpenUser - added Clear Orders + Clear Wishlist buttons */
   window.tgOpenUser = function(uid){
     const u = ALL_USERS.find(x=>x.id===uid); if (!u) return;
     const r = (u.role||'customer').toLowerCase();
-    document.getElementById('mu-body').innerHTML = '<div style="text-align:center;margin-bottom:14px;"><div class="tg-row-av" style="width:70px;height:70px;font-size:26px;margin:0 auto 10px;">'+esc(ini(u.name||u.email))+'</div><div style="font-size:17px;font-weight:800;">'+esc(u.name||'User')+'</div><div style="font-size:12.5px;color:#888;">'+esc(u.email||'')+'</div></div><div class="tg-tbl"><table><tr><td><b>UID</b></td><td style="font-family:monospace;font-size:11px;">'+esc(u.id)+'</td></tr><tr><td><b>Phone</b></td><td>'+esc(u.phone||'—')+'</td></tr><tr><td><b>Joined</b></td><td>'+fdate(u.createdAt)+'</td></tr></table></div><div class="tg-fld" style="margin-top:14px;"><label>Role</label><select id="mu-role"><option value="customer" '+(r==='customer'?'selected':'')+'>Customer</option><option value="seller" '+(r==='seller'?'selected':'')+'>Seller</option><option value="admin" '+(r==='admin'?'selected':'')+'>Admin</option></select></div><div class="tg-mod-a" style="margin-top:16px;"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-user\')">Close</button><button class="tg-mod-b pri" onclick="tgUpdateRole(\''+esc(uid)+'\')">Update</button></div>';
+    const uidSafe = esc(uid);
+    document.getElementById('mu-body').innerHTML =
+      '<div style="text-align:center;margin-bottom:14px;"><div class="tg-row-av" style="width:70px;height:70px;font-size:26px;margin:0 auto 10px;">'+esc(ini(u.name||u.email))+'</div><div style="font-size:17px;font-weight:800;">'+esc(u.name||'User')+'</div><div style="font-size:12.5px;color:#888;">'+esc(u.email||'')+'</div></div>'+
+      '<div class="tg-tbl"><table><tr><td><b>UID</b></td><td style="font-family:monospace;font-size:11px;">'+esc(u.id)+'</td></tr><tr><td><b>Phone</b></td><td>'+esc(u.phone||'—')+'</td></tr><tr><td><b>Joined</b></td><td>'+fdate(u.createdAt)+'</td></tr></table></div>'+
+      '<div class="tg-fld" style="margin-top:14px;"><label>Role</label><select id="mu-role"><option value="customer" '+(r==='customer'?'selected':'')+'>Customer</option><option value="seller" '+(r==='seller'?'selected':'')+'>Seller</option><option value="admin" '+(r==='admin'?'selected':'')+'>Admin</option></select></div>'+
+      '<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">'+
+        '<button class="tg-btn dan" style="flex:1;padding:12px;justify-content:center;min-width:130px;" onclick="tgClearUserOrders(\''+uidSafe+'\')">🗑 Clear Orders</button>'+
+        '<button class="tg-btn dan" style="flex:1;padding:12px;justify-content:center;min-width:130px;" onclick="tgClearUserWishlist(\''+uidSafe+'\')">💔 Clear Wishlist</button>'+
+      '</div>'+
+      '<div class="tg-mod-a" style="margin-top:16px;"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-user\')">Close</button><button class="tg-mod-b pri" onclick="tgUpdateRole(\''+uidSafe+'\')">Update</button></div>';
     openMod('mod-user');
   };
   window.tgUpdateRole = async function(uid){
     const r = document.getElementById('mu-role').value;
     try { await db.collection('users').doc(uid).set({ role:r, updatedAt:FV.serverTimestamp() }, { merge:true }); toast('Updated ✓','suc'); tgCloseMod('mod-user'); }
     catch(e) { toast('Failed','err'); }
+  };
+
+  /* ✅ NEW: Clear all orders of a specific user */
+  window.tgClearUserOrders = function(uid){
+    if (!uid) { toast('User ID missing','err'); return; }
+    const u = ALL_USERS.find(x => x.id === uid);
+    const email = u ? (u.email || '') : '';
+    const matching = ALL_ORDERS.filter(o =>
+      String(o.userId||'') === uid ||
+      String(o.user_id||'') === uid ||
+      (email && String(o.userEmail||o.email||'') === email)
+    );
+    if (!matching.length) { toast('No orders for this user','inf'); return; }
+
+    confirmCb = async () => {
+      let ok = 0, fail = 0;
+      try {
+        toast('Deleting user orders...','inf');
+        const found = new Set();
+        /* Query approach */
+        try {
+          const s1 = await db.collection('orders').where('userId','==',uid).get();
+          s1.docs.forEach(d => found.add(d.id));
+        } catch(e) { console.warn('userId query fail', e); }
+        try {
+          const s2 = await db.collection('orders').where('user_id','==',uid).get();
+          s2.docs.forEach(d => found.add(d.id));
+        } catch(e) { console.warn('user_id query fail', e); }
+        if (email) {
+          try {
+            const s3 = await db.collection('orders').where('userEmail','==',email).get();
+            s3.docs.forEach(d => found.add(d.id));
+          } catch(e) { console.warn('userEmail query fail', e); }
+          try {
+            const s4 = await db.collection('orders').where('email','==',email).get();
+            s4.docs.forEach(d => found.add(d.id));
+          } catch(e) { console.warn('email query fail', e); }
+        }
+        /* Client-side fallback to catch everything */
+        try {
+          const all = await db.collection('orders').get();
+          all.docs.forEach(d => {
+            const data = d.data();
+            if (String(data.userId||data.user_id||'') === uid) found.add(d.id);
+            else if (email && String(data.userEmail||data.email||'') === email) found.add(d.id);
+          });
+        } catch(e) { console.warn('full scan fail', e); }
+
+        const refs = Array.from(found).map(id => db.collection('orders').doc(id));
+        for (let i = 0; i < refs.length; i += 450) {
+          const chunk = refs.slice(i, i + 450);
+          const batch = db.batch();
+          chunk.forEach(r => batch.delete(r));
+          try { await batch.commit(); ok += chunk.length; }
+          catch(e) { fail += chunk.length; }
+        }
+        toast('✓ Deleted ' + ok + ' order(s)' + (fail ? ', ' + fail + ' failed' : ''), 'suc');
+        tgCloseMod('mod-confirm');
+        tgCloseMod('mod-user');
+      } catch(e) {
+        console.error('[Clear user orders fail]', e);
+        toast('Failed: ' + (e.message || 'Unknown'), 'err');
+      }
+    };
+    document.getElementById('cf-t').textContent = 'Clear User Orders?';
+    document.getElementById('cf-m').innerHTML = '<b style="color:#d32f2f;">⚠️ Delete all ' + matching.length + ' order(s)</b> of <b>' + esc(u ? (u.name||u.email||uid) : uid) + '</b>?<br><br>This CANNOT be undone.';
+    document.getElementById('cf-b').textContent = 'Delete ' + matching.length + ' Orders';
+    document.getElementById('cf-b').className = 'tg-mod-b dan';
+    openMod('mod-confirm');
+  };
+
+  /* ✅ NEW: Clear wishlist of a specific user */
+  window.tgClearUserWishlist = function(uid){
+    if (!uid) { toast('User ID missing','err'); return; }
+    const u = ALL_USERS.find(x => x.id === uid);
+    const email = u ? (u.email || '') : '';
+
+    confirmCb = async () => {
+      let ok = 0, fail = 0;
+      try {
+        toast('Clearing wishlist...','inf');
+        /* Method 1: Query with where (fast if indexed) */
+        const found = new Set();
+        try {
+          const s1 = await db.collection('wishlists').where('userId','==',uid).get();
+          s1.docs.forEach(d => found.add(d.id));
+        } catch(e) { console.warn('wishlist userId query fail', e); }
+        try {
+          const s2 = await db.collection('wishlists').where('user_id','==',uid).get();
+          s2.docs.forEach(d => found.add(d.id));
+        } catch(e) { console.warn('wishlist user_id query fail', e); }
+        try {
+          const s3 = await db.collection('wishlists').where('uid','==',uid).get();
+          s3.docs.forEach(d => found.add(d.id));
+        } catch(e) { console.warn('wishlist uid query fail', e); }
+        /* Client-side full scan to catch anything missed */
+        try {
+          let hasMore = true;
+          let last = null;
+          while (hasMore) {
+            let q = db.collection('wishlists').limit(450);
+            if (last) q = q.startAfter(last);
+            const snap = await q.get();
+            if (snap.empty) { hasMore = false; break; }
+            last = snap.docs[snap.docs.length - 1];
+            snap.docs.forEach(d => {
+              if (found.has(d.id)) return;
+              const data = d.data();
+              if (d.id === uid) { found.add(d.id); return; }
+              if (String(data.userId||'') === uid) { found.add(d.id); return; }
+              if (String(data.user_id||'') === uid) { found.add(d.id); return; }
+              if (String(data.uid||'') === uid) { found.add(d.id); return; }
+              if (email && String(data.userEmail||data.email||'') === email) found.add(d.id);
+            });
+            if (snap.docs.length < 450) hasMore = false;
+          }
+        } catch(e) { console.warn('wishlist full scan fail', e); }
+
+        const refs = Array.from(found).map(id => db.collection('wishlists').doc(id));
+        for (let i = 0; i < refs.length; i += 450) {
+          const chunk = refs.slice(i, i + 450);
+          const batch = db.batch();
+          chunk.forEach(r => batch.delete(r));
+          try { await batch.commit(); ok += chunk.length; }
+          catch(e) { fail += chunk.length; }
+        }
+
+        /* Method 2: Subcollection wishlists/{uid}/items (if structure used) */
+        try {
+          let subMore = true;
+          while (subMore) {
+            const sub = await db.collection('wishlists').doc(uid).collection('items').limit(450).get();
+            if (sub.empty) { subMore = false; break; }
+            const batch = db.batch();
+            sub.docs.forEach(d => batch.delete(d.ref));
+            try { await batch.commit(); ok += sub.docs.length; }
+            catch(e) { fail += sub.docs.length; }
+            if (sub.docs.length < 450) subMore = false;
+          }
+          try { await db.collection('wishlists').doc(uid).delete(); ok++; } catch(e) {}
+        } catch(e) { console.warn('wishlist subcollection clear fail', e); }
+
+        toast('✓ Cleared ' + ok + ' wishlist item(s)' + (fail ? ', ' + fail + ' failed' : ''), 'suc');
+        tgCloseMod('mod-confirm');
+        tgCloseMod('mod-user');
+      } catch(e) {
+        console.error('[Clear user wishlist fail]', e);
+        toast('Failed: ' + (e.message || 'Unknown'), 'err');
+      }
+    };
+    document.getElementById('cf-t').textContent = 'Clear User Wishlist?';
+    document.getElementById('cf-m').innerHTML = '<b style="color:#d32f2f;">⚠️ Delete all wishlist items</b> for <b>' + esc(u ? (u.name||u.email||uid) : uid) + '</b>?<br><br>This CANNOT be undone.';
+    document.getElementById('cf-b').textContent = 'Clear Wishlist';
+    document.getElementById('cf-b').className = 'tg-mod-b dan';
+    openMod('mod-confirm');
   };
 
   window.tgFilterProds = function(f){
@@ -3185,6 +3407,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   window.tgFilterOrders = function(f){
     ORDER_FILTER = f;
+    SELECTED_ORDERS.clear();  /* ✅ NEW: clear selection on filter change */
     document.querySelectorAll('#ord-chips .tg-chip').forEach(c => c.classList.toggle('active', c.dataset.f===f));
     renderOrders();
   };
@@ -3215,8 +3438,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setText('oc-rtd', counts.rtd); setText('oc-disp', counts.dispatched); setText('oc-del', counts.delivered);
     setText('oc-can', counts.cancelled); setText('oc-ret', counts.returned);
     const list = getFilteredOrders();
-    if (!list.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No orders</div></div>'; return; }
-    el.innerHTML = list.slice(0,300).map(orderRow).join('');
+    if (!list.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No orders</div></div>'; updateOrdSelAll(); return; }
+    el.innerHTML = list.slice(0,300).map(o => orderRow(o, true)).join('');  /* ✅ NEW: pass true for checkbox */
+    updateOrdSelAll();
   }
 
   window.tgClearAllOrders = function(){
@@ -3731,7 +3955,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const approvedCount = ALL_SELLERS.filter(s => (s.status||'').toLowerCase()==='approved'||s.approved===true).length;
     const pct = SELLER_COMM[sid] != null ? Number(SELLER_COMM[sid]) : Number(GLOBAL_COMMISSION || 5);
 
-    /* ✅ FIXED: slab source with log */
     const sellerSlabs = SELLER_DELIV[sid];
     const usingCustom = Array.isArray(sellerSlabs) && sellerSlabs.length > 0;
     const slabs = usingCustom ? sellerSlabs : GLOBAL_SLABS;
@@ -3974,11 +4197,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     renderSiteData();
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ✅ FIX: renderShopLists() — oninput handlers now call
-     window.tgShopSetField() instead of accessing IIFE-scoped
-     variables directly (which was broken in global scope).
-     ═══════════════════════════════════════════════════════════════ */
   function renderShopLists(){
     document.getElementById('shop-hero-list').innerHTML = shopHeroList.length ? shopHeroList.map((h, i) =>
       '<div class="tg-sgrp" style="background:#fff;border:1.5px solid #e0e0e0;">' +
@@ -4011,9 +4229,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     ).join('') : '<div class="tg-empty" style="padding:20px;"><div class="tg-empty-i" style="font-size:34px;">⭐</div><div class="tg-empty-t" style="font-size:13px;">No featured cards</div></div>';
   }
 
-  /* ✅ NEW FUNCTION: handles field updates from inline oninput handlers.
-     Inline handlers run in global scope and cannot access shopHeroList,
-     shopMidList, shopFeatList (declared inside IIFE). This bridge fixes it. */
   window.tgShopSetField = function(type, i, field, val) {
     if (type === 'hero' && shopHeroList[i]) shopHeroList[i][field] = val;
     else if (type === 'mid'  && shopMidList[i])  shopMidList[i][field]  = val;
