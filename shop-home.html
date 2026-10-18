@@ -825,12 +825,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return url;
   }
 
+  /* ✅ PATCH: cardImgUrl — no dpr_auto for small sizes (halves bytes) */
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
     if (/\/upload\/[^/]*[qwfcs]_/.test(url)) return url;
     const w = width || 400;
-    return url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit,dpr_auto/');
+    const dprPart = w <= 400 ? '' : ',dpr_auto';
+    return url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit' + dprPart + '/');
   }
 
   function preloadBannerImages(banners) {
@@ -848,12 +850,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     });
   }
 
+  /* ✅ PATCH: preloadProductImages — instant (no requestIdleCallback delay) */
   function preloadProductImages(products, max) {
     if (!products || !products.length) return;
     max = max || 8;
     const slice = products.slice(0, max);
-    if ('requestIdleCallback' in window) requestIdleCallback(() => _preloadProdImgs(slice), { timeout: 1000 });
-    else setTimeout(() => _preloadProdImgs(slice), 100);
+    _preloadProdImgs(slice);
   }
   function _preloadProdImgs(products) {
     products.forEach((p, i) => {
@@ -955,7 +957,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       const link = b.link || 'products.html';
       const hasContent = (b.title || b.subtitle || b.buttonText);
       const imgUrl = optimizeImgUrl(b.image);
-      const eager = i === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+      /* ✅ PATCH: first 2 slides eager */
+      const eager = i < 2 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
       slidesHtml += '<div class="tg-mabanner-slide ' + (i===0?'active':'') + '" data-idx="' + i + '" onclick="location.href=\'' + esc(link) + '\'">' +
         '<img src="' + esc(imgUrl) + '" alt="' + esc(b.title||'Banner') + '" ' + eager + ' decoding="async" />' +
         (hasContent ? '<div class="tg-mabanner-content">' +
@@ -1507,7 +1510,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (sig === _renderAllSig && main.children.length > 0) return;
     _renderAllSig = sig;
 
-    /* ⚡ If cache exists, pre-render products directly — NO skeleton flash */
     const hasCachedProducts = allProducts.length > 0;
     const _skel = (n) => hasCachedProducts ? '' : skelGrid(n);
     const _miniSkel = (n) => hasCachedProducts ? '' : miniSkel(n);
@@ -1721,7 +1723,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   function loadProducts() {
     if (_productsLoading || _productsLoaded) return;
 
-    /* ⚡ Skip cache read if preload already filled allProducts */
     if (!allProducts.length) {
       let cached = getCache(PROD_CACHE, PROD_TTL);
       if (!cached || !cached.length) {
@@ -1985,14 +1986,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     const newArr = applySortWithTimer(filtered, 10);
     const allArr = applySortWithTimer(filtered, 40);
 
-    const set = (id, arr, fn) => { const el = document.getElementById(id); if (el) el.innerHTML = arr.length ? arr.map(fn).join('') : emptyBox(); };
+    /* ✅ PATCH: pass index to fn so eager loading works */
+    const set = (id, arr, fn) => { 
+      const el = document.getElementById(id); 
+      if (el) el.innerHTML = arr.length ? arr.map((p, i) => fn(p, i)).join('') : emptyBox(); 
+    };
     set('tg-mquick', quickPicks, miniCard);
     set('tg-mtrending', trendingArr, productCard);
     set('tg-mbest', bestArr, productCard);
     set('tg-mnew', newArr, productCard);
 
     const allEl = document.getElementById('tg-mall');
-    if (allEl) allEl.innerHTML = allArr.length ? allArr.map(largeCard).join('') : emptyBox();
+    if (allEl) allEl.innerHTML = allArr.length ? allArr.map((p, i) => largeCard(p, i)).join('') : emptyBox();
 
     updateAllWishStates();
     if (currentSearch) renderSearchResults();
@@ -2000,7 +2005,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   function emptyBox() { return '<div class="tg-mempty"><div class="tg-mempty-icon">📦</div><h3 style="margin:0 0 4px;color:#212121;font-size:14px;">No products</h3></div>'; }
 
-  function miniCard(p) {
+  /* ✅ PATCH: miniCard — first 6 eager for instant above-fold load */
+  function miniCard(p, i) {
+    i = i || 0;
+    const isAboveFold = i < 6;
+    const loadingAttr = isAboveFold ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
     const price = Number(p.price||0);
     const old = Number(p.compareAtPrice||p.mrp||0);
     const disc = old > price ? Math.round((1 - price/old)*100) : 0;
@@ -2013,7 +2022,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     const showTimer = endMs > Date.now();
     return '<div class="tg-mini' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-mini-img">' +
-        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/200x200/f1f3f6/878787?text=T\'" />' +
+        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" ' + loadingAttr + ' decoding="async" onerror="this.src=\'https://via.placeholder.com/200x200/f1f3f6/878787?text=T\'" />' +
       '</div>' +
       '<div class="tg-mini-body">' +
         (showTimer ? '<span class="tg-mini-timer tg-mcard-timer" data-end="' + endMs + '">' + timerHtml(endMs) + '</span>' : '') +
@@ -2059,7 +2068,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return '<span class="tg-tmr-ic">⚡</span>' + segs;
   }
 
-  function productCard(p) {
+  /* ✅ PATCH: productCard — first 3 eager for instant trending load */
+  function productCard(p, i) {
+    i = i || 0;
+    const loadingAttr = i < 3 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
     const price = Number(p.price||0);
     const old = Number(p.compareAtPrice||p.mrp||0);
     const disc = old > price ? Math.round((1 - price/old)*100) : 0;
@@ -2087,7 +2099,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return '<div class="tg-mcard' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-mcard-img">' +
         badgeHtml +
-        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/300x300/f1f3f6/878787?text=T\'" />' +
+        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" ' + loadingAttr + ' decoding="async" onerror="this.src=\'https://via.placeholder.com/300x300/f1f3f6/878787?text=T\'" />' +
         '<button class="tg-mcard-wish" data-pid="' + esc(p.id) + '" onclick="tgMToggleWish(event,\'' + p.id + '\',this)"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>' +
       '</div>' +
       '<div class="tg-mcard-body">' +
@@ -2108,6 +2120,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     '</div>';
   }
 
+  /* largeCard stays lazy — below fold */
   function largeCard(p) {
     const price = Number(p.price||0);
     const old = Number(p.compareAtPrice||p.mrp||0);
@@ -2422,7 +2435,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), null);
     if (title) title.textContent = 'Results for "' + q + '"';
     if (sub) sub.textContent = matches.length ? matches.length + ' product' + (matches.length>1?'s':'') + ' found' : 'No products matched';
-    grid.innerHTML = matches.length ? matches.map(largeCard).join('') : '<div class="tg-mempty"><div class="tg-mempty-icon">🔍</div><h3 style="margin:0 0 4px;color:#212121;font-size:15px;">No products found</h3><p style="margin:0;font-size:13px;">Try a different keyword</p></div>';
+    grid.innerHTML = matches.length ? matches.map((p, i) => largeCard(p, i)).join('') : '<div class="tg-mempty"><div class="tg-mempty-icon">🔍</div><h3 style="margin:0 0 4px;color:#212121;font-size:15px;">No products found</h3><p style="margin:0;font-size:13px;">Try a different keyword</p></div>';
     updateAllWishStates();
   }
 
@@ -2616,7 +2629,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   let initialQ = '';
   try { initialQ = new URLSearchParams(window.location.search).get('q') || ''; } catch(e) {}
 
-  /* ⚡ PRELOAD CACHE synchronously — products/categories/config render instantly, NO skeleton flash */
   (function preloadCacheBoot() {
     try {
       const cfg = getCache(CFG_CACHE, CFG_TTL);
@@ -2649,10 +2661,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   if (!CONFIG) CONFIG = DEFAULT_CONFIG;
 
-  /* ⚡ Render with preloaded cache — NO skeleton visible if cache exists */
   renderAll(true);
 
-  /* ⚡ Network sync in background (cache already shown) */
   loadProducts();
 
   loadConfig().then(() => {
