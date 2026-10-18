@@ -15,7 +15,7 @@
 <style>
 :root{--primary:#2874f0;--tg-primary:#2874f0;--primary-light:#f0f5ff;--text-main:#212121;--text-muted:#878787;--border:#e0e0e0;--bg-main:#ffffff;--bg-sec:#f1f3f6;--nav-h:60px;}
 *,*::before,*::after{box-sizing:border-box;}
-html,body{margin:0!important;padding:0!important;width:100%!important;max-width:100vw;overflow:hidden!important;background:var(--bg-main);font-family:'Roboto',Arial,sans-serif;color:var(--text-main);-webkit-font-smoothing:antialiased;height:100vh;}
+html,body{margin:0!important;padding:0!important;width:100%!important;max-width:100vw;overflow:hidden!important;background:var(--bg-main);font-family:'Roboto',Arial,sans-serif;color:var(--text-main);-webkit-font-smoothing:antialiased;height:100vh;overscroll-behavior:none;}
 img{max-width:100%;display:block;}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 input{font:inherit;}
@@ -43,7 +43,8 @@ a{color:inherit;text-decoration:none;}
 .tg-admin-bar-btn{background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:6px 12px;border-radius:4px;display:flex;align-items:center;gap:4px;}
 .tg-container{display:flex;height:calc(100vh - 58px - var(--nav-h) - env(safe-area-inset-bottom,0px));margin-top:58px;background:#fff;}
 .tg-admin-mode .tg-container{height:calc(100vh - 98px - var(--nav-h) - env(safe-area-inset-bottom,0px));margin-top:98px;}
-.tg-sidebar{width:110px;background:var(--bg-sec);overflow-y:auto;-webkit-overflow-scrolling:touch;border-right:1px solid var(--border);flex-shrink:0;scrollbar-width:none;padding-bottom:20px;}
+/* ✅ FIX 1: overscroll + touch-action */
+.tg-sidebar{width:110px;background:var(--bg-sec);overflow-y:auto;-webkit-overflow-scrolling:touch;border-right:1px solid var(--border);flex-shrink:0;scrollbar-width:none;padding-bottom:20px;overscroll-behavior:contain;touch-action:pan-y;}
 .tg-sidebar::-webkit-scrollbar{display:none;}
 .tg-side-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 6px;gap:8px;cursor:pointer;font-size:11px;font-weight:500;color:var(--text-muted);text-align:center;position:relative;border-bottom:1px solid #e8e8e8;transition:background 0.15s;}
 .tg-side-item.active{background:#fff;color:var(--primary);font-weight:700;border-right:3px solid var(--primary);border-bottom-color:transparent;}
@@ -71,7 +72,8 @@ a{color:inherit;text-decoration:none;}
 .tg-active-chips{display:flex;gap:8px;width:max-content;}
 .tg-ac{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);border:1px solid #d0e2ff;color:var(--primary);font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;white-space:nowrap;}
 .tg-ac button{width:16px;height:16px;border-radius:50%;background:rgba(40,116,240,0.15);color:var(--primary);font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
-.tg-prod-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:90px;}
+/* ✅ FIX 1: overscroll + touch-action */
+.tg-prod-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:90px;overscroll-behavior:contain;touch-action:pan-y;}
 .tg-prod-count{padding:12px 16px 0;font-size:12px;color:var(--text-muted);font-weight:500;min-height:20px;}
 .tg-prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px 16px 16px;}
 .tg-prod-card{border:1px solid #f0f0f0;border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,0.02);transition:transform 0.2s,box-shadow 0.2s;position:relative;}
@@ -279,7 +281,6 @@ a{color:inherit;text-decoration:none;}
 
 <div class="tg-toasts" id="tg-toasts"></div>
 
-<!-- ✅ Firebase scripts — WITHOUT defer (safe order) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -295,6 +296,7 @@ a{color:inherit;text-decoration:none;}
   let deleteAction = null, recognition = null, searchTimer = null;
   let unsubCats = null, unsubProds = null, hasCache = false, productsReady = false;
   let _productsSig = '', _sidebarSig = '', _subcatsSig = '', _progressOn = false;
+  let _serverProductsReceived = false; // ✅ NEW
 
   const _imgUrlCache = new Map();
   function cardImgUrl(url, width) {
@@ -353,7 +355,6 @@ a{color:inherit;text-decoration:none;}
   function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
   function tsToMs(ts) { if (!ts) return 0; if (typeof ts.toDate === 'function') return ts.toDate().getTime(); if (typeof ts === 'number') return ts; if (ts.seconds) return ts.seconds * 1000; return 0; }
 
-  /* ✅ Firebase — SYNCHRONOUS load, guaranteed available */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -366,11 +367,7 @@ a{color:inherit;text-decoration:none;}
   }
   const auth = firebase.auth();
   const db = firebase.firestore();
-
-  /* ✅ FIX: expose globally so external code + inline handlers can access */
-  window.db = db;
-  window.auth = auth;
-  window.firebase = firebase;
+  window.db = db; window.auth = auth; window.firebase = firebase;
 
   let pendingCatSlug = null;
   try {
@@ -572,14 +569,26 @@ a{color:inherit;text-decoration:none;}
       setProgress(false);
     }).catch(() => {});
 
+    // ✅ FIX 2: Skip empty cache snapshot — server se real data aane tak ruko
     try {
       unsubProds = db.collection('products').limit(300).onSnapshot(snap => {
         const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
-        ALL_PRODUCTS = prods; productsReady = true; persistCache();
+        if (prods.length === 0 && snap.metadata.fromCache && !_serverProductsReceived && ALL_PRODUCTS.length === 0) {
+          return;
+        }
+        ALL_PRODUCTS = prods;
+        productsReady = true;
+        if (!snap.metadata.fromCache) _serverProductsReceived = true;
+        persistCache();
         renderProducts(true);
         if (!snap.metadata.fromCache) setProgress(false);
-      }, () => { productsReady = true; setProgress(false); renderProducts(true); });
-    } catch(e) { productsReady = true; setProgress(false); }
+      }, () => {
+        productsReady = true;
+        _serverProductsReceived = true;
+        setProgress(false);
+        renderProducts(true);
+      });
+    } catch(e) { productsReady = true; _serverProductsReceived = true; setProgress(false); }
 
     try {
       unsubCats = db.collection('categories').onSnapshot(snap => {
@@ -590,7 +599,7 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
 
     setTimeout(() => {
-      if (!productsReady) { productsReady = true; renderProducts(true); }
+      if (!productsReady) { productsReady = true; _serverProductsReceived = true; renderProducts(true); }
       setProgress(false);
       if (!hasCache && ALL_CATEGORIES.length === 0 && ALL_PRODUCTS.length === 0) showErrorState();
     }, 12000);
@@ -603,7 +612,7 @@ a{color:inherit;text-decoration:none;}
     if (grid) grid.innerHTML = '<div class="tg-empty"><div style="font-size:36px;margin-bottom:8px;">📡</div>Could not load data<br><button class="tg-btn primary" style="margin-top:14px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgRetry()">Retry</button></div>';
   }
   window.tgRetry = function() {
-    hasCache = false; productsReady = false;
+    hasCache = false; productsReady = false; _serverProductsReceived = false;
     _productsSig = ''; _sidebarSig = ''; _subcatsSig = '';
     setProgress(true); setupListeners();
   };
@@ -698,8 +707,13 @@ a{color:inherit;text-decoration:none;}
     _productsSig = sig;
     if (countEl) countEl.textContent = filtered.length === 0 ? '' : `${filtered.length} product${filtered.length > 1 ? 's' : ''} found`;
     if (filtered.length === 0) {
-      const hasFilters = filterMinPrice > 0 || filterMaxPrice < 999999 || filterRating > 0 || searchQuery;
       const noProducts = ALL_PRODUCTS.length === 0;
+      // ✅ FIX 2: Server response aane tak skeleton — error flash nahi
+      if (noProducts && !_serverProductsReceived) {
+        grid.innerHTML = '<div class="tg-skel tg-skel-card"></div><div class="tg-skel tg-skel-card"></div><div class="tg-skel tg-skel-card"></div><div class="tg-skel tg-skel-card"></div>';
+        return;
+      }
+      const hasFilters = filterMinPrice > 0 || filterMaxPrice < 999999 || filterRating > 0 || searchQuery;
       let emptyHtml = '<div class="tg-empty"><div style="font-size:40px;margin-bottom:10px;">' + (noProducts ? '📡' : '🔍') + '</div><div>' + (noProducts ? 'Could not load products' : 'No products found') + '</div>';
       if (noProducts) emptyHtml += '<button class="tg-btn primary" style="margin-top:16px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgRetry()">Retry</button>';
       else if (hasFilters) emptyHtml += '<button class="tg-btn primary" style="margin-top:16px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgClearAll()">Clear All</button>';
