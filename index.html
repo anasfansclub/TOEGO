@@ -664,13 +664,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   </div>
 </div>
 
-<!-- ✅ FIX: Firebase scripts loaded with defer (non-blocking) -->
+<!-- Firebase SDKs -->
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-/* ══════════════════ IMMEDIATE: SPLASH ══════════════════ */
+/* SPLASH */
 (function() {
   var el = document.getElementById('tg-splash');
   if (!el) return;
@@ -697,7 +697,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   else window.addEventListener('load', function() { setTimeout(hideNow, 0); }, { once: true });
 })();
 
-/* ══════════════════ IMMEDIATE: THEME FROM CACHE ══════════════════ */
+/* THEME CACHE */
 (function() {
   try {
     var c = localStorage.getItem('toego_theme_colors');
@@ -720,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function() {
 (function() {
   'use strict';
 
-  /* ══════════════════ FIREBASE ══════════════════ */
+  /* FIREBASE INIT */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -738,7 +738,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const FV = firebase.firestore.FieldValue;
 
-  /* ══════════════════ STATE ══════════════════ */
+  /* STATE */
   let CONFIG = null;
   let allProducts = [];
   let allReviews = [];
@@ -834,7 +834,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  /* ✅ FIX 3: Banner image — w_1600 → w_900 (mobile pe 3-4x chhota) */
   function optimizeImgUrl(url) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') !== -1 && url.indexOf('/upload/') !== -1) {
@@ -845,7 +844,6 @@ document.addEventListener('DOMContentLoaded', function() {
     return url;
   }
 
-  /* ✅ FIX 1: cardImgUrl — ALWAYS w_400 (mini/card/large sab same URL share karte hain) */
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
@@ -867,9 +865,6 @@ document.addEventListener('DOMContentLoaded', function() {
       img.src = optimizeImgUrl(b.image);
     });
   }
-
-  /* ✅ FIX 6: preloadProductImages — DISABLED (browser khud handle karega) */
-  function preloadProductImages() { /* disabled */ }
 
   function saveBannersCache(data) {
     try { localStorage.setItem(BANNER_CACHE, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
@@ -1780,41 +1775,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 8000);
 
     try {
-      /* ✅ FIX 5: limit 60 → 30 */
-      db.collection('products').limit(30).get()
+      /* ✅ FIXED: where clauses for rules compliance + speed */
+      db.collection('products')
+        .where('active', '==', true)
+        .where('approved', '==', true)
+        .limit(30)
+        .get()
         .then(snap => {
           clearTimeout(safetyTimer);
           applySnap(snap);
           try {
-            unsubProducts = db.collection('products').limit(30).onSnapshot(
-              s => {
-                const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
-                  .filter(p => p && p.active !== false && p.approved !== false);
-                if (data.length) {
-                  const ns = _productsContentSig(data);
-                  const os = _productsContentSig(allProducts);
-                  if (ns !== os) {
-                    allProducts = data;
-                    setCache(PROD_CACHE, allProducts);
-                    _productsSig = '';
-                    renderProducts(true);
+            unsubProducts = db.collection('products')
+              .where('active', '==', true)
+              .where('approved', '==', true)
+              .limit(30)
+              .onSnapshot(
+                s => {
+                  const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .filter(p => p && p.active !== false && p.approved !== false);
+                  if (data.length) {
+                    const ns = _productsContentSig(data);
+                    const os = _productsContentSig(allProducts);
+                    if (ns !== os) {
+                      allProducts = data;
+                      setCache(PROD_CACHE, allProducts);
+                      _productsSig = '';
+                      renderProducts(true);
+                    }
                   }
-                }
-              },
-              () => {}
-            );
+                },
+                () => {}
+              );
           } catch(e) {}
         })
         .catch(() => {
           clearTimeout(safetyTimer);
           try {
-            unsubProducts = db.collection('products').limit(30).onSnapshot(
-              s => applySnap(s),
-              () => {
-                _productsLoading = false;
-                if (!allProducts.length) renderProducts(true);
-              }
-            );
+            unsubProducts = db.collection('products')
+              .where('active', '==', true)
+              .where('approved', '==', true)
+              .limit(30)
+              .onSnapshot(
+                s => applySnap(s),
+                () => {
+                  _productsLoading = false;
+                  if (!allProducts.length) renderProducts(true);
+                }
+              );
           } catch(e2) {
             _productsLoading = false;
             if (!allProducts.length) renderProducts(true);
@@ -1835,14 +1842,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function loadReviewsForProducts() {
     try {
-      /* ✅ FIX 8: 30 → 15 pids */
       const pids = allProducts.slice(0, 15).map(p => p.id).filter(Boolean);
       if (!pids.length) return;
       const all = [];
       for (let i = 0; i < pids.length; i += 10) {
         const chunk = pids.slice(i, i + 10);
         try {
-          /* ✅ FIX 8: limit 300 → 120 */
           const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(120).get();
           snap.forEach(d => all.push({ id: d.id, ...d.data() }));
         } catch(e) {}
@@ -1983,7 +1988,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const trendingArr = applySortWithTimer(filtered, 10);
     const bestArr = applySortWithTimer(filtered, 10);
     const newArr = applySortWithTimer(filtered, 10);
-    /* ✅ FIX 5: allArr 40 → 20 */
     const allArr = applySortWithTimer(filtered, 20);
 
     const set = (id, arr, fn) => { 
@@ -1998,7 +2002,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const allEl = document.getElementById('tg-mall');
     if (allEl) allEl.innerHTML = allArr.length ? allArr.map((p, i) => largeCard(p, i)).join('') : emptyBox();
 
-    /* ✅ FIX 7: refresh cached timer elements after render */
     _refreshTimerEls();
     updateAllWishStates();
     if (currentSearch) renderSearchResults();
@@ -2006,7 +2009,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function emptyBox() { return '<div class="tg-mempty"><div class="tg-mempty-icon">📦</div><h3 style="margin:0 0 4px;color:#212121;font-size:14px;">No products</h3></div>'; }
 
-  /* ✅ FIX 2: miniCard — first 2 eager only (was 6) */
   function miniCard(p, i) {
     i = i || 0;
     const isAboveFold = i < 2;
@@ -2069,7 +2071,6 @@ document.addEventListener('DOMContentLoaded', function() {
     return '<span class="tg-tmr-ic">⚡</span>' + segs;
   }
 
-  /* ✅ FIX 2: productCard — first 2 eager only (was 3) */
   function productCard(p, i) {
     i = i || 0;
     const loadingAttr = i < 2 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
@@ -2169,7 +2170,6 @@ document.addEventListener('DOMContentLoaded', function() {
     '</div>';
   }
 
-  /* ✅ FIX 7: cached timer elements — querySelectorAll ek baar per render */
   let _timerEls = [];
   function _refreshTimerEls() {
     _timerEls = document.querySelectorAll('.tg-mcard-timer[data-end]');
@@ -2270,6 +2270,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let _trackerInFlight = false;
   let _trackerLastLoad = 0;
 
+  /* ══════════════════════════════════════════════════════
+     ✅ FIXED loadTracker() — customerId query (rules + speed)
+     ══════════════════════════════════════════════════════ */
   function loadTracker() {
     if (_trackerInFlight) return;
     const now = Date.now();
@@ -2284,22 +2287,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!u) { const t = document.getElementById('tg-mtracker-strip'); if (t) { t.classList.remove('show'); t.innerHTML = ''; } return; }
 
     const uid = u.uid;
-    const email = (u.email||'').toLowerCase();
-    const phone = (u.phoneNumber||'').replace(/\D/g,'');
-
-    function userMatches(o) {
-      const candidates = [
-        o.userId, o.uid, o.customerId, o.user_id, o.customer_id,
-        o.customer && o.customer.id, o.user && o.user.id, o.user && o.user.uid,
-        o.buyerId, o.buyer && o.buyer.id,
-        o.email, o.userEmail, o.customerEmail,
-        o.phone, o.userPhone, o.customerPhone
-      ].filter(Boolean).map(x => String(x).toLowerCase());
-      if (candidates.includes(uid.toLowerCase())) return true;
-      if (email && candidates.includes(email)) return true;
-      if (phone && candidates.some(c => c.replace(/\D/g,'') === phone)) return true;
-      return false;
-    }
 
     function hideTracker() {
       const t = document.getElementById('tg-mtracker-strip');
@@ -2310,7 +2297,7 @@ document.addEventListener('DOMContentLoaded', function() {
       _trackerInFlight = false;
       _trackerLastLoad = Date.now();
       if (!snap || snap.empty) { hideTracker(); return; }
-      const myOrders = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(userMatches);
+      const myOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       const active = myOrders.filter(o => {
         const s = normStatus(o.status);
         return !['delivered','cancelled','returned','refunded','rto'].includes(s);
@@ -2321,25 +2308,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     _trackerInFlight = true;
     try {
-      unsubTracker = db.collection('orders').orderBy('createdAt', 'desc').limit(20)
+      unsubTracker = db.collection('orders')
+        .where('customerId', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .limit(5)
         .onSnapshot(
           snap => { handleSnap(snap); },
           err => {
             _trackerInFlight = false;
             _trackerLastLoad = Date.now();
             try {
-              unsubTracker = db.collection('orders').limit(40)
-                .onSnapshot(snap2 => { handleSnap(snap2); }, err2 => { hideTracker(); });
+              unsubTracker = db.collection('orders')
+                .where('customerId', '==', uid)
+                .limit(5)
+                .onSnapshot(snap2 => { handleSnap(snap2); }, () => { hideTracker(); });
             } catch(e2) { hideTracker(); }
           }
         );
     } catch(e) {
       _trackerInFlight = false;
       _trackerLastLoad = Date.now();
-      try {
-        unsubTracker = db.collection('orders').limit(40)
-          .onSnapshot(snap => { handleSnap(snap); }, () => { hideTracker(); });
-      } catch(e2) { hideTracker(); }
+      hideTracker();
     }
   }
 
