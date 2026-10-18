@@ -214,6 +214,7 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
 
 .tg-mod{position:fixed;inset:0;background:rgba(5,8,16,0.9);backdrop-filter:blur(8px);z-index:99999;display:none;align-items:flex-end;justify-content:center;}
 .tg-mod.show{display:flex;}
+.tg-confirm.show{display:flex!important;}
 .tg-mod-c{width:100%;max-width:640px;background:linear-gradient(180deg,#0f1729 0%,#0a0e1a 100%);border:1px solid rgba(0,212,255,0.2);border-radius:22px 22px 0 0;padding:22px 20px 26px;max-height:92vh;overflow-y:auto;animation:tgSlideUp .3s cubic-bezier(.34,1.2,.64,1);}
 @media (min-width:640px){.tg-mod{align-items:center;}.tg-mod-c{border-radius:18px;max-height:88vh;}}
 @keyframes tgSlideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
@@ -580,6 +581,10 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <div class="tg-scl" style="font-size:10px;margin-bottom:6px;">💰 Avg Rate</div>
           <div class="tg-scn" style="font-size:20px;color:#00d4ff;" id="d-avg-rate">₹0</div>
         </div>
+        <div class="tg-sc" style="padding:14px;border-color:rgba(239,68,68,0.35);" onclick="tgNav('receive')">
+          <div class="tg-scl" style="font-size:10px;margin-bottom:6px;">📥 To Receive</div>
+          <div class="tg-scn" style="font-size:20px;color:#f87171;"><span id="d-to-receive">0</span> <span style="font-size:12px;color:#8892a6;">packets</span></div>
+        </div>
       </div>
 
       <div class="tg-sg">
@@ -618,6 +623,17 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
           <div class="tg-scn" id="s-settle">₹0</div>
           <div class="tg-scl">To Settle</div>
         </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sh">
+          <div><div class="tg-st">📥 Receive from Partners</div><div class="tg-ss">Partner se packets receive karo · partner pe click = scan</div></div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="tg-pill red" id="d-receive-pill">0 packets</span>
+            <button class="tg-btn out" onclick="tgNav('receive')">View All</button>
+          </div>
+        </div>
+        <div id="d-receive-partners"></div>
       </div>
 
       <div class="tg-sec">
@@ -1665,6 +1681,39 @@ header#top,nav.o_main_navbar,footer#bottom,.o_website_edit_toolbar,.o_breadcrumb
       activeEl.innerHTML = activeList.map(([bid, b]) =>
         '<div class="tg-row" onclick="tgOpenBoyDetail(\''+esc(bid)+'\')"><div class="tg-row-av">🏍️</div><div class="tg-row-b"><div class="tg-row-t">'+esc(b.name)+'</div><div class="tg-row-s"><span>📞 '+esc(b.phone||'—')+'</span><span>'+b.count+' packet(s)</span></div></div><div class="tg-row-a"><div style="font-size:15px;font-weight:900;color:#00d4ff;font-family:monospace;">'+inr(b.earning)+'</div></div></div>'
       ).join('');
+    }
+
+    /* 📥 Receive from Partners — dashboard column */
+    const collectedTasks = ALL_TASKS.filter(t => normStatus(t.status) === 'collected');
+    const recvGroups = {};
+    collectedTasks.forEach(t => {
+      const bid = t.pickupBoyId || 'unknown';
+      if (!recvGroups[bid]) recvGroups[bid] = { boyId: bid, name: t.pickupBoyName || 'Partner', phone: t.pickupBoyPhone || '', count: 0, value: 0 };
+      recvGroups[bid].count++;
+      recvGroups[bid].value += Number(t.earning || 0);
+    });
+    const recvArr = Object.values(recvGroups).sort((a,b) => b.count - a.count);
+    setText('d-to-receive', collectedTasks.length);
+    setText('d-receive-pill', collectedTasks.length + ' packets');
+    const dRecvEl = document.getElementById('d-receive-partners');
+    if (dRecvEl) {
+      if (!recvArr.length) {
+        dRecvEl.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📥</div><div class="tg-empty-t">No packets to receive</div><div class="tg-empty-d">Partner jab packets collect karega, yahan dikhega</div></div>';
+      } else {
+        dRecvEl.innerHTML = recvArr.map(g =>
+          '<div class="tg-row" onclick="tgReceiveFromBoy(\'' + esc(g.boyId) + '\')">' +
+            '<div class="tg-row-av">' + esc(ini(g.name)) + '</div>' +
+            '<div class="tg-row-b">' +
+              '<div class="tg-row-t">' + esc(g.name) + '</div>' +
+              '<div class="tg-row-s"><span>📞 ' + esc(g.phone || '—') + '</span><span>' + g.count + ' packet(s)</span><span>' + inr(g.value) + '</span></div>' +
+            '</div>' +
+            '<div class="tg-row-a">' +
+              '<span class="tg-pill red">' + g.count + ' TO RECEIVE</span>' +
+              '<button class="tg-btn suc" onclick="event.stopPropagation();tgReceiveFromBoy(\'' + esc(g.boyId) + '\')" style="padding:8px 12px;font-size:11px;">⚡ Scan</button>' +
+            '</div>' +
+          '</div>'
+        ).join('');
+      }
     }
   }
 
