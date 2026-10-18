@@ -150,7 +150,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 .tg-mflash-tsep{color:#fff;font-weight:800;font-size:18px;}
 .tg-mflash-cta{background:#fff;color:#212121;font-size:12px;font-weight:800;padding:12px 22px;border-radius:8px;text-transform:uppercase;white-space:nowrap;}
 
-.tg-msec{background:#fff;margin:10px 0;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden;content-visibility:auto;contain-intrinsic-size:auto 500px;}
+.tg-msec{background:#fff;margin:10px 0;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06);overflow:hidden;}
 .tg-msec-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;}
 .tg-msec-head h3{margin:0;font-size:18px;font-weight:800;color:#212121;}
 .tg-msec-head-sub{font-size:12px;color:#666;margin-top:2px;}
@@ -382,7 +382,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   .tg-mflash-text p{font-size:10px;}
   .tg-mflash-tbox{font-size:13px;padding:4px 6px;min-width:26px;}
   .tg-mflash-cta{padding:8px 14px;font-size:10px;}
-  .tg-msec{margin:8px 0;border-radius:8px;contain-intrinsic-size:auto 400px;}
+  .tg-msec{margin:8px 0;border-radius:8px;}
   .tg-msec-head{padding:12px 14px 8px;}
   .tg-msec-head h3{font-size:15px;}
   .tg-msec-btn{font-size:10px;padding:6px 10px;}
@@ -477,7 +477,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   .tg-mflash-tbox{font-size:24px;padding:8px 14px;min-width:58px;border-radius:8px;}
   .tg-mflash-tsep{font-size:24px;}
   .tg-mflash-cta{padding:16px 34px;font-size:13.5px;border-radius:10px;font-weight:900;}
-  .tg-msec{border-radius:14px;margin:18px 0;contain-intrinsic-size:auto 600px;}
+  .tg-msec{border-radius:14px;margin:18px 0;}
   .tg-msec-head{padding:22px 28px 14px;}
   .tg-msec-head h3{font-size:22px;font-weight:900;letter-spacing:-0.4px;}
   .tg-msec-head-sub{font-size:13px;margin-top:3px;}
@@ -721,9 +721,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  try {
-    db.enablePersistence({ synchronizeTabs: false }).catch(() => {});
-  } catch(e) {}
+  /* ═══ ⚡ FIX: Persistence disabled — causes hangs in WebView & random browser freezes ═══ */
+  /* Original code had db.enablePersistence() which locks IndexedDB and breaks after 3-4 refreshes */
 
   const FV = firebase.firestore.FieldValue;
 
@@ -742,8 +741,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   let MAB_INDEX = 0, MAB_COUNT = 0, MAB_AUTO = null;
   let SLIDER_HASH = '';
 
-  // ⚡ FIX: Prevents flash of DEFAULT_CATEGORIES before Firestore responds
+  // ⚡ Prevents flash of DEFAULT_CATEGORIES before Firestore responds
   let _catsServerConfirmed = false;
+
+  // ⚡ Product load state
+  let _productsLoading = false;
+  let _productsLoaded = false;
+  let _reviewsLoaded = false;
 
   const _shuffleSeed = (Date.now() % 1000000007) ^ Math.floor(Math.random() * 2147483647);
   const _hashCache = new Map();
@@ -1145,7 +1149,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   async function loadTheme() {
     try {
-      const snap = await db.collection('siteSettings').doc('theme').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('theme').get());
+      const snap = await db.collection('siteSettings').doc('theme').get();
       if (snap.exists) {
         const d = snap.data();
         const primary = d.themeColor || '#2874f0';
@@ -1296,12 +1300,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
               const raw = snap.docs.map(d => ({ id: d.id, ...d.data() }))
                 .sort((a,b) => (Number(a.order)||999) - (Number(b.order)||999));
               ALL_CATS_FROM_DB = raw;
-              // ⚡ FIX: Mark confirmed so renderCategories can safely fallback to DEFAULT_CATEGORIES if empty
               _catsServerConfirmed = true;
               setCache(CATS_CACHE, raw);
               renderCategories();
             }, err => {
-              // ⚡ Even on error, stop waiting → allow fallback to defaults
               _catsServerConfirmed = true;
               renderCategories();
             });
@@ -1313,7 +1315,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       })(),
       (async function() {
         try {
-          const s = await db.collection('siteSettings').doc('shopHome').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('shopHome').get());
+          const s = await db.collection('siteSettings').doc('shopHome').get();
           if (s.exists) CONFIG = mergeDeep(DEFAULT_CONFIG, s.data());
           else if (!CONFIG) CONFIG = DEFAULT_CONFIG;
           setCache(CFG_CACHE, CONFIG);
@@ -1378,10 +1380,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
         }));
     }
 
-    // ⚡ FIX: Don't flash DEFAULT_CATEGORIES until Firestore confirms empty
     if (!cats.length) {
       if (!_catsServerConfirmed) {
-        // Still loading — keep "All" only, no flash of defaults
         return;
       }
       cats = DEFAULT_CATEGORIES.slice();
@@ -1540,6 +1540,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     _productsSig = ''; 
     renderBannerSlider(false);
     renderFlashSale();
+
+    /* ⚡ FIX: If products already loaded, re-render them after DOM wipe */
+    if (allProducts.length) {
+      renderProducts(true);
+    }
+
     if (!skipLoad) loadProducts();
     setTimeout(() => { if (!document.hidden) loadTracker(); }, 4000);
     if (currentSearch) {
@@ -1668,8 +1674,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return parts.join(';');
   }
 
+  /* ══════════════════ ⚡ FIXED PRODUCT LOADER ══════════════════
+     - Cache renders instantly
+     - .get() one-shot for speed, then onSnapshot for updates
+     - 8s safety timeout so skeleton never gets stuck
+     - Reviews loaded in background (non-blocking)
+  */
   function loadProducts() {
-    let cached = getCache(PROD_CACHE, PROD_TTL);
+    if (_productsLoading || _productsLoaded) return;
+
+    // ⚡ Instant cache render
+    const cached = getCache(PROD_CACHE, PROD_TTL);
     if (cached && cached.length) {
       allProducts = cached;
       renderProducts(true);
@@ -1679,42 +1694,103 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
     if (unsubProducts) { try { unsubProducts(); } catch(e){} unsubProducts = null; }
 
-    let isFirstLoad = true;
+    _productsLoading = true;
 
-    const applySnap = (snap) => {
-      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-        .filter(p => p && p.active !== false && p.approved !== false);
-      
-      const newSig = _productsContentSig(data);
-      const oldSig = _productsContentSig(allProducts);
-      if (newSig === oldSig) return true;
+    const finishLoad = (data) => {
+      _productsLoading = false;
 
-      allProducts = data;
-      setCache(PROD_CACHE, allProducts);
-      _productsSig = '';
-      renderProducts(true);
-      loadRecentlyViewed();
-      preloadProductImages(data, 8);
-      return true;
+      if (data && data.length) {
+        _productsLoaded = true;
+        const newSig = _productsContentSig(data);
+        const oldSig = _productsContentSig(allProducts);
+        if (newSig !== oldSig || !allProducts.length) {
+          allProducts = data;
+          setCache(PROD_CACHE, allProducts);
+          _productsSig = '';
+          renderProducts(true);
+          loadRecentlyViewed();
+          preloadProductImages(data, 8);
+        }
+      } else if (!allProducts.length) {
+        renderProducts(true);
+      }
+
+      // ⚡ Background reviews load (fixes always-"New" ratings, non-blocking)
+      if (!_reviewsLoaded && allProducts.length) {
+        _reviewsLoaded = true;
+        setTimeout(() => { loadReviewsForProducts().catch(() => {}); }, 1500);
+      }
     };
 
-    db.collection('products').limit(60).get().then(snap => {
-      if (isFirstLoad) {
-        if (snap.empty) { renderProducts(true); return; }
-        applySnap(snap);
-        isFirstLoad = false;
-      }
-    }).catch(() => {
-      if (isFirstLoad) { renderProducts(true); isFirstLoad = false; }
-    });
+    const applySnap = (snap) => {
+      if (!snap) { finishLoad([]); return; }
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        .filter(p => p && p.active !== false && p.approved !== false);
+      finishLoad(data);
+    };
 
+    // ⚡ Safety timeout — prevents skeleton getting stuck forever
+    const safetyTimer = setTimeout(() => {
+      if (_productsLoading && !_productsLoaded && !allProducts.length) {
+        _productsLoading = false;
+        renderProducts(true);
+      }
+    }, 8000);
+
+    // ⚡ Fast .get() first (more reliable than onSnapshot in WebView)
     try {
-      const q = db.collection('products').limit(60);
-      unsubProducts = q.onSnapshot(snap => {
-        isFirstLoad = false; 
-        applySnap(snap);
-      }, err => {});
-    } catch(e) {}
+      db.collection('products').limit(60).get()
+        .then(snap => {
+          clearTimeout(safetyTimer);
+          applySnap(snap);
+          // Setup realtime listener AFTER first success
+          try {
+            unsubProducts = db.collection('products').limit(60).onSnapshot(
+              s => {
+                const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
+                  .filter(p => p && p.active !== false && p.approved !== false);
+                if (data.length) {
+                  const ns = _productsContentSig(data);
+                  const os = _productsContentSig(allProducts);
+                  if (ns !== os) {
+                    allProducts = data;
+                    setCache(PROD_CACHE, allProducts);
+                    _productsSig = '';
+                    renderProducts(true);
+                  }
+                }
+              },
+              () => {}
+            );
+          } catch(e) {}
+        })
+        .catch(() => {
+          clearTimeout(safetyTimer);
+          // Fallback: onSnapshot
+          try {
+            unsubProducts = db.collection('products').limit(60).onSnapshot(
+              s => applySnap(s),
+              () => {
+                _productsLoading = false;
+                if (!allProducts.length) renderProducts(true);
+              }
+            );
+          } catch(e2) {
+            _productsLoading = false;
+            if (!allProducts.length) renderProducts(true);
+          }
+          setTimeout(() => {
+            if (!_productsLoaded && !allProducts.length) {
+              _productsLoading = false;
+              renderProducts(true);
+            }
+          }, 5000);
+        });
+    } catch(e) {
+      clearTimeout(safetyTimer);
+      _productsLoading = false;
+      if (!allProducts.length) renderProducts(true);
+    }
   }
 
   async function loadReviewsForProducts() {
@@ -2362,7 +2438,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     const u = auth.currentUser;
     if (!u) { wishSet = new Set(); updateAllWishStates(); return; }
     try {
-      const snap = await db.collection('wishlists').doc(u.uid).get({ source: 'cache' }).catch(() => db.collection('wishlists').doc(u.uid).get());
+      const snap = await db.collection('wishlists').doc(u.uid).get();
       const items = snap.exists && Array.isArray(snap.data().items) ? snap.data().items : [];
       wishSet = new Set(items);
       updateAllWishStates();
@@ -2510,14 +2586,26 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   updateCartBadge();
   loadTheme();
   
+  /* ═══ ⚡ FIX: Render structure + load products immediately (don't wait for config) ═══ */
   if (!CONFIG) {
     CONFIG = DEFAULT_CONFIG;
     renderAll(true);
   }
 
+  // ⚡ Direct product load — click karte hi products fetch ho jayenge
+  loadProducts();
+
   loadConfig().then(() => {
     if (initialQ) setTimeout(() => tgMDoSearch(initialQ), 350);
   });
+
+  // ⚡ FIX: Categories fallback — if firestore categories never respond, force defaults after 6s
+  setTimeout(() => {
+    if (!_catsServerConfirmed) {
+      _catsServerConfirmed = true;
+      renderCategories();
+    }
+  }, 6000);
 
   setTimeout(() => { 
     if (!document.hidden) { try { loadNotifs().catch(() => {}); } catch(e) {} }
