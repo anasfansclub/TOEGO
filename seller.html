@@ -2167,12 +2167,11 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   function labelHTML(o) {
     const mi = myItems(o); const di = mi.length ? mi : (Array.isArray(o.items) ? o.items : []);
     const a = addrOf(o); const sid = (o.id||'').slice(0,12).toUpperCase();
-    let sellerTotal = 0; di.forEach(it => { sellerTotal += Number(it.price||0) * Number(it.qty||1); });
 
-    const payMethodRaw = String(o.paymentMethod || o.payment || 'cod').toLowerCase();
-    const isCOD = payMethodRaw.indexOf('cod') !== -1 || payMethodRaw === 'cash' || payMethodRaw === '';
+    let totalQty = 0;
+    di.forEach(it => { totalQty += Number(it.qty||1); });
 
-    const qrData = 'TOEGO|' + sid + '|' + (a.pincode || '') + '|' + (isCOD ? sellerTotal : 0) + '|' + (isCOD ? 'COD' : 'ONLINE');
+    const qrData = 'TOEGO|' + sid + '|' + (a.pincode || '');
     const qrSvg = makeQRSvg(qrData, 'lbl-qr-svg');
 
     const sellerName = (SELLER && SELLER.shopName) || 'Seller';
@@ -2183,16 +2182,19 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     const sellerGst = (SELLER && SELLER.gst) ? SELLER.gst : '';
 
     const itemsHtml = di.map(it => {
-      const skuText = it.sku ? '<br><span style="font-size:9px;color:#555;font-weight:700;">SKU: ' + esc(it.sku) + '</span>' : '';
       return '<tr>' +
-        '<td>' + esc(it.name || 'Product') + skuText + '</td>' +
+        '<td>' + esc(it.name || 'Product') + '</td>' +
+        '<td>' + esc(it.size || '-') + '</td>' +
+        '<td>' + esc(it.color || '-') + '</td>' +
         '<td style="text-align:center;font-weight:700;">' + Number(it.qty||1) + '</td>' +
+        '<td>' + esc(it.sku || '-') + '</td>' +
       '</tr>';
     }).join('');
 
     return '<div class="lbl">' +
       '<div class="lbl-header">' +
-        '<div class="lbl-cod-box">' + (isCOD ? 'COD Collect amount : ' + esc(inr(sellerTotal)) : 'PREPAID') + '</div>' +
+        '<div class="lbl-orderid-box"><b>Order ID:</b> ' + esc(sid) + '</div>' +
+        '<div class="lbl-barcode-box">' + code39(sid) + '</div>' +
         '<div class="lbl-qr-box">' + qrSvg + '</div>' +
       '</div>' +
       '<div class="lbl-addr-box">' +
@@ -2205,13 +2207,10 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       (sellerGst ? '<div class="lbl-gst-box"><b>GSTIN No:</b> ' + esc(sellerGst) + '</div>' : '') +
       '<div class="lbl-table-box">' +
         '<table class="lbl-items-table">' +
-          '<thead><tr><th>Product</th><th style="text-align:center;width:40px;">Qty</th></tr></thead>' +
-          '<tbody>' + (itemsHtml || '<tr><td colspan="2" style="text-align:center;">No items</td></tr>') + '</tbody>' +
+          '<thead><tr><th>Product Name</th><th>Size</th><th>Color</th><th style="text-align:center;">Qty</th><th>SKU ID</th></tr></thead>' +
+          '<tbody>' + (itemsHtml || '<tr><td colspan="5" style="text-align:center;">No items</td></tr>') + '</tbody>' +
+          '<tfoot><tr><td colspan="3"><b>Total Qty</b></td><td style="text-align:center;"><b>' + totalQty + '</b></td><td></td></tr></tfoot>' +
         '</table>' +
-      '</div>' +
-      '<div class="lbl-footer">' +
-        '<div class="lbl-barcode">' + code39(sid) + '</div>' +
-        '<div class="lbl-orderid"><b>Order ID:</b> ' + esc(sid) + '</div>' +
       '</div>' +
     '</div>';
   }
@@ -2221,8 +2220,8 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     const orders = ids.map(id => ORDERS.find(o => o.id === id)).filter(Boolean); if (!orders.length) return;
 
     const css = FORMAT === 'a4'
-      ? '@page{size:A4;margin:6mm;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.page-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;width:198mm;height:285mm;gap:2mm;page-break-after:always;}.page-grid:last-child{page-break-after:auto;}.lbl{border:2px dashed #000;padding:3mm;box-sizing:border-box;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;font-size:10px;line-height:1.3;background:#fff;color:#000;position:relative;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2mm;gap:2mm;}.lbl-cod-box{font-weight:900;font-size:12px;flex:1;padding-top:2mm;}.lbl-qr-box{width:80px;height:80px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-addr-box{border-top:1px solid #000;padding-top:1mm;margin-bottom:2mm;}.lbl-section-h{font-weight:900;font-size:10px;margin-bottom:1mm;text-transform:uppercase;}.addr{font-size:11px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:10px;margin-bottom:2mm;border-top:1px solid #000;padding-top:1mm;}.lbl-table-box{margin-bottom:2mm;border:1px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1mm 2mm;font-size:10px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-footer{margin-top:auto;border-top:1px solid #000;padding-top:2mm;display:flex;justify-content:space-between;align-items:flex-end;}.lbl-barcode svg{height:30px;width:auto;max-width:100%;display:block;}.lbl-orderid{font-size:11px;font-weight:900;}'
-      : '@page{size:102mm 152mm;margin:0;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.lbl{width:102mm;height:152mm;box-sizing:border-box;padding:4mm;page-break-after:always;display:flex;flex-direction:column;font-size:11px;line-height:1.3;background:#fff;border:2px dashed #000;color:#000;position:relative;}.lbl:last-child{page-break-after:auto;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5mm;gap:2.5mm;}.lbl-cod-box{font-weight:900;font-size:13px;flex:1;padding-top:2mm;}.lbl-qr-box{width:90px;height:90px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-addr-box{border-top:1.5px solid #000;padding-top:1.5mm;margin-bottom:2.5mm;}.lbl-section-h{font-weight:900;font-size:11px;margin-bottom:1.5mm;text-transform:uppercase;}.addr{font-size:12px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:11px;margin-bottom:2.5mm;border-top:1.5px solid #000;padding-top:1.5mm;}.lbl-table-box{margin-bottom:2.5mm;border:1.5px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1.5mm 2mm;font-size:11px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-footer{margin-top:auto;border-top:1.5px solid #000;padding-top:2.5mm;display:flex;justify-content:space-between;align-items:flex-end;}.lbl-barcode svg{height:35px;width:auto;max-width:100%;display:block;}.lbl-orderid{font-size:12px;font-weight:900;}';
+      ? '@page{size:A4;margin:6mm;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.page-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;width:198mm;height:285mm;gap:2mm;page-break-after:always;}.page-grid:last-child{page-break-after:auto;}.lbl{border:2px dashed #000;padding:3mm;box-sizing:border-box;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;font-size:10px;line-height:1.3;background:#fff;color:#000;position:relative;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2mm;gap:2mm;}.lbl-orderid-box{font-weight:900;font-size:12px;flex:1;padding-top:2mm;}.lbl-barcode-box{flex-shrink:0;width:40%;text-align:center;}.lbl-barcode-box svg{max-width:100%;height:auto;display:block;}.lbl-qr-box{width:80px;height:80px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-addr-box{border-top:1px solid #000;padding-top:1mm;margin-bottom:2mm;}.lbl-section-h{font-weight:900;font-size:10px;margin-bottom:1mm;text-transform:uppercase;}.addr{font-size:11px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:10px;margin-bottom:2mm;border-top:1px solid #000;padding-top:1mm;}.lbl-table-box{margin-bottom:2mm;border:1px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1mm 2mm;font-size:10px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-items-table tfoot td{background:#f0f0f0;font-weight:900;}'
+      : '@page{size:102mm 152mm;margin:0;}*{box-sizing:border-box;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.lbl{width:102mm;height:152mm;box-sizing:border-box;padding:4mm;page-break-after:always;display:flex;flex-direction:column;font-size:11px;line-height:1.3;background:#fff;border:2px dashed #000;color:#000;position:relative;}.lbl:last-child{page-break-after:auto;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5mm;gap:2.5mm;}.lbl-orderid-box{font-weight:900;font-size:13px;flex:1;padding-top:2mm;}.lbl-barcode-box{flex-shrink:0;width:40%;text-align:center;}.lbl-barcode-box svg{max-width:100%;height:auto;display:block;}.lbl-qr-box{width:90px;height:90px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-addr-box{border-top:1.5px solid #000;padding-top:1.5mm;margin-bottom:2.5mm;}.lbl-section-h{font-weight:900;font-size:11px;margin-bottom:1.5mm;text-transform:uppercase;}.addr{font-size:12px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:11px;margin-bottom:2.5mm;border-top:1.5px solid #000;padding-top:1.5mm;}.lbl-table-box{margin-bottom:2.5mm;border:1.5px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1.5mm 2mm;font-size:11px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-items-table tfoot td{background:#f0f0f0;font-weight:900;}';
 
     let body = '';
     if (FORMAT === 'a4') {
