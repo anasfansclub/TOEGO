@@ -8,200 +8,98 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f172a;
-    color: #e2e8f0;
-    padding: 20px;
-    min-height: 100vh;
+    background: #0f172a; color: #e2e8f0; padding: 20px; min-height: 100vh;
   }
   .container { max-width: 900px; margin: 0 auto; }
   h1 {
-    font-size: 24px;
-    margin-bottom: 8px;
+    font-size: 24px; margin-bottom: 8px;
     background: linear-gradient(135deg, #60a5fa, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
   .card {
-    background: #1e293b;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid #334155;
+    background: #1e293b; border-radius: 12px; padding: 20px;
+    margin-bottom: 16px; border: 1px solid #334155;
   }
-  .card h2 {
-    font-size: 16px;
-    margin-bottom: 12px;
-    color: #f1f5f9;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .card h2 { font-size: 16px; margin-bottom: 12px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; }
   .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-left: auto;
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+    border-radius: 6px; font-size: 12px; font-weight: 600; margin-left: auto;
   }
   .status.pending { background: #334155; color: #94a3b8; }
   .status.ok { background: #14532d; color: #4ade80; }
   .status.fail { background: #7f1d1d; color: #f87171; }
   .status.warn { background: #78350f; color: #fbbf24; }
-  .row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #334155;
-    font-size: 14px;
-  }
+  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 14px; }
   .row:last-child { border-bottom: none; }
   .label { color: #94a3b8; }
-  .value {
-    color: #f1f5f9;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    word-break: break-all;
-    text-align: right;
-    max-width: 60%;
-  }
-  .error-box {
-    background: #450a0a;
-    border: 1px solid #7f1d1d;
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 12px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    color: #fca5a5;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-  .success-box {
-    background: #052e16;
-    border: 1px solid #14532d;
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 12px;
-    font-size: 14px;
-    color: #86efac;
-  }
+  .value { color: #f1f5f9; font-family: 'Courier New', monospace; font-size: 13px; word-break: break-all; text-align: right; max-width: 60%; }
+  .error-box { background: #450a0a; border: 1px solid #7f1d1d; border-radius: 8px; padding: 12px; margin-top: 12px; font-family: 'Courier New', monospace; font-size: 12px; color: #fca5a5; white-space: pre-wrap; word-break: break-all; }
+  .success-box { background: #052e16; border: 1px solid #14532d; border-radius: 8px; padding: 12px; margin-top: 12px; font-size: 14px; color: #86efac; }
   button {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    margin-bottom: 16px;
-    transition: opacity 0.2s;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none;
+    padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; width: 100%; margin-bottom: 16px; transition: opacity 0.2s;
   }
   button:hover { opacity: 0.9; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .spinner {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid #94a3b8;
-    border-top-color: #60a5fa;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .fix-box {
-    background: #0c4a6e;
-    border: 1px solid #075985;
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 12px;
-    font-size: 13px;
-    color: #bae6fd;
-    line-height: 1.6;
-  }
+  .fix-box { background: #0c4a6e; border: 1px solid #075985; border-radius: 8px; padding: 12px; margin-top: 12px; font-size: 13px; color: #bae6fd; line-height: 1.6; }
   .fix-box strong { color: #7dd3fc; }
-  pre {
-    background: #0f172a;
-    padding: 12px;
-    border-radius: 6px;
-    overflow-x: auto;
-    font-size: 12px;
-    color: #94a3b8;
-    margin-top: 8px;
-    border: 1px solid #334155;
-  }
+  pre { background: #0f172a; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 12px; color: #94a3b8; margin-top: 8px; border: 1px solid #334155; }
+  input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; margin-bottom: 10px; font-family: inherit; }
+  .btn-google { background: #fff; color: #333; margin-top: 10px; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🔍 Firestore Diagnostic Tool</h1>
-  <p class="subtitle">Ye page check karega ki admin access kyun nahi mil raha. Har section ka result dekho.</p>
+  <p class="subtitle">Ye page check karega ki admin access kyun nahi mil raha.</p>
 
-  <button id="runBtn" onclick="runDiagnostics()">
-    ▶️ Run Diagnostic
-  </button>
-
-  <!-- Section 1: Auth -->
-  <div class="card">
-    <h2>
-      <span>1️⃣ Authentication</span>
-      <span class="status pending" id="authStatus">Checking...</span>
-    </h2>
-    <div id="authDetails"></div>
+  <!-- Login Section -->
+  <div class="card" id="loginCard">
+    <h2>🔑 Step 1: Login Karein</h2>
+    <p style="font-size:13px; color:#94a3b8; margin-bottom:12px;">Apna admin account yahan login karo (sirf is page pe test ke liye):</p>
+    <input type="email" id="loginEmail" placeholder="Admin Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="loginEmail()" id="btnEmail" style="background:#10b981;">Email se Login Karo</button>
+    <button onclick="loginGoogle()" id="btnGoogle" class="btn-google">Google se Login Karo</button>
+    <div id="loginError" style="color:#f87171; font-size:13px; margin-top:10px;"></div>
   </div>
 
-  <!-- Section 2: User Doc -->
-  <div class="card">
-    <h2>
-      <span>2️⃣ User Document (users/{uid})</span>
-      <span class="status pending" id="docStatus">Checking...</span>
-    </h2>
-    <div id="docDetails"></div>
-  </div>
+  <!-- Diagnostic Sections -->
+  <div id="diagContainer" style="display:none;">
+    <button id="runBtn" onclick="runDiagnostics()">🔄 Run Diagnostic Again</button>
 
-  <!-- Section 3: Role -->
-  <div class="card">
-    <h2>
-      <span>3️⃣ Role Check</span>
-      <span class="status pending" id="roleStatus">Checking...</span>
-    </h2>
-    <div id="roleDetails"></div>
-  </div>
-
-  <!-- Section 4: Admin Collections Test -->
-  <div class="card">
-    <h2>
-      <span>4️⃣ Admin Collections Access</span>
-      <span class="status pending" id="collStatus">Checking...</span>
-    </h2>
-    <div id="collDetails"></div>
-  </div>
-
-  <!-- Section 5: Custom Claims -->
-  <div class="card">
-    <h2>
-      <span>5️⃣ Custom Claims</span>
-      <span class="status pending" id="claimStatus">Checking...</span>
-    </h2>
-    <div id="claimDetails"></div>
-  </div>
-
-  <!-- Final Verdict -->
-  <div class="card" id="verdictCard" style="display:none;">
-    <h2>🎯 Final Verdict — Kya Karna Hai</h2>
-    <div id="verdictDetails"></div>
+    <div class="card">
+      <h2><span>1️⃣ Authentication</span><span class="status pending" id="authStatus">Checking...</span></h2>
+      <div id="authDetails"></div>
+    </div>
+    <div class="card">
+      <h2><span>2️⃣ User Document (users/{uid})</span><span class="status pending" id="docStatus">Checking...</span></h2>
+      <div id="docDetails"></div>
+    </div>
+    <div class="card">
+      <h2><span>3️⃣ Role Check</span><span class="status pending" id="roleStatus">Checking...</span></h2>
+      <div id="roleDetails"></div>
+    </div>
+    <div class="card">
+      <h2><span>4️⃣ Admin Collections Access</span><span class="status pending" id="collStatus">Checking...</span></h2>
+      <div id="collDetails"></div>
+    </div>
+    <div class="card">
+      <h2><span>5️⃣ Custom Claims</span><span class="status pending" id="claimStatus">Checking...</span></h2>
+      <div id="claimDetails"></div>
+    </div>
+    <div class="card" id="verdictCard" style="display:none;">
+      <h2>🎯 Final Verdict — Kya Karna Hai</h2>
+      <div id="verdictDetails"></div>
+    </div>
   </div>
 </div>
 
 <script type="module">
 // ============================================================
 // ⚠️ APNA FIREBASE CONFIG YAHAN PASTE KARO
-// Firebase Console → Project Settings → Your apps → Config
 // ============================================================
 const firebaseConfig = {
   apiKey: "YAHAN_PASTE_KARO",
@@ -214,100 +112,109 @@ const firebaseConfig = {
 // ============================================================
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, doc, getDoc, collection, getDocs, limit, query } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let currentUser = null;
+
+window.loginEmail = async function() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  const btn = document.getElementById('btnEmail');
+  
+  err.textContent = '';
+  btn.textContent = 'Logging in...';
+  btn.disabled = true;
+
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    currentUser = cred.user;
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('diagContainer').style.display = 'block';
+    runDiagnostics();
+  } catch (e) {
+    err.textContent = '❌ ' + e.message;
+    btn.textContent = 'Email se Login Karo';
+    btn.disabled = false;
+  }
+};
+
+window.loginGoogle = async function() {
+  const provider = new GoogleAuthProvider();
+  const err = document.getElementById('loginError');
+  const btn = document.getElementById('btnGoogle');
+  
+  err.textContent = '';
+  btn.textContent = 'Logging in...';
+  btn.disabled = true;
+
+  try {
+    const cred = await signInWithPopup(auth, provider);
+    currentUser = cred.user;
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('diagContainer').style.display = 'block';
+    runDiagnostics();
+  } catch (e) {
+    err.textContent = '❌ ' + e.message;
+    btn.textContent = 'Google se Login Karo';
+    btn.disabled = false;
+  }
+};
+
 function setStatus(id, type, text) {
   const el = document.getElementById(id);
-  el.className = 'status ' + type;
-  el.textContent = text;
+  if(el) { el.className = 'status ' + type; el.textContent = text; }
 }
-
 function addRow(containerId, label, value, color = '') {
   const container = document.getElementById(containerId);
+  if(!container) return;
   const div = document.createElement('div');
   div.className = 'row';
   div.innerHTML = `<span class="label">${label}</span><span class="value" style="color:${color || '#f1f5f9'}">${value}</span>`;
   container.appendChild(div);
 }
-
 function addBox(containerId, type, text) {
   const container = document.getElementById(containerId);
+  if(!container) return;
   const div = document.createElement('div');
   div.className = type === 'error' ? 'error-box' : type === 'success' ? 'success-box' : 'fix-box';
   div.innerHTML = text;
   container.appendChild(div);
 }
 
-async function runDiagnostics() {
+window.runDiagnostics = async function() {
+  if (!currentUser) return;
   const btn = document.getElementById('runBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Running...';
+  btn.disabled = true; btn.textContent = '⏳ Running...';
 
-  // Reset
   ['authDetails','docDetails','roleDetails','collDetails','claimDetails','verdictDetails'].forEach(id => {
-    document.getElementById(id).innerHTML = '';
+    const el = document.getElementById(id); if(el) el.innerHTML = '';
   });
   document.getElementById('verdictCard').style.display = 'none';
 
   try {
     // ========== SECTION 1: Auth ==========
-    setStatus('authStatus', 'pending', 'Checking...');
-    const user = await new Promise(resolve => {
-      const unsub = onAuthStateChanged(auth, u => {
-        unsub();
-        resolve(u);
-      });
-    });
-
-    if (!user) {
-      setStatus('authStatus', 'fail', '❌ Not Signed In');
-      addRow('authDetails', 'Status', 'Not logged in', '#f87171');
-      addBox('authDetails', 'error',
-        '<strong>Problem:</strong> Is browser mein koi user login nahi hai.<br><br>' +
-        '<strong>Fix:</strong> Pehle app mein login karo, phir ye page refresh karo. ' +
-        'Ya agar app mein hi login hai to Firebase Auth persistence check karo.');
-      document.getElementById('verdictCard').style.display = 'block';
-      addBox('verdictDetails', 'error',
-        '<strong>🎯 Result:</strong> User logged in nahi hai. Pehle login karo.<br><br>' +
-        'Ye diagnostic page app ke <strong>same origin</strong> pe open karna (jahan app chal rahi hai). ' +
-        'Agar aap direct file:// se khol rahe ho to login state share nahi hoga.');
-      btn.disabled = false;
-      btn.textContent = '▶️ Run Diagnostic';
-      return;
-    }
-
     setStatus('authStatus', 'ok', '✅ Signed In');
-    addRow('authDetails', 'Email', user.email || '(none)');
-    addRow('authDetails', 'UID', user.uid, '#60a5fa');
-    addRow('authDetails', 'Email Verified', user.emailVerified ? '✅ Yes' : '❌ No',
-      user.emailVerified ? '#4ade80' : '#f87171');
-    addRow('authDetails', 'Provider', user.providerData[0]?.providerId || 'unknown');
-
-    addBox('authDetails', 'fix',
-      '<strong>⭐ IMPORTANT:</strong> Ye UID copy karo: <code>' + user.uid + '</code><br>' +
-      'Firebase Console → Firestore → <code>users/' + user.uid + '</code> ' +
-      'mein jaake check karo ki ye doc exist karta hai aur <code>role</code> field hai.');
+    addRow('authDetails', 'Email', currentUser.email || '(none)');
+    addRow('authDetails', 'UID', currentUser.uid, '#60a5fa');
+    addRow('authDetails', 'Email Verified', currentUser.emailVerified ? '✅ Yes' : '❌ No');
+    addRow('authDetails', 'Provider', currentUser.providerData[0]?.providerId || 'unknown');
+    addBox('authDetails', 'fix', '<strong>⭐ IMPORTANT:</strong> Ye UID copy karo: <code>' + currentUser.uid + '</code>');
 
     // ========== SECTION 2: User Doc ==========
     setStatus('docStatus', 'pending', 'Checking...');
     let userData = null;
     try {
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-
+      const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
       if (!userSnap.exists()) {
         setStatus('docStatus', 'fail', '❌ Doc Missing');
         addRow('docDetails', 'Doc Exists', '❌ NO', '#f87171');
-        addBox('docDetails', 'error',
-          '<strong>Problem:</strong> <code>users/' + user.uid + '</code> doc exist nahi karta.<br><br>' +
-          '<strong>Fix:</strong> Firebase Console → Firestore → <code>users</code> collection → ' +
-          '<strong>Add Document</strong> → Document ID = <code>' + user.uid + '</code> → ' +
-          'field: <code>role</code> (string) = <code>superadmin</code> → Save.');
+        addBox('docDetails', 'error', '<strong>Fix:</strong> Firebase Console → Firestore → <code>users</code> → Add Document → ID: <code>' + currentUser.uid + '</code> → Field: <code>role</code> = <code>superadmin</code>');
       } else {
         userData = userSnap.data();
         setStatus('docStatus', 'ok', '✅ Doc Found');
@@ -317,184 +224,85 @@ async function runDiagnostics() {
         // ========== SECTION 3: Role ==========
         setStatus('roleStatus', 'pending', 'Checking...');
         const role = userData.role;
-
         if (!role) {
-          setStatus('roleStatus', 'fail', '❌ role Field Missing');
-          addRow('roleDetails', 'role field', '❌ MISSING', '#f87171');
-          addBox('roleDetails', 'error',
-            '<strong>Problem:</strong> <code>role</code> field hi nahi hai user doc mein!<br><br>' +
-            '<strong>Fix:</strong> Firebase Console → Firestore → <code>users/' + user.uid + '</code> → ' +
-            'Edit → <strong>Add field</strong> → name: <code>role</code>, type: <code>string</code>, ' +
-            'value: <code>superadmin</code> → Save.');
+          setStatus('roleStatus', 'fail', '❌ Missing');
+          addRow('roleDetails', 'role', '❌ MISSING', '#f87171');
+          addBox('roleDetails', 'error', '<strong>Fix:</strong> Firestore mein <code>users/' + currentUser.uid + '</code> mein jao, field add karo: name: <code>role</code>, value: <code>superadmin</code>');
         } else if (role === 'superadmin' || role === 'admin') {
-          setStatus('roleStatus', 'ok', '✅ Valid Role');
+          setStatus('roleStatus', 'ok', '✅ Valid');
           addRow('roleDetails', 'role', role, '#4ade80');
-          addBox('roleDetails', 'success',
-            '<strong>✅ role sahi hai:</strong> <code>' + role + '</code><br>' +
-            'Rules ke hisaab se admin access milna chahiye. ' +
-            'Agar phir bhi collections nahi khul rahe to problem <strong>frontend code</strong> mein hai.');
         } else {
-          setStatus('roleStatus', 'fail', '❌ Wrong Role');
+          setStatus('roleStatus', 'fail', '❌ Wrong');
           addRow('roleDetails', 'role', '❌ "' + role + '"', '#f87171');
-          addRow('roleDetails', 'Expected', '"superadmin" ya "admin"', '#fbbf24');
-          addBox('roleDetails', 'error',
-            '<strong>Problem:</strong> role ki value galat hai: <code>"' + role + '"</code><br><br>' +
-            '<strong>Common mistakes:</strong><br>' +
-            '• Capital letters: "SuperAdmin" ❌ → "superadmin" ✅<br>' +
-            '• Space: "super admin" ❌ → "superadmin" ✅<br>' +
-            '• Trailing space: "superadmin " ❌ → "superadmin" ✅<br>' +
-            '• Different word: "owner", "root", "admin1" ❌<br><br>' +
-            '<strong>Fix:</strong> Firebase Console → Firestore → <code>users/' + user.uid + '</code> → ' +
-            'edit karke <code>role</code> = <code>superadmin</code> karo (exact, lowercase).');
+          addBox('roleDetails', 'error', '<strong>Fix:</strong> Value exactly <code>superadmin</code> honi chahiye. "SuperAdmin" ya "super admin" galat hai.');
         }
       }
     } catch (err) {
-      setStatus('docStatus', 'fail', '❌ Read Failed');
-      addRow('docDetails', 'Error', err.code || 'unknown', '#f87171');
-      addBox('docDetails', 'error',
-        '<strong>Problem:</strong> User doc padhne mein error aaya.<br><br>' +
-        '<strong>Error:</strong> <code>' + (err.code || err.message) + '</code><br><br>' +
-        '<strong>Possible reasons:</strong><br>' +
-        '• <code>permission-denied</code> → Rules deploy nahi hue ya galat hain<br>' +
-        '• <code>unavailable</code> → Network issue, retry karo<br>' +
-        '• <code>failed-precondition</code> → Index missing');
+      setStatus('docStatus', 'fail', '❌ Error');
+      addBox('docDetails', 'error', '<strong>Error:</strong> ' + err.code);
     }
 
     // ========== SECTION 4: Admin Collections ==========
     setStatus('collStatus', 'pending', 'Checking...');
-    const collectionsToTest = ['users', 'orders', 'products', 'siteSettings', 'coupons'];
-    const results = [];
+    const colls = ['users', 'orders', 'products', 'siteSettings', 'coupons'];
+    let failCount = 0;
 
-    for (const collName of collectionsToTest) {
+    for (const c of colls) {
       try {
-        const q = query(collection(db, collName), limit(1));
-        await getDocs(q);
-        results.push({ name: collName, ok: true });
-        addRow('collDetails', collName, '✅ Access OK', '#4ade80');
+        await getDocs(query(collection(db, c), limit(1)));
+        addRow('collDetails', c, '✅ Access OK', '#4ade80');
       } catch (err) {
-        results.push({ name: collName, ok: false, code: err.code });
-        addRow('collDetails', collName, '❌ ' + (err.code || 'error'), '#f87171');
+        failCount++;
+        addRow('collDetails', c, '❌ ' + err.code, '#f87171');
       }
     }
 
-    const failedCount = results.filter(r => !r.ok).length;
-    if (failedCount === 0) {
-      setStatus('collStatus', 'ok', '✅ All Accessible');
-      addBox('collDetails', 'success',
-        '<strong>🎉 Sab collections accessible hain!</strong><br>' +
-        'Matlab rules aur role dono theek hain. Agar app mein abhi bhi collections nahi khul rahe to ' +
-        '<strong>frontend code</strong> mein problem hai (purana email check, ya koi UI gating logic).');
-    } else if (failedCount === collectionsToTest.length) {
+    if (failCount === 0) {
+      setStatus('collStatus', 'ok', '✅ All Good');
+      addBox('collDetails', 'success', 'Sab collections khul rahi hain. Rules sahi kaam kar rahe hain.');
+    } else if (failCount === colls.length) {
       setStatus('collStatus', 'fail', '❌ All Blocked');
-      addBox('collDetails', 'error',
-        '<strong>Problem:</strong> Saari collections blocked hain. Iska matlab <code>isAdmin()</code> false hai.<br><br>' +
-        'Upar Section 2 aur 3 check karo — role set nahi hai ya doc missing hai. ' +
-        'Wo fix karke logout-login karo.');
+      addBox('collDetails', 'error', 'Saari collections block hain. Iska matlab <code>isAdmin()</code> false aa raha hai. Upar Section 2 aur 3 fix karo.');
     } else {
       setStatus('collStatus', 'warn', '⚠️ Partial');
-      addBox('collDetails', 'error',
-        '<strong>Problem:</strong> Kuch collections accessible, kuch nahi.<br>' +
-        'Ye normal ho sakta hai agar us collection mein data nahi hai aur rules strict hain.<br>' +
-        'Individual errors upar dekho.');
     }
 
     // ========== SECTION 5: Custom Claims ==========
     setStatus('claimStatus', 'pending', 'Checking...');
     try {
-      const tokenResult = await user.getIdTokenResult(true);
-      const claims = tokenResult.claims;
-      const claimRole = claims.role;
-
-      if (claimRole) {
-        setStatus('claimStatus', 'ok', '✅ Claim Set');
-        addRow('claimDetails', 'claims.role', claimRole, '#4ade80');
-        addBox('claimDetails', 'success',
-          '<strong>✅ Custom claim set hai:</strong> <code>' + claimRole + '</code><br>' +
-          'Rules mein <code>hasAdminClaim()</code> bhi pass hoga — double safety.');
+      const tokenResult = await currentUser.getIdTokenResult(true);
+      if (tokenResult.claims.role) {
+        setStatus('claimStatus', 'ok', '✅ Set');
+        addRow('claimDetails', 'claims.role', tokenResult.claims.role, '#4ade80');
       } else {
         setStatus('claimStatus', 'warn', '⚠️ No Claim');
-        addRow('claimDetails', 'claims.role', '(not set)', '#fbbf24');
-        addBox('claimDetails', 'fix',
-          '<strong>ℹ️ Custom claim nahi hai — par ye zaroori nahi.</strong><br>' +
-          'Rules <code>users/{uid}.role</code> bhi check karte hain, to firestore role se kaam chal jayega.<br><br>' +
-          '<strong>Optional (recommended):</strong> Admin SDK script se claim set karo:<br>' +
-          '<code>admin.auth().setCustomUserClaims(uid, { role: "superadmin" })</code>');
+        addBox('claimDetails', 'fix', 'Custom claim set nahi hai. Rules <code>users/{uid}.role</code> se kaam chalayenge, par custom claim zyada secure hai.');
       }
-
-      addRow('claimDetails', 'Token Email', claims.email || '(none)');
-      addRow('claimDetails', 'Token Expiry', new Date(tokenResult.expirationTime).toLocaleString());
     } catch (err) {
       setStatus('claimStatus', 'fail', '❌ Failed');
-      addBox('claimDetails', 'error',
-        'Token refresh failed: <code>' + (err.code || err.message) + '</code>');
     }
 
     // ========== FINAL VERDICT ==========
     document.getElementById('verdictCard').style.display = 'block';
-    const vd = document.getElementById('verdictDetails');
-    vd.innerHTML = '';
-
     const role = userData?.role;
-    const docExists = userData !== null;
-
-    if (!docExists) {
-      addBox('verdictDetails', 'error',
-        '<strong>🎯 ROOT CAUSE: User doc missing hai.</strong><br><br>' +
-        '<strong>Fix (2 minute):</strong><br>' +
-        '1. Firebase Console → Firestore → <code>users</code> collection<br>' +
-        '2. <strong>Add Document</strong> click karo<br>' +
-        '3. <strong>Document ID:</strong> <code>' + user.uid + '</code> paste karo<br>' +
-        '4. <strong>Field:</strong> <code>role</code> | <strong>Type:</strong> string | <strong>Value:</strong> <code>superadmin</code><br>' +
-        '5. <strong>Save</strong><br>' +
-        '6. Is page pe wapas <strong>Run Diagnostic</strong> click karo<br>' +
-        '7. Phir app mein logout → login karo');
-    } else if (!role || (role !== 'superadmin' && role !== 'admin')) {
-      addBox('verdictDetails', 'error',
-        '<strong>🎯 ROOT CAUSE: role field galat ya missing hai.</strong><br><br>' +
-        '<strong>Current value:</strong> ' + (role ? '<code>"' + role + '"</code>' : '<code>(missing)</code>') + '<br>' +
-        '<strong>Expected:</strong> <code>"superadmin"</code> ya <code>"admin"</code><br><br>' +
-        '<strong>Fix:</strong><br>' +
-        '1. Firebase Console → Firestore → <code>users/' + user.uid + '</code><br>' +
-        '2. <code>role</code> field edit karo → value exactly <code>superadmin</code> karo (lowercase, no space)<br>' +
-        '3. Save<br>' +
-        '4. Is page pe <strong>Run Diagnostic</strong> phir click karo<br>' +
-        '5. App mein logout → login karo');
-    } else if (failedCount > 0) {
-      addBox('verdictDetails', 'error',
-        '<strong>🎯 ROOT CAUSE: Role sahi hai par collections blocked.</strong><br><br>' +
-        '<strong>Possible reasons:</strong><br>' +
-        '• Rules deploy nahi hue — <code>firebase deploy --only firestore:rules</code> chalao<br>' +
-        '• Purane cached rules — Console → Firestore → Rules tab mein check karo<br>' +
-        '• Rules file mein typo hai — <code>superadmin</code> vs <code>superAdmin</code><br><br>' +
-        '<strong>Verify:</strong> Firebase Console → Firestore → Rules → Rules Playground → ' +
-        'get <code>/users/' + user.uid + '</code> → Allowed aana chahiye.');
+    
+    if (!userData) {
+      addBox('verdictDetails', 'error', '<strong>🎯 ROOT CAUSE: User doc missing hai.</strong><br><br>1. Firebase Console → Firestore<br>2. Add document in <code>users</code> → ID: <code>' + currentUser.uid + '</code><br>3. Field: <code>role</code> (string) = <code>superadmin</code><br>4. Save karo, phir yahan wapas Run Diagnostic dabao.');
+    } else if (role !== 'superadmin' && role !== 'admin') {
+      addBox('verdictDetails', 'error', '<strong>🎯 ROOT CAUSE: role galat ya missing hai.</strong><br><br>Firestore mein <code>users/' + currentUser.uid + '</code> kholo, <code>role</code> field ki value exactly <code>superadmin</code> karo (lowercase).');
+    } else if (failCount > 0) {
+      addBox('verdictDetails', 'error', '<strong>🎯 ROOT CAUSE: Role sahi hai par collections blocked hain.</strong><br><br>1. Firebase Console → Firestore → Rules tab check karo ki naye rules deploy hue hain ya nahi.<br>2. Terminal mein <code>firebase deploy --only firestore:rules</code> chalao.');
     } else {
-      addBox('verdictDetails', 'success',
-        '<strong>🎉 SAB THEEK HAI!</strong><br><br>' +
-        '• User logged in ✅<br>' +
-        '• User doc exists ✅<br>' +
-        '• Role: <code>' + role + '</code> ✅<br>' +
-        '• Collections accessible ✅<br><br>' +
-        '<strong>Ab agar app mein collections nahi khul rahe to:</strong><br>' +
-        'Aapke <strong>frontend JavaScript code</strong> mein problem hai. Search karo:<br>' +
-        '<pre>grep -rn "anasfansclub" src/\ngrep -rn "\\.email ===" src/</pre>' +
-        'Jo mile usko hatao, aur <code>userDoc.role</code> check use karo.');
+      addBox('verdictDetails', 'success', '<strong>🎉 SAB THEEK HAI!</strong><br><br>Role sahi hai aur collections bhi khul rahi hain. Ab aap wapas apni app mein logout → login karke check karo. Agar phir bhi collections nahi khul rahe, to aapke <strong>frontend code</strong> mein purana email check bacha hua hai. Search karo: <code>grep -rn "anasfansclub" src/</code>');
     }
 
-    btn.disabled = false;
-    btn.textContent = '🔄 Run Again';
+    btn.disabled = false; btn.textContent = '🔄 Run Diagnostic Again';
+
   } catch (err) {
-    console.error(err);
     alert('Unexpected error: ' + err.message);
-    btn.disabled = false;
-    btn.textContent = '▶️ Run Diagnostic';
+    btn.disabled = false; btn.textContent = '🔄 Run Diagnostic Again';
   }
 }
-
-// Auto-run on page load
-window.addEventListener('load', () => {
-  setTimeout(runDiagnostics, 1000);
-});
 </script>
 </body>
 </html>
