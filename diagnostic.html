@@ -98,18 +98,27 @@
 </div>
 
 <script type="module">
-// ============================================================
-// ⚠️ APNA FIREBASE CONFIG YAHAN PASTE KARO
-// ============================================================
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "YAHAN_PASTE_KARO",
-  authDomain: "YAHAN_PASTE_KARO",
-  projectId: "YAHAN_PASTE_KARO",
-  storageBucket: "YAHAN_PASTE_KARO",
-  messagingSenderId: "YAHAN_PASTE_KARO",
-  appId: "YAHAN_PASTE_KARO"
+  apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+  authDomain: "toego-ecommerce.firebaseapp.com",
+  projectId: "toego-ecommerce",
+  storageBucket: "toego-ecommerce.firebasestorage.app",
+  messagingSenderId: "234167880880",
+  appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75",
+  measurementId: "G-55Z9EX9KS6"
 };
-// ============================================================
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
