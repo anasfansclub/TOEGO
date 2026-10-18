@@ -6,6 +6,11 @@
 <title>Categories — TOEGO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+<link rel="dns-prefetch" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://api.cloudinary.com">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -53,7 +58,7 @@ a { color: inherit; text-decoration: none; }
 .tg-side-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 6px; gap: 8px; cursor: pointer; font-size: 11px; font-weight: 500; color: var(--text-muted); text-align: center; position: relative; border-bottom: 1px solid #e8e8e8; transition: background 0.15s; }
 .tg-side-item.active { background: #fff; color: var(--primary); font-weight: 700; border-right: 3px solid var(--primary); border-bottom-color: transparent; }
 .tg-side-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--primary); }
-.tg-side-icon { font-size: 40px; line-height: 1; display: flex; align-items: center; justify-content: center; min-height: 64px; }
+.tg-side-icon { font-size: 40px; line-height: 1; display: flex; align-items: center; justify-content: center; min-height: 64px; position: relative; }
 .tg-side-icon img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 .tg-side-item.active .tg-side-icon img { border-color: var(--primary-light); box-shadow: 0 1px 6px rgba(40,116,240,0.25); }
 .tg-side-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2; }
@@ -154,6 +159,10 @@ a { color: inherit; text-decoration: none; }
 @keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 .tg-toast.success { background: #388e3c; }
 .tg-toast.error { background: #d32f2f; }
+/* ✅ LQIP image fade-in */
+.tg-lqip-img { opacity: 0; transition: opacity 0.25s ease; }
+.tg-lqip-img.loaded { opacity: 1; }
+.tg-lqip-wrap { background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(15px); transform: scale(1.08); }
 @media (min-width: 600px) {
   .tg-prod-grid { grid-template-columns: repeat(3, 1fr); }
   .tg-sidebar { width: 140px; padding-bottom: 24px; }
@@ -420,13 +429,13 @@ a { color: inherit; text-decoration: none; }
   let hasCache = false;
   let productsReady = false;
 
-  /* ⚡ Render dedup signatures — prevents flicker/blank flashes */
   let _productsSig = '';
   let _sidebarSig = '';
   let _subcatsSig = '';
-
-  /* ⚡ Progress bar idempotent flag */
   let _progressOn = false;
+
+  /* ✅ Preload cache */
+  const _preloadedImages = new Set();
 
   let pendingCatSlug = null;
   try {
@@ -450,8 +459,6 @@ a { color: inherit; text-decoration: none; }
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  /* ═══ ⚡ FIX: Persistence REMOVED — hangs WebView & mobile browsers, causes blink on reload ═══ */
-
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -465,13 +472,49 @@ a { color: inherit; text-decoration: none; }
   function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
   function tsToMs(ts) { if (!ts) return 0; if (typeof ts.toDate === 'function') return ts.toDate().getTime(); if (typeof ts === 'number') return ts; if (ts.seconds) return ts.seconds * 1000; return 0; }
 
+  /* ✅ ULTRA-FAST cardImgUrl — q_50, no dpr_auto */
+  function cardImgUrl(url, width) {
+    if (!url || typeof url !== 'string') return url || '';
+    if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
+    if (/\/upload\/[^/]*[qwfcs]_/.test(url)) return url;
+    const w = width || 400;
+    return url.replace('/upload/', '/upload/f_auto,q_50,w_' + w + ',c_limit/');
+  }
+
+  /* ✅ LQIP — ultra tiny 20px blurred placeholder */
+  function lqipUrl(url) {
+    if (!url || typeof url !== 'string') return '';
+    if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return '';
+    if (/\/upload\/[^/]*[qwfcs]_/.test(url)) return '';
+    return url.replace('/upload/', '/upload/f_auto,q_20,w_20,c_limit/');
+  }
+
+  /* ✅ PRELOAD — force browser fetch BEFORE DOM insertion */
+  function preloadImg(url) {
+    if (!url || _preloadedImages.has(url)) return;
+    _preloadedImages.add(url);
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = url;
+    document.head.appendChild(link);
+  }
+
+  function preloadCriticalImages(filteredProducts) {
+    /* Preload first 12 category images */
+    ALL_CATEGORIES.slice(0, 12).forEach(c => {
+      if (c.image) preloadImg(cardImgUrl(c.image, 150));
+    });
+    /* Preload first 15 visible product images */
+    (filteredProducts || []).slice(0, 15).forEach(p => {
+      const img = p.image || (p.images && p.images[0]);
+      if (img) preloadImg(cardImgUrl(img, 350));
+    });
+  }
+
   window.tgCloseModal = function(id) { document.getElementById(id).classList.remove('show'); };
   window.tgScrollTop = function() { document.getElementById('tg-prod-scroll').scrollTo({ top: 0, behavior: 'smooth' }); };
 
-  /* ═══════════════════ ⚡ FIXED PROGRESS BAR ═══════════════════
-     - Only shows if loading takes > 700ms (fast loads never blink)
-     - Idempotent — calling setProgress(false) repeatedly does nothing
-  */
   function setProgress(on) {
     if (_progressOn === on) return;
     _progressOn = on;
@@ -656,7 +699,6 @@ a { color: inherit; text-decoration: none; }
     } catch(e) {}
   }
 
-  /* ═══════════════════ ⚡ CACHE LOADER ═══════════════════ */
   function loadLocalCache() {
     let rendered = false;
     try {
@@ -680,6 +722,13 @@ a { color: inherit; text-decoration: none; }
         if (currentCatId !== 'all' && !ALL_CATEGORIES.find(x => x.id === currentCatId)) {
           currentCatId = 'all'; currentSubName = 'all';
         }
+        /* ⚡ Preload immediately from cache */
+        const catObj = currentCatId === 'all' ? null : ALL_CATEGORIES.find(c => c.id === currentCatId);
+        const cachedFiltered = ALL_PRODUCTS.filter(pp => {
+          if (catObj && !productMatchesCategory(pp, catObj)) return false;
+          return true;
+        });
+        preloadCriticalImages(cachedFiltered);
         renderSidebar();
         renderSubcats();
         renderProducts(true);
@@ -718,29 +767,39 @@ a { color: inherit; text-decoration: none; }
     if (productsReady) renderProducts();
   }
 
-  /* ═══════════════════ ⚡ FIXED LISTENERS ═══════════════════
-     - .get() first (fast) then onSnapshot (realtime)
-     - Sig check on snapshot prevents redundant re-renders
-     - 6s safety timeout kills skeleton forever-stuck state
-  */
+  function getWithRetry(query, retries) {
+    retries = retries == null ? 1 : retries;
+    return query.get().catch(err => {
+      if (retries > 0) {
+        return new Promise(r => setTimeout(r, 400)).then(() => getWithRetry(query, retries - 1));
+      }
+      throw err;
+    });
+  }
+
   function setupListeners() {
     if (unsubCats) { try { unsubCats(); } catch(e) {} unsubCats = null; }
     if (unsubProds) { try { unsubProds(); } catch(e) {} unsubProds = null; }
 
     if (!hasCache) setProgress(true);
 
-    /* FAST PATH: .get() — shows data in 200-500ms */
-    db.collection('categories').get().then(snap => {
+    getWithRetry(db.collection('categories')).then(snap => {
       const cats = snap.docs.map(normalizeCategory).filter(c => c.name).sort((a,b) => a.order - b.order);
       if (cats.length > 0) { applyCategories(cats); persistCache(); }
       setProgress(false);
     }).catch(() => {});
 
-    db.collection('products').limit(500).get().then(snap => {
+    getWithRetry(db.collection('products').limit(500)).then(snap => {
       const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
       ALL_PRODUCTS = prods;
       productsReady = true;
       persistCache();
+      const catObj = currentCatId === 'all' ? null : ALL_CATEGORIES.find(c => c.id === currentCatId);
+      const filtered = prods.filter(p => {
+        if (catObj && !productMatchesCategory(p, catObj)) return false;
+        return true;
+      });
+      preloadCriticalImages(filtered);
       renderProducts(true);
       setProgress(false);
     }).catch(() => {
@@ -748,7 +807,6 @@ a { color: inherit; text-decoration: none; }
       setProgress(false);
     });
 
-    /* REALTIME: onSnapshot — sig check skips redundant renders */
     try {
       unsubCats = db.collection('categories').onSnapshot(snap => {
         const cats = snap.docs.map(normalizeCategory).filter(c => c.name).sort((a,b) => a.order - b.order);
@@ -773,14 +831,13 @@ a { color: inherit; text-decoration: none; }
       });
     } catch(e) {}
 
-    /* SAFETY: 6s timeout — never stuck */
     setTimeout(() => {
       if (!productsReady) { productsReady = true; renderProducts(true); }
       setProgress(false);
       if (!hasCache && ALL_CATEGORIES.length === 0 && ALL_PRODUCTS.length === 0) {
         showErrorState();
       }
-    }, 6000);
+    }, 12000);
   }
 
   function showErrorState() {
@@ -796,11 +853,12 @@ a { color: inherit; text-decoration: none; }
     _productsSig = '';
     _sidebarSig = '';
     _subcatsSig = '';
+    _preloadedImages.clear();
     setProgress(true);
     setupListeners();
   };
 
-  /* ═══════════════════ SIDEBAR (with sig check) ═══════════════════ */
+  /* ✅ Sidebar with LQIP + aggressive eager (first 20) */
   function renderSidebar() {
     const el = document.getElementById('tg-sidebar');
     if (!el) return;
@@ -817,9 +875,19 @@ a { color: inherit; text-decoration: none; }
 
     if (!ALL_CATEGORIES.length) { el.innerHTML = html; return; }
 
-    html += ALL_CATEGORIES.map(c => {
+    html += ALL_CATEGORIES.map((c, idx) => {
       const active = currentCatId === c.id ? 'active' : '';
-      const imgTag = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy">` : esc(c.icon);
+      /* ✅ Eager for first 20 (sidebar always above fold) */
+      const loadingAttr = idx < 20 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+      let imgTag;
+      if (c.image) {
+        const fullUrl = cardImgUrl(c.image, 150);
+        const lqip = lqipUrl(c.image);
+        const bgStyle = lqip ? `background-image:url('${esc(lqip)}');background-size:cover;background-position:center;` : '';
+        imgTag = `<img src="${esc(fullUrl)}" alt="${esc(c.name)}" ${loadingAttr} decoding="async" style="${bgStyle}" class="tg-lqip-img" onload="this.classList.add('loaded');this.style.backgroundImage='none';" onerror="this.classList.add('loaded');this.style.display='none';">`;
+      } else {
+        imgTag = esc(c.icon);
+      }
       const adminBtns = IS_ADMIN ? `
         <div class="tg-admin-btn-wrap">
           <button class="tg-adm-btn" onclick="event.stopPropagation();tgOpenCatModal('${esc(c.id)}')" aria-label="Edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -835,7 +903,6 @@ a { color: inherit; text-decoration: none; }
     el.innerHTML = html;
   }
 
-  /* ═══════════════════ SUBCATS (with sig check) ═══════════════════ */
   function renderSubcats() {
     if (currentCatId === 'all') {
       document.getElementById('tg-subcats-wrap').style.display = 'none';
@@ -884,7 +951,7 @@ a { color: inherit; text-decoration: none; }
     scroll.innerHTML = html;
   }
 
-  /* ═══════════════════ ⚡ FIXED renderProducts (sig check → no flicker) ═══════════════════ */
+  /* ✅ Products with LQIP + eager 15 + sync decode for first 3 */
   function renderProducts(force) {
     updateFilterUI();
     const grid = document.getElementById('tg-prod-grid');
@@ -934,7 +1001,6 @@ a { color: inherit; text-decoration: none; }
       });
     }
 
-    /* ⚡ SIG CHECK — skip identical re-renders (kills flicker) */
     const sig = currentCatId + '|' + currentSubName + '|' + searchQuery + '|' +
                 filterMinPrice + '|' + filterMaxPrice + '|' + filterRating + '|' +
                 sortBy + '|' + IS_ADMIN + '|' +
@@ -951,16 +1017,30 @@ a { color: inherit; text-decoration: none; }
 
     if (filtered.length === 0) {
       const hasFilters = filterMinPrice > 0 || filterMaxPrice < 999999 || filterRating > 0 || searchQuery;
-      grid.innerHTML = `<div class="tg-empty">
-        <div style="font-size:40px;margin-bottom:10px;">🔍</div>
-        <div>No products found</div>
-        ${hasFilters ? '<button class="tg-btn primary" style="margin-top:16px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgClearAll()">Clear All</button>' : ''}
-      </div>`;
+      const noProducts = ALL_PRODUCTS.length === 0;
+      let emptyHtml = '<div class="tg-empty"><div style="font-size:40px;margin-bottom:10px;">' + (noProducts ? '📡' : '🔍') + '</div><div>' + (noProducts ? 'Could not load products' : 'No products found') + '</div>';
+      if (noProducts) {
+        emptyHtml += '<button class="tg-btn primary" style="margin-top:16px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgRetry()">Retry</button>';
+      } else if (hasFilters) {
+        emptyHtml += '<button class="tg-btn primary" style="margin-top:16px;padding:8px 20px;font-size:13px;flex:none;" onclick="tgClearAll()">Clear All</button>';
+      }
+      emptyHtml += '</div>';
+      grid.innerHTML = emptyHtml;
       return;
     }
 
-    grid.innerHTML = filtered.map(p => {
+    /* ⚡ Preload next batch BEFORE DOM insertion */
+    preloadCriticalImages(filtered);
+
+    grid.innerHTML = filtered.map((p, idx) => {
       const img = p.image || (p.images && p.images[0]) || '';
+      const imgUrl = cardImgUrl(img, 350);
+      const lqip = lqipUrl(img);
+      /* ✅ Eager for first 15 */
+      const loadingAttr = idx < 15 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+      /* ✅ Sync decode for first 3 — instant render */
+      const decodingAttr = idx < 3 ? 'decoding="sync"' : 'decoding="async"';
+      const bgStyle = lqip ? `background-image:url('${esc(lqip)}');background-size:cover;background-position:center;` : '';
       const price = Number(p.price || 0);
       const old = Number(p.compareAtPrice || p.mrp || 0);
       const disc = old > price ? Math.round((1 - price/old)*100) : 0;
@@ -981,7 +1061,7 @@ a { color: inherit; text-decoration: none; }
         <div class="tg-prod-img">
           ${adminTagHtml}
           ${disc > 0 ? `<div class="tg-discount-badge">${disc}% OFF</div>` : ''}
-          ${img ? `<img src="${esc(img)}" loading="lazy" alt="${esc(p.name)}">` : `<span style="font-size:30px;">📦</span>`}
+          ${imgUrl ? `<img src="${esc(imgUrl)}" ${loadingAttr} ${decodingAttr} style="${bgStyle}" class="tg-lqip-img" onload="this.classList.add('loaded');this.style.backgroundImage='none';" onerror="this.classList.add('loaded');this.style.display='none';" alt="${esc(p.name)}">` : `<span style="font-size:30px;">📦</span>`}
           ${adminEditBtn}
         </div>
         <div class="tg-prod-body">
@@ -995,7 +1075,6 @@ a { color: inherit; text-decoration: none; }
     }).join('');
   }
 
-  /* ═══════════════════ INTERACTIONS ═══════════════════ */
   window.tgSelectCat = function(id) {
     pendingCatSlug = null;
     currentCatId = id;
@@ -1317,7 +1396,6 @@ a { color: inherit; text-decoration: none; }
     if (!document.hidden) updateCartBadge();
   });
 
-  /* ═══════════════════ BOOT ═══════════════════ */
   loadLocalCache();
   setupListeners();
   auth.onAuthStateChanged(u => checkAdmin(u));
