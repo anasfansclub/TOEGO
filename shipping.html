@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Shipping Policy — TOEGO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; }
+
+/* HEADER */
+.tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
+.tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+.tg-hd-actions { display: flex; gap: 2px; flex-shrink: 0; }
+.tg-hd-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; position: relative; }
+.tg-hd-btn:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* WRAP */
+.tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
+.tg-container { max-width: 900px; margin: 0 auto; padding: 12px; }
+
+/* HERO */
+.tg-hero { background: linear-gradient(135deg, #2874f0 0%, #1a5dc7 100%); border-radius: 14px; padding: 28px 22px; color: #fff; margin-bottom: 12px; position: relative; overflow: hidden; }
+.tg-hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%); border-radius: 50%; }
+.tg-hero-icon { font-size: 44px; margin-bottom: 8px; position: relative; }
+.tg-hero-title { font-size: 22px; font-weight: 900; margin: 0 0 6px; letter-spacing: -0.3px; position: relative; }
+.tg-hero-desc { font-size: 13.5px; opacity: 0.92; line-height: 1.55; margin: 0; max-width: 600px; position: relative; }
+
+/* QUICK HIGHLIGHTS */
+.tg-highlights { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+@media (min-width: 600px) { .tg-highlights { grid-template-columns: repeat(4, 1fr); } }
+.tg-hl { background: #fff; border-radius: 12px; padding: 16px 12px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: transform .18s, box-shadow .18s; }
+.tg-hl:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+.tg-hl-icon { font-size: 26px; margin-bottom: 8px; line-height: 1; }
+.tg-hl-title { font-size: 12.5px; font-weight: 800; color: #212121; margin: 0 0 3px; letter-spacing: -0.1px; }
+.tg-hl-desc { font-size: 11px; color: #666; line-height: 1.35; margin: 0; }
+
+/* CARD / SECTION */
+.tg-card { background: #fff; border-radius: 12px; padding: 18px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-card-title { font-size: 16px; font-weight: 800; color: #212121; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
+.tg-card-title-icon { font-size: 20px; }
+.tg-card p { font-size: 13.5px; color: #444; line-height: 1.65; margin: 0 0 10px; }
+.tg-card p:last-child { margin-bottom: 0; }
+
+/* TABLE */
+.tg-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12.5px; }
+.tg-table th { background: #f8f9fb; color: #212121; font-weight: 700; text-align: left; padding: 10px 12px; border-bottom: 2px solid #e8ebef; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.4px; }
+.tg-table td { padding: 11px 12px; border-bottom: 1px solid #f0f2f5; color: #444; vertical-align: top; line-height: 1.5; }
+.tg-table tr:last-child td { border-bottom: none; }
+.tg-table tr:hover td { background: #fafbfc; }
+
+/* LIST */
+.tg-list { list-style: none; padding: 0; margin: 0; }
+.tg-list li { position: relative; padding: 8px 0 8px 26px; font-size: 13.5px; color: #444; line-height: 1.55; }
+.tg-list li::before { content: '✓'; position: absolute; left: 0; top: 8px; width: 18px; height: 18px; background: #e6f7ec; color: #1b8a3a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; }
+.tg-list.no li::before { content: '✕'; background: #ffebee; color: #c62828; }
+
+/* STEPS */
+.tg-steps { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
+.tg-step { display: flex; gap: 14px; align-items: flex-start; }
+.tg-step-num { width: 34px; height: 34px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; flex-shrink: 0; box-shadow: 0 3px 8px rgba(40,116,240,0.3); }
+.tg-step-body { flex: 1; padding-top: 5px; }
+.tg-step-title { font-size: 13.5px; font-weight: 800; color: #212121; margin: 0 0 3px; }
+.tg-step-desc { font-size: 12.5px; color: #666; line-height: 1.5; margin: 0; }
+
+/* FAQ */
+.tg-faq { border-top: 1px solid #f0f2f5; }
+.tg-faq:first-child { border-top: none; }
+.tg-faq-q { padding: 14px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13.5px; font-weight: 700; color: #212121; gap: 10px; }
+.tg-faq-q:hover { color: #2874f0; }
+.tg-faq-icon { width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%; background: #f1f3f6; display: flex; align-items: center; justify-content: center; transition: transform .25s, background .2s; }
+.tg-faq-icon svg { width: 12px; height: 12px; stroke: #666; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .2s; }
+.tg-faq.open .tg-faq-icon { transform: rotate(180deg); background: #2874f0; }
+.tg-faq.open .tg-faq-icon svg { stroke: #fff; }
+.tg-faq.open .tg-faq-q { color: #2874f0; }
+.tg-faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; font-size: 13px; color: #555; line-height: 1.6; }
+.tg-faq.open .tg-faq-a { max-height: 400px; padding-bottom: 14px; }
+
+/* CONTACT CARD */
+.tg-contact { background: linear-gradient(135deg, #0f1729 0%, #1e293b 100%); color: #fff; border-radius: 12px; padding: 22px; text-align: center; margin-bottom: 12px; }
+.tg-contact-title { font-size: 16px; font-weight: 800; margin: 0 0 6px; }
+.tg-contact-desc { font-size: 12.5px; opacity: 0.85; margin: 0 0 16px; line-height: 1.5; }
+.tg-contact-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.tg-contact-btn { display: inline-flex; align-items: center; gap: 7px; padding: 11px 20px; background: #fff; color: #0f1729; font-size: 12.5px; font-weight: 800; border-radius: 8px; transition: all .15s; }
+.tg-contact-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255,255,255,0.15); }
+.tg-contact-btn.ghost { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+.tg-contact-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* BADGE */
+.tg-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
+.tg-badge.free { background: #e6f7ec; color: #1b8a3a; }
+.tg-badge.paid { background: #fff8e1; color: #f57c00; }
+.tg-badge.fast { background: #e8f0fe; color: #2874f0; }
+
+/* BOTTOM NAV */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; }
+.tg-bnav-item.active { color: #2874f0; }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: none; align-items: center; justify-content: center; padding: 0 4px; }
+
+/* TOAST */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+
+@media (max-width: 600px) {
+  .tg-container { padding: 8px; }
+  .tg-hero { padding: 22px 18px; border-radius: 12px; }
+  .tg-hero-icon { font-size: 36px; }
+  .tg-hero-title { font-size: 19px; }
+  .tg-hero-desc { font-size: 12.5px; }
+  .tg-card { padding: 16px 14px; border-radius: 10px; }
+  .tg-card-title { font-size: 15px; }
+  .tg-card p, .tg-list li { font-size: 13px; }
+  .tg-table th, .tg-table td { padding: 8px 10px; font-size: 12px; }
+  .tg-table th { font-size: 10.5px; }
+  .tg-step-num { width: 30px; height: 30px; font-size: 13px; }
+  .tg-contact { padding: 18px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="javascript:history.back()" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">Shipping Policy</div>
+    <div class="tg-hd-actions">
+      <a href="cart.html" class="tg-hd-btn" aria-label="Cart">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- HERO -->
+    <div class="tg-hero">
+      <div class="tg-hero-icon">🚚</div>
+      <h1 class="tg-hero-title">Fast & Reliable Delivery</h1>
+      <p class="tg-hero-desc">We ship across India with trusted courier partners. Enjoy free shipping on orders above ₹499 and get your products delivered safely to your doorstep.</p>
+    </div>
+
+    <!-- HIGHLIGHTS -->
+    <div class="tg-highlights">
+      <div class="tg-hl">
+        <div class="tg-hl-icon">⚡</div>
+        <div class="tg-hl-title">Fast Dispatch</div>
+        <div class="tg-hl-desc">Ships in 24-48 hrs</div>
+      </div>
+      <div class="tg-hl">
+        <div class="tg-hl-icon">💸</div>
+        <div class="tg-hl-title">Free Shipping</div>
+        <div class="tg-hl-desc">On orders ₹499+</div>
+      </div>
+      <div class="tg-hl">
+        <div class="tg-hl-icon">📍</div>
+        <div class="tg-hl-title">Pan India</div>
+        <div class="tg-hl-desc">All pincodes covered</div>
+      </div>
+      <div class="tg-hl">
+        <div class="tg-hl-icon">🛡️</div>
+        <div class="tg-hl-title">Safe Delivery</div>
+        <div class="tg-hl-desc">Tamper-proof packing</div>
+      </div>
+    </div>
+
+    <!-- SHIPPING CHARGES -->
+    <div class="tg-card">
+      <h2 class="tg-card-title"><span class="tg-card-title-icon">💰</span> Shipping Charges</h2>
+      <table class="tg-table">
+        <thead>
+          <tr>
+            <th>Order Value</th>
+            <th>Delivery Time</th>
+            <th>Shipping Fee</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Below ₹299</td>
+            <td>5–7 business days</td>
+            <td><span class="tg-badge paid">₹49</span></td>
+          </tr>
+          <tr>
+            <td>₹299 – ₹498</td>
+            <td>4–6 business days</td>
+            <td><span class="tg-badge paid">₹29</span></td>
+          </tr>
+          <tr>
+            <td>₹499 & above</td>
+            <td>3–5 business days</td>
+            <td><span class="tg-badge free">FREE</span></td>
+          </tr>
+          <tr>
+            <td>Metro cities</td>
+            <td>2–4 business days</td>
+            <td><span class="tg-badge fast">Priority</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;font-size:12px;color:#888;">💡 Shipping charges may vary for remote or restricted pincodes.</p>
+    </div>
+
+    <!-- DELIVERY TIMELINE -->
+    <div class="tg-card">
+      <h2 class="tg-card-title"><span class="tg-card-title-icon">⏱️</span> Delivery Timeline</h2>
+      <div class="tg-steps">
+        <div class="tg-step">
+          <div class="tg-step-num">1</div>
+          <div class="tg-step-body">
+            <h3 class="tg-step-title">Order Confirmed</h3>
+            <p class="tg-step-desc">You'll receive an SMS and email confirmation instantly after placing your order.</p>
+          </div>
+        </div>
+        <div class="tg-step">
+          <div class="tg-step-num">2</div>
+          <div class="tg-step-body">
+            <h3 class="tg-step-title">Packed & Dispatched</h3>
+            <p class="tg-step-desc">Seller packs your item within 24–48 hours. Tracking number is generated on dispatch.</p>
+          </div>
+        </div>
+        <div class="tg-step">
+          <div class="tg-step-num">3</div>
+          <div class="tg-step-body">
+            <h3 class="tg-step-title">In Transit</h3>
+            <p class="tg-step-desc">Track your order in real-time from the "My Orders" section on our app.</p>
+          </div>
+        </div>
+        <div class="tg-step">
+          <div class="tg-step-num">4</div>
+          <div class="tg-step-body">
+            <h3 class="tg-step-title">Delivered</h3>
+            <p class="tg-step-desc">Delivered to your doorstep. Please verify the package before signing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT WE COVER -->
+    <div class="tg-card">
+      <h2 class="tg-card-title"><span class="tg-card-title-icon">📍</span> Coverage & Restrictions</h2>
+      <ul class="tg-list">
+        <li>Delivery available across all 19,000+ serviceable pincodes in India.</li>
+        <li>Metro cities (Delhi, Mumbai, Bangalore, Hyderabad, Chennai, Pune, Kolkata) get priority delivery.</li>
+        <li>Remote areas like North-East, J&K, Andaman may take 7–10 business days.</li>
+        <li>Cash on Delivery (COD) available for orders up to ₹10,000.</li>
+        <li>International shipping not available currently.</li>
+      </ul>
+      <h3 style="font-size:13px;font-weight:800;margin:16px 0 8px;color:#212121;">❌ Not Deliverable To</h3>
+      <ul class="tg-list no">
+        <li>PO Boxes and military addresses without proper pincodes</li>
+        <li>International addresses</li>
+        <li>Pincodes marked as restricted by courier partners</li>
+      </ul>
+    </div>
+
+    <!-- PACKAGING -->
+    <div class="tg-card">
+      <h2 class="tg-card-title"><span class="tg-card-title-icon">📦</span> Packaging Standards</h2>
+      <p>Every order is carefully packed to ensure it reaches you in perfect condition:</p>
+      <ul class="tg-list">
+        <li>Tamper-proof, eco-friendly outer packaging.</li>
+        <li>Fragile items (electronics, glass) use bubble wrap + corner protection.</li>
+        <li>Apparel and footwear packed with moisture-resistant covers.</li>
+        <li>All orders include an invoice with order details.</li>
+      </ul>
+    </div>
+
+    <!-- FAQ -->
+    <div class="tg-card">
+      <h2 class="tg-card-title"><span class="tg-card-title-icon">❓</span> Frequently Asked Questions</h2>
+      <div class="tg-faq">
+        <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+          How can I track my order?
+          <span class="tg-faq-icon"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+        <div class="tg-faq-a">You can track your order from the "My Orders" section. Once dispatched, you'll receive a tracking link via SMS and email. You can also contact our support for real-time updates.</div>
+      </div>
+      <div class="tg-faq">
+        <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+          What if my order is delayed?
+          <span class="tg-faq-icon"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+        <div class="tg-faq-a">We aim for on-time delivery. If there's an unexpected delay due to weather, courier issues, or regional restrictions, we'll notify you via SMS and email. You can also track live status anytime.</div>
+      </div>
+      <div class="tg-faq">
+        <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+          Can I change my delivery address after placing an order?
+          <span class="tg-faq-icon"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+        <div class="tg-faq-a">Address changes are possible only before the order is dispatched. Please contact support immediately with your order ID if you need to update the address.</div>
+      </div>
+      <div class="tg-faq">
+        <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+          Do you offer Cash on Delivery (COD)?
+          <span class="tg-faq-icon"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+        <div class="tg-faq-a">Yes, COD is available for orders up to ₹10,000 in most serviceable pincodes. A small COD handling fee may apply based on the order value.</div>
+      </div>
+      <div class="tg-faq">
+        <div class="tg-faq-q" onclick="tgToggleFaq(this)">
+          What if my package arrives damaged?
+          <span class="tg-faq-icon"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+        <div class="tg-faq-a">Please refuse the delivery if packaging is visibly damaged. Contact support immediately with photos — we'll arrange a free replacement or full refund within 48 hours.</div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="tg-contact">
+      <h2 class="tg-contact-title">Need help with shipping?</h2>
+      <p class="tg-contact-desc">Our support team is available 9 AM – 9 PM, Mon–Sat</p>
+      <div class="tg-contact-actions">
+        <a href="mailto:support@toego.in" class="tg-contact-btn">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+          Email Us
+        </a>
+        <a href="returns.html" class="tg-contact-btn ghost">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.36 2.64L3 8"/><path d="M3 3v5h5"/></svg>
+          Returns Policy
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span><span class="tg-bnav-badge" id="tg-bnav-badge">0</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<!-- Firebase — light use (theme + cart badge only) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  // Initialize Firebase
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const db = firebase.firestore();
+
+  /* ===== FAQ TOGGLE ===== */
+  window.tgToggleFaq = function(el) {
+    const parent = el.parentElement;
+    const wasOpen = parent.classList.contains('open');
+    // Close all others
+    document.querySelectorAll('.tg-faq.open').forEach(f => {
+      if (f !== parent) f.classList.remove('open');
+    });
+    parent.classList.toggle('open', !wasOpen);
+  };
+
+  /* ===== CART BADGE (localStorage only — no auth needed) ===== */
+  function findCartCount() {
+    try {
+      const keys = ['toego_cart_guest','toego_cart','cart'];
+      let best = 0;
+      for (const k of keys) {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        try {
+          const c = JSON.parse(raw);
+          let n = 0;
+          if (Array.isArray(c)) {
+            n = c.reduce((s, i) => s + Number((i && (i.qty || i.quantity)) || 1), 0);
+          } else if (c && Array.isArray(c.items)) {
+            n = c.items.reduce((s, i) => s + Number((i && (i.qty || i.quantity)) || 1), 0);
+          }
+          if (n > best) best = n;
+        } catch(e) {}
+      }
+      return best;
+    } catch(e) { return 0; }
+  }
+  function updateCartBadge() {
+    const n = findCartCount();
+    const b = document.getElementById('tg-bnav-badge');
+    if (!b) return;
+    if (n > 0) {
+      b.textContent = n > 99 ? '99+' : String(n);
+      b.style.display = 'flex';
+    } else {
+      b.style.display = 'none';
+    }
+  }
+  updateCartBadge();
+  window.addEventListener('storage', updateCartBadge);
+  window.addEventListener('focus', updateCartBadge);
+  window.addEventListener('pageshow', updateCartBadge);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) updateCartBadge();
+  });
+
+  /* ===== THEME (Firebase sync + localStorage cache) ===== */
+  const themeMeta = document.getElementById('tg-theme-meta');
+  function applyTheme(primary) {
+    primary = primary || '#2874f0';
+    if (themeMeta) themeMeta.setAttribute('content', primary);
+    document.documentElement.style.setProperty('--tg-primary', primary);
+    const hd = document.querySelector('.tg-hd');
+    if (hd) hd.style.background = primary;
+    try { localStorage.setItem('toego_theme_colors', JSON.stringify({ primary })); } catch(e) {}
+  }
+  // Instant from cache
+  try {
+    const c = localStorage.getItem('toego_theme_colors');
+    if (c) applyTheme(JSON.parse(c).primary);
+  } catch(e) {}
+
+  // Sync from Firestore (background)
+  db.collection('siteSettings').doc('theme').get().then(s => {
+    if (s.exists) {
+      const d = s.data();
+      applyTheme(d.themeColor || (d.tokens && d.tokens['--tg-primary']) || '#2874f0');
+    }
+  }).catch(() => {});
+
+})();
+</script>
+</body>
+</html>
