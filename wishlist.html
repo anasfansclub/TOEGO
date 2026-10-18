@@ -22,7 +22,6 @@ input, select, textarea { font: inherit; }
 a { color: inherit; text-decoration: none; }
 header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
 
-/* HEADER */
 .tg-hd { background: #2874f0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
 .tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 58px; }
 .tg-hd-back { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
@@ -39,7 +38,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-wrap { padding-top: 58px; padding-bottom: 76px; min-height: 100vh; }
 .tg-container { max-width: 1200px; margin: 0 auto; padding: 12px; }
 
-/* TOOLBAR */
 .tg-toolbar { background: #fff; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-wrap: wrap; }
 .tg-toolbar-info { flex: 1; min-width: 0; }
 .tg-toolbar-title { font-size: 15px; font-weight: 800; color: #212121; }
@@ -52,7 +50,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-toolbar-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .tg-toolbar-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* WISHLIST GRID */
 .tg-wishlist { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media (min-width: 600px) { .tg-wishlist { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 900px) { .tg-wishlist { grid-template-columns: repeat(4, 1fr); } }
@@ -82,20 +79,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-card-rating.no-rating { background: #f4f5f7; border-color: #eceef1; }
 .tg-card-rating.no-rating .tg-card-rating-star { color: #8a8f96; }
 .tg-card-rating.no-rating .tg-card-rating-star svg { fill: #8a8f96; }
-
 .tg-card-title { font-size: 12.5px; line-height: 1.4; color: #1a1d21; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 35px; cursor: pointer; letter-spacing: -0.1px; }
 .tg-card-title:hover { color: #2874f0; }
-
 .tg-card-price-row { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
 .tg-card-price { font-size: 15.5px; font-weight: 900; color: #0f1729; line-height: 1; letter-spacing: -0.3px; }
 .tg-card-mrp { font-size: 11px; color: #9aa0a6; text-decoration: line-through; font-weight: 500; }
 .tg-card-off { font-size: 10px; color: #fff; background: linear-gradient(135deg,#16a34a,#15803d); font-weight: 800; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.2px; }
-
 .tg-card-stock { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; }
 .tg-card-stock.ok { background: #e6f7ec; color: #1b8a3a; }
 .tg-card-stock.low { background: #fff8e1; color: #f57c00; }
 .tg-card-stock.out { background: #ffebee; color: #c62828; }
-
 .tg-card-actions { display: flex; gap: 6px; margin-top: auto; padding-top: 8px; }
 .tg-btn-cart { flex: 1; padding: 9px 6px; border-radius: 7px; font-size: 11px; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; gap: 5px; letter-spacing: 0.4px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff !important; border: none; text-transform: uppercase; box-shadow: 0 2px 8px rgba(40,116,240,0.32); transition: all .15s; line-height: 1; min-height: 32px; white-space: nowrap; }
 .tg-btn-cart:hover { filter: brightness(1.08); box-shadow: 0 4px 12px rgba(40,116,240,0.5); }
@@ -103,20 +96,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-btn-cart:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.3); }
 .tg-btn-cart svg { width: 12px; height: 12px; stroke: #fff; fill: none; stroke-width: 2.6; flex-shrink: 0; }
 .tg-btn-cart svg circle { fill: #fff; stroke: none; }
-.tg-btn-cart span { color: #fff !important; font-weight: 900 !important; display: inline-block !important; }
-
 .tg-btn-trash { flex: 0 0 34px; max-width: 34px; padding: 9px; border-radius: 7px; background: #f4f6fa; color: #d32f2f; display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid #e4e8ef; min-height: 32px; transition: all .15s; }
 .tg-btn-trash:hover { background: #ffebee; border-color: #ffcdd2; }
 .tg-btn-trash svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Placeholder while product data fetching */
 .tg-card.loading { pointer-events: none; }
 .tg-card.loading .tg-card-img { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; }
 .tg-card.loading .tg-card-body > * { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 4px; color: transparent; }
 .tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
 @keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-/* EMPTY STATE */
 .tg-empty { background: #fff; border-radius: 12px; padding: 60px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-top: 12px; }
 .tg-empty-img { width: 160px; height: 160px; margin: 0 auto 20px; background: linear-gradient(135deg,#fce4ec,#f8bbd0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 70px; box-shadow: 0 12px 40px rgba(244,51,151,0.15); }
 .tg-empty-title { font-size: 20px; font-weight: 800; color: #212121; margin: 0 0 8px; }
@@ -125,7 +114,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-empty-cta:hover { filter: brightness(1.06); }
 .tg-empty-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
-/* LOGIN PROMPT */
 .tg-login-prompt { background: #fff; border-radius: 12px; padding: 48px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-top: 12px; }
 .tg-login-icon { font-size: 60px; margin-bottom: 16px; }
 .tg-login-title { font-size: 20px; font-weight: 800; margin: 0 0 8px; }
@@ -134,14 +122,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-login-btn:hover { filter: brightness(1.06); }
 .tg-login-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
-/* BOTTOM NAV */
 .tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
 .tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; position: relative; transition: color .15s; }
 .tg-bnav-item.active { color: #2874f0; }
 .tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
 
-/* TOASTS */
 .tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
 .tg-toast { padding: 12px 20px; background: #212121; color: #fff; font-size: 13px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); pointer-events: auto; font-weight: 500; animation: tgToastIn .3s; }
 @keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -149,7 +135,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-toast.error { background: #d32f2f; }
 .tg-toast.info { background: #2874f0; }
 
-/* MODAL */
 .tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px; animation: tgFadeIn .2s; }
 .tg-modal.show { display: flex; }
 @keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -307,15 +292,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
-  try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
+  // ✅ FIX: enablePersistence FIRST, no settings() conflict
+  try {
+    db.enablePersistence({ synchronizeTabs: false }).catch(() => {});
+  } catch(e) {}
 
   const GUEST_CART = 'toego_cart_guest';
-  const WISHLIST_CACHE_PREFIX = 'toego_wishlist_cache_v2_';
-  const PRODUCT_CACHE_KEY = 'toego_pcache_v2';
+  const WISHLIST_CACHE_PREFIX = 'toego_wishlist_cache_v3_';
+  const PRODUCT_CACHE_KEY = 'toego_pcache_v3';
   const PRODUCT_CACHE_TTL = 15 * 60 * 1000;
   const WISHLIST_CACHE_TTL = 30 * 60 * 1000;
-  const CHUNK_SIZE = 30;
+  // 🔥 FIX: Firestore 'in' query MAX 10 items — 30 tha (bug!)
+  const CHUNK_SIZE = 10;
 
   let USER = null;
   let WISHLIST_IDS = [];
@@ -327,11 +315,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let renderScheduled = false;
   let _lastRenderHash = '';
 
-  // ═══════════════════════════════════════════════════════════════
-  // ⭐ FIX #1 — NEW: cardImgUrl() — Cloudinary images ko proper
-  // width pe optimize karta hai. Purane transforms (w_1000, q_auto)
-  // strip karke sirf required width deta hai.
-  // ═══════════════════════════════════════════════════════════════
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
@@ -342,7 +325,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     while (segs.length > 1 && (segs[0].indexOf('_') !== -1 || segs[0].indexOf(',') !== -1) && segs[0].indexOf('.') === -1) {
       segs.shift();
     }
-    return parts[0] + '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit,dpr_auto/' + segs.join('/');
+    return parts[0] + '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit/' + segs.join('/');
   }
 
   const _pCache = new Map();
@@ -549,18 +532,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // ⭐ FIX #2 + #3 — productCard() updated:
-  //   - cardImgUrl(img, 300) → 300px optimized (was: raw URL)
-  //   - fetchpriority="low" REMOVED → visible cards ko deprioritize
-  //     nahi karega
-  // ═══════════════════════════════════════════════════════════════
   function productCard(p) {
     const price = Number(p.price || 0);
     const mrp = Number(p.compareAtPrice || p.mrp || 0);
     const disc = mrp > price ? Math.round((1 - price/mrp) * 100) : 0;
     const rawImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/300x300/f1f3f6/878787?text=TOEGO';
-    const img = cardImgUrl(rawImg, 300); /* ⭐ FIX: 300px optimized */
+    const img = cardImgUrl(rawImg, 300);
 
     const rating = getProductRating(p);
     let ratingHtml = '';
