@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <meta name="theme-color" content="#2874f0" id="tg-theme-color-meta">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="msapplication-TileColor" content="#2874f0">
 <style>
 :root{--tg-primary:#2874f0;--tg-primary-dark:#1a5dc7;--hdr-h:58px;}
 *,*::before,*::after{box-sizing:border-box;}
@@ -650,7 +651,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
         <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
         Popular Searches
       </div>
-      <div class="tg-sp-chips">
+      <div class="tg-sp-chips" id="tg-sp-chips">
         <button type="button" class="tg-sp-chip" onclick="tgSearchPopupChip('slippers')">🩴 Slippers</button>
         <button type="button" class="tg-sp-chip" onclick="tgSearchPopupChip('shoes')">👟 Shoes</button>
         <button type="button" class="tg-sp-chip" onclick="tgSearchPopupChip('sandals')">👡 Sandals</button>
@@ -714,10 +715,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  /* ⚡ FIX #2: Persistence ENABLED with synchronizeTabs: false — makes .get() instant, no WebView hangs */
-  try {
-    db.enablePersistence({ synchronizeTabs: false }).catch(() => {});
-  } catch(e) {}
+  try { db.enablePersistence({ synchronizeTabs: false }).catch(() => {}); } catch(e) {}
 
   const FV = firebase.firestore.FieldValue;
 
@@ -753,6 +751,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   let _productsSig = '';
   let _renderAllSig = '';
   let _catsSig = '';
+  let _chipsSig = '';
 
   const RECENT_GUEST = 'toego_recent_guest_v2';
   const GUEST_CART = 'toego_cart_guest';
@@ -762,10 +761,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const THEME_KEY = 'toego_theme_colors';
   const BANNER_CACHE = 'toego_home_banners_v23';
 
-  /* ⚡ FIX #1: TTLs increased — cache stays fresh longer, no stale-load flash on return */
-  const CFG_TTL = 24 * 60 * 60 * 1000;   // 24 hours (was 1 hour)
-  const PROD_TTL = 30 * 60 * 1000;       // 30 minutes (was 5 minutes)
-  const CATS_TTL = 60 * 60 * 1000;       // 1 hour (was 5 minutes)
+  const CFG_TTL = 24 * 60 * 60 * 1000;
+  const PROD_TTL = 30 * 60 * 1000;
+  const CATS_TTL = 60 * 60 * 1000;
 
   const DEFAULT_CATEGORIES = [
     { name:'Slippers', icon:'🩴' },
@@ -803,7 +801,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       return c.data;
     } catch(e) { return null; }
   }
-  /* ⚡ FIX #3: Robust setCache — retries after freeing space if quota exceeded */
   function setCache(k, d) {
     try {
       localStorage.setItem(k, JSON.stringify({ data: d, time: Date.now() }));
@@ -1122,17 +1119,45 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     dark = dark || adjustColor(primary, -30);
     document.documentElement.style.setProperty('--tg-primary', primary);
     document.documentElement.style.setProperty('--tg-primary-dark', dark);
-    let themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (!themeMeta) { themeMeta = document.createElement('meta'); themeMeta.name = 'theme-color'; document.head.appendChild(themeMeta); }
-    themeMeta.setAttribute('content', primary);
+
+    const metas = document.querySelectorAll('meta[name="theme-color"]');
+    if (metas.length === 0) {
+      const m = document.createElement('meta');
+      m.name = 'theme-color';
+      m.content = primary;
+      document.head.appendChild(m);
+    } else {
+      metas.forEach(m => m.setAttribute('content', primary));
+    }
+
+    const byId = document.getElementById('tg-theme-color-meta');
+    if (byId) byId.setAttribute('content', primary);
+
+    let tileMeta = document.querySelector('meta[name="msapplication-TileColor"]');
+    if (!tileMeta) {
+      tileMeta = document.createElement('meta');
+      tileMeta.name = 'msapplication-TileColor';
+      document.head.appendChild(tileMeta);
+    }
+    tileMeta.setAttribute('content', primary);
+
     const hd = document.getElementById('tg-mhd'); if (hd) hd.style.background = primary;
     const sp = document.getElementById('tg-splash'); if (sp) sp.style.background = `linear-gradient(135deg, ${primary} 0%, ${dark} 50%, #0f1729 100%)`;
+
+    document.documentElement.style.backgroundColor = primary;
+
     try { localStorage.setItem(THEME_KEY, JSON.stringify({ primary, dark })); } catch(e) {}
   }
 
   (function() {
     try { const c = localStorage.getItem(THEME_KEY); if (c) { const { primary, dark } = JSON.parse(c); applyTheme(primary, dark); } } catch(e) {}
   })();
+
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      try { const c = localStorage.getItem(THEME_KEY); if (c) { const { primary, dark } = JSON.parse(c); applyTheme(primary, dark); } } catch(e2) {}
+    }
+  });
 
   async function loadTheme() {
     try {
@@ -1194,11 +1219,47 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     scrollRAF = requestAnimationFrame(handleScrollDesktop);
   }, { passive: true });
 
+  function renderSearchChips() {
+    const el = document.getElementById('tg-sp-chips');
+    if (!el) return;
+
+    let cats = [];
+
+    if (Array.isArray(ALL_CATS_FROM_DB) && ALL_CATS_FROM_DB.length) {
+      cats = ALL_CATS_FROM_DB
+        .filter(c => c && c.name && String(c.name).toLowerCase() !== 'all')
+        .map(c => ({ name: String(c.name), icon: c.icon || '📦' }));
+    }
+    if (!cats.length && CONFIG && Array.isArray(CONFIG.categories) && CONFIG.categories.length) {
+      cats = CONFIG.categories
+        .filter(c => c && c.name && String(c.name).toLowerCase() !== 'all')
+        .map(c => ({ name: String(c.name), icon: c.icon || '📦' }));
+    }
+    if (!cats.length) {
+      cats = DEFAULT_CATEGORIES.slice();
+    }
+
+    const limited = cats.slice(0, 8);
+    const sig = JSON.stringify(limited.map(c => c.name + '|' + c.icon));
+    if (sig === _chipsSig && el.children.length > 0) return;
+    _chipsSig = sig;
+
+    const html = limited.map(c => {
+      const name = String(c.name);
+      const icon = String(c.icon || '📦');
+      return '<button type="button" class="tg-sp-chip" data-search-term="' + esc(name) + '" onclick="tgSearchPopupChip(this.dataset.searchTerm)">' +
+        esc(icon) + ' ' + esc(name) + '</button>';
+    }).join('') + '<button type="button" class="tg-sp-chip" data-search-term="sale" onclick="tgSearchPopupChip(\'sale\')">🔥 Sale</button>';
+
+    el.innerHTML = html;
+  }
+
   window.tgOpenSearchModal = function() {
     const popup = document.getElementById('tg-search-popup');
     if (!popup) return;
     popup.classList.add('show');
     document.body.style.overflow = 'hidden';
+    try { renderSearchChips(); } catch(e) {}
     setTimeout(() => {
       const input = document.getElementById('tg-search-popup-input');
       if (input) { input.focus(); input.select(); }
@@ -1290,9 +1351,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
               _catsServerConfirmed = true;
               setCache(CATS_CACHE, raw);
               renderCategories();
+              renderSearchChips();
             }, err => {
               _catsServerConfirmed = true;
               renderCategories();
+              renderSearchChips();
             });
           } catch(e) {
             _catsServerConfirmed = true;
@@ -1307,8 +1370,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           else if (!CONFIG) CONFIG = DEFAULT_CONFIG;
           setCache(CFG_CACHE, CONFIG);
           renderAll();
+          renderSearchChips();
         } catch(e) {
-          if (!CONFIG) { CONFIG = DEFAULT_CONFIG; renderAll(); }
+          if (!CONFIG) { CONFIG = DEFAULT_CONFIG; renderAll(); renderSearchChips(); }
         }
         try {
           if (unsubConfig) { try { unsubConfig(); } catch(e){} }
@@ -1318,6 +1382,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
             setCache(CFG_CACHE, CONFIG);
             renderAll();
             renderFlashSale();
+            renderSearchChips();
           }, () => {});
         } catch(e) {}
       })(),
@@ -1388,6 +1453,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     });
 
     el.innerHTML = html;
+
+    try { renderSearchChips(); } catch(e) {}
   }
 
   window.tgMSelectCategory = function(cat, el) {
@@ -1440,6 +1507,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (sig === _renderAllSig && main.children.length > 0) return;
     _renderAllSig = sig;
 
+    /* ⚡ If cache exists, pre-render products directly — NO skeleton flash */
+    const hasCachedProducts = allProducts.length > 0;
+    const _skel = (n) => hasCachedProducts ? '' : skelGrid(n);
+    const _miniSkel = (n) => hasCachedProducts ? '' : miniSkel(n);
+
     let html = '';
     html += '<div id="tg-banner-wrap"></div>';
     html += '<div id="tg-mflash-container"></div>';
@@ -1447,7 +1519,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (secs.quickPicks?.enabled !== false) {
       html += '<div class="tg-msec">' +
         '<div class="tg-msec-head"><div><h3>' + esc(secs.quickPicks?.title || '⚡ Quick Picks') + '</h3><div class="tg-msec-head-sub">Fast delivery</div></div><a href="' + esc(secs.quickPicks?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
-        '<div class="tg-mmini" id="tg-mquick">' + miniSkel(6) + '</div>' +
+        '<div class="tg-mmini" id="tg-mquick">' + _miniSkel(6) + '</div>' +
       '</div>';
     }
 
@@ -1456,7 +1528,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (secs.trending?.enabled !== false) {
       html += '<div class="tg-msec">' +
         '<div class="tg-msec-head"><div><h3>' + esc(secs.trending?.title || 'Trending Now') + '</h3><div class="tg-msec-head-sub">Most viewed</div></div><a href="' + esc(secs.trending?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
-        '<div class="tg-mgrid scroll" id="tg-mtrending">' + skelGrid(6) + '</div>' +
+        '<div class="tg-mgrid scroll" id="tg-mtrending">' + _skel(6) + '</div>' +
       '</div>';
     }
 
@@ -1472,7 +1544,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (secs.bestsellers?.enabled !== false) {
       html += '<div class="tg-msec">' +
         '<div class="tg-msec-head"><div><h3>' + esc(secs.bestsellers?.title || 'Bestsellers') + '</h3><div class="tg-msec-head-sub">Top selling</div></div><a href="' + esc(secs.bestsellers?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
-        '<div class="tg-mgrid scroll" id="tg-mbest">' + skelGrid(6) + '</div>' +
+        '<div class="tg-mgrid scroll" id="tg-mbest">' + _skel(6) + '</div>' +
       '</div>';
     }
 
@@ -1491,14 +1563,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (secs.newArrivals?.enabled !== false) {
       html += '<div class="tg-msec">' +
         '<div class="tg-msec-head"><div><h3>' + esc(secs.newArrivals?.title || 'New Arrivals') + '</h3><div class="tg-msec-head-sub">Fresh styles</div></div><a href="' + esc(secs.newArrivals?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
-        '<div class="tg-mgrid scroll" id="tg-mnew">' + skelGrid(6) + '</div>' +
+        '<div class="tg-mgrid scroll" id="tg-mnew">' + _skel(6) + '</div>' +
       '</div>';
     }
 
     if (secs.allProducts?.enabled !== false) {
       html += '<div class="tg-msec">' +
         '<div class="tg-msec-head"><div><h3>' + esc(secs.allProducts?.title || 'All Products') + '</h3><div class="tg-msec-head-sub">Explore collection</div></div><a href="' + esc(secs.allProducts?.link || 'products.html') + '" class="tg-msec-btn">View All</a></div>' +
-        '<div class="tg-mgrid-lg" id="tg-mall">' + skelGrid(8) + '</div>' +
+        '<div class="tg-mgrid-lg" id="tg-mall">' + (hasCachedProducts ? '' : skelGrid(8)) + '</div>' +
       '</div>';
     }
 
@@ -1649,22 +1721,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   function loadProducts() {
     if (_productsLoading || _productsLoaded) return;
 
-    /* ⚡ FIX #4: Instant cache render — try fresh, then STALE as fallback (never flash empty on return) */
-    let cached = getCache(PROD_CACHE, PROD_TTL);
-    if (!cached || !cached.length) {
-      try {
-        const raw = localStorage.getItem(PROD_CACHE);
-        if (raw) {
-          const c = JSON.parse(raw);
-          if (c && Array.isArray(c.data) && c.data.length) cached = c.data;
-        }
-      } catch(e) {}
-    }
-    if (cached && cached.length) {
-      allProducts = cached;
-      renderProducts(true);
-      loadRecentlyViewed();
-      preloadProductImages(cached, 8);
+    /* ⚡ Skip cache read if preload already filled allProducts */
+    if (!allProducts.length) {
+      let cached = getCache(PROD_CACHE, PROD_TTL);
+      if (!cached || !cached.length) {
+        try {
+          const raw = localStorage.getItem(PROD_CACHE);
+          if (raw) {
+            const c = JSON.parse(raw);
+            if (c && Array.isArray(c.data) && c.data.length) cached = c.data;
+          }
+        } catch(e) {}
+      }
+      if (cached && cached.length) {
+        allProducts = cached;
+        renderProducts(true);
+        loadRecentlyViewed();
+        preloadProductImages(cached, 8);
+      }
     }
 
     if (unsubProducts) { try { unsubProducts(); } catch(e){} unsubProducts = null; }
@@ -2542,18 +2616,47 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   let initialQ = '';
   try { initialQ = new URLSearchParams(window.location.search).get('q') || ''; } catch(e) {}
 
+  /* ⚡ PRELOAD CACHE synchronously — products/categories/config render instantly, NO skeleton flash */
+  (function preloadCacheBoot() {
+    try {
+      const cfg = getCache(CFG_CACHE, CFG_TTL);
+      if (cfg) CONFIG = mergeDeep(DEFAULT_CONFIG, cfg);
+
+      const cats = getCache(CATS_CACHE, CATS_TTL);
+      if (Array.isArray(cats) && cats.length) ALL_CATS_FROM_DB = cats;
+
+      let prods = getCache(PROD_CACHE, PROD_TTL);
+      if (!prods || !prods.length) {
+        try {
+          const raw = localStorage.getItem(PROD_CACHE);
+          if (raw) {
+            const p = JSON.parse(raw);
+            if (p && Array.isArray(p.data) && p.data.length) prods = p.data;
+          }
+        } catch(e) {}
+      }
+      if (Array.isArray(prods) && prods.length) allProducts = prods;
+
+      const b = loadBannersCache();
+      if (b) ALL_BANNERS = b.byId || {};
+    } catch(e) {}
+  })();
+
   renderCategories();
   updateCartBadge();
   loadTheme();
-  
-  if (!CONFIG) {
-    CONFIG = DEFAULT_CONFIG;
-    renderAll(true);
-  }
+  try { renderSearchChips(); } catch(e) {}
 
+  if (!CONFIG) CONFIG = DEFAULT_CONFIG;
+
+  /* ⚡ Render with preloaded cache — NO skeleton visible if cache exists */
+  renderAll(true);
+
+  /* ⚡ Network sync in background (cache already shown) */
   loadProducts();
 
   loadConfig().then(() => {
+    try { renderSearchChips(); } catch(e) {}
     if (initialQ) setTimeout(() => tgMDoSearch(initialQ), 350);
   });
 
@@ -2561,6 +2664,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!_catsServerConfirmed) {
       _catsServerConfirmed = true;
       renderCategories();
+      try { renderSearchChips(); } catch(e) {}
     }
   }, 6000);
 
