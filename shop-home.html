@@ -671,38 +671,31 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 (function() {
   'use strict';
 
-  /* ══════════════════ ULTRA-FAST SPLASH (guaranteed hide ≤1.5s) ══════════════════ */
+  /* ══════════════════ ULTRA-FAST SPLASH ══════════════════ */
   (function() {
     const el = document.getElementById('tg-splash');
     if (!el) return;
-
     const hideNow = () => {
       if (!el || el.classList.contains('gone')) return;
       el.classList.add('hide');
       setTimeout(() => { if (el) el.classList.add('gone'); }, 200);
     };
-
     let visited = false;
     try {
-      if (sessionStorage.getItem('toego_splash_seen') === '1') {
-        visited = true;
-      } else {
+      if (sessionStorage.getItem('toego_splash_seen') === '1') visited = true;
+      else {
         const ts = parseInt(localStorage.getItem('toego_splash_ts') || '0', 10);
         if (ts && (Date.now() - ts) < 5 * 60 * 1000) visited = true;
       }
     } catch(e) {}
-
     if (visited) { el.classList.add('gone'); return; }
-
     try {
       sessionStorage.setItem('toego_splash_seen', '1');
       localStorage.setItem('toego_splash_ts', String(Date.now()));
     } catch(e) {}
-
     setTimeout(hideNow, 250);
     setTimeout(hideNow, 1000);
     setTimeout(() => { if (el) el.classList.add('gone'); }, 1500);
-
     if (document.readyState === 'complete') setTimeout(hideNow, 50);
     else window.addEventListener('load', () => setTimeout(hideNow, 50), { once: true });
   })();
@@ -721,8 +714,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  /* ═══ ⚡ FIX: Persistence disabled — causes hangs in WebView & random browser freezes ═══ */
-  /* Original code had db.enablePersistence() which locks IndexedDB and breaks after 3-4 refreshes */
+  /* ⚡ FIX #2: Persistence ENABLED with synchronizeTabs: false — makes .get() instant, no WebView hangs */
+  try {
+    db.enablePersistence({ synchronizeTabs: false }).catch(() => {});
+  } catch(e) {}
 
   const FV = firebase.firestore.FieldValue;
 
@@ -741,10 +736,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   let MAB_INDEX = 0, MAB_COUNT = 0, MAB_AUTO = null;
   let SLIDER_HASH = '';
 
-  // ⚡ Prevents flash of DEFAULT_CATEGORIES before Firestore responds
   let _catsServerConfirmed = false;
-
-  // ⚡ Product load state
   let _productsLoading = false;
   let _productsLoaded = false;
   let _reviewsLoaded = false;
@@ -769,9 +761,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   const CATS_CACHE = 'toego_home_cats_v23';
   const THEME_KEY = 'toego_theme_colors';
   const BANNER_CACHE = 'toego_home_banners_v23';
-  const CFG_TTL = 60 * 60 * 1000;
-  const PROD_TTL = 5 * 60 * 1000;
-  const CATS_TTL = 5 * 60 * 1000;
+
+  /* ⚡ FIX #1: TTLs increased — cache stays fresh longer, no stale-load flash on return */
+  const CFG_TTL = 24 * 60 * 60 * 1000;   // 24 hours (was 1 hour)
+  const PROD_TTL = 30 * 60 * 1000;       // 30 minutes (was 5 minutes)
+  const CATS_TTL = 60 * 60 * 1000;       // 1 hour (was 5 minutes)
 
   const DEFAULT_CATEGORIES = [
     { name:'Slippers', icon:'🩴' },
@@ -809,7 +803,20 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       return c.data;
     } catch(e) { return null; }
   }
-  function setCache(k, d) { try { localStorage.setItem(k, JSON.stringify({ data: d, time: Date.now() })); } catch(e) {} }
+  /* ⚡ FIX #3: Robust setCache — retries after freeing space if quota exceeded */
+  function setCache(k, d) {
+    try {
+      localStorage.setItem(k, JSON.stringify({ data: d, time: Date.now() }));
+      return true;
+    } catch(e) {
+      try {
+        if (k !== CFG_CACHE) try { localStorage.removeItem(CFG_CACHE); } catch(x){}
+        if (k !== BANNER_CACHE) try { localStorage.removeItem(BANNER_CACHE); } catch(x){}
+        localStorage.setItem(k, JSON.stringify({ data: d, time: Date.now() }));
+        return true;
+      } catch(e2) { return false; }
+    }
+  }
 
   function optimizeImgUrl(url) {
     if (!url || typeof url !== 'string') return url || '';
@@ -831,20 +838,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
   function preloadBannerImages(banners) {
     if (!banners || !banners.length) return;
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => _preloadBanners(banners), { timeout: 2000 });
-    } else {
-      setTimeout(() => _preloadBanners(banners), 500);
-    }
+    if ('requestIdleCallback' in window) requestIdleCallback(() => _preloadBanners(banners), { timeout: 2000 });
+    else setTimeout(() => _preloadBanners(banners), 500);
   }
   function _preloadBanners(banners) {
     banners.forEach((b, i) => {
       if (!b.image) return;
-      const url = optimizeImgUrl(b.image);
       const img = new Image();
       img.decoding = 'async';
       if (i === 0) img.fetchPriority = 'high';
-      img.src = url;
+      img.src = optimizeImgUrl(b.image);
     });
   }
 
@@ -852,21 +855,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!products || !products.length) return;
     max = max || 8;
     const slice = products.slice(0, max);
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(() => _preloadProdImgs(slice), { timeout: 1000 });
-    } else {
-      setTimeout(() => _preloadProdImgs(slice), 100);
-    }
+    if ('requestIdleCallback' in window) requestIdleCallback(() => _preloadProdImgs(slice), { timeout: 1000 });
+    else setTimeout(() => _preloadProdImgs(slice), 100);
   }
   function _preloadProdImgs(products) {
     products.forEach((p, i) => {
       const raw = p.image || (p.images && p.images[0]);
       if (!raw) return;
-      const url = cardImgUrl(raw, 400);
       const img = new Image();
       img.decoding = 'async';
       if (i < 6) img.fetchPriority = 'high';
-      img.src = url;
+      img.src = cardImgUrl(raw, 400);
     });
   }
 
@@ -930,17 +929,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return 0;
   }
 
-  function hasActiveTimer(p) {
-    const ms = getSaleEndMs(p);
-    return ms > Date.now();
-  }
+  function hasActiveTimer(p) { return getSaleEndMs(p) > Date.now(); }
 
   function getAllAdminBanners() {
     const slots = ['slot1','slot2','slot3','slot4','slot5','slot6'];
     const out = [];
-    slots.forEach(s => {
-      if (ALL_BANNERS[s] && ALL_BANNERS[s].image) out.push(ALL_BANNERS[s]);
-    });
+    slots.forEach(s => { if (ALL_BANNERS[s] && ALL_BANNERS[s].image) out.push(ALL_BANNERS[s]); });
     return out;
   }
 
@@ -953,12 +947,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!wrap) return;
     const banners = getAllAdminBanners();
     const hash = bannerHash();
-
     if (!force && hash === SLIDER_HASH && wrap.children.length > 0) return;
     if (!force && !banners.length && !wrap.children.length) return;
-
     SLIDER_HASH = hash;
-
     if (!banners.length) { wrap.innerHTML = ''; MAB_COUNT = 0; return; }
 
     let slidesHtml = '';
@@ -1004,9 +995,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     const w = slider.offsetWidth || 1;
     track.style.transform = 'translateX(' + (-MAB_INDEX * w) + 'px)';
     const slides = track.children;
-    for (let i = 0; i < slides.length; i++) {
-      slides[i].classList.toggle('active', i === MAB_INDEX);
-    }
+    for (let i = 0; i < slides.length; i++) slides[i].classList.toggle('active', i === MAB_INDEX);
     document.querySelectorAll('.tg-mabanner-dot').forEach((d, i) => d.classList.toggle('active', i === MAB_INDEX));
     const cnt = document.getElementById('tg-mabanner-count');
     if (cnt) cnt.textContent = (MAB_INDEX + 1) + ' / ' + MAB_COUNT;
@@ -1064,8 +1053,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       if (Math.abs(dx) < Math.abs(dy)) return;
       if (Math.abs(dx) > 8) didMove = true;
       deltaX = dx;
-      const offset = -MAB_INDEX * slider.offsetWidth + deltaX;
-      track.style.transform = 'translateX(' + offset + 'px)';
+      track.style.transform = 'translateX(' + (-MAB_INDEX * slider.offsetWidth + deltaX) + 'px)';
     }, { passive: true });
 
     slider.addEventListener('touchend', () => {
@@ -1100,8 +1088,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       if (!mouseDown) return;
       deltaX = e.clientX - startX;
       if (Math.abs(deltaX) > 8) didMove = true;
-      const offset = -MAB_INDEX * slider.offsetWidth + deltaX;
-      track.style.transform = 'translateX(' + offset + 'px)';
+      track.style.transform = 'translateX(' + (-MAB_INDEX * slider.offsetWidth + deltaX) + 'px)';
     });
     window.addEventListener('mouseup', () => {
       if (!mouseDown) return;
@@ -1364,26 +1351,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (Array.isArray(ALL_CATS_FROM_DB) && ALL_CATS_FROM_DB.length) {
       cats = ALL_CATS_FROM_DB
         .filter(c => c && c.name && String(c.name).toLowerCase() !== 'all')
-        .map(c => ({
-          name: String(c.name),
-          icon: c.icon || '📦',
-          image: c.image || ''
-        }));
+        .map(c => ({ name: String(c.name), icon: c.icon || '📦', image: c.image || '' }));
     }
     if (!cats.length && CONFIG && Array.isArray(CONFIG.categories) && CONFIG.categories.length) {
       cats = CONFIG.categories
         .filter(c => c && c.name && String(c.name).toLowerCase() !== 'all')
-        .map(c => ({
-          name: String(c.name),
-          icon: c.icon || '📦',
-          image: c.image || ''
-        }));
+        .map(c => ({ name: String(c.name), icon: c.icon || '📦', image: c.image || '' }));
     }
 
     if (!cats.length) {
-      if (!_catsServerConfirmed) {
-        return;
-      }
+      if (!_catsServerConfirmed) return;
       cats = DEFAULT_CATEGORIES.slice();
     }
 
@@ -1432,12 +1409,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
           let subs = c.subcategories || c.subs || [];
           subs = subs.map(s => typeof s === 'string' ? { name: s, icon: '📦' } : s);
           return {
-            id: c.id,
-            name: c.name || '',
-            icon: c.icon || '📦',
-            image: c.image || '',
-            order: Number(c.order) || 9999,
-            subcategories: subs
+            id: c.id, name: c.name || '', icon: c.icon || '📦', image: c.image || '',
+            order: Number(c.order) || 9999, subcategories: subs
           };
         });
         localStorage.setItem('toego_cat_cats_v3', JSON.stringify(normalized));
@@ -1541,7 +1514,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     renderBannerSlider(false);
     renderFlashSale();
 
-    /* ⚡ FIX: If products already loaded, re-render them after DOM wipe */
     if (allProducts.length) {
       renderProducts(true);
     }
@@ -1674,17 +1646,20 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     return parts.join(';');
   }
 
-  /* ══════════════════ ⚡ FIXED PRODUCT LOADER ══════════════════
-     - Cache renders instantly
-     - .get() one-shot for speed, then onSnapshot for updates
-     - 8s safety timeout so skeleton never gets stuck
-     - Reviews loaded in background (non-blocking)
-  */
   function loadProducts() {
     if (_productsLoading || _productsLoaded) return;
 
-    // ⚡ Instant cache render
-    const cached = getCache(PROD_CACHE, PROD_TTL);
+    /* ⚡ FIX #4: Instant cache render — try fresh, then STALE as fallback (never flash empty on return) */
+    let cached = getCache(PROD_CACHE, PROD_TTL);
+    if (!cached || !cached.length) {
+      try {
+        const raw = localStorage.getItem(PROD_CACHE);
+        if (raw) {
+          const c = JSON.parse(raw);
+          if (c && Array.isArray(c.data) && c.data.length) cached = c.data;
+        }
+      } catch(e) {}
+    }
     if (cached && cached.length) {
       allProducts = cached;
       renderProducts(true);
@@ -1698,7 +1673,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
     const finishLoad = (data) => {
       _productsLoading = false;
-
       if (data && data.length) {
         _productsLoaded = true;
         const newSig = _productsContentSig(data);
@@ -1714,8 +1688,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       } else if (!allProducts.length) {
         renderProducts(true);
       }
-
-      // ⚡ Background reviews load (fixes always-"New" ratings, non-blocking)
       if (!_reviewsLoaded && allProducts.length) {
         _reviewsLoaded = true;
         setTimeout(() => { loadReviewsForProducts().catch(() => {}); }, 1500);
@@ -1729,7 +1701,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       finishLoad(data);
     };
 
-    // ⚡ Safety timeout — prevents skeleton getting stuck forever
     const safetyTimer = setTimeout(() => {
       if (_productsLoading && !_productsLoaded && !allProducts.length) {
         _productsLoading = false;
@@ -1737,13 +1708,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       }
     }, 8000);
 
-    // ⚡ Fast .get() first (more reliable than onSnapshot in WebView)
     try {
       db.collection('products').limit(60).get()
         .then(snap => {
           clearTimeout(safetyTimer);
           applySnap(snap);
-          // Setup realtime listener AFTER first success
           try {
             unsubProducts = db.collection('products').limit(60).onSnapshot(
               s => {
@@ -1766,7 +1735,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
         })
         .catch(() => {
           clearTimeout(safetyTimer);
-          // Fallback: onSnapshot
           try {
             unsubProducts = db.collection('products').limit(60).onSnapshot(
               s => applySnap(s),
@@ -1899,9 +1867,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       const el = document.getElementById(id);
       if (!el) return;
       const parentSec = el.closest('.tg-msec');
-      if (parentSec) {
-        parentSec.style.display = hasProducts ? '' : 'none';
-      }
+      if (parentSec) parentSec.style.display = hasProducts ? '' : 'none';
     });
 
     const homeWrap = document.getElementById('tg-mhome');
@@ -1933,11 +1899,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 
     const contentParts = filtered.map(_productContentSig).sort();
     const sig = JSON.stringify({
-      seed: _shuffleSeed,
-      cat: currentCategory,
-      sort: currentSort,
-      search: currentSearch,
-      content: contentParts
+      seed: _shuffleSeed, cat: currentCategory, sort: currentSort,
+      search: currentSearch, content: contentParts
     });
     if (!force && sig === _productsSig) return;
     _productsSig = sig;
@@ -2145,10 +2108,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     e.stopPropagation();
     e.preventDefault();
     const btn = e.currentTarget;
-    const id = btn.dataset.pid;
-    const name = btn.dataset.pname || 'Product';
-    const imgUrl = btn.dataset.img || '';
-    tgMShare(id, name, imgUrl);
+    tgMShare(btn.dataset.pid, btn.dataset.pname || 'Product', btn.dataset.img || '');
   };
 
   window.tgMShare = async function(id, name, imgUrl) {
@@ -2586,20 +2546,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   updateCartBadge();
   loadTheme();
   
-  /* ═══ ⚡ FIX: Render structure + load products immediately (don't wait for config) ═══ */
   if (!CONFIG) {
     CONFIG = DEFAULT_CONFIG;
     renderAll(true);
   }
 
-  // ⚡ Direct product load — click karte hi products fetch ho jayenge
   loadProducts();
 
   loadConfig().then(() => {
     if (initialQ) setTimeout(() => tgMDoSearch(initialQ), 350);
   });
 
-  // ⚡ FIX: Categories fallback — if firestore categories never respond, force defaults after 6s
   setTimeout(() => {
     if (!_catsServerConfirmed) {
       _catsServerConfirmed = true;
