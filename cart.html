@@ -79,7 +79,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-item-gst { font-size:11.5px; color:#666; margin-bottom:8px; display:flex; align-items:center; gap:6px; background:#f8f9fb; padding:5px 10px; border-radius:6px; align-self:flex-start; }
 .tg-item-gst b { color:#212121; font-weight:600; }
 
-/* ⭐ NEW: delivery row wrapper + free delivery tag */
 .tg-item-delivery-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
 .tg-item-delivery { font-size:12px; color:#212121; display:inline-flex; align-items:center; gap:5px; font-weight:600; }
 .tg-item-delivery b { font-weight:700; color:#212121; }
@@ -314,7 +313,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-qty-val { min-width:38px; height:30px; font-size:13px; }
   .tg-item-actions { font-size:11.5px; gap:12px; }
   .tg-item-remove { top:8px; right:8px; width:26px; height:26px; opacity:.9; }
-  /* ⭐ delivery tag stays clearly visible on mobile */
   .tg-item-delivery-row { margin-bottom:8px; gap:6px; }
   .tg-item-delivery { font-size:11.5px; }
   .tg-item-free-badge { font-size:9.5px; padding:2px 7px; }
@@ -447,6 +445,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
   <a href="account.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
 </nav>
+
+<!-- ✅ NEW: Pincode modal (replaces prompt for mobile reliability) -->
+<div class="tg-modal" id="tg-pin-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">Delivery Pincode</div>
+      <button class="tg-modal-close" onclick="tgClosePinModal()">✕</button>
+    </div>
+    <div class="tg-modal-field">
+      <label>Enter 6-digit Pincode *</label>
+      <input type="tel" id="tg-pin-input" placeholder="e.g. 208001" maxlength="6" inputmode="numeric" autocomplete="postal-code">
+    </div>
+    <p style="font-size:12.5px;color:#666;margin:8px 0 16px;line-height:1.5;">
+      Enter your delivery pincode to check availability and delivery time. Kanpur pincodes get <b style="color:#fb641b;">Same Day Delivery</b>.
+    </p>
+    <button class="tg-modal-save" onclick="tgSavePinFromModal()">Check Delivery</button>
+  </div>
+</div>
 
 <div class="tg-modal" id="tg-addr-list-modal">
   <div class="tg-modal-card">
@@ -1003,7 +1019,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  /* ⭐ Bulletproof Kanpur pincode detection — 208xxx and 209xxx */
+  /* ⭐ Kanpur pincode detection — 208xxx and 209xxx */
   function isKanpurPincode(pin) {
     if (!pin) return false;
     const p = String(pin).trim().replace(/\s+/g, '');
@@ -1014,7 +1030,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return false;
   }
 
-  /* ⭐ Robust delivery info with city + pin check */
+  /* ⭐ Delivery info — Kanpur = Same Day, others = 3-6 days */
   function getDeliveryInfo() {
     let pin = String(getPin() || '').trim();
     const a = getAddr();
@@ -1028,12 +1044,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (isKanpurPincode(pin)) {
       return { text: 'Same Day Delivery', cls: 'same-day' };
     }
-    return { text: 'Delivery in 3-5 days', cls: '' };
+    return { text: 'Delivery in 3-6 days', cls: '' };
   }
 
-  /* ⭐ Directly refresh the delivery tag inside every product card.
-     Runs the moment a pincode / address changes so the tag updates
-     immediately on BOTH desktop and mobile (Same Day ⇄ 3-5 Days). */
+  /* ⭐ Directly refresh delivery tag inside every product card */
   function refreshDeliveryTagsInPlace() {
     if (!_itemNodeMap || !_itemNodeMap.size) return;
     const dInfo = getDeliveryInfo();
@@ -1051,11 +1065,26 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
   }
 
-  /* ⭐ FIXED: Force full re-render + better UX + Kanpur toast */
+  /* ✅ FIXED: tgChangePin now opens modal instead of prompt() for mobile reliability */
   window.tgChangePin = function() {
-    const p = prompt('Enter delivery pincode (6 digits)', getPin() || '');
-    if (!p) return;
-    const clean = String(p).trim().replace(/\s+/g, '');
+    const inp = document.getElementById('tg-pin-input');
+    if (inp) inp.value = getPin() || '';
+    document.getElementById('tg-pin-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => { if (inp) inp.focus(); }, 150);
+  };
+
+  window.tgClosePinModal = function() {
+    document.getElementById('tg-pin-modal').classList.remove('show');
+    document.body.style.overflow = '';
+    refreshDeliveryTagsInPlace();
+  };
+
+  /* ✅ FIXED: Save pin from modal (mobile-friendly, no prompt) */
+  window.tgSavePinFromModal = function() {
+    const inp = document.getElementById('tg-pin-input');
+    if (!inp) return;
+    const clean = (inp.value || '').trim().replace(/\s+/g, '');
     if (!/^\d{6}$/.test(clean)) {
       toast('Please enter a valid 6-digit pincode', 'error');
       return;
@@ -1073,14 +1102,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const isKan = isKanpurPincode(clean);
     toast(
-      isKan ? '✓ Same Day Delivery available for ' + clean : '✓ Delivery in 3-5 days for ' + clean,
+      isKan ? '✓ Same Day Delivery available for ' + clean : '✓ Delivery in 3-6 days for ' + clean,
       'success'
     );
 
-    /* ⭐ Update delivery tags in product cards instantly (mobile + desktop) */
     refreshDeliveryTagsInPlace();
 
-    /* ⭐ Force FULL re-render */
     _itemNodeMap.forEach(node => {
       node.removeAttribute('data-struct-sig');
       node.removeAttribute('data-qty');
@@ -1089,8 +1116,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     _lastIdsKey = '';
     renderCart(true);
 
-    /* ⭐ Safety net — refresh again after re-render */
     refreshDeliveryTagsInPlace();
+
+    document.getElementById('tg-pin-modal').classList.remove('show');
+    document.body.style.overflow = '';
   };
 
   function getItemCount() { return cartItems.reduce((s, i) => s + Number(i.qty || 1), 0); }
@@ -1703,10 +1732,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
+  /* ✅ FIXED: Remove without confirm (mobile-friendly), extended pendingCartDeletes to prevent reappear */
   window.tgRemoveItem = async function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) return;
-    if (!skipConfirm && !confirm('Remove "' + (item.name || 'this item') + '" from cart?')) return;
 
     const node = _itemNodeMap.get(docId);
     if (node) node.classList.add('removing');
@@ -1723,8 +1752,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (currentUser) {
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
-        _pendingCartDeletes.delete(docId);
-        if (!skipConfirm) toast('Removed from cart', 'success');
+        // ✅ Keep in pending for 5s so stale snapshot doesn't re-add it
+        setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
+        toast('Removed from cart', 'success');
       } catch(err) {
         _pendingCartDeletes.delete(docId);
         toast('Could not remove item', 'error');
@@ -1732,14 +1762,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     } else {
       setGuestCart(cartItems);
-      if (!skipConfirm) toast('Removed from cart', 'success');
+      toast('Removed from cart', 'success');
     }
   };
 
+  /* ✅ FIXED: Remove selected without confirm (mobile-friendly) */
   window.tgRemoveSelected = async function() {
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
-    if (!confirm('Remove ' + sel.length + ' item(s)?')) return;
+
     const idsToRemove = sel.map(it => it.id);
     idsToRemove.forEach(id => _pendingCartDeletes.add(id));
     cartItems = cartItems.filter(it => !selectedIds.has(it.id));
@@ -1759,7 +1790,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const col = db.collection('carts').doc(currentUser.uid).collection('items');
         idsToRemove.forEach(id => batch.delete(col.doc(id)));
         await batch.commit();
-        idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
+        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 5000);
         toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
       } catch(err) {
         idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
@@ -2504,7 +2535,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
 
-    /* ⭐ Update delivery tags in product cards instantly */
     refreshDeliveryTagsInPlace();
 
     tgCloseAddrList();
@@ -2601,7 +2631,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = city + ' - ' + pin;
 
-    /* ⭐ Update delivery tags instantly on BOTH desktop and mobile */
     refreshDeliveryTagsInPlace();
 
     try {
@@ -2630,7 +2659,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   window.tgClosePay = function() {
     document.getElementById('tg-pay-modal').classList.remove('show');
     document.body.style.overflow = '';
-    /* ⭐ Safety: refresh delivery tags when pay modal closes */
     refreshDeliveryTagsInPlace();
   };
   window.tgPickPay = function(method, el) {
@@ -2812,7 +2840,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
       const sellerIds = [...new Set(orderItems.map(i => i.sellerId).filter(Boolean))];
       const dInfo = getDeliveryInfo();
-      const deliveryType = dInfo.cls === 'same-day' ? 'same_day' : 'standard_3_5_days';
+      const deliveryType = dInfo.cls === 'same-day' ? 'same_day' : 'standard_3_6_days';
 
       const orderPayload = {
         customerId: currentUser.uid,
@@ -2877,7 +2905,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const col = db.collection('carts').doc(currentUser.uid).collection('items');
         docsToDelete.forEach(docId => batch.delete(col.doc(docId)));
         cartCleanupPromise = batch.commit()
-          .then(() => { setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 4000); })
+          .then(() => { setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 5000); })
           .catch(e => {
             console.warn('Cart cleanup:', e && e.message);
             docsToDelete.forEach(id => _pendingCartDeletes.delete(id));
@@ -2922,7 +2950,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  /* ⭐ Debug helper */
   window.tgDebugDelivery = function() {
     console.log('═══ DELIVERY DEBUG ═══');
     console.log('Memory pin:', _memStore.pin);
@@ -2935,7 +2962,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     console.log('═══════════════════════');
   };
 
-  /* ⭐ Safety net: keep delivery tag in sync every 1.5s (mobile included) */
+  /* Safety net: keep delivery tag in sync every 1.5s */
   setInterval(() => {
     try {
       if (!cartItems.length || !_itemNodeMap.size) return;
@@ -2971,6 +2998,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (e.key === 'Enter') { e.preventDefault(); window.tgApplyCouponManual(); }
   });
 
+  // Pin input: auto-submit on Enter
+  (function() {
+    const pinInp = document.getElementById('tg-pin-input');
+    if (pinInp) {
+      pinInp.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); window.tgSavePinFromModal(); }
+      });
+    }
+  })();
+
   auth.onAuthStateChanged(async (u) => {
     const prevUser = currentUser;
     currentUser = u;
@@ -2990,7 +3027,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
   document.querySelectorAll('.tg-modal').forEach(m => {
     m.addEventListener('click', (e) => {
-      if (e.target === m) { m.classList.remove('show'); document.body.style.overflow = ''; }
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+        // Refresh delivery tags if pin modal closed
+        if (m.id === 'tg-pin-modal') refreshDeliveryTagsInPlace();
+      }
     });
   });
 
