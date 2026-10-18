@@ -95,12 +95,9 @@ a{color:inherit;text-decoration:none;}
 .tg-assured{display:inline-flex;align-items:center;gap:5px;color:var(--tg-primary);font-size:13px;font-weight:700;margin-bottom:16px;}
 .tg-assured svg{width:14px;height:14px;stroke:var(--tg-primary);fill:none;stroke-width:2.4;}
 .tg-divider{height:1px;background:#f1f3f6;margin:16px 0;}
-
-/* ═══ SMALLER TEXT: Size, Color, Qty labels ═══ */
 .tg-opt-title{font-size:11.5px;color:#878787;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
 .tg-opt-title .err{color:#d32f2f;font-size:10.5px;font-weight:700;text-transform:none;letter-spacing:0;display:none;}
 .tg-opt-title.has-error .err{display:inline;}
-
 .tg-sizes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
 .tg-size-btn{position:relative;min-width:56px;height:42px;padding:0 16px;border:2px solid #e0e0e0;border-radius:8px;background:#fff;font-size:13px;font-weight:700;color:#212121;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:5px;}
 .tg-size-btn:hover:not(:disabled):not(.active){border-color:var(--tg-primary);}
@@ -109,7 +106,6 @@ a{color:inherit;text-decoration:none;}
 .tg-size-tick{display:none;width:14px;height:14px;border-radius:50%;background:var(--tg-primary);color:#fff;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;line-height:1;font-weight:900;}
 .tg-size-btn.active .tg-size-tick{display:inline-flex;}
 .tg-size-btn.active .tg-size-tick::before{content:'✓';}
-
 .tg-color-wrap{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
 .tg-color-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:4px;user-select:none;transition:transform .15s;}
 .tg-color-item:hover{transform:translateY(-2px);}
@@ -126,13 +122,11 @@ a{color:inherit;text-decoration:none;}
   .tg-color-swatch-inner{font-size:14px;}
   .tg-color-swatch-label{font-size:10px;max-width:58px;}
 }
-
 .tg-qty-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
 .tg-qty{display:inline-flex;align-items:center;border:2px solid #e0e0e0;border-radius:8px;overflow:hidden;}
 .tg-qty button{width:40px;height:40px;font-size:19px;font-weight:700;color:var(--tg-primary);background:#fff;}
 .tg-qty button:disabled{color:#ccc;cursor:not-allowed;}
 .tg-qty-val{min-width:46px;height:40px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0;}
-
 .tg-seller-card{background:#f8f9fb;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:14px;}
 .tg-seller-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--tg-primary),var(--tg-primary-dark));color:#fff;font-size:22px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .tg-seller-info{flex:1;min-width:0;}
@@ -438,9 +432,6 @@ a{color:inherit;text-decoration:none;}
 (function(){
   'use strict';
 
-  // ═══════════════════════════════════════════════════════════════
-  // FIREBASE INIT
-  // ═══════════════════════════════════════════════════════════════
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -458,9 +449,6 @@ a{color:inherit;text-decoration:none;}
   try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
-  // ═══════════════════════════════════════════════════════════════
-  // CONSTANTS
-  // ═══════════════════════════════════════════════════════════════
   const GUEST_CART = 'toego_cart_guest';
   const PROD_CACHE_PREFIX = 'toego_prod_v2_';
   const PROD_CACHE_TTL = 30 * 60 * 1000;
@@ -473,9 +461,6 @@ a{color:inherit;text-decoration:none;}
   const CLOUD_CACHE_KEY = 'toego_cloud_v2';
   const PRODUCT_FETCH_TIMEOUT = 12000;
 
-  // ═══════════════════════════════════════════════════════════════
-  // STATE
-  // ═══════════════════════════════════════════════════════════════
   let PRODUCT = null;
   let ALL_PRODUCTS = [];
   let REVIEWS = [];
@@ -504,9 +489,6 @@ a{color:inherit;text-decoration:none;}
   let _productFetchInProgress = false;
   let CLOUD = { cloudName: '', uploadPreset: '' };
 
-  // ═══════════════════════════════════════════════════════════════
-  // THEME / TOAST MESSAGES CACHE
-  // ═══════════════════════════════════════════════════════════════
   const DEFAULT_TOAST_MSGS = {
     addCart: 'Added to cart',
     loginRequired: 'Please log in to continue',
@@ -569,7 +551,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
   })();
 
-  // Background network refresh
   db.collection('siteSettings').doc('theme').get().then(s => {
     if (!s.exists) return;
     const d = s.data() || {};
@@ -593,9 +574,6 @@ a{color:inherit;text-decoration:none;}
     try { localStorage.setItem(CLOUD_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
   }).catch(() => {});
 
-  // ═══════════════════════════════════════════════════════════════
-  // HELPERS
-  // ═══════════════════════════════════════════════════════════════
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -628,9 +606,23 @@ a{color:inherit;text-decoration:none;}
   function tago(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; if (s < 604800) return Math.floor(s/86400)+'d ago'; return fdate(d); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
 
-  // ═══════════════════════════════════════════════════════════════
-  // CACHE
-  // ═══════════════════════════════════════════════════════════════
+  // ⭐⭐⭐ FIX #1 — YEH NAYA FUNCTION HAI — Cloudinary URLs ko proper width pe optimize karta hai ⭐⭐⭐
+  // Kisi bhi cloudinary URL se purane transforms (w_1000, q_auto, etc.) strip karke
+  // clean width deta hai. Data URLs aur non-cloudinary URLs ko as-is return karta hai.
+  function cardImgUrl(url, width) {
+    if (!url || typeof url !== 'string') return url || '';
+    if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
+    const w = width || 400;
+    const parts = url.split('/upload/');
+    if (parts.length < 2) return url;
+    const segs = parts[1].split('/');
+    // Transform segments ko strip karo (jisme _ ya , ho lekin . nahi)
+    while (segs.length > 1 && (segs[0].indexOf('_') !== -1 || segs[0].indexOf(',') !== -1) && segs[0].indexOf('.') === -1) {
+      segs.shift();
+    }
+    return parts[0] + '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit,dpr_auto/' + segs.join('/');
+  }
+
   function getCachedProduct(pid) {
     try {
       const raw = localStorage.getItem(PROD_CACHE_PREFIX + pid);
@@ -666,9 +658,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return null; }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // PRODUCT ID
-  // ═══════════════════════════════════════════════════════════════
   function getProductId() {
     try {
       const p = new URLSearchParams(window.location.search);
@@ -677,9 +666,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return ''; }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // COLOR UTILS
-  // ═══════════════════════════════════════════════════════════════
   const COLOR_HEX_MAP = {
     'red': '#e53935', 'dark red': '#b71c1c', 'light red': '#ef5350',
     'blue': '#1e88e5', 'dark blue': '#0d47a1', 'light blue': '#42a5f5',
@@ -737,9 +723,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) { return false; }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // PRODUCT DATA GETTERS
-  // ═══════════════════════════════════════════════════════════════
   function getImages() {
     const imgs = [];
     try {
@@ -799,9 +782,6 @@ a{color:inherit;text-decoration:none;}
     return Number(PRODUCT.stock || 0);
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // ERROR SCREEN
-  // ═══════════════════════════════════════════════════════════════
   function showError(title, desc, showRetry) {
     document.getElementById('tg-content').innerHTML =
       '<div class="tg-card"><div class="tg-error">' +
@@ -817,9 +797,6 @@ a{color:inherit;text-decoration:none;}
     document.getElementById('tg-body').classList.add('tg-hide-actions');
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // TIMEOUT WRAPPER
-  // ═══════════════════════════════════════════════════════════════
   function withTimeout(promise, ms) {
     return new Promise((resolve, reject) => {
       const t = setTimeout(() => reject(new Error('timeout')), ms);
@@ -830,9 +807,6 @@ a{color:inherit;text-decoration:none;}
     });
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // PRODUCT LOADING
-  // ═══════════════════════════════════════════════════════════════
   async function loadProduct() {
     const pid = getProductId();
     _currentProductId = pid;
@@ -974,9 +948,6 @@ a{color:inherit;text-decoration:none;}
     setupAllProductsLazy();
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // RENDER PRODUCT
-  // ═══════════════════════════════════════════════════════════════
   function renderProduct() {
     if (!PRODUCT) {
       showError('Product Not Available', 'No product data to display.', true);
@@ -996,17 +967,13 @@ a{color:inherit;text-decoration:none;}
     const hasSizes = sizes.length > 0;
     const hasColors = colors.length > 0;
 
-    // Reset selection if not in new options
     if (hasSizes && SELECTED_SIZE && sizes.indexOf(SELECTED_SIZE) === -1) SELECTED_SIZE = '';
     if (hasColors && SELECTED_COLOR && colors.indexOf(SELECTED_COLOR) === -1) SELECTED_COLOR = '';
-
-    // ⭐ NEW: Auto-select if seller provided ONLY ONE size/color
     if (sizes.length === 1) { SELECTED_SIZE = sizes[0]; SIZE_ERROR = false; }
     if (colors.length === 1) { SELECTED_COLOR = colors[0]; COLOR_ERROR = false; }
 
     const ratingHtml = '<div id="tg-main-rating"></div>';
 
-    // Sizes HTML
     let sizeHtml = '';
     if (hasSizes) {
       sizeHtml = '<div class="tg-opt-title ' + (SIZE_ERROR ? 'has-error' : '') + '">Select Size <span class="err">• Required</span></div><div class="tg-sizes" id="tg-sizes-wrap">' + sizes.map(sz => {
@@ -1018,7 +985,6 @@ a{color:inherit;text-decoration:none;}
       }).join('') + '</div>';
     }
 
-    // Colors HTML
     let colorHtml = '';
     if (hasColors) {
       colorHtml = '<div class="tg-opt-title ' + (COLOR_ERROR ? 'has-error' : '') + '">Select Color <span class="err">• Required</span></div>' +
@@ -1042,13 +1008,15 @@ a{color:inherit;text-decoration:none;}
     const sellerName = PRODUCT.sellerName || PRODUCT.shopName || (PRODUCT.seller && PRODUCT.seller.shopName) || 'TOEGO Store';
     const sellerInit = String(sellerName).trim().charAt(0).toUpperCase() || 'T';
 
+    // ⭐⭐⭐ FIX #2 — Main slider images 900px width pe optimize (was: raw URL) ⭐⭐⭐
     const sliderHtml =
       '<div class="tg-slider" id="tg-slider">' +
         '<div class="tg-slider-track" id="tg-slider-track">' +
           imgs.map((u, i) => {
             const loadingAttr = i === 0 ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
             const safeU = escapeAttr(u);
-            return '<div class="tg-slide" onclick="tgSlideTapOpen(\'' + safeU + '\')"><img src="' + esc(u) + '" alt="' + esc(PRODUCT.name||'') + '" draggable="false" ' + loadingAttr + ' onerror="this.src=\'https://via.placeholder.com/400x400/f1f3f6/878787?text=TOEGO\'" /></div>';
+            const displayImg = cardImgUrl(u, 900); /* ⭐ FIX: 900px optimized */
+            return '<div class="tg-slide" onclick="tgSlideTapOpen(\'' + safeU + '\')"><img src="' + esc(displayImg) + '" alt="' + esc(PRODUCT.name||'') + '" draggable="false" ' + loadingAttr + ' onerror="this.src=\'https://via.placeholder.com/400x400/f1f3f6/878787?text=TOEGO\'" /></div>';
           }).join('') +
         '</div>' +
         (imgs.length > 1 ? '<span class="tg-slider-count" id="tg-slider-count">1/' + imgs.length + '</span>' : '') +
@@ -1057,8 +1025,9 @@ a{color:inherit;text-decoration:none;}
         (imgs.length > 1 ? '<div class="tg-slider-dots" id="tg-slider-dots">' + imgs.map((_, i) => '<span class="tg-slider-dot ' + (i===0?'active':'') + '" onclick="tgSliderGo(event,' + i + ')"></span>').join('') + '</div>' : '') +
       '</div>';
 
+    // ⭐⭐⭐ FIX #3 — Thumbnails 150px pe optimize (was: raw URL, 72px display pe 1000px image aa rahi thi!) ⭐⭐⭐
     const thumbsHtml = imgs.length > 1
-      ? '<div class="tg-gallery-thumbs">' + imgs.map((u, i) => '<div class="tg-thumb ' + (i===0?'active':'') + '" onclick="tgSliderGo(event,' + i + ')"><img src="' + esc(u) + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/100x100/f1f3f6/878787?text=T\'" /></div>').join('') + '</div>'
+      ? '<div class="tg-gallery-thumbs">' + imgs.map((u, i) => '<div class="tg-thumb ' + (i===0?'active':'') + '" onclick="tgSliderGo(event,' + i + ')"><img src="' + esc(cardImgUrl(u, 150)) + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/100x100/f1f3f6/878787?text=T\'" /></div>').join('') + '</div>'
       : '';
 
     const views = Number(PRODUCT.views || 0);
@@ -1163,9 +1132,6 @@ a{color:inherit;text-decoration:none;}
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // SLIDER
-  // ═══════════════════════════════════════════════════════════════
   function initSlider() {
     sliderTrack = document.getElementById('tg-slider-track');
     if (!sliderTrack) return;
@@ -1247,7 +1213,8 @@ a{color:inherit;text-decoration:none;}
     });
   }
 
-  window.tgSlideTapOpen = function(url) { tgOpenViewer(url); };
+  // ⭐⭐⭐ FIX #4 — Viewer me 1400px image load (was: raw possibly 3000px+) ⭐⭐⭐
+  window.tgSlideTapOpen = function(url) { tgOpenViewer(cardImgUrl(url, 1400)); };
 
   function updateSlider() {
     if (!sliderTrack) return;
@@ -1269,9 +1236,6 @@ a{color:inherit;text-decoration:none;}
   window.tgSliderPrev = function(e) { if (e) { e.preventDefault(); e.stopPropagation(); } if (SLIDER_INDEX > 0) { SLIDER_INDEX--; updateSlider(); } };
   window.tgSliderNext = function(e) { if (e) { e.preventDefault(); e.stopPropagation(); } if (!sliderTrack) return; const slides = sliderTrack.children.length; if (SLIDER_INDEX < slides - 1) { SLIDER_INDEX++; updateSlider(); } };
 
-  // ═══════════════════════════════════════════════════════════════
-  // SELECTION
-  // ═══════════════════════════════════════════════════════════════
   window.tgSelectSize = function(sz) {
     SELECTED_SIZE = sz; SIZE_ERROR = false;
     document.querySelectorAll('[data-size]').forEach(b => {
@@ -1314,9 +1278,6 @@ a{color:inherit;text-decoration:none;}
     if (btns[1]) btns[1].disabled = QTY >= 10;
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // RELATED PRODUCTS
-  // ═══════════════════════════════════════════════════════════════
   async function loadRelated() {
     try {
       if (!PRODUCT) return;
@@ -1386,11 +1347,13 @@ a{color:inherit;text-decoration:none;}
     return Number(p.stock || 0);
   }
 
+  // ⭐⭐⭐ FIX #5 — Related + All Products cards 400px pe optimize (was: raw URL) ⭐⭐⭐
   function productCardHtml(p) {
     const price = Number(p.price||0);
     const mrp = Number(p.compareAtPrice || p.mrp || 0);
     const off = mrp > price ? Math.round((1 - price/mrp)*100) : 0;
-    const img = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=T';
+    const rawImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=T';
+    const img = cardImgUrl(rawImg, 400); /* ⭐ FIX: 400px optimized */
     const rating = Number(p.rating || 0);
     const ratingCount = Number(p.ratingCount || 0);
     const stock = getProductStock(p);
@@ -1410,9 +1373,6 @@ a{color:inherit;text-decoration:none;}
     '</div>';
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // ALL PRODUCTS (LAZY)
-  // ═══════════════════════════════════════════════════════════════
   function setupAllProductsLazy() {
     const el = document.getElementById('tg-all-products');
     if (!el) return;
@@ -1471,9 +1431,6 @@ a{color:inherit;text-decoration:none;}
     el.innerHTML = shuffleArr(ALL_PRODUCTS).slice(0, 40).map(p => productCardHtml(p)).join('');
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // REVIEWS
-  // ═══════════════════════════════════════════════════════════════
   function subscribeReviews(pid) {
     if (!pid) return;
     if (unsubReviews) { try { unsubReviews(); } catch(e) {} unsubReviews = null; }
@@ -1539,11 +1496,16 @@ a{color:inherit;text-decoration:none;}
     el.innerHTML = html;
   }
 
+  // ⭐⭐⭐ FIX #6 — Review images 150px thumbnails + 1200px viewer (was: raw URL) ⭐⭐⭐
   function reviewCardHtml(r) {
     const rating = Math.round(Number(r.rating||0));
     const imgsArr = Array.isArray(r.images) ? r.images.filter(u => u) : [];
     const imgs = imgsArr.length
-      ? '<div class="tg-review-imgs">' + imgsArr.map(u => '<div class="tg-review-img" onclick="tgOpenViewer(\'' + escapeAttr(u) + '\')"><img src="' + esc(u) + '" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" /></div>').join('') + '</div>'
+      ? '<div class="tg-review-imgs">' + imgsArr.map(u => {
+          const thumbUrl = cardImgUrl(u, 150);     /* ⭐ FIX: 150px thumbnail */
+          const bigUrl = cardImgUrl(u, 1200);      /* ⭐ FIX: 1200px lightbox */
+          return '<div class="tg-review-img" onclick="tgOpenViewer(\'' + escapeAttr(bigUrl) + '\')"><img src="' + esc(thumbUrl) + '" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" /></div>';
+        }).join('') + '</div>'
       : '';
     const verified = r.verified ? ' <span style="color:#388e3c;font-size:11px;">✓ Verified</span>' : '';
     const isMine = currentUser && r.userId === currentUser.uid;
@@ -1599,9 +1561,6 @@ a{color:inherit;text-decoration:none;}
     if (e.target.id === 'tg-ar-modal') tgCloseAllReviews();
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // REVIEW ELIGIBILITY
-  // ═══════════════════════════════════════════════════════════════
   async function checkReviewEligibility(pid) {
     CAN_REVIEW = false;
     HAS_REVIEWED = false;
@@ -1677,9 +1636,6 @@ a{color:inherit;text-decoration:none;}
   }
   window.tgShowNotEligibleMsg = function() { toast(TOAST_MSGS.onlyDelivered, 'info'); };
 
-  // ═══════════════════════════════════════════════════════════════
-  // REVIEW MODAL
-  // ═══════════════════════════════════════════════════════════════
   window.tgOpenReview = function() {
     if (!currentUser) { toast(TOAST_MSGS.loginToReview, 'info'); setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('product.html?id=' + (PRODUCT?.id || '')), 1000); return; }
     if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'info'); return; }
@@ -1693,7 +1649,9 @@ a{color:inherit;text-decoration:none;}
     document.getElementById('tg-rv-img-preview').innerHTML = '';
     document.getElementById('tg-rv-upload-progress').classList.remove('show');
     document.getElementById('tg-rv-img-file').value = '';
-    const img = (PRODUCT.images && PRODUCT.images[0]) || PRODUCT.image || '';
+    // ⭐ FIX #7 — Review modal product thumbnail 150px (was: raw)
+    const rawImg = (PRODUCT.images && PRODUCT.images[0]) || PRODUCT.image || '';
+    const img = cardImgUrl(rawImg, 150);
     document.getElementById('tg-rv-prod-img').innerHTML = img ? '<img src="' + esc(img) + '" loading="lazy" onerror="this.style.display=\'none\'" />' : '';
     document.getElementById('tg-rv-prod-name').textContent = PRODUCT.name || 'Product';
     document.getElementById('tg-rv-modal').classList.add('show');
@@ -1750,6 +1708,10 @@ a{color:inherit;text-decoration:none;}
     for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
     return new Blob([u8], { type: mime });
   }
+
+  // ⭐⭐⭐ FIX #8 — Review upload me w_800 remove — sirf q_auto (was: w_800 baked) ⭐⭐⭐
+  // Reason: display pe cardImgUrl proper width lagayega (150px thumbnail, 1200px viewer)
+  // w_800 bake karne se cards me 800px image load ho rahi thi 70px display pe
   async function uploadToCloudinary(blob) {
     if (!CLOUD.cloudName || !CLOUD.uploadPreset) return null;
     try {
@@ -1760,7 +1722,8 @@ a{color:inherit;text-decoration:none;}
       const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD.cloudName + '/image/upload', { method: 'POST', body: fd });
       if (!res.ok) return null;
       const d = await res.json();
-      return d.secure_url.replace('/upload/', '/upload/q_auto:good,w_800,c_limit/');
+      // Sirf basic optimization — width display time pe apply hogi
+      return d.secure_url.replace('/upload/', '/upload/f_auto,q_auto:good/');
     } catch(e) { return null; }
   }
   async function processReviewImage(file) {
@@ -1857,9 +1820,6 @@ a{color:inherit;text-decoration:none;}
     }
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // IMAGE VIEWER
-  // ═══════════════════════════════════════════════════════════════
   let vwScale = 1, vwLastScale = 1, vwStartDist = 0, vwPanX = 0, vwPanY = 0, vwStartX = 0, vwStartY = 0, vwIsPanning = false, vwLastTap = 0;
 
   function vwApply() {
@@ -1997,9 +1957,6 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // VALIDATION
-  // ═══════════════════════════════════════════════════════════════
   function validateSelection() {
     if (!PRODUCT) return false;
     const sizes = getSizes();
@@ -2019,9 +1976,6 @@ a{color:inherit;text-decoration:none;}
     return true;
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // CART ACTIONS
-  // ═══════════════════════════════════════════════════════════════
   function buildCartItem() {
     const sellerId = PRODUCT.sellerId || PRODUCT.seller_id || PRODUCT.sid || PRODUCT.sellerUid || '';
     const sellerName = PRODUCT.sellerName || PRODUCT.shopName || (PRODUCT.seller && PRODUCT.seller.shopName) || '';
@@ -2144,9 +2098,6 @@ a{color:inherit;text-decoration:none;}
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // RESIZE
-  // ═══════════════════════════════════════════════════════════════
   window.addEventListener('resize', () => {
     if (sliderTrack) {
       sliderTrack.classList.add('no-trans');
@@ -2155,9 +2106,6 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // AUTH
-  // ═══════════════════════════════════════════════════════════════
   auth.onAuthStateChanged((u) => {
     const wasLoggedIn = !!currentUser;
     currentUser = u;
@@ -2169,9 +2117,6 @@ a{color:inherit;text-decoration:none;}
     }
   });
 
-  // ═══════════════════════════════════════════════════════════════
-  // INIT
-  // ═══════════════════════════════════════════════════════════════
   setTimeout(() => {
     if (!PRODUCT || !document.querySelector('.tg-main')) {
       const el = document.getElementById('tg-content');
