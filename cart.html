@@ -635,6 +635,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const PCACHE_TTL = 15 * 60 * 1000;
   const COUPON_KEY = 'toego_applied_coupon';
   const CART_MIRROR_PREFIX = 'toego_cart_mirror_';
+  const DELETED_CART_KEY = 'toego_deleted_cart_items';  // ← NEW: persists deletes across refresh
+  const DELETED_CART_TTL = 45000;                        // ← NEW: 45 sec window
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
   const COD_LIMIT = 500;
@@ -671,6 +673,73 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const _pCache = new Map();
   let _pCacheDirty = false;
   let _pCacheSaveTimer = null;
+
+  /* ═══════════════════════════════════════════════════════════
+     🔒 DELETED CART ITEMS TRACKER (survives page refresh)
+     Fix: earlier _pendingCartDeletes was in-memory only,
+     so on refresh the stale Firebase cache showed removed items.
+     ═══════════════════════════════════════════════════════════ */
+  const _deletedItems = new Map();  // id -> timestamp
+
+  function _bootDeletedItems() {
+    try {
+      const raw = localStorage.getItem(DELETED_CART_KEY);
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return;
+      const now = Date.now();
+      let dirty = false;
+      arr.forEach(x => {
+        if (!x || !x.id || !x.ts) { dirty = true; return; }
+        if (now - x.ts > DELETED_CART_TTL) { dirty = true; return; }
+        _deletedItems.set(x.id, x.ts);
+      });
+      if (dirty) _saveDeletedItems();
+    } catch(e) {}
+  }
+
+  function _saveDeletedItems() {
+    try {
+      const now = Date.now();
+      const arr = [];
+      _deletedItems.forEach((ts, id) => {
+        if (now - ts < DELETED_CART_TTL) arr.push({ id, ts });
+      });
+      if (arr.length) localStorage.setItem(DELETED_CART_KEY, JSON.stringify(arr));
+      else localStorage.removeItem(DELETED_CART_KEY);
+    } catch(e) {}
+  }
+
+  function _markItemDeleted(id) {
+    if (!id) return;
+    const ts = Date.now();
+    _deletedItems.set(id, ts);
+    _saveDeletedItems();
+    // Auto-expire after TTL
+    setTimeout(() => {
+      const cur = _deletedItems.get(id);
+      if (cur === ts) {
+        _deletedItems.delete(id);
+        _saveDeletedItems();
+      }
+    }, DELETED_CART_TTL);
+  }
+
+  function _isItemDeleted(id) {
+    if (!id) return false;
+    const ts = _deletedItems.get(id);
+    if (!ts) return false;
+    if (Date.now() - ts > DELETED_CART_TTL) {
+      _deletedItems.delete(id);
+      _saveDeletedItems();
+      return false;
+    }
+    return true;
+  }
+
+  // Boot on page load
+  _bootDeletedItems();
+  /* ═══════════════════════════════════════════════════════════ */
 
   function _pCacheBoot() {
     try {
@@ -791,7 +860,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return enrichFromCacheSync(items);
   }
 
-  // 🚨 FIX #3: sirf qty ya price change pe hi re-render (blink ruk jayega)
   function _cartChanged(a, b) {
     if (a.length !== b.length) return true;
     for (let i = 0; i < a.length; i++) {
@@ -1013,7 +1081,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     let raw = [];
     try { raw = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || '[]'); } catch(e) { raw = []; }
     const mapped = raw.map(i => ({ ...i, id: makeGuestId(i), productId: i.productId || i.id }));
-    return dedupeCart(mapped);
+    return dedupeCart(mapped).filter(it => !_isItemDeleted(it.id));
   }
   function setGuestCart(arr) {
     const clean = dedupeCart(arr).map(i => { const { id, ...rest } = i; return rest; });
@@ -1710,6 +1778,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
+  /* 🔒 FIXED: Remove — now persists deletion across page refresh */
   window.tgRemoveItem = async function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) {
@@ -1719,7 +1788,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return;
     }
 
+    // Mark as deleted persistently + in-memory
     _pendingCartDeletes.add(docId);
+    _markItemDeleted(docId);
     _pendingQty.delete(docId);
     cartItems = cartItems.filter(it => it.id !== docId);
     selectedIds.delete(docId);
@@ -1732,12 +1803,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (currentUser) {
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
-        setTimeout(() => _pendingCartDeletes.delete(docId), 3000);
+        setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
         if (!skipConfirm) toast('Removed from cart', 'success');
       } catch(err) {
+        // Handle already-deleted case gracefully
+        const code = err && err.code;
+        const msg = String(err && err.message || '');
+        if (code === 'not-found' || msg.indexOf('not found') !== -1 || msg.indexOf('No document') !== -1) {
+          setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
+          if (!skipConfirm) toast('Removed from cart', 'success');
+          return;
+        }
         _pendingCartDeletes.delete(docId);
-        toast('Could not remove item', 'error');
-        cartItems = [];
+        toast('Could not remove item from server', 'error');
         loadCart();
       }
     } else {
@@ -1751,7 +1829,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!sel.length) { toast('No items selected', 'info'); return; }
 
     const idsToRemove = sel.map(it => it.id);
-    idsToRemove.forEach(id => _pendingCartDeletes.add(id));
+    idsToRemove.forEach(id => {
+      _pendingCartDeletes.add(id);
+      _markItemDeleted(id);
+    });
 
     cartItems = cartItems.filter(it => !selectedIds.has(it.id));
     idsToRemove.forEach(id => {
@@ -1770,12 +1851,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const col = db.collection('carts').doc(currentUser.uid).collection('items');
         idsToRemove.forEach(id => batch.delete(col.doc(id)));
         await batch.commit();
-        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 3000);
+        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 5000);
         toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
       } catch(err) {
         idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
         toast('Could not remove items', 'error');
-        cartItems = [];
         loadCart();
       }
     } else {
@@ -2145,7 +2225,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     setTimeout(attemptFn, delays[0]);
   }
 
-  // 🚨 FIX #1: Buy Now flow me purana mirror mat dikhao — seedha fresh load
   function _quickBootRender() {
     if (readBuyNowId()) return false;
 
@@ -2153,8 +2232,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const lastUid = localStorage.getItem(LAST_UID_KEY);
       if (lastUid) {
         const mirror = _loadMirror(lastUid);
-        if (mirror.length) {
-          cartItems = enrichFromCacheSync(dedupeCart(mirror.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
+        // 🔒 Filter out recently deleted items from mirror
+        const filtered = mirror.filter(it => it && it.id && !_isItemDeleted(it.id));
+        if (filtered.length) {
+          cartItems = enrichFromCacheSync(dedupeCart(filtered.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
           const loading = document.getElementById('tg-loading');
           if (loading) loading.style.display = 'none';
           renderCart(true);
@@ -2228,8 +2309,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const mirror = _loadMirror(currentUser.uid);
     if (mirror.length && !cartItems.length) {
-      cartItems = enrichFromCacheSync(dedupeCart(mirror.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
-      renderCart(true);
+      // 🔒 Filter deleted items
+      const filtered = mirror.filter(it => it && it.id && !_isItemDeleted(it.id));
+      if (filtered.length) {
+        cartItems = enrichFromCacheSync(dedupeCart(filtered.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
+        renderCart(true);
+      }
     }
 
     const buyNowDoc = readBuyNowId();
@@ -2247,15 +2332,23 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     let _firstSnapshotDone = false;
 
     async function processSnapshot(snap) {
+      // 🔒 Filter: check BOTH _pendingCartDeletes (same session) AND _isItemDeleted (survives refresh)
       let raw = snap.docs.map(d => {
         const data = d.data();
         return { ...data, id: d.id, productId: data.productId || d.id };
-      }).filter(it => !_pendingCartDeletes.has(it.id));
+      }).filter(it => !_pendingCartDeletes.has(it.id) && !_isItemDeleted(it.id));
 
       const snapIds = new Set(snap.docs.map(d => d.id));
       _pendingCartDeletes.forEach(id => {
         if (!snapIds.has(id)) _pendingCartDeletes.delete(id);
       });
+      // Also cleanup deleted-items that are no longer in snapshot
+      _deletedItems.forEach((ts, id) => {
+        if (!snapIds.has(id) && (Date.now() - ts) > 5000) {
+          _deletedItems.delete(id);
+        }
+      });
+      _saveDeletedItems();
 
       const now = Date.now();
       raw = raw.map(it => {
@@ -3079,13 +3172,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
         try {
           const docsToDelete = t.sel.map(it => it.id);
+          // 🔒 Mark as deleted BEFORE removing from Firebase
+          docsToDelete.forEach(id => { _pendingCartDeletes.add(id); _markItemDeleted(id); });
+
           const orderId = await tgCreateOrderSecure(
             verified,
             { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: 'paid' },
             docsToDelete
           );
 
-          docsToDelete.forEach(id => _pendingCartDeletes.add(id));
           const _delSet = new Set(docsToDelete);
           cartItems = cartItems.filter(it => !_delSet.has(it.id));
           docsToDelete.forEach(id => {
@@ -3096,7 +3191,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           saveSelected();
           _persistCartToMirror();
           renderCart(true);
-          setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 3000);
+          setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 5000);
 
           showSuccess(orderId);
           document.getElementById('tg-success-order').textContent = 'Order ID: #' + orderId.slice(0, 10).toUpperCase();
@@ -3221,9 +3316,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       placeBtns.forEach(b => { b.textContent = 'Placing order...'; });
 
       const docsToDelete = t.sel.map(it => it.id);
+      // 🔒 Mark as deleted BEFORE removing from Firebase
+      docsToDelete.forEach(id => { _pendingCartDeletes.add(id); _markItemDeleted(id); });
+
       const orderId = await tgCreateOrderSecure(verified, payInfo, docsToDelete);
 
-      docsToDelete.forEach(id => _pendingCartDeletes.add(id));
       const _delSet = new Set(docsToDelete);
       cartItems = cartItems.filter(it => !_delSet.has(it.id));
       docsToDelete.forEach(id => {
@@ -3234,7 +3331,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       saveSelected();
       _persistCartToMirror();
       renderCart(true);
-      setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 3000);
+      setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 5000);
 
       showSuccess(orderId);
       document.getElementById('tg-success-order').textContent = 'Order ID: #' + orderId.slice(0, 10).toUpperCase();
