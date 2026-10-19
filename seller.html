@@ -1648,6 +1648,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     }).join('');
   }
 
+  /* ⭐⭐⭐ FIXED renderEarnings — pending = sum of UNPAID delivered order nets ⭐⭐⭐ */
   function renderEarnings() {
     if (!document.getElementById('tg-earnings-list')) return;
     const e = calcEarnings();
@@ -1661,33 +1662,71 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     setText('tg-earn-net2', inr(e.netEarning));
     setText('tg-earn-settled', inr(totalReceived));
     setText('tg-earn-comm-pct-lbl', '(' + getCommission() + '%)');
-    const pendingPay = Math.max(0, e.netEarning - totalReceived);
+
+    // ⭐ FIX: pending = sum of UNPAID delivered order nets (was: netEarning - totalReceived)
+    const paidIds = getPaidOrderIds();
+    let pendingPay = 0;
+    ORDERS.forEach(o => {
+      if (normStatus(o) === 'delivered' && !paidIds.has(o.id)) {
+        pendingPay += orderNet(o);
+      }
+    });
     setText('tg-earn-pending-pay', inr(pendingPay));
 
-    if (e.returnCount > 0) { document.getElementById('tg-earn-return-row').style.display = 'flex'; setText('tg-earn-return-cut', '− ' + inr(e.returnCut)); }
-    else document.getElementById('tg-earn-return-row').style.display = 'none';
-    if (e.labelCut > 0) { document.getElementById('tg-earn-label-row').style.display = 'flex'; setText('tg-earn-label-cut', '− ' + inr(e.labelCut)); }
-    else document.getElementById('tg-earn-label-row').style.display = 'none';
+    if (e.returnCount > 0) {
+      document.getElementById('tg-earn-return-row').style.display = 'flex';
+      setText('tg-earn-return-cut', '− ' + inr(e.returnCut));
+    } else {
+      document.getElementById('tg-earn-return-row').style.display = 'none';
+    }
+    if (e.labelCut > 0) {
+      document.getElementById('tg-earn-label-row').style.display = 'flex';
+      setText('tg-earn-label-cut', '− ' + inr(e.labelCut));
+    } else {
+      document.getElementById('tg-earn-label-row').style.display = 'none';
+    }
 
     const rc = document.getElementById('tg-earn-return-card');
     if (rc) {
       if (e.returnCount === 0) rc.innerHTML = '';
-      else rc.innerHTML = '<div class="tg-return-alert"><div class="tg-return-alert-icon">🔄</div><div class="tg-return-alert-info"><div class="tg-return-alert-title">'+e.returnCount+' Return'+(e.returnCount === 1 ? '' : 's')+' Deducted</div><div class="tg-return-alert-desc">₹'+RETURN_CUT+' per return (admin approved)</div></div><div class="tg-return-alert-amount">− '+inr(e.returnCut)+'<small>Deducted</small></div></div>';
+      else rc.innerHTML = '<div class="tg-return-alert"><div class="tg-return-alert-icon">🔄</div><div class="tg-return-alert-info"><div class="tg-return-alert-title">' + e.returnCount + ' Return' + (e.returnCount === 1 ? '' : 's') + ' Deducted</div><div class="tg-return-alert-desc">₹' + RETURN_CUT + ' per return (admin approved)</div></div><div class="tg-return-alert-amount">− ' + inr(e.returnCut) + '<small>Deducted</small></div></div>';
     }
 
     const el = document.getElementById('tg-earnings-list');
     const delivered = ORDERS.filter(o => normStatus(o) === 'delivered');
-    if (!delivered.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">💰</div><div class="tg-empty-title">No earnings yet</div></div>'; return; }
-    const paidIds = getPaidOrderIds();
+    if (!delivered.length) {
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">💰</div><div class="tg-empty-title">No earnings yet</div></div>';
+      return;
+    }
+
+    const commPct = getCommission();
 
     el.innerHTML = delivered.slice(0, 50).map(o => {
-      const mi = myItems(o); let g = 0; mi.forEach(it => { g += Number(it.price||0)*Number(it.qty||1); });
-      const comm = Math.round(g * getCommission() / 100);
+      const mi = myItems(o);
+      let g = 0, w = 0;
+      mi.forEach(it => {
+        g += Number(it.price || 0) * Number(it.qty || 1);
+        w += Number(it.weight || 0) * Number(it.qty || 1);
+      });
+      if (!w) w = 500;
+      const comm = Math.round(g * commPct / 100);
       const deliv = calcDeliveryCharge(mi);
       const net = Math.max(0, g - comm - deliv);
       const isPaid = paidIds.has(o.id);
-      const paidBadge = isPaid ? '<span class="tg-paid-badge">PAID</span>' : '<span style="font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;background:#fff3e0;color:#f57c00;letter-spacing:0.4px;">⏳ PENDING</span>';
-      return '<div class="tg-order" style="cursor:default;"><div class="tg-order-head"><div><div class="tg-order-id">Order <b>#'+esc((o.id||'').slice(0,10).toUpperCase())+'</b></div><div class="tg-order-date">'+esc(fdate(o.deliveredAt||o.updatedAt||o.createdAt))+'</div></div>'+paidBadge+'</div><div style="background:#f8f9fb;border-radius:8px;padding:10px;margin-top:6px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;"><span>Gross</span><b style="color:#212121;">'+inr(g)+'</b></div><div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;"><span>Commission ('+getCommission()+'%)</span><b style="color:#d32f2f;">− '+inr(comm)+'</b></div><div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:6px;"><span>Delivery</span><b style="color:#d32f2f;">− '+inr(deliv)+'</b></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;padding-top:6px;border-top:1px dashed #ddd;color:#1b8a3a;"><span>Net</span><span>'+inr(net)+'</span></div></div></div>';
+      const paidBadge = isPaid
+        ? '<span class="tg-paid-badge">PAID</span>'
+        : '<span style="font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;background:#fff3e0;color:#f57c00;letter-spacing:0.4px;">⏳ PENDING</span>';
+
+      return '<div class="tg-order" style="cursor:default;">' +
+        '<div class="tg-order-head"><div><div class="tg-order-id">Order <b>#' + esc((o.id || '').slice(0, 10).toUpperCase()) + '</b></div><div class="tg-order-date">' + esc(fdate(o.deliveredAt || o.updatedAt || o.createdAt)) + '</div></div>' + paidBadge + '</div>' +
+        '<div style="background:#f8f9fb;border-radius:8px;padding:10px;margin-top:6px;">' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;"><span>Product Gross (Unit × Qty)</span><b style="color:#212121;">' + inr(g) + '</b></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:4px;"><span>Total Weight: ' + w + 'g</span><span style="color:#7c3aed;font-weight:700;">Slab based</span></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px;"><span>Commission (' + commPct + '%)</span><b style="color:#d32f2f;">− ' + inr(comm) + '</b></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:6px;"><span>Delivery (' + w + 'g slab)</span><b style="color:#d32f2f;">− ' + inr(deliv) + '</b></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:900;padding-top:6px;border-top:1px dashed #ddd;color:#1b8a3a;"><span>Net</span><span>' + inr(net) + '</span></div>' +
+        '</div>' +
+      '</div>';
     }).join('');
   }
 
