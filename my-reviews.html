@@ -6,9 +6,7 @@
 <title>My Reviews — TOEGO</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://firestore.googleapis.com">
-
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
-
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
@@ -16,7 +14,6 @@ img { max-width: 100%; display: block; }
 button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 input, select, textarea { font: inherit; }
 a { color: inherit; text-decoration: none; }
-
 header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
 
 /* HEADER */
@@ -58,131 +55,41 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   background: radial-gradient(circle, rgba(255,229,0,0.20), transparent 70%);
   border-radius: 50%;
 }
-.tg-summary-left {
-  flex-shrink: 0;
-  position: relative;
-  z-index: 2;
-}
-.tg-summary-avg {
-  font-size: 42px;
-  font-weight: 900;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.tg-summary-left { flex-shrink: 0; position: relative; z-index: 2; }
+.tg-summary-avg { font-size: 42px; font-weight: 900; line-height: 1; display: flex; align-items: center; gap: 6px; }
 .tg-summary-avg svg { width: 26px; height: 26px; fill: #ffe500; }
 .tg-summary-stars { font-size: 16px; color: #ffe500; margin-top: 4px; letter-spacing: 2px; }
-.tg-summary-body {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-  z-index: 2;
-}
+.tg-summary-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
 .tg-summary-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
 .tg-summary-sub { font-size: 12.5px; opacity: 0.85; }
-
-.tg-summary-stats {
-  display: flex;
-  gap: 20px;
-  position: relative;
-  z-index: 2;
-}
-.tg-summary-stat {
-  text-align: center;
-}
+.tg-summary-stats { display: flex; gap: 20px; position: relative; z-index: 2; }
+.tg-summary-stat { text-align: center; }
 .tg-summary-stat-num { font-size: 20px; font-weight: 800; line-height: 1; }
 .tg-summary-stat-label { font-size: 10.5px; opacity: 0.85; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
 
+/* SEARCH */
+.tg-search { background: #fff; border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-search-ic { color: #2874f0; flex-shrink: 0; display: flex; }
+.tg-search input { flex: 1; border: none; outline: none; font-size: 14px; color: #212121; background: transparent; min-width: 0; }
+.tg-search input::placeholder { color: #878787; }
+.tg-search-clear { color: #878787; font-size: 16px; padding: 4px 8px; display: none; }
+.tg-search-clear.show { display: block; }
+
 /* TABS */
-.tg-tabs-wrap {
-  background: #fff;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
+.tg-tabs-wrap { background: #fff; border-radius: 10px; margin-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .tg-tabs-wrap::-webkit-scrollbar { display: none; }
-.tg-tabs {
-  display: flex;
-  padding: 0 4px;
-  width: max-content;
-  min-width: 100%;
-}
-.tg-tab {
-  padding: 14px 16px 12px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #666;
-  white-space: nowrap;
-  cursor: pointer;
-  position: relative;
-  transition: color .2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.tg-tabs { display: flex; padding: 0 4px; width: max-content; min-width: 100%; }
+.tg-tab { padding: 14px 16px 12px; font-size: 13.5px; font-weight: 600; color: #666; white-space: nowrap; cursor: pointer; position: relative; transition: color .2s; display: flex; align-items: center; gap: 6px; }
 .tg-tab.active { color: #2874f0; font-weight: 700; }
-.tg-tab::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 8px; right: 8px;
-  height: 3px;
-  background: #2874f0;
-  border-radius: 3px 3px 0 0;
-  transform: scaleX(0);
-  transition: transform .25s cubic-bezier(.4,0,.2,1);
-}
+.tg-tab::after { content: ''; position: absolute; bottom: 0; left: 8px; right: 8px; height: 3px; background: #2874f0; border-radius: 3px 3px 0 0; transform: scaleX(0); transition: transform .25s cubic-bezier(.4,0,.2,1); }
 .tg-tab.active::after { transform: scaleX(1); }
-.tg-tab-count {
-  background: #f1f3f6;
-  color: #666;
-  font-size: 10.5px;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 8px;
-  min-width: 18px;
-  text-align: center;
-}
-.tg-tab.active .tg-tab-count {
-  background: #2874f0;
-  color: #fff;
-}
+.tg-tab-count { background: #f1f3f6; color: #666; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 8px; min-width: 18px; text-align: center; }
+.tg-tab.active .tg-tab-count { background: #2874f0; color: #fff; }
 
 /* SORT */
-.tg-sort {
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  flex-wrap: wrap;
-}
-.tg-sort-label {
-  font-size: 12px;
-  color: #878787;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-.tg-sort-btn {
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1.5px solid #e0e0e0;
-  background: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  color: #212121;
-  transition: all .15s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+.tg-sort { background: #fff; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); flex-wrap: wrap; }
+.tg-sort-label { font-size: 12px; color: #878787; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.tg-sort-btn { padding: 6px 12px; border-radius: 999px; border: 1.5px solid #e0e0e0; background: #fff; font-size: 12px; font-weight: 600; color: #212121; transition: all .15s; display: flex; align-items: center; gap: 4px; }
 .tg-sort-btn:hover { border-color: #2874f0; color: #2874f0; }
 .tg-sort-btn.active { background: #2874f0; color: #fff; border-color: #2874f0; }
 .tg-sort-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -190,149 +97,48 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 /* REVIEW CARDS */
 .tg-reviews { display: flex; flex-direction: column; gap: 12px; }
 
-.tg-review-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  transition: box-shadow .18s;
-}
+.tg-review-card { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: box-shadow .18s; }
 .tg-review-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
 
-.tg-review-product {
-  display: grid;
-  grid-template-columns: 60px 1fr auto;
-  gap: 12px;
-  align-items: center;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  border-bottom: 1px solid #f1f3f6;
-}
-.tg-review-product-img {
-  width: 60px; height: 60px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f5f5f6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
+.tg-review-product { display: grid; grid-template-columns: 60px 1fr auto; gap: 12px; align-items: center; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid #f1f3f6; border-radius: 6px; }
+.tg-review-product.clickable { cursor: pointer; transition: background .15s; }
+.tg-review-product.clickable:hover { background: #f8fbff; }
+.tg-review-product-img { width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: #f5f5f6; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
 .tg-review-product-img img { max-width: 100%; max-height: 100%; object-fit: contain; padding: 3px; }
 .tg-review-product-body { min-width: 0; }
-.tg-review-product-name {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #212121;
-  line-height: 1.35;
-  cursor: pointer;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.tg-review-product-name:hover { color: #2874f0; }
-.tg-review-product-date { font-size: 11.5px; color: #878787; margin-top: 3px; }
-.tg-review-product-go {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: #f1f3f6;
-  color: #666;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background .15s;
-}
-.tg-review-product-go:hover { background: #2874f0; color: #fff; }
+.tg-review-product-name { font-size: 13.5px; font-weight: 600; color: #212121; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; }
+.tg-review-product.clickable:hover .tg-review-product-name { color: #2874f0; }
+.tg-review-product-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: #878787; }
+.tg-review-product-price { color: #388e3c; font-weight: 700; }
+.tg-review-product-stock { color: #d32f2f; font-weight: 600; }
+.tg-review-product-go { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+.tg-review-product.clickable:hover .tg-review-product-go { background: #2874f0; color: #fff; }
 .tg-review-product-go svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
-.tg-review-stars-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.tg-review-star-badge {
-  background: #388e3c;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
+.tg-review-stars-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.tg-review-star-badge { background: #388e3c; color: #fff; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px; display: flex; align-items: center; gap: 3px; }
 .tg-review-star-badge svg { width: 10px; height: 10px; fill: #fff; }
 .tg-review-star-count { color: #878787; font-size: 11.5px; }
+.tg-review-verified { background: #e6f7ec; color: #1b8a3a; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.3px; }
 
-.tg-review-title {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: #212121;
-  margin-bottom: 6px;
-  line-height: 1.35;
-}
-.tg-review-text {
-  font-size: 13.5px;
-  color: #212121;
-  line-height: 1.55;
-  margin-bottom: 10px;
-  white-space: pre-wrap;
-}
+.tg-review-title { font-size: 14.5px; font-weight: 700; color: #212121; margin-bottom: 6px; line-height: 1.35; }
+.tg-review-text { font-size: 13.5px; color: #212121; line-height: 1.55; margin-bottom: 10px; white-space: pre-wrap; word-wrap: break-word; }
+.tg-review-text.collapsed { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.tg-review-read-more { color: #2874f0; font-weight: 600; font-size: 12.5px; cursor: pointer; margin-bottom: 10px; display: inline-block; }
 
 .tg-review-img-wrap { margin: 8px 0 10px; display: flex; gap: 8px; flex-wrap: wrap; }
-.tg-review-img { width: 76px; height: 76px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; background: #f5f5f6; cursor: zoom-in; }
+.tg-review-img { width: 76px; height: 76px; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; background: #f5f5f6; cursor: zoom-in; position: relative; }
 .tg-review-img img { width: 100%; height: 100%; object-fit: cover; }
+.tg-review-img-count { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
 
-.tg-review-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding-top: 10px;
-  border-top: 1px solid #f1f3f6;
-}
-.tg-review-helpful {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #878787;
-}
-.tg-review-helpful-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #212121;
-  transition: all .15s;
-}
-.tg-review-helpful-btn:hover { border-color: #2874f0; color: #2874f0; }
-.tg-review-helpful-btn.active { background: #e6f7ec; border-color: #388e3c; color: #1b8a3a; }
-.tg-review-helpful-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tg-review-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding-top: 10px; border-top: 1px solid #f1f3f6; }
+.tg-review-quick { display: flex; gap: 6px; }
+.tg-review-quick-btn { display: flex; align-items: center; gap: 4px; padding: 5px 10px; border: 1.5px solid #e0e0e0; border-radius: 999px; font-size: 11px; font-weight: 600; color: #666; transition: all .15s; background: #fff; }
+.tg-review-quick-btn:hover { border-color: #2874f0; color: #2874f0; }
+.tg-review-quick-btn svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
-.tg-review-actions {
-  display: flex;
-  gap: 8px;
-}
-.tg-review-action-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 7px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  transition: all .15s;
-}
+.tg-review-actions { display: flex; gap: 8px; }
+.tg-review-action-btn { display: flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; transition: all .15s; }
 .tg-review-action-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .tg-review-action-btn.edit { background: #eef3ff; color: #2874f0; }
 .tg-review-action-btn.edit:hover { background: #2874f0; color: #fff; }
@@ -340,45 +146,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-review-action-btn.delete:hover { background: #d32f2f; color: #fff; }
 
 /* EMPTY */
-.tg-empty {
-  background: #fff;
-  border-radius: 12px;
-  padding: 50px 24px;
-  text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-.tg-empty-img {
-  width: 140px; height: 140px;
-  margin: 0 auto 20px;
-  background: linear-gradient(135deg,#fff8e1,#ffe082);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 60px;
-}
+.tg-empty { background: #fff; border-radius: 12px; padding: 50px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.tg-empty-img { width: 140px; height: 140px; margin: 0 auto 20px; background: linear-gradient(135deg,#fff8e1,#ffe082); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 60px; }
 .tg-empty-title { font-size: 20px; font-weight: 800; color: #212121; margin: 0 0 8px; }
 .tg-empty-desc { font-size: 13.5px; color: #666; line-height: 1.55; margin: 0 auto 22px; max-width: 340px; }
-.tg-empty-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 13px 30px;
-  background: linear-gradient(135deg, #2874f0, #1a5dc7);
-  color: #fff;
-  font-size: 13.5px;
-  font-weight: 800;
-  border-radius: 8px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  box-shadow: 0 6px 18px rgba(40,116,240,0.3);
-}
+.tg-empty-cta { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; font-size: 13.5px; font-weight: 800; border-radius: 8px; letter-spacing: 0.4px; text-transform: uppercase; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
 .tg-empty-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 /* SKELETON */
 .tg-skel { background: linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%); background-size: 200% 100%; animation: tgShim 1.2s infinite; border-radius: 8px; }
 @keyframes tgShim { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .tg-skel-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+
+/* LOAD MORE */
+.tg-load-more { text-align: center; padding: 20px 0 10px; }
+.tg-load-more-btn { padding: 12px 28px; background: #fff; border: 1.5px solid #2874f0; color: #2874f0; font-size: 13px; font-weight: 700; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.4px; transition: all .15s; display: inline-flex; align-items: center; gap: 8px; }
+.tg-load-more-btn:hover { background: #2874f0; color: #fff; }
+.tg-load-more-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.tg-load-more-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 /* BOTTOM NAV */
 .tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
@@ -420,9 +205,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-upload-box { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border: 1.5px dashed #c5cad3; border-radius: 10px; background: #f8f9fb; cursor: pointer; transition: all .15s; font-size: 13px; color: #666; font-weight: 600; }
 .tg-upload-box:hover { border-color: #2874f0; background: #f0f5ff; color: #2874f0; }
 .tg-upload-box svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.tg-upload-preview { position: relative; display: inline-block; margin-top: 10px; }
-.tg-upload-preview img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; border: 1.5px solid #e0e0e0; }
-.tg-upload-preview-remove { position: absolute; top: -6px; right: -6px; width: 24px; height: 24px; border-radius: 50%; background: #d32f2f; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+.tg-upload-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.tg-upload-preview { position: relative; width: 82px; height: 82px; border-radius: 10px; overflow: hidden; border: 1.5px solid #e0e0e0; }
+.tg-upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+.tg-upload-preview-remove { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; background: rgba(211,47,47,0.95); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.3); line-height: 1; }
 .tg-upload-progress { font-size: 12px; color: #2874f0; margin-top: 6px; font-weight: 600; display: none; }
 .tg-upload-progress.show { display: block; }
 
@@ -437,6 +223,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-lightbox.show { display: flex; }
 .tg-lightbox-img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
 .tg-lightbox-close { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.15); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+
+/* BACK TO TOP */
+.tg-top { position: fixed; bottom: 88px; right: 16px; width: 44px; height: 44px; border-radius: 50%; background: #2874f0; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(40,116,240,0.35); z-index: 9998; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+.tg-top.show { opacity: 1; pointer-events: auto; }
+.tg-top svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 
 @media (max-width: 600px) {
   .tg-container { padding: 8px; }
@@ -456,6 +247,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-empty-title { font-size: 17px; }
   .tg-modal-card { padding: 20px 16px 22px; }
   .tg-star-pick svg { width: 34px; height: 34px; }
+  .tg-review-img { width: 68px; height: 68px; }
 }
 </style>
 </head>
@@ -507,6 +299,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </div>
     </div>
 
+    <!-- Search -->
+    <div class="tg-search" id="tg-search-wrap" style="display:none;">
+      <span class="tg-search-ic">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+      </span>
+      <input type="text" id="tg-search-input" placeholder="Search your reviews by product or text" autocomplete="off" oninput="tgSearchReviews()">
+      <button class="tg-search-clear" id="tg-search-clear" onclick="tgClearSearch()">✕</button>
+    </div>
+
     <!-- Tabs -->
     <div class="tg-tabs-wrap" id="tg-tabs-wrap" style="display:none;">
       <div class="tg-tabs" id="tg-tabs">
@@ -540,6 +341,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     <!-- Reviews -->
     <div class="tg-reviews" id="tg-reviews"></div>
+
+    <!-- Load More -->
+    <div class="tg-load-more" id="tg-load-more" style="display:none;">
+      <button class="tg-load-more-btn" id="tg-load-more-btn" onclick="tgLoadMore()">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+        Load More
+      </button>
+    </div>
 
     <!-- Skeleton -->
     <div id="tg-loading">
@@ -604,21 +413,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <svg viewBox="0 0 24 24" data-star="5" onclick="tgEditStar(5)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     </div>
 
-    <input type="text" class="tg-review-title-input" id="tg-edit-title" placeholder="Review title (optional)" maxlength="60">
-    <textarea class="tg-review-input" id="tg-edit-text" placeholder="Share your experience with this product..." maxlength="500"></textarea>
+    <input type="text" class="tg-review-title-input" id="tg-edit-title" placeholder="Review title (optional)" maxlength="80">
+    <textarea class="tg-review-input" id="tg-edit-text" placeholder="Share your experience with this product..." maxlength="1000"></textarea>
 
     <div class="tg-upload-wrap">
-      <label class="tg-upload-label">Photo (optional)</label>
-      <label class="tg-upload-box" for="tg-edit-image">
+      <label class="tg-upload-label">Photos (max 3)</label>
+      <div class="tg-upload-grid" id="tg-edit-upload-grid"></div>
+      <label class="tg-upload-box" for="tg-edit-image" id="tg-edit-upload-btn">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-        <span id="tg-edit-upload-text">Click to upload image</span>
+        <span>Add photo</span>
       </label>
-      <input type="file" id="tg-edit-image" accept="image/*" style="display:none;">
+      <input type="file" id="tg-edit-image" accept="image/*" multiple style="display:none;">
       <div class="tg-upload-progress" id="tg-edit-upload-progress">Compressing image…</div>
-      <div class="tg-upload-preview" id="tg-edit-upload-preview" style="display:none;">
-        <img id="tg-edit-upload-preview-img" src="" alt="Preview">
-        <button class="tg-upload-preview-remove" type="button" onclick="tgRemoveEditImage()">✕</button>
-      </div>
     </div>
 
     <div class="tg-modal-actions">
@@ -651,6 +457,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   <img class="tg-lightbox-img" id="tg-lightbox-img" src="" alt="" />
 </div>
 
+<!-- BACK TO TOP -->
+<button class="tg-top" id="tg-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
 <div class="tg-toasts" id="tg-toasts"></div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -674,6 +485,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const auth = firebase.auth();
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
+  const FieldPath = firebase.firestore.FieldPath;
 
   /* ========= THEME ========= */
   const themeMeta = document.getElementById('tg-theme-meta');
@@ -707,14 +519,86 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     setTimeout(() => el.remove(), 2600);
   }
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function toDate(date) {
+    if (!date) return null;
+    if (date.toDate && typeof date.toDate === 'function') { try { return date.toDate(); } catch(e) { return null; } }
+    if (date.seconds != null) { try { return new Date(date.seconds * 1000); } catch(e) { return null; } }
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
   function fmtDate(date) {
-    if (!date) return '—';
-    const d = date.toDate ? date.toDate() : new Date(date);
+    const d = toDate(date);
+    if (!d) return '—';
     return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function fmtTime(date) {
+    const d = toDate(date);
+    if (!d) return '';
+    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+  function fmtDateTime(date) {
+    const d = toDate(date);
+    if (!d) return '—';
+    return fmtDate(d) + ' · ' + fmtTime(d);
+  }
+  function timeAgo(date) {
+    const d = toDate(date);
+    if (!d) return '';
+    const diff = Date.now() - d.getTime();
+    if (diff < 0) return 'Just now';
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return mins + ' min ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + ' hr ago';
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+    return fmtDate(d);
   }
   function starText(n) {
     const k = Math.round(Number(n || 0));
     return '★'.repeat(Math.max(0, Math.min(5, k))) + '☆'.repeat(Math.max(0, 5 - k));
+  }
+
+  // ✅ Review helper: get productId from any field name
+  function getReviewPid(r) {
+    if (!r) return '';
+    const raw = r.productId || r.pid || r.product_id || r.productID || '';
+    return String(raw || '').trim();
+  }
+
+  // ✅ Review helper: get images array (supports single `image` + `images` array)
+  function getReviewImages(r) {
+    if (!r) return [];
+    const out = [];
+    const seen = new Set();
+    if (Array.isArray(r.images)) {
+      r.images.forEach(u => {
+        const s = String(u || '').trim();
+        if (s && !seen.has(s)) { seen.add(s); out.push(s); }
+      });
+    }
+    const single = String(r.image || r.imageUrl || '').trim();
+    if (single && !seen.has(single)) { seen.add(single); out.push(single); }
+    return out;
+  }
+
+  function getReviewText(r) {
+    if (!r) return '';
+    return String(r.text || r.review || r.comment || '').trim();
+  }
+
+  // ✅ Product stock helper
+  function getProductStock(p) {
+    if (!p) return 0;
+    if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
+      let t = 0;
+      Object.values(p.sizeStock).forEach(v => { t += Number(v || 0); });
+      return t;
+    }
+    return Number(p.stock || 0);
   }
 
   /* ========= STATE ========= */
@@ -722,16 +606,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let ALL_REVIEWS = [];
   let CURRENT_TAB = 'all';
   let CURRENT_SORT = 'newest';
+  let SEARCH_QUERY = '';
   let editTarget = null;
   let deleteTarget = null;
   let editRating = 0;
-  let editImageData = null;
-  let editOriginalImage = '';
+  let editImages = []; // array of URLs
   let PRODUCT_CACHE = {};
+  const PAGE_SIZE = 12;
+  let VISIBLE_COUNT = PAGE_SIZE;
 
   /* ========= TABS ========= */
   window.tgPickTab = function(tab) {
     CURRENT_TAB = tab;
+    VISIBLE_COUNT = PAGE_SIZE;
     document.querySelectorAll('.tg-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
     renderReviews();
   };
@@ -739,9 +626,35 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   /* ========= SORT ========= */
   window.tgPickSort = function(sort, el) {
     CURRENT_SORT = sort;
+    VISIBLE_COUNT = PAGE_SIZE;
     document.querySelectorAll('.tg-sort-btn').forEach(b => b.classList.remove('active'));
     if (el) el.classList.add('active');
     renderReviews();
+  };
+
+  /* ========= SEARCH ========= */
+  window.tgSearchReviews = function() {
+    const input = document.getElementById('tg-search-input');
+    SEARCH_QUERY = (input?.value || '').trim().toLowerCase();
+    const clearBtn = document.getElementById('tg-search-clear');
+    if (clearBtn) clearBtn.classList.toggle('show', !!SEARCH_QUERY);
+    VISIBLE_COUNT = PAGE_SIZE;
+    renderReviews();
+  };
+  window.tgClearSearch = function() {
+    const input = document.getElementById('tg-search-input');
+    if (input) input.value = '';
+    SEARCH_QUERY = '';
+    const clearBtn = document.getElementById('tg-search-clear');
+    if (clearBtn) clearBtn.classList.remove('show');
+    VISIBLE_COUNT = PAGE_SIZE;
+    renderReviews();
+  };
+
+  /* ========= LOAD MORE ========= */
+  window.tgLoadMore = function() {
+    VISIBLE_COUNT += PAGE_SIZE;
+    renderReviews(true);
   };
 
   /* ========= FILTER + SORT ========= */
@@ -751,24 +664,32 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (CURRENT_TAB === '4') return reviews.filter(r => Math.round(r.rating) === 4);
     if (CURRENT_TAB === '3') return reviews.filter(r => Math.round(r.rating) === 3);
     if (CURRENT_TAB === 'low') return reviews.filter(r => Math.round(r.rating) <= 2);
-    if (CURRENT_TAB === 'with-image') return reviews.filter(r => r.image && r.image.trim());
+    if (CURRENT_TAB === 'with-image') return reviews.filter(r => getReviewImages(r).length > 0);
     return reviews;
+  }
+
+  function filterBySearch(reviews) {
+    if (!SEARCH_QUERY) return reviews;
+    const q = SEARCH_QUERY;
+    return reviews.filter(r => {
+      const pid = getReviewPid(r);
+      const p = PRODUCT_CACHE[pid] || {};
+      const pName = r.productName || p.name || '';
+      const hay = [
+        pName,
+        r.title || '',
+        getReviewText(r)
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
   }
 
   function sortReviews(reviews) {
     const arr = reviews.slice();
     if (CURRENT_SORT === 'newest') {
-      arr.sort((a, b) => {
-        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
-        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
-        return bt - at;
-      });
+      arr.sort((a, b) => (toDate(b.createdAt)?.getTime() || 0) - (toDate(a.createdAt)?.getTime() || 0));
     } else if (CURRENT_SORT === 'oldest') {
-      arr.sort((a, b) => {
-        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
-        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
-        return at - bt;
-      });
+      arr.sort((a, b) => (toDate(a.createdAt)?.getTime() || 0) - (toDate(b.createdAt)?.getTime() || 0));
     } else if (CURRENT_SORT === 'highest') {
       arr.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
     } else if (CURRENT_SORT === 'lowest') {
@@ -785,7 +706,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       '4': ALL_REVIEWS.filter(r => Math.round(r.rating) === 4).length,
       '3': ALL_REVIEWS.filter(r => Math.round(r.rating) === 3).length,
       low: ALL_REVIEWS.filter(r => Math.round(r.rating) <= 2).length,
-      img: ALL_REVIEWS.filter(r => r.image && r.image.trim()).length
+      img: ALL_REVIEWS.filter(r => getReviewImages(r).length > 0).length
     };
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('tg-count-all', c.all);
@@ -801,15 +722,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   /* ========= UPDATE SUMMARY ========= */
   function updateSummary() {
     const summary = document.getElementById('tg-summary');
+    const search = document.getElementById('tg-search-wrap');
     const tabs = document.getElementById('tg-tabs-wrap');
     const sort = document.getElementById('tg-sort');
     if (!ALL_REVIEWS.length) {
       if (summary) summary.style.display = 'none';
+      if (search) search.style.display = 'none';
       if (tabs) tabs.style.display = 'none';
       if (sort) sort.style.display = 'none';
       return;
     }
     if (summary) summary.style.display = 'flex';
+    if (search) search.style.display = 'flex';
     if (tabs) tabs.style.display = 'block';
     if (sort) sort.style.display = 'flex';
 
@@ -831,11 +755,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.getElementById('tg-stat-low').textContent = ALL_REVIEWS.filter(r => Math.round(r.rating) <= 2).length;
   }
 
-  /* ========= RENDER REVIEWS ========= */
-  function renderReviews() {
+  /* ========= RENDER ========= */
+  function renderReviews(keepScroll) {
     const wrap = document.getElementById('tg-reviews');
     const loading = document.getElementById('tg-loading');
     const empty = document.getElementById('tg-empty');
+    const loadMoreWrap = document.getElementById('tg-load-more');
     if (!wrap) return;
 
     if (loading) loading.style.display = 'none';
@@ -846,65 +771,123 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!ALL_REVIEWS.length) {
       wrap.innerHTML = '';
       if (empty) empty.style.display = 'block';
+      if (loadMoreWrap) loadMoreWrap.style.display = 'none';
       return;
     }
 
     let reviews = filterByTab(ALL_REVIEWS);
+    reviews = filterBySearch(reviews);
     reviews = sortReviews(reviews);
 
     if (empty) empty.style.display = 'none';
 
     if (!reviews.length) {
-      wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#999;font-size:13.5px;background:#fff;border-radius:10px;">No reviews in this filter</div>';
+      wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#999;font-size:13.5px;background:#fff;border-radius:10px;">' + (SEARCH_QUERY ? 'No reviews match your search' : 'No reviews in this filter') + '</div>';
+      if (loadMoreWrap) loadMoreWrap.style.display = 'none';
       return;
     }
 
-    wrap.innerHTML = reviews.map(reviewCardHtml).join('');
+    const visible = reviews.slice(0, VISIBLE_COUNT);
+    wrap.innerHTML = visible.map(reviewCardHtml).join('');
+
+    if (loadMoreWrap) {
+      if (reviews.length > VISIBLE_COUNT) {
+        loadMoreWrap.style.display = 'block';
+        const btn = document.getElementById('tg-load-more-btn');
+        if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> Load More (' + (reviews.length - VISIBLE_COUNT) + ' more)';
+      } else {
+        loadMoreWrap.style.display = 'none';
+      }
+    }
+  }
+
+  function productTileHtml(r) {
+    const pid = getReviewPid(r);
+    const hasPid = !!pid;
+    const p = hasPid && PRODUCT_CACHE[pid] ? PRODUCT_CACHE[pid] : {};
+    const pName = r.productName || p.name || (hasPid ? 'Product' : 'Product (deleted)');
+    const pImg = p.image || (Array.isArray(p.images) && p.images[0]) || '';
+    const price = Number(p.price || 0);
+    const stock = getProductStock(p);
+    const isOOS = hasPid && p.stock != null && stock <= 0;
+
+    const clickClass = hasPid ? ' clickable' : '';
+    const clickAttr = hasPid ? ` onclick="tgOpenProduct('${esc(pid)}', event)"` : '';
+    const pImgHtml = pImg
+      ? `<img src="${esc(pImg)}" alt="${esc(pName)}" loading="lazy" onerror="this.style.display='none';this.parentNode.textContent='📦';" />`
+      : '📦';
+
+    const dateTimeStr = fmtDateTime(r.createdAt);
+    const agoStr = timeAgo(r.createdAt);
+    const agoHtml = agoStr && agoStr !== fmtDate(r.createdAt) ? `<span style="color:#878787;">· ${esc(agoStr)}</span>` : '';
+
+    return `
+      <div class="tg-review-product${clickClass}"${clickAttr}>
+        <div class="tg-review-product-img">${pImgHtml}</div>
+        <div class="tg-review-product-body">
+          <div class="tg-review-product-name">${esc(pName)}</div>
+          <div class="tg-review-product-meta">
+            <span class="tg-review-product-date">📅 ${esc(dateTimeStr)}</span>
+            ${agoHtml}
+            ${price > 0 ? `<span class="tg-review-product-price">₹${price.toLocaleString('en-IN')}</span>` : ''}
+            ${isOOS ? `<span class="tg-review-product-stock">Out of stock</span>` : ''}
+          </div>
+        </div>
+        ${hasPid ? `<div class="tg-review-product-go" title="View Product">
+          <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </div>` : ''}
+      </div>
+    `;
   }
 
   function reviewCardHtml(r) {
     const id = r.id;
-    const pid = r.productId || '';
     const rating = Math.round(Number(r.rating || 0));
     const title = r.title || '';
-    const text = r.text || r.review || r.comment || '';
-    const dateStr = fmtDate(r.createdAt);
-    const imgUrl = r.image || r.imageUrl || '';
+    const text = getReviewText(r);
+    const imgs = getReviewImages(r);
+    const isVerified = r.verified === true;
 
-    // Product from cache or fallback
-    const p = PRODUCT_CACHE[pid] || {};
-    const pName = r.productName || p.name || 'Product';
-    const pImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/120x120/f1f3f6/878787?text=TOEGO';
+    const imgHtml = imgs.length
+      ? '<div class="tg-review-img-wrap">' + imgs.slice(0, 3).map((u, i) =>
+          `<div class="tg-review-img" onclick="tgOpenLightbox('${esc(u)}')">
+            <img src="${esc(u)}" alt="review" loading="lazy" />
+            ${imgs.length > 1 ? `<span class="tg-review-img-count">${i+1}/${imgs.length}</span>` : ''}
+          </div>`
+        ).join('') + '</div>'
+      : '';
 
-    const imgHtml = imgUrl
-      ? '<div class="tg-review-img-wrap"><div class="tg-review-img" onclick="tgOpenLightbox(\'' + esc(imgUrl) + '\')"><img src="' + esc(imgUrl) + '" alt="review" loading="lazy" /></div></div>'
+    const needsReadMore = text.length > 240;
+    const textHtml = text
+      ? `<div class="tg-review-text${needsReadMore ? ' collapsed' : ''}" id="rv-text-${esc(id)}">${esc(text)}</div>
+         ${needsReadMore ? `<span class="tg-review-read-more" onclick="tgToggleText('${esc(id)}', this)">Read more</span>` : ''}`
       : '';
 
     return `
       <div class="tg-review-card" data-id="${esc(id)}">
-        <div class="tg-review-product">
-          <div class="tg-review-product-img" onclick="location.href='product.html?id=${encodeURIComponent(pid)}'">
-            <img src="${esc(pImg)}" alt="${esc(pName)}" loading="lazy" />
-          </div>
-          <div class="tg-review-product-body">
-            <div class="tg-review-product-name" onclick="location.href='product.html?id=${encodeURIComponent(pid)}'">${esc(pName)}</div>
-            <div class="tg-review-product-date">Reviewed on ${esc(dateStr)}</div>
-          </div>
-          <a class="tg-review-product-go" href="product.html?id=${encodeURIComponent(pid)}" title="View Product">
-            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-          </a>
-        </div>
+        ${productTileHtml(r)}
 
         <div class="tg-review-stars-row">
           <span class="tg-review-star-badge">${esc(rating)} <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
           <span class="tg-review-star-count">${starText(rating)}</span>
+          ${isVerified ? '<span class="tg-review-verified">✓ Verified</span>' : ''}
         </div>
 
         ${title ? `<div class="tg-review-title">${esc(title)}</div>` : ''}
-        ${text ? `<div class="tg-review-text">${esc(text)}</div>` : ''}
+        ${textHtml}
         ${imgHtml}
 
         <div class="tg-review-footer">
+          <div class="tg-review-quick">
+            <button class="tg-review-quick-btn" onclick="tgCopyReview('${esc(id)}')" title="Copy review">
+              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+            <button class="tg-review-quick-btn" onclick="tgShareReview('${esc(id)}')" title="Share review">
+              <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+              Share
+            </button>
+          </div>
           <div class="tg-review-actions">
             <button class="tg-review-action-btn edit" onclick="tgOpenEdit('${esc(id)}')">
               <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -920,6 +903,103 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     `;
   }
 
+  window.tgToggleText = function(id, el) {
+    const t = document.getElementById('rv-text-' + id);
+    if (!t) return;
+    const collapsed = t.classList.toggle('collapsed');
+    if (el) el.textContent = collapsed ? 'Read more' : 'Show less';
+  };
+
+  /* ========= PRODUCT OPEN ========= */
+  window.tgOpenProduct = async function(pid, ev) {
+    if (ev) ev.stopPropagation();
+    if (!pid) { toast('Product unavailable', 'info'); return; }
+
+    // Cached — go directly
+    if (PRODUCT_CACHE[pid]) {
+      window.location.href = 'product.html?id=' + encodeURIComponent(pid);
+      return;
+    }
+
+    // Try to verify existence before navigating
+    try {
+      const doc = await db.collection('products').doc(pid).get();
+      if (doc.exists) {
+        const data = doc.data();
+        if (data.active === false) {
+          toast('This product is no longer available', 'info');
+          return;
+        }
+        PRODUCT_CACHE[pid] = { id: doc.id, ...data };
+        window.location.href = 'product.html?id=' + encodeURIComponent(pid);
+      } else {
+        toast('This product has been removed', 'info');
+      }
+    } catch(e) {
+      // Network error — try anyway
+      window.location.href = 'product.html?id=' + encodeURIComponent(pid);
+    }
+  };
+
+  /* ========= COPY / SHARE ========= */
+  window.tgCopyReview = async function(id) {
+    const r = ALL_REVIEWS.find(x => x.id === id);
+    if (!r) return;
+    const pid = getReviewPid(r);
+    const p = PRODUCT_CACHE[pid] || {};
+    const pName = r.productName || p.name || 'this product';
+    const text = [
+      '★'.repeat(Math.round(r.rating || 0)) + '☆'.repeat(5 - Math.round(r.rating || 0)) + ' — ' + pName,
+      r.title ? r.title : '',
+      getReviewText(r)
+    ].filter(Boolean).join('\n\n');
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        toast('Review copied ✓', 'success');
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        toast('Review copied ✓', 'success');
+      }
+    } catch(e) {
+      toast('Could not copy', 'error');
+    }
+  };
+
+  window.tgShareReview = async function(id) {
+    const r = ALL_REVIEWS.find(x => x.id === id);
+    if (!r) return;
+    const pid = getReviewPid(r);
+    const p = PRODUCT_CACHE[pid] || {};
+    const pName = r.productName || p.name || 'this product';
+    const basePath = window.location.pathname.replace(/[^/]*$/, '');
+    const url = pid
+      ? window.location.origin + basePath + 'product.html?id=' + encodeURIComponent(pid)
+      : window.location.href;
+    const text = 'My review for ' + pName + ' — ' + Math.round(r.rating || 0) + '★ on TOEGO';
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'TOEGO Review', text, url });
+      } else {
+        await navigator.clipboard.writeText(text + '\n\n' + url);
+        toast('Copied to clipboard ✓', 'success');
+      }
+    } catch(e) {
+      if (e && e.name === 'AbortError') return;
+      try {
+        await navigator.clipboard.writeText(text + '\n\n' + url);
+        toast('Copied to clipboard ✓', 'success');
+      } catch(e2) {
+        toast('Share failed', 'error');
+      }
+    }
+  };
+
   /* ========= LOAD REVIEWS ========= */
   async function loadReviews() {
     if (!USER) return;
@@ -934,61 +1014,60 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         snap = await db.collection('reviews').where('userId', '==', USER.uid).limit(100).get();
       }
       ALL_REVIEWS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      // Sort newest first
-      ALL_REVIEWS.sort((a, b) => {
-        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
-        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
-        return bt - at;
-      });
+      ALL_REVIEWS.sort((a, b) => (toDate(b.createdAt)?.getTime() || 0) - (toDate(a.createdAt)?.getTime() || 0));
 
-      // Preload products for names/images
       await preloadProducts();
       renderReviews();
     } catch(e) {
-      console.error(e);
+      console.error('[reviews] load failed:', e);
       toast('Could not load reviews', 'error');
       renderReviews();
     }
   }
 
+  // ✅ FIX: chunk `in` query into batches of 10 (Firestore limit)
   async function preloadProducts() {
-    const pids = [...new Set(ALL_REVIEWS.map(r => r.productId).filter(Boolean))];
+    const pids = [...new Set(ALL_REVIEWS.map(getReviewPid).filter(Boolean))];
     if (!pids.length) return;
-    try {
-      const batch = pids.slice(0, 20);
-      const snap = await db.collection('products').where(firebase.firestore.FieldPath.documentId(), 'in', batch).get();
-      snap.forEach(d => { PRODUCT_CACHE[d.id] = { id: d.id, ...d.data() }; });
-    } catch(e) {}
+
+    for (let i = 0; i < pids.length; i += 10) {
+      const batch = pids.slice(i, i + 10);
+      try {
+        const snap = await db.collection('products')
+          .where(FieldPath.documentId(), 'in', batch).get();
+        snap.forEach(d => { PRODUCT_CACHE[d.id] = { id: d.id, ...d.data() }; });
+      } catch(e) {
+        // Fallback: fetch individually
+        for (const pid of batch) {
+          try {
+            const doc = await db.collection('products').doc(pid).get();
+            if (doc.exists) PRODUCT_CACHE[pid] = { id: doc.id, ...doc.data() };
+          } catch(e2) {}
+        }
+      }
+    }
   }
 
-  /* ========= EDIT ========= */
+  /* ========= EDIT MODAL ========= */
   window.tgOpenEdit = function(id) {
     const r = ALL_REVIEWS.find(x => x.id === id);
     if (!r) return;
     editTarget = id;
     editRating = Math.round(Number(r.rating || 0));
-    editOriginalImage = r.image || r.imageUrl || '';
-    editImageData = null;
+    editImages = getReviewImages(r).slice();
 
-    const p = PRODUCT_CACHE[r.productId] || {};
+    const pid = getReviewPid(r);
+    const p = PRODUCT_CACHE[pid] || {};
     const pName = r.productName || p.name || 'Product';
     document.getElementById('tg-edit-prod-name').textContent = pName.slice(0, 70);
     document.getElementById('tg-edit-title').value = r.title || '';
-    document.getElementById('tg-edit-text').value = r.text || r.review || '';
+    document.getElementById('tg-edit-text').value = getReviewText(r);
 
     document.querySelectorAll('#tg-edit-star-pick svg').forEach(s => {
       s.classList.toggle('active', Number(s.dataset.star) <= editRating);
     });
 
-    // Existing image
-    if (editOriginalImage) {
-      document.getElementById('tg-edit-upload-preview-img').src = editOriginalImage;
-      document.getElementById('tg-edit-upload-preview').style.display = 'inline-block';
-      document.getElementById('tg-edit-upload-text').textContent = 'Keep existing or replace';
-    } else {
-      document.getElementById('tg-edit-upload-preview').style.display = 'none';
-      document.getElementById('tg-edit-upload-text').textContent = 'Click to upload image';
-    }
+    renderEditImages();
     document.getElementById('tg-edit-upload-progress').classList.remove('show');
     document.getElementById('tg-edit-image').value = '';
 
@@ -996,12 +1075,28 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.body.style.overflow = 'hidden';
   };
 
+  function renderEditImages() {
+    const grid = document.getElementById('tg-edit-upload-grid');
+    const btn = document.getElementById('tg-edit-upload-btn');
+    if (!grid) return;
+    grid.innerHTML = editImages.map((url, i) =>
+      `<div class="tg-upload-preview">
+        <img src="${esc(url)}" alt="" />
+        <button class="tg-upload-preview-remove" type="button" onclick="tgRemoveEditImageAt(${i})">✕</button>
+      </div>`
+    ).join('');
+    if (btn) btn.style.display = editImages.length >= 3 ? 'none' : 'flex';
+  }
+  window.tgRemoveEditImageAt = function(i) {
+    editImages.splice(i, 1);
+    renderEditImages();
+  };
+
   window.tgCloseEdit = function() {
     document.getElementById('tg-edit-modal').classList.remove('show');
     document.body.style.overflow = '';
     editTarget = null;
-    editImageData = null;
-    editOriginalImage = '';
+    editImages = [];
   };
 
   window.tgEditStar = function(n) {
@@ -1011,53 +1106,39 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
   };
 
-  async function compressImageTo10KB(file) {
+  async function compressImage(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
           const attempts = [
-            { maxW: 500, q: 0.7 },
-            { maxW: 400, q: 0.65 },
-            { maxW: 320, q: 0.6 },
-            { maxW: 280, q: 0.55 },
-            { maxW: 220, q: 0.5 },
-            { maxW: 180, q: 0.45 },
-            { maxW: 150, q: 0.4 },
-            { maxW: 120, q: 0.35 }
+            { maxW: 1000, q: 0.85 },
+            { maxW: 800, q: 0.7 },
+            { maxW: 600, q: 0.6 },
+            { maxW: 500, q: 0.55 },
+            { maxW: 400, q: 0.45 },
+            { maxW: 300, q: 0.4 },
+            { maxW: 250, q: 0.35 }
           ];
-          const TARGET_BYTES = 10 * 1024;
+          const TARGET = 50 * 1024;
           let bestDataUrl = null;
-          for (const attempt of attempts) {
+          for (const a of attempts) {
             let w = img.width, h = img.height;
-            if (w > attempt.maxW) {
-              h = Math.round(h * (attempt.maxW / w));
-              w = attempt.maxW;
-            }
+            if (w > a.maxW) { h = Math.round(h * (a.maxW / w)); w = a.maxW; }
             const canvas = document.createElement('canvas');
-            canvas.width = w;
-            canvas.height = h;
+            canvas.width = w; canvas.height = h;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#fff';
             ctx.fillRect(0, 0, w, h);
             ctx.drawImage(img, 0, 0, w, h);
-            const dataUrl = canvas.toDataURL('image/jpeg', attempt.q);
-            const base64Len = dataUrl.split(',')[1]?.length || 0;
-            const bytes = Math.round(base64Len * 0.75);
+            const dataUrl = canvas.toDataURL('image/jpeg', a.q);
+            const bytes = Math.round((dataUrl.split(',')[1]?.length || 0) * 0.75);
             bestDataUrl = dataUrl;
-            if (bytes <= TARGET_BYTES) {
-              resolve({ dataUrl, bytes });
-              return;
-            }
+            if (bytes <= TARGET) { resolve({ dataUrl, bytes }); return; }
           }
-          if (bestDataUrl) {
-            const base64Len = bestDataUrl.split(',')[1]?.length || 0;
-            const bytes = Math.round(base64Len * 0.75);
-            resolve({ dataUrl: bestDataUrl, bytes });
-          } else {
-            reject(new Error('Compression failed'));
-          }
+          if (bestDataUrl) resolve({ dataUrl: bestDataUrl, bytes: 0 });
+          else reject(new Error('Compression failed'));
         };
         img.onerror = () => reject(new Error('Image load failed'));
         img.src = e.target.result;
@@ -1068,59 +1149,58 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
 
   document.getElementById('tg-edit-image')?.addEventListener('change', async function(e) {
-    const f = this.files && this.files[0];
-    if (!f) return;
-    if (!f.type.startsWith('image/')) { toast('Please select an image file', 'error'); return; }
-    const prog = document.getElementById('tg-edit-upload-progress');
-    prog.textContent = 'Compressing image…';
-    prog.classList.add('show');
-    try {
-      const result = await compressImageTo10KB(f);
-      editImageData = result.dataUrl;
-      document.getElementById('tg-edit-upload-preview-img').src = result.dataUrl;
-      document.getElementById('tg-edit-upload-preview').style.display = 'inline-block';
-      document.getElementById('tg-edit-upload-text').textContent = 'Image attached (' + (result.bytes / 1024).toFixed(1) + ' KB)';
-      prog.classList.remove('show');
-      toast('Image compressed ✓', 'success');
-    } catch(err) {
-      prog.classList.remove('show');
-      toast('Could not process image', 'error');
-      editImageData = null;
-    }
-  });
+    const files = Array.from(this.files || []);
+    if (!files.length) return;
 
-  window.tgRemoveEditImage = function() {
-    editImageData = null;
-    editOriginalImage = '';
-    document.getElementById('tg-edit-upload-preview').style.display = 'none';
-    document.getElementById('tg-edit-upload-text').textContent = 'Click to upload image';
-    document.getElementById('tg-edit-image').value = '';
-  };
+    if (editImages.length + files.length > 3) {
+      toast('Max 3 images allowed', 'error');
+      this.value = '';
+      return;
+    }
+
+    const prog = document.getElementById('tg-edit-upload-progress');
+    prog.textContent = 'Compressing ' + files.length + ' image(s)…';
+    prog.classList.add('show');
+
+    for (const f of files) {
+      if (!f.type.startsWith('image/')) continue;
+      try {
+        const result = await compressImage(f);
+        editImages.push(result.dataUrl);
+        renderEditImages();
+      } catch(err) {
+        console.warn('Image process failed:', err);
+        toast('Could not process one image', 'error');
+      }
+    }
+
+    prog.classList.remove('show');
+    this.value = '';
+  });
 
   window.tgSubmitEdit = async function() {
     if (!editTarget) return;
     if (editRating < 1) { toast('Please select a star rating', 'error'); return; }
     const title = (document.getElementById('tg-edit-title').value || '').trim();
     const text = (document.getElementById('tg-edit-text').value || '').trim();
+    if (text.length < 10) { toast('Review must be at least 10 characters', 'error'); return; }
+
     const btn = document.getElementById('tg-edit-submit');
     btn.disabled = true;
     btn.textContent = 'Saving…';
-
-    // Determine final image
-    let finalImage = editOriginalImage;
-    if (editImageData) finalImage = editImageData;
 
     try {
       await db.collection('reviews').doc(editTarget).update({
         rating: editRating,
         title: title,
         text: text,
-        image: finalImage || '',
+        images: editImages.slice(),
+        image: editImages[0] || '',
         updatedAt: FV.serverTimestamp()
       });
       toast('Review updated ✓', 'success');
       tgCloseEdit();
-      setTimeout(loadReviews, 400);
+      setTimeout(loadReviews, 300);
     } catch(err) {
       console.error(err);
       toast('Failed: ' + (err.message || 'Try again'), 'error');
@@ -1146,8 +1226,41 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     btn.disabled = true;
     btn.textContent = 'Deleting…';
     try {
+      // Adjust product rating if possible
+      const r = ALL_REVIEWS.find(x => x.id === deleteTarget);
+      const pid = r ? getReviewPid(r) : '';
+      const oldRating = r ? Number(r.rating || 0) : 0;
+
       await db.collection('reviews').doc(deleteTarget).delete();
-      ALL_REVIEWS = ALL_REVIEWS.filter(r => r.id !== deleteTarget);
+
+      if (pid && oldRating > 0) {
+        try {
+          const prodRef = db.collection('products').doc(pid);
+          const prodSnap = await prodRef.get();
+          if (prodSnap.exists) {
+            const p = prodSnap.data();
+            const curRating = Number(p.rating || 0);
+            const curCount = Number(p.ratingCount || 0);
+            if (curCount > 1) {
+              const newCount = curCount - 1;
+              const newRating = ((curRating * curCount) - oldRating) / newCount;
+              await prodRef.update({
+                rating: Number(Math.max(0, newRating).toFixed(2)),
+                ratingCount: newCount,
+                updatedAt: FV.serverTimestamp()
+              });
+            } else {
+              await prodRef.update({
+                rating: 0,
+                ratingCount: 0,
+                updatedAt: FV.serverTimestamp()
+              });
+            }
+          }
+        } catch(e) { console.warn('Rating revert failed:', e && e.message); }
+      }
+
+      ALL_REVIEWS = ALL_REVIEWS.filter(x => x.id !== deleteTarget);
       toast('Review deleted', 'success');
       tgCloseDel();
       renderReviews();
@@ -1193,6 +1306,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
   }
 
+  /* ========= BACK TO TOP ========= */
+  let topBtnScrollRAF = null;
+  window.addEventListener('scroll', () => {
+    if (topBtnScrollRAF) return;
+    topBtnScrollRAF = requestAnimationFrame(() => {
+      topBtnScrollRAF = null;
+      const btn = document.getElementById('tg-top');
+      if (!btn) return;
+      btn.classList.toggle('show', window.scrollY > 300);
+    });
+  }, { passive: true });
+
   /* ========= MODAL OUTSIDE CLICK ========= */
   document.querySelectorAll('.tg-modal').forEach(m => {
     m.addEventListener('click', e => {
@@ -1201,6 +1326,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         document.body.style.overflow = '';
       }
     });
+  });
+
+  /* ========= ESC KEY ========= */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      const lb = document.getElementById('tg-lightbox');
+      if (lb && lb.classList.contains('show')) { tgCloseLightbox(); return; }
+      document.querySelectorAll('.tg-modal.show').forEach(m => m.classList.remove('show'));
+      document.body.style.overflow = '';
+    }
   });
 
   /* ========= INIT ========= */
