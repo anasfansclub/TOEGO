@@ -184,6 +184,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-pill.yel{background:#fff8e1;color:#f57c00;}
 .tg-pill.gry{background:#eceff1;color:#455a64;}
 .tg-pill.rtd{background:#e1f5fe;color:#0277bd;}
+.tg-pill.pickup{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 2px 6px rgba(251,146,60,0.35);}
 .tg-pill.sale{background:linear-gradient(135deg,#ff4d4d,#d32f2f);color:#fff;}
 .tg-pill.teal{background:#e0f2f1;color:#00796b;}
 .tg-pill.blocked{background:linear-gradient(135deg,#ef4444,#991b1b);color:#fff;box-shadow:0 2px 6px rgba(239,68,68,0.4);}
@@ -476,7 +477,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div class="tg-f"><div class="tg-f-ic"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><input type="password" id="tg-lp" placeholder="Password" autocomplete="current-password" required><button type="button" class="tg-f-toggle" id="tg-pt">Show</button></div>
       <button type="submit" class="tg-login-btn" id="tg-lb"><span class="tg-login-spin"></span><span>Sign In</span></button>
     </form>
-    <div class="tg-login-hint"><b>🔐 Super Admin Only</b><br>Authorized: <b>anasfansclub@toego.in</b></div>
+    <div class="tg-login-hint"><b>🔐 Admin Access Only</b><br>Authorized personnel only. Contact TOEGO team for access.</div>
     <a href="shop-home.html" class="tg-login-back">← Back to Shop</a>
   </div>
 </div>
@@ -559,7 +560,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div class="tg-sg">
         <div class="tg-sc" onclick="tgNav('orders');tgFilterOrders('pending')"><div class="tg-sci orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tg-scn" id="s-op">0</div><div class="tg-scl">New Orders</div></div>
         <div class="tg-sc" onclick="tgNav('orders');tgFilterOrders('accepted')"><div class="tg-sci blue"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="tg-scn" id="s-oa">0</div><div class="tg-scl">Seller Accepted</div></div>
-        <div class="tg-sc" onclick="tgNav('orders');tgFilterOrders('rtd')"><div class="tg-sci blue"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="tg-scn" id="s-ortd">0</div><div class="tg-scl">RTD / Label Ready</div></div>
+        <div class="tg-sc" onclick="tgNav('orders');tgFilterOrders('pickup')"><div class="tg-sci" style="background:linear-gradient(135deg,#fff3e0,#ffd7a8);color:#ea580c;"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M9 14h6"/></svg></div><div class="tg-scn" id="s-opickup">0</div><div class="tg-scl">📦 Pickup Ready</div></div>
         <div class="tg-sc" onclick="tgNav('orders');tgFilterOrders('dispatched')"><div class="tg-sci purple"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></div><div class="tg-scn" id="s-od">0</div><div class="tg-scl">Dispatched</div></div>
         <div class="tg-sc" onclick="tgNav('orders');tgFilterOrders('delivered')"><div class="tg-sci green"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div><div class="tg-scn" id="s-odl">0</div><div class="tg-scl">Delivered</div></div>
         <div class="tg-sc" onclick="tgNav('sellers');tgFilterSellers('pending')"><div class="tg-sci orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tg-scn" id="s-ps">0</div><div class="tg-scl">Pending Sellers</div></div>
@@ -700,6 +701,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         <div class="tg-chip" data-f="pending" onclick="tgFilterOrders('pending')">Pending <span class="tg-chip-c" id="oc-pend">0</span></div>
         <div class="tg-chip" data-f="accepted" onclick="tgFilterOrders('accepted')">Accepted <span class="tg-chip-c" id="oc-acc">0</span></div>
         <div class="tg-chip" data-f="rtd" onclick="tgFilterOrders('rtd')">RTD <span class="tg-chip-c" id="oc-rtd">0</span></div>
+        <div class="tg-chip" data-f="pickup" onclick="tgFilterOrders('pickup')">📦 Pickup <span class="tg-chip-c" id="oc-pickup">0</span></div>
         <div class="tg-chip" data-f="dispatched" onclick="tgFilterOrders('dispatched')">Dispatched <span class="tg-chip-c" id="oc-disp">0</span></div>
         <div class="tg-chip" data-f="delivered" onclick="tgFilterOrders('delivered')">Delivered <span class="tg-chip-c" id="oc-del">0</span></div>
         <div class="tg-chip" data-f="cancelled" onclick="tgFilterOrders('cancelled')">Cancelled <span class="tg-chip-c" id="oc-can">0</span></div>
@@ -1302,7 +1304,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 <script>
 (function(){
   'use strict';
-  const SA = 'anasfansclub@toego.in';
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -1692,8 +1693,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (s.includes('return') || s.includes('refund') || s === 'rto') return 'returned';
     if (s.includes('deliver') || s === 'completed') return 'delivered';
     if (s.includes('dispatch') || s.includes('shipped') || s === 'in_transit' || s === 'ofd' || s === 'out_for_delivery') return 'dispatched';
-    if (s.includes('label_generat') || s === 'label_created') return 'rtd';
-    if (s.includes('process') || s.includes('packing') || s === 'packed' || s === 'ready_to_ship' || s === 'preparing') return 'rtd';
+    if (s.includes('label_generat') || s === 'label_created') return 'pickup';
+    if (s.includes('process') || s.includes('packing') || s === 'packed' || s === 'ready_to_ship' || s === 'preparing') return 'pickup';
     if (s.includes('admin_approv') || s === 'approved' || s === 'admin_ok' || s === 'adminok' || s === 'rtd' || s.includes('ready_to_dispatch') || s.includes('ready_for_label') || s === 'admin-accepted') return 'rtd';
     if (s.includes('seller_accept') || s === 'accepted' || s === 'accept' || s.includes('order_accepted')) return 'accepted';
     return 'pending';
@@ -1705,6 +1706,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (s==='pending') return 'pend';
     if (s==='accepted') return 'blu';
     if (s==='rtd') return 'rtd';
+    if (s==='pickup') return 'pickup';
     if (s==='dispatched') return 'yel';
     if (s==='return_requested') return 'pur';
     return 'pend';
@@ -1712,7 +1714,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   function statusLabel(s){
     s = normStatus(s);
     return {
-      pending:'PENDING', accepted:'SELLER ACCEPTED', rtd:'RTD · READY FOR LABEL',
+      pending:'PENDING', accepted:'SELLER ACCEPTED', rtd:'READY FOR LABEL',
+      pickup:'📦 PICKUP READY',
       dispatched:'DISPATCHED', delivered:'DELIVERED',
       cancelled:'CANCELLED', return_requested:'RETURN REQUESTED', returned:'RETURNED'
     }[s] || s.toUpperCase();
@@ -1761,15 +1764,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     btn.classList.add('loading'); btn.disabled = true;
     try {
       const cred = await auth.signInWithEmailAndPassword(email, pass);
-      if (cred.user.email !== SA) {
-        const s = await db.collection('users').doc(cred.user.uid).get();
-        const r = s.exists ? (s.data().role||'').toLowerCase() : '';
-        if (!['admin','superadmin'].includes(r)) {
-          await auth.signOut();
-          toast('Access denied. Admin only.','err');
-          btn.classList.remove('loading'); btn.disabled = false;
-          return;
-        }
+      const s = await db.collection('users').doc(cred.user.uid).get();
+      const r = s.exists ? (s.data().role||'').toLowerCase() : '';
+      if (!['admin','superadmin'].includes(r)) {
+        await auth.signOut();
+        toast('Access denied. Admin only.','err');
+        btn.classList.remove('loading'); btn.disabled = false;
+        return;
       }
       toast('Welcome Admin! 🎉','suc');
       showPanel(cred.user);
@@ -1999,23 +2000,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setText('s-tr', inr(r.totalRev));
     setText('s-op', orderCounts.pending);
     setText('s-oa', orderCounts.accepted);
-    setText('s-ortd', orderCounts.rtd);
+    setText('s-opickup', orderCounts.pickup);
     setText('s-od', orderCounts.dispatched);
     setText('s-odl', orderCounts.delivered);
     const b1 = document.getElementById('tg-b-sellers'); if (b1) { b1.textContent = pending; b1.style.display = pending>0 ? 'inline-block' : 'none'; }
     const b2 = document.getElementById('tg-b-prods'); if (b2) { b2.textContent = pendingP; b2.style.display = pendingP>0 ? 'inline-block' : 'none'; }
-    const b3 = document.getElementById('tg-b-orders'); if (b3) { b3.textContent = orderCounts.pending + orderCounts.accepted; b3.style.display = (orderCounts.pending+orderCounts.accepted)>0 ? 'inline-block' : 'none'; }
+    const b3 = document.getElementById('tg-b-orders'); if (b3) { b3.textContent = orderCounts.pending + orderCounts.accepted + orderCounts.pickup; b3.style.display = (orderCounts.pending+orderCounts.accepted+orderCounts.pickup)>0 ? 'inline-block' : 'none'; }
     const b4 = document.getElementById('tg-b-returns'); if (b4) { b4.textContent = pendingReturns; b4.style.display = pendingReturns>0 ? 'inline-block' : 'none'; }
     const b5 = document.getElementById('tg-b-tickets'); if (b5) { b5.textContent = openTickets; b5.style.display = openTickets>0 ? 'inline-block' : 'none'; }
     const labelsCount = ALL_ORDERS.filter(isLabelOrder).length;
     const b6 = document.getElementById('tg-b-labels'); if (b6) { b6.textContent = labelsCount; b6.style.display = labelsCount>0 ? 'inline-block' : 'none'; }
     const sec = document.getElementById('pending-sec');
     const list = document.getElementById('pending-list');
-    const total = pending + pendingP + orderCounts.pending + orderCounts.accepted + pendingReturns + openTickets;
+    const total = pending + pendingP + orderCounts.pending + orderCounts.accepted + orderCounts.pickup + pendingReturns + openTickets;
     if (total > 0) {
       sec.style.display = 'block';
       let h = '';
       if (pendingReturns > 0) h += '<div class="tg-row" onclick="tgNav(\'returns\')"><div class="tg-row-av">🔄</div><div class="tg-row-b"><div class="tg-row-t">'+pendingReturns+' return request(s) pending</div><div class="tg-row-s"><span>Approve karo to seller ko ₹150 cut ke saath jayega</span></div></div></div>';
+      if (orderCounts.pickup > 0) h += '<div class="tg-row" onclick="tgNav(\'orders\');tgFilterOrders(\'pickup\')"><div class="tg-row-av">📦</div><div class="tg-row-b"><div class="tg-row-t">'+orderCounts.pickup+' order(s) ready for pickup</div><div class="tg-row-s"><span>Seller ne label generate kiya — courier details daalo & dispatch karo</span></div></div></div>';
       if (orderCounts.pending>0) h += '<div class="tg-row" onclick="tgNav(\'orders\');tgFilterOrders(\'pending\')"><div class="tg-row-av">⏳</div><div class="tg-row-b"><div class="tg-row-t">'+orderCounts.pending+' new order(s) — seller accept ka wait</div></div></div>';
       if (orderCounts.accepted>0) h += '<div class="tg-row" onclick="tgNav(\'orders\');tgFilterOrders(\'accepted\')"><div class="tg-row-av">✓</div><div class="tg-row-b"><div class="tg-row-t">'+orderCounts.accepted+' order(s) seller-accepted — RTD mark karo</div></div></div>';
       if (pending>0) h += '<div class="tg-row" onclick="tgNav(\'sellers\');tgFilterSellers(\'pending\')"><div class="tg-row-av">🏪</div><div class="tg-row-b"><div class="tg-row-t">'+pending+' seller application(s) pending</div></div></div>';
@@ -2030,7 +2032,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     else ro.innerHTML = recent.map(o => orderRow(o, false)).join('');
   }
   function countByStatus(){
-    const c = {pending:0, accepted:0, rtd:0, dispatched:0, delivered:0, cancelled:0, return_requested:0, returned:0, all:0};
+    const c = {pending:0, accepted:0, rtd:0, pickup:0, dispatched:0, delivered:0, cancelled:0, return_requested:0, returned:0, all:0};
     ALL_ORDERS.forEach(o => { const s = normStatus(o.status); c[s] = (c[s]||0)+1; c.all++; });
     return c;
   }
@@ -2059,7 +2061,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const map = {
       'pending':    { label: '✓ ACCEPT SELECTED',           status: 'seller_accepted', cls: 'out', nextFilter: 'accepted',   action: 'normal' },
       'accepted':   { label: '🚀 RTD SELECTED',              status: 'admin_approved',  cls: 'rtd', nextFilter: 'rtd',        action: 'normal' },
-      'rtd':        { label: '📦 ENTER COURIER & DISPATCH',  cls: 'pri', nextFilter: 'dispatched', action: 'courier_dispatch' },
+      'pickup':     { label: '📦 ENTER COURIER & DISPATCH',  cls: 'pri', nextFilter: 'dispatched', action: 'courier_dispatch' },
       'dispatched': { label: '✓ MARK DELIVERED',             status: 'delivered',       cls: 'suc', nextFilter: 'delivered',  action: 'normal' }
     };
     return map[ORDER_FILTER] || null;
@@ -2322,7 +2324,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!o) return false;
     if (o.labelGeneratedAt) return true;
     const s = normStatus(o.status);
-    return ['rtd', 'dispatched', 'delivered'].includes(s);
+    return ['rtd', 'pickup', 'dispatched', 'delivered'].includes(s);
   }
   function getFilteredLabels() {
     let list = ALL_ORDERS.filter(isLabelOrder);
@@ -3817,6 +3819,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         const s = normStatus(o.status);
         if (ORDER_FILTER === 'accepted') return s === 'accepted';
         if (ORDER_FILTER === 'rtd') return s === 'rtd';
+        if (ORDER_FILTER === 'pickup') return s === 'pickup';
         if (ORDER_FILTER === 'dispatched') return s === 'dispatched';
         if (ORDER_FILTER === 'returned') return s === 'returned' || s === 'return_requested';
         return s === ORDER_FILTER;
@@ -3835,7 +3838,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const el = document.getElementById('orders-list'); if (!el) return;
     const counts = countByStatus();
     setText('oc-all', counts.all); setText('oc-pend', counts.pending); setText('oc-acc', counts.accepted);
-    setText('oc-rtd', counts.rtd); setText('oc-disp', counts.dispatched); setText('oc-del', counts.delivered);
+    setText('oc-rtd', counts.rtd); setText('oc-pickup', counts.pickup); setText('oc-disp', counts.dispatched); setText('oc-del', counts.delivered);
     setText('oc-can', counts.cancelled); setText('oc-ret', counts.returned);
     const list = getFilteredOrders();
     if (!list.length) { el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No orders</div></div>'; updateOrdSelAll(); renderOrdersBulkBar(); return; }
@@ -3951,7 +3954,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const tl = [];
     tl.push({t:'Order Placed', s:fdate(o.createdAt)+' '+ftime(o.createdAt)});
     if (st!=='pending'&&st!=='cancelled') tl.push({t:'Seller Accepted', s:o.acceptedAt||o.sellerAcceptedAt?fdate(o.acceptedAt||o.sellerAcceptedAt)+' '+ftime(o.acceptedAt||o.sellerAcceptedAt):'Done'});
-    if (['rtd','dispatched','delivered'].includes(st)) tl.push({t:'RTD (Ready to Dispatch)', s:o.rtdAt?fdate(o.rtdAt)+' '+ftime(o.rtdAt):'Done'});
+    if (['rtd','pickup','dispatched','delivered'].includes(st)) tl.push({t:'RTD (Ready to Dispatch)', s:o.rtdAt?fdate(o.rtdAt)+' '+ftime(o.rtdAt):'Done'});
+    if (['pickup','dispatched','delivered'].includes(st)) tl.push({t:'📦 Pickup Ready (Label Generated)', s:o.labelGeneratedAt?fdate(o.labelGeneratedAt)+' '+ftime(o.labelGeneratedAt):'Done'});
     if (['dispatched','delivered'].includes(st)) tl.push({t:'Dispatched', s:(o.dispatchedAt?fdate(o.dispatchedAt):'Done') + (o.trackingId?' · '+o.trackingId:'')});
     if (st==='delivered') tl.push({t:'Delivered', s:o.deliveredAt?fdate(o.deliveredAt)+' '+ftime(o.deliveredAt):'Done'});
     if (st==='cancelled') tl.push({t:'Cancelled', s:o.cancelledAt?fdate(o.cancelledAt):'—'});
@@ -3961,7 +3965,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const addr = o.address || o.shippingAddress || o.deliveryAddress || {};
     const addrStr = typeof addr==='string' ? addr : [addr.line1||addr.address||addr.street||'', addr.city||'', addr.state||'', addr.pincode||addr.zip||''].filter(Boolean).join(', ');
     const canRTD = st==='accepted' || st==='pending';
-    const canCourierDispatch = st==='rtd';
+    const canCourierDispatch = st==='pickup';
     const canDeliver = st==='dispatched';
     const canCancel = !['cancelled','returned','delivered'].includes(st);
     const isPendingReturn = st === 'return_requested';
@@ -4007,7 +4011,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       '<div class="tg-fld"><label>Update Status</label><select id="ord-status-sel">' +
         '<option value="pending" '+(st==='pending'?'selected':'')+'>Pending</option>' +
         '<option value="accepted" '+(st==='accepted'?'selected':'')+'>Seller Accepted</option>' +
-        '<option value="rtd" '+(st==='rtd'?'selected':'')+'>RTD / Ready for Label</option>' +
+        '<option value="rtd" '+(st==='rtd'?'selected':'')+'>Ready for Label</option>' +
+        '<option value="pickup" '+(st==='pickup'?'selected':'')+'>📦 Pickup Ready</option>' +
         '<option value="dispatched" '+(st==='dispatched'?'selected':'')+'>Dispatched</option>' +
         '<option value="delivered" '+(st==='delivered'?'selected':'')+'>Delivered</option>' +
         '<option value="cancelled" '+(st==='cancelled'?'selected':'')+'>Cancelled</option>' +
@@ -4061,6 +4066,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const tracking = (document.getElementById('ord-track').value||'').trim();
     let realStatus = newStatus;
     if (newStatus === 'rtd') realStatus = 'admin_approved';
+    if (newStatus === 'pickup') realStatus = 'processing';
     await applyOrderStatus(oid, realStatus, tracking);
   };
   window.tgUpdateOrderStatus = async function(oid, status){
@@ -4089,6 +4095,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (o) { const sellerIds = buildSellerIdsPayload(o); if (sellerIds.length) payload.sellerIds = sellerIds; }
     if (normSt==='accepted') payload.acceptedAt = FV.serverTimestamp();
     if (normSt==='rtd') { payload.rtdAt = FV.serverTimestamp(); payload.adminApprovedAt = FV.serverTimestamp(); }
+    if (normSt==='pickup') payload.processingAt = FV.serverTimestamp();
     if (normSt==='dispatched') payload.dispatchedAt = FV.serverTimestamp();
     if (normSt==='delivered') payload.deliveredAt = FV.serverTimestamp();
     if (normSt==='cancelled') payload.cancelledAt = FV.serverTimestamp();
@@ -4358,7 +4365,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.getElementById('an-tp').innerHTML = pp.length ? pp.map(p=>'<div class="tg-row" style="cursor:default;"><div class="tg-row-b"><div class="tg-row-t">'+esc(p.name)+'</div></div><div class="tg-row-a"><span style="font-weight:800;color:#2874f0;">'+p.count+' sold</span></div></div>').join('') : '<div class="tg-empty" style="padding:30px;"><div class="tg-empty-i">📊</div></div>';
   }
 
-  /* ⭐⭐⭐ FIXED: getSettle with FIFO-based pendingAmt (no more netEarning - settled bug) ⭐⭐⭐ */
   function getSettle(sid){
     sid = String(sid);
     const seller = ALL_SELLERS.find(s => s.id === sid);
@@ -4423,7 +4429,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const totalDeduct = commission + delivery + returnCut + labelCut;
     const netEarning = Math.max(0, gross - totalDeduct);
 
-    // ⭐ FIX: Compute pendingAmt via FIFO on unpaid delivered orders
     const totalSettledAmt = ALL_SETTLE_RAW
       .filter(x => x.sellerId === sid && x.status === 'settled')
       .reduce((a,x) => a + Number(x.amount||0), 0);
@@ -4438,21 +4443,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     deliveredOrdersList.sort((a,b) => a.ts - b.ts);
     let pendingAmtCalc = 0;
     if (explicitPaidIds.size > 0) {
-      // If settlements store orderIds, use those (most accurate)
       deliveredOrdersList.forEach(ord => {
         if (!explicitPaidIds.has(String(ord.id))) pendingAmtCalc += ord.net;
       });
     } else {
-      // Otherwise FIFO match against total settlement amount
       let cum = 0;
       for (const ord of deliveredOrdersList) {
         cum += ord.net;
         if (cum <= totalSettledAmt + 1) {
-          // fully covered
         } else {
           const remaining = totalSettledAmt - (cum - ord.net);
           if (remaining >= ord.net * 0.5) {
-            // partial match counted as paid
           } else {
             pendingAmtCalc += ord.net;
           }
@@ -4478,7 +4479,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     else el.innerHTML = approved.map(s => {
       const st = getSettle(s.id);
       const settled = getSettledAmt(s.id);
-      // ⭐ FIX: pendingAmt from FIFO calc, not netEarning - settled
       const pendingAmt = st.pendingAmt;
       tg += st.gross; tc += st.totalDeduct; tn += st.netEarning; tp += pendingAmt;
       const matchWarn = st.matchedOrders === 0 ? '<span class="tg-pill rej">⚠ No matched orders</span>' : '';
@@ -4534,7 +4534,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const s = ALL_SELLERS.find(x=>x.id===sid); if (!s) return;
     const st = getSettle(sid);
     const settled = getSettledAmt(sid);
-    // ⭐ FIX: pendingAmt from FIFO calc
     const pendingAmt = st.pendingAmt;
     const payInfo = renderSettlePaymentMini(s);
     document.getElementById('mset-body').innerHTML =
@@ -4561,7 +4560,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (amt > 5000000) { toast('Amount too large (max ₹50L)','err'); return; }
     if (!USER) { toast('Not logged in','err'); return; }
     const st = getSettle(sid);
-    // ⭐ FIX: maxAmt from FIFO calc
     const maxAmt = st.pendingAmt;
     if (amt > maxAmt + 1) {
       toast('Amount pending se zyada hai. Max allowed: ' + inr(maxAmt), 'err');
@@ -4957,9 +4955,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   window.tgShowNotifications = function() {
     const pend = ALL_ORDERS.filter(o => normStatus(o.status) === 'pending').length;
-    const ready = ALL_ORDERS.filter(o => normStatus(o.status) === 'rtd').length;
+    const ready = ALL_ORDERS.filter(o => normStatus(o.status) === 'pickup').length;
     if (pend > 0) { toast(pend + ' new order(s)!', 'inf'); tgNav('orders'); tgFilterOrders('pending'); }
-    else if (ready > 0) { toast(ready + ' ready for courier!', 'suc'); tgNav('orders'); tgFilterOrders('rtd'); }
+    else if (ready > 0) { toast(ready + ' ready for pickup!', 'suc'); tgNav('orders'); tgFilterOrders('pickup'); }
     else toast('No new notifications', 'inf');
   };
 
@@ -4973,15 +4971,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   auth.onAuthStateChanged(async (u) => {
     if (!u) return;
-    const isSA = u.email === SA;
-    let isAdmin = isSA;
-    if (!isAdmin) {
-      try {
-        const s = await db.collection('users').doc(u.uid).get();
-        const r = s.exists ? (s.data().role||'').toLowerCase() : '';
-        isAdmin = ['admin','superadmin'].includes(r);
-      } catch(e) {}
-    }
+    let isAdmin = false;
+    try {
+      const s = await db.collection('users').doc(u.uid).get();
+      const r = s.exists ? (s.data().role||'').toLowerCase() : '';
+      isAdmin = ['admin','superadmin'].includes(r);
+    } catch(e) {}
     if (isAdmin) showPanel(u);
     else document.getElementById('tg-login').style.display = 'flex';
   });
