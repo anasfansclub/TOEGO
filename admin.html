@@ -1006,7 +1006,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   </div>
 </div>
 
-<!-- ═══ Courier Form Modal ═══ -->
+<!-- Courier Form Modal -->
 <div class="tg-mod" id="mod-courier">
   <div class="tg-mod-c" style="max-width:460px;">
     <div class="tg-mod-h"><div class="tg-mod-t" id="mc-title">Mark as Delivered</div><button class="tg-mod-x" onclick="tgCloseMod('mod-courier')">✕</button></div>
@@ -1363,7 +1363,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   try { _ringEnabled = localStorage.getItem('toego_admin_ring') !== '0'; } catch(e) {}
   let _prevPendingCount = -1;
 
-  // Courier form queue + mode
   let _courierOrderIds = [];
   let _courierMode = 'deliver';
 
@@ -1405,7 +1404,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   function fmtWeightShort(g){ g = Number(g||0); return g >= 1000 ? (g/1000).toFixed(g%1000===0?0:1)+'kg' : g+'g'; }
   function dateKey(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); return dt.toISOString().slice(0,10); }
 
-  /* ═══ HISTORY: ek ek page back ═══ */
   function pushHistory(state) {
     try { history.pushState(state, '', '#' + (state.view || CUR_VIEW)); } catch(e) {}
   }
@@ -1686,7 +1684,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     _prevPendingCount = pendingCount;
   }
 
-  /* ═══ NORM STATUS — Label/Processing → RTD so admin can enter courier & dispatch ═══ */
   function normStatus(s){
     s = String(s||'pending').toLowerCase().trim().replace(/\s+/g,'_').replace(/-/g,'_');
     if (!s || s==='new' || s==='placed' || s==='created' || s==='confirmed') return 'pending';
@@ -1695,12 +1692,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (s.includes('return') || s.includes('refund') || s === 'rto') return 'returned';
     if (s.includes('deliver') || s === 'completed') return 'delivered';
     if (s.includes('dispatch') || s.includes('shipped') || s === 'in_transit' || s === 'ofd' || s === 'out_for_delivery') return 'dispatched';
-    // label_generated and processing now go to RTD (admin enters courier & dispatches)
     if (s.includes('label_generat') || s === 'label_created') return 'rtd';
     if (s.includes('process') || s.includes('packing') || s === 'packed' || s === 'ready_to_ship' || s === 'preparing') return 'rtd';
-    // admin_approved (RTD)
     if (s.includes('admin_approv') || s === 'approved' || s === 'admin_ok' || s === 'adminok' || s === 'rtd' || s.includes('ready_to_dispatch') || s.includes('ready_for_label') || s === 'admin-accepted') return 'rtd';
-    // seller accepted
     if (s.includes('seller_accept') || s === 'accepted' || s === 'accept' || s.includes('order_accepted')) return 'accepted';
     return 'pending';
   }
@@ -2051,7 +2045,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     return '<div class="tg-row'+(sel?' selected':'')+'" onclick="tgOpenOrder(\''+esc(o.id)+'\')">'+cb+'<div class="tg-row-av">'+esc(ini(o.userName||o.customerName||'U'))+'</div><div class="tg-row-b"><div class="tg-row-t">#'+esc((o.id||'').slice(0,10).toUpperCase())+'</div><div class="tg-row-s"><span>'+esc(o.userName||o.customerName||'Customer')+'</span><span>'+inr(o.total||0)+'</span><span>'+(itemCount||0)+' items</span><span>'+fdate(o.createdAt)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill '+cls+'">'+statusLabel(o.status)+'</span>'+courierBadge+'</div></div><div class="tg-row-a" onclick="event.stopPropagation();"><button class="tg-btn out" onclick="tgOpenOrder(\''+esc(o.id)+'\')">View</button></div></div>';
   }
 
-  /* ═══ ORDERS BULK: RTD = courier+dispatch, Dispatch = deliver, Accepted = RTD ═══ */
   window.tgToggleSelectOrder = function(id, c){
     if (c) SELECTED_ORDERS.add(id); else SELECTED_ORDERS.delete(id);
     renderOrders();
@@ -2095,7 +2088,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const ids = Array.from(SELECTED_ORDERS);
     if (!ids.length) { toast('No orders selected', 'err'); return; }
 
-    // Courier form for RTD → dispatched
     if (cfg.action === 'courier_dispatch') {
       tgOpenCourierForm(ids, 'dispatch');
       return;
@@ -2132,7 +2124,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   };
 
-  /* ═══ COURIER FORM — dispatch & deliver modes ═══ */
   window.tgOpenCourierForm = function(ids, mode){
     _courierOrderIds = Array.isArray(ids) ? ids.slice() : [ids];
     _courierMode = (mode === 'dispatch') ? 'dispatch' : 'deliver';
@@ -2211,7 +2202,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   };
 
-  /* ═══ SELLER DATE-WISE ORDERS MODAL ═══ */
   window.tgOpenSellerOrders = function(sid, skipHistory) {
     const seller = ALL_SELLERS.find(x => x.id === sid);
     if (!seller) { toast('Seller not found', 'err'); return; }
@@ -2243,7 +2233,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       '<div class="tg-so-stat"><div class="tg-so-stat-num">' + inr(totalRevenue) + '</div><div class="tg-so-stat-label">Total Revenue</div></div>' +
       '<div class="tg-so-stat"><div class="tg-so-stat-num">' + sortedGroups.length + '</div><div class="tg-so-stat-label">Days Active</div></div>' +
     '</div>';
-    // Export all orders button
     html += '<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">' +
       '<button class="tg-btn suc" style="flex:1;padding:12px;justify-content:center;" onclick="tgExportSellerOrders(\'' + jsEsc(sid) + '\')">📥 Export All Orders (Excel)</button>' +
     '</div>';
@@ -2501,7 +2490,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     toast('Exported ' + rows.length + ' labels ✓', 'suc');
   };
 
-  /* ═══ SAVE ALL ORDERS VIEW ═══ */
   window.renderSaveOrders = function() {
     const el = document.getElementById('save-orders-list');
     if (!el) return;
@@ -4032,7 +4020,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!skipHistory) pushHistory({ view: CUR_VIEW, modal: 'order', orderId: oid });
   };
 
-  // Open courier form from order modal
   window.tgOpenCourierFromOrder = function(oid, mode) {
     document.getElementById('mod-order').classList.remove('show');
     document.body.style.overflow = '';
@@ -4040,7 +4027,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setTimeout(() => tgOpenCourierForm([oid], mode || 'dispatch'), 40);
   };
 
-  // Direct mark delivered from order modal (no courier form needed)
   window.tgMarkDeliveredDirect = async function(oid) {
     try {
       await db.collection('orders').doc(oid).update({
@@ -4372,6 +4358,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.getElementById('an-tp').innerHTML = pp.length ? pp.map(p=>'<div class="tg-row" style="cursor:default;"><div class="tg-row-b"><div class="tg-row-t">'+esc(p.name)+'</div></div><div class="tg-row-a"><span style="font-weight:800;color:#2874f0;">'+p.count+' sold</span></div></div>').join('') : '<div class="tg-empty" style="padding:30px;"><div class="tg-empty-i">📊</div></div>';
   }
 
+  /* ⭐⭐⭐ FIXED: getSettle with FIFO-based pendingAmt (no more netEarning - settled bug) ⭐⭐⭐ */
   function getSettle(sid){
     sid = String(sid);
     const seller = ALL_SELLERS.find(s => s.id === sid);
@@ -4406,6 +4393,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
     let gross = 0, commission = 0, delivery = 0, returnCut = 0, labelCut = 0;
     let settled = 0, pending = 0, deliveredCount = 0, returnCount = 0, itemsCount = 0, matchedOrders = 0;
+    const deliveredOrdersList = [];
+
     ALL_ORDERS.forEach(o => {
       const s = normStatus(o.status);
       const mi = matchSellerItems(o);
@@ -4428,13 +4417,54 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
         if (dd && (Date.now() - dd.getTime()) / 86400000 >= 7) settled += net;
         else pending += net;
+        deliveredOrdersList.push({ id: o.id, net: net, ts: dd ? dd.getTime() : 0 });
       }
     });
     const totalDeduct = commission + delivery + returnCut + labelCut;
     const netEarning = Math.max(0, gross - totalDeduct);
+
+    // ⭐ FIX: Compute pendingAmt via FIFO on unpaid delivered orders
+    const totalSettledAmt = ALL_SETTLE_RAW
+      .filter(x => x.sellerId === sid && x.status === 'settled')
+      .reduce((a,x) => a + Number(x.amount||0), 0);
+
+    const explicitPaidIds = new Set();
+    ALL_SETTLE_RAW.forEach(x => {
+      if (x.sellerId === sid && x.status === 'settled' && Array.isArray(x.orderIds)) {
+        x.orderIds.forEach(id => explicitPaidIds.add(String(id)));
+      }
+    });
+
+    deliveredOrdersList.sort((a,b) => a.ts - b.ts);
+    let pendingAmtCalc = 0;
+    if (explicitPaidIds.size > 0) {
+      // If settlements store orderIds, use those (most accurate)
+      deliveredOrdersList.forEach(ord => {
+        if (!explicitPaidIds.has(String(ord.id))) pendingAmtCalc += ord.net;
+      });
+    } else {
+      // Otherwise FIFO match against total settlement amount
+      let cum = 0;
+      for (const ord of deliveredOrdersList) {
+        cum += ord.net;
+        if (cum <= totalSettledAmt + 1) {
+          // fully covered
+        } else {
+          const remaining = totalSettledAmt - (cum - ord.net);
+          if (remaining >= ord.net * 0.5) {
+            // partial match counted as paid
+          } else {
+            pendingAmtCalc += ord.net;
+          }
+        }
+      }
+    }
+
     return {
       gross, commission, delivery, returnCut, labelCut, totalDeduct, netEarning,
-      settled, pending, deliveredCount, returnCount, itemsCount, matchedOrders, pct, usingCustom
+      settled, pending, deliveredCount, returnCount, itemsCount, matchedOrders, pct, usingCustom,
+      pendingAmt: pendingAmtCalc,
+      totalSettledAmt: totalSettledAmt
     };
   }
   function getSettledAmt(sid){
@@ -4448,7 +4478,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     else el.innerHTML = approved.map(s => {
       const st = getSettle(s.id);
       const settled = getSettledAmt(s.id);
-      const pendingAmt = Math.max(0, st.netEarning - settled);
+      // ⭐ FIX: pendingAmt from FIFO calc, not netEarning - settled
+      const pendingAmt = st.pendingAmt;
       tg += st.gross; tc += st.totalDeduct; tn += st.netEarning; tp += pendingAmt;
       const matchWarn = st.matchedOrders === 0 ? '<span class="tg-pill rej">⚠ No matched orders</span>' : '';
       const slabPill = st.usingCustom ? '<span class="tg-pill blu">🚚 Custom slabs</span>' : '<span class="tg-pill gry">🚚 Global slabs</span>';
@@ -4503,7 +4534,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const s = ALL_SELLERS.find(x=>x.id===sid); if (!s) return;
     const st = getSettle(sid);
     const settled = getSettledAmt(sid);
-    const pendingAmt = Math.max(0, st.netEarning - settled);
+    // ⭐ FIX: pendingAmt from FIFO calc
+    const pendingAmt = st.pendingAmt;
     const payInfo = renderSettlePaymentMini(s);
     document.getElementById('mset-body').innerHTML =
       payInfo +
@@ -4529,8 +4561,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (amt > 5000000) { toast('Amount too large (max ₹50L)','err'); return; }
     if (!USER) { toast('Not logged in','err'); return; }
     const st = getSettle(sid);
-    const settledAmt = getSettledAmt(sid);
-    const maxAmt = Math.max(0, st.netEarning - settledAmt);
+    // ⭐ FIX: maxAmt from FIFO calc
+    const maxAmt = st.pendingAmt;
     if (amt > maxAmt + 1) {
       toast('Amount pending se zyada hai. Max allowed: ' + inr(maxAmt), 'err');
       return;
