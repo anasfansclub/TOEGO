@@ -611,7 +611,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  /* ═══ CLOUD FUNCTIONS INIT ═══ */
   let functions = null;
   try {
     functions = firebase.functions();
@@ -639,6 +638,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
   const COD_LIMIT = 500;
+
+  /* ═══ SECURITY: Rate limiting ═══ */
+  let _lastOrderAttempt = 0;
+  const ORDER_COOLDOWN_MS = 5000;
 
   const _memStore = { pin: null, addr: null };
   function getPin() {
@@ -758,11 +761,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return null;
   }
 
+  /* ═══ enrichFromCacheSync — with price verification marking ═══ */
   function enrichFromCacheSync(items) {
     return items.map(it => {
       const p = _pGet(it.productId);
       if (!p) return it;
+
       const productGst = _pickNum(p, ['gst', 'gstPercent', 'gstRate', 'tax']) || 0;
+      const truePrice = Number(p.price || 0);
+      const priceMatch = truePrice > 0 && Math.abs(truePrice - Number(it.price || 0)) <= 0.01;
+
       return {
         ...it,
         sellerId: it.sellerId || p.sellerId || p.seller_id || p.sid || p.sellerUid || '',
@@ -770,7 +778,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         rating: (it.rating != null) ? it.rating : _pickNum(p, ['rating','avgRating','averageRating','stars','ratingAvg']),
         ratingCount: (it.ratingCount != null) ? it.ratingCount : _pickCount(p, ['ratingCount','reviewCount','numReviews','ratingsCount','totalRatings','totalReviews','reviewsCount']),
         gst: (it.gst != null && Number(it.gst) >= 0) ? Number(it.gst) : productGst,
-        gstIncluded: (it.gstIncluded != null) ? it.gstIncluded : (p.gstIncluded === true)
+        gstIncluded: (it.gstIncluded != null) ? it.gstIncluded : (p.gstIncluded === true),
+        _priceVerified: priceMatch,
+        _truePrice: truePrice
       };
     });
   }
@@ -2364,14 +2374,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return list;
   }
 
+  /* ═══ FORCE LOGIN — guest ordering blocked ═══ */
   window.tgPlaceOrder = async function() {
-    const t = calcTotals();
-    if (t.itemCount === 0) { toast('Please select items to order', 'info'); return; }
     if (!currentUser) {
-      toast('Please log in to place order', 'info');
-      setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html'), 900);
+      toast('Please log in to place order — guest orders are disabled for security.', 'info');
+      setTimeout(() => {
+        location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html');
+      }, 1200);
       return;
     }
+
+    const t = calcTotals();
+    if (t.itemCount === 0) { toast('Please select items to order', 'info'); return; }
+
     const list = await getSavedAddresses();
     if (list.length > 0) openAddrList(list);
     else tgOpenNewAddr();
@@ -2555,9 +2570,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     tgOpenPayModal();
   };
 
-  /* ═══════════════════════════════════════════════════════════════
-     PAYMENT MODAL — WITH COD CAP ₹500
-     ═══════════════════════════════════════════════════════════════ */
   window.tgOpenPayModal = function() {
     const t = calcTotals();
     document.getElementById('tg-pay-amount').textContent = fmtINR(t.grand);
@@ -2647,10 +2659,364 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
+  /* ═══════════════════════════════════════════════════════════════
+     🔒 SECURITY LAYER — SERVER-SIDE VERIFICATION
+     ═══════════════════════════════════════════════════════════════ */
+
+  async function fetchFreshProductsServer(ids) {
+    const out = {};
+    if (!ids.length) return out;
+    try {
+      const CHUNK = 10;
+      for (let i = 0; i < ids.length; i += CHUNK) {
+        const chunk = ids.slice(i, i + CHUNK);
+        try {
+          const snap = await db.collection('products')
+            .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+            .get({ source: 'server' });
+          snap.forEach(d => { out[d.id] = { id: d.id, ...d.data() }; });
+        } catch(e) {
+          for (const id of chunk) {
+            try {
+              const d = await db.collection('products').doc(id).get({ source: 'server' });
+              if (d.exists) out[id] = { id: d.id, ...d.data() };
+            } catch(e2) {}
+          }
+        }
+      }
+    } catch(e) {
+      console.warn('[verify] product fetch failed:', e);
+    }
+    return out;
+  }
+
+  async function tgVerifyCartServerSide(clientItems) {
+    if (!Array.isArray(clientItems) || !clientItems.length) {
+      throw new Error('Cart is empty');
+    }
+
+    const pids = [...new Set(clientItems.map(it => it.productId).filter(Boolean))];
+    if (!pids.length) throw new Error('Invalid cart items');
+
+    const freshProds = await fetchFreshProductsServer(pids);
+    if (Object.keys(freshProds).length === 0) {
+      throw new Error('Unable to verify products. Check your internet and try again.');
+    }
+
+    let subtotal = 0, mrpTotal = 0;
+    let gstIncludedTotal = 0, gstAddedTotal = 0;
+    const verifiedItems = [];
+    const tamperedItems = [];
+
+    for (const it of clientItems) {
+      const p = freshProds[it.productId];
+      if (!p) throw new Error('Product no longer available: ' + (it.name || it.productId));
+
+      if (p.active === false) throw new Error('Product removed from sale: ' + (p.name || ''));
+      if (p.approved === false) throw new Error('Product not approved: ' + (p.name || ''));
+
+      const serverPrice = Number(p.price || 0);
+      const clientPrice = Number(it.price || 0);
+      if (!(serverPrice > 0)) throw new Error('Invalid product price');
+
+      if (Math.abs(serverPrice - clientPrice) > 0.01) {
+        tamperedItems.push({
+          productId: it.productId,
+          name: p.name || it.name || 'Product',
+          clientPrice, serverPrice
+        });
+      }
+
+      const qty = Number(it.qty || 1);
+      if (!Number.isInteger(qty) || qty < 1 || qty > 10) {
+        throw new Error('Invalid quantity for ' + (p.name || 'item'));
+      }
+
+      const sizeStock = p.sizeStock || {};
+      const availStock = (it.size && sizeStock[it.size] != null)
+        ? Number(sizeStock[it.size])
+        : Number(p.stock || 0);
+      if (qty > availStock) {
+        throw new Error('Out of stock: ' + (p.name || '') + (it.size ? ' (Size ' + it.size + ')' : '') + ' — Only ' + availStock + ' left');
+      }
+
+      const serverMrp = Number(p.compareAtPrice || p.mrp || serverPrice);
+      const gstPct = Number(p.gst || 18);
+      const gstIncluded = p.gstIncluded === true;
+      const lineTotal = serverPrice * qty;
+
+      subtotal += lineTotal;
+      mrpTotal += serverMrp * qty;
+
+      if (gstPct > 0) {
+        if (gstIncluded) {
+          gstIncludedTotal += lineTotal - (lineTotal / (1 + gstPct / 100));
+        } else {
+          gstAddedTotal += lineTotal * gstPct / 100;
+        }
+      }
+
+      verifiedItems.push({
+        productId: p.id,
+        name: p.name || '',
+        image: p.image || (p.images && p.images[0]) || '',
+        price: serverPrice,
+        mrp: serverMrp,
+        qty: qty,
+        size: it.size || '',
+        color: it.color || '',
+        weight: Number(p.weight || 0),
+        gst: gstPct,
+        gstIncluded: gstIncluded,
+        gstAmount: Number((gstPct > 0 ? (gstIncluded ? lineTotal - (lineTotal / (1 + gstPct/100)) : lineTotal * gstPct / 100) : 0).toFixed(2)),
+        sellerId: p.sellerId || p.seller_id || p.sid || p.sellerUid || '',
+        sellerName: p.sellerName || p.shopName || ''
+      });
+    }
+
+    if (tamperedItems.length > 0) {
+      console.warn('[SECURITY] Price tampering detected:', tamperedItems);
+      tamperedItems.forEach(t => {
+        const it = cartItems.find(x => x.productId === t.productId);
+        if (it) it.price = t.serverPrice;
+      });
+      if (currentUser) _saveMirror(currentUser.uid, cartItems);
+      else setGuestCart(cartItems);
+      renderCart(true);
+      throw new Error('Cart prices were outdated and have been corrected. Please review and try again.');
+    }
+
+    let couponDiscount = 0;
+    let verifiedCoupon = null;
+
+    if (appliedCoupon) {
+      try {
+        const code = String(appliedCoupon.code || '').toUpperCase().trim();
+        if (!code) throw new Error('Invalid coupon');
+
+        const cSnap = await db.collection('coupons').doc(code).get({ source: 'server' });
+        if (!cSnap.exists) {
+          appliedCoupon = null;
+          saveAppliedCouponToStorage();
+          updateCouponCard();
+          throw new Error('Coupon no longer exists. It has been removed.');
+        }
+        const c = cSnap.data();
+        if (c.active === false) {
+          appliedCoupon = null;
+          saveAppliedCouponToStorage();
+          updateCouponCard();
+          throw new Error('Coupon is inactive. It has been removed.');
+        }
+        if (c.expiry) {
+          const exp = new Date(c.expiry);
+          if (!isNaN(exp.getTime())) {
+            const eod = new Date(exp.getFullYear(), exp.getMonth(), exp.getDate(), 23, 59, 59, 999);
+            if (eod.getTime() < Date.now()) {
+              appliedCoupon = null;
+              saveAppliedCouponToStorage();
+              updateCouponCard();
+              throw new Error('Coupon expired. It has been removed.');
+            }
+          }
+        }
+        const minOrder = Number(c.minOrder || 0);
+        if (subtotal < minOrder) {
+          throw new Error('Coupon requires minimum order of ' + fmtINR(minOrder));
+        }
+        if (currentUser) {
+          try {
+            const usedSnap = await db.collection('orders')
+              .where('userId', '==', currentUser.uid)
+              .where('couponCode', '==', code)
+              .limit(1).get();
+            if (!usedSnap.empty) {
+              appliedCoupon = null;
+              saveAppliedCouponToStorage();
+              updateCouponCard();
+              throw new Error('You have already used this coupon.');
+            }
+          } catch(e) {
+            if (e.message && e.message.indexOf('already used') !== -1) throw e;
+          }
+        }
+        if (c.discountType === 'percent') {
+          couponDiscount = subtotal * Number(c.value || 0) / 100;
+          const maxD = Number(c.maxDiscount || 0);
+          if (maxD > 0) couponDiscount = Math.min(couponDiscount, maxD);
+        } else {
+          couponDiscount = Number(c.value || 0);
+        }
+        couponDiscount = Math.min(couponDiscount, subtotal);
+        couponDiscount = Math.max(0, Math.round(couponDiscount));
+
+        verifiedCoupon = {
+          code: code,
+          discountType: String(c.discountType || 'flat').toLowerCase(),
+          value: Number(c.value || 0),
+          minOrder: minOrder,
+          maxDiscount: Number(c.maxDiscount || 0),
+          description: c.description || ''
+        };
+      } catch(e) {
+        if (e.message && (e.message.toLowerCase().indexOf('coupon') !== -1)) throw e;
+        throw new Error('Unable to verify coupon: ' + e.message);
+      }
+    }
+
+    let commPct = 0;
+    try {
+      const ss = await db.collection('siteSettings').doc('seller').get({ source: 'server' });
+      if (ss.exists) commPct = Number(ss.data().commissionPercent || 0);
+    } catch(e) {}
+
+    const cartCommission = commPct !== 0 ? Math.round(subtotal * commPct / 100) : 0;
+
+    let gstEnabled = true;
+    try {
+      const ps = await db.collection('siteSettings').doc('payment').get({ source: 'server' });
+      if (ps.exists) gstEnabled = ps.data().gstEnabled !== false;
+    } catch(e) {}
+
+    if (!gstEnabled) {
+      gstIncludedTotal = 0;
+      gstAddedTotal = 0;
+    }
+
+    const grand = Math.max(0, subtotal + gstAddedTotal + cartCommission - couponDiscount);
+    const gstTotal = gstIncludedTotal + gstAddedTotal;
+
+    return {
+      items: verifiedItems,
+      subtotal: subtotal,
+      mrpTotal: mrpTotal,
+      discount: mrpTotal - subtotal,
+      gst: gstTotal,
+      gstIncluded: gstIncludedTotal,
+      gstAdded: gstAddedTotal,
+      cartCommission: cartCommission,
+      cartCommissionPct: commPct,
+      couponDiscount: couponDiscount,
+      coupon: verifiedCoupon,
+      grand: grand,
+      itemCount: verifiedItems.reduce((a, i) => a + i.qty, 0)
+    };
+  }
+
+  async function tgCreateOrderSecure(verified, payInfo, cartDocIds) {
+    if (!currentUser) throw new Error('Not logged in');
+    if (!verified || !verified.items || !verified.items.length) throw new Error('Invalid order data');
+
+    const orderRef = db.collection('orders').doc();
+    const cartColRef = db.collection('carts').doc(currentUser.uid).collection('items');
+
+    await db.runTransaction(async (tx) => {
+      const productRefs = verified.items.map(it => db.collection('products').doc(it.productId));
+      const productSnaps = await Promise.all(productRefs.map(r => tx.get(r)));
+
+      for (let i = 0; i < verified.items.length; i++) {
+        const it = verified.items[i];
+        const snap = productSnaps[i];
+        if (!snap.exists) throw new Error('Product removed: ' + it.name);
+        const p = snap.data();
+        if (p.active === false) throw new Error('Product inactive: ' + it.name);
+        if (p.approved === false) throw new Error('Product not approved: ' + it.name);
+
+        const currentPrice = Number(p.price || 0);
+        if (Math.abs(currentPrice - it.price) > 0.01) {
+          throw new Error('Price changed for "' + it.name + '". Please refresh cart and try again.');
+        }
+
+        const sizeStock = p.sizeStock || {};
+        const availStock = (it.size && sizeStock[it.size] != null)
+          ? Number(sizeStock[it.size])
+          : Number(p.stock || 0);
+        if (it.qty > availStock) {
+          throw new Error('Just sold out: ' + it.name + (it.size ? ' (' + it.size + ')' : '') + ' — Only ' + availStock + ' left');
+        }
+      }
+
+      for (let i = 0; i < verified.items.length; i++) {
+        const it = verified.items[i];
+        const p = productSnaps[i].data();
+        const updates = {
+          stock: FV.increment(-it.qty),
+          updatedAt: FV.serverTimestamp()
+        };
+        if (it.size && p.sizeStock && p.sizeStock[it.size] != null) {
+          updates['sizeStock.' + it.size] = FV.increment(-it.qty);
+        }
+        tx.update(productRefs[i], updates);
+      }
+
+      cartDocIds.forEach(id => tx.delete(cartColRef.doc(id)));
+
+      const addr = pendingAddress || {};
+      const dInfo = getDeliveryInfo();
+      tx.set(orderRef, {
+        customerId: currentUser.uid,
+        userId: currentUser.uid,
+        uid: currentUser.uid,
+        userName: addr.name || '',
+        userEmail: addr.email || currentUser.email || '',
+        userPhone: addr.phone || '',
+        items: verified.items,
+        itemCount: verified.itemCount,
+        address: addr,
+        shippingAddress: addr,
+        subtotal: Number(verified.subtotal.toFixed(2)),
+        mrpTotal: Number(verified.mrpTotal.toFixed(2)),
+        discount: Number(verified.discount.toFixed(2)),
+        gst: Number(verified.gst.toFixed(2)),
+        gstIncluded: Number(verified.gstIncluded.toFixed(2)),
+        gstAdded: Number(verified.gstAdded.toFixed(2)),
+        cartCommission: Number(verified.cartCommission.toFixed(2)),
+        cartCommissionPct: Number(verified.cartCommissionPct || 0),
+        delivery: 0,
+        deliverySource: 'seller',
+        total: Number(verified.grand.toFixed(2)),
+        couponCode: verified.coupon ? verified.coupon.code : '',
+        couponDiscount: Number(verified.couponDiscount.toFixed(2)),
+        coupon: verified.coupon,
+        paymentMethod: payInfo.paymentMethod,
+        paymentId: payInfo.paymentId || '',
+        paymentStatus: payInfo.paymentStatus,
+        deliveryType: dInfo.cls === 'same-day' ? 'same_day' : 'standard_3_6_days',
+        deliveryEstimate: dInfo.text,
+        status: 'pending',
+        sellerIds: [...new Set(verified.items.map(i => i.sellerId).filter(Boolean))],
+        _verified: true,
+        _verifiedAt: FV.serverTimestamp(),
+        createdAt: FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      });
+    });
+
+    return orderRef.id;
+  }
+
   async function tgStartRazorpay(t) {
+    if (!currentUser) { toast('Please log in', 'error'); return; }
+
+    toast('🔒 Verifying cart...', 'info');
+    let verified;
+    try {
+      verified = await tgVerifyCartServerSide(t.sel);
+    } catch(e) {
+      toast('❌ ' + (e.message || 'Cannot proceed'), 'error');
+      return;
+    }
+
+    if (!verified || !verified.items.length) { toast('Cart is empty', 'error'); return; }
+    if (verified.grand <= 0) { toast('Invalid amount', 'error'); return; }
+
+    const amountPaise = Math.round(verified.grand * 100);
     const keyId = SETTINGS.razorpayKeyId;
-    const amountPaise = Math.round(t.grand * 100);
-    if (typeof Razorpay === 'undefined') { toast('Payment gateway not loaded. Check internet.', 'error'); return; }
+
+    if (typeof Razorpay === 'undefined') {
+      toast('Payment gateway not loaded. Check internet.', 'error');
+      return;
+    }
 
     let razorpayOrder = null;
     let verifyFn = null;
@@ -2662,18 +3028,20 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           amount: amountPaise,
           name: pendingAddress.name,
           phone: pendingAddress.phone,
-          uid: currentUser ? currentUser.uid : ''
+          uid: currentUser.uid
         });
         if (res && res.data && res.data.order_id) {
           razorpayOrder = res.data;
           verifyFn = functions.httpsCallable('verifyRazorpayPayment');
-          console.log('[razorpay] Secure mode: server-side order created');
+
+          if (razorpayOrder.amount && Math.abs(razorpayOrder.amount - amountPaise) > 100) {
+            toast('❌ Amount mismatch detected. Contact support.', 'error');
+            return;
+          }
         }
       } catch(err) {
-        console.warn('[razorpay] Cloud Function failed, using direct mode:', err && err.message);
+        console.warn('[razorpay] CF failed:', err && err.message);
       }
-    } else {
-      console.warn('[razorpay] firebase-functions not loaded — using direct mode (less secure)');
     }
 
     const options = {
@@ -2681,19 +3049,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       amount: razorpayOrder ? razorpayOrder.amount : amountPaise,
       currency: (razorpayOrder && razorpayOrder.currency) ? razorpayOrder.currency : (SETTINGS.currency || 'INR'),
       name: 'TOEGO',
-      description: 'Order Payment (' + t.itemCount + ' items)',
+      description: 'Order Payment (' + verified.itemCount + ' items)',
       image: window.location.origin + '/favicon.ico',
       prefill: {
         name: pendingAddress.name,
         contact: '+91' + pendingAddress.phone,
-        email: pendingAddress.email || (currentUser && currentUser.email) || ''
+        email: pendingAddress.email || currentUser.email || ''
       },
       theme: { color: '#2874f0' },
       notes: {
         uid: currentUser.uid,
-        items: t.itemCount,
+        items: verified.itemCount,
         address: pendingAddress.city + ' ' + pendingAddress.pin,
-        coupon: appliedCoupon?.code || ''
+        coupon: verified.coupon ? verified.coupon.code : ''
       },
       handler: async function(response) {
         if (verifyFn) {
@@ -2704,25 +3072,62 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
               razorpay_signature: response.razorpay_signature
             });
             if (!v || !v.data || !v.data.verified) {
-              console.error('[razorpay] Signature verification FAILED', v);
-              toast('❌ Payment verification failed. Please contact support with Payment ID: ' + response.razorpay_payment_id, 'error');
+              toast('❌ Payment verification failed. Contact support with ID: ' + response.razorpay_payment_id, 'error');
               return;
             }
-            console.log('[razorpay] Signature verified ✓');
           } catch(err) {
-            console.error('[razorpay] Verification error:', err);
             toast('Payment received but verification failed. Contact support with ID: ' + response.razorpay_payment_id, 'error');
             return;
           }
-        } else {
-          console.warn('[razorpay] ⚠ No server verification — proceeding anyway');
         }
 
-        tgCreateOrder(t, {
-          paymentMethod: 'razorpay',
-          paymentId: response.razorpay_payment_id,
-          paymentStatus: 'paid'
+        const placeBtns = ['tg-place-order', 'tg-m-btn'].map(id => document.getElementById(id)).filter(Boolean);
+        placeBtns.forEach(b => {
+          b.dataset.origText = b.textContent;
+          b.disabled = true;
+          b.textContent = 'Creating order...';
         });
+
+        try {
+          const docsToDelete = t.sel.map(it => it.id);
+          const orderId = await tgCreateOrderSecure(
+            verified,
+            { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: 'paid' },
+            docsToDelete
+          );
+
+          docsToDelete.forEach(id => _pendingCartDeletes.add(id));
+          const _delSet = new Set(docsToDelete);
+          cartItems = cartItems.filter(it => !_delSet.has(it.id));
+          docsToDelete.forEach(id => {
+            selectedIds.delete(id);
+            selectedIds.delete(NS_MARK + id);
+            _pendingQty.delete(id);
+          });
+          saveSelected();
+          _persistCartToMirror();
+          renderCart(true);
+          setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 3000);
+
+          showSuccess(orderId);
+          document.getElementById('tg-success-order').textContent = 'Order ID: #' + orderId.slice(0, 10).toUpperCase();
+
+          if (appliedCoupon) {
+            usedCouponCodes.add(appliedCoupon.code);
+            appliedCoupon = null;
+            saveAppliedCouponToStorage();
+            updateCouponCard();
+          }
+        } catch(e) {
+          console.error('[RZP ORDER FAIL]', e);
+          toast('❌ ' + (e.message || 'Order failed'), 'error');
+          toast('Payment received but order failed. Contact support with ID: ' + response.razorpay_payment_id, 'error');
+        } finally {
+          placeBtns.forEach(b => {
+            b.disabled = false;
+            b.textContent = b.dataset.origText || 'Place Order';
+          });
+        }
       },
       modal: {
         ondismiss: function() { toast('Payment cancelled', 'info'); }
@@ -2798,76 +3203,36 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
 
   async function tgCreateOrder(t, payInfo) {
-    const docsToDelete = t.sel.map(it => it.id);
+    if (!currentUser) { toast('Please log in', 'error'); return; }
+
+    const now = Date.now();
+    if (now - _lastOrderAttempt < ORDER_COOLDOWN_MS) {
+      toast('Please wait a moment before trying again', 'info');
+      return;
+    }
+    _lastOrderAttempt = now;
+
     const placeBtns = ['tg-place-order', 'tg-m-btn'].map(id => document.getElementById(id)).filter(Boolean);
     placeBtns.forEach(b => {
       b.dataset.origText = b.textContent;
       b.disabled = true;
-      b.textContent = 'Placing...';
+      b.textContent = 'Verifying...';
     });
 
     try {
-      let orderItems = t.sel.map(it => {
-        const q = Number(it.qty || 1);
-        const p = Number(it.price || 0);
-        const m = Number(it.mrp || it.compareAtPrice || it.originalPrice || Math.round(p * 1.6));
-        const gstPct = getItemGstPct(it);
-        const gstIncluded = isGstIncluded(it);
-        const gstAmt = gstPct > 0
-          ? (gstIncluded ? (p*q) - ((p*q)/(1+gstPct/100)) : (p*q)*gstPct/100)
-          : 0;
-        return {
-          productId: it.productId || it.id, name: it.name || '', image: it.image || '',
-          price: p, mrp: m, qty: q, size: it.size || '', color: it.color || '',
-          rating: (it.rating != null) ? Number(it.rating) : null,
-          ratingCount: (it.ratingCount != null) ? Number(it.ratingCount) : null,
-          gst: gstPct, gstIncluded: gstIncluded, gstAmount: Number(gstAmt.toFixed(2)),
-          sellerId: it.sellerId || '', sellerName: it.sellerName || it.seller || ''
-        };
-      });
+      toast('🔒 Verifying cart...', 'info');
+      const verified = await tgVerifyCartServerSide(t.sel);
 
-      try {
-        const enriched = await enrichCartItemsFast(orderItems);
-        orderItems = enriched;
-      } catch(e) {}
+      if (payInfo.paymentMethod === 'cod' && verified.grand > COD_LIMIT) {
+        throw new Error('COD limit is ₹' + COD_LIMIT + '. Please use online payment.');
+      }
 
-      const sellerIds = [...new Set(orderItems.map(i => i.sellerId).filter(Boolean))];
-      const dInfo = getDeliveryInfo();
-      const deliveryType = dInfo.cls === 'same-day' ? 'same_day' : 'standard_3_6_days';
+      if (verified.grand <= 0) throw new Error('Invalid order total');
 
-      const orderPayload = {
-        customerId: currentUser.uid, userId: currentUser.uid, uid: currentUser.uid,
-        userName: pendingAddress.name,
-        userEmail: pendingAddress.email || currentUser.email || '',
-        userPhone: pendingAddress.phone,
-        items: orderItems, itemCount: t.itemCount,
-        address: pendingAddress, shippingAddress: pendingAddress,
-        subtotal: Number(t.finalTotal.toFixed(2)),
-        mrpTotal: Number(t.mrpTotal.toFixed(2)),
-        discount: Number(t.discount.toFixed(2)),
-        gst: Number(t.gstTotal.toFixed(2)),
-        gstIncluded: Number(t.gstIncludedAmt.toFixed(2)),
-        gstAdded: Number(t.gstAddedAmt.toFixed(2)),
-        cartCommission: Number(t.cartCommission.toFixed(2)),
-        cartCommissionPct: Number(t.cartCommissionPct || 0),
-        delivery: 0, deliverySource: 'seller',
-        total: Number(t.grand.toFixed(2)),
-        couponCode: appliedCoupon ? appliedCoupon.code : '',
-        couponDiscount: Number(t.couponDiscount || 0),
-        coupon: appliedCoupon ? {
-          code: appliedCoupon.code, type: appliedCoupon.discountType,
-          value: appliedCoupon.value, minOrder: appliedCoupon.minOrder,
-          maxDiscount: appliedCoupon.maxDiscount
-        } : null,
-        paymentMethod: payInfo.paymentMethod,
-        paymentId: payInfo.paymentId || '',
-        paymentStatus: payInfo.paymentStatus,
-        deliveryType: deliveryType, deliveryEstimate: dInfo.text,
-        status: 'pending', sellerIds: sellerIds,
-        createdAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
-      };
+      placeBtns.forEach(b => { b.textContent = 'Placing order...'; });
 
-      const orderPromise = db.collection('orders').add(orderPayload);
+      const docsToDelete = t.sel.map(it => it.id);
+      const orderId = await tgCreateOrderSecure(verified, payInfo, docsToDelete);
 
       docsToDelete.forEach(id => _pendingCartDeletes.add(id));
       const _delSet = new Set(docsToDelete);
@@ -2880,30 +3245,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       saveSelected();
       _persistCartToMirror();
       renderCart(true);
+      setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 3000);
 
-      let cartCleanupPromise = Promise.resolve();
-      if (currentUser) {
-        const batch = db.batch();
-        const col = db.collection('carts').doc(currentUser.uid).collection('items');
-        docsToDelete.forEach(docId => batch.delete(col.doc(docId)));
-        cartCleanupPromise = batch.commit()
-          .then(() => { setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 5000); })
-          .catch(e => {
-            console.warn('Cart cleanup:', e && e.message);
-            docsToDelete.forEach(id => _pendingCartDeletes.delete(id));
-            loadCart();
-          });
-      } else {
-        setGuestCart(getGuestCart().filter(i => !docsToDelete.includes(i.id)));
-      }
-
-      showSuccess('');
-
-      const [ref] = await Promise.all([orderPromise, cartCleanupPromise]);
-      document.getElementById('tg-success-order').textContent = 'Order ID: #' + ref.id.slice(0, 10).toUpperCase();
-
-      docsToDelete.forEach(id => { selectedIds.delete(id); selectedIds.delete(NS_MARK + id); });
-      saveSelected();
+      showSuccess(orderId);
+      document.getElementById('tg-success-order').textContent = 'Order ID: #' + orderId.slice(0, 10).toUpperCase();
 
       if (appliedCoupon) {
         usedCouponCodes.add(appliedCoupon.code);
@@ -2912,18 +3257,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         updateCouponCard();
       }
 
-      if (!currentUser) {
-        cartItems = getGuestCart().filter(it => !_pendingCartDeletes.has(it.id));
-        renderCart(true);
-      }
-    } catch(err) {
-      console.error('Order creation failed:', err);
+      toast('✓ Order placed successfully!', 'success');
+
+    } catch (err) {
+      console.error('[ORDER BLOCKED]', err);
+      const msg = (err && err.message) || 'Order failed';
+      toast('❌ ' + msg, 'error');
       document.getElementById('tg-success').classList.remove('show');
       document.body.style.overflow = '';
-      toast('Order failed: ' + (err.message || 'Try again'), 'error');
-      placeBtns.forEach(b => { b.disabled = false; b.textContent = b.dataset.origText || 'Place Order'; });
-      docsToDelete.forEach(id => _pendingCartDeletes.delete(id));
-      loadCart();
+    } finally {
+      placeBtns.forEach(b => {
+        b.disabled = false;
+        b.textContent = b.dataset.origText || 'Place Order';
+      });
     }
   }
 
