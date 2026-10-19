@@ -639,7 +639,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const PENDING_QTY_TTL = 8000;
   const COD_LIMIT = 500;
 
-  /* ═══ SECURITY: Rate limiting ═══ */
   let _lastOrderAttempt = 0;
   const ORDER_COOLDOWN_MS = 5000;
 
@@ -761,16 +760,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return null;
   }
 
-  /* ═══ enrichFromCacheSync — with price verification marking ═══ */
   function enrichFromCacheSync(items) {
     return items.map(it => {
       const p = _pGet(it.productId);
       if (!p) return it;
-
       const productGst = _pickNum(p, ['gst', 'gstPercent', 'gstRate', 'tax']) || 0;
-      const truePrice = Number(p.price || 0);
-      const priceMatch = truePrice > 0 && Math.abs(truePrice - Number(it.price || 0)) <= 0.01;
-
       return {
         ...it,
         sellerId: it.sellerId || p.sellerId || p.seller_id || p.sid || p.sellerUid || '',
@@ -778,9 +772,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         rating: (it.rating != null) ? it.rating : _pickNum(p, ['rating','avgRating','averageRating','stars','ratingAvg']),
         ratingCount: (it.ratingCount != null) ? it.ratingCount : _pickCount(p, ['ratingCount','reviewCount','numReviews','ratingsCount','totalRatings','totalReviews','reviewsCount']),
         gst: (it.gst != null && Number(it.gst) >= 0) ? Number(it.gst) : productGst,
-        gstIncluded: (it.gstIncluded != null) ? it.gstIncluded : (p.gstIncluded === true),
-        _priceVerified: priceMatch,
-        _truePrice: truePrice
+        gstIncluded: (it.gstIncluded != null) ? it.gstIncluded : (p.gstIncluded === true)
       };
     });
   }
@@ -799,14 +791,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return enrichFromCacheSync(items);
   }
 
+  // 🚨 FIX #3: sirf qty ya price change pe hi re-render (blink ruk jayega)
   function _cartChanged(a, b) {
     if (a.length !== b.length) return true;
     for (let i = 0; i < a.length; i++) {
       if (a[i].id !== b[i].id) return true;
-      if (a[i].rating !== b[i].rating) return true;
-      if (a[i].ratingCount !== b[i].ratingCount) return true;
-      if (a[i].sellerName !== b[i].sellerName) return true;
-      if (a[i].gst !== b[i].gst) return true;
+      if (Number(a[i].qty) !== Number(b[i].qty)) return true;
+      if (Number(a[i].price) !== Number(b[i].price)) return true;
     }
     return false;
   }
@@ -2154,7 +2145,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     setTimeout(attemptFn, delays[0]);
   }
 
+  // 🚨 FIX #1: Buy Now flow me purana mirror mat dikhao — seedha fresh load
   function _quickBootRender() {
+    if (readBuyNowId()) return false;
+
     try {
       const lastUid = localStorage.getItem(LAST_UID_KEY);
       if (lastUid) {
@@ -2374,7 +2368,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return list;
   }
 
-  /* ═══ FORCE LOGIN — guest ordering blocked ═══ */
   window.tgPlaceOrder = async function() {
     if (!currentUser) {
       toast('Please log in to place order — guest orders are disabled for security.', 'info');
@@ -2658,10 +2651,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       tgCreateOrder(t, { paymentMethod: 'cod', paymentId: null, paymentStatus: 'pending' });
     }
   };
-
-  /* ═══════════════════════════════════════════════════════════════
-     🔒 SECURITY LAYER — SERVER-SIDE VERIFICATION
-     ═══════════════════════════════════════════════════════════════ */
 
   async function fetchFreshProductsServer(ids) {
     const out = {};
