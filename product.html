@@ -6,7 +6,7 @@
 <title>Product — TOEGO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://firestore.googleapis.com">F
+<link rel="preconnect" href="https://firestore.googleapis.com">
 <link rel="preconnect" href="https://res.cloudinary.com">
 <link rel="dns-prefetch" href="https://www.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -27,6 +27,7 @@ a{color:inherit;text-decoration:none;}
 .tg-hd-actions{display:flex;gap:2px;}
 .tg-hd-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;border-radius:50%;position:relative;}
 .tg-hd-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.tg-hd-btn.wish.active svg{fill:#ff4343;stroke:#ff4343;}
 .tg-cart-badge{position:absolute;top:4px;right:4px;background:#ff6161;color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid var(--tg-primary);}
 .tg-wrap{padding-top:58px;padding-bottom:170px;min-height:100vh;}
 .tg-co{max-width:1280px;margin:0 auto;padding:14px;}
@@ -116,6 +117,22 @@ a{color:inherit;text-decoration:none;}
 .tg-seller-label{font-size:11.5px;color:#878787;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px;}
 .tg-seller-name{font-size:16px;font-weight:800;color:#212121;}
 .tg-seller-meta{font-size:12.5px;color:#666;margin-top:3px;}
+
+/* PINCODE CHECK */
+.tg-pincode{margin-bottom:16px;padding:14px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafbfc;}
+.tg-pincode-label{font-size:11.5px;color:#878787;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.tg-pincode-label svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.tg-pincode-row{display:flex;gap:8px;}
+.tg-pincode-input{flex:1;min-width:0;padding:10px 12px;border:1.5px solid #d0d3d8;border-radius:8px;font-size:14px;outline:none;background:#fff;}
+.tg-pincode-input:focus{border-color:var(--tg-primary);box-shadow:0 0 0 3px rgba(var(--tg-primary-rgb),0.10);}
+.tg-pincode-btn{padding:10px 18px;background:var(--tg-primary);color:#fff;border-radius:8px;font-size:13px;font-weight:700;white-space:nowrap;}
+.tg-pincode-btn:disabled{opacity:0.7;cursor:not-allowed;}
+.tg-pincode-result{margin-top:10px;font-size:13px;font-weight:600;padding:8px 10px;border-radius:6px;display:none;}
+.tg-pincode-result.show{display:block;}
+.tg-pincode-result.ok{background:#e6f7ec;color:#1b8a3a;}
+.tg-pincode-result.fail{background:#ffebee;color:#c62828;}
+.tg-pincode-result.wait{background:#fff3e0;color:#e65100;}
+
 .tg-desc{font-size:15.5px;color:#212121;line-height:1.7;white-space:pre-wrap;}
 .tg-specs{display:grid;grid-template-columns:1fr;gap:0;}
 .tg-spec-row{display:grid;grid-template-columns:160px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid #f1f3f6;font-size:15px;}
@@ -133,8 +150,26 @@ a{color:inherit;text-decoration:none;}
 .tg-review-status.eligible{background:#e6f7ec;color:#1b8a3a;}
 .tg-reviews-rate{background:#388e3c;color:#fff;font-size:13px;font-weight:700;padding:5px 10px;border-radius:6px;display:flex;align-items:center;gap:3px;}
 .tg-reviews-rate svg{width:12px;height:12px;fill:#fff;}
+
+/* RATING BREAKDOWN */
+.tg-rb-wrap{display:grid;grid-template-columns:auto 1fr;gap:20px;padding:18px;background:#fafbfc;border-radius:10px;margin-bottom:16px;}
+@media(max-width:520px){.tg-rb-wrap{grid-template-columns:1fr;gap:14px;}}
+.tg-rb-score{text-align:center;min-width:120px;}
+.tg-rb-big{font-size:44px;font-weight:900;line-height:1;color:#212121;}
+.tg-rb-big-suffix{font-size:20px;color:#999;font-weight:700;}
+.tg-rb-stars{font-size:16px;color:#ffc107;letter-spacing:1px;margin-top:4px;}
+.tg-rb-count{font-size:12px;color:#878787;margin-top:4px;font-weight:600;}
+.tg-rb-bars{display:flex;flex-direction:column;gap:6px;}
+.tg-rb-row{display:grid;grid-template-columns:32px 1fr 40px;gap:8px;align-items:center;font-size:11.5px;font-weight:600;cursor:pointer;border-radius:4px;padding:2px 4px;transition:background .15s;}
+.tg-rb-row:hover{background:#f0f5ff;}
+.tg-rb-row-label{color:#666;text-align:right;}
+.tg-rb-row-bar{height:8px;background:#e8eaec;border-radius:999px;overflow:hidden;position:relative;}
+.tg-rb-row-fill{height:100%;background:#388e3c;border-radius:999px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.tg-rb-row-count{color:#666;text-align:left;font-variant-numeric:tabular-nums;}
+
 .tg-review{padding:14px 0;border-bottom:1px solid #f1f3f6;}
 .tg-review:last-child{border-bottom:none;}
+.tg-review.mine{background:#f8fbff;margin:0 -18px;padding:14px 18px;border-radius:0;}
 .tg-review-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
 .tg-review-star{background:#388e3c;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;display:flex;align-items:center;gap:2px;}
 .tg-review-star svg{width:9px;height:9px;fill:#fff;}
@@ -180,17 +215,17 @@ a{color:inherit;text-decoration:none;}
 .tg-error-btn.pri{background:var(--tg-primary);color:#fff;}
 .tg-error-btn.gho{background:#f1f3f6;color:#212121;}
 .tg-toasts{position:fixed;top:74px;right:16px;z-index:999999;display:flex;flex-direction:column;gap:10px;max-width:calc(100vw - 32px);pointer-events:none;}
-.tg-toast{position:relative;display:flex;align-items:center;gap:12px;padding:13px 44px 14px 14px;background:linear-gradient(135deg,rgba(20,30,50,0.97),rgba(15,23,41,0.97));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;font-size:13.5px;font-weight:500;border-radius:14px;box-shadow:0 20px 44px rgba(0,0,0,0.32),0 4px 14px rgba(0,0,0,0.22),inset 0 1px 0 rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.10);pointer-events:auto;overflow:hidden;min-width:280px;max-width:400px;animation:tgToastIn .42s cubic-bezier(.34,1.56,.64,1);font-family:'Roboto',Arial,sans-serif;}
+.tg-toast{position:relative;display:flex;align-items:center;gap:12px;padding:13px 44px 14px 14px;background:linear-gradient(135deg,rgba(20,30,50,0.97),rgba(15,23,41,0.97));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;font-size:13.5px;font-weight:500;border-radius:14px;box-shadow:0 20px 44px rgba(0,0,0,0.32),0 4px 14px rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.10);pointer-events:auto;overflow:hidden;min-width:280px;max-width:400px;animation:tgToastIn .42s cubic-bezier(.34,1.56,.64,1);font-family:'Roboto',Arial,sans-serif;}
 .tg-toast::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--tg-primary),var(--tg-primary-dark));}
 .tg-toast.success::before{background:linear-gradient(180deg,#22c55e,#15803d);}
 .tg-toast.error::before{background:linear-gradient(180deg,#ef4444,#b91c1c);}
-.tg-toast-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0;background:rgba(var(--tg-primary-rgb),0.22);border:1.5px solid rgba(var(--tg-primary-rgb),0.4);color:#60a5fa;box-shadow:0 0 16px rgba(var(--tg-primary-rgb),0.25);}
-.tg-toast.success .tg-toast-icon{background:rgba(34,197,94,0.22);border-color:rgba(34,197,94,0.4);color:#4ade80;box-shadow:0 0 16px rgba(34,197,94,0.25);}
-.tg-toast.error .tg-toast-icon{background:rgba(239,68,68,0.22);border-color:rgba(239,68,68,0.4);color:#f87171;box-shadow:0 0 16px rgba(239,68,68,0.25);}
+.tg-toast-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0;background:rgba(var(--tg-primary-rgb),0.22);border:1.5px solid rgba(var(--tg-primary-rgb),0.4);color:#60a5fa;}
+.tg-toast.success .tg-toast-icon{background:rgba(34,197,94,0.22);border-color:rgba(34,197,94,0.4);color:#4ade80;}
+.tg-toast.error .tg-toast-icon{background:rgba(239,68,68,0.22);border-color:rgba(239,68,68,0.4);color:#f87171;}
 .tg-toast-body{flex:1;min-width:0;}
 .tg-toast-title{font-size:10.5px;font-weight:800;letter-spacing:0.9px;text-transform:uppercase;opacity:0.72;margin-bottom:3px;}
 .tg-toast-msg{font-size:13.5px;font-weight:600;line-height:1.35;word-wrap:break-word;color:#fff;}
-.tg-toast-close{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;flex-shrink:0;color:rgba(255,255,255,0.65);transition:background .15s,color .15s,transform .15s;border:none;line-height:1;}
+.tg-toast-close{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:rgba(255,255,255,0.65);transition:background .15s,color .15s,transform .15s;line-height:1;}
 .tg-toast-close:hover{background:rgba(255,255,255,0.2);color:#fff;transform:rotate(90deg);}
 .tg-toast-progress{position:absolute;left:0;bottom:0;height:2.5px;width:100%;background:linear-gradient(90deg,var(--tg-primary),#60a5fa);animation:tgToastProgress 2.4s linear forwards;transform-origin:left;}
 .tg-toast.success .tg-toast-progress{background:linear-gradient(90deg,#22c55e,#4ade80);}
@@ -200,7 +235,7 @@ a{color:inherit;text-decoration:none;}
 @media (max-width:520px){.tg-toasts{top:64px;right:10px;left:10px;max-width:none;align-items:stretch;}.tg-toast{min-width:0;max-width:none;}}
 .tg-hide-actions .tg-actions-fixed{display:none;}
 .tg-rel-card.out-of-stock{filter:grayscale(1);opacity:0.55;pointer-events:none;cursor:not-allowed;position:relative;}
-.tg-rel-card.out-of-stock::after{content:'🔒 OUT OF STOCK';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,rgba(15,23,41,0.95),rgba(40,30,60,0.95));color:#fff;font-size:10px;font-weight:900;letter-spacing:1.2px;padding:8px 14px;border-radius:8px;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.15);z-index:10;text-shadow:0 1px 3px rgba(0,0,0,0.6);}
+.tg-rel-card.out-of-stock::after{content:'🔒 OUT OF STOCK';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,23,41,0.95);color:#fff;font-size:10px;font-weight:900;letter-spacing:1.2px;padding:8px 14px;border-radius:8px;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.5);border:1.5px solid rgba(255,255,255,0.15);z-index:10;text-shadow:0 1px 3px rgba(0,0,0,0.6);}
 .tg-rel-card.out-of-stock .tg-rel-img img{filter:grayscale(1) contrast(0.85);}
 .tg-rv-modal{position:fixed;inset:0;background:rgba(15,23,41,0.65);backdrop-filter:blur(4px);z-index:99999;display:none;align-items:flex-end;justify-content:center;}
 .tg-rv-modal.show{display:flex;}
@@ -249,7 +284,7 @@ a{color:inherit;text-decoration:none;}
 @media(min-width:640px){.tg-ar-head{border-radius:16px 16px 0 0;}}
 .tg-ar-title{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;}
 .tg-ar-count{font-size:12px;font-weight:600;color:#fff;background:var(--tg-primary);padding:3px 9px;border-radius:999px;}
-.tg-ar-close{width:36px;height:36px;border-radius:50%;background:#f1f3f6;color:#212121;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;cursor:pointer;flex-shrink:0;transition:all .15s;line-height:1;border:none;}
+.tg-ar-close{width:36px;height:36px;border-radius:50%;background:#f1f3f6;color:#212121;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;cursor:pointer;flex-shrink:0;transition:all .15s;line-height:1;}
 .tg-ar-close:hover{background:#d32f2f;color:#fff;transform:rotate(90deg);}
 .tg-ar-body{overflow-y:auto;padding:6px 20px 20px;flex:1;-webkit-overflow-scrolling:touch;}
 .tg-ar-body .tg-review{padding:16px 0;}
@@ -281,7 +316,9 @@ a{color:inherit;text-decoration:none;}
     <a href="shop-home.html" class="tg-hd-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
     <div class="tg-hd-title" id="tg-hd-title">Product</div>
     <div class="tg-hd-actions">
-      <a href="wishlist.html" class="tg-hd-btn" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></a>
+      <button class="tg-hd-btn wish" id="tg-wish-btn" aria-label="Wishlist" onclick="tgToggleWishlist()">
+        <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+      </button>
       <a href="cart.html" class="tg-hd-btn" aria-label="Cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span class="tg-cart-badge" id="tg-cart-badge" style="display:none;">0</span></a>
     </div>
   </div>
@@ -292,9 +329,7 @@ a{color:inherit;text-decoration:none;}
     <div class="tg-card"><div class="tg-load">
       <div class="tg-skel" style="aspect-ratio:1/1;"></div>
       <div>
-        <div style="font-size:14px;color:#2874f0;font-weight:800;margin-bottom:12px;">
-          ⏳ Please wait.....
-        </div>
+        <div style="font-size:14px;color:#2874f0;font-weight:800;margin-bottom:12px;">⏳ Loading…</div>
         <div class="tg-skel" style="height:20px;margin-bottom:12px;width:80%;"></div>
         <div class="tg-skel" style="height:16px;margin-bottom:12px;width:40%;"></div>
         <div class="tg-skel" style="height:32px;margin-bottom:16px;width:50%;"></div>
@@ -315,7 +350,7 @@ a{color:inherit;text-decoration:none;}
 
 <div class="tg-rv-modal" id="tg-rv-modal">
   <div class="tg-rv-card">
-    <div class="tg-rv-head"><div class="tg-rv-title">Write a Review</div><button class="tg-rv-close" onclick="tgRvClose()">✕</button></div>
+    <div class="tg-rv-head"><div class="tg-rv-title" id="tg-rv-modal-title">Write a Review</div><button class="tg-rv-close" onclick="tgRvClose()">✕</button></div>
     <div class="tg-rv-product"><div class="tg-rv-product-img" id="tg-rv-prod-img"></div><div class="tg-rv-product-name" id="tg-rv-prod-name"></div></div>
     <div class="tg-rv-field"><label>Your Rating *</label>
       <div class="tg-rv-star-pick" id="tg-rv-star-pick">
@@ -330,7 +365,7 @@ a{color:inherit;text-decoration:none;}
     <div class="tg-rv-field"><label>Review Title</label><input type="text" class="tg-rv-input" id="tg-rv-title" placeholder="Summarize your experience" maxlength="80"></div>
     <div class="tg-rv-field"><label>Your Review *</label><textarea class="tg-rv-textarea" id="tg-rv-text" placeholder="What did you like or dislike? (min 10 chars)" maxlength="1000"></textarea></div>
     <div class="tg-rv-field">
-      <label>Add Photos (max 3) — Auto-compressed to 50KB</label>
+      <label>Add Photos (max 3) — Auto-compressed</label>
       <div class="tg-rv-upload" onclick="document.getElementById('tg-rv-img-file').click()">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
         <div class="tg-rv-upload-title">Tap to upload photos</div>
@@ -363,7 +398,7 @@ a{color:inherit;text-decoration:none;}
 </div>
 
 <div class="tg-img-viewer" id="tg-img-viewer">
-  <button class="tg-img-viewer-reset" id="tg-viewer-reset" onclick="tgViewerReset(event)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset</button>
+  <button class="tg-img-viewer-reset" id="tg-viewer-reset" onclick="tgViewerReset(event)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset</button>
   <button class="tg-img-viewer-close" onclick="tgCloseViewer()" aria-label="Close">✕</button>
   <img id="tg-viewer-img" src="" alt="" />
   <div class="tg-img-viewer-hint" id="tg-viewer-hint">Pinch to zoom · Tap outside to close</div>
@@ -422,10 +457,13 @@ a{color:inherit;text-decoration:none;}
   let rvRating = 0;
   let rvImages = [];
   let unsubReviews = null;
+  let unsubProductDoc = null;
   let CAN_REVIEW = false;
   let HAS_REVIEWED = false;
   let HAS_ORDERED = false;
   let HAS_DELIVERED = false;
+  let MY_REVIEW = null;
+  let EDITING_REVIEW_ID = null;
   let AR_FILTER = 'all';
   let _sliderDrag = { down:false, startX:0, deltaX:0 };
   let _allProductsIO = null;
@@ -435,17 +473,20 @@ a{color:inherit;text-decoration:none;}
   let _productRenderAttempts = 0;
   let _currentProductId = '';
   let _productFetchInProgress = false;
+  let _eligibilityRetryTimer = null;
+  let _eligibilityRetryCount = 0;
   let CLOUD = { cloudName: '', uploadPreset: '' };
+  let WISHLIST_HAS = false;
 
   const DEFAULT_TOAST_MSGS = {
     addCart: 'Added to cart', loginRequired: 'Please log in to continue',
-    reviewSuccess: 'Review submitted ✓ Thank you!', reviewFailed: 'Failed to submit review',
-    loginToReview: 'Please log in to write a review', selectRating: 'Please select a rating',
-    minChars: 'Review must be at least 10 characters', outOfStock: 'This product is out of stock',
-    selectSize: 'Please select a size', selectColor: 'Please select a color',
-    onlyDelivered: 'Review available only after your order is delivered',
-    alreadyReviewed: 'You already reviewed this product',
-    maxImages: 'Max 3 images allowed', imgUploaded: '✓ Image uploaded', imgFailed: 'Failed to process image', onlyImages: 'Please select image files'
+    reviewSuccess: 'Review submitted ✓ Thank you!', reviewUpdateSuccess: 'Review updated ✓',
+    reviewFailed: 'Failed to submit review', loginToReview: 'Please log in to write a review',
+    selectRating: 'Please select a rating', minChars: 'Review must be at least 10 characters',
+    outOfStock: 'This product is out of stock', selectSize: 'Please select a size',
+    selectColor: 'Please select a color', onlyDelivered: 'Review available only after your order is delivered',
+    alreadyReviewed: 'You already reviewed this product', maxImages: 'Max 3 images allowed',
+    imgUploaded: '✓ Image uploaded', imgFailed: 'Failed to process image', onlyImages: 'Please select image files'
   };
   let TOAST_MSGS = { ...DEFAULT_TOAST_MSGS };
 
@@ -521,6 +562,7 @@ a{color:inherit;text-decoration:none;}
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function inr(n){ return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0}); }
   function fdate(d){ if(!d) return '—'; const dt = d.toDate?d.toDate():new Date(d); return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+  function fdatetime(d){ if(!d) return '—'; const dt = d.toDate?d.toDate():new Date(d); return fdate(d) + ' · ' + dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
   function tago(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; if (s < 604800) return Math.floor(s/86400)+'d ago'; return fdate(d); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
   function fmtBytes(b) { if (!b) return ''; if (b < 1024) return b + 'B'; return (b/1024).toFixed(1) + 'KB'; }
@@ -545,8 +587,7 @@ a{color:inherit;text-decoration:none;}
   function getProductId() { try { const p = new URLSearchParams(window.location.search); let id = p.get('id') || p.get('pid') || ''; return String(id || '').trim(); } catch(e) { return ''; } }
 
   const COLOR_HEX_MAP = {
-    'red':'#e53935','dark red':'#b71c1c','light red':'#ef5350','blue':'#1e88e5','dark blue':'#0d47a1','light blue':'#42a5f5','navy':'#001f3f','navy blue':'#001f3f','sky blue':'#87ceeb','royal blue':'#4169e1','black':'#000000','white':'#ffffff','off white':'#fafafa','green':'#43a047','dark green':'#1b5e20','light green':'#81c784','olive':'#808000','yellow':'#fdd835','gold':'#ffd700','mustard':'#e1ad01','pink':'#ec407a','hot pink':'#ff69b4','light pink':'#f8bbd0','rose':'#e91e63','orange':'#fb8c00','dark orange':'#e65100','peach':'#ffcba4','purple':'#8e24aa','violet':'#7f00ff','lavender':'#b57edc','brown':'#795548','dark brown':'#3e2723','tan':'#d2b48c','chocolate':'#5d4037','grey':'#757575','gray':'#757575','dark grey':'#424242','dark gray':'#424242','light grey':'#bdbdbd','light gray':'#bdbdbd','silver':'#c0c0c0','maroon':'#800000','beige':'#f5f5dc','cream':'#fffdd0','ivory':'#fffff0','cyan':'#00bcd4','teal':'#00897b','turquoise':'#40e0d0','magenta':'#e91e63','coral':'#ff7f50','salmon':'#fa8072','khaki':'#c3b091','indigo':'#3f51b5','mint':'#98ff98',
-    'multi':'conic-gradient(from 0deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee, #ff0000)','multicolor':'conic-gradient(from 0deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee, #ff0000)','multi color':'conic-gradient(from 0deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee, #ff0000)','mixed':'conic-gradient(from 0deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee, #ff0000)','assorted':'conic-gradient(from 0deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee, #ff0000)'
+    'red':'#e53935','dark red':'#b71c1c','light red':'#ef5350','blue':'#1e88e5','dark blue':'#0d47a1','light blue':'#42a5f5','navy':'#001f3f','navy blue':'#001f3f','sky blue':'#87ceeb','royal blue':'#4169e1','black':'#000000','white':'#ffffff','off white':'#fafafa','green':'#43a047','dark green':'#1b5e20','light green':'#81c784','olive':'#808000','yellow':'#fdd835','gold':'#ffd700','mustard':'#e1ad01','pink':'#ec407a','hot pink':'#ff69b4','light pink':'#f8bbd0','rose':'#e91e63','orange':'#fb8c00','dark orange':'#e65100','peach':'#ffcba4','purple':'#8e24aa','violet':'#7f00ff','lavender':'#b57edc','brown':'#795548','dark brown':'#3e2723','tan':'#d2b48c','chocolate':'#5d4037','grey':'#757575','gray':'#757575','dark grey':'#424242','dark gray':'#424242','light grey':'#bdbdbd','light gray':'#bdbdbd','silver':'#c0c0c0','maroon':'#800000','beige':'#f5f5dc','cream':'#fffdd0','ivory':'#fffff0','cyan':'#00bcd4','teal':'#00897b','turquoise':'#40e0d0','magenta':'#e91e63','coral':'#ff7f50','salmon':'#fa8072','khaki':'#c3b091','indigo':'#3f51b5','mint':'#98ff98'
   };
 
   function getColorHex(colorName) {
@@ -554,11 +595,9 @@ a{color:inherit;text-decoration:none;}
     if (!c) return '#cccccc';
     if (COLOR_HEX_MAP[c]) return COLOR_HEX_MAP[c];
     for (const key in COLOR_HEX_MAP) {
-      if (['multi','multicolor','multi color','mixed','assorted'].indexOf(key) !== -1) continue;
       if (c === key) return COLOR_HEX_MAP[key];
     }
     for (const key in COLOR_HEX_MAP) {
-      if (['multi','multicolor','multi color','mixed','assorted'].indexOf(key) !== -1) continue;
       if (key.length > 2 && (c.includes(key) || key.includes(c))) return COLOR_HEX_MAP[key];
     }
     if (c.includes('multi') || c.includes('mix') || c.includes('assort')) return 'conic-gradient(from 0deg, #ff0000, #ffa500, #ffff00, #008000, #0000ff, #4b0082, #ee82ee, #ff0000)';
@@ -635,6 +674,47 @@ a{color:inherit;text-decoration:none;}
     });
   }
 
+  // ✅ CRITICAL FIX: Compute rating from reviews array if product doc fields are missing
+  function computeRatingFromReviews() {
+    if (!Array.isArray(REVIEWS) || !REVIEWS.length) return { avg: 0, count: 0, distribution: {5:0,4:0,3:0,2:0,1:0} };
+    let sum = 0, count = 0;
+    const distribution = {5:0,4:0,3:0,2:0,1:0};
+    REVIEWS.forEach(r => {
+      const rt = Math.round(Number(r.rating || 0));
+      if (rt >= 1 && rt <= 5) {
+        sum += rt;
+        count++;
+        distribution[rt]++;
+      }
+    });
+    if (!count) return { avg: 0, count: 0, distribution };
+    return { avg: sum / count, count, distribution };
+  }
+
+  // ✅ CRITICAL FIX: Get product rating — prefer doc values, fallback to computed from reviews
+  function getProductRatingData() {
+    const docRating = Number(PRODUCT?.rating || 0);
+    const docCount = Number(PRODUCT?.ratingCount || PRODUCT?.rating_count || PRODUCT?.reviewCount || 0);
+
+    // If product doc has valid rating, use it
+    if (docRating > 0 && docCount > 0) {
+      return {
+        avg: docRating,
+        count: docCount,
+        distribution: computeDistributionFromDocs() || computeRatingFromReviews().distribution
+      };
+    }
+
+    // Otherwise compute from reviews
+    const computed = computeRatingFromReviews();
+    return computed;
+  }
+
+  function computeDistributionFromDocs() {
+    // Product doc might not have distribution, skip and use reviews
+    return null;
+  }
+
   async function loadProduct() {
     const pid = getProductId();
     _currentProductId = pid;
@@ -673,18 +753,13 @@ a{color:inherit;text-decoration:none;}
     _productFetchInProgress = false;
 
     if (fresh) {
-      const isHidden = (fresh.active === false) || (fresh.approved === false && fresh.approvalStatus !== 'pending');
-      const changed = !PRODUCT || PRODUCT.rating !== fresh.rating || PRODUCT.ratingCount !== fresh.ratingCount || PRODUCT.stock !== fresh.stock || PRODUCT.price !== fresh.price || JSON.stringify(PRODUCT.sizeStock) !== JSON.stringify(fresh.sizeStock) || JSON.stringify(PRODUCT.colors) !== JSON.stringify(fresh.colors) || JSON.stringify(PRODUCT.images) !== JSON.stringify(fresh.images);
       PRODUCT = fresh;
       cacheProduct(pid, PRODUCT);
       document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
       document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
-      if (changed || !document.querySelector('.tg-main')) {
-        try { renderProduct(); } catch(e) { showError('Failed to display product', e.message || 'An error occurred while rendering.', true); return; }
-      }
-      if (isHidden) setTimeout(() => toast('⚠️ This product is not publicly visible', 'info'), 500);
+      try { renderProduct(); } catch(e) { showError('Failed to display product', e.message || 'An error occurred.', true); return; }
     } else if (!PRODUCT) {
-      const msg = fetchErr ? (fetchErr.message === 'timeout' ? 'Connection timed out. Please check your internet and try again.' : 'Could not load product. Please check your internet connection.') : 'This product may have been removed or is unavailable.';
+      const msg = fetchErr ? (fetchErr.message === 'timeout' ? 'Connection timed out.' : 'Could not load product.') : 'This product may have been removed.';
       showError('Product Not Available', msg, true);
       return;
     }
@@ -692,10 +767,28 @@ a{color:inherit;text-decoration:none;}
     setTimeout(() => { try { db.collection('products').doc(pid).update({ views: FV.increment(1) }).catch(() => {}); } catch(e) {} }, 1500);
     try { loadRelated(); } catch(e) {}
     try { subscribeReviews(pid); } catch(e) {}
+    try { subscribeProductDoc(pid); } catch(e) {}
     if (currentUser) { try { checkReviewEligibility(pid); } catch(e) {} }
     const cachedAll = getCachedAllProducts();
     if (cachedAll && cachedAll.length) { ALL_PRODUCTS = cachedAll.filter(p => p && p.id !== pid); try { renderAllProducts(); } catch(e) {} }
     setupAllProductsLazy();
+  }
+
+  // ✅ Live product doc updates (rating, stock)
+  function subscribeProductDoc(pid) {
+    if (unsubProductDoc) { try { unsubProductDoc(); } catch(e) {} unsubProductDoc = null; }
+    try {
+      unsubProductDoc = db.collection('products').doc(pid).onSnapshot(snap => {
+        if (!snap.exists) return;
+        const fresh = { id: snap.id, ...snap.data() };
+        const changed = !PRODUCT || PRODUCT.rating !== fresh.rating || PRODUCT.ratingCount !== fresh.ratingCount || PRODUCT.stock !== fresh.stock || JSON.stringify(PRODUCT.sizeStock) !== JSON.stringify(fresh.sizeStock);
+        PRODUCT = fresh;
+        if (changed) {
+          try { updateMainRating(); } catch(e) {}
+          try { cacheProduct(pid, PRODUCT); } catch(e) {}
+        }
+      }, () => {});
+    } catch(e) {}
   }
 
   function renderProduct() {
@@ -754,7 +847,7 @@ a{color:inherit;text-decoration:none;}
     const sales = Number(PRODUCT.sales || 0);
     const conv = views > 0 ? ((sales / views) * 100).toFixed(1) : '0.0';
 
-    const html = '<div class="tg-card"><div class="tg-main"><div class="tg-gallery">' + sliderHtml + thumbsHtml + '</div><div><h1 class="tg-title">' + esc(PRODUCT.name || 'Product') + '</h1>' + (PRODUCT.brand ? '<div class="tg-brand">' + esc(PRODUCT.brand) + '</div>' : '') + '<div id="tg-main-rating"></div>' + '<div class="tg-price-row"><span class="tg-price">' + inr(price) + '</span>' + (mrp > price ? '<span class="tg-mrp">' + inr(mrp) + '</span>' : '') + (off > 0 ? '<span class="tg-off">' + off + '% off</span>' : '') + '</div><div class="tg-assured"><svg viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"></path><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"></path></svg> TOEGO Assured</div>' + (outOfStock ? '<div style="background:#ffebee;color:#c62828;padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:12px;">⚠ Out of Stock</div>' : '<div style="background:#e6f7ec;color:#1b8a3a;padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:12px;">✓ In Stock</div>') + '<div class="tg-divider"></div>' + sizeHtml + colorHtml + '<div class="tg-opt-title">Quantity</div><div class="tg-qty-row"><div class="tg-qty"><button onclick="tgChangeQty(-1)" ' + (QTY<=1?'disabled':'') + '>−</button><div class="tg-qty-val" id="tg-qty-val">' + QTY + '</div><button onclick="tgChangeQty(1)" ' + (QTY>=10?'disabled':'') + '>+</button></div><span style="font-size:12.5px;color:#878787;">Max 10 per order</span></div><div class="tg-divider"></div><div class="tg-seller-card"><div class="tg-seller-avatar">' + esc(sellerInit) + '</div><div class="tg-seller-info"><div class="tg-seller-label">Sold by</div><div class="tg-seller-name">' + esc(sellerName) + '</div><div class="tg-seller-meta">✓ Verified Seller</div></div></div></div></div></div>' + (PRODUCT.description ? '<div class="tg-card" style="padding:18px;"><div class="tg-reviews-title" style="margin-bottom:12px;">Product Description</div><div class="tg-desc">' + esc(PRODUCT.description) + '</div></div>' : '') + '<div class="tg-card" style="padding:18px;"><div class="tg-reviews-title" style="margin-bottom:12px;">Specifications</div><div class="tg-specs">' + (PRODUCT.brand ? '<div class="tg-spec-row"><div class="tg-spec-key">Brand</div><div class="tg-spec-val">' + esc(PRODUCT.brand) + '</div></div>' : '') + (PRODUCT.category ? '<div class="tg-spec-row"><div class="tg-spec-key">Category</div><div class="tg-spec-val">' + esc(PRODUCT.category) + '</div></div>' : '') + (PRODUCT.weight ? '<div class="tg-spec-row"><div class="tg-spec-key">Weight</div><div class="tg-spec-val">' + esc(PRODUCT.weight) + ' g</div></div>' : '') + (PRODUCT.gst ? '<div class="tg-spec-row"><div class="tg-spec-key">GST</div><div class="tg-spec-val">' + esc(PRODUCT.gst) + '%</div></div>' : '') + (sizes.length ? '<div class="tg-spec-row"><div class="tg-spec-key">Available Sizes</div><div class="tg-spec-val">' + sizes.map(esc).join(', ') + '</div></div>' : '') + (colors.length ? '<div class="tg-spec-row"><div class="tg-spec-key">Available Colors</div><div class="tg-spec-val">' + colors.map(esc).join(', ') + '</div></div>' : '') + '<div class="tg-spec-row"><div class="tg-spec-key">In Stock</div><div class="tg-spec-val">' + stock + ' units</div></div><div class="tg-spec-row"><div class="tg-spec-key">Total Views</div><div class="tg-spec-val">' + views.toLocaleString('en-IN') + '</div></div><div class="tg-spec-row"><div class="tg-spec-key">Conversion Rate</div><div class="tg-spec-val">' + conv + '%</div></div></div></div>' + '<div class="tg-card" style="padding:18px;" id="tg-reviews-sec"><div class="tg-reviews-header"><div class="tg-reviews-header-left"><div class="tg-reviews-title">Customer Reviews</div><div class="tg-review-status" id="tg-review-status" style="display:none;"></div></div><button class="tg-write-review-btn hidden" id="tg-write-review-btn" onclick="tgOpenReview()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span id="tg-write-review-text">Write Review</span></button></div><div id="tg-reviews-list"></div></div>' + '<div class="tg-card"><div style="padding:18px 18px 0;"><div class="tg-reviews-title">You May Also Like</div></div><div class="tg-related-grid" id="tg-related"><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div></div></div>' + '<div class="tg-card"><div style="padding:18px 18px 0;"><div class="tg-reviews-title">All Products</div><div style="font-size:12.5px;color:#888;margin-top:2px;">Explore full collection</div></div><div class="tg-all-grid" id="tg-all-products"><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div></div></div>';
+    const html = '<div class="tg-card"><div class="tg-main"><div class="tg-gallery">' + sliderHtml + thumbsHtml + '</div><div><h1 class="tg-title">' + esc(PRODUCT.name || 'Product') + '</h1>' + (PRODUCT.brand ? '<div class="tg-brand">' + esc(PRODUCT.brand) + '</div>' : '') + '<div id="tg-main-rating"></div>' + '<div class="tg-price-row"><span class="tg-price">' + inr(price) + '</span>' + (mrp > price ? '<span class="tg-mrp">' + inr(mrp) + '</span>' : '') + (off > 0 ? '<span class="tg-off">' + off + '% off</span>' : '') + '</div><div class="tg-assured"><svg viewBox="0 0 24 24"><path d="m9 12 2 2 4-4"></path><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"></path></svg> TOEGO Assured</div>' + (outOfStock ? '<div style="background:#ffebee;color:#c62828;padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:12px;">⚠ Out of Stock</div>' : '<div style="background:#e6f7ec;color:#1b8a3a;padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;margin-bottom:12px;">✓ In Stock</div>') + '<div class="tg-pincode"><div class="tg-pincode-label"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Delivery Options</div><div class="tg-pincode-row"><input type="text" class="tg-pincode-input" id="tg-pincode-input" placeholder="Enter pincode" maxlength="6" inputmode="numeric" oninput="this.value=this.value.replace(/\\D/g,\'\').slice(0,6)"><button class="tg-pincode-btn" id="tg-pincode-btn" onclick="tgCheckPincode()">Check</button></div><div class="tg-pincode-result" id="tg-pincode-result"></div></div>' + '<div class="tg-divider"></div>' + sizeHtml + colorHtml + '<div class="tg-opt-title">Quantity</div><div class="tg-qty-row"><div class="tg-qty"><button onclick="tgChangeQty(-1)" ' + (QTY<=1?'disabled':'') + '>−</button><div class="tg-qty-val" id="tg-qty-val">' + QTY + '</div><button onclick="tgChangeQty(1)" ' + (QTY>=10?'disabled':'') + '>+</button></div><span style="font-size:12.5px;color:#878787;">Max 10 per order</span></div><div class="tg-divider"></div><div class="tg-seller-card"><div class="tg-seller-avatar">' + esc(sellerInit) + '</div><div class="tg-seller-info"><div class="tg-seller-label">Sold by</div><div class="tg-seller-name">' + esc(sellerName) + '</div><div class="tg-seller-meta">✓ Verified Seller</div></div></div></div></div></div>' + (PRODUCT.description ? '<div class="tg-card" style="padding:18px;"><div class="tg-reviews-title" style="margin-bottom:12px;">Product Description</div><div class="tg-desc">' + esc(PRODUCT.description) + '</div></div>' : '') + '<div class="tg-card" style="padding:18px;"><div class="tg-reviews-title" style="margin-bottom:12px;">Specifications</div><div class="tg-specs">' + (PRODUCT.brand ? '<div class="tg-spec-row"><div class="tg-spec-key">Brand</div><div class="tg-spec-val">' + esc(PRODUCT.brand) + '</div></div>' : '') + (PRODUCT.category ? '<div class="tg-spec-row"><div class="tg-spec-key">Category</div><div class="tg-spec-val">' + esc(PRODUCT.category) + '</div></div>' : '') + (PRODUCT.weight ? '<div class="tg-spec-row"><div class="tg-spec-key">Weight</div><div class="tg-spec-val">' + esc(PRODUCT.weight) + ' g</div></div>' : '') + (PRODUCT.gst ? '<div class="tg-spec-row"><div class="tg-spec-key">GST</div><div class="tg-spec-val">' + esc(PRODUCT.gst) + '%</div></div>' : '') + (sizes.length ? '<div class="tg-spec-row"><div class="tg-spec-key">Available Sizes</div><div class="tg-spec-val">' + sizes.map(esc).join(', ') + '</div></div>' : '') + (colors.length ? '<div class="tg-spec-row"><div class="tg-spec-key">Available Colors</div><div class="tg-spec-val">' + colors.map(esc).join(', ') + '</div></div>' : '') + '<div class="tg-spec-row"><div class="tg-spec-key">In Stock</div><div class="tg-spec-val">' + stock + ' units</div></div><div class="tg-spec-row"><div class="tg-spec-key">Total Views</div><div class="tg-spec-val">' + views.toLocaleString('en-IN') + '</div></div><div class="tg-spec-row"><div class="tg-spec-key">Conversion Rate</div><div class="tg-spec-val">' + conv + '%</div></div></div></div>' + '<div class="tg-card" style="padding:18px;" id="tg-reviews-sec"><div class="tg-reviews-header"><div class="tg-reviews-header-left"><div class="tg-reviews-title">Customer Reviews</div><div class="tg-review-status" id="tg-review-status" style="display:none;"></div></div><button class="tg-write-review-btn hidden" id="tg-write-review-btn" onclick="tgOpenReview()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span id="tg-write-review-text">Write Review</span></button></div><div id="tg-rating-breakdown"></div><div id="tg-reviews-list"></div></div>' + '<div class="tg-card"><div style="padding:18px 18px 0;"><div class="tg-reviews-title">You May Also Like</div></div><div class="tg-related-grid" id="tg-related"><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div></div></div>' + '<div class="tg-card"><div style="padding:18px 18px 0;"><div class="tg-reviews-title">All Products</div><div style="font-size:12.5px;color:#888;margin-top:2px;">Explore full collection</div></div><div class="tg-all-grid" id="tg-all-products"><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div><div class="tg-skel" style="aspect-ratio:1/1;"></div></div></div>';
 
     document.getElementById('tg-content').innerHTML = html;
     document.getElementById('tg-body').classList.remove('tg-hide-actions');
@@ -774,16 +867,53 @@ a{color:inherit;text-decoration:none;}
     _productRenderAttempts++;
   }
 
+  // ✅ FIXED: Compute rating from reviews if doc fields missing
   function updateMainRating() {
     const el = document.getElementById('tg-main-rating');
     if (!el || !PRODUCT) return;
-    const rating = Number(PRODUCT.rating || 0);
-    const count = Number(PRODUCT.ratingCount || 0);
-    if (rating > 0 && count > 0) {
-      el.innerHTML = '<div class="tg-rating"><span class="tg-rating-badge">' + rating.toFixed(1) + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-rating-count">(' + count + ' ' + (count === 1 ? 'review' : 'reviews') + ')</span></div>';
+    const data = getProductRatingData();
+    if (data.avg > 0 && data.count > 0) {
+      el.innerHTML = '<div class="tg-rating"><span class="tg-rating-badge">' + Number(data.avg).toFixed(1) + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-rating-count">(' + data.count + ' ' + (data.count === 1 ? 'review' : 'reviews') + ')</span></div>';
     } else {
       el.innerHTML = '<div class="tg-rating"><span class="tg-rating-badge" style="background:var(--tg-primary);">NEW</span><span class="tg-rating-count">Be the first to review</span></div>';
     }
+  }
+
+  // ✅ NEW: Rating breakdown with clickable bars
+  function renderRatingBreakdown() {
+    const el = document.getElementById('tg-rating-breakdown');
+    if (!el) return;
+    if (!REVIEWS.length) { el.innerHTML = ''; return; }
+    const data = getProductRatingData();
+    if (!data.count) { el.innerHTML = ''; return; }
+
+    const dist = data.distribution;
+    const total = data.count;
+    const maxDist = Math.max(...Object.values(dist)) || 1;
+
+    el.innerHTML = '<div class="tg-rb-wrap">' +
+      '<div class="tg-rb-score">' +
+        '<div class="tg-rb-big">' + Number(data.avg).toFixed(1) + '<span class="tg-rb-big-suffix">/5</span></div>' +
+        '<div class="tg-rb-stars">' + starText(Math.round(data.avg)) + '</div>' +
+        '<div class="tg-rb-count">' + total + ' review' + (total > 1 ? 's' : '') + '</div>' +
+      '</div>' +
+      '<div class="tg-rb-bars">' +
+        [5,4,3,2,1].map(star => {
+          const cnt = dist[star] || 0;
+          const pct = total > 0 ? (cnt / total) * 100 : 0;
+          return '<div class="tg-rb-row" onclick="tgFilterAllReviews(\'' + star + '\', null); tgOpenAllReviews()">' +
+            '<div class="tg-rb-row-label">' + star + ' ★</div>' +
+            '<div class="tg-rb-row-bar"><div class="tg-rb-row-fill" style="width:' + pct + '%;"></div></div>' +
+            '<div class="tg-rb-row-count">' + cnt + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+  }
+
+  function starText(n) {
+    n = Math.round(Number(n || 0));
+    return '★'.repeat(Math.max(0, Math.min(5, n))) + '☆'.repeat(Math.max(0, 5 - n));
   }
 
   function initSlider() {
@@ -898,6 +1028,78 @@ a{color:inherit;text-decoration:none;}
     if (btns[1]) btns[1].disabled = QTY >= 10;
   };
 
+  // ✅ NEW: Pincode checker
+  window.tgCheckPincode = function() {
+    const input = document.getElementById('tg-pincode-input');
+    const result = document.getElementById('tg-pincode-result');
+    const btn = document.getElementById('tg-pincode-btn');
+    const pin = (input?.value || '').trim();
+    if (!/^\d{6}$/.test(pin)) {
+      result.className = 'tg-pincode-result show fail';
+      result.textContent = '✕ Please enter a valid 6-digit pincode';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = '…';
+    result.className = 'tg-pincode-result show wait';
+    result.textContent = '⏳ Checking availability…';
+
+    setTimeout(() => {
+      // Mock check — replace with real API
+      const firstDigit = parseInt(pin[0], 10);
+      const available = firstDigit >= 1 && firstDigit <= 8;
+      const days = 2 + (firstDigit % 4);
+      if (available) {
+        const dt = new Date();
+        dt.setDate(dt.getDate() + days);
+        const eta = dt.toLocaleDateString('en-IN', {day:'numeric', month:'short'});
+        result.className = 'tg-pincode-result show ok';
+        result.innerHTML = '✓ Delivers by <b>' + eta + '</b> · ' + (days <= 3 ? 'Free' : '₹40') + ' delivery';
+      } else {
+        result.className = 'tg-pincode-result show fail';
+        result.textContent = '✕ Sorry, we don\'t deliver to this pincode yet';
+      }
+      btn.disabled = false;
+      btn.textContent = 'Check';
+    }, 600);
+  };
+
+  // ✅ NEW: Wishlist toggle
+  window.tgToggleWishlist = async function() {
+    if (!currentUser) { toast('Please log in to save', 'info'); return; }
+    if (!PRODUCT) return;
+    const btn = document.getElementById('tg-wish-btn');
+    const pid = PRODUCT.id;
+    try {
+      const ref = db.collection('wishlists').doc(currentUser.uid);
+      if (WISHLIST_HAS) {
+        await ref.set({ items: FV.arrayRemove(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
+        WISHLIST_HAS = false;
+        if (btn) btn.classList.remove('active');
+        toast('Removed from wishlist', 'info');
+      } else {
+        await ref.set({ items: FV.arrayUnion(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
+        WISHLIST_HAS = true;
+        if (btn) btn.classList.add('active');
+        toast('❤ Saved to wishlist', 'success');
+      }
+    } catch(e) {
+      toast('Wishlist error', 'error');
+    }
+  };
+
+  async function loadWishlistState() {
+    if (!currentUser || !PRODUCT) return;
+    try {
+      const snap = await db.collection('wishlists').doc(currentUser.uid).get();
+      if (snap.exists && Array.isArray(snap.data().items)) {
+        WISHLIST_HAS = snap.data().items.includes(PRODUCT.id);
+        const btn = document.getElementById('tg-wish-btn');
+        if (btn) btn.classList.toggle('active', WISHLIST_HAS);
+      }
+    } catch(e) {}
+  }
+
   async function loadRelated() {
     try {
       if (!PRODUCT) return;
@@ -981,6 +1183,8 @@ a{color:inherit;text-decoration:none;}
         if (!snap.empty) {
           REVIEWS = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
           renderReviewsBlock();
+          renderRatingBreakdown();
+          updateMainRating();
         }
       }).catch(() => {});
     } catch(e) {}
@@ -989,8 +1193,11 @@ a{color:inherit;text-decoration:none;}
         REVIEWS = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
         _reviewsLoaded = true;
         renderReviewsBlock();
+        renderRatingBreakdown();
+        updateMainRating();
+        updateReviewButton();
         if (document.getElementById('tg-ar-modal')?.classList.contains('show')) renderAllReviewsModal();
-      }, err => { _reviewsLoaded = true; renderReviewsBlock(); });
+      }, err => { _reviewsLoaded = true; renderReviewsBlock(); renderRatingBreakdown(); });
     } catch(e) { _reviewsLoaded = true; }
   }
 
@@ -1010,14 +1217,16 @@ a{color:inherit;text-decoration:none;}
   function reviewCardHtml(r) {
     const rating = Math.round(Number(r.rating||0));
     const imgsArr = Array.isArray(r.images) ? r.images.filter(u => u) : [];
-    const imgs = imgsArr.length ? '<div class="tg-review-imgs">' + imgsArr.map(u => {
+    if (!imgsArr.length && r.image) imgsArr.push(r.image);
+    const imgs = imgsArr.length ? '<div class="tg-review-imgs">' + imgsArr.slice(0, 3).map(u => {
       const thumbUrl = cardImgUrl(u, 150), bigUrl = cardImgUrl(u, 1200);
       return '<div class="tg-review-img" onclick="tgOpenViewer(\'' + escapeAttr(bigUrl) + '\')"><img src="' + esc(thumbUrl) + '" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" /></div>';
     }).join('') + '</div>' : '';
     const verified = r.verified ? ' <span style="color:#388e3c;font-size:11px;">✓ Verified</span>' : '';
     const isMine = currentUser && r.userId === currentUser.uid;
     const mineBadge = isMine ? ' <span style="color:var(--tg-primary);font-size:11px;font-weight:700;">(You)</span>' : '';
-    return '<div class="tg-review"><div class="tg-review-head"><span class="tg-review-star">' + rating + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-review-name">' + esc(r.userName || r.name || 'Verified Buyer') + verified + mineBadge + '</span><span class="tg-review-date">' + esc(tago(r.createdAt)) + '</span></div>' + (r.title ? '<div style="font-size:13.5px;font-weight:700;margin-top:4px;">' + esc(r.title) + '</div>' : '') + (r.text ? '<div class="tg-review-text">' + esc(r.text) + '</div>' : '') + imgs + '</div>';
+    const editBtn = isMine ? ' <button onclick="tgOpenReview()" style="background:none;color:var(--tg-primary);font-size:11px;font-weight:700;text-decoration:underline;padding:0;margin-left:6px;">Edit</button>' : '';
+    return '<div class="tg-review' + (isMine ? ' mine' : '') + '"><div class="tg-review-head"><span class="tg-review-star">' + rating + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-review-name">' + esc(r.userName || r.name || 'Verified Buyer') + verified + mineBadge + editBtn + '</span><span class="tg-review-date">' + esc(tago(r.createdAt)) + '</span></div>' + (r.title ? '<div style="font-size:13.5px;font-weight:700;margin-top:4px;">' + esc(r.title) + '</div>' : '') + (r.text ? '<div class="tg-review-text">' + esc(r.text) + '</div>' : '') + imgs + '</div>';
   }
 
   window.tgOpenAllReviews = function() {
@@ -1037,65 +1246,112 @@ a{color:inherit;text-decoration:none;}
     else if (AR_FILTER === '4') list = list.filter(r => Math.round(r.rating) === 4);
     else if (AR_FILTER === '3') list = list.filter(r => Math.round(r.rating) === 3);
     else if (AR_FILTER === 'low') list = list.filter(r => Math.round(r.rating) <= 2);
-    else if (AR_FILTER === 'with-image') list = list.filter(r => Array.isArray(r.images) && r.images.filter(u => u).length > 0);
+    else if (AR_FILTER === 'with-image') list = list.filter(r => (Array.isArray(r.images) && r.images.filter(u => u).length > 0) || r.image);
     if (cnt) cnt.textContent = list.length;
-    if (!list.length) { body.innerHTML = '<div class="tg-ar-empty"><div style="font-size:44px;opacity:0.4;margin-bottom:8px;">📝</div><div style="font-size:14px;font-weight:700;color:#212121;">No reviews in this filter</div><div style="font-size:12.5px;margin-top:4px;">Try a different filter</div></div>'; return; }
+    if (!list.length) { body.innerHTML = '<div class="tg-ar-empty"><div style="font-size:44px;opacity:0.4;margin-bottom:8px;">📝</div><div style="font-size:14px;font-weight:700;color:#212121;">No reviews in this filter</div></div>'; return; }
     body.innerHTML = list.map(r => reviewCardHtml(r)).join('');
   }
   document.getElementById('tg-ar-modal').addEventListener('click', e => { if (e.target.id === 'tg-ar-modal') tgCloseAllReviews(); });
 
+  // ═══════════════════════════════════════════════════════════
+  // ✅ CRITICAL FIX: checkReviewEligibility
+  // ═══════════════════════════════════════════════════════════
   async function checkReviewEligibility(pid) {
     CAN_REVIEW = false;
     HAS_REVIEWED = false;
     HAS_ORDERED = false;
     HAS_DELIVERED = false;
+    MY_REVIEW = null;
+
     if (!currentUser || !pid) { updateReviewButton(); return; }
 
+    const uid = currentUser.uid;
+    const email = (currentUser.email || '').toLowerCase().trim();
+    const phone = (currentUser.phoneNumber || '').replace(/\D/g, '');
+    const pidStr = String(pid).trim();
+
+    // Step 1: Check if user already reviewed this product
     try {
       const rSnap = await db.collection('reviews')
-        .where('userId', '==', currentUser.uid)
-        .where('productId', '==', pid)
+        .where('userId', '==', uid)
+        .where('productId', '==', pidStr)
         .limit(1).get();
       if (!rSnap.empty) {
+        const doc = rSnap.docs[0];
+        MY_REVIEW = { id: doc.id, ...doc.data() };
         HAS_REVIEWED = true;
         updateReviewButton();
         return;
       }
-    } catch(e) { console.warn('[review eligibility] reviewed check failed:', e && e.message); }
+    } catch(e) {
+      console.warn('[eligibility] reviewed check failed:', e && e.message);
+    }
 
+    // Step 2: Check orders — try multiple fields
     try {
-      const uid = currentUser.uid;
       const ordersMap = new Map();
-
-      for (const field of ['userId', 'customerId', 'uid']) {
+      const queries = ['userId', 'customerId', 'uid', 'user_id', 'customer_id'];
+      const promises = queries.map(async (field) => {
         try {
           const snap = await db.collection('orders').where(field, '==', uid).limit(100).get();
           snap.docs.forEach(d => ordersMap.set(d.id, { id: d.id, ...d.data() }));
-        } catch(e) { }
+        } catch(e) {}
+      });
+      await Promise.all(promises);
+
+      // Also try email match
+      if (email) {
+        try {
+          const snap = await db.collection('orders').where('userEmail', '==', email).limit(50).get();
+          snap.docs.forEach(d => ordersMap.set(d.id, { id: d.id, ...d.data() }));
+        } catch(e) {}
       }
 
       for (const o of ordersMap.values()) {
         const items = Array.isArray(o.items) ? o.items : [];
-        const hasProduct = items.some(it => it && (
-          it.productId === pid ||
-          it.id === pid ||
-          (it.product && it.product.id === pid)
-        ));
+        // ✅ FIX: Check all common item field names
+        const hasProduct = items.some(it => {
+          if (!it) return false;
+          const candidates = [
+            it.productId, it.pid, it.product_id, it.productID,
+            it.id, (it.product && it.product.id), (it.product && it.product.productId)
+          ];
+          return candidates.some(c => c != null && String(c).trim() === pidStr);
+        });
         if (!hasProduct) continue;
 
         HAS_ORDERED = true;
 
-        const st = String(o.status || '').toLowerCase().replace(/\s+/g, '_').replace(/-/g, '_');
-        const isDelivered = st.includes('deliver') || st === 'completed' || st === 'complete' || st === 'delivered';
+        // ✅ FIX: Check BOTH status and orderStatus fields
+        const rawStatus = o.status || o.orderStatus || o.order_status || '';
+        const st = String(rawStatus).toLowerCase().trim().replace(/\s+/g, '_').replace(/-/g, '_');
+
+        // ✅ FIX: Broad delivered detection
+        const isDelivered = st.includes('deliver') || st === 'completed' || st === 'complete' ||
+                            st === 'delivered' || st === 'order_delivered' || st === 'dlvd';
+
         if (isDelivered) {
           HAS_DELIVERED = true;
           CAN_REVIEW = true;
           break;
         }
       }
-    } catch(e) { console.warn('[review eligibility] orders check failed:', e && e.message); }
+
+      console.log('[eligibility]', { HAS_ORDERED, HAS_DELIVERED, CAN_REVIEW, HAS_REVIEWED });
+    } catch(e) {
+      console.warn('[eligibility] orders check failed:', e && e.message);
+    }
 
     updateReviewButton();
+
+    // ✅ Retry once if failed (network blip)
+    if (!HAS_DELIVERED && !HAS_REVIEWED && _eligibilityRetryCount < 2) {
+      _eligibilityRetryCount++;
+      if (_eligibilityRetryTimer) clearTimeout(_eligibilityRetryTimer);
+      _eligibilityRetryTimer = setTimeout(() => {
+        if (currentUser && PRODUCT) checkReviewEligibility(PRODUCT.id);
+      }, 2000 * _eligibilityRetryCount);
+    }
   }
 
   function updateReviewButton() {
@@ -1117,12 +1373,13 @@ a{color:inherit;text-decoration:none;}
     }
 
     if (HAS_REVIEWED) {
-      btn.classList.add('hidden');
-      btn.removeAttribute('onclick');
+      btn.classList.remove('hidden', 'disabled');
+      btn.setAttribute('onclick', 'tgOpenReview()');
+      if (text) text.textContent = 'Edit Review';
       if (status) {
         status.style.display = 'inline-flex';
         status.className = 'tg-review-status reviewed';
-        status.innerHTML = '✓ You already reviewed this product';
+        status.innerHTML = '✓ You already reviewed — click to edit';
       }
       return;
     }
@@ -1166,12 +1423,42 @@ a{color:inherit;text-decoration:none;}
       setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('product.html?id=' + (PRODUCT?.id || '')), 1000);
       return;
     }
-    if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'info'); return; }
-    if (!CAN_REVIEW || !HAS_DELIVERED) { toast(TOAST_MSGS.onlyDelivered, 'info'); return; }
     if (!PRODUCT) return;
 
+    // ✅ EDIT MODE — if already reviewed
+    if (HAS_REVIEWED && MY_REVIEW) {
+      EDITING_REVIEW_ID = MY_REVIEW.id;
+      rvRating = Math.round(Number(MY_REVIEW.rating || 0));
+      rvImages = Array.isArray(MY_REVIEW.images) ? MY_REVIEW.images.slice() : (MY_REVIEW.image ? [MY_REVIEW.image] : []);
+      document.getElementById('tg-rv-modal-title').textContent = 'Edit Your Review';
+      document.getElementById('tg-rv-title').value = MY_REVIEW.title || '';
+      document.getElementById('tg-rv-text').value = MY_REVIEW.text || '';
+      document.querySelectorAll('#tg-rv-star-pick svg').forEach(s => {
+        s.classList.toggle('active', Number(s.dataset.star) <= rvRating);
+      });
+      const labels = {1:'😞 Poor', 2:'😐 Fair', 3:'🙂 Good', 4:'😊 Very Good', 5:'🤩 Excellent'};
+      document.getElementById('tg-rv-rating-text').textContent = labels[rvRating] || '';
+      renderRvPreviews();
+      document.getElementById('tg-rv-upload-progress').classList.remove('show');
+      document.getElementById('tg-rv-img-file').value = '';
+      const submitBtn = document.getElementById('tg-rv-submit');
+      if (submitBtn) submitBtn.textContent = 'Update Review';
+      const rawImg = (PRODUCT.images && PRODUCT.images[0]) || PRODUCT.image || '';
+      const img = cardImgUrl(rawImg, 150);
+      document.getElementById('tg-rv-prod-img').innerHTML = img ? '<img src="' + esc(img) + '" loading="lazy" onerror="this.style.display=\'none\'" />' : '';
+      document.getElementById('tg-rv-prod-name').textContent = PRODUCT.name || 'Product';
+      document.getElementById('tg-rv-modal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+
+    // NEW REVIEW MODE
+    if (!CAN_REVIEW || !HAS_DELIVERED) { toast(TOAST_MSGS.onlyDelivered, 'info'); return; }
+
+    EDITING_REVIEW_ID = null;
     rvRating = 0;
     rvImages = [];
+    document.getElementById('tg-rv-modal-title').textContent = 'Write a Review';
     document.getElementById('tg-rv-title').value = '';
     document.getElementById('tg-rv-text').value = '';
     document.getElementById('tg-rv-rating-text').textContent = '';
@@ -1179,6 +1466,8 @@ a{color:inherit;text-decoration:none;}
     document.getElementById('tg-rv-img-preview').innerHTML = '';
     document.getElementById('tg-rv-upload-progress').classList.remove('show');
     document.getElementById('tg-rv-img-file').value = '';
+    const submitBtn = document.getElementById('tg-rv-submit');
+    if (submitBtn) submitBtn.textContent = 'Submit Review';
 
     const rawImg = (PRODUCT.images && PRODUCT.images[0]) || PRODUCT.image || '';
     const img = cardImgUrl(rawImg, 150);
@@ -1191,6 +1480,7 @@ a{color:inherit;text-decoration:none;}
   window.tgRvClose = function() {
     document.getElementById('tg-rv-modal').classList.remove('show');
     document.body.style.overflow = '';
+    EDITING_REVIEW_ID = null;
   };
 
   window.tgRvPickStar = function(n) {
@@ -1285,8 +1575,8 @@ a{color:inherit;text-decoration:none;}
       try {
         prog.textContent = 'Compressing ' + f.name.slice(0, 20) + '… (' + fmtBytes(f.size) + ')';
         const result = await processReviewImage(f);
-        rvImages.push(result);
-        prog.textContent = '✓ ' + fmtBytes(result.bytes) + ' (' + result.w + '×' + result.h + ') — compressed';
+        rvImages.push(result.url);
+        prog.textContent = '✓ ' + fmtBytes(result.bytes) + ' — compressed';
         renderRvPreviews();
       } catch(err) {
         console.warn('Image processing error:', err);
@@ -1298,12 +1588,8 @@ a{color:inherit;text-decoration:none;}
   });
 
   function renderRvPreviews() {
-    document.getElementById('tg-rv-img-preview').innerHTML = rvImages.map((img, i) =>
-      '<div class="tg-rv-img-preview-item">' +
-        '<img src="' + esc(img.url) + '" loading="lazy" />' +
-        '<div class="tg-rv-img-size">' + fmtBytes(img.bytes) + '</div>' +
-        '<button type="button" class="tg-rv-img-preview-remove" onclick="tgRemoveRvImg(' + i + ')">✕</button>' +
-      '</div>'
+    document.getElementById('tg-rv-img-preview').innerHTML = rvImages.map((url, i) =>
+      '<div class="tg-rv-img-preview-item"><img src="' + esc(url) + '" loading="lazy" /><button type="button" class="tg-rv-img-preview-remove" onclick="tgRemoveRvImg(' + i + ')">✕</button></div>'
     ).join('');
   }
   window.tgRemoveRvImg = function(i) { rvImages.splice(i, 1); renderRvPreviews(); };
@@ -1311,8 +1597,6 @@ a{color:inherit;text-decoration:none;}
   window.tgRvSubmit = async function() {
     if (!currentUser) { toast(TOAST_MSGS.loginRequired, 'error'); return; }
     if (!PRODUCT) return;
-    if (!CAN_REVIEW || !HAS_DELIVERED) { toast(TOAST_MSGS.onlyDelivered, 'error'); return; }
-    if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'error'); return; }
     if (rvRating < 1) { toast(TOAST_MSGS.selectRating, 'error'); return; }
     const title = (document.getElementById('tg-rv-title').value || '').trim();
     const text = (document.getElementById('tg-rv-text').value || '').trim();
@@ -1320,10 +1604,51 @@ a{color:inherit;text-decoration:none;}
 
     const btn = document.getElementById('tg-rv-submit');
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    const isEdit = !!EDITING_REVIEW_ID;
+    btn.textContent = isEdit ? 'Updating…' : 'Submitting…';
 
     try {
       const userName = currentUser.displayName || (currentUser.email || '').split('@')[0] || 'Customer';
+
+      if (isEdit) {
+        // UPDATE existing review
+        const oldReview = MY_REVIEW || {};
+        const oldRating = Number(oldReview.rating || 0);
+        await db.collection('reviews').doc(EDITING_REVIEW_ID).update({
+          rating: rvRating,
+          title: title,
+          text: text,
+          images: rvImages.slice(),
+          image: rvImages[0] || '',
+          updatedAt: FV.serverTimestamp()
+        });
+
+        // Try to update product aggregate rating (may fail silently if rules block)
+        try {
+          const prodRef = db.collection('products').doc(PRODUCT.id);
+          const prodSnap = await prodRef.get();
+          if (prodSnap.exists) {
+            const p = prodSnap.data();
+            const curRating = Number(p.rating || 0);
+            const curCount = Number(p.ratingCount || 0);
+            if (curCount > 0 && oldRating > 0) {
+              const newRating = ((curRating * curCount) - oldRating + rvRating) / curCount;
+              await prodRef.update({
+                rating: Number(newRating.toFixed(2)),
+                updatedAt: FV.serverTimestamp()
+              });
+            }
+          }
+        } catch(e) { console.warn('Rating update blocked by rules — will compute from reviews'); }
+
+        toast(TOAST_MSGS.reviewUpdateSuccess, 'success');
+        tgRvClose();
+        return;
+      }
+
+      // NEW REVIEW
+      if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'error'); return; }
+
       const payload = {
         productId: PRODUCT.id,
         productName: PRODUCT.name || '',
@@ -1333,7 +1658,8 @@ a{color:inherit;text-decoration:none;}
         rating: rvRating,
         title,
         text,
-        images: rvImages.map(i => i.url),
+        images: rvImages.slice(),
+        image: rvImages[0] || '',
         verified: true,
         active: true,
         createdAt: FV.serverTimestamp(),
@@ -1341,19 +1667,21 @@ a{color:inherit;text-decoration:none;}
       };
       await db.collection('reviews').add(payload);
 
+      // Try to update product rating (may fail — computed fallback will kick in)
       try {
         const prodRef = db.collection('products').doc(PRODUCT.id);
-        const curRating = Number(PRODUCT.rating || 0), curCount = Number(PRODUCT.ratingCount || 0);
-        const newCount = curCount + 1;
-        const newRating = curCount > 0 ? ((curRating * curCount) + rvRating) / newCount : rvRating;
-        await prodRef.update({ rating: Number(newRating.toFixed(2)), ratingCount: newCount, updatedAt: FV.serverTimestamp() });
-        PRODUCT.rating = Number(newRating.toFixed(2));
-        PRODUCT.ratingCount = newCount;
-        try { cacheProduct(PRODUCT.id, PRODUCT); } catch(e) {}
-        updateMainRating();
-      } catch(e) {}
+        const prodSnap = await prodRef.get();
+        if (prodSnap.exists) {
+          const p = prodSnap.data();
+          const curRating = Number(p.rating || 0), curCount = Number(p.ratingCount || 0);
+          const newCount = curCount + 1;
+          const newRating = curCount > 0 ? ((curRating * curCount) + rvRating) / newCount : rvRating;
+          await prodRef.update({ rating: Number(newRating.toFixed(2)), ratingCount: newCount, updatedAt: FV.serverTimestamp() });
+        }
+      } catch(e) { console.warn('Product rating update failed:', e && e.message); }
 
       HAS_REVIEWED = true;
+      CAN_REVIEW = false;
       updateReviewButton();
       toast(TOAST_MSGS.reviewSuccess, 'success');
       tgRvClose();
@@ -1361,7 +1689,7 @@ a{color:inherit;text-decoration:none;}
       console.error('Review submit failed:', err);
       toast(TOAST_MSGS.reviewFailed + ': ' + (err.message || 'Error'), 'error');
       btn.disabled = false;
-      btn.textContent = 'Submit Review';
+      btn.textContent = isEdit ? 'Update Review' : 'Submit Review';
     }
   };
 
@@ -1572,7 +1900,9 @@ a{color:inherit;text-decoration:none;}
     currentUser = u;
     updateCartBadge();
     if (PRODUCT && PRODUCT.id && wasLoggedIn !== !!u) {
+      _eligibilityRetryCount = 0;
       setTimeout(() => { try { checkReviewEligibility(PRODUCT.id); } catch(e) {} }, 300);
+      setTimeout(() => { try { loadWishlistState(); } catch(e) {} }, 300);
     }
   });
 
