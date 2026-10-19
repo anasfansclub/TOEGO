@@ -4440,22 +4440,33 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       }
     });
 
-    deliveredOrdersList.sort((a,b) => a.ts - b.ts);
     let pendingAmtCalc = 0;
+    const pendingOrderIds = [];
+    const paidOrderIds = [];
+
+    deliveredOrdersList.sort((a,b) => a.ts - b.ts);
     if (explicitPaidIds.size > 0) {
       deliveredOrdersList.forEach(ord => {
-        if (!explicitPaidIds.has(String(ord.id))) pendingAmtCalc += ord.net;
+        if (!explicitPaidIds.has(String(ord.id))) {
+          pendingAmtCalc += ord.net;
+          pendingOrderIds.push(ord.id);
+        } else {
+          paidOrderIds.push(ord.id);
+        }
       });
     } else {
       let cum = 0;
       for (const ord of deliveredOrdersList) {
         cum += ord.net;
         if (cum <= totalSettledAmt + 1) {
+          paidOrderIds.push(ord.id);
         } else {
           const remaining = totalSettledAmt - (cum - ord.net);
           if (remaining >= ord.net * 0.5) {
+            paidOrderIds.push(ord.id);
           } else {
             pendingAmtCalc += ord.net;
+            pendingOrderIds.push(ord.id);
           }
         }
       }
@@ -4465,6 +4476,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       gross, commission, delivery, returnCut, labelCut, totalDeduct, netEarning,
       settled, pending, deliveredCount, returnCount, itemsCount, matchedOrders, pct, usingCustom,
       pendingAmt: pendingAmtCalc,
+      pendingOrderIds: pendingOrderIds,
+      paidOrderIds: paidOrderIds,
       totalSettledAmt: totalSettledAmt
     };
   }
@@ -4525,10 +4538,28 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           (x.reference ? '<div class="tg-settle-hist-ref">Ref: ' + esc(x.reference) + '</div>' : '') +
           (x.note ? '<div style="font-size:11.5px;color:#666;margin-top:6px;">📝 ' + esc(x.note) + '</div>' : '') +
         '</div>' +
-        '<div class="tg-settle-hist-amt">' + inr(x.amount) + '<small>Settled</small></div>' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
+          '<div class="tg-settle-hist-amt">' + inr(x.amount) + '<small>Settled</small></div>' +
+          '<button class="tg-btn dan" style="padding:4px 8px;font-size:10px;" onclick="tgDeleteSettlement(\'' + x.id + '\')">Delete</button>' +
+        '</div>' +
       '</div>';
     }).join('');
   }
+
+  window.tgDeleteSettlement = function(id) {
+    confirmCb = async () => {
+      try {
+        await db.collection('settlements').doc(id).delete();
+        toast('Settlement deleted ✓ — Seller panel update ho jayega', 'suc');
+        tgCloseMod('mod-confirm');
+      } catch(e) { toast('Failed: ' + e.message, 'err'); }
+    };
+    document.getElementById('cf-t').textContent = 'Delete Settlement?';
+    document.getElementById('cf-m').innerHTML = 'This will permanently delete this settlement record.<br><br>The seller will see this amount back in <b>Pending Payment</b>.';
+    document.getElementById('cf-b').textContent = 'Delete';
+    document.getElementById('cf-b').className = 'tg-mod-b dan';
+    openMod('mod-confirm');
+  };
 
   window.tgOpenSettleMod = function(sid){
     const s = ALL_SELLERS.find(x=>x.id===sid); if (!s) return;
@@ -4568,10 +4599,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
     try {
       const newRef = db.collection('settlements').doc();
+      const settledOrderIds = st.pendingOrderIds ? st.pendingOrderIds.slice(0, 50) : [];
       await newRef.set({
         sellerId: sid,
         sellerName: sname || '',
         amount: amt,
+        orderIds: settledOrderIds,
         reference: ref,
         note: note,
         status: 'settled',
