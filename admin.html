@@ -910,6 +910,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               <input type="file" id="seller-import-file" accept=".json" style="display:none;" onchange="tgImportSellers(event)">
             </div>
           </div>
+          
+          <!-- ⭐ NEW USER CLEAR SECTION ⭐ -->
+          <div class="tg-ie-box" style="background:linear-gradient(135deg,#ffebee,#ffcdd2);border-color:#d32f2f;">
+            <div class="tg-ie-box-title" style="color:#b71c1c;">🗑️ Lifetime Delete User Data</div>
+            <div class="tg-ie-box-desc" style="color:#7f1d1d;">Warning: This will permanently delete all orders, cart, wishlist, and reviews for the selected user from Firebase.</div>
+            <div class="tg-srch" style="margin-bottom:10px;"><input type="text" id="clear-user-srch" placeholder="Search user by email/phone..." oninput="renderClearUsers()"></div>
+            <div id="clear-users-list" style="max-height:300px; overflow-y:auto; border:1px solid #e0e0e0; border-radius:8px; background:#fff;"></div>
+          </div>
+
           <div class="tg-danger-zone">
             <div class="tg-danger-zone-title">Danger Zone — Permanent Actions</div>
             <div class="tg-danger-zone-desc">Ye actions <b>permanent</b> hain, <b>undo nahi ho sakte</b>. Sirf tab use karo jab aap 100% sure ho.</div>
@@ -1446,6 +1455,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (v === 'labels') renderLabels();
     if (v === 'saveorders') renderSaveOrders();
     if (v === 'settle') { renderSettle(); renderSettleHistory(); }
+    if (v === 'backup') renderClearUsers(); // ⭐ NEW: Load users for wipe
   }
   function handlePopState(e) {
     const state = e.state || { view: 'dash', modal: null };
@@ -1820,7 +1830,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   };
 
   function loadAll(){
-    db.collection('users').limit(1000).onSnapshot(s => { ALL_USERS = s.docs.map(d=>({id:d.id,...d.data()})); renderDash(); tgRenderUsers(); });
+    db.collection('users').limit(1000).onSnapshot(s => { ALL_USERS = s.docs.map(d=>({id:d.id,...d.data()})); renderDash(); tgRenderUsers(); renderClearUsers(); });
     db.collection('sellers').limit(1000).onSnapshot(s => { ALL_SELLERS = s.docs.map(d=>({id:d.id,...d.data()})); renderDash(); tgRenderSellers(); renderSettle(); });
     db.collection('products').limit(1000).onSnapshot(s => { ALL_PRODUCTS = s.docs.map(d=>({id:d.id,...d.data()})); renderDash(); tgRenderProds(); renderSiteData(); });
     db.collection('orders').limit(1000).onSnapshot(s => {
@@ -2685,6 +2695,84 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     toast('✓ Cleared ' + totalDeleted + ' docs' + (totalFail ? ' (' + totalFail + ' failed)' : ''), 'suc');
   })();
 };
+
+  /* ⭐ NEW: User Clear List functions */
+  window.renderClearUsers = function() {
+    const el = document.getElementById('clear-users-list');
+    if (!el) return;
+    const q = (document.getElementById('clear-user-srch')?.value || '').toLowerCase().trim();
+    let list = ALL_USERS.slice();
+    if (q) list = list.filter(u => [(u.name||''),(u.email||''),(u.phone||'')].join(' ').toLowerCase().includes(q));
+    list = list.slice(0, 50);
+    if (!list.length) { el.innerHTML = '<div style="padding:15px;text-align:center;color:#888;">No users found</div>'; return; }
+    el.innerHTML = list.map(u => `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee;">
+        <div>
+          <div style="font-weight:700; font-size:13px;">${esc(u.name || 'User')}</div>
+          <div style="font-size:11px; color:#666;">${esc(u.email || '')} | ${esc(u.phone || '')}</div>
+        </div>
+        <button class="tg-btn dan" style="padding:6px 10px; font-size:11px;" onclick="tgWipeUserData('${jsEsc(u.id)}', '${jsEsc(u.email||u.name||u.id)}')">Delete Data</button>
+      </div>
+    `).join('');
+  };
+
+  window.tgWipeUserData = function(uid, email) {
+     confirmCb = async () => {
+       try {
+         toast('Wiping user data...', 'inf');
+         // Delete Orders
+         let found = new Set();
+         try { const s1 = await db.collection('orders').where('userId','==',uid).get(); s1.docs.forEach(d => found.add(d.id)); } catch(e) {}
+         try { const s2 = await db.collection('orders').where('user_id','==',uid).get(); s2.docs.forEach(d => found.add(d.id)); } catch(e) {}
+         if (email) {
+           try { const s3 = await db.collection('orders').where('userEmail','==',email).get(); s3.docs.forEach(d => found.add(d.id)); } catch(e) {}
+           try { const s4 = await db.collection('orders').where('email','==',email).get(); s4.docs.forEach(d => found.add(d.id)); } catch(e) {}
+         }
+         const refs = Array.from(found).map(id => db.collection('orders').doc(id));
+         for (let i = 0; i < refs.length; i += 450) {
+           const batch = db.batch();
+           refs.slice(i, i + 450).forEach(r => batch.delete(r));
+           await batch.commit();
+         }
+
+         // Delete Cart
+         try {
+           let subMore = true;
+           while(subMore) {
+             const items = await db.collection('carts').doc(uid).collection('items').limit(450).get();
+             if(items.empty) { subMore = false; break; }
+             const b = db.batch(); items.docs.forEach(d=>b.delete(d.ref)); await b.commit();
+             if(items.docs.length < 450) subMore = false;
+           }
+           await db.collection('carts').doc(uid).delete().catch(()=>{});
+         } catch(e){}
+
+         // Delete Wishlist
+         try {
+           let subMore = true;
+           while(subMore) {
+             const items = await db.collection('wishlists').doc(uid).collection('items').limit(450).get();
+             if(items.empty) { subMore = false; break; }
+             const b = db.batch(); items.docs.forEach(d=>b.delete(d.ref)); await b.commit();
+             if(items.docs.length < 450) subMore = false;
+           }
+           await db.collection('wishlists').doc(uid).delete().catch(()=>{});
+         } catch(e){}
+
+         // Delete Reviews
+         try { const rSnap = await db.collection('reviews').where('userId','==',uid).get(); const b = db.batch(); rSnap.docs.forEach(d=>b.delete(d.ref)); await b.commit(); } catch(e){}
+
+         toast('✓ User data wiped successfully', 'suc');
+         tgCloseMod('mod-confirm');
+         renderClearUsers();
+       } catch(e) { toast('Failed: ' + e.message, 'err'); }
+     };
+     document.getElementById('cf-t').textContent = 'Delete All Data?';
+     document.getElementById('cf-m').innerHTML = `Are you sure you want to permanently delete ALL data (orders, cart, wishlist, reviews) for <b>${esc(email)}</b>?<br><br>This action CANNOT be undone.`;
+     document.getElementById('cf-b').textContent = 'Delete Data';
+     document.getElementById('cf-b').className = 'tg-mod-b dan';
+     openMod('mod-confirm');
+  };
 
   window.tgExportSellers = async function() {
     try {
@@ -4365,6 +4453,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.getElementById('an-tp').innerHTML = pp.length ? pp.map(p=>'<div class="tg-row" style="cursor:default;"><div class="tg-row-b"><div class="tg-row-t">'+esc(p.name)+'</div></div><div class="tg-row-a"><span style="font-weight:800;color:#2874f0;">'+p.count+' sold</span></div></div>').join('') : '<div class="tg-empty" style="padding:30px;"><div class="tg-empty-i">📊</div></div>';
   }
 
+  /* ⭐⭐⭐ FIXED getSettle — Builds unpaidOrders Array for exact settlement ⭐⭐⭐ */
   function getSettle(sid){
     sid = String(sid);
     const seller = ALL_SELLERS.find(s => s.id === sid);
@@ -4440,18 +4529,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       }
     });
 
-    let pendingAmtCalc = 0;
-    const pendingOrderIds = [];
-    const paidOrderIds = [];
-
     deliveredOrdersList.sort((a,b) => a.ts - b.ts);
+    let pendingAmtCalc = 0;
+    let unpaidOrders = []; // ⭐ NEW: Exact list of unpaid delivered orders
+
     if (explicitPaidIds.size > 0) {
       deliveredOrdersList.forEach(ord => {
         if (!explicitPaidIds.has(String(ord.id))) {
           pendingAmtCalc += ord.net;
-          pendingOrderIds.push(ord.id);
-        } else {
-          paidOrderIds.push(ord.id);
+          unpaidOrders.push(ord);
         }
       });
     } else {
@@ -4459,14 +4545,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       for (const ord of deliveredOrdersList) {
         cum += ord.net;
         if (cum <= totalSettledAmt + 1) {
-          paidOrderIds.push(ord.id);
+          // fully covered
         } else {
           const remaining = totalSettledAmt - (cum - ord.net);
           if (remaining >= ord.net * 0.5) {
-            paidOrderIds.push(ord.id);
+            // partial paid
           } else {
             pendingAmtCalc += ord.net;
-            pendingOrderIds.push(ord.id);
+            unpaidOrders.push(ord);
           }
         }
       }
@@ -4476,9 +4562,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       gross, commission, delivery, returnCut, labelCut, totalDeduct, netEarning,
       settled, pending, deliveredCount, returnCount, itemsCount, matchedOrders, pct, usingCustom,
       pendingAmt: pendingAmtCalc,
-      pendingOrderIds: pendingOrderIds,
-      paidOrderIds: paidOrderIds,
-      totalSettledAmt: totalSettledAmt
+      totalSettledAmt: totalSettledAmt,
+      unpaidOrders: unpaidOrders
     };
   }
   function getSettledAmt(sid){
@@ -4527,6 +4612,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const dt = x.settledAt?.toDate ? x.settledAt.toDate() : (x.settledAt ? new Date(x.settledAt) : null);
       const dateStr = dt ? dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) + ' · ' + dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '—';
       const byTxt = x.settledByEmail || (x.settledBy ? 'admin' : '');
+      const ordCount = Array.isArray(x.orderIds) ? x.orderIds.length : 0;
       return '<div class="tg-settle-hist-item">' +
         '<div class="tg-settle-hist-icon">✓</div>' +
         '<div class="tg-settle-hist-body">' +
@@ -4535,31 +4621,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
             '<span>📅 ' + esc(dateStr) + '</span>' +
             (byTxt ? '<span>👤 ' + esc(byTxt) + '</span>' : '') +
           '</div>' +
+          (ordCount > 0 ? '<div style="font-size:11.5px;color:#1b8a3a;font-weight:700;margin-top:4px;">✓ ' + ordCount + ' orders settled</div>' : '') +
           (x.reference ? '<div class="tg-settle-hist-ref">Ref: ' + esc(x.reference) + '</div>' : '') +
           (x.note ? '<div style="font-size:11.5px;color:#666;margin-top:6px;">📝 ' + esc(x.note) + '</div>' : '') +
         '</div>' +
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
-          '<div class="tg-settle-hist-amt">' + inr(x.amount) + '<small>Settled</small></div>' +
-          '<button class="tg-btn dan" style="padding:4px 8px;font-size:10px;" onclick="tgDeleteSettlement(\'' + x.id + '\')">Delete</button>' +
-        '</div>' +
+        '<div class="tg-settle-hist-amt">' + inr(x.amount) + '<small>Settled</small></div>' +
       '</div>';
     }).join('');
   }
-
-  window.tgDeleteSettlement = function(id) {
-    confirmCb = async () => {
-      try {
-        await db.collection('settlements').doc(id).delete();
-        toast('Settlement deleted ✓ — Seller panel update ho jayega', 'suc');
-        tgCloseMod('mod-confirm');
-      } catch(e) { toast('Failed: ' + e.message, 'err'); }
-    };
-    document.getElementById('cf-t').textContent = 'Delete Settlement?';
-    document.getElementById('cf-m').innerHTML = 'This will permanently delete this settlement record.<br><br>The seller will see this amount back in <b>Pending Payment</b>.';
-    document.getElementById('cf-b').textContent = 'Delete';
-    document.getElementById('cf-b').className = 'tg-mod-b dan';
-    openMod('mod-confirm');
-  };
 
   window.tgOpenSettleMod = function(sid){
     const s = ALL_SELLERS.find(x=>x.id===sid); if (!s) return;
@@ -4598,13 +4667,23 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
     if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
     try {
+      // ⭐ FIX: Figure out exactly which orderIds are being settled (FIFO)
+      const unpaid = st.unpaidOrders || [];
+      let selectedOrderIds = [];
+      let running = 0;
+      for (let o of unpaid) {
+        if (running + o.net <= amt + 1) {
+          selectedOrderIds.push(o.id);
+          running += o.net;
+        } else break;
+      }
+
       const newRef = db.collection('settlements').doc();
-      const settledOrderIds = st.pendingOrderIds ? st.pendingOrderIds.slice(0, 50) : [];
       await newRef.set({
         sellerId: sid,
         sellerName: sname || '',
         amount: amt,
-        orderIds: settledOrderIds,
+        orderIds: selectedOrderIds, // ⭐ NEW FIELD SAVED
         reference: ref,
         note: note,
         status: 'settled',
@@ -4613,7 +4692,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         settledAt: FV.serverTimestamp(),
         createdAt: FV.serverTimestamp()
       });
-      toast('💸 Settlement recorded ✓','suc');
+      toast('💸 Settlement recorded ✓ (' + selectedOrderIds.length + ' orders paid)','suc');
       tgCloseMod('mod-settle');
     } catch(e) {
       console.error('[SETTLE FAIL]', e);
