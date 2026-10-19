@@ -606,9 +606,6 @@ a{color:inherit;text-decoration:none;}
   function tago(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; if (s < 604800) return Math.floor(s/86400)+'d ago'; return fdate(d); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
 
-  // ⭐⭐⭐ FIX #1 — YEH NAYA FUNCTION HAI — Cloudinary URLs ko proper width pe optimize karta hai ⭐⭐⭐
-  // Kisi bhi cloudinary URL se purane transforms (w_1000, q_auto, etc.) strip karke
-  // clean width deta hai. Data URLs aur non-cloudinary URLs ko as-is return karta hai.
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
@@ -616,7 +613,6 @@ a{color:inherit;text-decoration:none;}
     const parts = url.split('/upload/');
     if (parts.length < 2) return url;
     const segs = parts[1].split('/');
-    // Transform segments ko strip karo (jisme _ ya , ho lekin . nahi)
     while (segs.length > 1 && (segs[0].indexOf('_') !== -1 || segs[0].indexOf(',') !== -1) && segs[0].indexOf('.') === -1) {
       segs.shift();
     }
@@ -1008,14 +1004,13 @@ a{color:inherit;text-decoration:none;}
     const sellerName = PRODUCT.sellerName || PRODUCT.shopName || (PRODUCT.seller && PRODUCT.seller.shopName) || 'TOEGO Store';
     const sellerInit = String(sellerName).trim().charAt(0).toUpperCase() || 'T';
 
-    // ⭐⭐⭐ FIX #2 — Main slider images 900px width pe optimize (was: raw URL) ⭐⭐⭐
     const sliderHtml =
       '<div class="tg-slider" id="tg-slider">' +
         '<div class="tg-slider-track" id="tg-slider-track">' +
           imgs.map((u, i) => {
             const loadingAttr = i === 0 ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
             const safeU = escapeAttr(u);
-            const displayImg = cardImgUrl(u, 900); /* ⭐ FIX: 900px optimized */
+            const displayImg = cardImgUrl(u, 900);
             return '<div class="tg-slide" onclick="tgSlideTapOpen(\'' + safeU + '\')"><img src="' + esc(displayImg) + '" alt="' + esc(PRODUCT.name||'') + '" draggable="false" ' + loadingAttr + ' onerror="this.src=\'https://via.placeholder.com/400x400/f1f3f6/878787?text=TOEGO\'" /></div>';
           }).join('') +
         '</div>' +
@@ -1025,7 +1020,6 @@ a{color:inherit;text-decoration:none;}
         (imgs.length > 1 ? '<div class="tg-slider-dots" id="tg-slider-dots">' + imgs.map((_, i) => '<span class="tg-slider-dot ' + (i===0?'active':'') + '" onclick="tgSliderGo(event,' + i + ')"></span>').join('') + '</div>' : '') +
       '</div>';
 
-    // ⭐⭐⭐ FIX #3 — Thumbnails 150px pe optimize (was: raw URL, 72px display pe 1000px image aa rahi thi!) ⭐⭐⭐
     const thumbsHtml = imgs.length > 1
       ? '<div class="tg-gallery-thumbs">' + imgs.map((u, i) => '<div class="tg-thumb ' + (i===0?'active':'') + '" onclick="tgSliderGo(event,' + i + ')"><img src="' + esc(cardImgUrl(u, 150)) + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/100x100/f1f3f6/878787?text=T\'" /></div>').join('') + '</div>'
       : '';
@@ -1213,7 +1207,6 @@ a{color:inherit;text-decoration:none;}
     });
   }
 
-  // ⭐⭐⭐ FIX #4 — Viewer me 1400px image load (was: raw possibly 3000px+) ⭐⭐⭐
   window.tgSlideTapOpen = function(url) { tgOpenViewer(cardImgUrl(url, 1400)); };
 
   function updateSlider() {
@@ -1347,13 +1340,12 @@ a{color:inherit;text-decoration:none;}
     return Number(p.stock || 0);
   }
 
-  // ⭐⭐⭐ FIX #5 — Related + All Products cards 400px pe optimize (was: raw URL) ⭐⭐⭐
   function productCardHtml(p) {
     const price = Number(p.price||0);
     const mrp = Number(p.compareAtPrice || p.mrp || 0);
     const off = mrp > price ? Math.round((1 - price/mrp)*100) : 0;
     const rawImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=T';
-    const img = cardImgUrl(rawImg, 400); /* ⭐ FIX: 400px optimized */
+    const img = cardImgUrl(rawImg, 400);
     const rating = Number(p.rating || 0);
     const ratingCount = Number(p.ratingCount || 0);
     const stock = getProductStock(p);
@@ -1496,14 +1488,13 @@ a{color:inherit;text-decoration:none;}
     el.innerHTML = html;
   }
 
-  // ⭐⭐⭐ FIX #6 — Review images 150px thumbnails + 1200px viewer (was: raw URL) ⭐⭐⭐
   function reviewCardHtml(r) {
     const rating = Math.round(Number(r.rating||0));
     const imgsArr = Array.isArray(r.images) ? r.images.filter(u => u) : [];
     const imgs = imgsArr.length
       ? '<div class="tg-review-imgs">' + imgsArr.map(u => {
-          const thumbUrl = cardImgUrl(u, 150);     /* ⭐ FIX: 150px thumbnail */
-          const bigUrl = cardImgUrl(u, 1200);      /* ⭐ FIX: 1200px lightbox */
+          const thumbUrl = cardImgUrl(u, 150);
+          const bigUrl = cardImgUrl(u, 1200);
           return '<div class="tg-review-img" onclick="tgOpenViewer(\'' + escapeAttr(bigUrl) + '\')"><img src="' + esc(thumbUrl) + '" loading="lazy" decoding="async" onerror="this.style.display=\'none\'" /></div>';
         }).join('') + '</div>'
       : '';
@@ -1649,7 +1640,6 @@ a{color:inherit;text-decoration:none;}
     document.getElementById('tg-rv-img-preview').innerHTML = '';
     document.getElementById('tg-rv-upload-progress').classList.remove('show');
     document.getElementById('tg-rv-img-file').value = '';
-    // ⭐ FIX #7 — Review modal product thumbnail 150px (was: raw)
     const rawImg = (PRODUCT.images && PRODUCT.images[0]) || PRODUCT.image || '';
     const img = cardImgUrl(rawImg, 150);
     document.getElementById('tg-rv-prod-img').innerHTML = img ? '<img src="' + esc(img) + '" loading="lazy" onerror="this.style.display=\'none\'" />' : '';
@@ -1709,9 +1699,6 @@ a{color:inherit;text-decoration:none;}
     return new Blob([u8], { type: mime });
   }
 
-  // ⭐⭐⭐ FIX #8 — Review upload me w_800 remove — sirf q_auto (was: w_800 baked) ⭐⭐⭐
-  // Reason: display pe cardImgUrl proper width lagayega (150px thumbnail, 1200px viewer)
-  // w_800 bake karne se cards me 800px image load ho rahi thi 70px display pe
   async function uploadToCloudinary(blob) {
     if (!CLOUD.cloudName || !CLOUD.uploadPreset) return null;
     try {
@@ -1722,7 +1709,6 @@ a{color:inherit;text-decoration:none;}
       const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD.cloudName + '/image/upload', { method: 'POST', body: fd });
       if (!res.ok) return null;
       const d = await res.json();
-      // Sirf basic optimization — width display time pe apply hogi
       return d.secure_url.replace('/upload/', '/upload/f_auto,q_auto:good/');
     } catch(e) { return null; }
   }
@@ -2045,12 +2031,18 @@ a{color:inherit;text-decoration:none;}
     }, 400);
   };
 
-  window.tgBuyNow = function() {
+  // ⭐⭐⭐ FIX — Buy Now is now ASYNC and AWAITS the Firestore write ⭐⭐⭐
+  // Pehle ye `function()` tha jo fire-and-forget tha → race condition → item cart me
+  // add hone se pehle navigate ho jata tha → cart me purane items dikhte the.
+  // Ab: server pe write complete hone ke baad hi navigate hota hai.
+  window.tgBuyNow = async function() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
+
     const item = buildCartItem();
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
 
+    // ── GUEST ──
     if (!currentUser) {
       try {
         let cart = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
@@ -2064,18 +2056,44 @@ a{color:inherit;text-decoration:none;}
       return;
     }
 
-    const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-    ref.get({ source: 'cache' }).then(snap => {
-      if (snap.exists) return ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
-      return ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
-    }).catch(() => {
-      return ref.set({
-        ...item,
-        qty: FV.increment(QTY),
-        addedAt: FV.serverTimestamp(),
-        updatedAt: FV.serverTimestamp()
-      }, { merge: true });
-    }).catch(() => {});
+    // ── LOGGED IN — await the write before navigating ──
+    const btn = document.getElementById('tg-buy-btn');
+    const origHTML = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = 'Processing…'; }
+
+    try {
+      const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
+
+      // Server fetch first (authoritative), cache fallback if offline
+      let exists = false;
+      try {
+        const snap = await ref.get({ source: 'server' });
+        exists = !!(snap && snap.exists);
+      } catch(e) {
+        try {
+          const snap2 = await ref.get({ source: 'cache' });
+          exists = !!(snap2 && snap2.exists);
+        } catch(e2) {
+          exists = false;
+        }
+      }
+
+      if (exists) {
+        await ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
+      } else {
+        await ref.set({
+          ...item,
+          qty: QTY,
+          addedAt: FV.serverTimestamp(),
+          updatedAt: FV.serverTimestamp()
+        });
+      }
+    } catch(err) {
+      console.warn('[buy now] write failed:', err && err.message);
+      if (btn) { btn.disabled = false; btn.innerHTML = origHTML; }
+      toast('Failed to process buy now. Please try again.', 'error');
+      return;
+    }
 
     try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
     location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
