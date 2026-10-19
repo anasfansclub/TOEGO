@@ -627,7 +627,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div class="tg-sg">
         <div class="tg-sc"><div class="tg-scl">Gross</div><div class="tg-scn" id="st-g" style="color:#2874f0;">₹0</div></div>
         <div class="tg-sc"><div class="tg-scl">Total Cuts</div><div class="tg-scn" id="st-c" style="color:#d32f2f;">₹0</div></div>
-        <div class="tg-sc"><div class="tg-scl">Net Payable</div><div class="tg-scn" id="st-n" style="color:#1b8a3a;">₹0</div></div>
+        <div class="tg-sc"><div class="tg-scl">Total Paid</div><div class="tg-scn" id="st-n" style="color:#1b8a3a;">₹0</div></div>
         <div class="tg-sc"><div class="tg-scl">Pending</div><div class="tg-scn" id="st-p" style="color:#f57c00;">₹0</div></div>
       </div>
       <div class="tg-sec"><div class="tg-sh"><div><div class="tg-st">Seller Settlements</div><div class="tg-ss">Settle seller earnings</div></div></div><div id="settle-list"></div></div>
@@ -927,6 +927,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
               Clear All Sellers Data
             </button>
+            
+            <!-- ⭐ NEW BUTTON: CLEAR USER ACTIVITY ONLY ⭐ -->
+            <button class="tg-danger-btn high" onclick="tgClearUserActivityData()">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              🧹 Clear User Activity (Keep Products & Banners)
+            </button>
+
             <button class="tg-danger-btn high" onclick="tgClearAllData()">
               <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
               💥 Clear ALL Data (Full Reset)
@@ -2615,6 +2622,90 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         }
         toast('✓ Deleted ' + ok + ' sellers' + (fail ? ', ' + fail + ' failed' : ''), 'suc');
       } catch (e) { toast('Failed: ' + e.message, 'err'); }
+    })();
+  };
+
+  /* ⭐ NEW: Clear User Activity Data (Keep Products & Banners) ⭐ */
+  window.tgClearUserActivityData = function() {
+    const msg = '⚠️ DANGER: This will delete all USER ACTIVITY data from:\n' +
+      '• Users\n' +
+      '• Sellers\n' +
+      '• Orders\n' +
+      '• Coupons\n' +
+      '• Promotions\n' +
+      '• Notifications\n' +
+      '• Reviews\n' +
+      '• Settlements\n' +
+      '• Support Tickets\n' +
+      '• Carts\n' +
+      '• Wishlists\n\n' +
+      '✅ Products and Banners will be KEPT SAFE.\n\n' +
+      'This CANNOT be undone!';
+    if (!confirm(msg)) return;
+    if (!confirm('⚠️ Are you ABSOLUTELY 100% SURE?\n\nThis is your LAST chance to cancel.')) return;
+    const typed = prompt('Type "CLEAR ACTIVITY" (uppercase, exact) to confirm:');
+    if (typed !== 'CLEAR ACTIVITY') { toast('Cancelled — nothing was deleted', 'inf'); return; }
+    
+    (async () => {
+      let totalDeleted = 0, totalFail = 0;
+      toast('Starting data clear (keeping Products & Banners)...', 'inf');
+      
+      // Clear Carts
+      try {
+        const cartSnaps = await db.collection('carts').get();
+        for (const cartDoc of cartSnaps.docs) {
+          let hasMore = true;
+          while (hasMore) {
+            const itemsSnap = await cartDoc.ref.collection('items').limit(450).get();
+            if (itemsSnap.empty) { hasMore = false; break; }
+            const batch = db.batch();
+            itemsSnap.docs.forEach(d => batch.delete(d.ref));
+            try { await batch.commit(); totalDeleted += itemsSnap.docs.length; }
+            catch (e) { totalFail += itemsSnap.docs.length; }
+            if (itemsSnap.docs.length < 450) hasMore = false;
+          }
+          try { await cartDoc.ref.delete(); totalDeleted++; } catch (e) {}
+        }
+      } catch(e) {}
+      
+      // Clear Wishlists
+      try {
+        let hasMore = true;
+        while (hasMore) {
+          const snap = await db.collection('wishlists').limit(450).get();
+          if (snap.empty) { hasMore = false; break; }
+          const batch = db.batch();
+          snap.docs.forEach(d => batch.delete(d.ref));
+          try { await batch.commit(); totalDeleted += snap.docs.length; }
+          catch (e) { totalFail += snap.docs.length; }
+          if (snap.docs.length < 450) hasMore = false;
+        }
+      } catch(e) {}
+      
+      // Collections to clear
+      const cols = ['users', 'sellers', 'orders', 'coupons', 'promotions', 'notifications', 'reviews', 'settlements', 'supportTickets'];
+      for (const c of cols) {
+        try {
+          let hasMore = true;
+          while (hasMore) {
+            const snap = await db.collection(c).limit(450).get();
+            if (snap.empty) { hasMore = false; break; }
+            const batch = db.batch();
+            snap.docs.forEach(d => batch.delete(d.ref));
+            try { await batch.commit(); totalDeleted += snap.docs.length; }
+            catch (e) { totalFail += snap.docs.length; }
+            if (snap.docs.length < 450) hasMore = false;
+          }
+        } catch (e) {}
+      }
+      
+      try {
+        localStorage.removeItem('toego_home_prod_v19');
+        localStorage.removeItem('toego_home_cfg_v19');
+        localStorage.removeItem('toego_home_banners_v1');
+        localStorage.removeItem('toego_products_cache_v1');
+      } catch(e) {}
+      toast('✓ Cleared ' + totalDeleted + ' docs (Products & Banners kept safe)' + (totalFail ? ' (' + totalFail + ' failed)' : ''), 'suc');
     })();
   };
 
@@ -4586,7 +4677,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const st = getSettle(s.id);
       const settled = getSettledAmt(s.id);
       const pendingAmt = st.pendingAmt;
-      tg += st.gross; tc += st.totalDeduct; tn += st.netEarning; tp += pendingAmt;
+      tg += st.gross; 
+      tc += st.totalDeduct; 
+      tn += settled; // ⭐ FIX: Net Payable (Total Paid) = only settled amount
+      tp += pendingAmt;
+      
       const matchWarn = st.matchedOrders === 0 ? '<span class="tg-pill rej">⚠ No matched orders</span>' : '';
       const slabPill = st.usingCustom ? '<span class="tg-pill blu">🚚 Custom slabs</span>' : '<span class="tg-pill gry">🚚 Global slabs</span>';
       const returnInfo = st.returnCount > 0 ? '<span style="color:#d32f2f;font-weight:700;">Return: −'+inr(st.returnCut)+'</span>' : '';
@@ -4601,7 +4696,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       else payPill = '<span class="tg-pill rej">⚠ No Payment</span>';
       return '<div class="tg-row"><div class="tg-row-av">'+esc(ini(s.shopName))+'</div><div class="tg-row-b"><div class="tg-row-t">'+esc(s.shopName||'')+' '+blockedPill+'</div><div class="tg-row-s"><span>Comm: '+st.pct+'%</span><span>Delivered: '+st.deliveredCount+'</span><span>Returns: '+st.returnCount+'</span><span>Items: '+st.itemsCount+'</span></div><div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;align-items:center;">'+payPill+slabPill+'<span style="color:#1b8a3a;font-weight:700;">Total Net: '+inr(st.netEarning)+'</span><span class="tg-pill today">Today: '+inr(st.todayEarning)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill appr">Paid: '+inr(settled)+'</span><span class="tg-pill '+(pendingAmt>0?'yel':'appr')+'">Pending: '+inr(pendingAmt)+'</span>'+matchWarn+'</div></div><div class="tg-row-a" style="flex-direction:column;gap:6px;align-items:flex-end;"><button class="tg-btn pri" onclick="tgOpenSettleMod(\''+esc(s.id)+'\')">Settle</button><button class="tg-btn suc" onclick="tgExportSellerOrders(\''+esc(s.id)+'\')" style="white-space:nowrap;">📊 Excel</button></div></div>';
     }).join('');
-    setText('st-g', inr(tg)); setText('st-c', inr(tc)); setText('st-n', inr(tn)); setText('st-p', inr(tp));
+    setText('st-g', inr(tg)); 
+    setText('st-c', inr(tc)); 
+    setText('st-n', inr(tn)); // Total Paid
+    setText('st-p', inr(tp)); // Pending
   }
 
   window.tgDeleteSettlement = function(id) {
