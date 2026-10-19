@@ -153,7 +153,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 .tg-order-status.pending{background:#fff8e1;color:#f57c00;}
 .tg-order-status.seller-accepted{background:#e3f2fd;color:#1565c0;}
 .tg-order-status.admin-approved{background:#e1f5fe;color:#0277bd;}
-.tg-order-status.label-generated{background:#ede7f6;color:#6a1b9a;}
+.tg-order-status.label-generated{background:#fff3e0;color:#e65100;}
 .tg-order-status.processing{background:#fff3e0;color:#e65100;}
 .tg-order-status.dispatched{background:#e8eaf6;color:#3949ab;}
 .tg-order-status.delivered{background:#e6f7ec;color:#1b8a3a;}
@@ -549,11 +549,11 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
         <div class="tg-chip" data-status="pending" onclick="tgFilterOrders('pending')">New <span class="tg-chip-count" id="tg-oc-pending">0</span></div>
         <div class="tg-chip" data-status="seller_accepted" onclick="tgFilterOrders('seller_accepted')">Accepted <span class="tg-chip-count" id="tg-oc-accepted">0</span></div>
         <div class="tg-chip" data-status="admin_approved" onclick="tgFilterOrders('admin_approved')">Ready for Label <span class="tg-chip-count" id="tg-oc-ready">0</span></div>
-        <div class="tg-chip" data-status="label_generated" onclick="tgFilterOrders('label_generated')">Label Generated <span class="tg-chip-count" id="tg-oc-label">0</span></div>
-        <div class="tg-chip" data-status="processing" onclick="tgFilterOrders('processing')">Processing <span class="tg-chip-count" id="tg-oc-processing">0</span></div>
+        <div class="tg-chip" data-status="pickup" onclick="tgFilterOrders('pickup')">📦 Pickup <span class="tg-chip-count" id="tg-oc-pickup">0</span></div>
         <div class="tg-chip" data-status="dispatched" onclick="tgFilterOrders('dispatched')">Dispatched <span class="tg-chip-count" id="tg-oc-dispatched">0</span></div>
         <div class="tg-chip" data-status="delivered" onclick="tgFilterOrders('delivered')">Delivered <span class="tg-chip-count" id="tg-oc-delivered">0</span></div>
         <div class="tg-chip" data-status="cancelled" onclick="tgFilterOrders('cancelled')">Cancelled <span class="tg-chip-count" id="tg-oc-cancelled">0</span></div>
+        <div class="tg-chip" data-status="return" onclick="tgFilterOrders('return')">🔄 Return <span class="tg-chip-count" id="tg-oc-return">0</span></div>
       </div></div>
       <div class="tg-order-select-bar">
         <label><input type="checkbox" id="tg-select-all" onchange="tgToggleSelectAll(this.checked)"> Select All</label>
@@ -793,7 +793,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       <div class="tg-label-opt selected" data-format="a4" onclick="tgSelectFormat('a4', this)" style="background:#e8f0ff;border:2px solid #2874f0;border-radius:12px;padding:18px 14px;cursor:pointer;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">📄</div><div style="font-size:13.5px;font-weight:800;">A4 Sheet</div><div style="font-size:11px;color:#666;margin-top:4px;">4 per page · Full Bill</div></div>
       <div class="tg-label-opt" data-format="thermal" onclick="tgSelectFormat('thermal', this)" style="background:#f8f9fb;border:2px solid #e0e0e0;border-radius:12px;padding:18px 14px;cursor:pointer;text-align:center;"><div style="font-size:32px;margin-bottom:8px;">🧾</div><div style="font-size:13.5px;font-weight:800;">Thermal 4×6</div><div style="font-size:11px;color:#666;margin-top:4px;">102×152mm</div></div>
     </div>
-    <div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-label-modal')">Cancel</button><button class="tg-modal-btn primary" id="tg-label-print-btn" onclick="tgPrintLabels()">🖨 Print → Processing</button></div>
+    <div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-label-modal')">Cancel</button><button class="tg-modal-btn primary" id="tg-label-print-btn" onclick="tgPrintLabels()">🖨 Print → Pickup</button></div>
   </div>
 </div>
 
@@ -929,7 +929,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   function fdate(d) { if (!d) return '—'; const dt = d.toDate ? d.toDate() : new Date(d); return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
   function ftime(d) { if (!d) return ''; const dt = d.toDate ? d.toDate() : new Date(d); return dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }); }
   function tago(d) { if (!d) return ''; const dt = d.toDate ? d.toDate() : new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago'; }
-  function stLabel(o) { const k = normStatus(o); return { pending:'New Order', seller_accepted:'Accepted', admin_approved:'Ready for Label', label_generated:'Label Generated', processing:'Processing', dispatched:'Dispatched', delivered:'Delivered', cancelled:'Cancelled', return_requested:'Return Pending', returned:'Returned' }[k] || 'New Order'; }
+  function stLabel(o) { const k = normStatus(o); return { pending:'New Order', seller_accepted:'Accepted', admin_approved:'Ready for Label', label_generated:'📦 Pickup', processing:'📦 Pickup', dispatched:'Dispatched', delivered:'Delivered', cancelled:'Cancelled', return_requested:'Return Pending', returned:'Returned' }[k] || 'New Order'; }
   function stClass(o) { return normStatus(o).replace(/_/g, '-'); }
   function isDelivered(o) { return normStatus(o) === 'delivered'; }
   function totalStock(p) { if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) { let t = 0; Object.values(p.sizeStock).forEach(v => { t += Number(v||0); }); return t; } return Number(p.stock||0); }
@@ -1222,7 +1222,14 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   }
   function visibleOrders() {
     let o = ORDERS.slice();
-    if (OFILTER !== 'all') o = o.filter(x => normStatus(x) === OFILTER);
+    if (OFILTER !== 'all') {
+      o = o.filter(x => {
+        const s = normStatus(x);
+        if (OFILTER === 'return') return s === 'return_requested' || s === 'returned';
+        if (OFILTER === 'pickup') return s === 'label_generated' || s === 'processing';
+        return s === OFILTER;
+      });
+    }
     return o.filter(matchSearch);
   }
   function updateSelAll() {
@@ -1279,11 +1286,13 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       b.push('<span style="font-size:11.5px;color:#888;font-weight:600;padding:7px 12px;background:#f1f3f6;border-radius:6px;">⏳ Admin RTD wait</span>');
     } else if (s === 'admin_approved') {
       b.push('<button class="tg-order-btn label" onclick="tgGenerateLabel(\''+o.id+'\')">📄 Generate Label</button>');
-    } else if (s === 'label_generated') {
-      b.push('<button class="tg-order-btn primary" onclick="tgDownloadLabel(\''+o.id+'\')">🖨 Print</button>');
-    } else if (s === 'processing') {
-      b.push('<span style="font-size:11.5px;color:#e65100;font-weight:700;padding:7px 12px;background:#fff3e0;border-radius:6px;">📦 Processing</span>');
-      b.push('<button class="tg-order-btn outline" onclick="tgDownloadLabel(\''+o.id+'\')">🖨 Download Label</button>');
+    } else if (s === 'label_generated' || s === 'processing') {
+      const isPicked = s === 'processing';
+      const badgeTxt = isPicked ? '📦 Waiting for Pickup' : '📦 Pickup Ready';
+      const badgeBg  = isPicked ? '#fff3e0' : '#fef3c7';
+      const badgeClr = isPicked ? '#e65100' : '#92400e';
+      b.push('<button class="tg-order-btn primary" onclick="tgDownloadLabel(\''+o.id+'\')">🖨 Print Label</button>');
+      b.push('<span style="font-size:11.5px;color:'+badgeClr+';font-weight:700;padding:7px 12px;background:'+badgeBg+';border-radius:6px;">'+badgeTxt+'</span>');
     } else if (s === 'dispatched') {
       b.push('<span style="font-size:11.5px;color:#3949ab;font-weight:700;padding:7px 12px;background:#e8eaf6;border-radius:6px;">🚚 In Transit</span>');
       b.push('<button class="tg-order-btn outline" onclick="tgDownloadLabel(\''+o.id+'\')">🖨 Label</button>');
@@ -1505,7 +1514,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   }
   function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
 
-  /* ⭐ renderStats — Dispatched fix */
+  /* ⭐ renderStats — Pickup + Return chips */
   function renderStats() {
     const c = { pending: 0, accepted: 0, ready: 0, label: 0, processing: 0, dispatched: 0, delivered: 0, returns: 0, low: 0, pp: 0 };
     ORDERS.forEach(o => {
@@ -1534,11 +1543,11 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     setText('tg-oc-pending', c.pending);
     setText('tg-oc-accepted', c.accepted);
     setText('tg-oc-ready', c.ready);
-    setText('tg-oc-label', c.label);
-    setText('tg-oc-processing', c.processing);
+    setText('tg-oc-pickup', c.label + c.processing);
     setText('tg-oc-dispatched', c.dispatched);
     setText('tg-oc-delivered', c.delivered);
     setText('tg-oc-cancelled', ORDERS.filter(o => normStatus(o) === 'cancelled').length);
+    setText('tg-oc-return', c.returns);
 
     setText('tg-pc-all', PRODUCTS.length);
     setText('tg-pc-pending', PRODUCTS.filter(p => p.approved === false && p.rejectionStatus !== 'rejected').length);
@@ -2188,7 +2197,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   window.tgGenerateLabel = async function(id) {
     try {
       await db.collection('orders').doc(id).update({ status: 'label_generated', labelGeneratedAt: FV.serverTimestamp(), labelGeneratedBy: USER.uid, labelFee: LABEL_CUT, updatedAt: FV.serverTimestamp() });
-      toast('📄 Label Generated', 'success');
+      toast('📦 Pickup Ready — Label Generated', 'success');
       PENDING_LABELS = [id];
       setTimeout(() => tgOpenLabelModal(), 400);
     } catch(e) { toast('Failed: ' + e.message, 'error'); }
@@ -2205,7 +2214,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
         ok++;
       } catch(e) {}
     }
-    toast('📄 ' + ok + ' label(s) generated', 'success');
+    toast('📦 ' + ok + ' label(s) ready for pickup', 'success');
     SELECTED.clear();
     setTimeout(() => { PENDING_LABELS = eligible.map(o => o.id); tgOpenLabelModal(); }, 500);
   };
@@ -2220,7 +2229,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     const orders = ids.map(id => ORDERS.find(o => o.id === id)).filter(Boolean);
     const willChangeStatus = orders.some(o => normStatus(o) === 'label_generated');
     const printBtn = document.getElementById('tg-label-print-btn');
-    if (printBtn) printBtn.textContent = willChangeStatus ? '🖨 Print → Processing' : '🖨 Print Label';
+    if (printBtn) printBtn.textContent = willChangeStatus ? '🖨 Print → Pickup' : '🖨 Print Label';
     openModal('tg-label-modal');
   };
   window.tgSelectFormat = function(f, el) {
@@ -2355,11 +2364,11 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
         } catch(e) {}
       }
     }
-    if (moved > 0) toast('📦 ' + moved + ' → Processing', 'success');
+    if (moved > 0) toast('📦 ' + moved + ' order(s) → Waiting for Pickup', 'success');
     PENDING_LABELS = []; SELECTED.clear(); updateBulk();
   };
 
-  /* ⭐ tgOpenOrderDetail — Ship To section REMOVED (customer phone/address privacy) */
+  /* ⭐ tgOpenOrderDetail — Timeline labels updated for Pickup */
   window.tgOpenOrderDetail = function(id) {
     const o = ORDERS.find(x => x.id === id); if (!o) return;
     const mi = myItems(o); const s = normStatus(o);
@@ -2367,8 +2376,8 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     tl.push({ t: 'Order Placed', time: o.createdAt });
     if (o.sellerAcceptedAt) tl.push({ t: 'Seller Accepted', time: o.sellerAcceptedAt });
     if (o.adminApprovedAt || o.rtdAt) tl.push({ t: 'Admin RTD', time: o.adminApprovedAt || o.rtdAt });
-    if (o.labelGeneratedAt) tl.push({ t: 'Label Generated', time: o.labelGeneratedAt });
-    if (o.processingAt) tl.push({ t: 'Processing', time: o.processingAt });
+    if (o.labelGeneratedAt) tl.push({ t: '📦 Pickup Ready (Label Generated)', time: o.labelGeneratedAt });
+    if (o.processingAt) tl.push({ t: '📦 Waiting for Pickup', time: o.processingAt });
     if (o.dispatchedAt) tl.push({ t: 'Dispatched', time: o.dispatchedAt });
     if (o.deliveredAt) tl.push({ t: 'Delivered', time: o.deliveredAt });
     if (o.cancelledAt) tl.push({ t: 'Cancelled', time: o.cancelledAt });
