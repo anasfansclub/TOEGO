@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com">
 <link rel="preconnect" href="https://checkout.razorpay.com">
-<link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
 <link rel="dns-prefetch" href="https://www.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
@@ -326,7 +325,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           <div class="tg-pin-sub">Enter delivery pincode to check availability</div>
         </div>
       </div>
-
       <div id="tg-loading">
         <div class="tg-item-skel">
           <div class="tg-skel" style="width:20px;height:20px;"></div>
@@ -338,15 +336,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           </div>
         </div>
       </div>
-
       <div class="tg-selectall" id="tg-selectall" style="display:none;">
         <input type="checkbox" class="tg-checkbox" id="tg-select-all">
         <label class="tg-selectall-label" for="tg-select-all" id="tg-selectall-label">Select All</label>
         <button class="tg-selectall-remove" id="tg-remove-selected" onclick="tgRemoveSelected()">Remove</button>
       </div>
-
       <div class="tg-items" id="tg-items" style="display:none;"></div>
-
       <div class="tg-empty-wrap" id="tg-empty" style="display:none;">
         <div class="tg-empty-img">🛒</div>
         <h2 class="tg-empty-title">Your cart is empty!</h2>
@@ -365,7 +360,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         </div>
       </div>
     </div>
-
     <aside class="tg-right" id="tg-right" style="display:none;">
       <div class="tg-price-card">
         <div class="tg-price-head">Price Details</div>
@@ -378,38 +372,23 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           <hr class="tg-price-divider">
           <div class="tg-price-total"><span class="label">Total Amount</span><span id="tg-price-final">₹0</span></div>
           <div class="tg-price-tags" id="tg-price-tags"></div>
-          <div class="tg-price-save" id="tg-price-save-box" style="display:none;">
-            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
-            <span>You will save <b id="tg-price-save-amt">₹0</b> on this order</span>
-          </div>
+          <div class="tg-price-save" id="tg-price-save-box" style="display:none;"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>You will save <b id="tg-price-save-amt">₹0</b> on this order</span></div>
         </div>
         <button class="tg-place-order" id="tg-place-order" onclick="tgPlaceOrder()">Place Order</button>
       </div>
-
       <div class="tg-coupon" id="tg-coupon-card" onclick="tgOpenCoupons()">
         <div class="tg-coupon-icon"><svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
-        <div class="tg-coupon-body">
-          <div class="tg-coupon-label" id="tg-coupon-label">Apply Coupon</div>
-          <div class="tg-coupon-sub" id="tg-coupon-sub">Save extra on your order</div>
-        </div>
+        <div class="tg-coupon-body"><div class="tg-coupon-label" id="tg-coupon-label">Apply Coupon</div><div class="tg-coupon-sub" id="tg-coupon-sub">Save extra on your order</div></div>
         <svg style="width:16px;height:16px;stroke:#999;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
       </div>
-
-      <div class="tg-trust">
-        <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-        <div>Safe and secure payments via Razorpay. Easy returns. <b>100% Authentic.</b></div>
-      </div>
+      <div class="tg-trust"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg><div>Safe and secure payments via Razorpay. Easy returns. <b>100% Authentic.</b></div></div>
     </aside>
   </div>
 </div>
 
 <div class="tg-mobile-tags" id="tg-mobile-tags"></div>
-
 <div class="tg-mobile-order" id="tg-mobile-order">
-  <div class="tg-mobile-order-price">
-    <div class="tg-mobile-order-total" id="tg-m-total">₹0</div>
-    <div class="tg-mobile-order-save" id="tg-m-save"></div>
-  </div>
+  <div class="tg-mobile-order-price"><div class="tg-mobile-order-total" id="tg-m-total">₹0</div><div class="tg-mobile-order-save" id="tg-m-save"></div></div>
   <button class="tg-mobile-order-btn" id="tg-m-btn" onclick="tgPlaceOrder()">Place Order</button>
 </div>
 
@@ -423,39 +402,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
 <div class="tg-modal" id="tg-pin-modal">
   <div class="tg-modal-card">
-    <div class="tg-modal-head">
-      <div class="tg-modal-title">Delivery Pincode</div>
-      <button class="tg-modal-close" onclick="tgClosePinModal()">✕</button>
-    </div>
-    <div class="tg-modal-field">
-      <label>Enter 6-digit Pincode *</label>
-      <input type="tel" id="tg-pin-input" placeholder="e.g. 208001" maxlength="6" inputmode="numeric" autocomplete="postal-code">
-    </div>
-    <p style="font-size:12.5px;color:#666;margin:8px 0 16px;line-height:1.5;">
-      Kanpur pincodes (208xxx, 209xxx) get <b style="color:#fb641b;">Same Day Delivery</b>. All other pincodes get delivery in <b>3-6 days</b>.
-    </p>
+    <div class="tg-modal-head"><div class="tg-modal-title">Delivery Pincode</div><button class="tg-modal-close" onclick="tgClosePinModal()">✕</button></div>
+    <div class="tg-modal-field"><label>Enter 6-digit Pincode *</label><input type="tel" id="tg-pin-input" placeholder="e.g. 208001" maxlength="6" inputmode="numeric" autocomplete="postal-code"></div>
+    <p style="font-size:12.5px;color:#666;margin:8px 0 16px;line-height:1.5;">Kanpur pincodes (208xxx, 209xxx) get <b style="color:#fb641b;">Same Day Delivery</b>. All other pincodes get delivery in <b>3-6 days</b>.</p>
     <button class="tg-modal-save" onclick="tgSavePinFromModal()">Check Delivery</button>
   </div>
 </div>
 
 <div class="tg-modal" id="tg-addr-list-modal">
   <div class="tg-modal-card">
-    <div class="tg-modal-head">
-      <div class="tg-modal-title">Select Delivery Address</div>
-      <button class="tg-modal-close" onclick="tgCloseAddrList()">✕</button>
-    </div>
+    <div class="tg-modal-head"><div class="tg-modal-title">Select Delivery Address</div><button class="tg-modal-close" onclick="tgCloseAddrList()">✕</button></div>
     <div id="tg-addr-list"></div>
   </div>
 </div>
 
 <div class="tg-modal" id="tg-addr-modal">
   <div class="tg-modal-card">
-    <div class="tg-modal-head">
-      <div class="tg-modal-title">Delivery Address</div>
-      <button class="tg-modal-close" onclick="tgCloseAddr()">✕</button>
-    </div>
-    <div class="tg-modal-field">
-      <label>Address Type *</label>
+    <div class="tg-modal-head"><div class="tg-modal-title">Delivery Address</div><button class="tg-modal-close" onclick="tgCloseAddr()">✕</button></div>
+    <div class="tg-modal-field"><label>Address Type *</label>
       <div class="tg-addr-types" id="tg-addr-types">
         <button type="button" class="tg-addr-type active" data-type="home" onclick="tgPickAddrType('home',this)">🏠 Home</button>
         <button type="button" class="tg-addr-type" data-type="work" onclick="tgPickAddrType('work',this)">🏢 Work</button>
@@ -481,20 +445,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div class="tg-modal-field"><label>State *</label><input type="text" id="tg-addr-state" placeholder="State" maxlength="40" autocomplete="address-level1"></div>
     </div>
     <div class="tg-modal-field"><label>Email (optional)</label><input type="email" id="tg-addr-email" placeholder="you@example.com" maxlength="80" autocomplete="email"></div>
-    <label class="tg-addr-default-row">
-      <input type="checkbox" id="tg-addr-default">
-      <span>Set as default address</span>
-    </label>
+    <label class="tg-addr-default-row"><input type="checkbox" id="tg-addr-default"><span>Set as default address</span></label>
     <button class="tg-modal-save" id="tg-addr-save" onclick="tgSaveAddr()"><span id="tg-addr-save-text">Save & Continue</span></button>
   </div>
 </div>
 
 <div class="tg-modal" id="tg-pay-modal">
   <div class="tg-modal-card">
-    <div class="tg-modal-head">
-      <div class="tg-modal-title">Choose Payment Method</div>
-      <button class="tg-modal-close" onclick="tgClosePay()">✕</button>
-    </div>
+    <div class="tg-modal-head"><div class="tg-modal-title">Choose Payment Method</div><button class="tg-modal-close" onclick="tgClosePay()">✕</button></div>
     <div style="background:#f8f9fb;border-radius:10px;padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
       <span style="font-size:13px;color:#666;font-weight:600;">Amount to Pay</span>
       <span style="font-size:20px;font-weight:800;color:#212121;" id="tg-pay-amount">₹0</span>
@@ -502,18 +460,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     <div class="tg-pay-list" id="tg-pay-list">
       <div class="tg-pay-opt" data-method="razorpay" onclick="tgPickPay('razorpay', this)">
         <div class="tg-pay-opt-icon rzp">R</div>
-        <div class="tg-pay-opt-body">
-          <div class="tg-pay-opt-title">Razorpay (Online)</div>
-          <div class="tg-pay-opt-desc">UPI, Cards, Netbanking, Wallets</div>
-        </div>
+        <div class="tg-pay-opt-body"><div class="tg-pay-opt-title">Razorpay (Online)</div><div class="tg-pay-opt-desc">UPI, Cards, Netbanking, Wallets</div></div>
         <div class="tg-pay-opt-radio"></div>
       </div>
       <div class="tg-pay-opt" data-method="cod" onclick="tgPickPay('cod', this)" id="tg-cod-opt">
         <div class="tg-pay-opt-icon cod">💵</div>
-        <div class="tg-pay-opt-body">
-          <div class="tg-pay-opt-title">Cash on Delivery</div>
-          <div class="tg-pay-opt-desc">Pay when order arrives</div>
-        </div>
+        <div class="tg-pay-opt-body"><div class="tg-pay-opt-title">Cash on Delivery</div><div class="tg-pay-opt-desc">Pay when order arrives</div></div>
         <div class="tg-pay-opt-radio"></div>
       </div>
     </div>
@@ -523,18 +475,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
 <div class="tg-modal" id="tg-coupon-modal">
   <div class="tg-modal-card">
-    <div class="tg-modal-head">
-      <div class="tg-modal-title">Apply Coupon</div>
-      <button class="tg-modal-close" onclick="tgCloseCouponModal()">✕</button>
-    </div>
-    <div class="tg-coupon-input-wrap">
-      <input type="text" id="tg-coupon-input" placeholder="ENTER CODE" maxlength="20" autocomplete="off" autocapitalize="characters">
-      <button onclick="tgApplyCouponManual()">Apply</button>
-    </div>
+    <div class="tg-modal-head"><div class="tg-modal-title">Apply Coupon</div><button class="tg-modal-close" onclick="tgCloseCouponModal()">✕</button></div>
+    <div class="tg-coupon-input-wrap"><input type="text" id="tg-coupon-input" placeholder="ENTER CODE" maxlength="20" autocomplete="off" autocapitalize="characters"><button onclick="tgApplyCouponManual()">Apply</button></div>
     <div class="tg-coupon-section-title">Available Coupons</div>
-    <div class="tg-coupon-list" id="tg-coupon-list">
-      <div class="tg-coupon-empty"><div class="tg-coupon-empty-icon">🎟️</div>Loading coupons…</div>
-    </div>
+    <div class="tg-coupon-list" id="tg-coupon-list"><div class="tg-coupon-empty"><div class="tg-coupon-empty-icon">🎟️</div>Loading coupons…</div></div>
   </div>
 </div>
 
@@ -545,10 +489,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   <h2 class="tg-success-title">Order Placed! 🎉</h2>
   <p class="tg-success-desc">Thank you for shopping with TOEGO. Your order has been confirmed and will be delivered soon.</p>
   <div class="tg-success-order" id="tg-success-order">Order ID: —</div>
-  <div class="tg-success-actions">
-    <a href="my-orders.html" class="tg-success-btn primary">Track Order</a>
-    <a href="shop-home.html" class="tg-success-btn ghost">Continue Shopping</a>
-  </div>
+  <div class="tg-success-actions"><a href="my-orders.html" class="tg-success-btn primary">Track Order</a><a href="shop-home.html" class="tg-success-btn ghost">Continue Shopping</a></div>
 </div>
 
 <div class="tg-toasts" id="tg-toasts"></div>
@@ -574,7 +515,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   const auth = firebase.auth();
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
-
   try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
@@ -593,130 +533,61 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   const CART_MIRROR_PREFIX = 'toego_cart_mirror_';
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
+  const LOCAL_ADD_TTL = 30000;
 
   const _memStore = { pin: null, addr: null };
-  function getPin() {
-    if (_memStore.pin !== null) return _memStore.pin;
-    try { return localStorage.getItem(PIN_KEY) || ''; } catch(e) { return ''; }
-  }
-  function setPin(p) {
-    _memStore.pin = p;
-    try { localStorage.setItem(PIN_KEY, p); } catch(e) {}
-  }
-  function getAddr() {
-    if (_memStore.addr) return _memStore.addr;
-    try { return JSON.parse(localStorage.getItem(ADDR_KEY) || '{}'); } catch(e) { return {}; }
-  }
-  function setAddr(a) {
-    _memStore.addr = a;
-    try { localStorage.setItem(ADDR_KEY, JSON.stringify(a)); } catch(e) {}
-  }
+  function getPin() { if (_memStore.pin !== null) return _memStore.pin; try { return localStorage.getItem(PIN_KEY) || ''; } catch(e) { return ''; } }
+  function setPin(p) { _memStore.pin = p; try { localStorage.setItem(PIN_KEY, p); } catch(e) {} }
+  function getAddr() { if (_memStore.addr) return _memStore.addr; try { return JSON.parse(localStorage.getItem(ADDR_KEY) || '{}'); } catch(e) { return {}; } }
+  function setAddr(a) { _memStore.addr = a; try { localStorage.setItem(ADDR_KEY, JSON.stringify(a)); } catch(e) {} }
 
-  let SETTINGS = {
-    razorpayEnabled: true, razorpayKeyId: '', currency: 'INR',
-    gstEnabled: true, gstPercent: 18, gstIncludedInPrice: false,
-    codEnabled: true, freeDeliveryAbove: 0, deliveryCharge: 0
-  };
-
+  let SETTINGS = { razorpayEnabled: true, razorpayKeyId: '', currency: 'INR', gstEnabled: true, gstPercent: 18, gstIncludedInPrice: false, codEnabled: true, freeDeliveryAbove: 0, deliveryCharge: 0 };
   let SELLER_GLOBAL = { commissionPercent: 0 };
 
   const _pCache = new Map();
-  let _pCacheDirty = false;
-  let _pCacheSaveTimer = null;
+  let _pCacheDirty = false, _pCacheSaveTimer = null;
 
   function _pCacheBoot() {
     try {
       const raw = localStorage.getItem(PCACHE_KEY);
       if (!raw) return;
-      const obj = JSON.parse(raw);
-      const now = Date.now();
-      for (const k in obj) {
-        const v = obj[k];
-        if (v && v.ts && (now - v.ts) < PCACHE_TTL) _pCache.set(k, v);
-      }
+      const obj = JSON.parse(raw); const now = Date.now();
+      for (const k in obj) { const v = obj[k]; if (v && v.ts && (now - v.ts) < PCACHE_TTL) _pCache.set(k, v); }
     } catch(e) {}
   }
-  function _pCacheFlush() {
-    if (!_pCacheDirty) return;
-    try {
-      const obj = {};
-      for (const [k, v] of _pCache) obj[k] = v;
-      localStorage.setItem(PCACHE_KEY, JSON.stringify(obj));
-      _pCacheDirty = false;
-    } catch(e) {}
-  }
-  function _pCacheScheduleFlush() {
-    if (_pCacheSaveTimer) return;
-    _pCacheSaveTimer = setTimeout(() => { _pCacheSaveTimer = null; _pCacheFlush(); }, 1500);
-  }
-  function _pGet(id) {
-    if (!id) return undefined;
-    const v = _pCache.get(id);
-    if (!v) return undefined;
-    if ((Date.now() - v.ts) > PCACHE_TTL) { _pCache.delete(id); return undefined; }
-    return v.data;
-  }
-  function _pSet(id, data) {
-    if (!id) return;
-    _pCache.set(id, { data: data || null, ts: Date.now() });
-    _pCacheDirty = true;
-    _pCacheScheduleFlush();
-  }
+  function _pCacheFlush() { if (!_pCacheDirty) return; try { const obj = {}; for (const [k, v] of _pCache) obj[k] = v; localStorage.setItem(PCACHE_KEY, JSON.stringify(obj)); _pCacheDirty = false; } catch(e) {} }
+  function _pCacheScheduleFlush() { if (_pCacheSaveTimer) return; _pCacheSaveTimer = setTimeout(() => { _pCacheSaveTimer = null; _pCacheFlush(); }, 1500); }
+  function _pGet(id) { if (!id) return undefined; const v = _pCache.get(id); if (!v) return undefined; if ((Date.now() - v.ts) > PCACHE_TTL) { _pCache.delete(id); return undefined; } return v.data; }
+  function _pSet(id, data) { if (!id) return; _pCache.set(id, { data: data || null, ts: Date.now() }); _pCacheDirty = true; _pCacheScheduleFlush(); }
   _pCacheBoot();
   window.addEventListener('beforeunload', _pCacheFlush);
 
   async function fetchProductsBatch(ids) {
-    const now = Date.now();
-    const missing = [];
-    for (const id of ids) {
-      const c = _pCache.get(id);
-      if (!c || (now - c.ts) > PCACHE_TTL) missing.push(id);
-    }
+    const now = Date.now(); const missing = [];
+    for (const id of ids) { const c = _pCache.get(id); if (!c || (now - c.ts) > PCACHE_TTL) missing.push(id); }
     if (!missing.length) return;
-    const CHUNK = 30;
-    const chunks = [];
+    const CHUNK = 30; const chunks = [];
     for (let i = 0; i < missing.length; i += CHUNK) chunks.push(missing.slice(i, i + CHUNK));
     await Promise.all(chunks.map(async chunk => {
       try {
-        const snap = await db.collection('products')
-          .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
-          .get();
+        const snap = await db.collection('products').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
         const got = new Set();
         snap.forEach(d => { _pSet(d.id, d.data()); got.add(d.id); });
         chunk.forEach(id => { if (!got.has(id)) _pSet(id, null); });
       } catch(e) {
-        await Promise.all(chunk.map(async id => {
-          try {
-            const d = await db.collection('products').doc(id).get();
-            _pSet(id, d.exists ? d.data() : null);
-          } catch(e2) { _pSet(id, null); }
-        }));
+        await Promise.all(chunk.map(async id => { try { const d = await db.collection('products').doc(id).get(); _pSet(id, d.exists ? d.data() : null); } catch(e2) { _pSet(id, null); } }));
       }
     }));
   }
 
-  function _pickNum(obj, keys) {
-    if (!obj) return null;
-    for (const k of keys) {
-      const v = obj[k];
-      if (v != null && !isNaN(Number(v)) && Number(v) > 0) return Number(v);
-    }
-    return null;
-  }
-  function _pickCount(obj, keys) {
-    if (!obj) return null;
-    for (const k of keys) {
-      const v = obj[k];
-      if (v != null && !isNaN(Number(v))) return Number(v);
-    }
-    return null;
-  }
+  function _pickNum(obj, keys) { if (!obj) return null; for (const k of keys) { const v = obj[k]; if (v != null && !isNaN(Number(v)) && Number(v) > 0) return Number(v); } return null; }
+  function _pickCount(obj, keys) { if (!obj) return null; for (const k of keys) { const v = obj[k]; if (v != null && !isNaN(Number(v))) return Number(v); } return null; }
 
   function enrichFromCacheSync(items) {
     return items.map(it => {
       const p = _pGet(it.productId);
       if (!p) return it;
-      const productGst = _pickNum(p, ['gst', 'gstPercent', 'gstRate', 'tax']) || 0;
+      const productGst = _pickNum(p, ['gst','gstPercent','gstRate','tax']) || 0;
       return {
         ...it,
         sellerId: it.sellerId || p.sellerId || p.seller_id || p.sid || p.sellerUid || '',
@@ -728,21 +599,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       };
     });
   }
-
   async function enrichCartItemsFast(items) {
     if (!items || !items.length) return items;
     const needFetch = [];
-    for (const it of items) {
-      if (!it.productId) continue;
-      const cached = _pGet(it.productId);
-      if (cached === undefined) needFetch.push(it.productId);
-    }
-    if (needFetch.length) {
-      try { await fetchProductsBatch([...new Set(needFetch)]); } catch(e) {}
-    }
+    for (const it of items) { if (!it.productId) continue; const cached = _pGet(it.productId); if (cached === undefined) needFetch.push(it.productId); }
+    if (needFetch.length) { try { await fetchProductsBatch([...new Set(needFetch)]); } catch(e) {} }
     return enrichFromCacheSync(items);
   }
-
   function _cartChanged(a, b) {
     if (a.length !== b.length) return true;
     for (let i = 0; i < a.length; i++) {
@@ -754,18 +617,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
     return false;
   }
-
   function dedupeCart(arr) {
     if (!Array.isArray(arr)) return [];
     const map = new Map();
     for (const it of arr) {
       if (!it || !it.id) continue;
-      if (map.has(it.id)) {
-        const existing = map.get(it.id);
-        existing.qty = Math.max(Number(existing.qty || 1), Number(it.qty || 1));
-      } else {
-        map.set(it.id, { ...it });
-      }
+      if (map.has(it.id)) { const existing = map.get(it.id); existing.qty = Math.max(Number(existing.qty || 1), Number(it.qty || 1)); }
+      else map.set(it.id, { ...it });
     }
     return [...map.values()];
   }
@@ -774,38 +632,34 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   function _saveMirror(uid, items) {
     if (!uid) return;
     try {
-      const slim = items.map(({ id, productId, name, image, price, mrp, qty, size, color, sellerId, sellerName, rating, ratingCount, gst, gstIncluded }) =>
-        ({ id, productId, name, image, price, mrp, qty, size, color, sellerId, sellerName, rating, ratingCount, gst, gstIncluded }));
+      const slim = items.map(({ id, productId, name, image, price, mrp, qty, size, color, sellerId, sellerName, rating, ratingCount, gst, gstIncluded }) => ({ id, productId, name, image, price, mrp, qty, size, color, sellerId, sellerName, rating, ratingCount, gst, gstIncluded }));
       localStorage.setItem(_mirrorKey(uid), JSON.stringify(slim));
     } catch(e) {}
   }
-  function _loadMirror(uid) {
-    if (!uid) return [];
-    try { return JSON.parse(localStorage.getItem(_mirrorKey(uid)) || '[]'); } catch(e) { return []; }
+  function _loadMirror(uid) { if (!uid) return []; try { return JSON.parse(localStorage.getItem(_mirrorKey(uid)) || '[]'); } catch(e) { return []; } }
+
+  /* ⭐⭐⭐ NEW: Track locally-added items so snapshot doesn't wipe them ⭐⭐⭐ */
+  const _locallyAdded = new Map();   // id -> timestamp
+  function _markLocallyAdded(id) {
+    if (!id) return;
+    _locallyAdded.set(id, Date.now());
+    setTimeout(() => {
+      const ts = _locallyAdded.get(id);
+      if (ts && (Date.now() - ts) >= LOCAL_ADD_TTL) _locallyAdded.delete(id);
+    }, LOCAL_ADD_TTL + 1000);
   }
+  function _clearLocalAdd(id) { _locallyAdded.delete(id); }
 
   async function loadPaymentSettings() {
     try {
       const snap = await db.collection('siteSettings').doc('payment').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('payment').get());
       if (snap && snap.exists) {
         const d = snap.data();
-        SETTINGS = {
-          razorpayEnabled: d.razorpayEnabled !== false,
-          razorpayKeyId: d.razorpayKeyId || '',
-          currency: d.currency || 'INR',
-          gstEnabled: d.gstEnabled !== false,
-          gstPercent: Number(d.gstPercent || 18),
-          gstIncludedInPrice: d.gstIncludedInPrice === true,
-          codEnabled: d.codEnabled !== false,
-          freeDeliveryAbove: 0,
-          deliveryCharge: 0
-        };
+        SETTINGS = { razorpayEnabled: d.razorpayEnabled !== false, razorpayKeyId: d.razorpayKeyId || '', currency: d.currency || 'INR', gstEnabled: d.gstEnabled !== false, gstPercent: Number(d.gstPercent || 18), gstIncludedInPrice: d.gstIncludedInPrice === true, codEnabled: d.codEnabled !== false, freeDeliveryAbove: 0, deliveryCharge: 0 };
       }
     } catch(e) {}
-    applyPaymentUI();
-    updateTotals();
+    applyPaymentUI(); updateTotals();
   }
-
   function watchPaymentSettings() {
     try {
       db.collection('siteSettings').doc('payment').onSnapshot(snap => {
@@ -818,71 +672,33 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         SETTINGS.gstPercent = Number(d.gstPercent || 18);
         SETTINGS.gstIncludedInPrice = d.gstIncludedInPrice === true;
         SETTINGS.codEnabled = d.codEnabled !== false;
-        applyPaymentUI();
-        updateTotals();
+        applyPaymentUI(); updateTotals();
       }, err => console.warn('[cart payment listener]', err && err.message));
     } catch(e) {}
   }
-
   function applyPaymentUI() {
-    const gstRow = document.getElementById('tg-price-gst-row');
-    if (gstRow) gstRow.style.display = SETTINGS.gstEnabled ? 'flex' : 'none';
-    const codOpt = document.getElementById('tg-cod-opt');
-    if (codOpt) codOpt.style.display = SETTINGS.codEnabled ? 'flex' : 'none';
+    const gstRow = document.getElementById('tg-price-gst-row'); if (gstRow) gstRow.style.display = SETTINGS.gstEnabled ? 'flex' : 'none';
+    const codOpt = document.getElementById('tg-cod-opt'); if (codOpt) codOpt.style.display = SETTINGS.codEnabled ? 'flex' : 'none';
   }
-
   async function loadSellerGlobal() {
     try {
-      const snap = await db.collection('siteSettings').doc('seller')
-        .get({ source: 'cache' })
-        .catch(() => db.collection('siteSettings').doc('seller').get());
-      if (snap && snap.exists) {
-        const d = snap.data() || {};
-        SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0);
-      }
-    } catch (e) {
-      console.warn('[Cart] seller settings load failed:', e && e.message);
-    }
-    try { updateTotals(); } catch (e) {}
-  }
-
-  function watchSellerGlobal() {
-    try {
-      db.collection('siteSettings').doc('seller').onSnapshot(snap => {
-        if (snap.exists) {
-          const d = snap.data() || {};
-          SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0);
-          try { updateTotals(); } catch(e) {}
-        }
-      }, () => {});
+      const snap = await db.collection('siteSettings').doc('seller').get({ source: 'cache' }).catch(() => db.collection('siteSettings').doc('seller').get());
+      if (snap && snap.exists) { const d = snap.data() || {}; SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0); }
     } catch(e) {}
+    try { updateTotals(); } catch(e) {}
+  }
+  function watchSellerGlobal() {
+    try { db.collection('siteSettings').doc('seller').onSnapshot(snap => { if (snap.exists) { const d = snap.data() || {}; SELLER_GLOBAL.commissionPercent = Number(d.commissionPercent || 0); try { updateTotals(); } catch(e) {} } }, () => {}); } catch(e) {}
   }
 
   const themeMeta = document.getElementById('tg-theme-meta');
-  function applyTheme(primary) {
-    primary = primary || '#2874f0';
-    if (themeMeta) themeMeta.setAttribute('content', primary);
-    document.documentElement.style.setProperty('--tg-primary', primary);
-  }
-  (function bootCachedColor() {
-    try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {}
-  })();
+  function applyTheme(primary) { primary = primary || '#2874f0'; if (themeMeta) themeMeta.setAttribute('content', primary); document.documentElement.style.setProperty('--tg-primary', primary); }
+  (function bootCachedColor() { try { const c = localStorage.getItem('toego_theme_colors'); if (c) applyTheme(JSON.parse(c).primary); } catch(e) {} })();
 
-  function toast(msg, type) {
-    type = type || 'info';
-    const w = document.getElementById('tg-toasts');
-    if (!w) return;
-    const el = document.createElement('div');
-    el.className = 'tg-toast ' + type;
-    el.textContent = msg;
-    w.appendChild(el);
-    setTimeout(() => el.remove(), 3200);
-  }
+  function toast(msg, type) { type = type || 'info'; const w = document.getElementById('tg-toasts'); if (!w) return; const el = document.createElement('div'); el.className = 'tg-toast ' + type; el.textContent = msg; w.appendChild(el); setTimeout(() => el.remove(), 3200); }
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:2}); }
-  function escapeAttr(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,"\\'");
-  }
+  function escapeAttr(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,"\\'"); }
 
   let cartItems = [];
   let selectedIds = new Set();
@@ -907,18 +723,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   let usedCouponCodes = new Set();
 
   function _itemStructuralSig(item) {
-    return [
-      item.name || '', item.sellerName || '', item.rating || '', item.ratingCount || '',
-      item.gst || '', item.gstIncluded ? 1 : 0, item.price || 0, item.mrp || 0,
-      item.size || '', item.color || '', 'pin:' + (getPin() || '')
-    ].join('|');
+    return [item.name||'', item.sellerName||'', item.rating||'', item.ratingCount||'', item.gst||'', item.gstIncluded?1:0, item.price||0, item.mrp||0, item.size||'', item.color||'', 'pin:' + (getPin() || '')].join('|');
   }
-
   function _updateQtyInPlace(docId, newQty) {
-    const node = _itemNodeMap.get(docId);
-    if (!node) return;
-    const body = node.querySelector('.tg-item-body');
-    if (!body) return;
+    const node = _itemNodeMap.get(docId); if (!node) return;
+    const body = node.querySelector('.tg-item-body'); if (!body) return;
     const qtyValEl = body.querySelector('.tg-qty-val');
     if (qtyValEl && Number(qtyValEl.textContent) !== newQty) qtyValEl.textContent = newQty;
     const btns = body.querySelectorAll('.tg-qty-btn');
@@ -927,48 +736,27 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (item) {
       const gstEl = body.querySelector('.tg-item-gst');
       if (gstEl) {
-        const gstPct = getItemGstPct(item);
-        const gstIncluded = isGstIncluded(item);
+        const gstPct = getItemGstPct(item), gstIncluded = isGstIncluded(item);
         const price = Number(item.price || 0);
         const gstAmt = gstPct > 0 ? (gstIncluded ? (price * newQty) - ((price * newQty) / (1 + gstPct/100)) : (price * newQty) * gstPct/100) : 0;
         gstEl.innerHTML = `GST <b>${gstPct}%</b> ${gstIncluded ? '· incl.' : '· ' + fmtINR(gstAmt)}`;
       }
     }
   }
-
-  function makeGuestId(i) {
-    const pid = i.productId || i.id || '';
-    return pid + '|' + (i.size || '') + '|' + (i.color || '');
-  }
+  function makeGuestId(i) { const pid = i.productId || i.id || ''; return pid + '|' + (i.size || '') + '|' + (i.color || ''); }
   function getGuestCart() {
-    let raw = [];
-    try { raw = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || '[]'); } catch(e) { raw = []; }
+    let raw = []; try { raw = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || '[]'); } catch(e) { raw = []; }
     const mapped = raw.map(i => ({ ...i, id: makeGuestId(i), productId: i.productId || i.id }));
     return dedupeCart(mapped);
   }
-  function setGuestCart(arr) {
-    const clean = dedupeCart(arr).map(i => { const { id, ...rest } = i; return rest; });
-    try { localStorage.setItem(GUEST_CART_KEY, JSON.stringify(clean)); } catch(e) {}
-  }
-
-  function loadSelected() {
-    try { selectedIds = new Set(JSON.parse(localStorage.getItem(SELECTED_KEY) || '[]')); }
-    catch(e) { selectedIds = new Set(); }
-  }
-  function saveSelected() {
-    try { localStorage.setItem(SELECTED_KEY, JSON.stringify([...selectedIds])); } catch(e) {}
-  }
-
+  function setGuestCart(arr) { const clean = dedupeCart(arr).map(i => { const { id, ...rest } = i; return rest; }); try { localStorage.setItem(GUEST_CART_KEY, JSON.stringify(clean)); } catch(e) {} }
+  function loadSelected() { try { selectedIds = new Set(JSON.parse(localStorage.getItem(SELECTED_KEY) || '[]')); } catch(e) { selectedIds = new Set(); } }
+  function saveSelected() { try { localStorage.setItem(SELECTED_KEY, JSON.stringify([...selectedIds])); } catch(e) {} }
   function loadPin() {
-    const pin = getPin();
-    const city = document.getElementById('tg-pin-city');
+    const pin = getPin(); const city = document.getElementById('tg-pin-city');
     if (pin && city) city.textContent = pin;
-    if (!pin) {
-      const a = getAddr();
-      if (a.city && city) city.textContent = a.city + (a.pin ? ' - ' + a.pin : '');
-    }
+    if (!pin) { const a = getAddr(); if (a.city && city) city.textContent = a.city + (a.pin ? ' - ' + a.pin : ''); }
   }
-
   function isKanpurPincode(pin) {
     if (!pin) return false;
     const p = String(pin).trim().replace(/\s+/g, '');
@@ -978,28 +766,20 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (p.startsWith('208') || p.startsWith('209')) return true;
     return false;
   }
-
   function getDeliveryInfo() {
-    let pin = String(getPin() || '').trim();
-    const a = getAddr();
+    let pin = String(getPin() || '').trim(); const a = getAddr();
     if (!pin && a && a.pin) pin = String(a.pin).trim();
-    if (/^\d{6}$/.test(pin)) {
-      if (isKanpurPincode(pin)) return { text: 'Same Day Delivery', cls: 'same-day' };
-      return { text: 'Delivery in 3-6 days', cls: '' };
-    }
+    if (/^\d{6}$/.test(pin)) { if (isKanpurPincode(pin)) return { text: 'Same Day Delivery', cls: 'same-day' }; return { text: 'Delivery in 3-6 days', cls: '' }; }
     const city = String((a && a.city) || '').toLowerCase();
     if (city.includes('kanpur')) return { text: 'Same Day Delivery', cls: 'same-day' };
     return { text: 'Delivery in 3-6 days', cls: '' };
   }
-
   function refreshDeliveryTagsInPlace() {
     if (!_itemNodeMap || !_itemNodeMap.size) return;
     const dInfo = getDeliveryInfo();
     cartItems.forEach(it => {
-      const node = _itemNodeMap.get(it.id);
-      if (!node) return;
-      const el = node.querySelector('.tg-item-delivery');
-      if (!el) return;
+      const node = _itemNodeMap.get(it.id); if (!node) return;
+      const el = node.querySelector('.tg-item-delivery'); if (!el) return;
       const newCls = 'tg-item-delivery' + (dInfo.cls ? ' ' + dInfo.cls : '');
       if (el.className !== newCls) el.className = newCls;
       if (el.getAttribute('data-delivery-text') !== dInfo.text) {
@@ -1010,8 +790,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
 
   window.tgChangePin = function() {
-    const inp = document.getElementById('tg-pin-input');
-    if (inp) inp.value = getPin() || '';
+    const inp = document.getElementById('tg-pin-input'); if (inp) inp.value = getPin() || '';
     document.getElementById('tg-pin-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
     setTimeout(() => { if (inp) { inp.focus(); inp.select(); } }, 150);
@@ -1022,15 +801,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     refreshDeliveryTagsInPlace();
   };
   window.tgSavePinFromModal = function() {
-    const inp = document.getElementById('tg-pin-input');
-    if (!inp) return;
+    const inp = document.getElementById('tg-pin-input'); if (!inp) return;
     const clean = (inp.value || '').trim().replace(/\s+/g, '');
     if (!/^\d{6}$/.test(clean)) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
     setPin(clean);
     const addr = getAddr();
     if (addr && Object.keys(addr).length) { addr.pin = clean; setAddr(addr); }
-    const cityEl = document.getElementById('tg-pin-city');
-    if (cityEl) cityEl.textContent = clean;
+    const cityEl = document.getElementById('tg-pin-city'); if (cityEl) cityEl.textContent = clean;
     const isKan = isKanpurPincode(clean);
     toast(isKan ? '✓ Same Day Delivery available for ' + clean : '✓ Delivery in 3-6 days for ' + clean, 'success');
     refreshDeliveryTagsInPlace();
@@ -1045,12 +822,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   function getItemCount() { return cartItems.reduce((s, i) => s + Number(i.qty || 1), 0); }
   function updateHeaderBadge() {
     const n = getItemCount();
-    const el1 = document.getElementById('tg-bnav-badge');
-    if (el1) { el1.textContent = n; el1.style.display = n > 0 ? 'flex' : 'none'; }
-    const c = document.getElementById('tg-hd-count');
-    if (c) c.textContent = n > 0 ? '(' + n + ')' : '';
+    const el1 = document.getElementById('tg-bnav-badge'); if (el1) { el1.textContent = n; el1.style.display = n > 0 ? 'flex' : 'none'; }
+    const c = document.getElementById('tg-hd-count'); if (c) c.textContent = n > 0 ? '(' + n + ')' : '';
   }
-
   function getItemGstPct(item) {
     if (!SETTINGS.gstEnabled) return 0;
     if (item && item.gst != null && !isNaN(Number(item.gst)) && Number(item.gst) >= 0) return Number(item.gst);
@@ -1064,6 +838,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     return SETTINGS.gstIncludedInPrice === true;
   }
 
+  /* ⭐⭐⭐ FIX #2 — DOM SYNC: remove duplicate/orphan nodes from previous renders ⭐⭐⭐ */
+  function _syncDomWithMap(itemsWrap) {
+    if (!itemsWrap) return;
+    const seenIds = new Set();
+    Array.from(itemsWrap.children).forEach(child => {
+      if (!child.classList || !child.classList.contains('tg-item')) return;
+      const id = child.getAttribute('data-id');
+      if (!id) { child.remove(); return; }
+      const trackedNode = _itemNodeMap.get(id);
+      if (trackedNode === child) {
+        if (seenIds.has(id)) child.remove();   // duplicate of tracked → remove
+        else seenIds.add(id);
+      } else {
+        child.remove();   // orphan or stale → remove
+      }
+    });
+  }
+
   function renderCart(force) {
     const loading = document.getElementById('tg-loading');
     const itemsWrap = document.getElementById('tg-items');
@@ -1071,6 +863,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const selectBar = document.getElementById('tg-selectall');
     const rightCol = document.getElementById('tg-right');
     const mobileBar = document.getElementById('tg-mobile-order');
+
+    /* ⭐ FIX #2: Sync DOM with _itemNodeMap first */
+    _syncDomWithMap(itemsWrap);
 
     if (Array.isArray(cartItems) && cartItems.length > 1) {
       const deduped = dedupeCart(cartItems);
@@ -1094,7 +889,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       return;
     }
 
-    /* ⭐ FIX #2: Buy-now mode → sirf buy-now item select, baaki explicitly deselect */
+    /* Buy-now mode → sirf buy-now item select, baaki explicit deselect */
     cartItems.forEach(it => {
       if (selectedIds.has(it.id)) return;
       if (selectedIds.has(NS_MARK + it.id)) return;
@@ -1102,9 +897,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         const buyNowStr = String(_activeBuyNowId);
         const isVariant = buyNowStr.indexOf('|') !== -1;
         const buyNowPid = isVariant ? buyNowStr.split('|')[0] : buyNowStr;
-        const isBuyNowItem = isVariant
-          ? (it.id === buyNowStr || (it.productId === buyNowPid && it.id === buyNowStr))
-          : (it.productId === buyNowPid || it.id === buyNowStr);
+        const isBuyNowItem = isVariant ? (it.id === buyNowStr) : (it.productId === buyNowPid || it.id === buyNowStr);
         if (isBuyNowItem) selectedIds.add(it.id);
         else selectedIds.add(NS_MARK + it.id);
       } else {
@@ -1112,14 +905,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       }
     });
 
-    const itemSig = cartItems.map(i =>
-      i.id + ':' + i.qty + ':' + (i.rating || '') + ':' + (i.ratingCount || '') + ':' + (i.sellerName || '') + ':' + (i.gst || '')
-    ).join('|');
+    const itemSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating || '') + ':' + (i.ratingCount || '') + ':' + (i.sellerName || '') + ':' + (i.gst || '')).join('|');
     const sig = itemSig + '|sel:' + [...selectedIds].sort().join(',') + '|pin:' + (getPin() || '');
-    if (!force && sig === _lastRenderSig) {
-      updateTotals(); updateHeaderBadge();
-      return;
-    }
+    if (!force && sig === _lastRenderSig) { updateTotals(); updateHeaderBadge(); return; }
 
     if (emptyWrap) emptyWrap.style.display = 'none';
     if (itemsWrap) itemsWrap.style.display = 'flex';
@@ -1133,6 +921,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const toRemove = [...existingIdSet].filter(id => !currentIdSet.has(id));
     const toAdd = currentIds.filter(id => !existingIdSet.has(id));
     const toPatch = currentIds.filter(id => existingIdSet.has(id));
+
     const isEmpty = _itemNodeMap.size === 0;
     const needsFullRebuild = force && isEmpty;
 
@@ -1152,9 +941,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         }
         _itemNodeMap.delete(id);
       });
+
       toAdd.forEach(id => {
         const item = cartItems.find(it => it.id === id);
         if (!item) return;
+        /* ⭐ FIX #3: Remove any existing node with same data-id (fading leftover) */
+        Array.from(itemsWrap.children).forEach(child => {
+          if (child.getAttribute('data-id') === id) child.remove();
+        });
         const temp = document.createElement('div');
         temp.innerHTML = itemHtml(item, false);
         const node = temp.firstElementChild;
@@ -1169,10 +963,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           node.style.transform = 'translateY(0)';
         });
       });
+
       toPatch.forEach(id => {
         const item = cartItems.find(it => it.id === id);
         if (item) patchItemInPlace(item);
       });
+
       const orderedNodes = currentIds.map(id => _itemNodeMap.get(id)).filter(Boolean);
       const currentChildren = Array.from(itemsWrap.children).filter(n => n.classList && n.classList.contains('tg-item'));
       let orderMismatch = false;
@@ -1183,19 +979,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         orderedNodes.forEach(node => { if (node.parentNode === itemsWrap) itemsWrap.appendChild(node); });
       }
     }
+
     _lastRenderSig = sig;
     _lastIdsKey = currentIds.join('§');
-    updateSelectAllState();
-    updateTotals();
-    updateHeaderBadge();
-    saveSelected();
+    updateSelectAllState(); updateTotals(); updateHeaderBadge(); saveSelected();
   }
 
   function patchItemInPlace(item) {
-    const node = _itemNodeMap.get(item.id);
-    if (!node) return;
-    const body = node.querySelector('.tg-item-body');
-    if (!body) return;
+    const node = _itemNodeMap.get(item.id); if (!node) return;
+    const body = node.querySelector('.tg-item-body'); if (!body) return;
     const newStructSig = _itemStructuralSig(item);
     const oldStructSig = node.getAttribute('data-struct-sig') || '';
     if (newStructSig !== oldStructSig) {
@@ -1205,10 +997,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     } else {
       const newQty = Number(item.qty || 1);
       const oldQty = Number(node.getAttribute('data-qty') || 1);
-      if (newQty !== oldQty) {
-        _updateQtyInPlace(item.id, newQty);
-        node.setAttribute('data-qty', String(newQty));
-      }
+      if (newQty !== oldQty) { _updateQtyInPlace(item.id, newQty); node.setAttribute('data-qty', String(newQty)); }
     }
     const cb = node.querySelector('.tg-item-check input');
     if (cb) cb.checked = selectedIds.has(item.id);
@@ -1228,38 +1017,19 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const sizeText = item.size ? 'Size: ' + item.size : '';
     const colorText = item.color ? 'Color: ' + item.color : '';
     const sellerName = item.sellerName || item.seller || '';
-    const gstPct = getItemGstPct(item);
-    const gstIncluded = isGstIncluded(item);
-    const gstAmt = gstPct > 0
-      ? (gstIncluded ? (price * qty) - ((price * qty) / (1 + gstPct/100)) : (price * qty) * gstPct/100)
-      : 0;
+    const gstPct = getItemGstPct(item), gstIncluded = isGstIncluded(item);
+    const gstAmt = gstPct > 0 ? (gstIncluded ? (price * qty) - ((price * qty) / (1 + gstPct/100)) : (price * qty) * gstPct/100) : 0;
     const dInfo = getDeliveryInfo();
-    const ratingHtml = hasRating ? `
-      <div class="tg-item-rating">
-        <span class="tg-item-rating-badge">${esc(rating)} <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-        ${hasCount ? `<span class="tg-item-rating-count">(${esc(ratingCount)})</span>` : ''}
-      </div>` : '';
-    return `
-      <div class="tg-item-title" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'">${esc(name)}</div>
+    const ratingHtml = hasRating ? `<div class="tg-item-rating"><span class="tg-item-rating-badge">${esc(rating)} <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>${hasCount ? `<span class="tg-item-rating-count">(${esc(ratingCount)})</span>` : ''}</div>` : '';
+    return `<div class="tg-item-title" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'">${esc(name)}</div>
       ${sellerName ? `<div class="tg-item-seller">Sold by: <b>${esc(sellerName)}</b></div>` : ''}
       ${(sizeText || colorText) ? `<div class="tg-item-meta">${sizeText ? `<span>${esc(sizeText)}</span>` : ''}${colorText ? `<span>${esc(colorText)}</span>` : ''}</div>` : ''}
       ${ratingHtml}
       <div class="tg-item-price-row"><span class="tg-item-price">${fmtINR(price)}</span>${mrp > price ? `<span class="tg-item-mrp">${fmtINR(mrp)}</span>` : ''}${off > 0 ? `<span class="tg-item-off">${off}% off</span>` : ''}</div>
       ${gstPct > 0 ? `<div class="tg-item-gst">GST <b>${gstPct}%</b> ${gstIncluded ? '· incl.' : '· ' + fmtINR(gstAmt)}</div>` : ''}
-      <div class="tg-item-delivery-row">
-        <div class="tg-item-delivery ${dInfo.cls}" data-delivery-text="${esc(dInfo.text)}">🚚 <b>${esc(dInfo.text)}</b></div>
-        <span class="tg-item-free-badge"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>FREE Delivery</span>
-      </div>
-      <div class="tg-qty">
-        <button class="tg-qty-btn" onclick="tgChangeQty('${escapeAttr(item.id)}', -1)" ${qty<=1?'disabled':''}>−</button>
-        <div class="tg-qty-val">${qty}</div>
-        <button class="tg-qty-btn" onclick="tgChangeQty('${escapeAttr(item.id)}', 1)">+</button>
-      </div>
-      <div class="tg-item-actions">
-        <button class="tg-item-action" onclick="tgMoveToWishlist('${escapeAttr(item.id)}')"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>Save for later</button>
-        <button class="tg-item-action danger" onclick="tgRemoveItem('${escapeAttr(item.id)}')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Remove</button>
-      </div>
-    `;
+      <div class="tg-item-delivery-row"><div class="tg-item-delivery ${dInfo.cls}" data-delivery-text="${esc(dInfo.text)}">🚚 <b>${esc(dInfo.text)}</b></div><span class="tg-item-free-badge"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>FREE Delivery</span></div>
+      <div class="tg-qty"><button class="tg-qty-btn" onclick="tgChangeQty('${escapeAttr(item.id)}', -1)" ${qty<=1?'disabled':''}>−</button><div class="tg-qty-val">${qty}</div><button class="tg-qty-btn" onclick="tgChangeQty('${escapeAttr(item.id)}', 1)">+</button></div>
+      <div class="tg-item-actions"><button class="tg-item-action" onclick="tgMoveToWishlist('${escapeAttr(item.id)}')"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>Save for later</button><button class="tg-item-action danger" onclick="tgRemoveItem('${escapeAttr(item.id)}')"><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Remove</button></div>`;
   }
 
   function itemHtml(item, isFirst) {
@@ -1269,52 +1039,38 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const img = item.image || 'https://via.placeholder.com/200x200/f1f3f6/878787?text=TOEGO';
     const checked = selectedIds.has(docId);
     const imgAttrs = isFirst ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
-    return `
-      <div class="tg-item" data-id="${esc(docId)}" data-qty="${Number(item.qty||1)}" data-struct-sig="${esc(_itemStructuralSig(item))}">
-        <div class="tg-item-check"><input type="checkbox" class="tg-checkbox" ${checked?'checked':''} onchange="tgToggleItem('${escapeAttr(docId)}', this.checked)"></div>
-        <div class="tg-item-img" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'"><img src="${esc(img)}" alt="${esc(name)}" ${imgAttrs} draggable="false" /></div>
-        <div class="tg-item-body">${itemBodyHtml(item)}</div>
-        <button class="tg-item-remove" onclick="tgRemoveItem('${escapeAttr(docId)}')" aria-label="Remove"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-      </div>
-    `;
+    return `<div class="tg-item" data-id="${esc(docId)}" data-qty="${Number(item.qty||1)}" data-struct-sig="${esc(_itemStructuralSig(item))}">
+      <div class="tg-item-check"><input type="checkbox" class="tg-checkbox" ${checked?'checked':''} onchange="tgToggleItem('${escapeAttr(docId)}', this.checked)"></div>
+      <div class="tg-item-img" onclick="location.href='product.html?id=${encodeURIComponent(productId)}'"><img src="${esc(img)}" alt="${esc(name)}" ${imgAttrs} draggable="false" /></div>
+      <div class="tg-item-body">${itemBodyHtml(item)}</div>
+      <button class="tg-item-remove" onclick="tgRemoveItem('${escapeAttr(docId)}')" aria-label="Remove"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>`;
   }
 
   function updateSelectAllState() {
     const all = cartItems.length > 0;
     const allSelected = all && cartItems.every(it => selectedIds.has(it.id));
-    const cb = document.getElementById('tg-select-all');
-    if (cb) cb.checked = allSelected;
+    const cb = document.getElementById('tg-select-all'); if (cb) cb.checked = allSelected;
     const lbl = document.getElementById('tg-selectall-label');
     if (lbl && allSelected) lbl.textContent = 'All items selected';
     else if (lbl) lbl.textContent = 'Select All';
   }
 
   document.getElementById('tg-select-all').addEventListener('change', function() {
-    if (this.checked) {
-      cartItems.forEach(it => { selectedIds.add(it.id); selectedIds.delete(NS_MARK + it.id); });
-    } else {
-      cartItems.forEach(it => { selectedIds.delete(it.id); selectedIds.add(NS_MARK + it.id); });
-    }
-    _itemNodeMap.forEach((node, id) => {
-      const cb = node.querySelector('.tg-item-check input');
-      if (cb) cb.checked = this.checked;
-    });
-    updateSelectAllState();
-    updateTotals();
-    saveSelected();
+    if (this.checked) { cartItems.forEach(it => { selectedIds.add(it.id); selectedIds.delete(NS_MARK + it.id); }); }
+    else { cartItems.forEach(it => { selectedIds.delete(it.id); selectedIds.add(NS_MARK + it.id); }); }
+    _itemNodeMap.forEach((node, id) => { const cb = node.querySelector('.tg-item-check input'); if (cb) cb.checked = this.checked; });
+    updateSelectAllState(); updateTotals(); saveSelected();
   });
 
   window.tgToggleItem = function(docId, checked) {
     if (checked) { selectedIds.add(docId); selectedIds.delete(NS_MARK + docId); }
     else { selectedIds.delete(docId); selectedIds.add(NS_MARK + docId); }
-    updateSelectAllState();
-    updateTotals();
-    saveSelected();
+    updateSelectAllState(); updateTotals(); saveSelected();
   };
 
   function getSelectedItems() { return cartItems.filter(it => selectedIds.has(it.id)); }
   function getCouponDiscountBase(finalTotal) { return Number(finalTotal || 0); }
-
   function calcCouponDiscount(finalTotal) {
     if (!appliedCoupon) return 0;
     const base = getCouponDiscountBase(finalTotal);
@@ -1323,11 +1079,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const type = String(appliedCoupon.discountType || 'flat').toLowerCase();
     const val = Number(appliedCoupon.value || 0);
     let disc = 0;
-    if (type === 'percent') {
-      disc = base * val / 100;
-      const maxD = Number(appliedCoupon.maxDiscount || 0);
-      if (maxD > 0) disc = Math.min(disc, maxD);
-    } else disc = val;
+    if (type === 'percent') { disc = base * val / 100; const maxD = Number(appliedCoupon.maxDiscount || 0); if (maxD > 0) disc = Math.min(disc, maxD); }
+    else disc = val;
     disc = Math.min(disc, base);
     return Math.max(0, Math.round(disc));
   }
@@ -1337,12 +1090,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     let mrpTotal = 0, finalTotal = 0, gstIncludedAmt = 0, gstAddedAmt = 0, qtyCount = 0;
     const gstByRate = {};
     sel.forEach(it => {
-      const q = Number(it.qty || 1);
-      const p = Number(it.price || 0);
+      const q = Number(it.qty || 1); const p = Number(it.price || 0);
       const m = Number(it.mrp || it.compareAtPrice || it.originalPrice || Math.round(p * 1.6));
-      mrpTotal += m * q;
-      finalTotal += p * q;
-      qtyCount += q;
+      mrpTotal += m * q; finalTotal += p * q; qtyCount += q;
       const gstPct = getItemGstPct(it);
       if (gstPct > 0) {
         const rateKey = String(gstPct);
@@ -1350,14 +1100,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         gstByRate[rateKey].count += q;
         if (isGstIncluded(it)) {
           const amt = (p * q) - ((p * q) / (1 + gstPct / 100));
-          gstIncludedAmt += amt;
-          gstByRate[rateKey].included += amt;
-          gstByRate[rateKey].hasIncluded = true;
+          gstIncludedAmt += amt; gstByRate[rateKey].included += amt; gstByRate[rateKey].hasIncluded = true;
         } else {
           const amt = (p * q) * gstPct / 100;
-          gstAddedAmt += amt;
-          gstByRate[rateKey].added += amt;
-          gstByRate[rateKey].hasAdded = true;
+          gstAddedAmt += amt; gstByRate[rateKey].added += amt; gstByRate[rateKey].hasAdded = true;
         }
       }
     });
@@ -1367,49 +1113,33 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const couponDiscount = calcCouponDiscount(finalTotal);
     const grand = Math.max(0, finalTotal + gstAddedAmt + cartCommission - couponDiscount);
     const gstTotal = gstIncludedAmt + gstAddedAmt;
-    return {
-      mrpTotal, finalTotal, discount, gstTotal, gstIncludedAmt, gstAddedAmt, gstPayable: gstAddedAmt, gstByRate,
-      delivery: 0, deliverySource: 'seller', cartCommission, cartCommissionPct: commPct,
-      couponDiscount, appliedCode: appliedCoupon?.code || '',
-      grand, itemCount: qtyCount, count: sel.length, sel
-    };
+    return { mrpTotal, finalTotal, discount, gstTotal, gstIncludedAmt, gstAddedAmt, gstPayable: gstAddedAmt, gstByRate, delivery: 0, deliverySource: 'seller', cartCommission, cartCommissionPct: commPct, couponDiscount, appliedCode: appliedCoupon?.code || '', grand, itemCount: qtyCount, count: sel.length, sel };
   }
 
   function buildChargeTags(t) {
     const tags = [];
     if (t.cartCommission !== 0) {
-      if (t.cartCommission > 0) {
-        tags.push(`<span class="tg-tag handling"><svg viewBox="0 0 24 24"><path d="M20 7h-4V5a3 3 0 0 0-3-3h-2a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2ZM9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2H9V5Z"/></svg>Handling Fee · +${fmtINR(t.cartCommission)} (${t.cartCommissionPct}%)</span>`);
-      } else {
-        tags.push(`<span class="tg-tag discount"><svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>Special Discount · −${fmtINR(Math.abs(t.cartCommission))} (${t.cartCommissionPct}%)</span>`);
-      }
+      if (t.cartCommission > 0) tags.push(`<span class="tg-tag handling"><svg viewBox="0 0 24 24"><path d="M20 7h-4V5a3 3 0 0 0-3-3h-2a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2ZM9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2H9V5Z"/></svg>Handling Fee · +${fmtINR(t.cartCommission)} (${t.cartCommissionPct}%)</span>`);
+      else tags.push(`<span class="tg-tag discount"><svg viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>Special Discount · −${fmtINR(Math.abs(t.cartCommission))} (${t.cartCommissionPct}%)</span>`);
     }
     if (SETTINGS.gstEnabled && t.gstByRate) {
       const rates = Object.keys(t.gstByRate).map(Number).sort((a, b) => a - b);
       rates.forEach(rate => {
-        const g = t.gstByRate[String(rate)];
-        if (!g) return;
-        if (g.hasAdded && g.added > 0) {
-          tags.push(`<span class="tg-tag gst-rate"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>GST ${rate}% · ${fmtINR(g.added)}</span>`);
-        } else if (g.hasIncluded && g.included > 0) {
-          tags.push(`<span class="tg-tag gst-rate"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>GST ${rate}% Included</span>`);
-        }
+        const g = t.gstByRate[String(rate)]; if (!g) return;
+        if (g.hasAdded && g.added > 0) tags.push(`<span class="tg-tag gst-rate"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>GST ${rate}% · ${fmtINR(g.added)}</span>`);
+        else if (g.hasIncluded && g.included > 0) tags.push(`<span class="tg-tag gst-rate"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>GST ${rate}% Included</span>`);
       });
     }
-    if (!tags.length) return '';
-    return tags.join('');
+    return tags.length ? tags.join('') : '';
   }
 
   function updateGstLabel(t) {
-    const label = document.getElementById('tg-gst-pct-label');
-    if (!label) return;
+    const label = document.getElementById('tg-gst-pct-label'); if (!label) return;
     if (!SETTINGS.gstEnabled) { label.textContent = ''; return; }
     const rates = Object.keys(t.gstByRate || {}).map(Number).sort((a, b) => a - b);
     if (!rates.length) { label.textContent = ''; return; }
-    if (rates.length === 1) {
-      const g = t.gstByRate[String(rates[0])];
-      label.textContent = g.hasIncluded && !g.hasAdded ? '(' + rates[0] + '% included)' : '(' + rates[0] + '%)';
-    } else {
+    if (rates.length === 1) { const g = t.gstByRate[String(rates[0])]; label.textContent = g.hasIncluded && !g.hasAdded ? '(' + rates[0] + '% included)' : '(' + rates[0] + '%)'; }
+    else {
       const minR = rates[0], maxR = rates[rates.length - 1];
       const allIncluded = rates.every(r => { const g = t.gstByRate[String(r)]; return g.hasIncluded && !g.hasAdded; });
       label.textContent = allIncluded ? '(' + minR + '-' + maxR + '% included)' : '(' + minR + '-' + maxR + '%)';
@@ -1442,9 +1172,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       if (cpRow) cpRow.style.display = 'flex';
       if (cpVal) cpVal.textContent = '− ' + fmtINR(t.couponDiscount);
       if (cpLbl) cpLbl.textContent = '(' + (appliedCoupon.code || '') + ')';
-    } else {
-      if (cpRow) cpRow.style.display = 'none';
-    }
+    } else { if (cpRow) cpRow.style.display = 'none'; }
     updateGstLabel(t);
     if (!SETTINGS.gstEnabled) setText('tg-price-gst', fmtINR(0));
     else if (t.gstAddedAmt > 0) setText('tg-price-gst', fmtINR(t.gstAddedAmt));
@@ -1459,7 +1187,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         if (ccLbl) ccLbl.textContent = '(' + t.cartCommissionPct + '%)';
         if (t.cartCommission > 0) { ccVal.textContent = '+ ' + fmtINR(t.cartCommission); ccVal.style.color = '#d32f2f'; }
         else { ccVal.textContent = '− ' + fmtINR(Math.abs(t.cartCommission)); ccVal.style.color = '#388e3c'; }
-      } else { ccRow.style.display = 'none'; }
+      } else ccRow.style.display = 'none';
     }
     setText('tg-price-final', fmtINR(t.grand));
     setText('tg-m-total', fmtINR(t.grand));
@@ -1487,29 +1215,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   function _persistCartToMirror() { if (currentUser) _saveMirror(currentUser.uid, cartItems); }
 
   window.tgChangeQty = async function(docId, delta) {
-    const item = cartItems.find(it => it.id === docId);
-    if (!item) return;
+    const item = cartItems.find(it => it.id === docId); if (!item) return;
     const newQty = Number(item.qty || 1) + delta;
     if (newQty < 1) return;
     if (newQty > 10) { toast('Max 10 items per product', 'error'); return; }
     item.qty = newQty;
     _pendingQty.set(docId, { qty: newQty, ts: Date.now() });
     _updateQtyInPlace(docId, newQty);
-    const node = _itemNodeMap.get(docId);
-    if (node) node.setAttribute('data-qty', String(newQty));
+    const node = _itemNodeMap.get(docId); if (node) node.setAttribute('data-qty', String(newQty));
     _lastRenderSig = cartItems.map(i => i.id + ':' + i.qty + ':' + (i.rating||'') + ':' + (i.ratingCount||'') + ':' + (i.sellerName||'') + ':' + (i.gst||'')).join('|') + '|sel:' + [...selectedIds].sort().join(',') + '|pin:' + (getPin() || '');
-    updateTotals();
-    updateHeaderBadge();
-    _persistCartToMirror();
+    updateTotals(); updateHeaderBadge(); _persistCartToMirror();
     if (currentUser) {
       try {
-        await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId)
-          .update({ qty: newQty, updatedAt: FV.serverTimestamp() });
+        await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).update({ qty: newQty, updatedAt: FV.serverTimestamp() });
         setTimeout(() => { const p = _pendingQty.get(docId); if (p && p.qty === newQty) _pendingQty.delete(docId); }, 1200);
       } catch(err) {
-        _pendingQty.delete(docId);
-        toast('Could not update quantity', 'error');
-        loadCart();
+        _pendingQty.delete(docId); toast('Could not update quantity', 'error'); loadCart();
       }
     } else {
       setGuestCart(cartItems);
@@ -1527,11 +1248,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
     _pendingCartDeletes.add(docId);
     _pendingQty.delete(docId);
+    _locallyAdded.delete(docId);
     cartItems = cartItems.filter(it => it.id !== docId);
-    selectedIds.delete(docId);
-    selectedIds.delete(NS_MARK + docId);
-    saveSelected();
-    _persistCartToMirror();
+    selectedIds.delete(docId); selectedIds.delete(NS_MARK + docId);
+    saveSelected(); _persistCartToMirror();
     renderCart(true);
     if (currentUser) {
       try {
@@ -1539,9 +1259,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         setTimeout(() => _pendingCartDeletes.delete(docId), 3000);
         if (!skipConfirm) toast('Removed from cart', 'success');
       } catch(err) {
-        _pendingCartDeletes.delete(docId);
-        toast('Could not remove item', 'error');
-        cartItems = []; loadCart();
+        _pendingCartDeletes.delete(docId); toast('Could not remove item', 'error'); cartItems = []; loadCart();
       }
     } else {
       setGuestCart(cartItems);
@@ -1553,15 +1271,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
     const idsToRemove = sel.map(it => it.id);
-    idsToRemove.forEach(id => _pendingCartDeletes.add(id));
+    idsToRemove.forEach(id => { _pendingCartDeletes.add(id); _locallyAdded.delete(id); });
     cartItems = cartItems.filter(it => !selectedIds.has(it.id));
-    idsToRemove.forEach(id => {
-      selectedIds.delete(id);
-      selectedIds.delete(NS_MARK + id);
-      _pendingQty.delete(id);
-    });
-    saveSelected();
-    _persistCartToMirror();
+    idsToRemove.forEach(id => { selectedIds.delete(id); selectedIds.delete(NS_MARK + id); _pendingQty.delete(id); });
+    saveSelected(); _persistCartToMirror();
     renderCart(true);
     if (currentUser) {
       try {
@@ -1573,8 +1286,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
       } catch(err) {
         idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
-        toast('Could not remove items', 'error');
-        cartItems = []; loadCart();
+        toast('Could not remove items', 'error'); cartItems = []; loadCart();
       }
     } else {
       setGuestCart(cartItems);
@@ -1583,24 +1295,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   };
 
   window.tgMoveToWishlist = async function(docId) {
-    if (!currentUser) {
-      toast('Please log in to save to wishlist', 'info');
-      setTimeout(() => location.href = 'log-in.html?redirect=cart.html', 1000);
-      return;
-    }
-    const item = cartItems.find(it => it.id === docId);
-    if (!item) return;
+    if (!currentUser) { toast('Please log in to save to wishlist', 'info'); setTimeout(() => location.href = 'log-in.html?redirect=cart.html', 1000); return; }
+    const item = cartItems.find(it => it.id === docId); if (!item) return;
     try {
       const pid = item.productId || item.id;
-      await db.collection('wishlists').doc(currentUser.uid).set({
-        items: FV.arrayUnion(pid), updatedAt: FV.serverTimestamp()
-      }, { merge: true });
+      await db.collection('wishlists').doc(currentUser.uid).set({ items: FV.arrayUnion(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
       await window.tgRemoveItem(docId, true);
       toast('Saved for later ❤', 'success');
     } catch(err) { toast('Could not save to wishlist', 'error'); }
   };
 
-  /* ⭐ FIX #3: correct variant docId write, proper target cleanup */
   async function ensureBuyNowItem(buyNowId) {
     if (!buyNowId || !currentUser) return false;
     const buyNowStr = String(buyNowId);
@@ -1610,50 +1314,36 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const color = parts[2] || '';
     const variantDocId = buyNowStr;
 
-    // 1) In-memory cart
-    const found = cartItems.find(it =>
-      it.id === variantDocId ||
-      (it.productId === productId && (it.size||'') === size && (it.color||'') === color)
-    );
+    const found = cartItems.find(it => it.id === variantDocId || (it.productId === productId && (it.size||'') === size && (it.color||'') === color));
     if (found) {
-      selectedIds.add(found.id);
-      selectedIds.delete(NS_MARK + found.id);
-      saveSelected();
-      _pendingCartDeletes.delete(found.id);
+      selectedIds.add(found.id); selectedIds.delete(NS_MARK + found.id);
+      saveSelected(); _pendingCartDeletes.delete(found.id);
+      _markLocallyAdded(found.id);
       renderCart(false);
-      _activeBuyNowId = null;
-      clearBuyNowKeys();
+      _activeBuyNowId = null; clearBuyNowKeys();
       return true;
     }
 
-    // 2) Firestore cart
     try {
-      const cartDoc = await db.collection('carts').doc(currentUser.uid)
-        .collection('items').doc(variantDocId).get({ source: 'server' });
+      const cartDoc = await db.collection('carts').doc(currentUser.uid).collection('items').doc(variantDocId).get({ source: 'server' });
       if (cartDoc.exists) {
         const data = cartDoc.data();
         const item = { ...data, id: cartDoc.id, productId: data.productId || productId };
         if (!cartItems.find(it => it.id === item.id)) cartItems = [...cartItems, ...enrichFromCacheSync([item])];
-        selectedIds.add(item.id);
-        selectedIds.delete(NS_MARK + item.id);
-        saveSelected();
-        _pendingCartDeletes.delete(item.id);
+        selectedIds.add(item.id); selectedIds.delete(NS_MARK + item.id);
+        saveSelected(); _pendingCartDeletes.delete(item.id);
+        _markLocallyAdded(item.id);
         _saveMirror(currentUser.uid, cartItems);
         renderCart(false);
-        _activeBuyNowId = null;
-        clearBuyNowKeys();
+        _activeBuyNowId = null; clearBuyNowKeys();
         return true;
       }
     } catch(e) {}
 
-    // 3) Create from products
     let pData = _pGet(productId);
     if (!pData) { try { await fetchProductsBatch([productId]); pData = _pGet(productId); } catch(e) {} }
     if (!pData) {
-      try {
-        const prodDoc = await db.collection('products').doc(productId).get();
-        if (prodDoc.exists) { pData = prodDoc.data(); _pSet(productId, pData); }
-      } catch(e) {}
+      try { const prodDoc = await db.collection('products').doc(productId).get(); if (prodDoc.exists) { pData = prodDoc.data(); _pSet(productId, pData); } } catch(e) {}
     }
     if (!pData) return false;
 
@@ -1671,64 +1361,36 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     try {
       const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(variantDocId);
       await ref.set({ ...newItem, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true });
-    } catch(e) {
-      console.warn('[ensureBuyNowItem] write failed:', e && e.message);
-      return false;
-    }
+    } catch(e) { console.warn('[ensureBuyNowItem] write failed:', e && e.message); return false; }
+
     _pendingCartDeletes.delete(variantDocId);
+    _markLocallyAdded(variantDocId);
     const item = { ...newItem, id: variantDocId };
     if (!cartItems.find(it => it.id === item.id)) cartItems = [...cartItems, ...enrichFromCacheSync([item])];
-    selectedIds.add(variantDocId);
-    selectedIds.delete(NS_MARK + variantDocId);
-    saveSelected();
-    _saveMirror(currentUser.uid, cartItems);
+    selectedIds.add(variantDocId); selectedIds.delete(NS_MARK + variantDocId);
+    saveSelected(); _saveMirror(currentUser.uid, cartItems);
     renderCart(false);
-    _activeBuyNowId = null;
-    clearBuyNowKeys();
+    _activeBuyNowId = null; clearBuyNowKeys();
     return true;
   }
 
   function isCouponNotExpired(c) {
     if (!c || !c.expiry) return true;
-    try {
-      const exp = new Date(c.expiry);
-      if (isNaN(exp.getTime())) return true;
-      const endOfDay = new Date(exp.getFullYear(), exp.getMonth(), exp.getDate(), 23, 59, 59, 999);
-      return endOfDay.getTime() >= Date.now();
-    } catch(e) { return true; }
+    try { const exp = new Date(c.expiry); if (isNaN(exp.getTime())) return true; const endOfDay = new Date(exp.getFullYear(), exp.getMonth(), exp.getDate(), 23, 59, 59, 999); return endOfDay.getTime() >= Date.now(); } catch(e) { return true; }
   }
-  function daysLeftCoupon(c) {
-    if (!c || !c.expiry) return null;
-    try {
-      const exp = new Date(c.expiry);
-      if (isNaN(exp.getTime())) return null;
-      return Math.ceil((exp.getTime() - Date.now()) / 86400000);
-    } catch(e) { return null; }
-  }
-  function fmtCouponExpiry(c) {
-    if (!c || !c.expiry) return '';
-    try {
-      const exp = new Date(c.expiry);
-      if (isNaN(exp.getTime())) return '';
-      return exp.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-    } catch(e) { return ''; }
-  }
+  function daysLeftCoupon(c) { if (!c || !c.expiry) return null; try { const exp = new Date(c.expiry); if (isNaN(exp.getTime())) return null; return Math.ceil((exp.getTime() - Date.now()) / 86400000); } catch(e) { return null; } }
+  function fmtCouponExpiry(c) { if (!c || !c.expiry) return ''; try { const exp = new Date(c.expiry); if (isNaN(exp.getTime())) return ''; return exp.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); } catch(e) { return ''; } }
 
   function loadAppliedCouponFromStorage() {
     try {
-      const raw = localStorage.getItem(COUPON_KEY);
-      if (!raw) return;
-      const c = JSON.parse(raw);
-      if (!c || !c.code) return;
+      const raw = localStorage.getItem(COUPON_KEY); if (!raw) return;
+      const c = JSON.parse(raw); if (!c || !c.code) return;
       if (!isCouponNotExpired(c)) { localStorage.removeItem(COUPON_KEY); return; }
       appliedCoupon = c;
     } catch(e) {}
   }
   function saveAppliedCouponToStorage() {
-    try {
-      if (appliedCoupon) localStorage.setItem(COUPON_KEY, JSON.stringify(appliedCoupon));
-      else localStorage.removeItem(COUPON_KEY);
-    } catch(e) {}
+    try { if (appliedCoupon) localStorage.setItem(COUPON_KEY, JSON.stringify(appliedCoupon)); else localStorage.removeItem(COUPON_KEY); } catch(e) {}
   }
 
   function updateCouponCard() {
@@ -1740,11 +1402,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       card.classList.add('applied');
       lbl.textContent = appliedCoupon.code + ' applied ✓';
       const t = calcTotals();
-      if (t.couponDiscount > 0) {
-        sub.innerHTML = 'You save <b style="color:#1b8a3a;">' + fmtINR(t.couponDiscount) + '</b> · <span class="remove-link" onclick="event.stopPropagation();tgRemoveCoupon()">Remove</span>';
-      } else {
-        sub.innerHTML = 'Applied · <span class="remove-link" onclick="event.stopPropagation();tgRemoveCoupon()">Remove</span>';
-      }
+      if (t.couponDiscount > 0) sub.innerHTML = 'You save <b style="color:#1b8a3a;">' + fmtINR(t.couponDiscount) + '</b> · <span class="remove-link" onclick="event.stopPropagation();tgRemoveCoupon()">Remove</span>';
+      else sub.innerHTML = 'Applied · <span class="remove-link" onclick="event.stopPropagation();tgRemoveCoupon()">Remove</span>';
     } else {
       card.classList.remove('applied');
       lbl.textContent = 'Apply Coupon';
@@ -1752,14 +1411,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   }
 
-  window.tgRemoveCoupon = function() {
-    if (!appliedCoupon) return;
-    appliedCoupon = null;
-    saveAppliedCouponToStorage();
-    updateCouponCard();
-    updateTotals();
-    toast('Coupon removed', 'info');
-  };
+  window.tgRemoveCoupon = function() { if (!appliedCoupon) return; appliedCoupon = null; saveAppliedCouponToStorage(); updateCouponCard(); updateTotals(); toast('Coupon removed', 'info'); };
 
   function applyCouponObject(c, silent) {
     if (!c) { toast('Coupon not found', 'error'); return false; }
@@ -1769,32 +1421,19 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const minOrder = Number(c.minOrder || 0);
     if (t.finalTotal < minOrder) { toast('Minimum order of ' + fmtINR(minOrder) + ' required for this coupon', 'error'); return false; }
     if (currentUser && usedCouponCodes.has(String(c.code || '').toUpperCase())) { toast('You have already used this coupon', 'error'); return false; }
-    appliedCoupon = {
-      code: String(c.code || c.id || '').toUpperCase(),
-      discountType: String(c.discountType || 'flat').toLowerCase(),
-      value: Number(c.value || 0),
-      minOrder: Number(c.minOrder || 0),
-      maxDiscount: Number(c.maxDiscount || 0),
-      description: c.description || '',
-      expiry: c.expiry || ''
-    };
-    saveAppliedCouponToStorage();
-    updateCouponCard();
-    updateTotals();
+    appliedCoupon = { code: String(c.code || c.id || '').toUpperCase(), discountType: String(c.discountType || 'flat').toLowerCase(), value: Number(c.value || 0), minOrder: Number(c.minOrder || 0), maxDiscount: Number(c.maxDiscount || 0), description: c.description || '', expiry: c.expiry || '' };
+    saveAppliedCouponToStorage(); updateCouponCard(); updateTotals();
     if (!silent) toast('✓ ' + appliedCoupon.code + ' applied', 'success');
     return true;
   }
-
   window.tgApplyCouponManual = function() {
-    const inp = document.getElementById('tg-coupon-input');
-    if (!inp) return;
+    const inp = document.getElementById('tg-coupon-input'); if (!inp) return;
     const code = (inp.value || '').trim().toUpperCase();
     if (!code) { toast('Please enter a coupon code', 'error'); return; }
     const found = availableCoupons.find(c => String(c.code || c.id || '').toUpperCase() === code);
     if (!found) { toast('Invalid coupon code', 'error'); return; }
     if (applyCouponObject(found)) { inp.value = ''; tgCloseCouponModal(); }
   };
-
   window.tgApplyCouponFromList = function(code) {
     const c = availableCoupons.find(x => String(x.code || x.id || '').toUpperCase() === String(code || '').toUpperCase());
     if (!c) { toast('Coupon not found', 'error'); return; }
@@ -1802,33 +1441,21 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   };
 
   function renderCouponList() {
-    const el = document.getElementById('tg-coupon-list');
-    if (!el) return;
+    const el = document.getElementById('tg-coupon-list'); if (!el) return;
     const active = availableCoupons.filter(c => c.active !== false);
-    if (!active.length) {
-      el.innerHTML = '<div class="tg-coupon-empty"><div class="tg-coupon-empty-icon">🎟️</div><b>No coupons available</b><br><span style="font-size:12px;margin-top:6px;display:inline-block;">Check back later for exclusive deals</span></div>';
-      return;
-    }
+    if (!active.length) { el.innerHTML = '<div class="tg-coupon-empty"><div class="tg-coupon-empty-icon">🎟️</div><b>No coupons available</b><br><span style="font-size:12px;margin-top:6px;display:inline-block;">Check back later for exclusive deals</span></div>'; return; }
     const enriched = active.map(c => {
-      const expired = !isCouponNotExpired(c);
-      const left = daysLeftCoupon(c);
+      const expired = !isCouponNotExpired(c); const left = daysLeftCoupon(c);
       const used = currentUser && usedCouponCodes.has(String(c.code || c.id || '').toUpperCase());
       const isApplied = appliedCoupon && appliedCoupon.code === String(c.code || c.id || '').toUpperCase();
       return { c, expired, left, used, isApplied };
     });
-    enriched.sort((a, b) => {
-      if (a.isApplied !== b.isApplied) return a.isApplied ? -1 : 1;
-      if (a.expired !== b.expired) return a.expired ? 1 : -1;
-      if (a.used !== b.used) return a.used ? 1 : -1;
-      return (a.left == null ? 9999 : a.left) - (b.left == null ? 9999 : b.left);
-    });
+    enriched.sort((a, b) => { if (a.isApplied !== b.isApplied) return a.isApplied ? -1 : 1; if (a.expired !== b.expired) return a.expired ? 1 : -1; if (a.used !== b.used) return a.used ? 1 : -1; return (a.left == null ? 9999 : a.left) - (b.left == null ? 9999 : b.left); });
     el.innerHTML = enriched.map(({ c, expired, left, used, isApplied }) => {
       const code = String(c.code || c.id || '').toUpperCase();
       const type = String(c.discountType || 'flat').toLowerCase();
       const val = Number(c.value || 0);
-      const discHtml = type === 'percent'
-        ? '<div class="tg-coupon-ticket-discount">' + val + '<small>%</small></div>'
-        : '<div class="tg-coupon-ticket-discount">₹' + val + '</div>';
+      const discHtml = type === 'percent' ? '<div class="tg-coupon-ticket-discount">' + val + '<small>%</small></div>' : '<div class="tg-coupon-ticket-discount">₹' + val + '</div>';
       const labelTxt = type === 'percent' ? 'OFF' : 'FLAT';
       const terms = [];
       if (Number(c.minOrder) > 0) terms.push('<span>Min ' + fmtINR(c.minOrder) + '</span>');
@@ -1842,50 +1469,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       else actionBtn = '<button type="button" class="tg-coupon-ticket-btn" data-coupon-code="' + esc(code) + '">Apply</button>';
       const cls = 'tg-coupon-ticket' + (expired ? ' expired' : '') + (used && !expired ? ' used' : '') + (isApplied ? ' applied' : '');
       const clickable = !expired && !used && !isApplied;
-      return '<div class="' + cls + '"' + (clickable ? ' data-coupon-ticket="' + esc(code) + '"' : '') + '>' +
-        '<div class="tg-coupon-ticket-left">' + discHtml + '<div class="tg-coupon-ticket-label">' + labelTxt + '</div></div>' +
-        '<div class="tg-coupon-ticket-body">' +
-          '<div class="tg-coupon-ticket-code">' + esc(code) + '</div>' +
-          (c.description ? '<div class="tg-coupon-ticket-desc">' + esc(c.description) + '</div>' : '') +
-          (terms.length ? '<div class="tg-coupon-ticket-terms">' + terms.join('') + '</div>' : '') +
-        '</div>' +
-        '<div class="tg-coupon-ticket-action">' + actionBtn + '</div></div>';
+      return '<div class="' + cls + '"' + (clickable ? ' data-coupon-ticket="' + esc(code) + '"' : '') + '><div class="tg-coupon-ticket-left">' + discHtml + '<div class="tg-coupon-ticket-label">' + labelTxt + '</div></div><div class="tg-coupon-ticket-body"><div class="tg-coupon-ticket-code">' + esc(code) + '</div>' + (c.description ? '<div class="tg-coupon-ticket-desc">' + esc(c.description) + '</div>' : '') + (terms.length ? '<div class="tg-coupon-ticket-terms">' + terms.join('') + '</div>' : '') + '</div><div class="tg-coupon-ticket-action">' + actionBtn + '</div></div>';
     }).join('');
-    el.querySelectorAll('[data-coupon-code]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation(); e.preventDefault();
-        const code = btn.getAttribute('data-coupon-code');
-        if (code) window.tgApplyCouponFromList(code);
-      });
-    });
+    el.querySelectorAll('[data-coupon-code]').forEach(btn => { btn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); const code = btn.getAttribute('data-coupon-code'); if (code) window.tgApplyCouponFromList(code); }); });
     el.querySelectorAll('[data-coupon-ticket]').forEach(ticket => {
       ticket.style.cursor = 'pointer';
-      ticket.addEventListener('click', (e) => {
-        if (e.target.closest('[data-coupon-code]')) return;
-        const code = ticket.getAttribute('data-coupon-ticket');
-        if (code) window.tgApplyCouponFromList(code);
-      });
+      ticket.addEventListener('click', (e) => { if (e.target.closest('[data-coupon-code]')) return; const code = ticket.getAttribute('data-coupon-ticket'); if (code) window.tgApplyCouponFromList(code); });
     });
   }
 
-  window.tgOpenCoupons = function() {
-    if (!cartItems.length) { toast('Add items to cart first', 'info'); return; }
-    const modal = document.getElementById('tg-coupon-modal');
-    if (!modal) return;
-    modal.classList.add('show');
-    document.body.style.overflow = 'hidden';
-    const inp = document.getElementById('tg-coupon-input');
-    if (inp) inp.value = '';
-    renderCouponList();
-  };
-  window.tgCloseCouponModal = function() {
-    const modal = document.getElementById('tg-coupon-modal');
-    if (!modal) return;
-    modal.classList.remove('show');
-    document.body.style.overflow = '';
-    const inp = document.getElementById('tg-coupon-input');
-    if (inp) inp.blur();
-  };
+  window.tgOpenCoupons = function() { if (!cartItems.length) { toast('Add items to cart first', 'info'); return; } const modal = document.getElementById('tg-coupon-modal'); if (!modal) return; modal.classList.add('show'); document.body.style.overflow = 'hidden'; const inp = document.getElementById('tg-coupon-input'); if (inp) inp.value = ''; renderCouponList(); };
+  window.tgCloseCouponModal = function() { const modal = document.getElementById('tg-coupon-modal'); if (!modal) return; modal.classList.remove('show'); document.body.style.overflow = ''; const inp = document.getElementById('tg-coupon-input'); if (inp) inp.blur(); };
 
   function loadCoupons() {
     if (unsubCoupons) { try { unsubCoupons(); } catch(e){} unsubCoupons = null; }
@@ -1897,7 +1491,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       }, err => { console.warn('[coupons listener]', err && err.message); });
     } catch(e) { console.warn('[coupons sync]', e && e.message); }
   }
-
   async function loadUsedCoupons(uid) {
     if (!uid) { usedCouponCodes = new Set(); return; }
     try {
@@ -1905,21 +1498,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       try { const s1 = await db.collection('orders').where('customerId', '==', uid).limit(50).get(); s1.docs.forEach(d => ordersMap.set(d.id, d.data())); } catch(e) {}
       try { const s2 = await db.collection('orders').where('userId', '==', uid).limit(50).get(); s2.docs.forEach(d => ordersMap.set(d.id, d.data())); } catch(e) {}
       const set = new Set();
-      ordersMap.forEach(o => {
-        [o.couponCode, o.coupon, o.coupon_code, o.appliedCoupon].forEach(c => {
-          if (c && typeof c === 'string') set.add(c.trim().toUpperCase());
-        });
-      });
+      ordersMap.forEach(o => { [o.couponCode, o.coupon, o.coupon_code, o.appliedCoupon].forEach(c => { if (c && typeof c === 'string') set.add(c.trim().toUpperCase()); }); });
       usedCouponCodes = set;
     } catch(e) { usedCouponCodes = new Set(); }
   }
 
   function readBuyNowId() {
     let id = null;
-    try {
-      const params = new URLSearchParams(window.location.search);
-      id = params.get('buynow') || params.get('buy_now') || params.get('buyNow') || null;
-    } catch(e) {}
+    try { const params = new URLSearchParams(window.location.search); id = params.get('buynow') || params.get('buy_now') || params.get('buyNow') || null; } catch(e) {}
     if (id) return id;
     for (const k of BUY_NOW_KEYS) {
       try { const v = sessionStorage.getItem(k); if (v) return v; } catch(e) {}
@@ -1927,7 +1513,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
     return null;
   }
-
   function clearBuyNowKeys() {
     try { window.history.replaceState({}, '', window.location.pathname); } catch(e) {}
     for (const k of BUY_NOW_KEYS) {
@@ -1936,7 +1521,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   }
 
-  /* ⭐ FIX #4: cleanup on success/failure, retry with delays */
   function startBuyNowLoop(buyNowId) {
     if (!buyNowId) return;
     _activeBuyNowId = buyNowId;
@@ -1949,16 +1533,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const ok = await ensureBuyNowItem(buyNowId);
       if (ok) return;
       if (attempt < MAX) setTimeout(attemptFn, delays[attempt] || 3500);
-      else {
-        _activeBuyNowId = null;
-        clearBuyNowKeys();
-        toast('Unable to load this product. Please add it to cart from the product page.', 'error');
-      }
+      else { _activeBuyNowId = null; clearBuyNowKeys(); toast('Unable to load this product. Please add it to cart from the product page.', 'error'); }
     };
     setTimeout(attemptFn, delays[0]);
   }
 
-  /* ⭐ FIX #1: buy-now detect BEFORE render */
   function _quickBootRender() {
     try {
       const buyNowId = readBuyNowId();
@@ -1968,8 +1547,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         const mirror = _loadMirror(lastUid);
         if (mirror.length) {
           cartItems = enrichFromCacheSync(dedupeCart(mirror.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
-          const loading = document.getElementById('tg-loading');
-          if (loading) loading.style.display = 'none';
+          const loading = document.getElementById('tg-loading'); if (loading) loading.style.display = 'none';
           renderCart(true);
           _bootRendered = true;
           return true;
@@ -1978,8 +1556,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const guestRaw = getGuestCart();
       if (guestRaw.length) {
         cartItems = enrichFromCacheSync(guestRaw);
-        const loading = document.getElementById('tg-loading');
-        if (loading) loading.style.display = 'none';
+        const loading = document.getElementById('tg-loading'); if (loading) loading.style.display = 'none';
         renderCart(true);
         _bootRendered = true;
         return true;
@@ -1996,19 +1573,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       document.getElementById('tg-selectall').style.display = 'none';
       document.getElementById('tg-right').style.display = 'none';
       document.getElementById('tg-mobile-order').style.display = 'none';
-      const mt = document.getElementById('tg-mobile-tags');
-      if (mt) { mt.classList.remove('has-tags'); mt.innerHTML = ''; }
-      _itemNodeMap.clear();
-      _lastRenderSig = ''; _lastIdsKey = '';
+      const mt = document.getElementById('tg-mobile-tags'); if (mt) { mt.classList.remove('has-tags'); mt.innerHTML = ''; }
+      _itemNodeMap.clear(); _lastRenderSig = ''; _lastIdsKey = '';
     }
     try {
       const validIds = new Set((cartItems || []).map(it => it.id));
       let changed = false;
       [...selectedIds].forEach(id => {
-        if (id.startsWith(NS_MARK)) {
-          const realId = id.slice(NS_MARK.length);
-          if (!validIds.has(realId)) { selectedIds.delete(id); changed = true; }
-        } else if (!validIds.has(id)) { selectedIds.delete(id); changed = true; }
+        if (id.startsWith(NS_MARK)) { const realId = id.slice(NS_MARK.length); if (!validIds.has(realId)) { selectedIds.delete(id); changed = true; } }
+        else if (!validIds.has(id)) { selectedIds.delete(id); changed = true; }
       });
       if (changed) saveSelected();
     } catch(e) {}
@@ -2017,21 +1590,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!currentUser) {
       const raw = getGuestCart();
       const buyNowGuest = readBuyNowId();
-      if (buyNowGuest) {
-        selectedIds.clear();
-        selectedIds.add(buyNowGuest);
-        saveSelected();
-        _pendingCartDeletes.delete(buyNowGuest);   /* FIX #6 */
-        clearBuyNowKeys();
-      }
-      if (!cartItems.length && raw.length) {
-        cartItems = enrichFromCacheSync(raw);
-        renderCart(true);
-      }
-      enrichCartItemsFast(raw).then(enriched => {
-        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); }
-        else cartItems = enriched;
-      }).catch(() => {});
+      if (buyNowGuest) { selectedIds.clear(); selectedIds.add(buyNowGuest); saveSelected(); _pendingCartDeletes.delete(buyNowGuest); clearBuyNowKeys(); }
+      if (!cartItems.length && raw.length) { cartItems = enrichFromCacheSync(raw); renderCart(true); }
+      enrichCartItemsFast(raw).then(enriched => { if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(); } else cartItems = enriched; }).catch(() => {});
       return;
     }
 
@@ -2042,23 +1603,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
     const buyNowDoc = readBuyNowId();
     if (buyNowDoc) {
-      selectedIds.clear();
-      selectedIds.add(buyNowDoc);
-      saveSelected();
-      _pendingCartDeletes.delete(buyNowDoc);   /* FIX #6 */
+      selectedIds.clear(); selectedIds.add(buyNowDoc); saveSelected();
+      _pendingCartDeletes.delete(buyNowDoc);
       clearBuyNowKeys();
     }
     const cartRef = db.collection('carts').doc(currentUser.uid).collection('items');
-    let _snapDebounceTimer = null;
-    let _latestSnap = null;
-    let _firstSnapshotDone = false;
+    let _snapDebounceTimer = null, _latestSnap = null, _firstSnapshotDone = false;
 
     async function processSnapshot(snap) {
-      /* ⭐ FIX #5: don't filter buy-now target */
-      let raw = snap.docs.map(d => {
-        const data = d.data();
-        return { ...data, id: d.id, productId: data.productId || d.id };
-      }).filter(it => {
+      let raw = snap.docs.map(d => { const data = d.data(); return { ...data, id: d.id, productId: data.productId || d.id }; }).filter(it => {
         if (!_pendingCartDeletes.has(it.id)) return true;
         if (_activeBuyNowId) {
           const buyNowStr = String(_activeBuyNowId);
@@ -2072,95 +1625,94 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
       const snapIds = new Set(snap.docs.map(d => d.id));
       _pendingCartDeletes.forEach(id => { if (!snapIds.has(id)) _pendingCartDeletes.delete(id); });
+      snapIds.forEach(id => _clearLocalAdd(id));
 
       const now = Date.now();
       raw = raw.map(it => {
         const pending = _pendingQty.get(it.id);
         if (pending && (now - pending.ts) < PENDING_QTY_TTL) return { ...it, qty: pending.qty };
-        for (const [pid, p] of _pendingQty) {
-          if ((now - p.ts) < PENDING_QTY_TTL && it.productId === pid) return { ...it, qty: p.qty };
-        }
+        for (const [pid, p] of _pendingQty) { if ((now - p.ts) < PENDING_QTY_TTL && it.productId === pid) return { ...it, qty: p.qty }; }
         return it;
       });
       _pendingQty.forEach((v, k) => { if (now - v.ts > PENDING_QTY_TTL) _pendingQty.delete(k); });
+
       raw = dedupeCart(raw);
-      _saveMirror(currentUser.uid, raw);
-      const fastItems = enrichFromCacheSync(raw);
+
+      /* ⭐ FIX #1: Preserve locally-added items (buy-now) until snapshot catches up */
+      const snapIdSet = new Set(raw.map(r => r.id));
+      const localOnly = cartItems.filter(it =>
+        !snapIdSet.has(it.id) &&
+        !_pendingCartDeletes.has(it.id) &&
+        _locallyAdded.has(it.id)
+      );
+      const mergedRaw = localOnly.length ? dedupeCart([...raw, ...localOnly]) : raw;
+
+      _saveMirror(currentUser.uid, mergedRaw);
+
+      const fastItems = enrichFromCacheSync(mergedRaw);
       cartItems = fastItems;
       renderCart(false);
+
       try {
-        const enriched = await enrichCartItemsFast(raw);
-        if (_cartChanged(cartItems, enriched)) { cartItems = enriched; renderCart(false); }
+        const enriched = await enrichCartItemsFast(mergedRaw);
+        /* ⭐ Preserve locally-added again after async gap */
+        const snapIdSet2 = new Set(enriched.map(r => r.id));
+        const stillLocal = cartItems.filter(it =>
+          !snapIdSet2.has(it.id) &&
+          !_pendingCartDeletes.has(it.id) &&
+          _locallyAdded.has(it.id)
+        );
+        if (_cartChanged(cartItems, enriched) || stillLocal.length) {
+          cartItems = stillLocal.length ? dedupeCart([...enriched, ...stillLocal]) : enriched;
+          renderCart(false);
+        }
       } catch(e) {}
+
       if (_activeBuyNowId) {
         const cid = _activeBuyNowId;
         const pid = String(cid).indexOf('|') !== -1 ? String(cid).split('|')[0] : cid;
         const found = cartItems.find(it => it.id === cid || it.productId === cid || it.id === pid || it.productId === pid);
         if (found && !selectedIds.has(found.id)) {
-          selectedIds.add(found.id);
-          saveSelected();
+          selectedIds.add(found.id); saveSelected();
           const node = _itemNodeMap.get(found.id);
           if (node) { const cb = node.querySelector('.tg-item-check input'); if (cb) cb.checked = true; }
-          updateTotals();
-          updateSelectAllState();
+          updateTotals(); updateSelectAllState();
         }
       }
     }
 
     unsubscribe = cartRef.onSnapshot(async snap => {
       _latestSnap = snap;
-      if (!_firstSnapshotDone) {
-        _firstSnapshotDone = true;
-        await processSnapshot(snap);
-        return;
-      }
+      if (!_firstSnapshotDone) { _firstSnapshotDone = true; await processSnapshot(snap); return; }
       if (_snapDebounceTimer) clearTimeout(_snapDebounceTimer);
-      _snapDebounceTimer = setTimeout(async () => {
-        _snapDebounceTimer = null;
-        if (_latestSnap) await processSnapshot(_latestSnap);
-      }, 80);
+      _snapDebounceTimer = setTimeout(async () => { _snapDebounceTimer = null; if (_latestSnap) await processSnapshot(_latestSnap); }, 80);
     }, err => {
       console.warn('cart load error:', err && err.message);
-      if (!cartItems.length) {
-        cartItems = enrichFromCacheSync(getGuestCart());
-        renderCart(true);
-      }
+      if (!cartItems.length) { cartItems = enrichFromCacheSync(getGuestCart()); renderCart(true); }
     });
 
     if (buyNowDoc) startBuyNowLoop(buyNowDoc);
   }
 
-  async function loadProfile(u) {
-    try { const snap = await db.collection('users').doc(u.uid).get(); if (snap.exists) userProfile = snap.data(); }
-    catch(e) { userProfile = null; }
-  }
+  async function loadProfile(u) { try { const snap = await db.collection('users').doc(u.uid).get(); if (snap.exists) userProfile = snap.data(); } catch(e) { userProfile = null; } }
 
   async function getSavedAddresses() {
     if (currentUser) {
-      try {
-        const snap = await db.collection('users').doc(currentUser.uid).get();
-        if (snap.exists) { const arr = snap.data().addresses; if (Array.isArray(arr)) return arr; }
-      } catch(e) {}
+      try { const snap = await db.collection('users').doc(currentUser.uid).get(); if (snap.exists) { const arr = snap.data().addresses; if (Array.isArray(arr)) return arr; } } catch(e) {}
       return [];
     }
-    try { const arr = JSON.parse(localStorage.getItem(ADDR_LIST_KEY) || '[]'); return Array.isArray(arr) ? arr : []; }
-    catch(e) { return []; }
+    try { const arr = JSON.parse(localStorage.getItem(ADDR_LIST_KEY) || '[]'); return Array.isArray(arr) ? arr : []; } catch(e) { return []; }
   }
   async function setSavedAddresses(list) {
-    if (currentUser) {
-      try { await db.collection('users').doc(currentUser.uid).set({ addresses: list, updatedAt: FV.serverTimestamp() }, { merge: true }); }
-      catch(e) { toast('Could not save address', 'error'); }
-    } else {
-      try { localStorage.setItem(ADDR_LIST_KEY, JSON.stringify(list)); } catch(e) {}
-    }
+    if (currentUser) { try { await db.collection('users').doc(currentUser.uid).set({ addresses: list, updatedAt: FV.serverTimestamp() }, { merge: true }); } catch(e) { toast('Could not save address', 'error'); } }
+    else { try { localStorage.setItem(ADDR_LIST_KEY, JSON.stringify(list)); } catch(e) {} }
   }
   async function addAddressToList(addr) {
     const list = await getSavedAddresses();
     const key = (addr.line||'').toLowerCase() + '|' + (addr.pin||'') + '|' + (addr.phone||'');
     const idx = list.findIndex(a => ((a.line||'').toLowerCase() + '|' + (a.pin||'') + '|' + (a.phone||'')) === key);
     if (addr.isDefault) list.forEach(a => { a.isDefault = false; });
-    if (idx >= 0) list[idx] = addr;
-    else list.push(addr);
+    if (idx >= 0) list[idx] = addr; else list.push(addr);
     if (!list.some(a => a.isDefault) && list.length) list[0].isDefault = true;
     await setSavedAddresses(list);
     return list;
@@ -2178,11 +1730,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   window.tgPlaceOrder = async function() {
     const t = calcTotals();
     if (t.itemCount === 0) { toast('Please select items to order', 'info'); return; }
-    if (!currentUser) {
-      toast('Please log in to place order', 'info');
-      setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html'), 900);
-      return;
-    }
+    if (!currentUser) { toast('Please log in to place order', 'info'); setTimeout(() => location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html'), 900); return; }
     const list = await getSavedAddresses();
     if (list.length > 0) openAddrList(list);
     else tgOpenNewAddr();
@@ -2200,46 +1748,19 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     let lastSel = 0;
     const defIdx = list.findIndex(a => a.isDefault);
     if (defIdx >= 0) lastSel = defIdx;
-    else {
-      try { const v = parseInt(localStorage.getItem(ADDR_LAST_IDX) || '0', 10); if (!isNaN(v) && v >= 0 && v < list.length) lastSel = v; } catch(e) {}
-    }
+    else { try { const v = parseInt(localStorage.getItem(ADDR_LAST_IDX) || '0', 10); if (!isNaN(v) && v >= 0 && v < list.length) lastSel = v; } catch(e) {} }
     pendingAddrIndex = lastSel;
-    const wrap = document.getElementById('tg-addr-list');
-    if (!wrap) return;
-    if (!list.length) {
-      wrap.innerHTML = '<div class="tg-addr-empty">No saved addresses yet.</div>';
-    } else {
-      wrap.innerHTML = list.map((a, i) => `
-        <div class="tg-addr-item ${i===lastSel?'active':''}" onclick="tgSelectAddr(${i})" data-idx="${i}">
-          <div class="tg-addr-radio"></div>
-          <div class="tg-addr-body">
-            <div class="tg-addr-name">
-              ${esc(a.name)} ${typeBadge(a.type)} ${a.isDefault ? '<span class="tg-addr-badge default">✓ Default</span>' : ''}
-              <span class="tg-addr-phone">📱 ${esc(a.phone)}${a.altPhone ? ' / ' + esc(a.altPhone) : ''}</span>
-            </div>
-            <div class="tg-addr-text">
-              <b>${esc(a.line)}</b>${a.locality ? ', ' + esc(a.locality) : ''}${a.landmark ? ' (Near ' + esc(a.landmark) + ')' : ''}<br>
-              ${esc(a.city)}${a.district ? ', ' + esc(a.district) : ''}, ${esc(a.state)} - ${esc(a.pin)}
-            </div>
-          </div>
-          <button class="tg-addr-del" onclick="event.stopPropagation(); tgDeleteAddr(${i})" title="Delete" aria-label="Delete">✕</button>
-        </div>
-      `).join('') +
-      `<button class="tg-modal-save" onclick="tgContinueWithAddr()" style="margin-top:6px;background:linear-gradient(135deg,#fb641b,#e05515);box-shadow:0 6px 18px rgba(251,100,27,0.3);">Deliver to this Address</button>
-       <button class="tg-modal-save" onclick="tgOpenNewAddr()" style="background:#fff;color:#2874f0;border:1.5px solid #2874f0;box-shadow:none;">+ Add New Address</button>`;
+    const wrap = document.getElementById('tg-addr-list'); if (!wrap) return;
+    if (!list.length) { wrap.innerHTML = '<div class="tg-addr-empty">No saved addresses yet.</div>'; }
+    else {
+      wrap.innerHTML = list.map((a, i) => `<div class="tg-addr-item ${i===lastSel?'active':''}" onclick="tgSelectAddr(${i})" data-idx="${i}"><div class="tg-addr-radio"></div><div class="tg-addr-body"><div class="tg-addr-name">${esc(a.name)} ${typeBadge(a.type)} ${a.isDefault ? '<span class="tg-addr-badge default">✓ Default</span>' : ''}<span class="tg-addr-phone">📱 ${esc(a.phone)}${a.altPhone ? ' / ' + esc(a.altPhone) : ''}</span></div><div class="tg-addr-text"><b>${esc(a.line)}</b>${a.locality ? ', ' + esc(a.locality) : ''}${a.landmark ? ' (Near ' + esc(a.landmark) + ')' : ''}<br>${esc(a.city)}${a.district ? ', ' + esc(a.district) : ''}, ${esc(a.state)} - ${esc(a.pin)}</div></div><button class="tg-addr-del" onclick="event.stopPropagation(); tgDeleteAddr(${i})" title="Delete" aria-label="Delete">✕</button></div>`).join('') +
+      `<button class="tg-modal-save" onclick="tgContinueWithAddr()" style="margin-top:6px;background:linear-gradient(135deg,#fb641b,#e05515);box-shadow:0 6px 18px rgba(251,100,27,0.3);">Deliver to this Address</button><button class="tg-modal-save" onclick="tgOpenNewAddr()" style="background:#fff;color:#2874f0;border:1.5px solid #2874f0;box-shadow:none;">+ Add New Address</button>`;
     }
     document.getElementById('tg-addr-list-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
   }
-
-  window.tgCloseAddrList = function() {
-    document.getElementById('tg-addr-list-modal').classList.remove('show');
-    document.body.style.overflow = '';
-  };
-  window.tgSelectAddr = function(i) {
-    pendingAddrIndex = i;
-    document.querySelectorAll('.tg-addr-item').forEach(el => { el.classList.toggle('active', Number(el.dataset.idx) === i); });
-  };
+  window.tgCloseAddrList = function() { document.getElementById('tg-addr-list-modal').classList.remove('show'); document.body.style.overflow = ''; };
+  window.tgSelectAddr = function(i) { pendingAddrIndex = i; document.querySelectorAll('.tg-addr-item').forEach(el => { el.classList.toggle('active', Number(el.dataset.idx) === i); }); };
   window.tgContinueWithAddr = function() {
     const addr = addrListCache[pendingAddrIndex];
     if (!addr) { toast('Please select an address', 'error'); return; }
@@ -2247,8 +1768,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setAddr(addr);
     try { localStorage.setItem(ADDR_LAST_IDX, String(pendingAddrIndex)); } catch(e) {}
     if (addr.pin) setPin(addr.pin);
-    const cityEl = document.getElementById('tg-pin-city');
-    if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
+    const cityEl = document.getElementById('tg-pin-city'); if (cityEl) cityEl.textContent = addr.city + (addr.pin ? ' - ' + addr.pin : '');
     refreshDeliveryTagsInPlace();
     tgCloseAddrList();
     tgOpenPayModal();
@@ -2259,48 +1779,25 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (!list.length) { toast('Address removed', 'success'); tgCloseAddrList(); tgOpenNewAddr(); }
     else { toast('Address removed', 'success'); openAddrList(list); }
   };
-
-  window.tgPickAddrType = function(t, el) {
-    pendingAddrType = t;
-    document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => b.classList.remove('active'));
-    if (el) el.classList.add('active');
-  };
-
+  window.tgPickAddrType = function(t, el) { pendingAddrType = t; document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => b.classList.remove('active')); if (el) el.classList.add('active'); };
   window.tgOpenNewAddr = function() {
-    const listModal = document.getElementById('tg-addr-list-modal');
-    if (listModal) listModal.classList.remove('show');
+    const listModal = document.getElementById('tg-addr-list-modal'); if (listModal) listModal.classList.remove('show');
     pendingAddrType = 'home';
     document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => { b.classList.toggle('active', b.dataset.type === 'home'); });
     document.getElementById('tg-addr-default').checked = false;
-    try {
-      const saved = getAddr();
-      if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
-      if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone;
-      if (saved.altPhone) document.getElementById('tg-addr-alt-phone').value = saved.altPhone;
-    } catch(e) {}
+    try { const saved = getAddr(); if (saved.name) document.getElementById('tg-addr-name').value = saved.name; if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone; if (saved.altPhone) document.getElementById('tg-addr-alt-phone').value = saved.altPhone; } catch(e) {}
     if (userProfile) {
-      const nameEl = document.getElementById('tg-addr-name');
-      const phoneEl = document.getElementById('tg-addr-phone');
-      const emailEl = document.getElementById('tg-addr-email');
+      const nameEl = document.getElementById('tg-addr-name'), phoneEl = document.getElementById('tg-addr-phone'), emailEl = document.getElementById('tg-addr-email');
       if (!nameEl.value && userProfile.name) nameEl.value = userProfile.name;
       if (!phoneEl.value && userProfile.phone) phoneEl.value = userProfile.phone;
       if (!emailEl.value && (userProfile.email || (currentUser && currentUser.email))) emailEl.value = userProfile.email || currentUser.email;
-    } else if (currentUser && currentUser.email) {
-      const emailEl = document.getElementById('tg-addr-email');
-      if (!emailEl.value) emailEl.value = currentUser.email;
-    }
-    ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.value = '';
-    });
+    } else if (currentUser && currentUser.email) { const emailEl = document.getElementById('tg-addr-email'); if (!emailEl.value) emailEl.value = currentUser.email; }
+    ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     document.getElementById('tg-addr-save-text').textContent = 'Save & Continue';
     document.getElementById('tg-addr-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
   };
-
-  window.tgCloseAddr = function() {
-    document.getElementById('tg-addr-modal').classList.remove('show');
-    document.body.style.overflow = '';
-  };
+  window.tgCloseAddr = function() { document.getElementById('tg-addr-modal').classList.remove('show'); document.body.style.overflow = ''; };
 
   window.tgSaveAddr = async function() {
     const name = (document.getElementById('tg-addr-name').value || '').trim();
@@ -2327,8 +1824,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     pendingAddress = { name, phone, altPhone, line, locality, landmark, city, pin, district, state, email, type, isDefault, country: 'India' };
     setAddr(pendingAddress);
     setPin(pin);
-    const cityEl = document.getElementById('tg-pin-city');
-    if (cityEl) cityEl.textContent = city + ' - ' + pin;
+    const cityEl = document.getElementById('tg-pin-city'); if (cityEl) cityEl.textContent = city + ' - ' + pin;
     refreshDeliveryTagsInPlace();
     try {
       const list = await addAddressToList(pendingAddress);
@@ -2352,16 +1848,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.getElementById('tg-pay-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
   };
-  window.tgClosePay = function() {
-    document.getElementById('tg-pay-modal').classList.remove('show');
-    document.body.style.overflow = '';
-    refreshDeliveryTagsInPlace();
-  };
-  window.tgPickPay = function(method, el) {
-    pendingPayMethod = method;
-    document.querySelectorAll('.tg-pay-opt').forEach(o => o.classList.remove('active'));
-    if (el) el.classList.add('active');
-  };
+  window.tgClosePay = function() { document.getElementById('tg-pay-modal').classList.remove('show'); document.body.style.overflow = ''; refreshDeliveryTagsInPlace(); };
+  window.tgPickPay = function(method, el) { pendingPayMethod = method; document.querySelectorAll('.tg-pay-opt').forEach(o => o.classList.remove('active')); if (el) el.classList.add('active'); };
 
   let _razorpayPromise = null;
   function ensureRazorpay() {
@@ -2384,12 +1872,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (pendingPayMethod === 'razorpay') {
       if (!SETTINGS.razorpayEnabled) { toast('Online payment unavailable', 'error'); return; }
       if (!SETTINGS.razorpayKeyId) { toast('Payment gateway not configured', 'error'); return; }
-      try {
-        const btn = document.getElementById('tg-pay-continue-text');
-        if (btn) btn.textContent = 'Loading…';
-        await ensureRazorpay();
-        if (btn) btn.textContent = 'Continue';
-      } catch(e) { toast('Could not load payment gateway', 'error'); return; }
+      try { const btn = document.getElementById('tg-pay-continue-text'); if (btn) btn.textContent = 'Loading…'; await ensureRazorpay(); if (btn) btn.textContent = 'Continue'; }
+      catch(e) { toast('Could not load payment gateway', 'error'); return; }
       tgClosePay();
       tgStartRazorpay(t);
     } else {
@@ -2408,23 +1892,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       image: window.location.origin + '/favicon.ico',
       prefill: { name: pendingAddress.name, contact: '+91' + pendingAddress.phone, email: pendingAddress.email || (currentUser && currentUser.email) || '' },
       theme: { color: '#2874f0' },
-      notes: {
-        uid: currentUser.uid, items: t.itemCount,
-        gstIncluded: t.gstIncludedAmt.toFixed(2), gstAdded: t.gstAddedAmt.toFixed(2),
-        cartCommission: t.cartCommission.toFixed(2),
-        address: pendingAddress.city + ' ' + pendingAddress.pin,
-        coupon: appliedCoupon?.code || ''
-      },
-      handler: function(response) {
-        tgCreateOrder(t, { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: 'paid' });
-      },
+      notes: { uid: currentUser.uid, items: t.itemCount, gstIncluded: t.gstIncludedAmt.toFixed(2), gstAdded: t.gstAddedAmt.toFixed(2), cartCommission: t.cartCommission.toFixed(2), address: pendingAddress.city + ' ' + pendingAddress.pin, coupon: appliedCoupon?.code || '' },
+      handler: function(response) { tgCreateOrder(t, { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: 'paid' }); },
       modal: { ondismiss: function() { toast('Payment cancelled', 'info'); } }
     };
     try {
       const rzp = new Razorpay(options);
-      rzp.on('payment.failed', function(resp) {
-        toast((resp && resp.error && resp.error.description) || 'Payment failed', 'error');
-      });
+      rzp.on('payment.failed', function(resp) { toast((resp && resp.error && resp.error.description) || 'Payment failed', 'error'); });
       rzp.open();
     } catch(err) { toast('Could not open payment gateway', 'error'); }
   }
@@ -2436,8 +1910,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const ctx = new Ctx();
       const now = ctx.currentTime;
       [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
+        const o = ctx.createOscillator(); const g = ctx.createGain();
         o.type = 'sine'; o.frequency.value = freq;
         g.gain.setValueAtTime(0, now + i*0.09);
         g.gain.linearRampToValueAtTime(0.18, now + i*0.09 + 0.02);
@@ -2451,8 +1924,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   function vibrate(pattern) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {} }
 
   function launchConfetti() {
-    const wrap = document.getElementById('tg-confetti-wrap');
-    if (!wrap) return;
+    const wrap = document.getElementById('tg-confetti-wrap'); if (!wrap) return;
     wrap.innerHTML = '';
     const colors = ['#2874f0','#22c55e','#fbbf24','#f43397','#fb641b','#7e57c2','#06b6d4','#e11d48'];
     const frag = document.createDocumentFragment();
@@ -2471,13 +1943,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     wrap.appendChild(frag);
     setTimeout(() => { if (wrap) wrap.innerHTML = ''; }, 4200);
   }
-
   function showSuccess(orderId) {
     document.getElementById('tg-success-order').textContent = 'Order ID: #' + String(orderId || '').slice(0, 10).toUpperCase();
     document.getElementById('tg-success').classList.add('show');
     document.body.style.overflow = 'hidden';
-    playSuccessSound();
-    vibrate([60, 40, 120, 40, 200]);
+    playSuccessSound(); vibrate([60, 40, 120, 40, 200]);
     setTimeout(() => launchConfetti(), 100);
   }
 
@@ -2487,20 +1957,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     placeBtns.forEach(b => { b.dataset.origText = b.textContent; b.disabled = true; b.textContent = 'Placing...'; });
     try {
       let orderItems = t.sel.map(it => {
-        const q = Number(it.qty || 1);
-        const p = Number(it.price || 0);
+        const q = Number(it.qty || 1); const p = Number(it.price || 0);
         const m = Number(it.mrp || it.compareAtPrice || it.originalPrice || Math.round(p * 1.6));
-        const gstPct = getItemGstPct(it);
-        const gstIncluded = isGstIncluded(it);
+        const gstPct = getItemGstPct(it), gstIncluded = isGstIncluded(it);
         const gstAmt = gstPct > 0 ? (gstIncluded ? (p*q) - ((p*q)/(1+gstPct/100)) : (p*q)*gstPct/100) : 0;
-        return {
-          productId: it.productId || it.id, name: it.name || '', image: it.image || '',
-          price: p, mrp: m, qty: q, size: it.size || '', color: it.color || '',
-          rating: (it.rating != null) ? Number(it.rating) : null,
-          ratingCount: (it.ratingCount != null) ? Number(it.ratingCount) : null,
-          gst: gstPct, gstIncluded: gstIncluded, gstAmount: Number(gstAmt.toFixed(2)),
-          sellerId: it.sellerId || '', sellerName: it.sellerName || it.seller || ''
-        };
+        return { productId: it.productId || it.id, name: it.name || '', image: it.image || '', price: p, mrp: m, qty: q, size: it.size || '', color: it.color || '', rating: (it.rating != null) ? Number(it.rating) : null, ratingCount: (it.ratingCount != null) ? Number(it.ratingCount) : null, gst: gstPct, gstIncluded: gstIncluded, gstAmount: Number(gstAmt.toFixed(2)), sellerId: it.sellerId || '', sellerName: it.sellerName || it.seller || '' };
       });
       try { const enriched = await enrichCartItemsFast(orderItems); orderItems = enriched; } catch(e) {}
       const sellerIds = [...new Set(orderItems.map(i => i.sellerId).filter(Boolean))];
@@ -2508,59 +1969,36 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const deliveryType = dInfo.cls === 'same-day' ? 'same_day' : 'standard_3_6_days';
       const orderPayload = {
         customerId: currentUser.uid, userId: currentUser.uid, uid: currentUser.uid,
-        userName: pendingAddress.name,
-        userEmail: pendingAddress.email || currentUser.email || '',
-        userPhone: pendingAddress.phone,
+        userName: pendingAddress.name, userEmail: pendingAddress.email || currentUser.email || '', userPhone: pendingAddress.phone,
         items: orderItems, itemCount: t.itemCount,
         address: pendingAddress, shippingAddress: pendingAddress,
-        subtotal: Number(t.finalTotal.toFixed(2)),
-        mrpTotal: Number(t.mrpTotal.toFixed(2)),
-        discount: Number(t.discount.toFixed(2)),
-        gst: Number(t.gstTotal.toFixed(2)),
-        gstIncluded: Number(t.gstIncludedAmt.toFixed(2)),
-        gstAdded: Number(t.gstAddedAmt.toFixed(2)),
-        cartCommission: Number(t.cartCommission.toFixed(2)),
-        cartCommissionPct: Number(t.cartCommissionPct || 0),
+        subtotal: Number(t.finalTotal.toFixed(2)), mrpTotal: Number(t.mrpTotal.toFixed(2)), discount: Number(t.discount.toFixed(2)),
+        gst: Number(t.gstTotal.toFixed(2)), gstIncluded: Number(t.gstIncludedAmt.toFixed(2)), gstAdded: Number(t.gstAddedAmt.toFixed(2)),
+        cartCommission: Number(t.cartCommission.toFixed(2)), cartCommissionPct: Number(t.cartCommissionPct || 0),
         delivery: 0, deliverySource: 'seller',
         total: Number(t.grand.toFixed(2)),
-        couponCode: appliedCoupon ? appliedCoupon.code : '',
-        couponDiscount: Number(t.couponDiscount || 0),
-        coupon: appliedCoupon ? {
-          code: appliedCoupon.code, type: appliedCoupon.discountType,
-          value: appliedCoupon.value, minOrder: appliedCoupon.minOrder,
-          maxDiscount: appliedCoupon.maxDiscount
-        } : null,
-        paymentMethod: payInfo.paymentMethod,
-        paymentId: payInfo.paymentId || '',
-        paymentStatus: payInfo.paymentStatus,
+        couponCode: appliedCoupon ? appliedCoupon.code : '', couponDiscount: Number(t.couponDiscount || 0),
+        coupon: appliedCoupon ? { code: appliedCoupon.code, type: appliedCoupon.discountType, value: appliedCoupon.value, minOrder: appliedCoupon.minOrder, maxDiscount: appliedCoupon.maxDiscount } : null,
+        paymentMethod: payInfo.paymentMethod, paymentId: payInfo.paymentId || '', paymentStatus: payInfo.paymentStatus,
         deliveryType: deliveryType, deliveryEstimate: dInfo.text,
         status: 'pending', sellerIds: sellerIds,
         createdAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
       };
       const orderPromise = db.collection('orders').add(orderPayload);
-      docsToDelete.forEach(id => _pendingCartDeletes.add(id));
+
+      docsToDelete.forEach(id => { _pendingCartDeletes.add(id); _locallyAdded.delete(id); });
       const _delSet = new Set(docsToDelete);
       cartItems = cartItems.filter(it => !_delSet.has(it.id));
-      docsToDelete.forEach(id => {
-        selectedIds.delete(id);
-        selectedIds.delete(NS_MARK + id);
-        _pendingQty.delete(id);
-      });
-      saveSelected();
-      _persistCartToMirror();
+      docsToDelete.forEach(id => { selectedIds.delete(id); selectedIds.delete(NS_MARK + id); _pendingQty.delete(id); });
+      saveSelected(); _persistCartToMirror();
       renderCart(true);
+
       let cartCleanupPromise = Promise.resolve();
       if (currentUser) {
         const batch = db.batch();
         const col = db.collection('carts').doc(currentUser.uid).collection('items');
         docsToDelete.forEach(docId => batch.delete(col.doc(docId)));
-        cartCleanupPromise = batch.commit()
-          .then(() => { setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 5000); })
-          .catch(e => {
-            console.warn('Cart cleanup:', e && e.message);
-            docsToDelete.forEach(id => _pendingCartDeletes.delete(id));
-            loadCart();
-          });
+        cartCleanupPromise = batch.commit().then(() => { setTimeout(() => docsToDelete.forEach(id => _pendingCartDeletes.delete(id)), 5000); }).catch(e => { console.warn('Cart cleanup:', e && e.message); docsToDelete.forEach(id => _pendingCartDeletes.delete(id)); loadCart(); });
       } else {
         setGuestCart(getGuestCart().filter(i => !docsToDelete.includes(i.id)));
       }
@@ -2569,16 +2007,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       document.getElementById('tg-success-order').textContent = 'Order ID: #' + ref.id.slice(0, 10).toUpperCase();
       docsToDelete.forEach(id => { selectedIds.delete(id); selectedIds.delete(NS_MARK + id); });
       saveSelected();
-      if (appliedCoupon) {
-        usedCouponCodes.add(appliedCoupon.code);
-        appliedCoupon = null;
-        saveAppliedCouponToStorage();
-        updateCouponCard();
-      }
-      if (!currentUser) {
-        cartItems = getGuestCart().filter(it => !_pendingCartDeletes.has(it.id));
-        renderCart(true);
-      }
+      if (appliedCoupon) { usedCouponCodes.add(appliedCoupon.code); appliedCoupon = null; saveAppliedCouponToStorage(); updateCouponCard(); }
+      if (!currentUser) { cartItems = getGuestCart().filter(it => !_pendingCartDeletes.has(it.id)); renderCart(true); }
     } catch(err) {
       console.error('Order creation failed:', err);
       document.getElementById('tg-success').classList.remove('show');
@@ -2590,27 +2020,20 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   }
 
-  /* keep delivery tag fresh every 1.5s */
   setInterval(() => {
     try {
       if (!cartItems.length || !_itemNodeMap.size) return;
       const dInfo = getDeliveryInfo();
       cartItems.forEach(it => {
-        const node = _itemNodeMap.get(it.id);
-        if (!node) return;
-        const el = node.querySelector('.tg-item-delivery');
-        if (!el) return;
+        const node = _itemNodeMap.get(it.id); if (!node) return;
+        const el = node.querySelector('.tg-item-delivery'); if (!el) return;
         const newCls = 'tg-item-delivery' + (dInfo.cls ? ' ' + dInfo.cls : '');
         if (el.className !== newCls) el.className = newCls;
-        if (el.getAttribute('data-delivery-text') !== dInfo.text) {
-          el.innerHTML = '🚚 <b>' + esc(dInfo.text) + '</b>';
-          el.setAttribute('data-delivery-text', dInfo.text);
-        }
+        if (el.getAttribute('data-delivery-text') !== dInfo.text) { el.innerHTML = '🚚 <b>' + esc(dInfo.text) + '</b>'; el.setAttribute('data-delivery-text', dInfo.text); }
       });
     } catch(e) {}
   }, 1500);
 
-  /* ========== BOOT ========== */
   loadSelected();
   loadPin();
   loadAppliedCouponFromStorage();
@@ -2622,19 +2045,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   watchSellerGlobal();
   watchPaymentSettings();
 
-  document.getElementById('tg-coupon-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); window.tgApplyCouponManual(); }
-  });
-
+  document.getElementById('tg-coupon-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); window.tgApplyCouponManual(); } });
   (function() {
     const pinInp = document.getElementById('tg-pin-input');
     if (pinInp) {
-      pinInp.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); window.tgSavePinFromModal(); }
-      });
-      pinInp.addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '').slice(0, 6);
-      });
+      pinInp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); window.tgSavePinFromModal(); } });
+      pinInp.addEventListener('input', function() { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
     }
   })();
 
@@ -2646,14 +2062,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     loadCart();
     if (u) {
       loadProfile(u).catch(() => {});
-      loadUsedCoupons(u.uid).then(() => {
-        const modal = document.getElementById('tg-coupon-modal');
-        if (modal && modal.classList.contains('show')) renderCouponList();
-      }).catch(() => {});
-    } else {
-      userProfile = null;
-      usedCouponCodes = new Set();
-    }
+      loadUsedCoupons(u.uid).then(() => { const modal = document.getElementById('tg-coupon-modal'); if (modal && modal.classList.contains('show')) renderCouponList(); }).catch(() => {});
+    } else { userProfile = null; usedCouponCodes = new Set(); }
   });
 
   document.querySelectorAll('.tg-modal').forEach(m => {
