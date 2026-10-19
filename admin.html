@@ -633,7 +633,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div class="tg-sec"><div class="tg-sh"><div><div class="tg-st">Seller Settlements</div><div class="tg-ss">Settle seller earnings</div></div></div><div id="settle-list"></div></div>
       <div class="tg-sec">
         <div class="tg-sh">
-          <div><div class="tg-st">📜 Settlement History</div><div class="tg-ss">All payments made to sellers (live)</div></div>
+          <div><div class="tg-st">📜 Daily Settlement History</div><div class="tg-ss">Date-wise seller payments (live)</div></div>
           <span class="tg-pill appr" id="settle-hist-count">0</span>
         </div>
         <div id="settle-history-list"></div>
@@ -912,28 +912,30 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
             </div>
           </div>
 
-          <!-- ⭐ NEW USER CLEAR SECTION ⭐ -->
+          <!-- ⭐ BULK USER CLEAR SECTION ⭐ -->
           <div class="tg-ie-box" style="background:linear-gradient(135deg,#ffebee,#ffcdd2);border-color:#d32f2f;">
             <div class="tg-ie-box-title" style="color:#b71c1c;">🗑️ Lifetime Delete User Data</div>
-            <div class="tg-ie-box-desc" style="color:#7f1d1d;">Warning: This will permanently delete all orders, cart, wishlist, and reviews for the selected user from Firebase.</div>
-            <div class="tg-srch" style="margin-bottom:10px;"><input type="text" id="clear-user-srch" placeholder="Search user by email/phone..." oninput="renderClearUsers()"></div>
-            <div id="clear-users-list" style="max-height:300px; overflow-y:auto; border:1px solid #e0e0e0; border-radius:8px; background:#fff;"></div>
+            <div class="tg-ie-box-desc" style="color:#7f1d1d;">Warning: This will permanently delete all orders, cart, wishlist, reviews, and <b>USER EMAIL</b> for selected users.</div>
+            
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
+              <div class="tg-srch" style="flex:1; margin-bottom:0;"><input type="text" id="clear-user-srch" placeholder="Search user by email/phone..." oninput="renderClearUsers()"></div>
+              <button class="tg-btn dan" onclick="tgDeleteSelectedUsers()" style="box-shadow:0 4px 12px rgba(211,47,47,0.3);">🗑️ Delete Selected</button>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:#fff; border-bottom:1px solid #e0e0e0; border-radius:8px 8px 0 0;">
+              <input type="checkbox" id="clear-all-users-cb" onchange="tgSelectAllClearUsers(this.checked)" style="width:16px;height:16px;accent-color:#d32f2f;cursor:pointer;">
+              <label for="clear-all-users-cb" style="font-size:12px;font-weight:700;color:#b71c1c;cursor:pointer;margin:0;">Select All Users (Max 100)</label>
+            </div>
+            <div id="clear-users-list" style="max-height:300px; overflow-y:auto; border:1px solid #e0e0e0; border-top:none; border-radius:0 0 8px 8px; background:#fff;"></div>
           </div>
 
           <div class="tg-danger-zone">
             <div class="tg-danger-zone-title">Danger Zone — Permanent Actions</div>
-            <div class="tg-danger-zone-desc">Ye actions <b>permanent</b> hain, <b>undo nahi ho sakte</b>. Sirf tab use karo jab aap 100% sure ho.</div>
+            <div class="tg-danger-zone-desc">Ye actions <b>permanent</b> hain, <b>undo nahi ho sakte</b>. Admin account safe rahega.</div>
             <button class="tg-danger-btn medium" onclick="tgClearSellerData()">
               <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
               Clear All Sellers Data
             </button>
-            
-            <!-- ⭐ NEW BUTTON: CLEAR USER ACTIVITY ONLY ⭐ -->
-            <button class="tg-danger-btn high" onclick="tgClearUserActivityData()">
-              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-              🧹 Clear User Activity (Keep Products & Banners)
-            </button>
-
             <button class="tg-danger-btn high" onclick="tgClearAllData()">
               <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
               💥 Clear ALL Data (Full Reset)
@@ -1367,6 +1369,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   let SELECTED_PRODS = new Set();
   let SELECTED_LABELS = new Set();
   let SELECTED_ORDERS = new Set();
+  let SELECTED_CLEAR_USERS = new Set();
   let CURRENT_TICKET = null;
   let ALL_SETTLE_RAW = [];
 
@@ -1463,7 +1466,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     if (v === 'labels') renderLabels();
     if (v === 'saveorders') renderSaveOrders();
     if (v === 'settle') { renderSettle(); renderSettleHistory(); }
-    if (v === 'backup') renderClearUsers(); // ⭐ NEW: Load users for wipe
+    if (v === 'backup') renderClearUsers(); // ⭐ Load users for wipe
   }
   function handlePopState(e) {
     const state = e.state || { view: 'dash', modal: null };
@@ -1609,7 +1612,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         '<div class="tg-settle-pay-mini-title">🏦 Send To Bank</div>' +
         '<div class="tg-settle-pay-mini-row">' +
           '<span class="tg-settle-pay-mini-k">Account</span>' +
-          '<span class="tg-settle-pay-mini-v">' + esc(s.bankAcc) +
+          '<span class="tg-settle-pay-mini-val">' + esc(s.bankAcc) +
             ' <button type="button" class="tg-pay-copy-btn" onclick="tgCopyText(\'' + jsEsc(s.bankAcc) + '\', this)">' +
               '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>' +
           '</span>' +
@@ -1626,8 +1629,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     } else {
       html = '<div class="tg-settle-pay-mini">' +
         '<div class="tg-settle-pay-mini-title">💳 Payment Details</div>' +
-        (hasUPI ? '<div class="tg-settle-pay-mini-row"><span class="tg-settle-pay-mini-k">UPI</span><span class="tg-settle-pay-mini-v">' + esc(s.upiId) + '</span></div>' : '') +
-        (hasBank ? '<div class="tg-settle-pay-mini-row"><span class="tg-settle-pay-mini-k">Bank</span><span class="tg-settle-pay-mini-v">' + esc(s.bankAcc) + '</span></div>' : '') +
+        (hasUPI ? '<div class="tg-settle-pay-mini-row"><span class="tg-settle-pay-mini-k">UPI</span><span class="tg-settle-pay-mini-val">' + esc(s.upiId) + '</span></div>' : '') +
+        (hasBank ? '<div class="tg-settle-pay-mini-row"><span class="tg-settle-pay-mini-k">Bank</span><span class="tg-settle-pay-mini-val">' + esc(s.bankAcc) + '</span></div>' : '') +
       '</div>';
     }
     return html;
@@ -2625,32 +2628,34 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     })();
   };
 
-  /* ⭐ NEW: Clear User Activity Data (Keep Products & Banners) ⭐ */
-  window.tgClearUserActivityData = function() {
-    const msg = '⚠️ DANGER: This will delete all USER ACTIVITY data from:\n' +
-      '• Users\n' +
-      '• Sellers\n' +
-      '• Orders\n' +
-      '• Coupons\n' +
-      '• Promotions\n' +
-      '• Notifications\n' +
-      '• Reviews\n' +
-      '• Settlements\n' +
-      '• Support Tickets\n' +
-      '• Carts\n' +
-      '• Wishlists\n\n' +
-      '✅ Products and Banners will be KEPT SAFE.\n\n' +
+  window.tgClearAllData = function() {
+    const totalCount = ALL_USERS.length + ALL_SELLERS.length + ALL_PRODUCTS.length + ALL_ORDERS.length + ALL_CATS.length + ALL_BANNERS.length + ALL_COUPONS.length + ALL_PROMOS.length + ALL_NOTIFS.length + ALL_REVIEWS.length + ALL_SETTLE.length + ALL_TICKETS.length;
+    const msg = '💥 DANGER: This will delete ALL data from:\n' +
+      '• Users (' + ALL_USERS.length + ')\n' +
+      '• Sellers (' + ALL_SELLERS.length + ')\n' +
+      '• Products (' + ALL_PRODUCTS.length + ')\n' +
+      '• Orders (' + ALL_ORDERS.length + ')\n' +
+      '• Categories (' + ALL_CATS.length + ')\n' +
+      '• Banners (' + ALL_BANNERS.length + ')\n' +
+      '• Coupons (' + ALL_COUPONS.length + ')\n' +
+      '• Promotions (' + ALL_PROMOS.length + ')\n' +
+      '• Notifications (' + ALL_NOTIFS.length + ')\n' +
+      '• Reviews (' + ALL_REVIEWS.length + ')\n' +
+      '• Settlements (' + ALL_SETTLE.length + ')\n' +
+      '• Support Tickets (' + ALL_TICKETS.length + ')\n' +
+      '• Carts (all user carts + items)\n' +
+      '• Wishlists (all user wishlists)\n\n' +
+      '⚠️ Admin account will be SAFE.\n\n' +
+      'Total: ~' + totalCount + ' documents\n\n' +
       'This CANNOT be undone!';
     if (!confirm(msg)) return;
     if (!confirm('⚠️ Are you ABSOLUTELY 100% SURE?\n\nThis is your LAST chance to cancel.')) return;
-    const typed = prompt('Type "CLEAR ACTIVITY" (uppercase, exact) to confirm:');
-    if (typed !== 'CLEAR ACTIVITY') { toast('Cancelled — nothing was deleted', 'inf'); return; }
-    
+    const typed = prompt('Type "CLEAR ALL" (uppercase, exact) to confirm:');
+    if (typed !== 'CLEAR ALL') { toast('Cancelled — nothing was deleted', 'inf'); return; }
     (async () => {
       let totalDeleted = 0, totalFail = 0;
-      toast('Starting data clear (keeping Products & Banners)...', 'inf');
+      toast('Starting full data clear...', 'inf');
       
-      // Clear Carts
       try {
         const cartSnaps = await db.collection('carts').get();
         for (const cartDoc of cartSnaps.docs) {
@@ -2668,7 +2673,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         }
       } catch(e) {}
       
-      // Clear Wishlists
       try {
         let hasMore = true;
         while (hasMore) {
@@ -2682,8 +2686,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         }
       } catch(e) {}
       
-      // Collections to clear
-      const cols = ['users', 'sellers', 'orders', 'coupons', 'promotions', 'notifications', 'reviews', 'settlements', 'supportTickets'];
+      const adminUid = USER.uid;
+      const cols = ['users', 'sellers', 'products', 'orders', 'categories', 'banners', 'coupons', 'promotions', 'notifications', 'reviews', 'settlements', 'supportTickets'];
+      
       for (const c of cols) {
         try {
           let hasMore = true;
@@ -2691,9 +2696,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
             const snap = await db.collection(c).limit(450).get();
             if (snap.empty) { hasMore = false; break; }
             const batch = db.batch();
-            snap.docs.forEach(d => batch.delete(d.ref));
-            try { await batch.commit(); totalDeleted += snap.docs.length; }
-            catch (e) { totalFail += snap.docs.length; }
+            let deletedInBatch = 0;
+            
+            snap.docs.forEach(d => {
+              // ⭐ FIX: Skip admin user doc
+              if (c === 'users' && d.id === adminUid) {
+                // Skip admin
+              } else {
+                batch.delete(d.ref);
+                deletedInBatch++;
+              }
+            });
+            
+            if (deletedInBatch > 0) {
+              try { await batch.commit(); totalDeleted += deletedInBatch; }
+              catch (e) { totalFail += deletedInBatch; }
+            }
             if (snap.docs.length < 450) hasMore = false;
           }
         } catch (e) {}
@@ -2705,88 +2723,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         localStorage.removeItem('toego_home_banners_v1');
         localStorage.removeItem('toego_products_cache_v1');
       } catch(e) {}
-      toast('✓ Cleared ' + totalDeleted + ' docs (Products & Banners kept safe)' + (totalFail ? ' (' + totalFail + ' failed)' : ''), 'suc');
+      toast('✓ Cleared ' + totalDeleted + ' docs (Admin Safe)' + (totalFail ? ' (' + totalFail + ' failed)' : ''), 'suc');
     })();
   };
-
-  window.tgClearAllData = function() {
-  const totalCount = ALL_USERS.length + ALL_SELLERS.length + ALL_PRODUCTS.length + ALL_ORDERS.length + ALL_CATS.length + ALL_BANNERS.length + ALL_COUPONS.length + ALL_PROMOS.length + ALL_NOTIFS.length + ALL_REVIEWS.length + ALL_SETTLE.length + ALL_TICKETS.length;
-  const msg = '💥 DANGER: This will delete ALL data from:\n' +
-    '• Users (' + ALL_USERS.length + ')\n' +
-    '• Sellers (' + ALL_SELLERS.length + ')\n' +
-    '• Products (' + ALL_PRODUCTS.length + ')\n' +
-    '• Orders (' + ALL_ORDERS.length + ')\n' +
-    '• Categories (' + ALL_CATS.length + ')\n' +
-    '• Banners (' + ALL_BANNERS.length + ')\n' +
-    '• Coupons (' + ALL_COUPONS.length + ')\n' +
-    '• Promotions (' + ALL_PROMOS.length + ')\n' +
-    '• Notifications (' + ALL_NOTIFS.length + ')\n' +
-    '• Reviews (' + ALL_REVIEWS.length + ')\n' +
-    '• Settlements (' + ALL_SETTLE.length + ')\n' +
-    '• Support Tickets (' + ALL_TICKETS.length + ')\n' +
-    '• Carts (all user carts + items)\n' +
-    '• Wishlists (all user wishlists)\n\n' +
-    'Total: ~' + totalCount + ' documents\n\n' +
-    'This CANNOT be undone!';
-  if (!confirm(msg)) return;
-  if (!confirm('⚠️ Are you ABSOLUTELY 100% SURE?\n\nThis is your LAST chance to cancel.')) return;
-  const typed = prompt('Type "CLEAR ALL" (uppercase, exact) to confirm:');
-  if (typed !== 'CLEAR ALL') { toast('Cancelled — nothing was deleted', 'inf'); return; }
-  (async () => {
-    let totalDeleted = 0, totalFail = 0;
-    toast('Starting full data clear...', 'inf');
-    try {
-      const cartSnaps = await db.collection('carts').get();
-      for (const cartDoc of cartSnaps.docs) {
-        let hasMore = true;
-        while (hasMore) {
-          const itemsSnap = await cartDoc.ref.collection('items').limit(450).get();
-          if (itemsSnap.empty) { hasMore = false; break; }
-          const batch = db.batch();
-          itemsSnap.docs.forEach(d => batch.delete(d.ref));
-          try { await batch.commit(); totalDeleted += itemsSnap.docs.length; }
-          catch (e) { totalFail += itemsSnap.docs.length; }
-          if (itemsSnap.docs.length < 450) hasMore = false;
-        }
-        try { await cartDoc.ref.delete(); totalDeleted++; } catch (e) {}
-      }
-    } catch(e) {}
-    try {
-      let hasMore = true;
-      while (hasMore) {
-        const snap = await db.collection('wishlists').limit(450).get();
-        if (snap.empty) { hasMore = false; break; }
-        const batch = db.batch();
-        snap.docs.forEach(d => batch.delete(d.ref));
-        try { await batch.commit(); totalDeleted += snap.docs.length; }
-        catch (e) { totalFail += snap.docs.length; }
-        if (snap.docs.length < 450) hasMore = false;
-      }
-    } catch(e) {}
-    const cols = ['users', 'sellers', 'products', 'orders', 'categories', 'banners', 'coupons', 'promotions', 'notifications', 'reviews', 'settlements', 'supportTickets'];
-    for (const c of cols) {
-      try {
-        let hasMore = true;
-        while (hasMore) {
-          const snap = await db.collection(c).limit(450).get();
-          if (snap.empty) { hasMore = false; break; }
-          const batch = db.batch();
-          snap.docs.forEach(d => batch.delete(d.ref));
-          try { await batch.commit(); totalDeleted += snap.docs.length; }
-          catch (e) { totalFail += snap.docs.length; }
-          if (snap.docs.length < 450) hasMore = false;
-        }
-      } catch (e) {}
-    }
-    try {
-      localStorage.removeItem('toego_home_prod_v19');
-      localStorage.removeItem('toego_home_cfg_v19');
-      localStorage.removeItem('toego_home_banners_v1');
-      localStorage.removeItem('toego_products_cache_v1');
-    } catch(e) {}
-    toast('✓ Cleared ' + totalDeleted + ' docs' + (totalFail ? ' (' + totalFail + ' failed)' : ''), 'suc');
-  })();
-};
 
   /* ⭐ NEW: User Clear List functions */
   window.renderClearUsers = function() {
@@ -2795,75 +2734,96 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const q = (document.getElementById('clear-user-srch')?.value || '').toLowerCase().trim();
     let list = ALL_USERS.slice();
     if (q) list = list.filter(u => [(u.name||''),(u.email||''),(u.phone||'')].join(' ').toLowerCase().includes(q));
-    list = list.slice(0, 50);
+    list = list.slice(0, 100); // Increased limit
+    
+    // Update Select All checkbox state
+    const cbAll = document.getElementById('clear-all-users-cb');
+    if (cbAll && list.length > 0) {
+      cbAll.checked = list.every(u => SELECTED_CLEAR_USERS.has(u.id));
+    }
+
     if (!list.length) { el.innerHTML = '<div style="padding:15px;text-align:center;color:#888;">No users found</div>'; return; }
+    
     el.innerHTML = list.map(u => `
-      <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee;">
-        <div>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #eee;">
+        <input type="checkbox" onchange="tgToggleClearUser('${jsEsc(u.id)}', this.checked)" ${SELECTED_CLEAR_USERS.has(u.id) ? 'checked' : ''} style="width:16px;height:16px;accent-color:#d32f2f; cursor:pointer;">
+        <div style="flex:1;">
           <div style="font-weight:700; font-size:13px;">${esc(u.name || 'User')}</div>
           <div style="font-size:11px; color:#666;">${esc(u.email || '')} | ${esc(u.phone || '')}</div>
         </div>
-        <button class="tg-btn dan" style="padding:6px 10px; font-size:11px;" onclick="tgWipeUserData('${jsEsc(u.id)}', '${jsEsc(u.email||u.name||u.id)}')">Delete Data</button>
       </div>
     `).join('');
   };
 
-  window.tgWipeUserData = function(uid, email) {
-     confirmCb = async () => {
-       try {
-         toast('Wiping user data...', 'inf');
-         // Delete Orders
-         let found = new Set();
-         try { const s1 = await db.collection('orders').where('userId','==',uid).get(); s1.docs.forEach(d => found.add(d.id)); } catch(e) {}
-         try { const s2 = await db.collection('orders').where('user_id','==',uid).get(); s2.docs.forEach(d => found.add(d.id)); } catch(e) {}
-         if (email) {
-           try { const s3 = await db.collection('orders').where('userEmail','==',email).get(); s3.docs.forEach(d => found.add(d.id)); } catch(e) {}
-           try { const s4 = await db.collection('orders').where('email','==',email).get(); s4.docs.forEach(d => found.add(d.id)); } catch(e) {}
-         }
-         const refs = Array.from(found).map(id => db.collection('orders').doc(id));
-         for (let i = 0; i < refs.length; i += 450) {
-           const batch = db.batch();
-           refs.slice(i, i + 450).forEach(r => batch.delete(r));
-           await batch.commit();
-         }
+  window.tgToggleClearUser = function(uid, c) {
+    if (c) SELECTED_CLEAR_USERS.add(uid);
+    else SELECTED_CLEAR_USERS.delete(uid);
+    renderClearUsers(); // re-render to update Select All
+  };
 
-         // Delete Cart
-         try {
-           let subMore = true;
-           while(subMore) {
-             const items = await db.collection('carts').doc(uid).collection('items').limit(450).get();
-             if(items.empty) { subMore = false; break; }
-             const b = db.batch(); items.docs.forEach(d=>b.delete(d.ref)); await b.commit();
-             if(items.docs.length < 450) subMore = false;
-           }
-           await db.collection('carts').doc(uid).delete().catch(()=>{});
-         } catch(e){}
+  window.tgSelectAllClearUsers = function(c) {
+    const q = (document.getElementById('clear-user-srch')?.value || '').toLowerCase().trim();
+    let list = ALL_USERS.slice();
+    if (q) list = list.filter(u => [(u.name||''),(u.email||''),(u.phone||'')].join(' ').toLowerCase().includes(q));
+    list = list.slice(0, 100);
+    
+    if (c) list.forEach(u => SELECTED_CLEAR_USERS.add(u.id));
+    else list.forEach(u => SELECTED_CLEAR_USERS.delete(u.id));
+    renderClearUsers();
+  };
 
-         // Delete Wishlist
-         try {
-           let subMore = true;
-           while(subMore) {
-             const items = await db.collection('wishlists').doc(uid).collection('items').limit(450).get();
-             if(items.empty) { subMore = false; break; }
-             const b = db.batch(); items.docs.forEach(d=>b.delete(d.ref)); await b.commit();
-             if(items.docs.length < 450) subMore = false;
-           }
-           await db.collection('wishlists').doc(uid).delete().catch(()=>{});
-         } catch(e){}
+  window.tgDeleteSelectedUsers = async function() {
+    const uids = Array.from(SELECTED_CLEAR_USERS);
+    if (!uids.length) { toast('No users selected', 'err'); return; }
+    
+    if (!confirm(`⚠️ Are you sure you want to permanently delete ${uids.length} user(s) and all their data (orders, cart, wishlist, reviews, email)?\n\nThis CANNOT be undone!`)) return;
+    
+    toast(`Deleting ${uids.length} users...`, 'inf');
+    let ok = 0, fail = 0;
+    
+    for (const uid of uids) {
+      try {
+        // 1. Delete Orders (multiple field checks)
+        const oSnap1 = await db.collection('orders').where('customerId', '==', uid).get();
+        const b1 = db.batch(); oSnap1.docs.forEach(d => b1.delete(d.ref)); await b1.commit();
+        
+        const oSnap2 = await db.collection('orders').where('userId', '==', uid).get();
+        const b2 = db.batch(); oSnap2.docs.forEach(d => b2.delete(d.ref)); await b2.commit();
+        
+        const oSnap3 = await db.collection('orders').where('user_id', '==', uid).get();
+        const b3 = db.batch(); oSnap3.docs.forEach(d => b3.delete(d.ref)); await b3.commit();
 
-         // Delete Reviews
-         try { const rSnap = await db.collection('reviews').where('userId','==',uid).get(); const b = db.batch(); rSnap.docs.forEach(d=>b.delete(d.ref)); await b.commit(); } catch(e){}
+        // 2. Delete Cart items
+        try {
+          const cSnap = await db.collection('carts').doc(uid).collection('items').get();
+          const b4 = db.batch(); cSnap.docs.forEach(d => b4.delete(d.ref)); await b4.commit();
+          await db.collection('carts').doc(uid).delete().catch(()=>{});
+        } catch(e) {}
+        
+        // 3. Delete Wishlist items
+        try {
+          const wSnap = await db.collection('wishlists').doc(uid).collection('items').get();
+          const b5 = db.batch(); wSnap.docs.forEach(d => b5.delete(d.ref)); await b5.commit();
+          await db.collection('wishlists').doc(uid).delete().catch(()=>{});
+        } catch(e) {}
 
-         toast('✓ User data wiped successfully', 'suc');
-         tgCloseMod('mod-confirm');
-         renderClearUsers();
-       } catch(e) { toast('Failed: ' + e.message, 'err'); }
-     };
-     document.getElementById('cf-t').textContent = 'Delete All Data?';
-     document.getElementById('cf-m').innerHTML = `Are you sure you want to permanently delete ALL data (orders, cart, wishlist, reviews) for <b>${esc(email)}</b>?<br><br>This action CANNOT be undone.`;
-     document.getElementById('cf-b').textContent = 'Delete Data';
-     document.getElementById('cf-b').className = 'tg-mod-b dan';
-     openMod('mod-confirm');
+        // 4. Delete Reviews
+        const rSnap = await db.collection('reviews').where('userId', '==', uid).get();
+        const b6 = db.batch(); rSnap.docs.forEach(d => b6.delete(d.ref)); await b6.commit();
+
+        // 5. Delete User Document (This removes the email)
+        await db.collection('users').doc(uid).delete();
+        
+        ok++;
+      } catch(e) {
+        console.error('Delete fail for', uid, e);
+        fail++;
+      }
+    }
+    
+    toast(`✓ Deleted ${ok} user(s)${fail ? `, ${fail} failed` : ''}`, 'suc');
+    SELECTED_CLEAR_USERS.clear();
+    renderClearUsers();
   };
 
   window.tgExportSellers = async function() {
@@ -4717,40 +4677,77 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     openMod('mod-confirm');
   };
 
+  /* ⭐ FIXED: Group settlements by Date (Daily Payments) */
   function renderSettleHistory(){
     const el = document.getElementById('settle-history-list'); if (!el) return;
+    
+    // Sort all by date descending
     const list = ALL_SETTLE_RAW.filter(x => x.status === 'settled').slice().sort((a,b) => {
       const at = a.settledAt?.toDate?.()?.getTime?.() || 0;
       const bt = b.settledAt?.toDate?.()?.getTime?.() || 0;
       return bt - at;
     });
+    
     setText('settle-hist-count', list.length);
+    
     if (!list.length) {
-      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-i">📜</div><div class="tg-empty-t">No settlements yet</div><div class="tg-empty-d">Pehla settlement karte hi yahan dikhega</div></div>';
+      el.innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">📜</div><div class="tg-empty-title">No settlements yet</div><div class="tg-empty-desc">Pehla settlement karte hi yahan dikhega</div></div>';
       return;
     }
-    el.innerHTML = list.slice(0, 100).map(x => {
-      const dt = x.settledAt?.toDate ? x.settledAt.toDate() : (x.settledAt ? new Date(x.settledAt) : null);
-      const dateStr = dt ? dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) + ' · ' + dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '—';
-      const byTxt = x.settledByEmail || (x.settledBy ? 'admin' : '');
-      const ordCount = Array.isArray(x.orderIds) ? x.orderIds.length : 0;
-      return '<div class="tg-settle-hist-item">' +
-        '<div class="tg-settle-hist-icon">✓</div>' +
-        '<div class="tg-settle-hist-body">' +
-          '<div class="tg-settle-hist-name">' + esc(x.sellerName||'Seller') + '</div>' +
-          '<div class="tg-settle-hist-meta">' +
-            '<span>📅 ' + esc(dateStr) + '</span>' +
-            (byTxt ? '<span>👤 ' + esc(byTxt) + '</span>' : '') +
-          '</div>' +
-          (ordCount > 0 ? '<div style="font-size:11.5px;color:#1b8a3a;font-weight:700;margin-top:4px;">✓ ' + ordCount + ' orders settled</div>' : '') +
-          (x.reference ? '<div class="tg-settle-hist-ref">Ref: ' + esc(x.reference) + '</div>' : '') +
-          (x.note ? '<div style="font-size:11.5px;color:#666;margin-top:6px;">📝 ' + esc(x.note) + '</div>' : '') +
-        '</div>' +
-        '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">' +
-          '<div class="tg-settle-hist-amt">' + inr(x.amount) + '<small>Settled</small></div>' +
-          '<button class="tg-btn dan" style="padding:4px 8px; font-size:10px;" onclick="tgDeleteSettlement(\'' + x.id + '\')">🗑 Delete</button>' +
-        '</div>' +
-      '</div>';
+
+    // Group by Date (YYYY-MM-DD)
+    const groups = {};
+    list.forEach(x => {
+      const dt = x.settledAt?.toDate ? x.settledAt.toDate() : (x.settledAt ? new Date(x.settledAt) : new Date());
+      const dk = dt.toISOString().slice(0, 10);
+      if (!groups[dk]) groups[dk] = { dateObj: dt, items: [], total: 0 };
+      groups[dk].items.push(x);
+      groups[dk].total += Number(x.amount || 0);
+    });
+
+    const sortedDays = Object.keys(groups).sort((a,b) => b.localeCompare(a)); // newest first
+
+    el.innerHTML = sortedDays.map(dk => {
+      const g = groups[dk];
+      const dateStr = g.dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      
+      // Daily Header
+      let html = `<div class="tg-date-group" style="margin-bottom:16px; border:1.5px solid #e0e0e0; border-radius:10px; overflow:hidden;">
+        <div class="tg-date-group-head" style="background:#f0f5ff; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-weight:800; color:#2874f0; font-size:13px;">📅 ${esc(dateStr)}</div>
+          <div style="font-weight:800; color:#1b8a3a; font-size:14px;">Total: ${inr(g.total)}</div>
+        </div>
+        <div>`;
+
+      // Items inside the day
+      g.items.forEach(x => {
+        const dt = x.settledAt?.toDate ? x.settledAt.toDate() : (x.settledAt ? new Date(x.settledAt) : null);
+        const timeStr = dt ? dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '';
+        const byTxt = x.settledByEmail || (x.settledBy ? 'admin' : '');
+        const ordCount = Array.isArray(x.orderIds) ? x.orderIds.length : 0;
+        
+        html += `
+          <div class="tg-settle-hist-item" style="padding:12px 14px; border-bottom:1px solid #f1f3f6;">
+            <div class="tg-settle-hist-icon" style="width:36px; height:36px; font-size:16px;">✓</div>
+            <div class="tg-settle-hist-body">
+              <div class="tg-settle-hist-name">${esc(x.sellerName||'Seller')}</div>
+              <div class="tg-settle-hist-meta">
+                <span>⏰ ${esc(timeStr)}</span>
+                ${byTxt ? `<span>👤 ${esc(byTxt)}</span>` : ''}
+              </div>
+              ${ordCount > 0 ? `<div style="font-size:11.5px;color:#1b8a3a;font-weight:700;margin-top:4px;">✓ ${ordCount} orders settled</div>` : ''}
+              ${x.reference ? `<div class="tg-settle-hist-ref">Ref: ${esc(x.reference)}</div>` : ''}
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <div class="tg-settle-hist-amt" style="font-size:16px;">${inr(x.amount)}</div>
+              <button class="tg-btn dan" style="padding:4px 8px; font-size:10px;" onclick="tgDeleteSettlement('${x.id}')">🗑 Delete</button>
+            </div>
+          </div>
+        `;
+      });
+      
+      html += `</div></div>`;
+      return html;
     }).join('');
   }
 
