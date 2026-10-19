@@ -362,12 +362,14 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 .tg-gst-info b{color:#0d47a1;font-weight:800;}
 .tg-gst-info.ready{background:linear-gradient(135deg,#fff8e1,#ffecb3);color:#8a6d00;border-color:#ffe082;}
 .tg-gst-info.ready b{color:#5d4300;}
+.tg-gst-info.green{background:linear-gradient(135deg,#e6f7ec,#d1f0dd);border-color:#a5d6b7;color:#1b8a3a;}
+.tg-gst-info.green b{color:#14532d;}
 .tg-gst-download-btn{background:linear-gradient(135deg,#1b8a3a,#15803d);color:#fff;padding:8px 14px;border-radius:8px;font-weight:800;font-size:12px;margin-top:10px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 4px 12px rgba(27,138,58,0.3);}
 .tg-gst-download-btn:hover{filter:brightness(1.1);}
 .tg-gst-download-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;}
 .tg-gst-month-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-bottom:12px;}
-.tg-gst-month-row input[type="month"]{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;font-weight:600;color:#212121;background:#fff;}
-.tg-gst-month-row input[type="month"]:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
+.tg-gst-month-row input[type="month"],.tg-gst-month-row input[type="date"]{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;font-weight:600;color:#212121;background:#fff;}
+.tg-gst-month-row input[type="month"]:focus,.tg-gst-month-row input[type="date"]:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
 .tg-gst-month-row button{padding:12px 18px;border-radius:10px;background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;font-weight:800;font-size:13px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;box-shadow:0 4px 12px rgba(40,116,240,0.3);}
 .tg-gst-month-row button:disabled{opacity:0.5;cursor:not-allowed;}
 .tg-gst-month-row button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4;}
@@ -379,7 +381,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 </head>
 <body>
 
-<!-- ══════════════ SECURITY LAYER START ══════════════ -->
 <script>
 (function securityGuard(){
   'use strict';
@@ -421,7 +422,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   }, 1200);
 })();
 </script>
-<!-- ══════════════ SECURITY LAYER END ══════════════ -->
 
 <header class="tg-hd">
   <div class="tg-hd-inner">
@@ -631,6 +631,31 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
           <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;display:none;" id="tg-earn-return-row"><span style="color:#c62828;font-weight:700;">Return Cuts</span><span style="color:#d32f2f;font-weight:800;" id="tg-earn-return-cut">− ₹0</span></div>
           <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;display:none;" id="tg-earn-label-row"><span style="color:#c62828;font-weight:700;">Cancelled Label Cost</span><span style="color:#d32f2f;font-weight:800;" id="tg-earn-label-cut">− ₹0</span></div>
           <div style="display:flex;justify-content:space-between;padding:12px 0 4px;border-top:1.5px solid #e0e0e0;margin-top:8px;font-size:16px;font-weight:800;color:#1b8a3a;"><span>Net Earnings</span><span id="tg-earn-net2">₹0</span></div>
+        </div>
+      </div>
+
+      <div class="tg-sec">
+        <div class="tg-sec-head">
+          <div>
+            <div class="tg-sec-title">📥 Daily Delivered Orders</div>
+            <div class="tg-sec-sub">Date-wise full details Excel download</div>
+          </div>
+        </div>
+        <div class="tg-gst-panel">
+          <div class="tg-gst-info green">
+            💡 <b>Tip:</b> Select any date and download that day's delivered orders with full details — customer info, items, commission, delivery, net earnings, courier & tracking.
+          </div>
+          <div class="tg-gst-month-row">
+            <div>
+              <label style="display:block;font-size:11.5px;color:#666;font-weight:700;margin-bottom:6px;text-transform:uppercase;">Select Date</label>
+              <input type="date" id="tg-deliv-export-date">
+            </div>
+            <button onclick="tgExportDailyDelivered()">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Excel
+            </button>
+          </div>
+          <div id="tg-deliv-count-badge" style="margin-top:8px;"></div>
         </div>
       </div>
 
@@ -855,7 +880,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   const auth = firebase.auth();
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
-  const SA = 'anasfansclub@toego.in';
   const LOW_STOCK = 10;
   const LABEL_CUT = 30;
   const RETURN_CUT = 150;
@@ -965,17 +989,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     _myItemsCache.set(o, result);
     return result;
   }
-  function hasMyItems(o) {
-    if (!o || !USER) return false;
-    const uid = USER.uid;
-    if (String(o.sellerId||'') === uid) return true;
-    if (String(o.seller_id||'') === uid) return true;
-    if (String(o.sellerUid||'') === uid) return true;
-    if (Array.isArray(o.sellerIds) && o.sellerIds.some(sid => String(sid) === uid)) return true;
-    return myItems(o).length > 0;
-  }
 
-  /* ═══ PRIVATE: addrOf — SIRF LABEL KE LIYE, UI MEIN USE NAHI HOTA ═══ */
   function addrOf(o) {
     let a = o.address || o.shippingAddress || o.deliveryAddress || {};
     if (typeof a === 'string') a = { line: a };
@@ -1054,6 +1068,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     return Math.max(0, g - comm - deliv);
   }
 
+  /* ⭐ FIX: Strict FIFO — no 50% partial match. Orders fully covered by settlements = PAID, else PENDING */
   function getPaidOrderIds() {
     const paidIds = new Set();
     MY_SETTLEMENTS.forEach(s => {
@@ -1076,11 +1091,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     for (const o of deliveredOrders) {
       cum += o.net;
       if (cum <= totalSettled + 1) paidIds.add(o.id);
-      else {
-        const remaining = totalSettled - (cum - o.net);
-        if (remaining >= o.net * 0.5) paidIds.add(o.id);
-        break;
-      }
+      else break;
     }
     return paidIds;
   }
@@ -1182,7 +1193,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
         case 'products': renderStats(); renderProducts(); break;
         case 'inventory': renderInventory(); break;
         case 'returns': renderReturns(); break;
-        case 'earnings': renderEarnings(); renderSettleHistory(); initGSTPanel(); break;
+        case 'earnings': renderEarnings(); renderSettleHistory(); initGSTPanel(); initDailyDelivExport(); break;
         case 'insights': renderInsights(); break;
         case 'help': renderTickets(); break;
         case 'promotions': renderPromos(); break;
@@ -1212,7 +1223,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     OSEARCH = (document.getElementById('tg-order-search').value||'').toLowerCase().trim();
     renderOrders(); updateSelAll();
   };
-  /* ⭐ FIX: search only by order ID / product — NO customer phone (privacy) */
   function matchSearch(o) {
     if (!OSEARCH) return true;
     const mi = myItems(o);
@@ -1329,17 +1339,17 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     } catch(e) {}
     try {
       const u3 = db.collection('orders').where('sellerId', '==', USER.uid).limit(200)
-        .onSnapshot(s => { s.docs.forEach(d => { if (!map.has(d.id)) map.set(d.id, { id: d.id, ...d.data() }); }); updateAll(); }, () => {});
+        .onSnapshot(s => { s.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() })); updateAll(); }, () => {});
       unsubOrders.push(u3);
     } catch(e) {}
     try {
       const u6 = db.collection('orders').where('seller_id', '==', USER.uid).limit(100)
-        .onSnapshot(s => { let a = 0; s.docs.forEach(d => { if (!map.has(d.id)) { map.set(d.id, { id: d.id, ...d.data() }); a++; } }); if (a > 0) updateAll(); }, () => {});
+        .onSnapshot(s => { s.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() })); updateAll(); }, () => {});
       unsubOrders.push(u6);
     } catch(e) {}
     try {
       const u7 = db.collection('orders').where('sellerUid', '==', USER.uid).limit(100)
-        .onSnapshot(s => { let a = 0; s.docs.forEach(d => { if (!map.has(d.id)) { map.set(d.id, { id: d.id, ...d.data() }); a++; } }); if (a > 0) updateAll(); }, () => {});
+        .onSnapshot(s => { s.docs.forEach(d => map.set(d.id, { id: d.id, ...d.data() })); updateAll(); }, () => {});
       unsubOrders.push(u7);
     } catch(e) {}
   }
@@ -1514,7 +1524,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   }
   function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
 
-  /* ⭐ renderStats — Pickup + Return chips */
   function renderStats() {
     const c = { pending: 0, accepted: 0, ready: 0, label: 0, processing: 0, dispatched: 0, delivered: 0, returns: 0, low: 0, pp: 0 };
     ORDERS.forEach(o => {
@@ -1711,6 +1720,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     }).join('');
   }
 
+  /* ⭐ FIXED renderEarnings — Pending = TotalDeliveredNet − TotalSettled */
   function renderEarnings() {
     if (!document.getElementById('tg-earnings-list')) return;
     const e = calcEarnings();
@@ -1725,13 +1735,15 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     setText('tg-earn-settled', inr(totalReceived));
     setText('tg-earn-comm-pct-lbl', '(' + getCommission() + '%)');
 
+    // ⭐ FIX: Pending = Total Delivered Net − Total Settled (accurate)
     const paidIds = getPaidOrderIds();
-    let pendingPay = 0;
+    let totalDeliveredNet = 0;
     ORDERS.forEach(o => {
-      if (normStatus(o) === 'delivered' && !paidIds.has(o.id)) {
-        pendingPay += orderNet(o);
+      if (normStatus(o) === 'delivered') {
+        totalDeliveredNet += orderNet(o);
       }
     });
+    const pendingPay = Math.max(0, totalDeliveredNet - totalReceived);
     setText('tg-earn-pending-pay', inr(pendingPay));
 
     if (e.returnCount > 0) {
@@ -1816,6 +1828,144 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       '</div>';
     }).join('');
   }
+
+  /* ⭐ NEW: Daily Delivered Export */
+  function initDailyDelivExport() {
+    const inp = document.getElementById('tg-deliv-export-date');
+    if (!inp) return;
+    if (!inp.value) {
+      const today = new Date();
+      inp.value = today.toISOString().slice(0, 10);
+    }
+    inp.onchange = updateDailyDelivCount;
+    updateDailyDelivCount();
+  }
+  function updateDailyDelivCount() {
+    const inp = document.getElementById('tg-deliv-export-date');
+    const badge = document.getElementById('tg-deliv-count-badge');
+    if (!inp || !badge) return;
+    const dateVal = (inp.value || '').trim();
+    if (!dateVal) { badge.innerHTML = ''; return; }
+    const count = ORDERS.filter(o => {
+      if (normStatus(o) !== 'delivered') return false;
+      const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+      if (!dd) return false;
+      return dd.toISOString().slice(0, 10) === dateVal;
+    }).length;
+    if (count === 0) {
+      badge.innerHTML = '<div style="font-size:12px;color:#888;padding:8px;text-align:center;">No delivered orders on ' + dateVal + '</div>';
+    } else {
+      badge.innerHTML = '<div style="background:#e6f7ec;border:1.5px solid #a5d6b7;border-radius:8px;padding:8px 12px;font-size:12px;color:#1b8a3a;font-weight:700;text-align:center;">✓ ' + count + ' delivered order' + (count === 1 ? '' : 's') + ' found on ' + dateVal + '</div>';
+    }
+  }
+  window.tgExportDailyDelivered = function() {
+    const inp = document.getElementById('tg-deliv-export-date');
+    const dateVal = (inp?.value || '').trim();
+    if (!dateVal) { toast('Please select a date', 'error'); return; }
+    const orders = ORDERS.filter(o => {
+      if (normStatus(o) !== 'delivered') return false;
+      const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+      if (!dd) return false;
+      return dd.toISOString().slice(0, 10) === dateVal;
+    });
+    if (!orders.length) { toast('No delivered orders on ' + dateVal, 'error'); return; }
+    const paidIds = getPaidOrderIds();
+    const commPct = getCommission();
+    const rows = [];
+    let totalGross = 0, totalComm = 0, totalDeliv = 0, totalNet = 0, totalQty = 0;
+    orders.forEach(o => {
+      const mi = myItems(o);
+      if (!mi.length) return;
+      const a = addrOf(o);
+      const isPaid = paidIds.has(o.id);
+      let ordGross = 0, ordWeight = 0;
+      mi.forEach(it => {
+        ordGross += Number(it.price || 0) * Number(it.qty || 1);
+        ordWeight += Number(it.weight || 0) * Number(it.qty || 1);
+      });
+      const ordComm = Math.round(ordGross * commPct / 100);
+      const ordDeliv = calcDeliveryCharge(mi);
+      const ordNet = Math.max(0, ordGross - ordComm - ordDeliv);
+      totalGross += ordGross;
+      totalComm += ordComm;
+      totalDeliv += ordDeliv;
+      totalNet += ordNet;
+      const deliveredDt = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+      const orderDt = o.createdAt?.toDate?.() || null;
+      const addrStr = [a.line1, a.line2, a.city, a.state, a.pincode].filter(Boolean).join(', ');
+      const itemsStr = mi.map(it => `${it.name||'Product'} (Size:${it.size||'-'}, Color:${it.color||'-'}, Qty:${it.qty||1})`).join(' | ');
+      totalQty += mi.reduce((acc, it) => acc + Number(it.qty || 1), 0);
+      rows.push({
+        'Order ID': o.id,
+        'Delivered Date': deliveredDt ? deliveredDt.toLocaleDateString('en-IN') : '—',
+        'Delivered Time': deliveredDt ? deliveredDt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '—',
+        'Order Placed Date': orderDt ? orderDt.toLocaleDateString('en-IN') : '—',
+        'Customer Name': a.name || '—',
+        'Customer Phone': a.phone || '—',
+        'Full Address': addrStr || '—',
+        'Pincode': a.pincode || '—',
+        'Items': itemsStr,
+        'Total Qty': mi.reduce((acc, it) => acc + Number(it.qty || 1), 0),
+        'Total Weight (g)': ordWeight,
+        'Product Gross (₹)': ordGross,
+        'Commission %': commPct,
+        'Commission (₹)': ordComm,
+        'Delivery (₹)': ordDeliv,
+        'Net Earning (₹)': ordNet,
+        'Payment Mode': (o.paymentMethod || 'COD').toUpperCase(),
+        'Payment Status': isPaid ? 'PAID' : 'PENDING',
+        'Order Status': 'DELIVERED',
+        'Courier': o.courierName || '—',
+        'Courier Hub': o.courierHub || '—',
+        'Tracking ID': o.trackingId || '—'
+      });
+    });
+    if (!rows.length) { toast('No items found for this date', 'error'); return; }
+    const sellerName = (SELLER && SELLER.shopName) || 'Seller';
+    const sellerGSTIN = (SELLER && SELLER.gst) || 'Not Registered';
+    const sellerAddr = [SELLER && SELLER.address, SELLER && SELLER.city, SELLER && SELLER.state, SELLER && SELLER.pincode].filter(Boolean).join(', ');
+    const summary = [
+      { 'Field': 'SELLER DETAILS', 'Value': '' },
+      { 'Field': 'Business Name', 'Value': sellerName },
+      { 'Field': 'Owner', 'Value': (SELLER && SELLER.ownerName) || '' },
+      { 'Field': 'GSTIN', 'Value': sellerGSTIN },
+      { 'Field': 'Address', 'Value': sellerAddr },
+      { 'Field': 'Phone', 'Value': (SELLER && SELLER.phone) || '' },
+      { 'Field': 'Email', 'Value': (SELLER && SELLER.email) || '' },
+      { 'Field': '', 'Value': '' },
+      { 'Field': 'REPORT PERIOD', 'Value': '' },
+      { 'Field': 'Date', 'Value': dateVal },
+      { 'Field': 'Generated On', 'Value': new Date().toLocaleString('en-IN') },
+      { 'Field': '', 'Value': '' },
+      { 'Field': 'DELIVERED ORDERS SUMMARY', 'Value': '' },
+      { 'Field': 'Total Orders', 'Value': rows.length },
+      { 'Field': 'Total Items Sold', 'Value': totalQty },
+      { 'Field': 'Product Gross (₹)', 'Value': Number(totalGross.toFixed(2)) },
+      { 'Field': 'Total Commission (₹)', 'Value': Number(totalComm.toFixed(2)) },
+      { 'Field': 'Total Delivery (₹)', 'Value': Number(totalDeliv.toFixed(2)) },
+      { 'Field': 'Total Net Earning (₹)', 'Value': Number(totalNet.toFixed(2)) }
+    ];
+    try {
+      const wb = XLSX.utils.book_new();
+      const wsSum = XLSX.utils.json_to_sheet(summary);
+      wsSum['!cols'] = [{ wch: 28 }, { wch: 60 }];
+      XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = [
+        { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 14 }, { wch: 22 }, { wch: 14 },
+        { wch: 40 }, { wch: 10 }, { wch: 50 }, { wch: 8 }, { wch: 12 }, { wch: 14 },
+        { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 12 }, { wch: 12 },
+        { wch: 14 }, { wch: 14 }, { wch: 20 }, { wch: 20 }
+      ];
+      XLSX.utils.book_append_sheet(wb, ws, 'Delivered Orders');
+      const fname = 'TOEGO_Delivered_' + sellerName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + dateVal + '.xlsx';
+      XLSX.writeFile(wb, fname);
+      toast('✓ Exported ' + rows.length + ' delivered order(s) for ' + dateVal, 'success');
+    } catch (err) {
+      console.error('[DAILY DELIV EXPORT ERROR]', err);
+      toast('Failed: ' + (err.message || 'Error'), 'error');
+    }
+  };
 
   function initGSTPanel() {
     const inp = document.getElementById('tg-gst-month');
@@ -2273,7 +2423,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     return { label: 'COD', cls: 'cod' };
   }
 
-  /* ⭐ labelHTML — YAHAN address/phone hai (print ke liye) */
   function labelHTML(o) {
     const mi = myItems(o); const di = mi.length ? mi : (Array.isArray(o.items) ? o.items : []);
     const a = addrOf(o); const sid = (o.id||'').slice(0,12).toUpperCase();
@@ -2339,7 +2488,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     const ids = PENDING_LABELS.slice(); if (!ids.length) { toast('No labels', 'error'); return; }
     const orders = ids.map(id => ORDERS.find(o => o.id === id)).filter(Boolean); if (!orders.length) return;
 
-    /* ⭐ FIX: PREPAID badge solid black background — thermal pe clearly print hoga */
     const css = FORMAT === 'a4'
       ? '@page{size:A4;margin:6mm;}*{box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.page-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;width:198mm;height:285mm;gap:2mm;page-break-after:always;}.page-grid:last-child{page-break-after:auto;}.lbl{border:2px dashed #000;padding:3mm;box-sizing:border-box;overflow:hidden;width:100%;height:100%;display:flex;flex-direction:column;font-size:10px;line-height:1.3;background:#fff;color:#000;position:relative;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2mm;gap:2mm;}.lbl-left-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:1.5mm;}.lbl-orderid-box{font-weight:900;font-size:12px;}.lbl-barcode-box{width:100%;text-align:center;}.lbl-barcode-box svg{max-width:100%;height:auto;display:block;margin:0 auto;}.lbl-qr-box{width:80px;height:80px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-pay-badge{display:inline-block;border:2px solid #000;padding:1mm 3mm;font-size:12px;font-weight:900;letter-spacing:1px;margin-bottom:2mm;align-self:flex-start;border-radius:3px;}.lbl-pay-badge.cod{background:#000;color:#fff;}.lbl-pay-badge.prepaid{background:#000;color:#fff;}.lbl-addr-box{border-top:1px solid #000;padding-top:1mm;margin-bottom:2mm;}.lbl-section-h{font-weight:900;font-size:10px;margin-bottom:1mm;text-transform:uppercase;}.addr{font-size:11px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:10px;margin-bottom:2mm;border-top:1px solid #000;padding-top:1mm;}.lbl-table-box{margin-bottom:2mm;border:1px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1mm 2mm;font-size:10px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-items-table tfoot td{background:#f0f0f0;font-weight:900;}.lbl-footer{flex:1;margin-top:2mm;border-top:1.5px dashed #000;padding-top:2mm;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1mm;}.lbl-footer-logo{display:inline-flex;align-items:center;gap:2mm;margin-bottom:1mm;}.lbl-logo-mark{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:#000;color:#fff;font-weight:900;font-style:italic;font-size:18px;border-radius:5px;}.lbl-logo-text{font-weight:900;font-style:italic;font-size:22px;letter-spacing:-0.5px;color:#000;}.lbl-footer-tag{font-size:11px;font-weight:800;letter-spacing:0.3px;margin-bottom:0.5mm;}.lbl-footer-meta{font-size:9.5px;font-weight:600;line-height:1.4;}'
       : '@page{size:102mm 152mm;margin:0;}*{box-sizing:border-box;-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important;}body{margin:0;font-family:Arial,sans-serif;background:#fff;}.lbl{width:102mm;height:152mm;box-sizing:border-box;padding:4mm;page-break-after:always;display:flex;flex-direction:column;font-size:11px;line-height:1.3;background:#fff;border:2px dashed #000;color:#000;position:relative;}.lbl:last-child{page-break-after:auto;}.lbl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5mm;gap:2.5mm;}.lbl-left-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:1.5mm;}.lbl-orderid-box{font-weight:900;font-size:13px;}.lbl-barcode-box{width:100%;text-align:center;}.lbl-barcode-box svg{max-width:100%;height:auto;display:block;margin:0 auto;}.lbl-qr-box{width:90px;height:90px;flex-shrink:0;}.lbl-qr-box svg{width:100%;height:100%;display:block;}.lbl-pay-badge{display:inline-block;border:3px solid #000;padding:1.5mm 4mm;font-size:15px;font-weight:900;letter-spacing:1.5px;margin-bottom:2.5mm;align-self:flex-start;border-radius:3px;text-transform:uppercase;}.lbl-pay-badge.cod{background:#000;color:#fff;}.lbl-pay-badge.prepaid{background:#000;color:#fff;}.lbl-addr-box{border-top:1.5px solid #000;padding-top:1.5mm;margin-bottom:2.5mm;}.lbl-section-h{font-weight:900;font-size:11px;margin-bottom:1.5mm;text-transform:uppercase;}.addr{font-size:12px;line-height:1.35;}.lbl-soldby-box, .lbl-gst-box{font-size:11px;margin-bottom:2.5mm;border-top:1.5px solid #000;padding-top:1.5mm;}.lbl-table-box{margin-bottom:2.5mm;border:1.5px solid #000;}.lbl-items-table{width:100%;border-collapse:collapse;}.lbl-items-table th, .lbl-items-table td{border:1px solid #000;padding:1.5mm 2mm;font-size:11px;}.lbl-items-table th{background:#e0e0e0;font-weight:900;text-align:left;}.lbl-items-table tfoot td{background:#f0f0f0;font-weight:900;}.lbl-footer{flex:1;margin-top:2.5mm;border-top:1.5px dashed #000;padding-top:2mm;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1mm;}.lbl-footer-logo{display:inline-flex;align-items:center;gap:1.5mm;margin-bottom:1mm;}.lbl-logo-mark{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:#000;color:#fff;font-weight:900;font-style:italic;font-size:14px;border-radius:4px;}.lbl-logo-text{font-weight:900;font-style:italic;font-size:17px;letter-spacing:-0.3px;color:#000;}.lbl-footer-tag{font-size:9.5px;font-weight:800;letter-spacing:0.2px;margin-bottom:0.5mm;}.lbl-footer-meta{font-size:8.5px;font-weight:600;line-height:1.35;}';
@@ -2368,7 +2516,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     PENDING_LABELS = []; SELECTED.clear(); updateBulk();
   };
 
-  /* ⭐ tgOpenOrderDetail — Timeline labels updated for Pickup */
   window.tgOpenOrderDetail = function(id) {
     const o = ORDERS.find(x => x.id === id); if (!o) return;
     const mi = myItems(o); const s = normStatus(o);
@@ -2940,8 +3087,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     try {
       const us = await db.collection('users').doc(u.uid).get();
       const role = us.exists ? (us.data().role || '').toLowerCase() : '';
-      const isAdmin = u.email === SA || ['admin','superadmin'].includes(role);
-      if (role !== 'seller' && !isAdmin) {
+      if (role !== 'seller' && !['admin','superadmin'].includes(role)) {
         const sd = await db.collection('sellers').doc(u.uid).get();
         if (!sd.exists || (sd.data().status || '').toLowerCase() !== 'approved') { toast('Seller access required', 'error'); setTimeout(() => location.href = 'account.html', 1200); return; }
       }
@@ -2957,6 +3103,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       listenSettlements();
       listenMyPricing();
       setTimeout(initGSTPanel, 800);
+      setTimeout(initDailyDelivExport, 900);
     } catch(e) {
       await loadSettings();
       await loadProfile();
@@ -2970,6 +3117,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       listenSettlements();
       listenMyPricing();
       setTimeout(initGSTPanel, 800);
+      setTimeout(initDailyDelivExport, 900);
     }
   });
 
