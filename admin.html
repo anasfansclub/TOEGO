@@ -190,6 +190,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-pill.blocked{background:linear-gradient(135deg,#ef4444,#991b1b);color:#fff;box-shadow:0 2px 6px rgba(239,68,68,0.4);}
 .tg-pill.pay-upi{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;}
 .tg-pill.pay-bank{background:linear-gradient(135deg,#0284c7,#075985);color:#fff;}
+.tg-pill.today{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 2px 6px rgba(139,92,246,0.4);}
 .tg-empty{text-align:center;padding:50px 20px;}
 .tg-empty-i{font-size:54px;margin-bottom:12px;opacity:0.35;}
 .tg-empty-t{font-size:16px;font-weight:800;margin:0 0 6px;}
@@ -910,7 +911,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
               <input type="file" id="seller-import-file" accept=".json" style="display:none;" onchange="tgImportSellers(event)">
             </div>
           </div>
-          
+
           <!-- ⭐ NEW USER CLEAR SECTION ⭐ -->
           <div class="tg-ie-box" style="background:linear-gradient(135deg,#ffebee,#ffcdd2);border-color:#d32f2f;">
             <div class="tg-ie-box-title" style="color:#b71c1c;">🗑️ Lifetime Delete User Data</div>
@@ -4453,7 +4454,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.getElementById('an-tp').innerHTML = pp.length ? pp.map(p=>'<div class="tg-row" style="cursor:default;"><div class="tg-row-b"><div class="tg-row-t">'+esc(p.name)+'</div></div><div class="tg-row-a"><span style="font-weight:800;color:#2874f0;">'+p.count+' sold</span></div></div>').join('') : '<div class="tg-empty" style="padding:30px;"><div class="tg-empty-i">📊</div></div>';
   }
 
-  /* ⭐⭐⭐ FIXED getSettle — Builds unpaidOrders Array for exact settlement ⭐⭐⭐ */
+  /* ⭐⭐⭐ FIXED getSettle — Today's earning + exact settlement logic ⭐⭐⭐ */
   function getSettle(sid){
     sid = String(sid);
     const seller = ALL_SELLERS.find(s => s.id === sid);
@@ -4488,6 +4489,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
     let gross = 0, commission = 0, delivery = 0, returnCut = 0, labelCut = 0;
     let settled = 0, pending = 0, deliveredCount = 0, returnCount = 0, itemsCount = 0, matchedOrders = 0;
+    let todayEarning = 0;
     const deliveredOrdersList = [];
 
     ALL_ORDERS.forEach(o => {
@@ -4512,6 +4514,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
         if (dd && (Date.now() - dd.getTime()) / 86400000 >= 7) settled += net;
         else pending += net;
+
+        if (dd && (Date.now() - dd.getTime()) <= 24 * 60 * 60 * 1000) {
+            todayEarning += net;
+        }
+
         deliveredOrdersList.push({ id: o.id, net: net, ts: dd ? dd.getTime() : 0 });
       }
     });
@@ -4531,7 +4538,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
     deliveredOrdersList.sort((a,b) => a.ts - b.ts);
     let pendingAmtCalc = 0;
-    let unpaidOrders = []; // ⭐ NEW: Exact list of unpaid delivered orders
+    let unpaidOrders = []; // ⭐ Exact list of unpaid delivered orders
 
     if (explicitPaidIds.size > 0) {
       deliveredOrdersList.forEach(ord => {
@@ -4563,7 +4570,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       settled, pending, deliveredCount, returnCount, itemsCount, matchedOrders, pct, usingCustom,
       pendingAmt: pendingAmtCalc,
       totalSettledAmt: totalSettledAmt,
-      unpaidOrders: unpaidOrders
+      unpaidOrders: unpaidOrders,
+      todayEarning: todayEarning
     };
   }
   function getSettledAmt(sid){
@@ -4591,10 +4599,25 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       if (payMethod === 'upi') payPill = '<span class="tg-pill pay-upi">📱 UPI</span>';
       else if (payMethod === 'bank') payPill = '<span class="tg-pill pay-bank">🏦 BANK</span>';
       else payPill = '<span class="tg-pill rej">⚠ No Payment</span>';
-      return '<div class="tg-row"><div class="tg-row-av">'+esc(ini(s.shopName))+'</div><div class="tg-row-b"><div class="tg-row-t">'+esc(s.shopName||'')+' '+blockedPill+'</div><div class="tg-row-s"><span>Comm: '+st.pct+'%</span><span>Delivered: '+st.deliveredCount+'</span><span>Returns: '+st.returnCount+'</span><span>Items: '+st.itemsCount+'</span></div><div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;align-items:center;">'+payPill+slabPill+'<span style="color:#1b8a3a;font-weight:700;">Gross: '+inr(st.gross)+'</span><span style="color:#d32f2f;font-weight:700;">Comm: −'+inr(st.commission)+'</span><span style="color:#d32f2f;font-weight:700;">Deliv: −'+inr(st.delivery)+'</span>'+returnInfo+labelInfo+'<span style="color:#2874f0;font-weight:700;">Net: '+inr(st.netEarning)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill appr">Settled: '+inr(settled)+'</span><span class="tg-pill '+(pendingAmt>0?'yel':'appr')+'">Pending: '+inr(pendingAmt)+'</span>'+matchWarn+'</div></div><div class="tg-row-a" style="flex-direction:column;gap:6px;align-items:flex-end;"><button class="tg-btn pri" onclick="tgOpenSettleMod(\''+esc(s.id)+'\')">Settle</button><button class="tg-btn suc" onclick="tgExportSellerOrders(\''+esc(s.id)+'\')" style="white-space:nowrap;">📊 Excel</button></div></div>';
+      return '<div class="tg-row"><div class="tg-row-av">'+esc(ini(s.shopName))+'</div><div class="tg-row-b"><div class="tg-row-t">'+esc(s.shopName||'')+' '+blockedPill+'</div><div class="tg-row-s"><span>Comm: '+st.pct+'%</span><span>Delivered: '+st.deliveredCount+'</span><span>Returns: '+st.returnCount+'</span><span>Items: '+st.itemsCount+'</span></div><div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;align-items:center;">'+payPill+slabPill+'<span style="color:#1b8a3a;font-weight:700;">Total Net: '+inr(st.netEarning)+'</span><span class="tg-pill today">Today: '+inr(st.todayEarning)+'</span></div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="tg-pill appr">Paid: '+inr(settled)+'</span><span class="tg-pill '+(pendingAmt>0?'yel':'appr')+'">Pending: '+inr(pendingAmt)+'</span>'+matchWarn+'</div></div><div class="tg-row-a" style="flex-direction:column;gap:6px;align-items:flex-end;"><button class="tg-btn pri" onclick="tgOpenSettleMod(\''+esc(s.id)+'\')">Settle</button><button class="tg-btn suc" onclick="tgExportSellerOrders(\''+esc(s.id)+'\')" style="white-space:nowrap;">📊 Excel</button></div></div>';
     }).join('');
     setText('st-g', inr(tg)); setText('st-c', inr(tc)); setText('st-n', inr(tn)); setText('st-p', inr(tp));
   }
+
+  window.tgDeleteSettlement = function(id) {
+    confirmCb = async () => {
+      try {
+        await db.collection('settlements').doc(id).delete();
+        toast('Settlement deleted ✓', 'suc');
+        tgCloseMod('mod-confirm');
+      } catch(e) { toast('Failed: ' + e.message, 'err'); }
+    };
+    document.getElementById('cf-t').textContent = 'Delete Settlement?';
+    document.getElementById('cf-m').innerHTML = 'Are you sure you want to delete this settlement record?<br><br>The seller will see this amount as <b>Pending</b> again.';
+    document.getElementById('cf-b').textContent = 'Delete';
+    document.getElementById('cf-b').className = 'tg-mod-b dan';
+    openMod('mod-confirm');
+  };
 
   function renderSettleHistory(){
     const el = document.getElementById('settle-history-list'); if (!el) return;
@@ -4625,7 +4648,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           (x.reference ? '<div class="tg-settle-hist-ref">Ref: ' + esc(x.reference) + '</div>' : '') +
           (x.note ? '<div style="font-size:11.5px;color:#666;margin-top:6px;">📝 ' + esc(x.note) + '</div>' : '') +
         '</div>' +
-        '<div class="tg-settle-hist-amt">' + inr(x.amount) + '<small>Settled</small></div>' +
+        '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">' +
+          '<div class="tg-settle-hist-amt">' + inr(x.amount) + '<small>Settled</small></div>' +
+          '<button class="tg-btn dan" style="padding:4px 8px; font-size:10px;" onclick="tgDeleteSettlement(\'' + x.id + '\')">🗑 Delete</button>' +
+        '</div>' +
       '</div>';
     }).join('');
   }
@@ -4639,9 +4665,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.getElementById('mset-body').innerHTML =
       payInfo +
       '<div style="background:#f8f9fb;border-radius:10px;padding:14px;margin-bottom:14px;"><div style="font-size:16px;font-weight:800;">'+esc(s.shopName||'')+'</div><div style="font-size:12px;color:#888;">Commission: '+st.pct+'% · Delivered: '+st.deliveredCount+' orders · Items: '+st.itemsCount+'</div></div>'+
-      '<div class="tg-tbl"><table><tr><td><b>Gross Sales</b></td><td style="color:#1b8a3a;font-weight:800;">'+inr(st.gross)+'</td></tr><tr><td><b>Commission ('+st.pct+'%)</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.commission)+'</td></tr><tr><td><b>Delivery Charges</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.delivery)+'</td></tr><tr><td><b>Return Cuts ('+st.returnCount+')</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.returnCut)+'</td></tr><tr><td><b>Label Cuts</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.labelCut)+'</td></tr><tr><td><b>Net Payable</b></td><td style="color:#2874f0;font-weight:800;">'+inr(st.netEarning)+'</td></tr><tr><td><b>Already Settled</b></td><td>'+inr(settled)+'</td></tr><tr><td><b>Pending Now</b></td><td style="font-size:16px;font-weight:900;color:'+(pendingAmt>0?'#f57c00':'#1b8a3a')+';">'+inr(pendingAmt)+'</td></tr></table></div>'+
+      '<div class="tg-tbl"><table><tr><td><b>Total Gross</b></td><td style="color:#1b8a3a;font-weight:800;">'+inr(st.gross)+'</td></tr><tr><td><b>Commission ('+st.pct+'%)</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.commission)+'</td></tr><tr><td><b>Delivery Charges</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.delivery)+'</td></tr><tr><td><b>Return Cuts ('+st.returnCount+')</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.returnCut)+'</td></tr><tr><td><b>Label Cuts</b></td><td style="color:#d32f2f;font-weight:800;">− '+inr(st.labelCut)+'</td></tr><tr><td><b>Total Net Earning</b></td><td style="color:#2874f0;font-weight:800;">'+inr(st.netEarning)+'</td></tr><tr><td><b>Already Paid</b></td><td>'+inr(settled)+'</td></tr><tr><td><b>Pending Now</b></td><td style="font-size:16px;font-weight:900;color:'+(pendingAmt>0?'#f57c00':'#1b8a3a')+';">'+inr(pendingAmt)+'</td></tr></table></div>'+
       '<div class="tg-fld" style="margin-top:14px;"><label>Amount to Settle (₹)</label><input type="number" id="mset-amt" value="'+pendingAmt+'" min="0" max="'+pendingAmt+'"></div>'+
-      '<div class="tg-fld"><label>Payment Reference / UTR</label><input type="text" id="mset-ref" maxlength="40" placeholder="e.g. UPI ref, UTR number"></div>'+
+      '<div class="tg-fld"><label>Payment Reference / UTR <span class="rq">*</span></label><input type="text" id="mset-ref" maxlength="40" placeholder="e.g. UPI ref, UTR number" required></div>'+
       '<div class="tg-fld"><label>Note (optional)</label><input type="text" id="mset-note" maxlength="120" placeholder="Any remark"></div>'+
       '<input type="hidden" id="mset-sid" value="'+esc(sid)+'"><input type="hidden" id="mset-sname" value="'+esc(s.shopName||'')+'">'+
       '<div class="tg-mod-a" style="margin-top:16px;"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-settle\')">Cancel</button><button class="tg-mod-b pri" id="mset-confirm-btn" onclick="tgConfirmSettle()">💸 Mark Settled</button></div>';
@@ -4656,6 +4682,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     const note = (document.getElementById('mset-note').value||'').trim();
     const btn = document.getElementById('mset-confirm-btn');
     if (!sid) { toast('Seller ID missing','err'); return; }
+    if (!ref) { toast('UTR / Reference is required', 'err'); return; } // ⭐ UTR VALIDATION
     if (amt <= 0) { toast('Enter valid amount','err'); return; }
     if (amt > 5000000) { toast('Amount too large (max ₹50L)','err'); return; }
     if (!USER) { toast('Not logged in','err'); return; }
