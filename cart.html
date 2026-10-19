@@ -547,7 +547,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <div class="tg-pay-opt-icon cod">💵</div>
         <div class="tg-pay-opt-body">
           <div class="tg-pay-opt-title">Cash on Delivery</div>
-          <div class="tg-pay-opt-desc">Pay when order arrives</div>
+          <div class="tg-pay-opt-desc" id="tg-cod-desc">Pay when order arrives</div>
         </div>
         <div class="tg-pay-opt-radio"></div>
       </div>
@@ -591,6 +591,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
 
 <script>
 (function() {
@@ -601,7 +602,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
       authDomain: "toego-ecommerce.firebaseapp.com",
       projectId: "toego-ecommerce",
-      storageBucket: "toego-ecommerce.firebasestorage.app",
+      storageBucket: "toego-ecommerce.firebaseapp.com",
       messagingSenderId: "234167880880",
       appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
     });
@@ -609,6 +610,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const auth = firebase.auth();
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
+
+  /* ═══ CLOUD FUNCTIONS INIT ═══ */
+  let functions = null;
+  try {
+    functions = firebase.functions();
+    console.log('[cart] Cloud Functions initialized');
+  } catch(e) {
+    console.warn('[cart] Cloud Functions unavailable:', e.message);
+  }
 
   try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
@@ -628,6 +638,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const CART_MIRROR_PREFIX = 'toego_cart_mirror_';
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
+  const COD_LIMIT = 500;
 
   const _memStore = { pin: null, addr: null };
   function getPin() {
@@ -916,7 +927,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:2}); }
 
-  // ✅ IMPROVED: Proper JS-in-HTML-attribute escaping
   function escapeAttr(s) {
     return String(s||'')
       .replace(/&/g, '&amp;')
@@ -1037,13 +1047,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return false;
   }
 
-  /* ⭐ FIX: PIN has priority — if valid pin exists, ONLY check pin (ignore stale city) */
   function getDeliveryInfo() {
     let pin = String(getPin() || '').trim();
     const a = getAddr();
     if (!pin && a && a.pin) pin = String(a.pin).trim();
 
-    // PIN PRIORITY: valid 6-digit pin → use pin only
     if (/^\d{6}$/.test(pin)) {
       if (isKanpurPincode(pin)) {
         return { text: 'Same Day Delivery', cls: 'same-day' };
@@ -1051,7 +1059,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return { text: 'Delivery in 3-6 days', cls: '' };
     }
 
-    // No valid pin — fallback to city check
     const city = String((a && a.city) || '').toLowerCase();
     if (city.includes('kanpur')) {
       return { text: 'Same Day Delivery', cls: 'same-day' };
@@ -1702,19 +1709,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* ⭐ CRITICAL FIX: Single remove — DON'T delete from _itemNodeMap before renderCart.
-     Let renderCart find the node in map and animate removal via toRemove. */
   window.tgRemoveItem = async function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) {
-      // Safety net: clean up orphan node
       const orphan = _itemNodeMap.get(docId);
       if (orphan && orphan.parentNode) orphan.remove();
       _itemNodeMap.delete(docId);
       return;
     }
 
-    // Optimistic update — add to pending deletes, remove from cartItems
     _pendingCartDeletes.add(docId);
     _pendingQty.delete(docId);
     cartItems = cartItems.filter(it => it.id !== docId);
@@ -1723,10 +1726,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     saveSelected();
     _persistCartToMirror();
 
-    // ⭐ FIX: Let renderCart handle node removal (finds node in _itemNodeMap, adds .removing, then removes after 180ms)
     renderCart(true);
 
-    // Background Firestore delete
     if (currentUser) {
       try {
         await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
@@ -1744,7 +1745,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* ⭐ CRITICAL FIX: Remove selected — same fix, don't delete from _itemNodeMap */
   window.tgRemoveSelected = async function() {
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
@@ -1756,13 +1756,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     idsToRemove.forEach(id => {
       selectedIds.delete(id);
       selectedIds.delete(NS_MARK + id);
-      // ⭐ Don't delete from _itemNodeMap — let renderCart handle it
       _pendingQty.delete(id);
     });
     saveSelected();
     _persistCartToMirror();
 
-    // ⭐ Immediate render — renderCart finds nodes and removes them via toRemove
     renderCart(true);
 
     if (currentUser) {
@@ -2146,10 +2144,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     setTimeout(attemptFn, delays[0]);
   }
 
-  /* ⭐ SUPER-FAST BOOT: Render from cache BEFORE auth resolves */
   function _quickBootRender() {
     try {
-      // Priority 1: last logged-in user's mirror
       const lastUid = localStorage.getItem(LAST_UID_KEY);
       if (lastUid) {
         const mirror = _loadMirror(lastUid);
@@ -2162,7 +2158,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           return true;
         }
       }
-      // Priority 2: guest cart
       const guestRaw = getGuestCart();
       if (guestRaw.length) {
         cartItems = enrichFromCacheSync(guestRaw);
@@ -2177,7 +2172,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
 
   function loadCart() {
-    // ⚡ Only show skeleton if we DON'T already have items rendered
     if (cartItems.length === 0) {
       document.getElementById('tg-loading').style.display = 'block';
       document.getElementById('tg-items').style.display = 'none';
@@ -2254,7 +2248,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         return { ...data, id: d.id, productId: data.productId || d.id };
       }).filter(it => !_pendingCartDeletes.has(it.id));
 
-      // ⭐ Clean up confirmed deletes (no longer in snapshot)
       const snapIds = new Set(snap.docs.map(d => d.id));
       _pendingCartDeletes.forEach(id => {
         if (!snapIds.has(id)) _pendingCartDeletes.delete(id);
@@ -2562,11 +2555,33 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     tgOpenPayModal();
   };
 
+  /* ═══════════════════════════════════════════════════════════════
+     PAYMENT MODAL — WITH COD CAP ₹500
+     ═══════════════════════════════════════════════════════════════ */
   window.tgOpenPayModal = function() {
     const t = calcTotals();
     document.getElementById('tg-pay-amount').textContent = fmtINR(t.grand);
-    if (!SETTINGS.razorpayEnabled && SETTINGS.codEnabled) pendingPayMethod = 'cod';
+
+    const codOpt = document.getElementById('tg-cod-opt');
+    const codDesc = document.getElementById('tg-cod-desc');
+    const overLimit = t.grand > COD_LIMIT;
+
+    if (codOpt) {
+      codOpt.style.opacity = overLimit ? '0.45' : '1';
+      codOpt.style.pointerEvents = overLimit ? 'none' : 'auto';
+      codOpt.style.cursor = overLimit ? 'not-allowed' : 'pointer';
+    }
+    if (codDesc) {
+      if (overLimit) {
+        codDesc.innerHTML = '<span style="color:#d32f2f;font-weight:700;">⚠ Unavailable — Order exceeds ₹' + COD_LIMIT + '</span>';
+      } else {
+        codDesc.textContent = 'Pay when order arrives';
+      }
+    }
+
+    if (!SETTINGS.razorpayEnabled && SETTINGS.codEnabled && !overLimit) pendingPayMethod = 'cod';
     else pendingPayMethod = 'razorpay';
+
     document.querySelectorAll('.tg-pay-opt').forEach(el => el.classList.toggle('active', el.dataset.method === pendingPayMethod));
     document.getElementById('tg-pay-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -2577,6 +2592,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     refreshDeliveryTagsInPlace();
   };
   window.tgPickPay = function(method, el) {
+    if (method === 'cod') {
+      const t = calcTotals();
+      if (t.grand > COD_LIMIT) {
+        toast('COD limit ₹' + COD_LIMIT + ' hai. Online payment use karein.', 'error');
+        return;
+      }
+    }
     pendingPayMethod = method;
     document.querySelectorAll('.tg-pay-opt').forEach(o => o.classList.remove('active'));
     if (el) el.classList.add('active');
@@ -2600,6 +2622,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const t = calcTotals();
     if (t.itemCount === 0) { toast('Cart is empty', 'error'); return; }
     if (!pendingAddress) { toast('Please add delivery address', 'error'); tgClosePay(); return; }
+
     if (pendingPayMethod === 'razorpay') {
       if (!SETTINGS.razorpayEnabled) { toast('Online payment unavailable', 'error'); return; }
       if (!SETTINGS.razorpayKeyId) { toast('Payment gateway not configured', 'error'); return; }
@@ -2615,18 +2638,50 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       tgClosePay();
       tgStartRazorpay(t);
     } else {
+      if (t.grand > COD_LIMIT) {
+        toast('COD limit ₹' + COD_LIMIT + ' hai. Online payment use karein.', 'error');
+        return;
+      }
       tgClosePay();
       tgCreateOrder(t, { paymentMethod: 'cod', paymentId: null, paymentStatus: 'pending' });
     }
   };
 
-  function tgStartRazorpay(t) {
+  async function tgStartRazorpay(t) {
     const keyId = SETTINGS.razorpayKeyId;
     const amountPaise = Math.round(t.grand * 100);
     if (typeof Razorpay === 'undefined') { toast('Payment gateway not loaded. Check internet.', 'error'); return; }
+
+    let razorpayOrder = null;
+    let verifyFn = null;
+
+    if (functions) {
+      try {
+        const createFn = functions.httpsCallable('createRazorpayOrder');
+        const res = await createFn({
+          amount: amountPaise,
+          name: pendingAddress.name,
+          phone: pendingAddress.phone,
+          uid: currentUser ? currentUser.uid : ''
+        });
+        if (res && res.data && res.data.order_id) {
+          razorpayOrder = res.data;
+          verifyFn = functions.httpsCallable('verifyRazorpayPayment');
+          console.log('[razorpay] Secure mode: server-side order created');
+        }
+      } catch(err) {
+        console.warn('[razorpay] Cloud Function failed, using direct mode:', err && err.message);
+      }
+    } else {
+      console.warn('[razorpay] firebase-functions not loaded — using direct mode (less secure)');
+    }
+
     const options = {
-      key: keyId, amount: amountPaise, currency: SETTINGS.currency || 'INR',
-      name: 'TOEGO', description: 'Order Payment (' + t.itemCount + ' items)',
+      key: (razorpayOrder && razorpayOrder.key_id) ? razorpayOrder.key_id : keyId,
+      amount: razorpayOrder ? razorpayOrder.amount : amountPaise,
+      currency: (razorpayOrder && razorpayOrder.currency) ? razorpayOrder.currency : (SETTINGS.currency || 'INR'),
+      name: 'TOEGO',
+      description: 'Order Payment (' + t.itemCount + ' items)',
       image: window.location.origin + '/favicon.ico',
       prefill: {
         name: pendingAddress.name,
@@ -2635,25 +2690,59 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       },
       theme: { color: '#2874f0' },
       notes: {
-        uid: currentUser.uid, items: t.itemCount,
-        gstIncluded: t.gstIncludedAmt.toFixed(2),
-        gstAdded: t.gstAddedAmt.toFixed(2),
-        cartCommission: t.cartCommission.toFixed(2),
+        uid: currentUser.uid,
+        items: t.itemCount,
         address: pendingAddress.city + ' ' + pendingAddress.pin,
         coupon: appliedCoupon?.code || ''
       },
-      handler: function(response) {
-        tgCreateOrder(t, { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: 'paid' });
+      handler: async function(response) {
+        if (verifyFn) {
+          try {
+            const v = await verifyFn({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            if (!v || !v.data || !v.data.verified) {
+              console.error('[razorpay] Signature verification FAILED', v);
+              toast('❌ Payment verification failed. Please contact support with Payment ID: ' + response.razorpay_payment_id, 'error');
+              return;
+            }
+            console.log('[razorpay] Signature verified ✓');
+          } catch(err) {
+            console.error('[razorpay] Verification error:', err);
+            toast('Payment received but verification failed. Contact support with ID: ' + response.razorpay_payment_id, 'error');
+            return;
+          }
+        } else {
+          console.warn('[razorpay] ⚠ No server verification — proceeding anyway');
+        }
+
+        tgCreateOrder(t, {
+          paymentMethod: 'razorpay',
+          paymentId: response.razorpay_payment_id,
+          paymentStatus: 'paid'
+        });
       },
-      modal: { ondismiss: function() { toast('Payment cancelled', 'info'); } }
+      modal: {
+        ondismiss: function() { toast('Payment cancelled', 'info'); }
+      }
     };
+
+    if (razorpayOrder && razorpayOrder.order_id) {
+      options.order_id = razorpayOrder.order_id;
+    }
+
     try {
       const rzp = new Razorpay(options);
       rzp.on('payment.failed', function(resp) {
         toast((resp && resp.error && resp.error.description) || 'Payment failed', 'error');
       });
       rzp.open();
-    } catch(err) { toast('Could not open payment gateway', 'error'); }
+    } catch(err) {
+      console.error('[razorpay] open failed:', err);
+      toast('Could not open payment gateway', 'error');
+    }
   }
 
   function playSuccessSound() {
@@ -2850,7 +2939,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     console.log('═══════════════════════');
   };
 
-  /* Safety net: keep delivery tag in sync every 1.5s */
   setInterval(() => {
     try {
       if (!cartItems.length || !_itemNodeMap.size) return;
@@ -2870,13 +2958,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     } catch(e) {}
   }, 1500);
 
-  /* ========== BOOT ========== */
   loadSelected();
   loadPin();
   loadAppliedCouponFromStorage();
   updateCouponCard();
 
-  // ⚡ SUPER-FAST: Render from cache IMMEDIATELY (before auth resolves)
   _quickBootRender();
 
   loadPaymentSettings();
