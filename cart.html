@@ -12,6 +12,11 @@
 <link rel="dns-prefetch" href="https://www.gstatic.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+<!-- ✅ FREE MAP (LEAFLET) CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
@@ -300,6 +305,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-confetti { position:absolute; width:10px; height:10px; top:-20px; animation:tgConfettiFall linear forwards; }
 @keyframes tgConfettiFall { 0% { transform:translateY(0) rotate(0deg); opacity:1; } 100% { transform:translateY(110vh) rotate(720deg); opacity:0; } }
 
+/* ✅ BLINKIT STYLE MAP & LOCATION CSS */
+.tg-map-wrap { position: relative; width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 16px; background: #e5e3df; border: 1.5px solid #e0e0e0; }
+#tg-addr-map { width: 100%; height: 100%; z-index: 1; }
+.tg-map-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); z-index: 400; font-size: 32px; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+.tg-loc-btn { width: 100%; padding: 12px; background: #eef3ff; color: #2874f0; border: 1px dashed #2874f0; border-radius: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13.5px; margin-bottom: 16px; transition: all 0.2s; cursor: pointer; }
+.tg-loc-btn:hover { background: #e0eaff; }
+.tg-loc-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.tg-loc-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
 @media (max-width:991px) { .tg-container { grid-template-columns:1fr; } .tg-right { position:static; } }
 @media (max-width:768px) {
   .tg-hd-title { font-size:15px; }
@@ -473,12 +487,25 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   </div>
 </div>
 
+<!-- ✅ NAYA: BLINKIT STYLE MAP ADDRESS MODAL -->
 <div class="tg-modal" id="tg-addr-modal">
-  <div class="tg-modal-card">
+  <div class="tg-modal-card" style="padding-bottom: 20px;">
     <div class="tg-modal-head">
       <div class="tg-modal-title">Delivery Address</div>
       <button class="tg-modal-close" onclick="tgCloseAddr()">✕</button>
     </div>
+
+    <!-- Blinkit/Swiggy Style Map -->
+    <div class="tg-map-wrap">
+      <div id="tg-addr-map"></div>
+      <div class="tg-map-pin">📍</div>
+    </div>
+
+    <!-- Auto Location Button -->
+    <button type="button" class="tg-loc-btn" id="tg-loc-btn" onclick="tgDetectLocation()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Use My Current Location</span>
+    </button>
 
     <div class="tg-modal-field">
       <label>Address Type *</label>
@@ -496,11 +523,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div class="tg-modal-field"><label>Alternate Phone</label><input type="tel" id="tg-addr-alt-phone" placeholder="Optional" maxlength="10" inputmode="numeric"></div>
     </div>
 
-    <div class="tg-modal-field"><label>Address Line (House No., Building, Street) *</label><textarea id="tg-addr-line" placeholder="House no., building, street, area" maxlength="180" autocomplete="street-address"></textarea></div>
+    <div class="tg-modal-field"><label>Flat / House No., Building Name *</label><textarea id="tg-addr-line" placeholder="e.g. Flat 301, ABC Apartments" maxlength="180" autocomplete="street-address"></textarea></div>
 
     <div class="tg-modal-row">
-      <div class="tg-modal-field"><label>Locality / Area</label><input type="text" id="tg-addr-locality" placeholder="e.g. Civil Lines" maxlength="60"></div>
-      <div class="tg-modal-field"><label>Landmark</label><input type="text" id="tg-addr-landmark" placeholder="e.g. Near SBI Bank" maxlength="60"></div>
+      <div class="tg-modal-field"><label>Landmark / Area</label><input type="text" id="tg-addr-landmark" placeholder="e.g. Near City Mall" maxlength="60"></div>
+      <div class="tg-modal-field"><label>Locality</label><input type="text" id="tg-addr-locality" placeholder="e.g. Civil Lines" maxlength="60"></div>
     </div>
 
     <div class="tg-modal-row">
@@ -514,6 +541,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     </div>
 
     <div class="tg-modal-field"><label>Email (optional)</label><input type="email" id="tg-addr-email" placeholder="you@example.com" maxlength="80" autocomplete="email"></div>
+
+    <!-- Hidden fields for Lat/Lng -->
+    <input type="hidden" id="tg-addr-lat">
+    <input type="hidden" id="tg-addr-lng">
 
     <label class="tg-addr-default-row">
       <input type="checkbox" id="tg-addr-default">
@@ -602,7 +633,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
       authDomain: "toego-ecommerce.firebaseapp.com",
       projectId: "toego-ecommerce",
-      storageBucket: "toego-ecommerce.firebaseapp.com",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
       messagingSenderId: "234167880880",
       appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
     });
@@ -1874,7 +1905,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  // ✅ FIXED: ensureBuyNowItem — cache-first, sessionStorage qty, existing-check
   async function ensureBuyNowItem(buyNowId) {
     if (!buyNowId || !currentUser) return false;
 
@@ -1891,13 +1921,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (parts[0]) candidateIds.add(parts[0]);
     }
 
-    // 1) In-memory
     for (const cid of candidateIds) {
       const found = cartItems.find(it => it.id === cid || it.productId === cid);
       if (found) { selectedIds.add(found.id); saveSelected(); renderCart(false); return true; }
     }
 
-    // 2) Cache-first, then server
     for (const cid of candidateIds) {
       try {
         let cartDoc = await db.collection('carts').doc(currentUser.uid)
@@ -1921,7 +1949,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       } catch(e) {}
     }
 
-    // 3) Fallback: build from product with correct qty
     for (const cid of candidateIds) {
       try {
         const prodDoc = await db.collection('products').doc(cid).get();
@@ -2317,7 +2344,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const raw = getGuestCart();
       const buyNowGuest = readBuyNowId();
       if (buyNowGuest) {
-        // ✅ FIX: clear any stale deleted mark so Buy Now item appears
         if (_deletedItems.has(buyNowGuest)) {
           _deletedItems.delete(buyNowGuest);
           _saveDeletedItems();
@@ -2356,7 +2382,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const buyNowDoc = readBuyNowId();
     if (buyNowDoc) {
-      // ✅ FIX: clear any stale deleted mark so Buy Now item appears
       if (_deletedItems.has(buyNowDoc)) {
         _deletedItems.delete(buyNowDoc);
         _saveDeletedItems();
@@ -2621,6 +2646,91 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (el) el.classList.add('active');
   };
 
+  // ✅ BLINKIT STYLE MAP SETUP
+  let tgMap = null;
+  let tgMarker = null;
+  let tgGeocodeTimeout = null;
+
+  function initTgMap(lat = 28.6139, lng = 77.2090) {
+    if (tgMap) {
+      tgMap.remove();
+    }
+    tgMap = L.map('tg-addr-map', { zoomControl: false, attributionControl: false }).setView([lat, lng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(tgMap);
+
+    tgMap.on('moveend', function() {
+      const center = tgMap.getCenter();
+      document.getElementById('tg-addr-lat').value = center.lat;
+      document.getElementById('tg-addr-lng').value = center.lng;
+      
+      if (tgGeocodeTimeout) clearTimeout(tgGeocodeTimeout);
+      tgGeocodeTimeout = setTimeout(() => {
+        reverseGeocode(center.lat, center.lng);
+      }, 600); // 600ms debounce
+    });
+  }
+
+  window.tgDetectLocation = function() {
+    const btn = document.getElementById('tg-loc-btn');
+    const originalText = btn.innerHTML;
+    
+    if (!navigator.geolocation) {
+      toast('Aapka browser location support nahi karta', 'error');
+      return;
+    }
+
+    btn.innerHTML = '<svg style="animation:spin 1s linear infinite;" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Detecting...';
+    btn.disabled = true;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        if (tgMap) {
+          tgMap.setView([lat, lng], 16);
+        }
+        
+        document.getElementById('tg-addr-lat').value = lat;
+        document.getElementById('tg-addr-lng').value = lng;
+        
+        reverseGeocode(lat, lng);
+        
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        toast('✓ Location detected!', 'success');
+      },
+      (error) => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        let msg = 'Location access denied. Please enable GPS.';
+        if (error.code === 2) msg = 'Location unavailable. Check network/GPS.';
+        if (error.code === 3) msg = 'Location request timed out.';
+        toast(msg, 'error');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
+  async function reverseGeocode(lat, lng) {
+    try {
+      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      const data = await res.json();
+      
+      if (data.locality || data.city) {
+        document.getElementById('tg-addr-city').value = data.city || data.locality || '';
+      }
+      if (data.principalSubdivision) {
+        document.getElementById('tg-addr-state').value = data.principalSubdivision || '';
+      }
+      if (data.postcode) {
+        document.getElementById('tg-addr-pin').value = data.postcode || '';
+      }
+    } catch (err) {
+      console.warn('Geocode failed:', err);
+    }
+  }
+
   window.tgOpenNewAddr = function() {
     const listModal = document.getElementById('tg-addr-list-modal');
     if (listModal) listModal.classList.remove('show');
@@ -2629,12 +2739,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       b.classList.toggle('active', b.dataset.type === 'home');
     });
     document.getElementById('tg-addr-default').checked = false;
+    
     try {
       const saved = getAddr();
       if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
       if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone;
       if (saved.altPhone) document.getElementById('tg-addr-alt-phone').value = saved.altPhone;
     } catch(e) {}
+    
     if (userProfile) {
       const nameEl = document.getElementById('tg-addr-name');
       const phoneEl = document.getElementById('tg-addr-phone');
@@ -2646,13 +2758,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const emailEl = document.getElementById('tg-addr-email');
       if (!emailEl.value) emailEl.value = currentUser.email;
     }
-    ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state'].forEach(id => {
+    
+    ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state','tg-addr-lat','tg-addr-lng'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
+    
     document.getElementById('tg-addr-save-text').textContent = 'Save & Continue';
     document.getElementById('tg-addr-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+      initTgMap(28.6139, 77.2090); // Default Delhi
+    }, 300);
   };
 
   window.tgCloseAddr = function() {
@@ -2672,6 +2790,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const district = (document.getElementById('tg-addr-district').value || '').trim();
     const state = (document.getElementById('tg-addr-state').value || '').trim();
     const email = (document.getElementById('tg-addr-email').value || '').trim();
+    const lat = document.getElementById('tg-addr-lat').value;
+    const lng = document.getElementById('tg-addr-lng').value;
     const isDefault = document.getElementById('tg-addr-default').checked;
     const type = pendingAddrType || 'home';
 
@@ -2684,12 +2804,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!state) { toast('Please enter state', 'error'); return; }
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); return; }
 
-    pendingAddress = { name, phone, altPhone, line, locality, landmark, city, pin, district, state, email, type, isDefault, country: 'India' };
+    pendingAddress = { name, phone, altPhone, line, locality, landmark, city, pin, district, state, email, type, isDefault, lat, lng, country: 'India' };
     setAddr(pendingAddress);
     setPin(pin);
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = city + ' - ' + pin;
     refreshDeliveryTagsInPlace();
+    
     try {
       const list = await addAddressToList(pendingAddress);
       const key = (pendingAddress.line||'').toLowerCase() + '|' + (pendingAddress.pin||'') + '|' + (pendingAddress.phone||'');
@@ -2698,6 +2819,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       pendingAddrIndex = idx;
       try { localStorage.setItem(ADDR_LAST_IDX, String(idx)); } catch(e) {}
     } catch(e) {}
+    
     tgCloseAddr();
     toast('Address saved', 'success');
     tgOpenPayModal();
@@ -2792,30 +2914,29 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
+  // ✅ FAST ORDER PLACING: Promise.all for parallel fetch
   async function fetchFreshProductsServer(ids) {
     const out = {};
     if (!ids.length) return out;
-    try {
-      const CHUNK = 10;
-      for (let i = 0; i < ids.length; i += CHUNK) {
-        const chunk = ids.slice(i, i + CHUNK);
-        try {
-          const snap = await db.collection('products')
-            .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
-            .get({ source: 'server' });
-          snap.forEach(d => { out[d.id] = { id: d.id, ...d.data() }; });
-        } catch(e) {
-          for (const id of chunk) {
-            try {
-              const d = await db.collection('products').doc(id).get({ source: 'server' });
-              if (d.exists) out[id] = { id: d.id, ...d.data() };
-            } catch(e2) {}
-          }
-        }
+    const CHUNK = 10;
+    const chunks = [];
+    for (let i = 0; i < ids.length; i += CHUNK) chunks.push(ids.slice(i, i + CHUNK));
+
+    await Promise.all(chunks.map(async (chunk) => {
+      try {
+        const snap = await db.collection('products')
+          .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+          .get({ source: 'server' });
+        snap.forEach(d => { out[d.id] = { id: d.id, ...d.data() }; });
+      } catch(e) {
+        await Promise.all(chunk.map(async (id) => {
+          try {
+            const d = await db.collection('products').doc(id).get({ source: 'server' });
+            if (d.exists) out[id] = { id: d.id, ...d.data() };
+          } catch(e2) {}
+        }));
       }
-    } catch(e) {
-      console.warn('[verify] product fetch failed:', e);
-    }
+    }));
     return out;
   }
 
@@ -3493,6 +3614,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     });
   });
+
+  // ✅ CSS Keyframe for loading spinner
+  const styleSheet = document.createElement("style");
+  styleSheet.innerText = "@keyframes spin { 100% { transform: rotate(360deg); } }";
+  document.head.appendChild(styleSheet);
 
 })();
 </script>
