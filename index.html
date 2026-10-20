@@ -694,10 +694,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-/* SPLASH */
+/* SPLASH (1.2 SECONDS - FIRST TIME ONLY) */
 (function() {
   var el = document.getElementById('tg-splash');
   if (!el) return;
+  
   var visited = false;
   try {
     if (sessionStorage.getItem('toego_splash_seen') === '1') visited = true;
@@ -706,17 +707,26 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       if (ts && (Date.now() - ts) < 5 * 60 * 1000) visited = true;
     }
   } catch(e) {}
-  if (visited) { el.classList.add('gone'); return; }
+
+  if (visited) { 
+    el.classList.add('gone'); 
+    return; 
+  }
+  
   try {
     sessionStorage.setItem('toego_splash_seen', '1');
     localStorage.setItem('toego_splash_ts', String(Date.now()));
   } catch(e) {}
+
   var hideNow = function() {
     if (!el || el.classList.contains('gone')) return;
     el.classList.add('hide');
-    setTimeout(function() { if (el) el.classList.add('gone'); }, 200);
+    setTimeout(function() { if (el) el.classList.add('gone'); }, 300);
   };
-  setTimeout(hideNow, 300);
+  
+  // ✅ 1.2 Seconds (1200ms) TIMING SET KI HAI
+  setTimeout(hideNow, 1200);
+  
   if (document.readyState === 'complete') setTimeout(hideNow, 0);
   else window.addEventListener('load', function() { setTimeout(hideNow, 0); }, { once: true });
 })();
@@ -808,7 +818,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const PROD_TTL = 30 * 60 * 1000;
   const CATS_TTL = 60 * 60 * 1000;
 
-  /* ✅ 100 products load karne ke liye */
   const PRODUCTS_FETCH_LIMIT = 100;
   const PRODUCTS_RENDER_ALL_LIMIT = 100;
 
