@@ -306,9 +306,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 @keyframes tgConfettiFall { 0% { transform:translateY(0) rotate(0deg); opacity:1; } 100% { transform:translateY(110vh) rotate(720deg); opacity:0; } }
 
 /* ✅ BLINKIT STYLE MAP & LOCATION CSS */
-.tg-map-wrap { position: relative; width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 16px; background: #e5e3df; border: 1.5px solid #e0e0e0; }
+.tg-map-wrap { position: relative; width: 100%; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 16px; background: #e5e3df; border: 1.5px solid #e0e0e0; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
 #tg-addr-map { width: 100%; height: 100%; z-index: 1; }
-.tg-map-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); z-index: 400; font-size: 32px; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+.tg-map-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); z-index: 400; font-size: 36px; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); transition: transform 0.1s; }
+.tg-map-pin-shadow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 14px; height: 6px; background: rgba(0,0,0,0.3); border-radius: 50%; z-index: 399; pointer-events: none; filter: blur(1px); }
 .tg-loc-btn { width: 100%; padding: 12px; background: #eef3ff; color: #2874f0; border: 1px dashed #2874f0; border-radius: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13.5px; margin-bottom: 16px; transition: all 0.2s; cursor: pointer; }
 .tg-loc-btn:hover { background: #e0eaff; }
 .tg-loc-btn:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -487,7 +488,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   </div>
 </div>
 
-<!-- ✅ NAYA: BLINKIT STYLE MAP ADDRESS MODAL -->
+<!-- ✅ NEW BLINKIT STYLE MAP ADDRESS MODAL -->
 <div class="tg-modal" id="tg-addr-modal">
   <div class="tg-modal-card" style="padding-bottom: 20px;">
     <div class="tg-modal-head">
@@ -499,6 +500,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     <div class="tg-map-wrap">
       <div id="tg-addr-map"></div>
       <div class="tg-map-pin">📍</div>
+      <div class="tg-map-pin-shadow"></div>
     </div>
 
     <!-- Auto Location Button -->
@@ -518,29 +520,21 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     <div class="tg-modal-field"><label>Full Name *</label><input type="text" id="tg-addr-name" placeholder="Enter full name" maxlength="60" autocomplete="name"></div>
 
-    <div class="tg-modal-row">
-      <div class="tg-modal-field"><label>Phone Number *</label><input type="tel" id="tg-addr-phone" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" autocomplete="tel"></div>
-      <div class="tg-modal-field"><label>Alternate Phone</label><input type="tel" id="tg-addr-alt-phone" placeholder="Optional" maxlength="10" inputmode="numeric"></div>
-    </div>
+    <div class="tg-modal-field"><label>Phone Number *</label><input type="tel" id="tg-addr-phone" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" autocomplete="tel"></div>
 
     <div class="tg-modal-field"><label>Flat / House No., Building Name *</label><textarea id="tg-addr-line" placeholder="e.g. Flat 301, ABC Apartments" maxlength="180" autocomplete="street-address"></textarea></div>
 
-    <div class="tg-modal-row">
-      <div class="tg-modal-field"><label>Landmark / Area</label><input type="text" id="tg-addr-landmark" placeholder="e.g. Near City Mall" maxlength="60"></div>
-      <div class="tg-modal-field"><label>Locality</label><input type="text" id="tg-addr-locality" placeholder="e.g. Civil Lines" maxlength="60"></div>
-    </div>
+    <div class="tg-modal-field"><label>Area / Locality</label><input type="text" id="tg-addr-locality" placeholder="Auto-filled by map" maxlength="60"></div>
 
     <div class="tg-modal-row">
       <div class="tg-modal-field"><label>City *</label><input type="text" id="tg-addr-city" placeholder="City" maxlength="40" autocomplete="address-level2"></div>
-      <div class="tg-modal-field"><label>Pincode *</label><input type="text" id="tg-addr-pin" placeholder="6-digit" maxlength="6" inputmode="numeric" autocomplete="postal-code"></div>
+      <div class="tg-modal-field"><label>District</label><input type="text" id="tg-addr-district" placeholder="District" maxlength="40"></div>
     </div>
 
     <div class="tg-modal-row">
-      <div class="tg-modal-field"><label>District</label><input type="text" id="tg-addr-district" placeholder="District" maxlength="40"></div>
+      <div class="tg-modal-field"><label>Pincode *</label><input type="text" id="tg-addr-pin" placeholder="6-digit" maxlength="6" inputmode="numeric" autocomplete="postal-code"></div>
       <div class="tg-modal-field"><label>State *</label><input type="text" id="tg-addr-state" placeholder="State" maxlength="40" autocomplete="address-level1"></div>
     </div>
-
-    <div class="tg-modal-field"><label>Email (optional)</label><input type="email" id="tg-addr-email" placeholder="you@example.com" maxlength="80" autocomplete="email"></div>
 
     <!-- Hidden fields for Lat/Lng -->
     <input type="hidden" id="tg-addr-lat">
@@ -2587,7 +2581,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
               ${esc(a.name)}
               ${typeBadge(a.type)}
               ${a.isDefault ? '<span class="tg-addr-badge default">✓ Default</span>' : ''}
-              <span class="tg-addr-phone">📱 ${esc(a.phone)}${a.altPhone ? ' / ' + esc(a.altPhone) : ''}</span>
+              <span class="tg-addr-phone">📱 ${esc(a.phone)}</span>
             </div>
             <div class="tg-addr-text">
               <b>${esc(a.line)}</b>${a.locality ? ', ' + esc(a.locality) : ''}${a.landmark ? ' (Near ' + esc(a.landmark) + ')' : ''}<br>
@@ -2648,7 +2642,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
   // ✅ BLINKIT STYLE MAP SETUP
   let tgMap = null;
-  let tgMarker = null;
   let tgGeocodeTimeout = null;
 
   function initTgMap(lat = 28.6139, lng = 77.2090) {
@@ -2656,7 +2649,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       tgMap.remove();
     }
     tgMap = L.map('tg-addr-map', { zoomControl: false, attributionControl: false }).setView([lat, lng], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(tgMap);
+    
+    // Clean CartoDB Voyager Tiles (Google Maps jaisa look)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(tgMap);
 
     tgMap.on('moveend', function() {
       const center = tgMap.getCenter();
@@ -2666,7 +2663,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (tgGeocodeTimeout) clearTimeout(tgGeocodeTimeout);
       tgGeocodeTimeout = setTimeout(() => {
         reverseGeocode(center.lat, center.lng);
-      }, 600); // 600ms debounce
+      }, 1000); // 1s debounce
     });
   }
 
@@ -2688,7 +2685,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const lng = position.coords.longitude;
         
         if (tgMap) {
-          tgMap.setView([lat, lng], 16);
+          tgMap.setView([lat, lng], 17);
         }
         
         document.getElementById('tg-addr-lat').value = lat;
@@ -2698,7 +2695,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         
         btn.innerHTML = originalText;
         btn.disabled = false;
-        toast('✓ Location detected!', 'success');
       },
       (error) => {
         btn.innerHTML = originalText;
@@ -2708,26 +2704,60 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (error.code === 3) msg = 'Location request timed out.';
         toast(msg, 'error');
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   };
 
   async function reverseGeocode(lat, lng) {
+    const cityEl = document.getElementById('tg-addr-city');
+    const stateEl = document.getElementById('tg-addr-state');
+    const pinEl = document.getElementById('tg-addr-pin');
+    const localityEl = document.getElementById('tg-addr-locality');
+    const districtEl = document.getElementById('tg-addr-district');
+
+    [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
+      if(el) el.style.opacity = '0.5';
+    });
+
     try {
-      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      // Use Nominatim for accurate India data
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=en`);
       const data = await res.json();
       
-      if (data.locality || data.city) {
-        document.getElementById('tg-addr-city').value = data.city || data.locality || '';
-      }
-      if (data.principalSubdivision) {
-        document.getElementById('tg-addr-state').value = data.principalSubdivision || '';
-      }
-      if (data.postcode) {
-        document.getElementById('tg-addr-pin').value = data.postcode || '';
+      if (data && data.address) {
+        const a = data.address;
+        
+        const area = a.suburb || a.neighbourhood || a.residential || a.road || a.city_district || a.county || '';
+        const city = a.city || a.town || a.village || a.municipality || a.county || '';
+        const state = a.state || a.state_district || '';
+        const pin = a.postcode || '';
+        const district = a.state_district || a.county || '';
+
+        if (localityEl) localityEl.value = area;
+        if (cityEl) cityEl.value = city;
+        if (stateEl) stateEl.value = state;
+        if (pinEl) pinEl.value = pin;
+        if (districtEl) districtEl.value = district;
+
+        toast('✓ Location auto-filled', 'success');
+      } else {
+        throw new Error('No address found');
       }
     } catch (err) {
-      console.warn('Geocode failed:', err);
+      console.warn('Nominatim failed, trying BigDataCloud:', err);
+      // Fallback to BigDataCloud
+      try {
+        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+        const data = await res.json();
+        if (cityEl) cityEl.value = data.city || data.locality || '';
+        if (stateEl) stateEl.value = data.principalSubdivision || '';
+        if (pinEl) pinEl.value = data.postcode || '';
+        if (localityEl) localityEl.value = data.locality || '';
+      } catch(e) {}
+    } finally {
+      [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
+        if(el) el.style.opacity = '1';
+      });
     }
   }
 
@@ -2744,19 +2774,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const saved = getAddr();
       if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
       if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone;
-      if (saved.altPhone) document.getElementById('tg-addr-alt-phone').value = saved.altPhone;
     } catch(e) {}
     
     if (userProfile) {
       const nameEl = document.getElementById('tg-addr-name');
       const phoneEl = document.getElementById('tg-addr-phone');
-      const emailEl = document.getElementById('tg-addr-email');
       if (!nameEl.value && userProfile.name) nameEl.value = userProfile.name;
       if (!phoneEl.value && userProfile.phone) phoneEl.value = userProfile.phone;
-      if (!emailEl.value && (userProfile.email || (currentUser && currentUser.email))) emailEl.value = userProfile.email || currentUser.email;
-    } else if (currentUser && currentUser.email) {
-      const emailEl = document.getElementById('tg-addr-email');
-      if (!emailEl.value) emailEl.value = currentUser.email;
     }
     
     ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state','tg-addr-lat','tg-addr-lng'].forEach(id => {
@@ -2781,15 +2805,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   window.tgSaveAddr = async function() {
     const name = (document.getElementById('tg-addr-name').value || '').trim();
     const phone = (document.getElementById('tg-addr-phone').value || '').trim();
-    const altPhone = (document.getElementById('tg-addr-alt-phone').value || '').trim();
     const line = (document.getElementById('tg-addr-line').value || '').trim();
     const locality = (document.getElementById('tg-addr-locality').value || '').trim();
-    const landmark = (document.getElementById('tg-addr-landmark').value || '').trim();
     const city = (document.getElementById('tg-addr-city').value || '').trim();
     const pin = (document.getElementById('tg-addr-pin').value || '').trim();
     const district = (document.getElementById('tg-addr-district').value || '').trim();
     const state = (document.getElementById('tg-addr-state').value || '').trim();
-    const email = (document.getElementById('tg-addr-email').value || '').trim();
     const lat = document.getElementById('tg-addr-lat').value;
     const lng = document.getElementById('tg-addr-lng').value;
     const isDefault = document.getElementById('tg-addr-default').checked;
@@ -2797,14 +2818,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     if (!name || name.length < 2) { toast('Please enter full name', 'error'); return; }
     if (!/^\d{10}$/.test(phone)) { toast('Please enter a valid 10-digit phone', 'error'); return; }
-    if (altPhone && !/^\d{10}$/.test(altPhone)) { toast('Alternate phone must be 10 digits', 'error'); return; }
-    if (!line || line.length < 5) { toast('Please enter full address', 'error'); return; }
+    if (!line || line.length < 5) { toast('Please enter flat/building details', 'error'); return; }
     if (!city) { toast('Please enter city', 'error'); return; }
     if (!/^\d{6}$/.test(pin)) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
     if (!state) { toast('Please enter state', 'error'); return; }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Please enter a valid email', 'error'); return; }
 
-    pendingAddress = { name, phone, altPhone, line, locality, landmark, city, pin, district, state, email, type, isDefault, lat, lng, country: 'India' };
+    pendingAddress = { name, phone, line, locality, city, pin, district, state, type, isDefault, lat, lng, country: 'India' };
     setAddr(pendingAddress);
     setPin(pin);
     const cityEl = document.getElementById('tg-pin-city');
@@ -2914,7 +2933,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  // ✅ FAST ORDER PLACING: Promise.all for parallel fetch
   async function fetchFreshProductsServer(ids) {
     const out = {};
     if (!ids.length) return out;
@@ -3615,7 +3633,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
   });
 
-  // ✅ CSS Keyframe for loading spinner
   const styleSheet = document.createElement("style");
   styleSheet.innerText = "@keyframes spin { 100% { transform: rotate(360deg); } }";
   document.head.appendChild(styleSheet);
