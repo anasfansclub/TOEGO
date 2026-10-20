@@ -1341,7 +1341,8 @@ document.addEventListener('DOMContentLoaded', function() {
           try {
             if (unsubCats) { try { unsubCats(); } catch(e){} unsubCats = null; }
             unsubCats = db.collection('categories').onSnapshot(snap => {
-              const raw = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+              // ✅ FIXED: spread order (id last, so doc id always wins)
+              const raw = snap.docs.map(d => ({ ...d.data(), id: d.id }))
                 .sort((a,b) => (Number(a.order)||999) - (Number(b.order)||999));
               ALL_CATS_FROM_DB = raw;
               _catsServerConfirmed = true;
@@ -1388,7 +1389,8 @@ document.addEventListener('DOMContentLoaded', function() {
             db.collection('banners').onSnapshot(snap => {
               const newBanners = {};
               snap.docs.forEach(d => {
-                const b = { id: d.id, ...d.data() };
+                // ✅ FIXED: spread order
+                const b = { ...d.data(), id: d.id };
                 if (b.active === false) return;
                 if (b.slot) newBanners[b.slot] = b;
               });
@@ -1760,9 +1762,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
 
+    // ✅ FIXED: spread order
     const applySnap = (snap) => {
       if (!snap) { finishLoad([]); return; }
-      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      const data = snap.docs.map(d => ({ ...d.data(), id: d.id }))
         .filter(p => p && p.active !== false && p.approved !== false);
       finishLoad(data);
     };
@@ -1775,7 +1778,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 8000);
 
     try {
-      /* ✅ FIXED: where clauses for rules compliance + speed */
       db.collection('products')
         .where('active', '==', true)
         .where('approved', '==', true)
@@ -1791,7 +1793,8 @@ document.addEventListener('DOMContentLoaded', function() {
               .limit(30)
               .onSnapshot(
                 s => {
-                  const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
+                  // ✅ FIXED: spread order
+                  const data = s.docs.map(d => ({ ...d.data(), id: d.id }))
                     .filter(p => p && p.active !== false && p.approved !== false);
                   if (data.length) {
                     const ns = _productsContentSig(data);
@@ -1849,7 +1852,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const chunk = pids.slice(i, i + 10);
         try {
           const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(120).get();
-          snap.forEach(d => all.push({ id: d.id, ...d.data() }));
+          // ✅ FIXED: spread order
+          snap.forEach(d => all.push({ ...d.data(), id: d.id }));
         } catch(e) {}
       }
       allReviews = all;
@@ -2270,9 +2274,6 @@ document.addEventListener('DOMContentLoaded', function() {
   let _trackerInFlight = false;
   let _trackerLastLoad = 0;
 
-  /* ══════════════════════════════════════════════════════
-     ✅ FIXED loadTracker() — customerId query (rules + speed)
-     ══════════════════════════════════════════════════════ */
   function loadTracker() {
     if (_trackerInFlight) return;
     const now = Date.now();
@@ -2297,7 +2298,8 @@ document.addEventListener('DOMContentLoaded', function() {
       _trackerInFlight = false;
       _trackerLastLoad = Date.now();
       if (!snap || snap.empty) { hideTracker(); return; }
-      const myOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // ✅ FIXED: spread order
+      const myOrders = snap.docs.map(d => ({ ...d.data(), id: d.id }));
       const active = myOrders.filter(o => {
         const s = normStatus(o.status);
         return !['delivered','cancelled','returned','refunded','rto'].includes(s);
@@ -2533,12 +2535,14 @@ document.addEventListener('DOMContentLoaded', function() {
   async function loadNotifs() {
     try {
       const snap = await db.collection('notifications').where('active','==',true).orderBy('createdAt','desc').limit(20).get();
-      notifCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // ✅ FIXED: spread order
+      notifCache = snap.docs.map(d => ({ ...d.data(), id: d.id }));
       renderNotifList(); updateBellDot();
     } catch(e) {
       try {
         const snap = await db.collection('notifications').where('active','==',true).limit(20).get();
-        notifCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // ✅ FIXED: spread order
+        notifCache = snap.docs.map(d => ({ ...d.data(), id: d.id }));
         renderNotifList(); updateBellDot();
       } catch(e2) {}
     }
