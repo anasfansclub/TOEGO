@@ -1775,11 +1775,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 8000);
 
     try {
-      /* ✅ FIXED: limit 500 → all products load fast at once */
+      /* ✅ FIXED: Primary limit(100) — falls back to limit(30) if rules block */
       db.collection('products')
         .where('active', '==', true)
         .where('approved', '==', true)
-        .limit(500)
+        .limit(100)
         .get()
         .then(snap => {
           clearTimeout(safetyTimer);
@@ -1788,7 +1788,7 @@ document.addEventListener('DOMContentLoaded', function() {
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
-              .limit(500)
+              .limit(100)
               .onSnapshot(
                 s => {
                   const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
@@ -1809,12 +1809,13 @@ document.addEventListener('DOMContentLoaded', function() {
           } catch(e) {}
         })
         .catch(() => {
+          /* ✅ Fallback: retry with original limit(30) — rules-safe */
           clearTimeout(safetyTimer);
           try {
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
-              .limit(500)
+              .limit(30)
               .onSnapshot(
                 s => applySnap(s),
                 () => {
