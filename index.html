@@ -3,7 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>TOEGO — Shop Smart, Save Big</title>
+<title>TOEGO - Online Shopping for Footwear, Fashion & More | toego.in</title>
+<meta name="description" content="Shop smart, save big on TOEGO (toego.in)! Discover the best deals on footwear, slippers, shoes, watches, bags, and electronics. Fast delivery & top brands.">
+<meta name="keywords" content="toego, toego.in, online shopping india, buy shoes online, slippers, sandals, watches, electronic accessories, best deals">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://toego.in/shop-home.html">
+
+<!-- ✅ FAVICON ADDED HERE -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<!-- ✅ OPEN GRAPH FOR WHATSAPP/FACEBOOK SHARING -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toego.in/shop-home.html">
+<meta property="og:title" content="TOEGO - Shop Smart, Save Big!">
+<meta property="og:description" content="Discover the best deals on footwear, slippers, shoes, watches, bags, and electronics at TOEGO.in. Fast delivery guaranteed.">
+<meta property="og:image" content="https://toego.in/og-image.jpg">
+
+<!-- ✅ TWITTER CARD -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TOEGO - Online Shopping">
+<meta name="twitter:description" content="Shop smart, save big on footwear, fashion, and more at toego.in.">
+<meta name="twitter:image" content="https://toego.in/og-image.jpg">
+
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -784,7 +808,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const PROD_TTL = 30 * 60 * 1000;
   const CATS_TTL = 60 * 60 * 1000;
 
-  /* ✅ FIXED: 100 products load karne ke liye */
+  /* ✅ 100 products load karne ke liye */
   const PRODUCTS_FETCH_LIMIT = 100;
   const PRODUCTS_RENDER_ALL_LIMIT = 100;
 
@@ -1771,7 +1795,6 @@ document.addEventListener('DOMContentLoaded', function() {
       finishLoad(data);
     };
 
-    /* ✅ FIXED: timeout 8s → 15s (100 products need more time) */
     const safetyTimer = setTimeout(() => {
       if (_productsLoading && !_productsLoaded && !allProducts.length) {
         _productsLoading = false;
@@ -1780,7 +1803,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 15000);
 
     try {
-      /* ✅ FIXED: .limit(30) → .limit(100) */
       db.collection('products')
         .where('active', '==', true)
         .where('approved', '==', true)
@@ -1790,7 +1812,6 @@ document.addEventListener('DOMContentLoaded', function() {
           clearTimeout(safetyTimer);
           applySnap(snap);
           try {
-            /* ✅ FIXED: .limit(30) → .limit(100) */
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
@@ -1817,7 +1838,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(() => {
           clearTimeout(safetyTimer);
           try {
-            /* ✅ FIXED: .limit(30) → .limit(100) */
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
@@ -1833,7 +1853,6 @@ document.addEventListener('DOMContentLoaded', function() {
             _productsLoading = false;
             if (!allProducts.length) renderProducts(true);
           }
-          /* ✅ FIXED: 5s → 10s */
           setTimeout(() => {
             if (!_productsLoaded && !allProducts.length) {
               _productsLoading = false;
@@ -1996,7 +2015,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const trendingArr = applySortWithTimer(filtered, 10);
     const bestArr = applySortWithTimer(filtered, 10);
     const newArr = applySortWithTimer(filtered, 10);
-    /* ✅ FIXED: 20 → 100 (All Products me sab dikhe) */
     const allArr = applySortWithTimer(filtered, PRODUCTS_RENDER_ALL_LIMIT);
 
     const set = (id, arr, fn) => { 
