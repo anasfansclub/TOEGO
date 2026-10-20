@@ -635,8 +635,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const PCACHE_TTL = 15 * 60 * 1000;
   const COUPON_KEY = 'toego_applied_coupon';
   const CART_MIRROR_PREFIX = 'toego_cart_mirror_';
-  const DELETED_CART_KEY = 'toego_deleted_cart_items';  // ← NEW: persists deletes across refresh
-  const DELETED_CART_TTL = 45000;                        // ← NEW: 45 sec window
+  const DELETED_CART_KEY = 'toego_deleted_cart_items';
+  const DELETED_CART_TTL = 45000;
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
   const COD_LIMIT = 500;
@@ -674,12 +674,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let _pCacheDirty = false;
   let _pCacheSaveTimer = null;
 
-  /* ═══════════════════════════════════════════════════════════
-     🔒 DELETED CART ITEMS TRACKER (survives page refresh)
-     Fix: earlier _pendingCartDeletes was in-memory only,
-     so on refresh the stale Firebase cache showed removed items.
-     ═══════════════════════════════════════════════════════════ */
-  const _deletedItems = new Map();  // id -> timestamp
+  const _deletedItems = new Map();
 
   function _bootDeletedItems() {
     try {
@@ -715,7 +710,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const ts = Date.now();
     _deletedItems.set(id, ts);
     _saveDeletedItems();
-    // Auto-expire after TTL
     setTimeout(() => {
       const cur = _deletedItems.get(id);
       if (cur === ts) {
@@ -737,9 +731,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return true;
   }
 
-  // Boot on page load
   _bootDeletedItems();
-  /* ═══════════════════════════════════════════════════════════ */
 
   function _pCacheBoot() {
     try {
@@ -1778,7 +1770,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  /* 🔒 FIXED: Remove — now persists deletion across page refresh */
   window.tgRemoveItem = async function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) {
@@ -1788,7 +1779,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return;
     }
 
-    // Mark as deleted persistently + in-memory
     _pendingCartDeletes.add(docId);
     _markItemDeleted(docId);
     _pendingQty.delete(docId);
@@ -1806,7 +1796,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
         if (!skipConfirm) toast('Removed from cart', 'success');
       } catch(err) {
-        // Handle already-deleted case gracefully
         const code = err && err.code;
         const msg = String(err && err.message || '');
         if (code === 'not-found' || msg.indexOf('not found') !== -1 || msg.indexOf('No document') !== -1) {
@@ -1885,25 +1874,44 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
+  // ✅ FIXED: ensureBuyNowItem — cache-first, sessionStorage qty, existing-check
   async function ensureBuyNowItem(buyNowId) {
     if (!buyNowId || !currentUser) return false;
+
+    let storedQty = 1;
+    try {
+      const v = parseInt(sessionStorage.getItem('toego_buy_now_qty') || '1', 10);
+      if (!isNaN(v) && v > 0) storedQty = Math.max(1, Math.min(10, v));
+    } catch(e) {}
+
     const candidateIds = new Set();
     candidateIds.add(buyNowId);
     if (String(buyNowId).includes('|')) {
       const parts = String(buyNowId).split('|');
       if (parts[0]) candidateIds.add(parts[0]);
     }
+
+    // 1) In-memory
     for (const cid of candidateIds) {
       const found = cartItems.find(it => it.id === cid || it.productId === cid);
       if (found) { selectedIds.add(found.id); saveSelected(); renderCart(false); return true; }
     }
+
+    // 2) Cache-first, then server
     for (const cid of candidateIds) {
       try {
-        const cartDoc = await db.collection('carts').doc(currentUser.uid).collection('items').doc(cid).get({ source: 'server' });
+        let cartDoc = await db.collection('carts').doc(currentUser.uid)
+          .collection('items').doc(cid).get({ source: 'cache' });
+        if (!cartDoc.exists) {
+          cartDoc = await db.collection('carts').doc(currentUser.uid)
+            .collection('items').doc(cid).get({ source: 'server' });
+        }
         if (cartDoc.exists) {
           const data = cartDoc.data();
           const item = { ...data, id: cartDoc.id, productId: data.productId || cartDoc.id };
-          if (!cartItems.find(it => it.id === item.id)) cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+          if (!cartItems.find(it => it.id === item.id)) {
+            cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+          }
           selectedIds.add(item.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
@@ -1912,6 +1920,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         }
       } catch(e) {}
     }
+
+    // 3) Fallback: build from product with correct qty
     for (const cid of candidateIds) {
       try {
         const prodDoc = await db.collection('products').doc(cid).get();
@@ -1921,17 +1931,34 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
             productId: prodDoc.id, name: p.name || '',
             image: p.image || (p.images && p.images[0]) || '',
             price: Number(p.price || 0), mrp: Number(p.compareAtPrice || p.mrp || 0),
-            qty: 1, size: '', color: '',
-            sellerId: p.sellerId || p.seller_id || '', sellerName: p.sellerName || '',
+            qty: storedQty,
+            size: '', color: '',
+            sellerId: p.sellerId || p.seller_id || '',
+            sellerName: p.sellerName || '',
             rating: p.rating || null, ratingCount: p.ratingCount || null,
             gst: Number(p.gst || 18), gstIncluded: p.gstIncluded === true,
             addedAt: FV.serverTimestamp()
           };
-          const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(prodDoc.id);
-          const existing = await ref.get();
-          if (!existing.exists) await ref.set(newItem);
+          const ref = db.collection('carts').doc(currentUser.uid)
+            .collection('items').doc(prodDoc.id);
+          const existing = await ref.get({ source: 'cache' });
+          if (existing.exists) {
+            const data = existing.data();
+            const item = { ...data, id: existing.id, productId: data.productId || existing.id };
+            if (!cartItems.find(it => it.id === item.id)) {
+              cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+            }
+            selectedIds.add(item.id);
+            saveSelected();
+            _saveMirror(currentUser.uid, cartItems);
+            renderCart(false);
+            return true;
+          }
+          await ref.set(newItem);
           const item = { ...newItem, id: prodDoc.id };
-          if (!cartItems.find(it => it.id === item.id)) cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+          if (!cartItems.find(it => it.id === item.id)) {
+            cartItems = [...cartItems, ...enrichFromCacheSync([item])];
+          }
           selectedIds.add(prodDoc.id);
           saveSelected();
           _saveMirror(currentUser.uid, cartItems);
@@ -2232,7 +2259,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const lastUid = localStorage.getItem(LAST_UID_KEY);
       if (lastUid) {
         const mirror = _loadMirror(lastUid);
-        // 🔒 Filter out recently deleted items from mirror
         const filtered = mirror.filter(it => it && it.id && !_isItemDeleted(it.id));
         if (filtered.length) {
           cartItems = enrichFromCacheSync(dedupeCart(filtered.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
@@ -2291,6 +2317,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const raw = getGuestCart();
       const buyNowGuest = readBuyNowId();
       if (buyNowGuest) {
+        // ✅ FIX: clear any stale deleted mark so Buy Now item appears
+        if (_deletedItems.has(buyNowGuest)) {
+          _deletedItems.delete(buyNowGuest);
+          _saveDeletedItems();
+        }
+        if (String(buyNowGuest).includes('|')) {
+          const pid = String(buyNowGuest).split('|')[0];
+          if (pid && _deletedItems.has(pid)) {
+            _deletedItems.delete(pid);
+            _saveDeletedItems();
+          }
+        }
         selectedIds.clear();
         selectedIds.add(buyNowGuest);
         saveSelected();
@@ -2309,7 +2347,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const mirror = _loadMirror(currentUser.uid);
     if (mirror.length && !cartItems.length) {
-      // 🔒 Filter deleted items
       const filtered = mirror.filter(it => it && it.id && !_isItemDeleted(it.id));
       if (filtered.length) {
         cartItems = enrichFromCacheSync(dedupeCart(filtered.map(it => ({ ...it, id: it.id, productId: it.productId || it.id }))));
@@ -2319,6 +2356,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const buyNowDoc = readBuyNowId();
     if (buyNowDoc) {
+      // ✅ FIX: clear any stale deleted mark so Buy Now item appears
+      if (_deletedItems.has(buyNowDoc)) {
+        _deletedItems.delete(buyNowDoc);
+        _saveDeletedItems();
+      }
+      if (String(buyNowDoc).includes('|')) {
+        const pid = String(buyNowDoc).split('|')[0];
+        if (pid && _deletedItems.has(pid)) {
+          _deletedItems.delete(pid);
+          _saveDeletedItems();
+        }
+      }
       selectedIds.clear();
       selectedIds.add(buyNowDoc);
       saveSelected();
@@ -2332,7 +2381,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     let _firstSnapshotDone = false;
 
     async function processSnapshot(snap) {
-      // 🔒 Filter: check BOTH _pendingCartDeletes (same session) AND _isItemDeleted (survives refresh)
       let raw = snap.docs.map(d => {
         const data = d.data();
         return { ...data, id: d.id, productId: data.productId || d.id };
@@ -2342,7 +2390,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       _pendingCartDeletes.forEach(id => {
         if (!snapIds.has(id)) _pendingCartDeletes.delete(id);
       });
-      // Also cleanup deleted-items that are no longer in snapshot
       _deletedItems.forEach((ts, id) => {
         if (!snapIds.has(id) && (Date.now() - ts) > 5000) {
           _deletedItems.delete(id);
@@ -3172,7 +3219,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
         try {
           const docsToDelete = t.sel.map(it => it.id);
-          // 🔒 Mark as deleted BEFORE removing from Firebase
           docsToDelete.forEach(id => { _pendingCartDeletes.add(id); _markItemDeleted(id); });
 
           const orderId = await tgCreateOrderSecure(
@@ -3316,7 +3362,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       placeBtns.forEach(b => { b.textContent = 'Placing order...'; });
 
       const docsToDelete = t.sel.map(it => it.id);
-      // 🔒 Mark as deleted BEFORE removing from Firebase
       docsToDelete.forEach(id => { _pendingCartDeletes.add(id); _markItemDeleted(id); });
 
       const orderId = await tgCreateOrderSecure(verified, payInfo, docsToDelete);
