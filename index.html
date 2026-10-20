@@ -1775,11 +1775,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 8000);
 
     try {
-      /* ✅ FIXED: where clauses for rules compliance + speed */
+      /* ✅ FIXED: limit 500 → all products load fast at once */
       db.collection('products')
         .where('active', '==', true)
         .where('approved', '==', true)
-        .limit(30)
+        .limit(500)
         .get()
         .then(snap => {
           clearTimeout(safetyTimer);
@@ -1788,7 +1788,7 @@ document.addEventListener('DOMContentLoaded', function() {
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
-              .limit(30)
+              .limit(500)
               .onSnapshot(
                 s => {
                   const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
@@ -1814,7 +1814,7 @@ document.addEventListener('DOMContentLoaded', function() {
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
-              .limit(30)
+              .limit(500)
               .onSnapshot(
                 s => applySnap(s),
                 () => {
@@ -2270,9 +2270,6 @@ document.addEventListener('DOMContentLoaded', function() {
   let _trackerInFlight = false;
   let _trackerLastLoad = 0;
 
-  /* ══════════════════════════════════════════════════════
-     ✅ FIXED loadTracker() — customerId query (rules + speed)
-     ══════════════════════════════════════════════════════ */
   function loadTracker() {
     if (_trackerInFlight) return;
     const now = Date.now();
