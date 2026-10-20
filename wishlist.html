@@ -292,7 +292,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  // ✅ FIX: enablePersistence FIRST, no settings() conflict
   try {
     db.enablePersistence({ synchronizeTabs: false }).catch(() => {});
   } catch(e) {}
@@ -302,7 +301,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const PRODUCT_CACHE_KEY = 'toego_pcache_v3';
   const PRODUCT_CACHE_TTL = 15 * 60 * 1000;
   const WISHLIST_CACHE_TTL = 30 * 60 * 1000;
-  // 🔥 FIX: Firestore 'in' query MAX 10 items — 30 tha (bug!)
   const CHUNK_SIZE = 10;
 
   let USER = null;
@@ -463,7 +461,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (unsubCart) { try { unsubCart(); } catch(e){} unsubCart = null; }
     if (!uid) { cartItems = getGuestCart(); updateCartBadge(); return; }
     unsubCart = db.collection('carts').doc(uid).collection('items').onSnapshot(snap => {
-      cartItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // ✅ FIXED: Spread order (id last)
+      cartItems = snap.docs.map(d => ({ ...d.data(), id: d.id }));
       updateCartBadge();
     }, () => {});
   }
@@ -616,7 +615,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           .get();
         const got = new Set();
         snap.forEach(d => {
-          const data = { id: d.id, ...d.data() };
+          // ✅ FIXED: Spread order (id last)
+          const data = { ...d.data(), id: d.id };
           _pSet(d.id, data);
           results[d.id] = data;
           got.add(d.id);
@@ -626,7 +626,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         await Promise.all(chunk.map(async id => {
           try {
             const d = await db.collection('products').doc(id).get();
-            const data = d.exists ? { id: d.id, ...d.data() } : null;
+            // ✅ FIXED: Spread order (id last)
+            const data = d.exists ? { ...d.data(), id: d.id } : null;
             _pSet(id, data);
             if (data) results[id] = data;
           } catch(e2) { _pSet(id, null); }
