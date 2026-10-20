@@ -73,79 +73,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 @keyframes tgCheckPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
 .tg-auth-loading-check svg{width:38px;height:38px;stroke:#fff;fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:tgCheckDraw .3s .1s ease forwards;}
 @keyframes tgCheckDraw{to{stroke-dashoffset:0;}}
-
-/* ═══ GOOGLE POPUP OVERLAY — background dim/blur while popup open ═══ */
-.tg-google-overlay{
-  position:fixed;inset:0;
-  background:rgba(15,23,41,0.55);
-  -webkit-backdrop-filter:blur(6px);
-  backdrop-filter:blur(6px);
-  z-index:99999990;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  animation:tgFadeIn .22s ease;
-}
-.tg-google-overlay.show{display:flex;}
-@keyframes tgFadeIn{from{opacity:0;}to{opacity:1;}}
-.tg-google-overlay-card{
-  background:#fff;
-  border-radius:16px;
-  padding:28px 24px 22px;
-  max-width:340px;
-  width:100%;
-  text-align:center;
-  box-shadow:0 24px 60px rgba(0,0,0,0.4);
-  animation:tgPopIn .32s cubic-bezier(.34,1.4,.64,1);
-}
-@keyframes tgPopIn{from{transform:scale(.85);opacity:0;}to{transform:scale(1);opacity:1;}}
-.tg-google-overlay-spinner{
-  width:46px;height:46px;
-  border:4px solid #e8e8e8;
-  border-top-color:#2874f0;
-  border-radius:50%;
-  animation:tgSpin .8s linear infinite;
-  margin:0 auto 18px;
-}
-.tg-google-overlay-logo{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  margin-bottom:10px;
-  font-weight:900;
-  font-style:italic;
-  font-size:20px;
-  color:#2874f0;
-  letter-spacing:-0.4px;
-}
-.tg-google-overlay-logo span{color:#ffe500;}
-.tg-google-overlay-title{
-  font-size:16px;
-  font-weight:800;
-  color:#212121;
-  margin:0 0 8px;
-}
-.tg-google-overlay-desc{
-  font-size:13px;
-  color:#666;
-  margin:0 0 18px;
-  line-height:1.5;
-}
-.tg-google-overlay-desc b{color:#212121;font-weight:700;}
-.tg-google-overlay-cancel{
-  width:100%;
-  padding:11px 18px;
-  border-radius:9px;
-  background:#f1f3f6;
-  color:#212121;
-  font-size:13.5px;
-  font-weight:700;
-  transition:background .15s;
-}
-.tg-google-overlay-cancel:hover{background:#e5e7eb;}
-
 .tg-modal{position:fixed;inset:0;background:rgba(15,23,41,0.6);backdrop-filter:blur(4px);z-index:999999999;display:none;align-items:center;justify-content:center;padding:20px;}
 .tg-modal.show{display:flex;}
 .tg-modal-box{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:32px 28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
@@ -175,17 +102,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
   <div class="tg-auth-loading-text" id="tg-auth-loading-text">Signing you in…</div>
-</div>
-
-<!-- ═══ GOOGLE POPUP OVERLAY ═══ -->
-<div class="tg-google-overlay" id="tg-google-overlay">
-  <div class="tg-google-overlay-card">
-    <div class="tg-google-overlay-spinner"></div>
-    <div class="tg-google-overlay-logo">TOE<span>GO</span></div>
-    <h3 class="tg-google-overlay-title">Sign in with Google</h3>
-    <p class="tg-google-overlay-desc">Popup window me apna <b>Google account</b> choose karein.</p>
-    <button type="button" class="tg-google-overlay-cancel" id="tg-google-overlay-cancel">Cancel</button>
-  </div>
 </div>
 
 <div class="tg-modal" id="tg-modal">
@@ -257,6 +173,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 (function() {
   'use strict';
 
+  /* ═══════════════════════════════════════════════════════════════
+     CONSTANTS
+     ═══════════════════════════════════════════════════════════════ */
   const API_KEY = "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8";
   const PROJECT_ID = "toego-ecommerce";
   const REDIRECT_URL = 'shop-home.html';
@@ -270,6 +189,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   const REST_RESET = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_KEY}`;
   const REST_PROFILE = `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`;
 
+  /* ═══════════════════════════════════════════════════════════════
+     SAFE STORAGE
+     ═══════════════════════════════════════════════════════════════ */
   const _mem = new Map();
   function safeGet(k) {
     try { const v = localStorage.getItem(k); if (v) return v; } catch(e) {}
@@ -287,6 +209,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     _mem.delete(k);
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     GOOGLE PENDING HELPERS
+     ═══════════════════════════════════════════════════════════════ */
   function setPendingGoogle() { safeSet(GOOGLE_PENDING_KEY, String(Date.now())); }
   function clearPendingGoogle() { safeRemove(GOOGLE_PENDING_KEY); }
   function isPendingGoogle() {
@@ -304,6 +229,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     safeSet(LOGIN_SUCCESS_KEY, data);
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     REST ERROR MAPPER
+     ═══════════════════════════════════════════════════════════════ */
   function mapRestError(msg) {
     msg = String(msg || '').toUpperCase();
     if (msg.includes('EMAIL_EXISTS')) return 'auth/email-already-in-use';
@@ -318,6 +246,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     return 'auth/unknown';
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     REST API CALLS
+     ═══════════════════════════════════════════════════════════════ */
   async function restCall(url, body) {
     const res = await fetch(url, {
       method: 'POST',
@@ -338,6 +269,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     try { await restCall(REST_PROFILE, { idToken, displayName, returnSecureToken: false }); } catch(e) {}
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     SAVE USER DOC — Both SDK and REST
+     ═══════════════════════════════════════════════════════════════ */
   async function saveUserDocREST(idToken, uid, email, name, photoURL) {
     if (!idToken || !uid) return;
     try {
@@ -371,6 +305,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           body: JSON.stringify({ fields })
         });
       }
+      console.log('[userdoc] saved via REST ✓');
     } catch(e) { console.warn('[userdoc] REST failed:', e); }
   }
 
@@ -392,9 +327,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       } else {
         await ref.update(data);
       }
-    } catch(e) { console.warn('[userdoc] SDK failed:', e && e.code); }
+      console.log('[userdoc] saved via SDK ✓');
+    } catch(e) {
+      console.warn('[userdoc] SDK failed:', e && e.code);
+    }
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     FIREBASE INIT
+     ═══════════════════════════════════════════════════════════════ */
   let auth, db, FV;
   try {
     if (!window.__TOEGO_FB__) {
@@ -412,17 +353,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     FV = firebase.firestore.FieldValue;
   } catch(e) { console.error('[init]', e); }
 
+  /* Persistence — LOCAL with SESSION fallback (better than NONE) */
   try {
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .catch(() => auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(() => {}));
   } catch(e) {}
 
+  /* ═══════════════════════════════════════════════════════════════
+     SHOW LOADING IF GOOGLE PENDING (legacy safety — no-op now)
+     ═══════════════════════════════════════════════════════════════ */
   if (isPendingGoogle()) {
     document.getElementById('tg-auth-loading').classList.add('show');
     document.getElementById('tg-wrap').style.display = 'none';
     document.body.style.overflow = 'hidden';
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     UI HELPERS
+     ═══════════════════════════════════════════════════════════════ */
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -455,23 +403,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.body.style.overflow = '';
   }
 
-  /* ═══ GOOGLE OVERLAY ═══ */
-  const googleOverlay = document.getElementById('tg-google-overlay');
-  function showGoogleOverlay() {
-    if (!googleOverlay) return;
-    googleOverlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-  function hideGoogleOverlay() {
-    if (!googleOverlay) return;
-    googleOverlay.classList.remove('show');
-    /* Only restore overflow if no other overlay is showing */
-    if (!document.getElementById('tg-auth-loading')?.classList.contains('show') &&
-        !document.getElementById('tg-modal')?.classList.contains('show')) {
-      document.body.style.overflow = '';
-    }
-  }
-
+  /* ═══ MODAL ═══ */
   const modal = document.getElementById('tg-modal');
   const modalIcon = document.getElementById('tg-modal-icon');
   const modalTitle = document.getElementById('tg-modal-title');
@@ -502,6 +434,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   modalPrimary.addEventListener('click', function() { const cb = _modalCb; closeModal(); if (cb) cb(); });
   modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
 
+  /* ═══ ERROR HANDLER ═══ */
   function showError(err) {
     const code = (err && err.code) || 'unknown';
     console.warn('[auth-error]', code, err && err.message);
@@ -528,6 +461,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     showModal({ type: 'error', title: 'Login Failed', desc: 'Kuch problem aayi. Please try again.', primaryText: 'Try Again' });
   }
 
+  /* ═══ UI REFS ═══ */
   const card = document.getElementById('tg-card');
   const leftTitle = document.getElementById('tg-left-title');
   const leftSub = document.getElementById('tg-left-sub');
@@ -592,13 +526,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     googleText.textContent = on ? 'Please wait…' : 'Continue with Google';
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     SUCCESS HANDLER
+     ═══════════════════════════════════════════════════════════════ */
   let _redirected = false;
 
   async function handleSuccess(userData) {
     if (_redirected) return;
     _redirected = true;
 
-    hideGoogleOverlay();
     showAuthLoading('Login successful! Redirecting…', true);
 
     const sessionData = {
@@ -629,6 +565,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     setTimeout(() => { window.location.replace(REDIRECT_URL); }, 600);
   }
 
+  /* ═══════════════════════════════════════════════════════════════
+     EMAIL/PASSWORD SUBMIT
+     ═══════════════════════════════════════════════════════════════ */
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = (emailInput.value || '').trim();
@@ -643,7 +582,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
 
+    /* TIER 1: SDK */
     try {
+      console.log('[tier1] SDK', mode);
       let cred;
       if (mode === 'signup') {
         cred = await auth.createUserWithEmailAndPassword(email, password);
@@ -652,6 +593,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         cred = await auth.signInWithEmailAndPassword(email, password);
       }
       if (cred && cred.user) {
+        console.log('[tier1] ✓');
         let idToken = '';
         try { idToken = await cred.user.getIdToken(); } catch(e) {}
         await handleSuccess({
@@ -665,8 +607,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       }
     } catch (err) {
       const code = err && err.code;
+      console.log('[tier1] failed:', code);
 
+      /* TIER 2: Recover from auth.currentUser */
       if ((code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') && auth.currentUser) {
+        console.log('[tier2] recovered');
         let idToken = '';
         try { idToken = await auth.currentUser.getIdToken(); } catch(e) {}
         await handleSuccess({
@@ -679,11 +624,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
+      /* TIER 3: REST */
       if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
+        console.log('[tier3] REST');
         try {
           const data = mode === 'signup'
             ? await restSignup(email, password)
             : await restLogin(email, password);
+          console.log('[tier3] ✓');
           if (mode === 'signup' && name && data.idToken) updateProfileRest(data.idToken, name);
           await handleSuccess({
             uid: data.localId,
@@ -693,6 +641,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           });
           return;
         } catch (restErr) {
+          console.log('[tier3] failed:', restErr && restErr.code);
           setSubmitLoading(false);
           showError(restErr);
           return;
@@ -705,23 +654,23 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     ✅ GOOGLE LOGIN — POPUP ONLY + BACKGROUND DIM OVERLAY
+     ✅ FIXED: GOOGLE LOGIN — POPUP ONLY, NO REDIRECT
      ═══════════════════════════════════════════════════════════════ */
   googleBtn.addEventListener('click', function() {
     if (googleBtn.disabled) return;
 
     setGoogleLoading(true);
-    showGoogleOverlay();  /* ✅ Dim background while popup open */
 
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
+    /* No await before signInWithPopup — preserves user gesture */
     auth.signInWithPopup(provider).then(async function(result) {
       if (result && result.user) {
+        console.log('[google] popup success:', result.user.email);
         clearPendingGoogle();
         let idToken = '';
         try { idToken = await result.user.getIdToken(); } catch(e) {}
-        /* handleSuccess() will call hideGoogleOverlay() internally */
         await handleSuccess({
           uid: result.user.uid,
           email: result.user.email,
@@ -730,19 +679,21 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           idToken: idToken
         });
       } else {
-        hideGoogleOverlay();
         setGoogleLoading(false);
       }
     }).catch(async function(err) {
       const code = err && err.code;
-      hideGoogleOverlay();  /* ✅ Remove dim on error */
-      setGoogleLoading(false);
+      console.log('[google] error:', code);
 
+      /* User closed popup — silent, just re-enable button */
       if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
-        return; /* silent */
+        setGoogleLoading(false);
+        return;
       }
 
+      /* Popup blocked — clear instructions */
       if (code === 'auth/popup-blocked') {
+        setGoogleLoading(false);
         showModal({
           type: 'warn',
           title: 'Popup Blocked',
@@ -754,7 +705,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
+      /* In-app browser (Instagram, Facebook, etc.) */
       if (code === 'auth/operation-not-supported-in-this-environment') {
+        setGoogleLoading(false);
         showModal({
           type: 'error',
           title: 'Browser Not Supported',
@@ -764,7 +717,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
+      /* Network issue */
       if (code === 'auth/network-request-failed') {
+        setGoogleLoading(false);
         showModal({
           type: 'error',
           title: 'No Internet',
@@ -775,7 +730,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
+      /* Domain not authorized */
       if (code === 'auth/unauthorized-domain') {
+        setGoogleLoading(false);
         showModal({
           type: 'error',
           title: 'Configuration Error',
@@ -785,7 +742,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
+      /* Account disabled */
       if (code === 'auth/user-disabled') {
+        setGoogleLoading(false);
         showModal({
           type: 'error',
           title: 'Account Disabled',
@@ -795,6 +754,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
+      /* Storage errors — try recovery from current user */
       if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
         if (auth.currentUser) {
           let idToken = '';
@@ -808,6 +768,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           });
           return;
         }
+        setGoogleLoading(false);
         showModal({
           type: 'error',
           title: 'Storage Required',
@@ -817,20 +778,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
+      /* Any other error */
+      setGoogleLoading(false);
       showError(err);
     });
   });
 
-  /* ═══ Overlay Cancel Button — just hides dim, popup still pending ═══ */
-  const googleOverlayCancel = document.getElementById('tg-google-overlay-cancel');
-  if (googleOverlayCancel) {
-    googleOverlayCancel.addEventListener('click', function() {
-      hideGoogleOverlay();
-      /* Don't reset googleBtn loading — popup is still open. When user
-         closes popup, the .catch() will fire and reset everything. */
-    });
-  }
-
+  /* ═══ Redirect return (no-op now — safe) ═══ */
   (async function handleRedirectReturn() {
     try {
       const result = await auth.getRedirectResult();
@@ -849,11 +803,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     } catch (err) { /* silent */ }
   })();
 
+  /* ═══════════════════════════════════════════════════════════════
+     SESSION RESTORE — SDK verified, ultra-proof
+     ═══════════════════════════════════════════════════════════════ */
   let _authCheckFirst = true;
   auth.onAuthStateChanged(async (user) => {
     if (_authCheckFirst) {
       _authCheckFirst = false;
       if (user && !_redirected) {
+        console.log('[session-restore] Firebase confirms:', user.email);
         showAuthLoading('Welcome back!', true);
         let idToken = '';
         try { idToken = await user.getIdToken(); } catch(e) {}
@@ -866,12 +824,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         });
         return;
       }
+      /* Not logged in — clear any stale cache, stay on login page */
+      console.log('[session-restore] not logged in — showing login form');
       safeRemove(AUTH_CACHE_KEY);
       safeRemove(SESSION_KEY);
       return;
     }
 
+    /* Subsequent fires — user just logged in */
     if (user && !_redirected) {
+      console.log('[auth-state] user present:', user.email);
       clearPendingGoogle();
       let idToken = '';
       try { idToken = await user.getIdToken(); } catch(e) {}
@@ -885,8 +847,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
+  /* Failsafe — if pending Google stuck after 6s, show login */
   setTimeout(() => {
     if (isPendingGoogle() && !auth.currentUser && !_redirected) {
+      console.log('[failsafe] restoring login form');
       clearPendingGoogle();
       hideAuthLoading();
     }
@@ -894,6 +858,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
   window.addEventListener('pageshow', (e) => {
     if (e.persisted && auth.currentUser && !_redirected) {
+      console.log('[pageshow] user present');
       handleSuccess({
         uid: auth.currentUser.uid,
         email: auth.currentUser.email,
@@ -903,6 +868,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
+  /* ═══ FORGOT PASSWORD ═══ */
   async function doForgotPassword() {
     const email = (emailInput.value || '').trim();
     if (!email) { showModal({ type: 'info', title: 'Email Required', desc: 'Password reset ke liye email daalo.', primaryText: 'OK', onPrimary: () => emailInput.focus() }); return; }
@@ -910,7 +876,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
     try {
       try { await auth.sendPasswordResetEmail(email); }
-      catch(sdkErr) { await restReset(email); }
+      catch(sdkErr) { console.log('[reset] SDK failed, REST:', sdkErr && sdkErr.code); await restReset(email); }
       showModal({ type: 'success', title: 'Reset Link Sent', desc: 'Reset link bhej diya:<br><br><b>' + email + '</b>', primaryText: 'OK' });
     } catch (err) {
       const code = err && err.code;
@@ -923,6 +889,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
   forgotLink.addEventListener('click', (e) => { e.preventDefault(); doForgotPassword(); });
 
+  /* ═══ THEME ═══ */
   setTimeout(() => {
     try {
       db.collection('siteSettings').doc('theme').get()
