@@ -674,7 +674,6 @@ a{color:inherit;text-decoration:none;}
     });
   }
 
-  // ✅ CRITICAL FIX: Compute rating from reviews array if product doc fields are missing
   function computeRatingFromReviews() {
     if (!Array.isArray(REVIEWS) || !REVIEWS.length) return { avg: 0, count: 0, distribution: {5:0,4:0,3:0,2:0,1:0} };
     let sum = 0, count = 0;
@@ -691,28 +690,19 @@ a{color:inherit;text-decoration:none;}
     return { avg: sum / count, count, distribution };
   }
 
-  // ✅ CRITICAL FIX: Get product rating — prefer doc values, fallback to computed from reviews
   function getProductRatingData() {
     const docRating = Number(PRODUCT?.rating || 0);
     const docCount = Number(PRODUCT?.ratingCount || PRODUCT?.rating_count || PRODUCT?.reviewCount || 0);
 
-    // If product doc has valid rating, use it
     if (docRating > 0 && docCount > 0) {
       return {
         avg: docRating,
         count: docCount,
-        distribution: computeDistributionFromDocs() || computeRatingFromReviews().distribution
+        distribution: computeRatingFromReviews().distribution
       };
     }
 
-    // Otherwise compute from reviews
-    const computed = computeRatingFromReviews();
-    return computed;
-  }
-
-  function computeDistributionFromDocs() {
-    // Product doc might not have distribution, skip and use reviews
-    return null;
+    return computeRatingFromReviews();
   }
 
   async function loadProduct() {
@@ -774,7 +764,6 @@ a{color:inherit;text-decoration:none;}
     setupAllProductsLazy();
   }
 
-  // ✅ Live product doc updates (rating, stock)
   function subscribeProductDoc(pid) {
     if (unsubProductDoc) { try { unsubProductDoc(); } catch(e) {} unsubProductDoc = null; }
     try {
@@ -867,7 +856,6 @@ a{color:inherit;text-decoration:none;}
     _productRenderAttempts++;
   }
 
-  // ✅ FIXED: Compute rating from reviews if doc fields missing
   function updateMainRating() {
     const el = document.getElementById('tg-main-rating');
     if (!el || !PRODUCT) return;
@@ -879,7 +867,6 @@ a{color:inherit;text-decoration:none;}
     }
   }
 
-  // ✅ NEW: Rating breakdown with clickable bars
   function renderRatingBreakdown() {
     const el = document.getElementById('tg-rating-breakdown');
     if (!el) return;
@@ -889,7 +876,6 @@ a{color:inherit;text-decoration:none;}
 
     const dist = data.distribution;
     const total = data.count;
-    const maxDist = Math.max(...Object.values(dist)) || 1;
 
     el.innerHTML = '<div class="tg-rb-wrap">' +
       '<div class="tg-rb-score">' +
@@ -1028,7 +1014,6 @@ a{color:inherit;text-decoration:none;}
     if (btns[1]) btns[1].disabled = QTY >= 10;
   };
 
-  // ✅ NEW: Pincode checker
   window.tgCheckPincode = function() {
     const input = document.getElementById('tg-pincode-input');
     const result = document.getElementById('tg-pincode-result');
@@ -1045,7 +1030,6 @@ a{color:inherit;text-decoration:none;}
     result.textContent = '⏳ Checking availability…';
 
     setTimeout(() => {
-      // Mock check — replace with real API
       const firstDigit = parseInt(pin[0], 10);
       const available = firstDigit >= 1 && firstDigit <= 8;
       const days = 2 + (firstDigit % 4);
@@ -1064,7 +1048,6 @@ a{color:inherit;text-decoration:none;}
     }, 600);
   };
 
-  // ✅ NEW: Wishlist toggle
   window.tgToggleWishlist = async function() {
     if (!currentUser) { toast('Please log in to save', 'info'); return; }
     if (!PRODUCT) return;
@@ -1253,9 +1236,6 @@ a{color:inherit;text-decoration:none;}
   }
   document.getElementById('tg-ar-modal').addEventListener('click', e => { if (e.target.id === 'tg-ar-modal') tgCloseAllReviews(); });
 
-  // ═══════════════════════════════════════════════════════════
-  // ✅ CRITICAL FIX: checkReviewEligibility
-  // ═══════════════════════════════════════════════════════════
   async function checkReviewEligibility(pid) {
     CAN_REVIEW = false;
     HAS_REVIEWED = false;
@@ -1267,10 +1247,8 @@ a{color:inherit;text-decoration:none;}
 
     const uid = currentUser.uid;
     const email = (currentUser.email || '').toLowerCase().trim();
-    const phone = (currentUser.phoneNumber || '').replace(/\D/g, '');
     const pidStr = String(pid).trim();
 
-    // Step 1: Check if user already reviewed this product
     try {
       const rSnap = await db.collection('reviews')
         .where('userId', '==', uid)
@@ -1287,7 +1265,6 @@ a{color:inherit;text-decoration:none;}
       console.warn('[eligibility] reviewed check failed:', e && e.message);
     }
 
-    // Step 2: Check orders — try multiple fields
     try {
       const ordersMap = new Map();
       const queries = ['userId', 'customerId', 'uid', 'user_id', 'customer_id'];
@@ -1299,7 +1276,6 @@ a{color:inherit;text-decoration:none;}
       });
       await Promise.all(promises);
 
-      // Also try email match
       if (email) {
         try {
           const snap = await db.collection('orders').where('userEmail', '==', email).limit(50).get();
@@ -1309,7 +1285,6 @@ a{color:inherit;text-decoration:none;}
 
       for (const o of ordersMap.values()) {
         const items = Array.isArray(o.items) ? o.items : [];
-        // ✅ FIX: Check all common item field names
         const hasProduct = items.some(it => {
           if (!it) return false;
           const candidates = [
@@ -1322,11 +1297,9 @@ a{color:inherit;text-decoration:none;}
 
         HAS_ORDERED = true;
 
-        // ✅ FIX: Check BOTH status and orderStatus fields
         const rawStatus = o.status || o.orderStatus || o.order_status || '';
         const st = String(rawStatus).toLowerCase().trim().replace(/\s+/g, '_').replace(/-/g, '_');
 
-        // ✅ FIX: Broad delivered detection
         const isDelivered = st.includes('deliver') || st === 'completed' || st === 'complete' ||
                             st === 'delivered' || st === 'order_delivered' || st === 'dlvd';
 
@@ -1344,7 +1317,6 @@ a{color:inherit;text-decoration:none;}
 
     updateReviewButton();
 
-    // ✅ Retry once if failed (network blip)
     if (!HAS_DELIVERED && !HAS_REVIEWED && _eligibilityRetryCount < 2) {
       _eligibilityRetryCount++;
       if (_eligibilityRetryTimer) clearTimeout(_eligibilityRetryTimer);
@@ -1425,7 +1397,6 @@ a{color:inherit;text-decoration:none;}
     }
     if (!PRODUCT) return;
 
-    // ✅ EDIT MODE — if already reviewed
     if (HAS_REVIEWED && MY_REVIEW) {
       EDITING_REVIEW_ID = MY_REVIEW.id;
       rvRating = Math.round(Number(MY_REVIEW.rating || 0));
@@ -1452,7 +1423,6 @@ a{color:inherit;text-decoration:none;}
       return;
     }
 
-    // NEW REVIEW MODE
     if (!CAN_REVIEW || !HAS_DELIVERED) { toast(TOAST_MSGS.onlyDelivered, 'info'); return; }
 
     EDITING_REVIEW_ID = null;
@@ -1611,7 +1581,6 @@ a{color:inherit;text-decoration:none;}
       const userName = currentUser.displayName || (currentUser.email || '').split('@')[0] || 'Customer';
 
       if (isEdit) {
-        // UPDATE existing review
         const oldReview = MY_REVIEW || {};
         const oldRating = Number(oldReview.rating || 0);
         await db.collection('reviews').doc(EDITING_REVIEW_ID).update({
@@ -1623,7 +1592,6 @@ a{color:inherit;text-decoration:none;}
           updatedAt: FV.serverTimestamp()
         });
 
-        // Try to update product aggregate rating (may fail silently if rules block)
         try {
           const prodRef = db.collection('products').doc(PRODUCT.id);
           const prodSnap = await prodRef.get();
@@ -1646,7 +1614,6 @@ a{color:inherit;text-decoration:none;}
         return;
       }
 
-      // NEW REVIEW
       if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'error'); return; }
 
       const payload = {
@@ -1667,7 +1634,6 @@ a{color:inherit;text-decoration:none;}
       };
       await db.collection('reviews').add(payload);
 
-      // Try to update product rating (may fail — computed fallback will kick in)
       try {
         const prodRef = db.collection('products').doc(PRODUCT.id);
         const prodSnap = await prodRef.get();
@@ -1839,7 +1805,8 @@ a{color:inherit;text-decoration:none;}
     setTimeout(() => { btn.disabled = false; btn.innerHTML = origHTML; }, 400);
   };
 
-  window.tgBuyNow = function() {
+  // ✅ FIXED: tgBuyNow — async, exact qty, await write, clear qty sessionStorage
+  window.tgBuyNow = async function() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
 
@@ -1852,24 +1819,33 @@ a{color:inherit;text-decoration:none;}
     if (!currentUser) {
       try {
         let cart = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
-        if (!cart.find(x => ((x.productId||x.id) + '|' + (x.size||'') + '|' + (x.color||'')) === docId)) {
+        const existing = cart.find(x => ((x.productId||x.id) + '|' + (x.size||'') + '|' + (x.color||'')) === docId);
+        if (existing) {
+          existing.qty = QTY;
+        } else {
           cart.push({ ...item, addedAt: Date.now() });
-          localStorage.setItem(GUEST_CART, JSON.stringify(cart));
         }
+        localStorage.setItem(GUEST_CART, JSON.stringify(cart));
       } catch(e) {}
       location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html?buynow=' + encodeURIComponent(docId));
       return;
     }
 
+    // ✅ Await write before redirect so cart page finds it in cache
     try {
       const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-      ref.get({ source: 'cache' }).then(snap => {
-        if (snap.exists) return ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
-        return ref.set({ ...item, qty: QTY, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
-      }).catch(() => {
-        return ref.set({ ...item, qty: QTY, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true });
-      }).catch(() => {});
-    } catch(e) {}
+      const snap = await ref.get({ source: 'cache' });
+      if (snap.exists) {
+        await ref.update({ qty: QTY, updatedAt: FV.serverTimestamp() });
+      } else {
+        await ref.set({ ...item, qty: QTY, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+      }
+    } catch(e) {
+      try {
+        const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
+        await ref.set({ ...item, qty: QTY, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true });
+      } catch(e2) {}
+    }
 
     location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
   };
