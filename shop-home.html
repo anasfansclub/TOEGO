@@ -784,6 +784,10 @@ document.addEventListener('DOMContentLoaded', function() {
   const PROD_TTL = 30 * 60 * 1000;
   const CATS_TTL = 60 * 60 * 1000;
 
+  /* ✅ FIXED: 100 products load karne ke liye */
+  const PRODUCTS_FETCH_LIMIT = 100;
+  const PRODUCTS_RENDER_ALL_LIMIT = 100;
+
   const DEFAULT_CATEGORIES = [
     { name:'Slippers', icon:'🩴' },
     { name:'Sandals', icon:'👡' },
@@ -1341,7 +1345,6 @@ document.addEventListener('DOMContentLoaded', function() {
           try {
             if (unsubCats) { try { unsubCats(); } catch(e){} unsubCats = null; }
             unsubCats = db.collection('categories').onSnapshot(snap => {
-              // ✅ FIXED: spread order (id last, so doc id always wins)
               const raw = snap.docs.map(d => ({ ...d.data(), id: d.id }))
                 .sort((a,b) => (Number(a.order)||999) - (Number(b.order)||999));
               ALL_CATS_FROM_DB = raw;
@@ -1389,7 +1392,6 @@ document.addEventListener('DOMContentLoaded', function() {
             db.collection('banners').onSnapshot(snap => {
               const newBanners = {};
               snap.docs.forEach(d => {
-                // ✅ FIXED: spread order
                 const b = { ...d.data(), id: d.id };
                 if (b.active === false) return;
                 if (b.slot) newBanners[b.slot] = b;
@@ -1762,7 +1764,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
 
-    // ✅ FIXED: spread order
     const applySnap = (snap) => {
       if (!snap) { finishLoad([]); return; }
       const data = snap.docs.map(d => ({ ...d.data(), id: d.id }))
@@ -1770,30 +1771,32 @@ document.addEventListener('DOMContentLoaded', function() {
       finishLoad(data);
     };
 
+    /* ✅ FIXED: timeout 8s → 15s (100 products need more time) */
     const safetyTimer = setTimeout(() => {
       if (_productsLoading && !_productsLoaded && !allProducts.length) {
         _productsLoading = false;
         renderProducts(true);
       }
-    }, 8000);
+    }, 15000);
 
     try {
+      /* ✅ FIXED: .limit(30) → .limit(100) */
       db.collection('products')
         .where('active', '==', true)
         .where('approved', '==', true)
-        .limit(30)
+        .limit(PRODUCTS_FETCH_LIMIT)
         .get()
         .then(snap => {
           clearTimeout(safetyTimer);
           applySnap(snap);
           try {
+            /* ✅ FIXED: .limit(30) → .limit(100) */
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
-              .limit(30)
+              .limit(PRODUCTS_FETCH_LIMIT)
               .onSnapshot(
                 s => {
-                  // ✅ FIXED: spread order
                   const data = s.docs.map(d => ({ ...d.data(), id: d.id }))
                     .filter(p => p && p.active !== false && p.approved !== false);
                   if (data.length) {
@@ -1814,10 +1817,11 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(() => {
           clearTimeout(safetyTimer);
           try {
+            /* ✅ FIXED: .limit(30) → .limit(100) */
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
-              .limit(30)
+              .limit(PRODUCTS_FETCH_LIMIT)
               .onSnapshot(
                 s => applySnap(s),
                 () => {
@@ -1829,12 +1833,13 @@ document.addEventListener('DOMContentLoaded', function() {
             _productsLoading = false;
             if (!allProducts.length) renderProducts(true);
           }
+          /* ✅ FIXED: 5s → 10s */
           setTimeout(() => {
             if (!_productsLoaded && !allProducts.length) {
               _productsLoading = false;
               renderProducts(true);
             }
-          }, 5000);
+          }, 10000);
         });
     } catch(e) {
       clearTimeout(safetyTimer);
@@ -1852,7 +1857,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const chunk = pids.slice(i, i + 10);
         try {
           const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(120).get();
-          // ✅ FIXED: spread order
           snap.forEach(d => all.push({ ...d.data(), id: d.id }));
         } catch(e) {}
       }
@@ -1992,7 +1996,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const trendingArr = applySortWithTimer(filtered, 10);
     const bestArr = applySortWithTimer(filtered, 10);
     const newArr = applySortWithTimer(filtered, 10);
-    const allArr = applySortWithTimer(filtered, 20);
+    /* ✅ FIXED: 20 → 100 (All Products me sab dikhe) */
+    const allArr = applySortWithTimer(filtered, PRODUCTS_RENDER_ALL_LIMIT);
 
     const set = (id, arr, fn) => { 
       const el = document.getElementById(id); 
@@ -2298,7 +2303,6 @@ document.addEventListener('DOMContentLoaded', function() {
       _trackerInFlight = false;
       _trackerLastLoad = Date.now();
       if (!snap || snap.empty) { hideTracker(); return; }
-      // ✅ FIXED: spread order
       const myOrders = snap.docs.map(d => ({ ...d.data(), id: d.id }));
       const active = myOrders.filter(o => {
         const s = normStatus(o.status);
@@ -2535,13 +2539,11 @@ document.addEventListener('DOMContentLoaded', function() {
   async function loadNotifs() {
     try {
       const snap = await db.collection('notifications').where('active','==',true).orderBy('createdAt','desc').limit(20).get();
-      // ✅ FIXED: spread order
       notifCache = snap.docs.map(d => ({ ...d.data(), id: d.id }));
       renderNotifList(); updateBellDot();
     } catch(e) {
       try {
         const snap = await db.collection('notifications').where('active','==',true).limit(20).get();
-        // ✅ FIXED: spread order
         notifCache = snap.docs.map(d => ({ ...d.data(), id: d.id }));
         renderNotifList(); updateBellDot();
       } catch(e2) {}
