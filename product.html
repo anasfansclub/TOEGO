@@ -118,7 +118,6 @@ a{color:inherit;text-decoration:none;}
 .tg-seller-name{font-size:16px;font-weight:800;color:#212121;}
 .tg-seller-meta{font-size:12.5px;color:#666;margin-top:3px;}
 
-/* PINCODE CHECK */
 .tg-pincode{margin-bottom:16px;padding:14px;border:1.5px solid #e0e0e0;border-radius:10px;background:#fafbfc;}
 .tg-pincode-label{font-size:11.5px;color:#878787;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .tg-pincode-label svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
@@ -151,7 +150,6 @@ a{color:inherit;text-decoration:none;}
 .tg-reviews-rate{background:#388e3c;color:#fff;font-size:13px;font-weight:700;padding:5px 10px;border-radius:6px;display:flex;align-items:center;gap:3px;}
 .tg-reviews-rate svg{width:12px;height:12px;fill:#fff;}
 
-/* RATING BREAKDOWN */
 .tg-rb-wrap{display:grid;grid-template-columns:auto 1fr;gap:20px;padding:18px;background:#fafbfc;border-radius:10px;margin-bottom:16px;}
 @media(max-width:520px){.tg-rb-wrap{grid-template-columns:1fr;gap:14px;}}
 .tg-rb-score{text-align:center;min-width:120px;}
@@ -435,7 +433,7 @@ a{color:inherit;text-decoration:none;}
   const PROD_CACHE_PREFIX = 'toego_prod_v2_';
   const PROD_CACHE_TTL = 30 * 60 * 1000;
   const ALL_PROD_CACHE_KEY = 'toego_allprod_v2';
-  const HOME_PROD_CACHE_KEY = 'toego_home_prod_v20';
+  const HOME_PROD_CACHE_KEY = 'toego_home_prod_v23';   /* ✅ FIXED: v20 → v23 (match home) */
   const ALL_PROD_CACHE_TTL = 10 * 60 * 1000;
   const ALL_PROD_LIMIT = 60;
   const THEME_CACHE_KEY = 'toego_theme_v2';
@@ -736,9 +734,10 @@ a{color:inherit;text-decoration:none;}
     _productFetchInProgress = true;
     let fresh = null, fetchErr = null;
 
-    try { const snapCache = await withTimeout(db.collection('products').doc(pid).get({ source: 'cache' }), PRODUCT_FETCH_TIMEOUT); if (snapCache && snapCache.exists) fresh = { id: snapCache.id, ...snapCache.data() }; } catch(e) {}
-    if (!fresh) { try { const snapServer = await withTimeout(db.collection('products').doc(pid).get(), PRODUCT_FETCH_TIMEOUT); if (snapServer && snapServer.exists) fresh = { id: snapServer.id, ...snapServer.data() }; } catch(e) { fetchErr = e; } }
-    if (!fresh) { try { const snapServer2 = await withTimeout(db.collection('products').doc(pid).get({ source: 'server' }), PRODUCT_FETCH_TIMEOUT); if (snapServer2 && snapServer2.exists) fresh = { id: snapServer2.id, ...snapServer2.data() }; } catch(e) {} }
+    /* ✅ FIXED: spread order — id last so doc ID always wins */
+    try { const snapCache = await withTimeout(db.collection('products').doc(pid).get({ source: 'cache' }), PRODUCT_FETCH_TIMEOUT); if (snapCache && snapCache.exists) fresh = { ...snapCache.data(), id: snapCache.id }; } catch(e) {}
+    if (!fresh) { try { const snapServer = await withTimeout(db.collection('products').doc(pid).get(), PRODUCT_FETCH_TIMEOUT); if (snapServer && snapServer.exists) fresh = { ...snapServer.data(), id: snapServer.id }; } catch(e) { fetchErr = e; } }
+    if (!fresh) { try { const snapServer2 = await withTimeout(db.collection('products').doc(pid).get({ source: 'server' }), PRODUCT_FETCH_TIMEOUT); if (snapServer2 && snapServer2.exists) fresh = { ...snapServer2.data(), id: snapServer2.id }; } catch(e) {} }
 
     _productFetchInProgress = false;
 
@@ -769,7 +768,8 @@ a{color:inherit;text-decoration:none;}
     try {
       unsubProductDoc = db.collection('products').doc(pid).onSnapshot(snap => {
         if (!snap.exists) return;
-        const fresh = { id: snap.id, ...snap.data() };
+        /* ✅ FIXED: spread order */
+        const fresh = { ...snap.data(), id: snap.id };
         const changed = !PRODUCT || PRODUCT.rating !== fresh.rating || PRODUCT.ratingCount !== fresh.ratingCount || PRODUCT.stock !== fresh.stock || JSON.stringify(PRODUCT.sizeStock) !== JSON.stringify(fresh.sizeStock);
         PRODUCT = fresh;
         if (changed) {
@@ -1088,11 +1088,13 @@ a{color:inherit;text-decoration:none;}
       if (!PRODUCT) return;
       let list = [];
       if (PRODUCT.category) {
-        try { const q = await withTimeout(db.collection('products').where('active','==',true).where('category','==',PRODUCT.category).limit(12).get(), 8000); list = q.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id); }
-        catch(e) { try { const q = await withTimeout(db.collection('products').where('category','==',PRODUCT.category).limit(12).get(), 8000); list = q.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id); } catch(e2) {} }
+        /* ✅ FIXED: spread order */
+        try { const q = await withTimeout(db.collection('products').where('active','==',true).where('category','==',PRODUCT.category).limit(12).get(), 8000); list = q.docs.map(d => ({ ...d.data(), id: d.id })).filter(x => x.id !== PRODUCT.id); }
+        catch(e) { try { const q = await withTimeout(db.collection('products').where('category','==',PRODUCT.category).limit(12).get(), 8000); list = q.docs.map(d => ({ ...d.data(), id: d.id })).filter(x => x.id !== PRODUCT.id); } catch(e2) {} }
       }
       if (list.length < 4) { const fromAll = ALL_PRODUCTS.filter(x => !list.find(y => y.id === x.id)); list = list.concat(fromAll.slice(0, 12 - list.length)); }
-      if (!list.length) { try { const snap = await withTimeout(db.collection('products').limit(12).get(), 8000); list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(x => x.id !== PRODUCT.id); } catch(e) {} }
+      if (!list.length) { /* ✅ FIXED: spread order */
+        try { const snap = await withTimeout(db.collection('products').limit(12).get(), 8000); list = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(x => x.id !== PRODUCT.id); } catch(e) {} }
       renderRelated(list.slice(0, 12));
     } catch(e) {
       if (ALL_PRODUCTS.length) renderRelated(ALL_PRODUCTS.slice(0, 12));
@@ -1145,7 +1147,8 @@ a{color:inherit;text-decoration:none;}
       try { snap = await withTimeout(db.collection('products').where('active','==',true).limit(ALL_PROD_LIMIT).get(), 8000); }
       catch(e) { try { snap = await withTimeout(db.collection('products').limit(ALL_PROD_LIMIT).get(), 8000); } catch(e2) { _allProductsFetching = false; return; } }
       if (snap && !snap.empty) {
-        const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p && p.id !== (PRODUCT && PRODUCT.id));
+        /* ✅ FIXED: spread order */
+        const list = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(p => p && p.id !== (PRODUCT && PRODUCT.id));
         ALL_PRODUCTS = list; cacheAllProducts(list); renderAllProducts(); _allProductsFetched = true;
       }
     } catch(e) {}
@@ -1164,7 +1167,8 @@ a{color:inherit;text-decoration:none;}
     try {
       db.collection('reviews').where('productId', '==', pid).get({ source: 'cache' }).then(snap => {
         if (!snap.empty) {
-          REVIEWS = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
+          /* ✅ FIXED: spread order */
+          REVIEWS = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
           renderReviewsBlock();
           renderRatingBreakdown();
           updateMainRating();
@@ -1173,7 +1177,8 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
     try {
       unsubReviews = db.collection('reviews').where('productId', '==', pid).onSnapshot(snap => {
-        REVIEWS = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
+        /* ✅ FIXED: spread order */
+        REVIEWS = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
         _reviewsLoaded = true;
         renderReviewsBlock();
         renderRatingBreakdown();
@@ -1256,7 +1261,8 @@ a{color:inherit;text-decoration:none;}
         .limit(1).get();
       if (!rSnap.empty) {
         const doc = rSnap.docs[0];
-        MY_REVIEW = { id: doc.id, ...doc.data() };
+        /* ✅ FIXED: spread order */
+        MY_REVIEW = { ...doc.data(), id: doc.id };
         HAS_REVIEWED = true;
         updateReviewButton();
         return;
@@ -1271,7 +1277,8 @@ a{color:inherit;text-decoration:none;}
       const promises = queries.map(async (field) => {
         try {
           const snap = await db.collection('orders').where(field, '==', uid).limit(100).get();
-          snap.docs.forEach(d => ordersMap.set(d.id, { id: d.id, ...d.data() }));
+          /* ✅ FIXED: spread order */
+          snap.docs.forEach(d => ordersMap.set(d.id, { ...d.data(), id: d.id }));
         } catch(e) {}
       });
       await Promise.all(promises);
@@ -1279,7 +1286,8 @@ a{color:inherit;text-decoration:none;}
       if (email) {
         try {
           const snap = await db.collection('orders').where('userEmail', '==', email).limit(50).get();
-          snap.docs.forEach(d => ordersMap.set(d.id, { id: d.id, ...d.data() }));
+          /* ✅ FIXED: spread order */
+          snap.docs.forEach(d => ordersMap.set(d.id, { ...d.data(), id: d.id }));
         } catch(e) {}
       }
 
@@ -1805,7 +1813,6 @@ a{color:inherit;text-decoration:none;}
     setTimeout(() => { btn.disabled = false; btn.innerHTML = origHTML; }, 400);
   };
 
-  // ✅ FIXED: tgBuyNow — async, exact qty, await write, clear qty sessionStorage
   window.tgBuyNow = async function() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
@@ -1831,7 +1838,6 @@ a{color:inherit;text-decoration:none;}
       return;
     }
 
-    // ✅ Await write before redirect so cart page finds it in cache
     try {
       const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
       const snap = await ref.get({ source: 'cache' });
