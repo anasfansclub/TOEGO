@@ -1775,11 +1775,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 8000);
 
     try {
-      /* ✅ FIXED: Primary limit(100) — falls back to limit(30) if rules block */
+      /* ✅ FIXED: where clauses for rules compliance + speed */
       db.collection('products')
         .where('active', '==', true)
         .where('approved', '==', true)
-        .limit(100)
+        .limit(30)
         .get()
         .then(snap => {
           clearTimeout(safetyTimer);
@@ -1788,7 +1788,7 @@ document.addEventListener('DOMContentLoaded', function() {
             unsubProducts = db.collection('products')
               .where('active', '==', true)
               .where('approved', '==', true)
-              .limit(100)
+              .limit(30)
               .onSnapshot(
                 s => {
                   const data = s.docs.map(d => ({ id: d.id, ...d.data() }))
@@ -1809,7 +1809,6 @@ document.addEventListener('DOMContentLoaded', function() {
           } catch(e) {}
         })
         .catch(() => {
-          /* ✅ Fallback: retry with original limit(30) — rules-safe */
           clearTimeout(safetyTimer);
           try {
             unsubProducts = db.collection('products')
@@ -2271,6 +2270,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let _trackerInFlight = false;
   let _trackerLastLoad = 0;
 
+  /* ══════════════════════════════════════════════════════
+     ✅ FIXED loadTracker() — customerId query (rules + speed)
+     ══════════════════════════════════════════════════════ */
   function loadTracker() {
     if (_trackerInFlight) return;
     const now = Date.now();
