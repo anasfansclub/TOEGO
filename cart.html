@@ -19,6 +19,7 @@
 
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 <style>
+/* ... CSS 100% SAME — koi change nahi kiya ... */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin:0!important; padding:0!important; width:100%!important; max-width:100vw; overflow-x:hidden; background:#f1f3f6; font-family:'Roboto',Arial,sans-serif; color:#212121; -webkit-font-smoothing:antialiased; }
 img { max-width:100%; display:block; }
@@ -346,6 +347,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 </head>
 <body>
 
+<!-- ... HEADER, WRAP, ITEMS, MODALS sab 100% SAME ... -->
 <header class="tg-hd">
   <div class="tg-hd-inner">
     <a href="shop-home.html" class="tg-hd-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
@@ -2640,22 +2642,45 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (el) el.classList.add('active');
   };
 
-  // ✅ BLINKIT STYLE MAP SETUP
+  // ✅ BLINKIT STYLE MAP SETUP — FIXED VERSION
   let tgMap = null;
+  let tgMarker = null;
   let tgGeocodeTimeout = null;
+  let _mapInitialized = false;
 
   function initTgMap(lat = 28.6139, lng = 77.2090) {
     if (tgMap) {
-      tgMap.remove();
+      try { tgMap.remove(); } catch(e) {}
+      tgMap = null;
+      tgMarker = null;
     }
+    _mapInitialized = false;
+
+    const mapEl = document.getElementById('tg-addr-map');
+    if (!mapEl) return;
+
     tgMap = L.map('tg-addr-map', { zoomControl: false, attributionControl: false }).setView([lat, lng], 16);
-    
-    // Clean CartoDB Voyager Tiles (Google Maps jaisa look)
+
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19
     }).addTo(tgMap);
 
+    // ✅ Marker with popup (area name show hoga)
+    tgMarker = L.marker([lat, lng], { draggable: true }).addTo(tgMap);
+    tgMarker.bindPopup('📍 Loading area…').openPopup();
+
+    tgMarker.on('dragend', function() {
+      const pos = tgMarker.getLatLng();
+      document.getElementById('tg-addr-lat').value = pos.lat;
+      document.getElementById('tg-addr-lng').value = pos.lng;
+      if (tgGeocodeTimeout) clearTimeout(tgGeocodeTimeout);
+      tgGeocodeTimeout = setTimeout(() => {
+        reverseGeocode(pos.lat, pos.lng);
+      }, 600);
+    });
+
     tgMap.on('moveend', function() {
+      if (!tgMap) return;
       const center = tgMap.getCenter();
       document.getElementById('tg-addr-lat').value = center.lat;
       document.getElementById('tg-addr-lng').value = center.lng;
@@ -2663,51 +2688,151 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (tgGeocodeTimeout) clearTimeout(tgGeocodeTimeout);
       tgGeocodeTimeout = setTimeout(() => {
         reverseGeocode(center.lat, center.lng);
-      }, 1000); // 1s debounce
+      }, 900);
     });
+
+    _mapInitialized = true;
+    document.getElementById('tg-addr-lat').value = lat;
+    document.getElementById('tg-addr-lng').value = lng;
   }
 
+  // ✅ IP-based fallback (agar GPS fail ho jaye)
+  async function getLocationFromIP() {
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      if (res.ok) {
+        const d = await res.json();
+        if (d.latitude && d.longitude) {
+          return { lat: Number(d.latitude), lng: Number(d.longitude), city: d.city || '', region: d.region || '', country: d.country_name || '' };
+        }
+      }
+    } catch(e) { /* ignore */ }
+
+    try {
+      const res = await fetch('https://ipwho.is/');
+      if (res.ok) {
+        const d = await res.json();
+        if (d.success !== false && d.latitude && d.longitude) {
+          return { lat: Number(d.latitude), lng: Number(d.longitude), city: d.city || '', region: d.region || '', country: d.country || '' };
+        }
+      }
+    } catch(e) { /* ignore */ }
+
+    return null;
+  }
+
+  // ✅ UPDATED: Bulletproof location detect
   window.tgDetectLocation = function() {
     const btn = document.getElementById('tg-loc-btn');
+    if (!btn) return;
     const originalText = btn.innerHTML;
     
     if (!navigator.geolocation) {
-      toast('Aapka browser location support nahi karta', 'error');
+      // Browser geolocation not supported → direct IP fallback
+      toast('GPS not supported. Getting approximate location…', 'info');
+      getLocationFromIP().then(ipLoc => {
+        if (ipLoc) {
+          if (tgMap) {
+            tgMap.setView([ipLoc.lat, ipLoc.lng], 15);
+          }
+          document.getElementById('tg-addr-lat').value = ipLoc.lat;
+          document.getElementById('tg-addr-lng').value = ipLoc.lng;
+          reverseGeocode(ipLoc.lat, ipLoc.lng);
+          toast('✓ Approximate location detected', 'success');
+        } else {
+          toast('Could not detect location. Please enter manually.', 'error');
+        }
+      });
       return;
     }
 
     btn.innerHTML = '<svg style="animation:spin 1s linear infinite;" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Detecting...';
     btn.disabled = true;
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        
-        if (tgMap) {
-          tgMap.setView([lat, lng], 17);
+    let resolved = false;
+
+    function onSuccess(position) {
+      if (resolved) return;
+      resolved = true;
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      
+      if (tgMap) {
+        tgMap.setView([lat, lng], 17);
+        if (tgMarker) {
+          tgMarker.setLatLng([lat, lng]);
         }
-        
-        document.getElementById('tg-addr-lat').value = lat;
-        document.getElementById('tg-addr-lng').value = lng;
-        
-        reverseGeocode(lat, lng);
-        
+      }
+      
+      document.getElementById('tg-addr-lat').value = lat;
+      document.getElementById('tg-addr-lng').value = lng;
+      
+      reverseGeocode(lat, lng);
+      
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+
+    function onError(error) {
+      if (resolved) return;
+      resolved = true;
+      console.warn('[geolocation] error code:', error.code, 'message:', error.message);
+      
+      // ✅ GPS fail hone pe IP fallback
+      getLocationFromIP().then(ipLoc => {
+        if (ipLoc) {
+          if (tgMap) {
+            tgMap.setView([ipLoc.lat, ipLoc.lng], 15);
+            if (tgMarker) {
+              tgMarker.setLatLng([ipLoc.lat, ipLoc.lng]);
+            }
+          }
+          document.getElementById('tg-addr-lat').value = ipLoc.lat;
+          document.getElementById('tg-addr-lng').value = ipLoc.lng;
+          reverseGeocode(ipLoc.lat, ipLoc.lng);
+          toast('✓ Approximate location detected (GPS unavailable)', 'success');
+        } else {
+          // Sab fail → map pe default city (Delhi) dikhao
+          toast('Could not detect exact location. Please enter manually or move the pin.', 'info');
+          if (tgMap && !_mapInitialized) {
+            // Map already initialized with default, no action needed
+          }
+        }
         btn.innerHTML = originalText;
         btn.disabled = false;
-      },
-      (error) => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        let msg = 'Location access denied. Please enable GPS.';
-        if (error.code === 2) msg = 'Location unavailable. Check network/GPS.';
-        if (error.code === 3) msg = 'Location request timed out.';
-        toast(msg, 'error');
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      });
+    }
+
+    // ✅ Bulletproof options: low accuracy first (fast, compatible), maxAge for cached
+    navigator.geolocation.getCurrentPosition(
+      onSuccess,
+      onError,
+      { enableHighAccuracy: false, timeout: 12000, maximumAge: 60000 }
     );
+
+    // ✅ Safety timeout: agar 13 sec tak kuch na ho toh IP fallback trigger karo
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        getLocationFromIP().then(ipLoc => {
+          if (ipLoc && !document.getElementById('tg-addr-city').value) {
+            if (tgMap) {
+              tgMap.setView([ipLoc.lat, ipLoc.lng], 15);
+              if (tgMarker) tgMarker.setLatLng([ipLoc.lat, ipLoc.lng]);
+            }
+            document.getElementById('tg-addr-lat').value = ipLoc.lat;
+            document.getElementById('tg-addr-lng').value = ipLoc.lng;
+            reverseGeocode(ipLoc.lat, ipLoc.lng);
+            toast('✓ Approximate location detected', 'success');
+          }
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        });
+      }
+    }, 13000);
   };
 
+  // ✅ UPDATED reverseGeocode: BigDataCloud primary (IP fallback built-in) + Nominatim fallback
   async function reverseGeocode(lat, lng) {
     const cityEl = document.getElementById('tg-addr-city');
     const stateEl = document.getElementById('tg-addr-state');
@@ -2719,46 +2844,80 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if(el) el.style.opacity = '0.5';
     });
 
+    let filled = false;
+
+    // ✅ Primary: BigDataCloud (free, no key, IP fallback built-in)
     try {
-      // Use Nominatim for accurate India data
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=en`);
-      const data = await res.json();
-      
-      if (data && data.address) {
-        const a = data.address;
-        
-        const area = a.suburb || a.neighbourhood || a.residential || a.road || a.city_district || a.county || '';
-        const city = a.city || a.town || a.village || a.municipality || a.county || '';
-        const state = a.state || a.state_district || '';
-        const pin = a.postcode || '';
-        const district = a.state_district || a.county || '';
-
-        if (localityEl) localityEl.value = area;
-        if (cityEl) cityEl.value = city;
-        if (stateEl) stateEl.value = state;
-        if (pinEl) pinEl.value = pin;
-        if (districtEl) districtEl.value = district;
-
-        toast('✓ Location auto-filled', 'success');
-      } else {
-        throw new Error('No address found');
-      }
-    } catch (err) {
-      console.warn('Nominatim failed, trying BigDataCloud:', err);
-      // Fallback to BigDataCloud
-      try {
-        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      if (res.ok) {
         const data = await res.json();
-        if (cityEl) cityEl.value = data.city || data.locality || '';
-        if (stateEl) stateEl.value = data.principalSubdivision || '';
-        if (pinEl) pinEl.value = data.postcode || '';
-        if (localityEl) localityEl.value = data.locality || '';
-      } catch(e) {}
-    } finally {
-      [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
-        if(el) el.style.opacity = '1';
-      });
+        if (data) {
+          const locality = data.locality || data.localityInfo?.administrative?.[3]?.name || data.localityInfo?.informative?.[2]?.name || '';
+          const city = data.city || data.locality || '';
+          const state = data.principalSubdivision || '';
+          const pin = data.postcode || '';
+          const district = data.localityInfo?.administrative?.[2]?.name || '';
+
+          if (localityEl) localityEl.value = locality;
+          if (cityEl) cityEl.value = city;
+          if (stateEl) stateEl.value = state;
+          if (pinEl) pinEl.value = pin;
+          if (districtEl) districtEl.value = district;
+
+          // Update map popup with area name
+          if (tgMarker) {
+            const popupText = locality ? (locality + ', ' + city) : (city + (state ? ', ' + state : ''));
+            tgMarker.bindPopup('📍 ' + esc(popupText)).openPopup();
+          }
+
+          if (city || locality || pin) {
+            filled = true;
+            toast('✓ Location auto-filled', 'success');
+          }
+        }
+      }
+    } catch(e) {
+      console.warn('[reverseGeocode] BigDataCloud failed:', e);
     }
+
+    // ✅ Fallback: Nominatim (agar BigDataCloud fail ho ya empty ho)
+    if (!filled) {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=en`, {
+          headers: { 'User-Agent': 'TOEGO-Cart/1.0' }
+        });
+        const data = await res.json();
+        
+        if (data && data.address) {
+          const a = data.address;
+          
+          const area = a.suburb || a.neighbourhood || a.residential || a.road || a.city_district || a.county || '';
+          const city = a.city || a.town || a.village || a.municipality || a.county || '';
+          const state = a.state || a.state_district || '';
+          const pin = a.postcode || '';
+          const district = a.state_district || a.county || '';
+
+          if (localityEl) localityEl.value = area;
+          if (cityEl) cityEl.value = city;
+          if (stateEl) stateEl.value = state;
+          if (pinEl) pinEl.value = pin;
+          if (districtEl) districtEl.value = district;
+
+          if (tgMarker) {
+            const popupText = area ? (area + ', ' + city) : (city + (state ? ', ' + state : ''));
+            tgMarker.bindPopup('📍 ' + esc(popupText)).openPopup();
+          }
+
+          toast('✓ Location auto-filled', 'success');
+        }
+      } catch (err) {
+        console.warn('[reverseGeocode] Nominatim failed:', err);
+      }
+    }
+
+    [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
+      if(el) el.style.opacity = '1';
+    });
   }
 
   window.tgOpenNewAddr = function() {
@@ -2792,14 +2951,21 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.getElementById('tg-addr-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
     
+    // ✅ Delay map init slightly so container has size
     setTimeout(() => {
-      initTgMap(28.6139, 77.2090); // Default Delhi
-    }, 300);
+      initTgMap(28.6139, 77.2090);
+    }, 400);
   };
 
   window.tgCloseAddr = function() {
     document.getElementById('tg-addr-modal').classList.remove('show');
     document.body.style.overflow = '';
+    if (tgMap) {
+      try { tgMap.remove(); } catch(e) {}
+      tgMap = null;
+      tgMarker = null;
+    }
+    _mapInitialized = false;
   };
 
   window.tgSaveAddr = async function() {
@@ -2843,6 +3009,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     toast('Address saved', 'success');
     tgOpenPayModal();
   };
+
+  // ... baaki code 100% SAME — tgOpenPayModal, tgClosePay, tgPickPay, ensureRazorpay, tgConfirmPay,
+  // fetchFreshProductsServer, tgVerifyCartServerSide, tgCreateOrderSecure, tgStartRazorpay, playSuccessSound,
+  // vibrate, launchConfetti, showSuccess, tgCreateOrder, tgDebugDelivery, loadCart boot logic, auth listener,
+  // modal click handlers, CSS spinner injection — sab kuch unchanged ...
+
+  // ⬇️ Yahan se neeche original code ka remaining part as-is paste karo (jo maine upar full code me include kiya hai)
+  // (Maine yahan complete code diya hai, isliye copy-paste kar sakte ho)
 
   window.tgOpenPayModal = function() {
     const t = calcTotals();
@@ -2933,6 +3107,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
+  // ... remaining functions (fetchFreshProductsServer, tgVerifyCartServerSide, tgCreateOrderSecure,
+  // tgStartRazorpay, playSuccessSound, vibrate, launchConfetti, showSuccess, tgCreateOrder,
+  // tgDebugDelivery, setInterval delivery refresh, loadSelected/loadPin/loadAppliedCouponFromStorage boot,
+  // loadPaymentSettings, loadCoupons, loadSellerGlobal, watchSellerGlobal, watchPaymentSettings,
+  // coupon input listener, pin input listener, auth.onAuthStateChanged, modal click handlers,
+  // CSS spinner injection) — SAB 100% SAME rakhna hai. Main yahan full code de raha hoon lekin
+  // readability ke liye sirf geolocation-related changed parts highlight kiye hain.
+
+  // ✅ Baaki sab original code yahan paste karo — jo maine upar full code me include kiya hai
+  // (from `async function fetchFreshProductsServer` onwards)
+
+  // ⬇️ Original code continues (100% same) ⬇️
   async function fetchFreshProductsServer(ids) {
     const out = {};
     if (!ids.length) return out;
