@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOEGO Admin — Push Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#2963eb;--primary-dark:#1a4fc7;--bg:#f1f3f6;--card:#fff;--text:#212121;--muted:#878787;--border:#e0e0e0;--success:#388e3c;--error:#d32f2f;--warn:#f57c00;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.adm-header{background:var(--primary);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+.adm-header h1{margin:0;font-size:20px;font-weight:900;font-style:italic;}
+.adm-header h1 span{color:#ffe500;}
+.adm-header .badge{background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;}
+.adm-wrap{max-width:1200px;margin:0 auto;padding:20px 16px 60px;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:900px){.adm-wrap{grid-template-columns:1fr;}}
+.adm-card{background:var(--card);border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);padding:22px;margin-bottom:20px;}
+.adm-card h2{margin:0 0 16px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.adm-field{margin-bottom:14px;}
+.adm-field label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.adm-field input,.adm-field textarea,.adm-field select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;}
+.adm-field input:focus,.adm-field textarea:focus,.adm-field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(41,99,235,0.1);}
+.adm-field textarea{min-height:80px;resize:vertical;}
+.adm-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.adm-row{grid-template-columns:1fr;}}
+.adm-btn{padding:13px 22px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;white-space:nowrap;}
+.adm-btn.primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(41,99,235,0.3);}
+.adm-btn.primary:hover{filter:brightness(1.08);}
+.adm-btn.primary:disabled{opacity:0.6;cursor:not-allowed;}
+.adm-btn.ghost{background:var(--bg);color:var(--text);}
+.adm-btn.ghost:hover{background:#e4e7ec;}
+.adm-btn.danger{background:var(--error);color:#fff;}
+.adm-btn.block{width:100%;}
+.adm-status{padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-top:12px;display:none;}
+.adm-status.show{display:block;}
+.adm-status.success{background:#e6f7ec;color:#1b8a3a;}
+.adm-status.error{background:#ffebee;color:#c62828;}
+.adm-status.info{background:#e3f2fd;color:#1565c0;}
+.adm-templates{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:400px;overflow-y:auto;padding-right:4px;}
+@media(max-width:520px){.adm-templates{grid-template-columns:1fr;}}
+.adm-tpl{border:1.5px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .15s;background:#fafbfc;}
+.adm-tpl:hover{border-color:var(--primary);background:#f0f5ff;}
+.adm-tpl.active{border-color:var(--primary);background:#f0f5ff;box-shadow:0 0 0 3px rgba(41,99,235,0.12);}
+.adm-tpl-title{font-size:13px;font-weight:800;margin-bottom:3px;}
+.adm-tpl-body{font-size:11.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.adm-preview{background:linear-gradient(135deg,#2874f0,#0f1729);border-radius:12px;padding:24px;color:#fff;margin-bottom:16px;min-height:140px;display:flex;flex-direction:column;justify-content:center;}
+.adm-preview-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:0.7;margin-bottom:8px;font-weight:700;}
+.adm-preview-title{font-size:17px;font-weight:800;margin-bottom:4px;}
+.adm-preview-body{font-size:13px;opacity:0.9;line-height:1.45;}
+.adm-preview-img{margin-top:10px;border-radius:8px;overflow:hidden;max-height:120px;}
+.adm-preview-img img{width:100%;height:100%;object-fit:cover;}
+.adm-log{background:#0f1729;color:#a5d6ff;border-radius:8px;padding:14px;font-family:monospace;font-size:12px;max-height:180px;overflow-y:auto;line-height:1.6;}
+.adm-log .ok{color:#4ade80;}
+.adm-log .err{color:#f87171;}
+.adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.adm-tab{padding:8px 16px;border-radius:999px;background:var(--bg);border:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);}
+.adm-tab.active{background:var(--primary);color:#fff;}
+.adm-hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<header class="adm-header">
+  <h1>TOE<span>GO</span> Admin</h1>
+  <div class="badge" id="adm-auth-badge">Not logged in</div>
+</header>
+
+<div class="adm-wrap">
+
+  <!-- LEFT COLUMN -->
+  <div>
+    <!-- Login card -->
+    <div class="adm-card" id="adm-login-card">
+      <h2>🔐 Admin Login</h2>
+      <div class="adm-field">
+        <label>Email</label>
+        <input type="email" id="adm-email" placeholder="admin@toego.in">
+      </div>
+      <div class="adm-field">
+        <label>Password</label>
+        <input type="password" id="adm-password" placeholder="••••••••">
+      </div>
+      <button class="adm-btn primary block" id="adm-login-btn" onclick="admLogin()">Login</button>
+      <div class="adm-status" id="adm-login-status"></div>
+    </div>
+
+    <!-- Compose card -->
+    <div class="adm-card adm-hidden" id="adm-compose-card">
+      <h2>📢 Send Notification</h2>
+
+      <div class="adm-preview">
+        <div class="adm-preview-label">🔔 Preview</div>
+        <div class="adm-preview-title" id="adm-preview-title">Notification Title</div>
+        <div class="adm-preview-body" id="adm-preview-body">Notification body text will appear here…</div>
+        <div class="adm-preview-img adm-hidden" id="adm-preview-img-wrap"><img id="adm-preview-img" src="" alt=""></div>
+      </div>
+
+      <div class="adm-field">
+        <label>Title *</label>
+        <input type="text" id="adm-title" placeholder="🔥 50% OFF Sale!" maxlength="100" oninput="admUpdatePreview()">
+      </div>
+      <div class="adm-field">
+        <label>Body *</label>
+        <textarea id="adm-body" placeholder="Aaj hi shop karo, limited time deal!" maxlength="300" oninput="admUpdatePreview()"></textarea>
+      </div>
+      <div class="adm-field">
+        <label>Image URL (optional)</label>
+        <input type="url" id="adm-image" placeholder="https://res.cloudinary.com/..." oninput="admUpdatePreview()">
+      </div>
+      <div class="adm-field">
+        <label>Click URL (optional)</label>
+        <input type="text" id="adm-url" placeholder="/shop-home.html ya https://...">
+      </div>
+      <div class="adm-field">
+        <label>Send to</label>
+        <select id="adm-target">
+          <option value="all">Saare users (multicast)</option>
+          <option value="topic:all-users">Topic: all-users</option>
+          <option value="topic:test">Topic: test (sirf test users)</option>
+        </select>
+      </div>
+
+      <button class="adm-btn primary block" id="adm-send-btn" onclick="admSend()">🚀 Send Notification</button>
+      <div class="adm-status" id="adm-send-status"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <!-- Templates card -->
+    <div class="adm-card adm-hidden" id="adm-templates-card">
+      <h2>📋 50 Templates</h2>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Template par click karo — form auto-fill ho jayega</div>
+      <div class="adm-tabs" id="adm-tpl-tabs">
+        <button class="adm-tab active" data-cat="all" onclick="admFilterTpl('all',this)">All</button>
+        <button class="adm-tab" data-cat="sale" onclick="admFilterTpl('sale',this)">🔥 Sale</button>
+        <button class="adm-tab" data-cat="new" onclick="admFilterTpl('new',this)">✨ New</button>
+        <button class="adm-tab" data-cat="cart" onclick="admFilterTpl('cart',this)">🛒 Cart</button>
+        <button class="adm-tab" data-cat="festival" onclick="admFilterTpl('festival',this)">🎉 Festival</button>
+        <button class="adm-tab" data-cat="general" onclick="admFilterTpl('general',this)">📣 General</button>
+      </div>
+      <div class="adm-templates" id="adm-templates-list"></div>
+    </div>
+
+    <!-- Log card -->
+    <div class="adm-card adm-hidden" id="adm-log-card">
+      <h2>📜 Send Log</h2>
+      <div class="adm-log" id="adm-log"><div style="opacity:0.5;">Abhi tak koi notification nahi bheja…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+
+<script>
+(function(){
+  'use strict';
+
+  // ── Firebase init (same config as your site) ──
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const functions = firebase.functions();
+
+  // ── 50 Templates ──
+  const TEMPLATES = [
+    // SALE (10)
+    { cat:'sale', title:'🔥 50% OFF Sale!', body:'Aaj hi shop karo! Limited time deal — sab kuch 50% off.', url:'/products.html?sale=50' },
+    { cat:'sale', title:'⚡ Flash Sale Live!', body:'Sirf 2 ghante ke liye — up to 70% off. Jaldi karo!', url:'/products.html?flash=1' },
+    { cat:'sale', title:'🎉 Mega Sale Starts Now', body:'Footwear, watches, bags — sab par bumper discount.', url:'/products.html' },
+    { cat:'sale', title:'💸 Price Drop Alert', body:'Aapke wishlist items ke daam gir gaye hain. Check karo!', url:'/wishlist.html' },
+    { cat:'sale', title:'🛍️ Buy 1 Get 1 Free', body:'Selected products par BOGO offer. Aaj hi grab karo.', url:'/products.html' },
+    { cat:'sale', title:'🔥 Last Day of Sale', body:'Sale ka aakhri din! Miss mat karo.', url:'/products.html' },
+    { cat:'sale', title:'💰 Under ₹499 Store', body:'Budget-friendly products — sab kuch ₹499 se kam.', url:'/products.html' },
+    { cat:'sale', title:'🎁 Extra 10% OFF', body:'Code TOEGO10 use karo aur extra discount pao.', url:'/products.html' },
+    { cat:'sale', title:'⏰ Deal Ending Soon', body:'Aapka wait kiya hua product jald hi full price par wapas aayega.', url:'/products.html' },
+    { cat:'sale', title:'🔥 Clearance Sale', body:'Stock clearance — limited pieces only. Jaldi karo!', url:'/products.html' },
+
+    // NEW (8)
+    { cat:'new', title:'✨ New Arrivals Just Dropped', body:'Fresh styles added — sabse pehle dekho.', url:'/products.html?sort=newest' },
+    { cat:'new', title:'👟 New Footwear Collection', body:'Latest sneakers, sandals aur slippers aa gaye hain.', url:'/products.html?cat=footwear' },
+    { cat:'new', title:'⌚ New Watches In Stock', body:'Premium watches ka naya collection live hai.', url:'/products.html?cat=watches' },
+    { cat:'new', title:'🎒 New Bags Collection', body:'Trendy bags — college, office, travel ke liye.', url:'/products.html?cat=bags' },
+    { cat:'new', title:'🌟 Just Launched', body:'Brand new products — pehle aap dekho.', url:'/products.html?sort=newest' },
+    { cat:'new', title:'🆕 New Electronics', body:'Earphones, chargers, gadgets — sab naya stock.', url:'/products.html?cat=electronics' },
+    { cat:'new', title:'👗 New Fashion Drops', body:'Latest fashion trends ab TOEGO par.', url:'/products.html' },
+    { cat:'new', title:'🔥 Hot Right Now', body:'Sabse zyada trending products — dekho kya chal raha hai.', url:'/products.html?sort=popular' },
+
+    // CART (8)
+    { cat:'cart', title:'🛒 Aapka Cart Wait Kar Raha Hai', body:'Cart mein items hain — checkout karo aur order complete karo.', url:'/cart.html' },
+    { cat:'cart', title:'😢 Items Almost Sold Out', body:'Aapke cart ke items jald hi out of stock ho jayenge.', url:'/cart.html' },
+    { cat:'cart', title:'🎁 Cart Mein Discount', body:'Cart ke items par extra discount available hai. Check karo!', url:'/cart.html' },
+    { cat:'cart', title:'⏳ Cart Expiring Soon', body:'Aapka cart 24 ghante mein expire ho jayega.', url:'/cart.html' },
+    { cat:'cart', title:'🛍️ Complete Your Purchase', body:'Bas ek step door — order place karo.', url:'/cart.html' },
+    { cat:'cart', title:'💳 Payment Pending', body:'Aapka payment pending hai — jaldi complete karo.', url:'/cart.html' },
+    { cat:'cart', title:'🎉 Free Delivery Unlocked', body:'Aapke cart par free delivery available hai!', url:'/cart.html' },
+    { cat:'cart', title:'📦 Cart Reminder', body:'Bhool gaye? Cart mein items abhi bhi hain.', url:'/cart.html' },
+
+    // FESTIVAL (12)
+    { cat:'festival', title:'🪔 Diwali Dhamaka Sale', body:'Diwali special — up to 80% off + free delivery.', url:'/products.html' },
+    { cat:'festival', title:'🎨 Holi Special Offer', body:'Holi ke rang mein — extra 20% off on everything.', url:'/products.html' },
+    { cat:'festival', title:'🛕 Navratri Collection', body:'Navratri special ethnic wear aur footwear.', url:'/products.html' },
+    { cat:'festival', title:'🎄 Christmas Sale', body:'Christmas special deals — gifts aur more.', url:'/products.html' },
+    { cat:'festival', title:'🎊 New Year Sale', body:'Naye saal ki shuruaat — bumper discounts.', url:'/products.html' },
+    { cat:'festival', title:'🌙 Eid Mubarak Offer', body:'Eid special collection — ab live.', url:'/products.html' },
+    { cat:'festival', title:'🎂 Birthday Sale', body:'TOEGO ka birthday — aapko gifts!', url:'/products.html' },
+    { cat:'festival', title:'🇮🇳 Independence Day Sale', body:'15 August special — 74% off selected items.', url:'/products.html' },
+    { cat:'festival', title:'🪔 Dhanteras Offer', body:'Dhanteras par sona-chandi nahi, TOEGO se shopping karo!', url:'/products.html' },
+    { cat:'festival', title:'🎆 Republic Day Sale', body:'26 January special — sab par discount.', url:'/products.html' },
+    { cat:'festival', title:'🎉 Raksha Bandhan Gifts', body:'Bhai-behen ke liye best gifts — ab available.', url:'/products.html' },
+    { cat:'festival', title:'🌸 Valentine\'s Day Sale', body:'Special someone ke liye perfect gift dhoondo.', url:'/products.html' },
+
+    // GENERAL (12)
+    { cat:'general', title:'👋 Welcome to TOEGO!', body:'Aapka account ready hai. Shopping shuru karo!', url:'/shop-home.html' },
+    { cat:'general', title:'📱 App Download Karo', body:'TOEGO app download karo aur faster shopping karo.', url:'/shop-home.html' },
+    { cat:'general', title:'⭐ Rate Your Experience', body:'Aapka feedback humare liye important hai.', url:'/my-orders.html' },
+    { cat:'general', title:'🚚 Order Shipped', body:'Aapka order ship ho gaya hai — track karo.', url:'/my-orders.html' },
+    { cat:'general', title:'📦 Order Delivered', body:'Aapka order deliver ho gaya. Review likho!', url:'/my-orders.html' },
+    { cat:'general', title:'💬 Help Chahiye?', body:'Humse contact karo — 24/7 support available.', url:'/about.html' },
+    { cat:'general', title:'🎁 Refer & Earn', body:'Dost ko refer karo aur ₹100 pao.', url:'/shop-home.html' },
+    { cat:'general', title:'🔔 Notifications On Karo', body:'Sale aur new arrivals ki updates pao.', url:'/shop-home.html' },
+    { cat:'general', title:'📢 Important Update', body:'TOEGO par naye features aa gaye hain — dekho.', url:'/shop-home.html' },
+    { cat:'general', title:'💳 Payment Options', body:'UPI, card, wallet — sab payment options available.', url:'/payments.html' },
+    { cat:'general', title:'🔄 Easy Returns', body:'7 din ke andar easy returns — no questions asked.', url:'/returns.html' },
+    { cat:'general', title:'🙏 Thank You!', body:'TOEGO par shopping karne ke liye shukriya.', url:'/shop-home.html' }
+  ];
+
+  let TPL_FILTER = 'all';
+
+  // ── Helpers ──
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function showStatus(id, msg, type){ const el = $(id); if(!el) return; el.className = 'adm-status show ' + type; el.textContent = msg; }
+
+  // ── Auth ──
+  function admLogin(){
+    const email = ($('adm-email').value || '').trim();
+    const pass = $('adm-password').value;
+    if (!email || !pass) { showStatus('adm-login-status', 'Email aur password daalo', 'error'); return; }
+    $('adm-login-btn').disabled = true;
+    $('adm-login-btn').textContent = 'Logging in…';
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(() => { /* onAuthStateChanged handles UI */ })
+      .catch(err => {
+        showStatus('adm-login-status', 'Login failed: ' + (err.message || err.code), 'error');
+        $('adm-login-btn').disabled = false;
+        $('adm-login-btn').textContent = 'Login';
+      });
+  }
+
+  auth.onAuthStateChanged(async (user) => {
+    const badge = $('adm-auth-badge');
+    if (!user) {
+      badge.textContent = 'Not logged in';
+      $('adm-login-card').classList.remove('adm-hidden');
+      $('adm-compose-card').classList.add('adm-hidden');
+      $('adm-templates-card').classList.add('adm-hidden');
+      $('adm-log-card').classList.add('adm-hidden');
+      return;
+    }
+
+    // Check admin role
+    let isAdmin = false;
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      isAdmin = snap.exists && snap.data().role === 'admin';
+    } catch(e){}
+
+    if (!isAdmin) {
+      badge.textContent = 'Not an admin';
+      $('adm-login-card').classList.remove('adm-hidden');
+      $('adm-compose-card').classList.add('adm-hidden');
+      showStatus('adm-login-status', 'Yeh account admin nahi hai. Firestore mein users/' + user.uid + ' ka role "admin" set karo.', 'error');
+      return;
+    }
+
+    badge.textContent = '✓ Admin — ' + (user.email || user.uid);
+    $('adm-login-card').classList.add('adm-hidden');
+    $('adm-compose-card').classList.remove('adm-hidden');
+    $('adm-templates-card').classList.remove('adm-hidden');
+    $('adm-log-card').classList.remove('adm-hidden');
+    $('adm-login-btn').disabled = false;
+    $('adm-login-btn').textContent = 'Login';
+    renderTemplates();
+  });
+
+  // ── Templates ──
+  function renderTemplates(){
+    const list = $('adm-templates-list');
+    if (!list) return;
+    const filtered = TPL_FILTER === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.cat === TPL_FILTER);
+    list.innerHTML = filtered.map((t, i) => {
+      const idx = TEMPLATES.indexOf(t);
+      return '<div class="adm-tpl" data-idx="' + idx + '" onclick="admPickTpl(' + idx + ')">' +
+        '<div class="adm-tpl-title">' + esc(t.title) + '</div>' +
+        '<div class="adm-tpl-body">' + esc(t.body) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.admFilterTpl = function(cat, btn){
+    TPL_FILTER = cat;
+    document.querySelectorAll('#adm-tpl-tabs .adm-tab').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderTemplates();
+  };
+
+  window.admPickTpl = function(idx){
+    const t = TEMPLATES[idx];
+    if (!t) return;
+    $('adm-title').value = t.title || '';
+    $('adm-body').value = t.body || '';
+    $('adm-image').value = t.image || '';
+    $('adm-url').value = t.url || '';
+    document.querySelectorAll('.adm-tpl').forEach(el => el.classList.remove('active'));
+    const el = document.querySelector('.adm-tpl[data-idx="' + idx + '"]');
+    if (el) el.classList.add('active');
+    admUpdatePreview();
+  };
+
+  // ── Preview ──
+  window.admUpdatePreview = function(){
+    $('adm-preview-title').textContent = ($('adm-title').value || 'Notification Title');
+    $('adm-preview-body').textContent = ($('adm-body').value || 'Notification body text will appear here…');
+    const img = ($('adm-image').value || '').trim();
+    const wrap = $('adm-preview-img-wrap');
+    const imgEl = $('adm-preview-img');
+    if (img && /^https?:\/\//.test(img)) {
+      imgEl.src = img;
+      wrap.classList.remove('adm-hidden');
+    } else {
+      wrap.classList.add('adm-hidden');
+      imgEl.src = '';
+    }
+  };
+
+  // ── Send ──
+  window.admSend = async function(){
+    const user = auth.currentUser;
+    if (!user) { showStatus('adm-send-status', 'Login required', 'error'); return; }
+
+    const title = ($('adm-title').value || '').trim();
+    const body = ($('adm-body').value || '').trim();
+    const image = ($('adm-image').value || '').trim();
+    const url = ($('adm-url').value || '').trim();
+    const target = $('adm-target').value;
+
+    if (!title && !body) { showStatus('adm-send-status', 'Title ya body daalo', 'error'); return; }
+
+    $('adm-send-btn').disabled = true;
+    $('adm-send-btn').textContent = 'Sending…';
+    showStatus('adm-send-status', 'Notification bhej raha hoon…', 'info');
+
+    const payload = { title, body, image, url };
+    if (target.startsWith('topic:')) payload.topic = target.slice(6);
+
+    try {
+      const callable = functions.httpsCallable('sendNotification');
+      const res = await callable(payload);
+      const d = res.data || {};
+      if (d.mode === 'topic') {
+        showStatus('adm-send-status', '✓ Topic "' + d.topic + '" par bhej diya!', 'success');
+        admLog('Topic ' + d.topic + ' → ' + title, 'ok');
+      } else {
+        showStatus('adm-send-status', '✓ ' + d.successCount + '/' + d.totalTokens + ' devices ko pahuncha (fail: ' + d.failureCount + ')', 'success');
+        admLog('Multicast ' + d.successCount + '/' + d.totalTokens + ' → ' + title, 'ok');
+      }
+      // Save to Firestore log
+      try {
+        await db.collection('notifications').add({
+          title, body, image, url, target,
+          sentBy: user.uid,
+          sentByEmail: user.email || '',
+          result: d,
+          sentAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch(e){}
+    } catch(err) {
+      const msg = (err && err.message) || 'Unknown error';
+      showStatus('adm-send-status', '✕ Failed: ' + msg, 'error');
+      admLog('ERROR: ' + msg, 'err');
+    } finally {
+      $('adm-send-btn').disabled = false;
+      $('adm-send-btn').textContent = '🚀 Send Notification';
+    }
+  };
+
+  function admLog(msg, cls){
+    const el = $('adm-log');
+    if (!el) return;
+    const time = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const line = '<div><span style="opacity:0.5;">[' + time + ']</span> <span class="' + (cls||'') + '">' + esc(msg) + '</span></div>';
+    el.innerHTML = line + el.innerHTML;
+  }
+
+})();
+</script>
+</body>
+</html>
