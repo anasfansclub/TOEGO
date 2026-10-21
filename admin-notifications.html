@@ -61,7 +61,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .adm-header .logout-btn.show{display:inline-block;}
 .adm-header .logout-btn:hover{background:rgba(255,255,255,0.25);}
 .adm-header-actions{display:flex;align-items:center;gap:10px;}
-/* Image Upload UI */
 .img-upload-wrap { display: flex; gap: 10px; align-items: center; }
 .img-upload-wrap input[type="url"] { flex: 1; }
 .img-upload-btn { background: #f1f3f6; border: 1.5px solid var(--border); padding: 11px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; white-space: nowrap;}
@@ -70,7 +69,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 </head>
 <body>
 
-<!-- Loading Screen -->
 <div class="adm-loading" id="adm-loading">
   <div class="adm-loading-spinner"></div>
   <div class="adm-loading-text">Checking admin session…</div>
@@ -85,9 +83,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 </header>
 
 <div class="adm-wrap">
-  <!-- LEFT COLUMN -->
   <div>
-    <!-- Login Card -->
     <div class="adm-card" id="adm-login-card">
       <h2>🔐 Admin Login</h2>
       <div class="adm-field">
@@ -102,7 +98,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       <div class="adm-status" id="adm-login-status"></div>
     </div>
 
-    <!-- Compose Card -->
     <div class="adm-card adm-hidden" id="adm-compose-card">
       <h2>📢 Send Notification</h2>
 
@@ -122,7 +117,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         <textarea id="adm-body" placeholder="Aaj hi shop karo, limited time deal!" maxlength="300" oninput="admUpdatePreview()"></textarea>
       </div>
       
-      <!-- ✅ IMAGE UPLOAD WITH CLOUDINARY & 30KB COMPRESSION -->
       <div class="adm-field">
         <label>Image (Auto 30KB Cloudinary)</label>
         <div class="img-upload-wrap">
@@ -152,9 +146,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     </div>
   </div>
 
-  <!-- RIGHT COLUMN -->
   <div>
-    <!-- Templates Card -->
     <div class="adm-card adm-hidden" id="adm-templates-card">
       <h2>📋 50 Templates</h2>
       <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Template par click karo — form auto-fill ho jayega</div>
@@ -169,7 +161,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       <div class="adm-templates" id="adm-templates-list"></div>
     </div>
 
-    <!-- Log Card -->
     <div class="adm-card adm-hidden" id="adm-log-card">
       <h2>📜 Send Log</h2>
       <div class="adm-log" id="adm-log"><div style="opacity:0.5;">Abhi tak koi notification nahi bheja…</div></div>
@@ -177,7 +168,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -186,15 +176,15 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 (function(){
   'use strict';
 
-  // ✅ AAPKA CLOUDFLARE WORKER URL
   const CLOUDFLARE_WORKER_URL = 'https://toego-notification-worker.divinebatteriess.workers.dev/';
   const ADMIN_EMAILS = ['anasfansclub@gmail.com'];
   
-  // Cloudinary config (will be fetched from Firestore)
-  let CLOUDINARY_CLOUD_NAME = '';
-  let CLOUDINARY_UPLOAD_PRESET = '';
+  // ═══════════════════════════════════════════════
+  // ⚠️ CLOUDINARY SETTINGS (Yahan apna Cloud Name aur Preset daalein)
+  // ═══════════════════════════════════════════════
+  let CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME"; // <--- APNA CLOUD NAME YAHAN DAALEIN
+  let CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; // <--- APNA UNSIGNED PRESET YAHAN DAALEIN
 
-  // ── Firebase init ──
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -210,15 +200,16 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
-  // Fetch Cloudinary Config
+  // Firestore se config fetch karne ki koshish karein (agar database me save hai toh)
   db.collection('siteSettings').doc('cloudinary').get().then(snap => {
     if (snap.exists) {
-      CLOUDINARY_CLOUD_NAME = snap.data().cloudName || '';
-      CLOUDINARY_UPLOAD_PRESET = snap.data().uploadPreset || '';
+      const d = snap.data();
+      if (d.cloudName) CLOUDINARY_CLOUD_NAME = d.cloudName;
+      if (d.uploadPreset) CLOUDINARY_UPLOAD_PRESET = d.uploadPreset;
+      console.log('✅ Cloudinary config loaded from Firestore');
     }
   }).catch(()=>{});
 
-  // ── 50 Templates ──
   const TEMPLATES = [
     { cat:'sale', title:'🔥 50% OFF Sale!', body:'Aaj hi shop karo! Limited time deal — sab kuch 50% off.', url:'/products.html?sale=50' },
     { cat:'sale', title:'⚡ Flash Sale Live!', body:'Sirf 2 ghante ke liye — up to 70% off. Jaldi karo!', url:'/products.html?flash=1' },
@@ -274,14 +265,12 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   let TPL_FILTER = 'all';
 
-  // ── Helpers ──
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function showStatus(id, msg, type){ const el = $(id); if(!el) return; el.className = 'adm-status show ' + type; el.textContent = msg; }
   function hideLoading(){ const el = $('adm-loading'); if (el) el.classList.add('hidden'); }
   function showLoading(text){ const el = $('adm-loading'); if (el) { el.classList.remove('hidden'); const t = el.querySelector('.adm-loading-text'); if (t && text) t.textContent = text; } }
 
-  // ── Auth ──
   function isWhitelistedAdmin(email) {
     if (!email) return false;
     return ADMIN_EMAILS.some(a => a.toLowerCase() === email.toLowerCase().trim());
@@ -335,7 +324,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     auth.signOut().then(() => { hideLoading(); $('adm-email').value = ''; $('adm-password').value = ''; $('adm-login-status').classList.remove('show'); }).catch(e => { hideLoading(); alert(e.message); });
   };
 
-  // ── Templates ──
   function renderTemplates(){
     const list = $('adm-templates-list'); if (!list) return;
     const filtered = TPL_FILTER === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.cat === TPL_FILTER);
@@ -377,20 +365,15 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   // ═══════════════════════════════════════════════
   // ✅ IMAGE COMPRESSION & CLOUDINARY UPLOAD
   // ═══════════════════════════════════════════════
-  
-  // Helper: Convert base64 to Blob
   function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(',')[1]);
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
     const ab = new ArrayBuffer(byteString.length);
     const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
     return new Blob([ab], { type: mimeString });
   }
 
-  // Compress Image to ~30KB
   function compressImageTo30KB(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -402,29 +385,20 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          
-          // Max dimension 800px to start
           const max_size = 800;
-          if (width > height) {
-            if (width > max_size) { height *= max_size / width; width = max_size; }
-          } else {
-            if (height > max_size) { width *= max_size / height; height = max_size; }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
+          if (width > height) { if (width > max_size) { height *= max_size / width; width = max_size; } } 
+          else { if (height > max_size) { width *= max_size / height; height = max_size; } }
+          
+          canvas.width = width; canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
           let quality = 0.9;
           let dataUrl = canvas.toDataURL('image/jpeg', quality);
-          
-          // Reduce quality until file size is < 30KB
           while (dataUrl.length * 0.75 > 30 * 1024 && quality > 0.1) {
             quality -= 0.1;
             dataUrl = canvas.toDataURL('image/jpeg', quality);
           }
-          
           resolve(dataUrl);
         };
         img.onerror = (error) => reject(error);
@@ -443,16 +417,14 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     statusEl.textContent = '⏳ Compressing image to <30KB...';
 
     try {
-      // 1. Compress
       const compressedDataUrl = await compressImageTo30KB(file);
       const blob = dataURItoBlob(compressedDataUrl);
       const sizeKB = (blob.size / 1024).toFixed(1);
       
       statusEl.textContent = `⏳ Compressed to ${sizeKB}KB. Uploading to Cloudinary...`;
 
-      // 2. Upload to Cloudinary
-      if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-        throw new Error('Cloudinary config missing in Firestore (siteSettings/cloudinary)');
+      if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET || CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME') {
+        throw new Error('Cloudinary config missing! Please set your keys in the code (Line 160).');
       }
 
       const formData = new FormData();
@@ -467,26 +439,24 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
       const data = await res.json();
       if (data.secure_url) {
-        // 3. Set URL to input
         $('adm-image').value = data.secure_url;
         admUpdatePreview();
         statusEl.style.color = 'var(--success)';
         statusEl.textContent = `✅ Image Uploaded (${sizeKB}KB)`;
         setTimeout(() => statusEl.style.display = 'none', 3000);
       } else {
-        throw new Error('Upload failed');
+        throw new Error(data.error?.message || 'Upload failed');
       }
     } catch (err) {
       statusEl.style.color = 'var(--error)';
       statusEl.textContent = '❌ ' + err.message;
-      console.error(err);
     }
-    
-    // Reset file input
     event.target.value = '';
   };
 
-  // ── Send Notification ──
+  // ═══════════════════════════════════════════════
+  // ✅ SEND NOTIFICATION (PAYLOAD FIXED)
+  // ═══════════════════════════════════════════════
   window.admSend = async function(){
     const user = auth.currentUser;
     if (!user) { showStatus('adm-send-status', 'Login required', 'error'); return; }
@@ -503,11 +473,17 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     $('adm-send-btn').textContent = 'Sending…';
     showStatus('adm-send-status', 'Notification bhej raha hoon…', 'info');
 
+    // ✅ FIX: Title aur Body seedha webpush ke andar bhej rahe hain
     const fcmMessage = {
-      notification: { title: title, body: body },
       webpush: {
-        fcmOptions: { link: url || '/shop-home.html' },
-        notification: { icon: '/favicon-32x32.png', badge: '/favicon-32x32.png', image: image || undefined }
+        fcmOptions: { link: url || 'https://toego.in/shop-home.html' },
+        notification: {
+          title: title,
+          body: body,
+          icon: 'https://toego.in/favicon-32x32.png',
+          badge: 'https://toego.in/favicon-32x32.png',
+          image: image || undefined
+        }
       }
     };
 
@@ -517,7 +493,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       try {
         const tokensSnap = await db.collection('fcm_tokens').get();
         const tokens = tokensSnap.docs.map(d => d.data().token).filter(Boolean);
-        if (!tokens.length) throw new Error('No FCM tokens found. Visit shop-home.html and allow notifications.');
+        if (!tokens.length) throw new Error('No FCM tokens found. Visit shop-home and allow notifications.');
         fcmMessage.tokens = tokens;
       } catch(e) {
         showStatus('adm-send-status', e.message, 'error');
@@ -534,7 +510,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       });
       const data = await res.json();
       
-      // ✅ FIXED SUCCESS CHECK LOGIC
       if (res.ok && data.success) {
         let msg = '✓ Sent! Success: ' + (data.successCount || 0) + ', Failed: ' + (data.failureCount || 0);
         showStatus('adm-send-status', msg, 'success');
