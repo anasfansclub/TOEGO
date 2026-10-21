@@ -10,43 +10,34 @@ firebase.initializeApp({
   appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
 });
 
-// Service Worker ko turant active karo
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
 const messaging = firebase.messaging();
 
-// ✅ BACKGROUND MESSAGE HANDLER (Data-Only Payload)
 messaging.onBackgroundMessage((payload) => {
-  console.log('[SW] Background message received:', payload);
-  
   const data = payload.data || {};
-
-  // Agar data khali hai toh default message dikhao
   const title = data.title || 'TOEGO Alert!';
   const body = data.body || 'Check out our new offers!';
   const image = data.image || '';
   const clickUrl = data.url || 'https://toego.in/shop-home.html';
   
-  // ✅ AAPKA LOGO YAHAN SET HAI
   const LOGO_URL = 'https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg';
 
   const options = {
     body: body,
-    icon: LOGO_URL,    // Bada logo
-    badge: LOGO_URL,   // Chhota logo (Status bar)
-    image: image || undefined, // Bada banner image (agar admin se upload kiya ho)
+    icon: LOGO_URL,
+    badge: LOGO_URL,
+    image: image || undefined,
     data: { url: clickUrl },
     vibrate: [200, 100, 200],
-    requireInteraction: false, 
-    tag: 'toego-notif'
+    tag: 'toego-main-notification', // ✅ IMPORTANT: Yeh spam rokega
+    renotify: true
   };
 
-  // Promise return karna zaroori hai warna Android me notification nahi aati
   return self.registration.showNotification(title, options);
 });
 
-// ✅ Notification Click Handler
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   const clickUrl = event.notification.data?.url || 'https://toego.in/shop-home.html';
