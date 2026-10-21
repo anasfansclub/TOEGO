@@ -16,7 +16,10 @@ self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
 const messaging = firebase.messaging();
-
+// ✅ Chrome PWA install requirement ke liye fetch handler
+self.addEventListener('fetch', function(event) {
+  // Yeh khaali handler hai, bas Chrome ko batata hai ki hum PWA hain
+});
 messaging.onBackgroundMessage((payload) => {
   console.log('[SW] Background message received:', payload);
   
