@@ -200,13 +200,11 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
-  // Firestore se config fetch karne ki koshish karein (agar database me save hai toh)
   db.collection('siteSettings').doc('cloudinary').get().then(snap => {
     if (snap.exists) {
       const d = snap.data();
       if (d.cloudName) CLOUDINARY_CLOUD_NAME = d.cloudName;
       if (d.uploadPreset) CLOUDINARY_UPLOAD_PRESET = d.uploadPreset;
-      console.log('✅ Cloudinary config loaded from Firestore');
     }
   }).catch(()=>{});
 
@@ -455,7 +453,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   };
 
   // ═══════════════════════════════════════════════
-  // ✅ SEND NOTIFICATION (PAYLOAD FIXED)
+  // ✅ SEND NOTIFICATION (DATA + NOTIFICATION PAYLOAD)
   // ═══════════════════════════════════════════════
   window.admSend = async function(){
     const user = auth.currentUser;
@@ -473,8 +471,15 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     $('adm-send-btn').textContent = 'Sending…';
     showStatus('adm-send-status', 'Notification bhej raha hoon…', 'info');
 
-    // ✅ FIX: Title aur Body seedha webpush ke andar bhej rahe hain
+    // ✅ DONO: notification aur data (data se click URL milega)
     const fcmMessage = {
+      notification: { title: title, body: body },
+      data: {
+        title: title,
+        body: body,
+        image: image || '',
+        url: url || '/shop-home.html'
+      },
       webpush: {
         fcmOptions: { link: url || 'https://toego.in/shop-home.html' },
         notification: {
