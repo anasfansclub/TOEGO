@@ -55,6 +55,15 @@ a{color:inherit;text-decoration:none;}
 .tg-slider-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer;transition:all .2s;}
 .tg-slider-dot.active{background:#fff;width:24px;border-radius:999px;}
 .tg-slider-count{position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.55);color:#fff;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;z-index:5;letter-spacing:0.3px;}
+
+/* ✅ NEW: Sale tag badge on main product image */
+.tg-slider-tag{position:absolute;top:14px;left:14px;background:#d32f2f;color:#fff;font-size:11.5px;font-weight:900;padding:6px 14px;border-radius:6px;text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap;z-index:6;box-shadow:0 3px 10px rgba(0,0,0,0.28);max-width:60%;overflow:hidden;text-overflow:ellipsis;}
+.tg-slider-tag.sale{background:#d32f2f;}
+.tg-slider-tag.hot{background:#fb641b;}
+.tg-slider-tag.new{background:#15803d;}
+.tg-slider-tag.custom{background:#5e35b1;}
+@media (max-width:520px){.tg-slider-tag{font-size:10px;padding:5px 10px;top:10px;left:10px;border-radius:5px;}}
+
 .tg-gallery-thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
 .tg-gallery-thumbs::-webkit-scrollbar{display:none;}
 .tg-thumb{width:72px;height:72px;border-radius:10px;border:2px solid #e0e0e0;overflow:hidden;flex-shrink:0;cursor:pointer;background:#fff;padding:3px;transition:border-color .15s;}
@@ -197,6 +206,14 @@ a{color:inherit;text-decoration:none;}
 .tg-rel-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.1);transform:translateY(-2px);}
 .tg-rel-img{aspect-ratio:1/1;background:#fff;overflow:hidden;position:relative;padding:2px;}
 .tg-rel-img img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
+
+/* ✅ NEW: Sale tag badge on related/all products cards */
+.tg-rel-badge{position:absolute;top:6px;left:6px;background:#d32f2f;color:#fff;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px;white-space:nowrap;z-index:3;max-width:80%;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 4px rgba(0,0,0,0.22);}
+.tg-rel-badge.sale{background:#d32f2f;}
+.tg-rel-badge.hot{background:#fb641b;}
+.tg-rel-badge.new{background:#15803d;}
+.tg-rel-badge.custom{background:#5e35b1;}
+
 .tg-rel-body{padding:6px 8px 8px;}
 .tg-rel-title{font-size:11.5px;line-height:1.3;color:#212121;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px;margin-bottom:4px;}
 .tg-rel-price{font-size:13px;font-weight:800;color:#212121;}
@@ -565,6 +582,18 @@ a{color:inherit;text-decoration:none;}
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
   function fmtBytes(b) { if (!b) return ''; if (b < 1024) return b + 'B'; return (b/1024).toFixed(1) + 'KB'; }
 
+  // ✅ NEW: Sale tag helper (same logic as home page)
+  function getSaleTag(p) {
+    if (!p || !p.saleTag || !String(p.saleTag).trim()) return null;
+    const tag = String(p.saleTag).trim();
+    const lower = tag.toLowerCase();
+    let cls = 'custom';
+    if (lower.includes('sale') || lower.includes('off') || lower.includes('deal')) cls = 'sale';
+    else if (lower.includes('hot') || lower.includes('trending')) cls = 'hot';
+    else if (lower.includes('new')) cls = 'new';
+    return { text: tag, cls: cls };
+  }
+
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
@@ -768,7 +797,7 @@ a{color:inherit;text-decoration:none;}
       unsubProductDoc = db.collection('products').doc(pid).onSnapshot(snap => {
         if (!snap.exists) return;
         const fresh = { ...snap.data(), id: snap.id };
-        const changed = !PRODUCT || PRODUCT.rating !== fresh.rating || PRODUCT.ratingCount !== fresh.ratingCount || PRODUCT.stock !== fresh.stock || JSON.stringify(PRODUCT.sizeStock) !== JSON.stringify(fresh.sizeStock);
+        const changed = !PRODUCT || PRODUCT.rating !== fresh.rating || PRODUCT.ratingCount !== fresh.ratingCount || PRODUCT.stock !== fresh.stock || JSON.stringify(PRODUCT.sizeStock) !== JSON.stringify(fresh.sizeStock) || PRODUCT.saleTag !== fresh.saleTag;
         PRODUCT = fresh;
         if (changed) {
           try { updateMainRating(); } catch(e) {}
@@ -821,7 +850,11 @@ a{color:inherit;text-decoration:none;}
     const sellerName = PRODUCT.sellerName || PRODUCT.shopName || (PRODUCT.seller && PRODUCT.seller.shopName) || 'TOEGO Store';
     const sellerInit = String(sellerName).trim().charAt(0).toUpperCase() || 'T';
 
-    const sliderHtml = '<div class="tg-slider" id="tg-slider"><div class="tg-slider-track" id="tg-slider-track">' + imgs.map((u, i) => {
+    // ✅ NEW: Sale tag badge for main product image slider
+    const mainSaleTag = getSaleTag(PRODUCT);
+    const mainTagHtml = mainSaleTag ? '<div class="tg-slider-tag ' + mainSaleTag.cls + '">' + esc(mainSaleTag.text) + '</div>' : '';
+
+    const sliderHtml = '<div class="tg-slider" id="tg-slider">' + mainTagHtml + '<div class="tg-slider-track" id="tg-slider-track">' + imgs.map((u, i) => {
       const loadingAttr = i === 0 ? 'loading="eager" fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
       const safeU = escapeAttr(u);
       const displayImg = cardImgUrl(u, 900);
@@ -1036,7 +1069,6 @@ a{color:inherit;text-decoration:none;}
         dt.setDate(dt.getDate() + days);
         const eta = dt.toLocaleDateString('en-IN', {day:'numeric', month:'short'});
         result.className = 'tg-pincode-result show ok';
-        // ✅ FIXED: Hamesha "Free" dikhega, ₹40 nahi
         result.innerHTML = '✓ Delivers by <b>' + eta + '</b> · Free delivery';
       } else {
         result.className = 'tg-pincode-result show fail';
@@ -1122,7 +1154,10 @@ a{color:inherit;text-decoration:none;}
     const oosClass = isOOS ? ' out-of-stock' : '';
     const clickAttr = isOOS ? '' : 'onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'"';
     const ratingHtml = rating > 0 ? '<div class="tg-rel-rating"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' + rating.toFixed(1) + ' (' + ratingCount + ')</div>' : '';
-    return '<div class="tg-rel-card' + oosClass + '" ' + clickAttr + '><div class="tg-rel-img"><img src="' + esc(img) + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/200x200/f1f3f6/878787?text=T\'" /></div><div class="tg-rel-body">' + ratingHtml + '<div class="tg-rel-title">' + esc(p.name || 'Product') + '</div><div><span class="tg-rel-price">' + inr(price) + '</span>' + (mrp > price ? '<span class="tg-rel-mrp">' + inr(mrp) + '</span>' : '') + (off > 0 ? '<span class="tg-rel-off">' + off + '% off</span>' : '') + '</div></div></div>';
+    // ✅ NEW: Sale tag badge for related/all products cards
+    const saleTag = getSaleTag(p);
+    const badgeHtml = saleTag ? '<div class="tg-rel-badge ' + saleTag.cls + '">' + esc(saleTag.text) + '</div>' : '';
+    return '<div class="tg-rel-card' + oosClass + '" ' + clickAttr + '><div class="tg-rel-img">' + badgeHtml + '<img src="' + esc(img) + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/200x200/f1f3f6/878787?text=T\'" /></div><div class="tg-rel-body">' + ratingHtml + '<div class="tg-rel-title">' + esc(p.name || 'Product') + '</div><div><span class="tg-rel-price">' + inr(price) + '</span>' + (mrp > price ? '<span class="tg-rel-mrp">' + inr(mrp) + '</span>' : '') + (off > 0 ? '<span class="tg-rel-off">' + off + '% off</span>' : '') + '</div></div></div>';
   }
 
   function setupAllProductsLazy() {
