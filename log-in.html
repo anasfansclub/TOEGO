@@ -190,6 +190,16 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   const REST_PROFILE = `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${API_KEY}`;
 
   /* ═══════════════════════════════════════════════════════════════
+     DEVICE DETECTION
+     ═══════════════════════════════════════════════════════════════ */
+  const IS_MOBILE = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(navigator.userAgent);
+  const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const IS_SAMSUNG = /SamsungBrowser/i.test(navigator.userAgent);
+  const IS_IN_APP = /FBAN|FBAV|Instagram|Line|WhatsApp|Twitter/i.test(navigator.userAgent);
+
+  console.log('[device]', { IS_MOBILE, IS_IOS, IS_SAMSUNG, IS_IN_APP });
+
+  /* ═══════════════════════════════════════════════════════════════
      SAFE STORAGE
      ═══════════════════════════════════════════════════════════════ */
   const _mem = new Map();
@@ -270,7 +280,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     SAVE USER DOC — Both SDK and REST
+     SAVE USER DOC
      ═══════════════════════════════════════════════════════════════ */
   async function saveUserDocREST(idToken, uid, email, name, photoURL) {
     if (!idToken || !uid) return;
@@ -354,14 +364,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     db = firebase.firestore();
     FV = firebase.firestore.FieldValue;
 
-    // ✅ CRITICAL FIX: Await persistence before any auth calls
     persistencePromise = auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .catch(() => auth.setPersistence(firebase.auth.Auth.Persistence.SESSION))
       .catch(() => {});
   } catch(e) { console.error('[init]', e); }
 
   /* ═══════════════════════════════════════════════════════════════
-     SHOW LOADING IF GOOGLE PENDING (legacy safety — no-op now)
+     SHOW LOADING IF GOOGLE PENDING
      ═══════════════════════════════════════════════════════════════ */
   if (isPendingGoogle()) {
     document.getElementById('tg-auth-loading').classList.add('show');
@@ -583,10 +592,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
 
-    // ✅ Await persistence before auth
     await persistencePromise;
 
-    /* TIER 1: SDK */
     try {
       console.log('[tier1] SDK', mode);
       let cred;
@@ -613,7 +620,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const code = err && err.code;
       console.log('[tier1] failed:', code);
 
-      /* TIER 2: Recover from auth.currentUser */
       if ((code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') && auth.currentUser) {
         console.log('[tier2] recovered');
         let idToken = '';
@@ -628,7 +634,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      /* TIER 3: REST */
       if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
         console.log('[tier3] REST');
         try {
@@ -658,21 +663,56 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     GOOGLE LOGIN — ROBUST HANDLING
+     ✅ GOOGLE LOGIN — MOBILE = REDIRECT, DESKTOP = POPUP
      ═══════════════════════════════════════════════════════════════ */
   googleBtn.addEventListener('click', async function() {
     if (googleBtn.disabled) return;
 
-    setGoogleLoading(true);
+    // In-app browsers (Instagram, FB) — must use redirect
+    if (IS_IN_APP) {
+      showModal({
+        type: 'warn',
+        title: 'Open in Browser',
+        desc: 'Google login in-app browser me kaam nahi karta.<br><br>Kripya <b>Chrome / Safari</b> me TOEGO kholein.',
+        primaryText: 'OK'
+      });
+      return;
+    }
 
-    // ✅ Await persistence before Google auth
+    setGoogleLoading(true);
     await persistencePromise;
 
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
+    // ✅ MOBILE: Use redirect (no desktop-style popup)
+    // ✅ DESKTOP: Use popup (faster UX)
+    if (IS_MOBILE) {
+      console.log('[google] mobile → redirect');
+      setPendingGoogle();
+      try {
+        await auth.signInWithRedirect(provider);
+        // Page will navigate away. On return, getRedirectResult handles it.
+      } catch (err) {
+        clearPendingGoogle();
+        setGoogleLoading(false);
+        const code = err && err.code;
+        if (code === 'auth/operation-not-supported-in-this-environment') {
+          showModal({
+            type: 'error',
+            title: 'Browser Not Supported',
+            desc: 'Ye browser Google login support nahi karta.<br><br>Kripya <b>Chrome / Safari</b> me TOEGO kholein.',
+            primaryText: 'OK'
+          });
+          return;
+        }
+        showError(err);
+      }
+      return;
+    }
+
+    // Desktop: popup with redirect fallback
     try {
-      // Try popup
       const result = await auth.signInWithPopup(provider);
       if (result && result.user) {
         console.log('[google] popup success:', result.user.email);
@@ -693,21 +733,27 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       const code = err && err.code;
       console.log('[google] error:', code);
 
-      // ✅ CRITICAL FIX: Handle missing-initial-state gracefully
-      // This means the user actually logged in, but the state was lost.
-      if (code === 'auth/missing-initial-state') {
-        console.log('[google] missing state — falling back to redirect');
-        // Fallback to redirect for 100% reliability
-        auth.signInWithRedirect(provider).catch(() => {
+      // Popup blocked or storage issue → redirect fallback
+      if (code === 'auth/popup-blocked' ||
+          code === 'auth/missing-initial-state' ||
+          code === 'auth/web-storage-unsupported' ||
+          code === 'auth/internal-error' ||
+          code === 'auth/operation-not-supported-in-this-environment') {
+        console.log('[google] falling back to redirect');
+        setPendingGoogle();
+        try {
+          await auth.signInWithRedirect(provider);
+        } catch (e2) {
+          clearPendingGoogle();
           setGoogleLoading(false);
           showModal({
             type: 'error',
-            title: 'Login Interrupted',
-            desc: 'Browser ne storage block kiya. Kripya <b>third-party cookies</b> allow karein ya <b>normal mode</b> me try karein.',
+            title: 'Login Failed',
+            desc: 'Browser storage block kar raha hai.<br><br>Kripya <b>third-party cookies</b> allow karein ya normal mode me try karein.',
             primaryText: 'Retry',
             onPrimary: () => setTimeout(() => googleBtn.click(), 150)
           });
-        });
+        }
         return;
       }
 
@@ -716,38 +762,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      if (code === 'auth/popup-blocked') {
-        setGoogleLoading(false);
-        showModal({
-          type: 'warn',
-          title: 'Popup Blocked',
-          desc: 'Browser ne popup block kiya hai.<br><br>Address bar me <b>popup icon</b> se "Always allow" karein, phir "Try Again" dabayein.',
-          primaryText: 'Try Again',
-          secondaryText: 'Cancel',
-          onPrimary: () => setTimeout(() => { try { googleBtn.click(); } catch(e) {} }, 150)
-        });
-        return;
-      }
-
-      if (code === 'auth/operation-not-supported-in-this-environment') {
-        setGoogleLoading(false);
-        showModal({
-          type: 'error',
-          title: 'Browser Not Supported',
-          desc: 'Ye browser Google login support nahi karta.<br><br>Please <b>Chrome, Safari, Firefox</b> ya koi bhi standard browser me TOEGO kholein.',
-          primaryText: 'OK'
-        });
-        return;
-      }
-
       if (code === 'auth/network-request-failed') {
         setGoogleLoading(false);
         showModal({
           type: 'error',
           title: 'No Internet',
-          desc: 'Internet connection check karein aur dobara try karein.',
+          desc: 'Internet connection check karein.',
           primaryText: 'Retry',
-          onPrimary: () => setTimeout(() => { try { googleBtn.click(); } catch(e) {} }, 150)
+          onPrimary: () => setTimeout(() => googleBtn.click(), 150)
         });
         return;
       }
@@ -757,7 +779,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         showModal({
           type: 'error',
           title: 'Configuration Error',
-          desc: 'Ye domain Firebase me authorized nahi hai. Admin se contact karein.',
+          desc: 'Ye domain Firebase me authorized nahi hai.',
           primaryText: 'OK'
         });
         return;
@@ -774,39 +796,19 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
-        if (auth.currentUser) {
-          let idToken = '';
-          try { idToken = await auth.currentUser.getIdToken(); } catch(e) {}
-          await handleSuccess({
-            uid: auth.currentUser.uid,
-            email: auth.currentUser.email,
-            name: auth.currentUser.displayName || (auth.currentUser.email || '').split('@')[0],
-            photoURL: auth.currentUser.photoURL || '',
-            idToken: idToken
-          });
-          return;
-        }
-        setGoogleLoading(false);
-        showModal({
-          type: 'error',
-          title: 'Storage Required',
-          desc: 'Browser storage allow karein. Incognito mode me Google login nahi hoga.',
-          primaryText: 'OK'
-        });
-        return;
-      }
-
       setGoogleLoading(false);
       showError(err);
     }
   });
 
-  /* ═══ Redirect return (safety net) ═══ */
+  /* ═══════════════════════════════════════════════════════════════
+     REDIRECT RETURN HANDLER (for mobile)
+     ═══════════════════════════════════════════════════════════════ */
   (async function handleRedirectReturn() {
     try {
       const result = await auth.getRedirectResult();
       if (result && result.user) {
+        console.log('[redirect-return] user found:', result.user.email);
         clearPendingGoogle();
         let idToken = '';
         try { idToken = await result.user.getIdToken(); } catch(e) {}
@@ -817,12 +819,25 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           photoURL: result.user.photoURL || '',
           idToken: idToken
         });
+      } else {
+        // No result. Check if we came back from redirect
+        if (isPendingGoogle()) {
+          console.log('[redirect-return] pending but no result — showing form');
+          clearPendingGoogle();
+          hideAuthLoading();
+          setGoogleLoading(false);
+        }
       }
-    } catch (err) { /* silent */ }
+    } catch (err) {
+      console.log('[redirect-return] error:', err && err.code);
+      clearPendingGoogle();
+      hideAuthLoading();
+      setGoogleLoading(false);
+    }
   })();
 
   /* ═══════════════════════════════════════════════════════════════
-     SESSION RESTORE — SDK verified, ultra-proof
+     SESSION RESTORE
      ═══════════════════════════════════════════════════════════════ */
   let _authCheckFirst = true;
   auth.onAuthStateChanged(async (user) => {
@@ -863,18 +878,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
-  /* Failsafe — if pending Google stuck after 6s, show login */
+  /* Failsafe */
   setTimeout(() => {
     if (isPendingGoogle() && !auth.currentUser && !_redirected) {
       console.log('[failsafe] restoring login form');
       clearPendingGoogle();
       hideAuthLoading();
+      setGoogleLoading(false);
     }
-  }, 6000);
+  }, 8000);
 
   window.addEventListener('pageshow', (e) => {
     if (e.persisted && auth.currentUser && !_redirected) {
-      console.log('[pageshow] user present');
       handleSuccess({
         uid: auth.currentUser.uid,
         email: auth.currentUser.email,
