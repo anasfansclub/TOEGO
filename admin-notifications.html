@@ -57,13 +57,33 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .adm-tab{padding:8px 16px;border-radius:999px;background:var(--bg);border:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);}
 .adm-tab.active{background:var(--primary);color:#fff;}
 .adm-hidden{display:none!important;}
+/* ✅ Loading screen */
+.adm-loading{position:fixed;inset:0;background:#fff;z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
+.adm-loading.hidden{display:none;}
+.adm-loading-spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:var(--primary);border-radius:50%;animation:admSpin .8s linear infinite;}
+@keyframes admSpin{to{transform:rotate(360deg);}}
+.adm-loading-text{font-size:15px;color:#666;font-weight:600;text-align:center;padding:0 20px;}
+/* ✅ Logout button in header */
+.adm-header .logout-btn{background:rgba(255,255,255,0.15);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
+.adm-header .logout-btn.show{display:inline-block;}
+.adm-header .logout-btn:hover{background:rgba(255,255,255,0.25);}
+.adm-header-actions{display:flex;align-items:center;gap:10px;}
 </style>
 </head>
 <body>
 
+<!-- ✅ Loading screen (initial session check) -->
+<div class="adm-loading" id="adm-loading">
+  <div class="adm-loading-spinner"></div>
+  <div class="adm-loading-text">Checking session…</div>
+</div>
+
 <header class="adm-header">
   <h1>TOE<span>GO</span> Admin</h1>
-  <div class="badge" id="adm-auth-badge">Not logged in</div>
+  <div class="adm-header-actions">
+    <div class="badge" id="adm-auth-badge">Not logged in</div>
+    <button class="logout-btn" id="adm-logout-btn" onclick="admLogout()">Logout</button>
+  </div>
 </header>
 
 <div class="adm-wrap">
@@ -75,11 +95,11 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       <h2>🔐 Admin Login</h2>
       <div class="adm-field">
         <label>Email</label>
-        <input type="email" id="adm-email" placeholder="admin@toego.in">
+        <input type="email" id="adm-email" placeholder="anasfansclub@gmail.com">
       </div>
       <div class="adm-field">
         <label>Password</label>
-        <input type="password" id="adm-password" placeholder="••••••••">
+        <input type="password" id="adm-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')admLogin()">
       </div>
       <button class="adm-btn primary block" id="adm-login-btn" onclick="admLogin()">Login</button>
       <div class="adm-status" id="adm-login-status"></div>
@@ -161,7 +181,16 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 (function(){
   'use strict';
 
-  // ── Firebase init (same config as your site) ──
+  // ═══════════════════════════════════════════════
+  // ✅ ADMIN EMAIL WHITELIST
+  // Jitne bhi admin emails chahiye, yahan add karo
+  // ═══════════════════════════════════════════════
+  const ADMIN_EMAILS = [
+    'anasfansclub@gmail.com'
+    // 'another-admin@gmail.com',  ← future me add kar sakte ho
+  ];
+
+  // ── Firebase init ──
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -175,6 +204,9 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   const auth = firebase.auth();
   const db = firebase.firestore();
   const functions = firebase.functions();
+
+  // ── Ensure admin session persists across tabs/pages ──
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
   // ── 50 Templates ──
   const TEMPLATES = [
@@ -245,65 +277,161 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function showStatus(id, msg, type){ const el = $(id); if(!el) return; el.className = 'adm-status show ' + type; el.textContent = msg; }
+  function hideLoading(){ const el = $('adm-loading'); if (el) el.classList.add('hidden'); }
+  function showLoading(text){ const el = $('adm-loading'); if (el) { el.classList.remove('hidden'); const t = el.querySelector('.adm-loading-text'); if (t && text) t.textContent = text; } }
 
-  // ── Auth ──
-  function admLogin(){
+  // ═══════════════════════════════════════════════
+  // ✅ AUTO-LOGIN DETECTION
+  // ═══════════════════════════════════════════════
+
+  // Check if email is in admin whitelist
+  function isWhitelistedAdmin(email) {
+    if (!email) return false;
+    const e = String(email).toLowerCase().trim();
+    return ADMIN_EMAILS.some(a => String(a).toLowerCase().trim() === e);
+  }
+
+  // Ensure Firestore has role: 'admin' for whitelisted emails
+  // (taaki Cloud Function bhi allow kare)
+  async function ensureAdminRole(user) {
+    try {
+      const ref = db.collection('users').doc(user.uid);
+      const snap = await ref.get();
+      if (!snap.exists) {
+        await ref.set({
+          uid: user.uid,
+          email: user.email || '',
+          name: user.displayName || (user.email || '').split('@')[0] || 'Admin',
+          role: 'admin',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log('[admin] User doc created with role=admin');
+      } else if (snap.data().role !== 'admin') {
+        await ref.update({
+          role: 'admin',
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log('[admin] User role updated to admin');
+      }
+    } catch(e) {
+      console.warn('[admin] Role ensure failed:', e.message);
+    }
+  }
+
+  // Show admin panel (all cards visible)
+  function showAdminPanel(user) {
+    $('adm-auth-badge').textContent = '✓ Admin — ' + (user.email || user.uid);
+    $('adm-login-card').classList.add('adm-hidden');
+    $('adm-compose-card').classList.remove('adm-hidden');
+    $('adm-templates-card').classList.remove('adm-hidden');
+    $('adm-log-card').classList.remove('adm-hidden');
+    $('adm-logout-btn').classList.add('show');
+    renderTemplates();
+    hideLoading();
+  }
+
+  // Show login form (not admin)
+  function showLoginForm(reason) {
+    $('adm-auth-badge').textContent = reason || 'Not logged in';
+    $('adm-login-card').classList.remove('adm-hidden');
+    $('adm-compose-card').classList.add('adm-hidden');
+    $('adm-templates-card').classList.add('adm-hidden');
+    $('adm-log-card').classList.add('adm-hidden');
+    $('adm-logout-btn').classList.remove('show');
+    hideLoading();
+  }
+
+  // Main auth state handler — runs on page load AND on any auth change
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      showLoginForm('Not logged in');
+      return;
+    }
+
+    // User is logged in — check if admin
+    const email = (user.email || '').toLowerCase().trim();
+    console.log('[admin] Logged in as:', email);
+
+    // 1. Email whitelist check (fast)
+    if (isWhitelistedAdmin(email)) {
+      console.log('[admin] ✓ Email in whitelist — granting admin access');
+      await ensureAdminRole(user);
+      showAdminPanel(user);
+      return;
+    }
+
+    // 2. Firestore role check (fallback for other admins)
+    let isAdminByRole = false;
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      isAdminByRole = snap.exists && snap.data().role === 'admin';
+    } catch(e) {
+      console.warn('[admin] Role check failed:', e.message);
+    }
+
+    if (isAdminByRole) {
+      console.log('[admin] ✓ Firestore role=admin — granting access');
+      showAdminPanel(user);
+      return;
+    }
+
+    // 3. Not an admin — show login form with error
+    console.warn('[admin] ✕ Not an admin:', email);
+    showLoginForm('Not an admin');
+    showStatus('adm-login-status', 'Yeh account admin nahi hai. Admin: ' + ADMIN_EMAILS.join(', ') + ' — logout karke admin se login karo.', 'error');
+  });
+
+  // ═══════════════════════════════════════════════
+  // LOGIN / LOGOUT
+  // ═══════════════════════════════════════════════
+
+  window.admLogin = function() {
     const email = ($('adm-email').value || '').trim();
     const pass = $('adm-password').value;
     if (!email || !pass) { showStatus('adm-login-status', 'Email aur password daalo', 'error'); return; }
+
     $('adm-login-btn').disabled = true;
     $('adm-login-btn').textContent = 'Logging in…';
+    showStatus('adm-login-status', 'Signing in…', 'info');
+
     auth.signInWithEmailAndPassword(email, pass)
-      .then(() => { /* onAuthStateChanged handles UI */ })
+      .then(() => {
+        // onAuthStateChanged will handle UI
+        $('adm-password').value = '';
+        $('adm-login-btn').disabled = false;
+        $('adm-login-btn').textContent = 'Login';
+      })
       .catch(err => {
         showStatus('adm-login-status', 'Login failed: ' + (err.message || err.code), 'error');
         $('adm-login-btn').disabled = false;
         $('adm-login-btn').textContent = 'Login';
       });
-  }
+  };
 
-  auth.onAuthStateChanged(async (user) => {
-    const badge = $('adm-auth-badge');
-    if (!user) {
-      badge.textContent = 'Not logged in';
-      $('adm-login-card').classList.remove('adm-hidden');
-      $('adm-compose-card').classList.add('adm-hidden');
-      $('adm-templates-card').classList.add('adm-hidden');
-      $('adm-log-card').classList.add('adm-hidden');
-      return;
-    }
+  window.admLogout = function() {
+    if (!confirm('Logout karna hai?')) return;
+    showLoading('Logging out…');
+    auth.signOut().then(() => {
+      hideLoading();
+      $('adm-email').value = '';
+      $('adm-password').value = '';
+      showStatus('adm-login-status', '', 'info');
+      $('adm-login-status').classList.remove('show');
+    }).catch(e => {
+      hideLoading();
+      alert('Logout failed: ' + e.message);
+    });
+  };
 
-    // Check admin role
-    let isAdmin = false;
-    try {
-      const snap = await db.collection('users').doc(user.uid).get();
-      isAdmin = snap.exists && snap.data().role === 'admin';
-    } catch(e){}
-
-    if (!isAdmin) {
-      badge.textContent = 'Not an admin';
-      $('adm-login-card').classList.remove('adm-hidden');
-      $('adm-compose-card').classList.add('adm-hidden');
-      showStatus('adm-login-status', 'Yeh account admin nahi hai. Firestore mein users/' + user.uid + ' ka role "admin" set karo.', 'error');
-      return;
-    }
-
-    badge.textContent = '✓ Admin — ' + (user.email || user.uid);
-    $('adm-login-card').classList.add('adm-hidden');
-    $('adm-compose-card').classList.remove('adm-hidden');
-    $('adm-templates-card').classList.remove('adm-hidden');
-    $('adm-log-card').classList.remove('adm-hidden');
-    $('adm-login-btn').disabled = false;
-    $('adm-login-btn').textContent = 'Login';
-    renderTemplates();
-  });
-
-  // ── Templates ──
+  // ═══════════════════════════════════════════════
+  // TEMPLATES
+  // ═══════════════════════════════════════════════
   function renderTemplates(){
     const list = $('adm-templates-list');
     if (!list) return;
     const filtered = TPL_FILTER === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.cat === TPL_FILTER);
-    list.innerHTML = filtered.map((t, i) => {
+    list.innerHTML = filtered.map((t) => {
       const idx = TEMPLATES.indexOf(t);
       return '<div class="adm-tpl" data-idx="' + idx + '" onclick="admPickTpl(' + idx + ')">' +
         '<div class="adm-tpl-title">' + esc(t.title) + '</div>' +
@@ -366,7 +494,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     showStatus('adm-send-status', 'Notification bhej raha hoon…', 'info');
 
     const payload = { title, body, image, url };
-    if (target.startsWith('topic:')) payload.topic = target.slice(6);
+    if (target.indexOf('topic:') === 0) payload.topic = target.slice(6);
 
     try {
       const callable = functions.httpsCallable('sendNotification');
@@ -406,6 +534,16 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     const line = '<div><span style="opacity:0.5;">[' + time + ']</span> <span class="' + (cls||'') + '">' + esc(msg) + '</span></div>';
     el.innerHTML = line + el.innerHTML;
   }
+
+  // ═══════════════════════════════════════════════
+  // ✅ FAILSAFE — if onAuthStateChanged doesn't fire in 8s, hide loading
+  // ═══════════════════════════════════════════════
+  setTimeout(() => {
+    if (!$('adm-loading').classList.contains('hidden')) {
+      hideLoading();
+      if (!auth.currentUser) showLoginForm('Not logged in');
+    }
+  }, 8000);
 
 })();
 </script>
