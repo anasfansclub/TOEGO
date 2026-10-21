@@ -820,8 +820,8 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('[FCM] Foreground message:', payload);
       const n = payload.notification || {};
       const data = payload.data || {};
-      const title = n.title || 'TOEGO';
-      const body = n.body || '';
+      const title = n.title || data.title || 'TOEGO';
+      const body = n.body || data.body || '';
       const img = n.image || data.image || '';
       try { tgMShowTopNotif(title, body, data.url || '/shop-home.html'); } catch(e) {}
       try { loadNotifs(); } catch(e) {}
@@ -836,11 +836,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (Notification.permission !== 'granted') return;
 
     try {
-      // 1. Service Worker register karein (Relative path)
+      // 1. Service Worker register karein
       const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
       console.log('✅ Service Worker registered:', registration.scope);
 
-      // 2. Service Worker ke ACTIVE hone ka wait karein (AbortError fix)
+      // 2. ✅ SERVICE WORKER KE ACTIVE HONE KA WAIT KAREIN (Mobile AbortError Fix)
       if (registration.installing || registration.waiting) {
         await new Promise((resolve) => {
           const worker = registration.installing || registration.waiting;
@@ -851,7 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Service Worker activated');
       }
 
-      // 3. Ab token generate karein
+      // 3. Ab token generate karein (Registration object pass karke)
       const token = await _messaging.getToken({ 
         vapidKey: VAPID_KEY,
         serviceWorkerRegistration: registration 
@@ -878,9 +878,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
       await db.collection('fcm_tokens').doc(token).set(data, { merge: true });
       console.log('✅ [FCM] Token saved to Firestore successfully!');
-
-      // 5. Topic subscribe karein
-     
 
     } catch (err) {
       console.error('❌ [FCM] Registration error:', err);
