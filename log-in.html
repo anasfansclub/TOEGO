@@ -696,20 +696,18 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       // ✅ CRITICAL FIX: Handle missing-initial-state gracefully
       // This means the user actually logged in, but the state was lost.
       if (code === 'auth/missing-initial-state') {
-        console.log('[google] missing state — waiting for onAuthStateChanged');
-        // Keep loading state, wait for onAuthStateChanged
-        setTimeout(() => {
-          if (!auth.currentUser && !_redirected) {
-            setGoogleLoading(false);
-            showModal({
-              type: 'error',
-              title: 'Login Interrupted',
-              desc: 'Browser ne storage block kiya. Kripya <b>third-party cookies</b> allow karein ya <b>normal mode</b> me try karein.',
-              primaryText: 'Retry',
-              onPrimary: () => setTimeout(() => googleBtn.click(), 150)
-            });
-          }
-        }, 3000);
+        console.log('[google] missing state — falling back to redirect');
+        // Fallback to redirect for 100% reliability
+        auth.signInWithRedirect(provider).catch(() => {
+          setGoogleLoading(false);
+          showModal({
+            type: 'error',
+            title: 'Login Interrupted',
+            desc: 'Browser ne storage block kiya. Kripya <b>third-party cookies</b> allow karein ya <b>normal mode</b> me try karein.',
+            primaryText: 'Retry',
+            onPrimary: () => setTimeout(() => googleBtn.click(), 150)
+          });
+        });
         return;
       }
 
