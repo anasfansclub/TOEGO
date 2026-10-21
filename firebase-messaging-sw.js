@@ -10,26 +10,55 @@ firebase.initializeApp({
   appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
 });
 
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-  const n = payload.notification || {};
-  const data = payload.data || {};
-  const title = n.title || data.title || 'TOEGO';
-  const body = n.body || data.body || '';
-  const image = n.image || data.image || '';
-  const url = data.url || '/shop-home.html';
-  
-  self.registration.showNotification(title, {
-    body: body,
-    icon: '/favicon-32x32.png',
-    image: image || undefined,
-    data: { url: url }
-  });
+// ✅ Service Worker ko turant activate karo
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
 });
 
+const messaging = firebase.messaging();
+
+// ✅ Background message handler
+messaging.onBackgroundMessage((payload) => {
+  console.log('[SW] Background message received:', payload);
+  
+  const title = payload.notification?.title || payload.data?.title || 'TOEGO';
+  const body = payload.notification?.body || payload.data?.body || '';
+  const image = payload.notification?.image || payload.data?.image || '';
+  const clickUrl = payload.data?.url || payload.fcmOptions?.link || '/shop-home.html';
+
+  const options = {
+    body: body,
+    icon: 'https://toego.in/favicon-32x32.png',
+    badge: 'https://toego.in/favicon-32x32.png',
+    image: image || undefined,
+    data: { url: clickUrl },
+    vibrate: [200, 100, 200],
+    requireInteraction: false,
+    tag: 'toego-notif',
+    renotify: true
+  };
+
+  // ✅ CRITICAL: showNotification ka promise RETURN karo
+  return self.registration.showNotification(title, options);
+});
+
+// ✅ Notification click handler
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = (event.notification.data && event.notification.data.url) || '/shop-home.html';
-  event.waitUntil(clients.openWindow(url));
+  const clickUrl = event.notification.data?.url || '/shop-home.html';
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.indexOf(self.location.origin) !== -1 && 'focus' in client) {
+          client.navigate(clickUrl);
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) return clients.openWindow(clickUrl);
+    })
+  );
 });
