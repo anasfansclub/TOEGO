@@ -811,10 +811,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // ═══════════════════════════════════════════════
   // ✅ PUSH NOTIFICATION (FCM) SETUP
   // ═══════════════════════════════════════════════
-  const VAPID_KEY = "BAn0Fb7ff1ZDDrvbE-IFvBNWAZTD1tUb7XE3bYxv1p8wo-C4v7AeIlwDGMwX-DuKVPx5ZuOmxrhM_pxnHc3_QUY"; // ⚠️ Firebase Console → Project Settings → Cloud Messaging → Web Push certificates → Generate Key Pair → Copy karke yahan paste karo
-
+  const VAPID_KEY = "BAn0Fb7ff1ZDDrvbE-IFvBNWAZTD1tUb7XE3bYxv1p8wo-C4v7AeIlwDGMwX-DuKVPx5ZuOmxrhM_pxnHc3_QUY"; // ⚠️ Yahan apni VAPID Key daalein
+  
   let _messaging = null;
-  let _fcmToken = null;
   try {
     _messaging = firebase.messaging();
     _messaging.onMessage((payload) => {
@@ -824,9 +823,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const title = n.title || 'TOEGO';
       const body = n.body || '';
       const img = n.image || data.image || '';
-      // Show top in-app notification
       try { tgMShowTopNotif(title, body, data.url || '/shop-home.html'); } catch(e) {}
-      // Also Firestore notification list refresh
       try { loadNotifs(); } catch(e) {}
     });
   } catch(e) {
@@ -839,14 +836,22 @@ document.addEventListener('DOMContentLoaded', function() {
     if (Notification.permission !== 'granted') return;
 
     try {
-      // 1. Service Worker register karein (Relative path ke saath)
-      let registration = null;
-      if ('serviceWorker' in navigator) {
-        registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-        console.log('✅ Service Worker registered:', registration.scope);
+      // 1. Service Worker register karein (Relative path)
+      const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+      console.log('✅ Service Worker registered:', registration.scope);
+
+      // 2. Service Worker ke ACTIVE hone ka wait karein (AbortError fix)
+      if (registration.installing || registration.waiting) {
+        await new Promise((resolve) => {
+          const worker = registration.installing || registration.waiting;
+          worker.addEventListener('statechange', function () {
+            if (this.state === 'activated') resolve();
+          });
+        });
+        console.log('✅ Service Worker activated');
       }
 
-      // 2. Token generate karein (Registration object pass karke)
+      // 3. Ab token generate karein
       const token = await _messaging.getToken({ 
         vapidKey: VAPID_KEY,
         serviceWorkerRegistration: registration 
@@ -858,14 +863,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       console.log('✅ [FCM] Token generated:', token);
 
-      // 3. Token ko Firestore mein save karein
+      // 4. Firestore mein save karein
       const u = auth.currentUser;
       const data = {
         token: token,
         updatedAt: FV.serverTimestamp(),
-        userAgent: navigator.userAgent,
-        platform: navigator.platform || '',
-        lang: navigator.language || ''
+        userAgent: navigator.userAgent
       };
       if (u) {
         data.uid = u.uid;
@@ -873,44 +876,32 @@ document.addEventListener('DOMContentLoaded', function() {
         data.name = u.displayName || (u.email || '').split('@')[0] || 'User';
       }
 
-      try {
-        await db.collection('fcm_tokens').doc(token).set(data, { merge: true });
-        console.log('✅ [FCM] Token saved to Firestore successfully!');
-      } catch(e) {
-        console.error('❌ [FCM] Token save failed:', e.message);
-      }
+      await db.collection('fcm_tokens').doc(token).set(data, { merge: true });
+      console.log('✅ [FCM] Token saved to Firestore successfully!');
 
-      // 4. Subscribe to Topic
-      try {
-        await _messaging.subscribeToTopic('all-users');
-        console.log('✅ [FCM] Subscribed to topic: all-users');
-      } catch(e) {
-        console.log('⚠️ [FCM] Topic subscribe failed:', e.message);
-      }
+      // 5. Topic subscribe karein
+      await _messaging.subscribeToTopic('all-users');
+      console.log('✅ [FCM] Subscribed to all-users');
+
     } catch (err) {
       console.error('❌ [FCM] Registration error:', err);
     }
   }
 
-  // Show banner if permission not decided yet
   function tgMaybeShowNotifBanner() {
     try {
       if (!('Notification' in window)) return;
       if (Notification.permission === 'default') {
         if (localStorage.getItem('toego_notif_dismissed') === '1') return;
         const b = document.getElementById('tg-notif-banner');
-        if (b) {
-          setTimeout(() => b.classList.add('show'), 3500);
-        }
+        if (b) setTimeout(() => b.classList.add('show'), 3500);
       }
     } catch(e) {}
   }
 
-  // User clicks "Enable" button
   window.tgEnableNotifs = async function() {
     try {
       if (!('Notification' in window)) { toast('Browser supports nahi karta', 'error'); return; }
-      
       const perm = await Notification.requestPermission();
       const banner = document.getElementById('tg-notif-banner');
       if (banner) banner.classList.remove('show');
@@ -922,9 +913,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toast('Notifications block ho gaye', 'info');
         try { localStorage.setItem('toego_notif_dismissed', '1'); } catch(e) {}
       }
-    } catch(e) {
-      console.warn(e);
-    }
+    } catch(e) { console.warn(e); }
   };
 
   window.tgDismissNotifBanner = function() {
