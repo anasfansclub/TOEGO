@@ -177,7 +177,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   const CLOUDFLARE_WORKER_URL = 'https://toego-notification-worker.divinebatteriess.workers.dev/';
   const ADMIN_EMAILS = ['anasfansclub@gmail.com'];
   
-  // ✅ AAPKA LOGO
   const LOGO_URL = 'https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg';
   
   let CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME"; 
@@ -423,23 +422,15 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     $('adm-send-btn').textContent = 'Sending…';
     showStatus('adm-send-status', 'Notification bhej raha hoon…', 'info');
 
-    // ✅ Payload for both Mobile & Desktop
     const fcmMessage = {
-      webpush: {
-        fcm_options: { link: url || 'https://toego.in/shop-home.html' },
-        notification: {
-          title: title,
-          body: body,
-          icon: LOGO_URL,
-          badge: LOGO_URL,
-          image: image || undefined
-        }
-      },
       data: {
-        title: title, 
-        body: body, 
-        image: image || '', 
-        url: url || 'https://toego.in/shop-home.html'
+        title: title,
+        body: body,
+        image: image || '',
+        url: url || '/shop-home.html'
+      },
+      webpush: {
+        headers: { Urgency: 'high' }
       }
     };
 
@@ -448,9 +439,13 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     } else {
       try {
         const tokensSnap = await db.collection('fcm_tokens').get();
-        const tokens = tokensSnap.docs.map(d => d.data().token).filter(Boolean);
-        if (!tokens.length) throw new Error('No FCM tokens found. Visit shop-home and allow notifications.');
-        fcmMessage.tokens = tokens;
+        const rawTokens = tokensSnap.docs.map(d => d.data().token).filter(Boolean);
+        
+        // ✅ TOKENS DEDUPLICATION: Ek user ko sirf ek hi baar notification jayegi
+        const uniqueTokens = [...new Set(rawTokens)];
+        
+        if (!uniqueTokens.length) throw new Error('No FCM tokens found. Visit shop-home and allow notifications.');
+        fcmMessage.tokens = uniqueTokens;
       } catch(e) {
         showStatus('adm-send-status', e.message, 'error');
         $('adm-send-btn').disabled = false; $('adm-send-btn').textContent = '🚀 Send Notification';
