@@ -61,6 +61,11 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .adm-header .logout-btn.show{display:inline-block;}
 .adm-header .logout-btn:hover{background:rgba(255,255,255,0.25);}
 .adm-header-actions{display:flex;align-items:center;gap:10px;}
+/* Image Upload UI */
+.img-upload-wrap { display: flex; gap: 10px; align-items: center; }
+.img-upload-wrap input[type="url"] { flex: 1; }
+.img-upload-btn { background: #f1f3f6; border: 1.5px solid var(--border); padding: 11px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; white-space: nowrap;}
+.img-upload-btn:hover { background: #e4e7ec; }
 </style>
 </head>
 <body>
@@ -116,10 +121,20 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         <label>Body *</label>
         <textarea id="adm-body" placeholder="Aaj hi shop karo, limited time deal!" maxlength="300" oninput="admUpdatePreview()"></textarea>
       </div>
+      
+      <!-- ✅ IMAGE UPLOAD WITH CLOUDINARY & 30KB COMPRESSION -->
       <div class="adm-field">
-        <label>Image URL (optional)</label>
-        <input type="url" id="adm-image" placeholder="https://res.cloudinary.com/..." oninput="admUpdatePreview()">
+        <label>Image (Auto 30KB Cloudinary)</label>
+        <div class="img-upload-wrap">
+          <input type="url" id="adm-image" placeholder="Image URL ya upload karein..." oninput="admUpdatePreview()">
+          <button class="img-upload-btn" onclick="document.getElementById('adm-image-file').click()">
+            📤 Upload
+          </button>
+          <input type="file" id="adm-image-file" accept="image/*" style="display:none" onchange="admHandleImageUpload(event)">
+        </div>
+        <div id="adm-img-status" style="font-size:12px; margin-top:6px; font-weight:600; color:var(--warn); display:none;"></div>
       </div>
+
       <div class="adm-field">
         <label>Click URL (optional)</label>
         <input type="text" id="adm-url" placeholder="/shop-home.html">
@@ -173,9 +188,11 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   // ✅ AAPKA CLOUDFLARE WORKER URL
   const CLOUDFLARE_WORKER_URL = 'https://toego-notification-worker.divinebatteriess.workers.dev/';
-  
-  // ✅ ADMIN EMAIL WHITELIST
   const ADMIN_EMAILS = ['anasfansclub@gmail.com'];
+  
+  // Cloudinary config (will be fetched from Firestore)
+  let CLOUDINARY_CLOUD_NAME = '';
+  let CLOUDINARY_UPLOAD_PRESET = '';
 
   // ── Firebase init ──
   if (!window.__TOEGO_FB__) {
@@ -192,6 +209,14 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   const db = firebase.firestore();
 
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
+  // Fetch Cloudinary Config
+  db.collection('siteSettings').doc('cloudinary').get().then(snap => {
+    if (snap.exists) {
+      CLOUDINARY_CLOUD_NAME = snap.data().cloudName || '';
+      CLOUDINARY_UPLOAD_PRESET = snap.data().uploadPreset || '';
+    }
+  }).catch(()=>{});
 
   // ── 50 Templates ──
   const TEMPLATES = [
@@ -331,8 +356,8 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     const t = TEMPLATES[idx]; if (!t) return;
     $('adm-title').value = t.title || '';
     $('adm-body').value = t.body || '';
-    $('adm-image').value = t.image || '';
     $('adm-url').value = t.url || '';
+    $('adm-image').value = '';
     document.querySelectorAll('.adm-tpl').forEach(el => el.classList.remove('active'));
     const el = document.querySelector('.adm-tpl[data-idx="' + idx + '"]');
     if (el) el.classList.add('active');
@@ -349,7 +374,119 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     else { wrap.classList.add('adm-hidden'); imgEl.src = ''; }
   };
 
-  // ── Send ──
+  // ═══════════════════════════════════════════════
+  // ✅ IMAGE COMPRESSION & CLOUDINARY UPLOAD
+  // ═══════════════════════════════════════════════
+  
+  // Helper: Convert base64 to Blob
+  function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+  }
+
+  // Compress Image to ~30KB
+  function compressImageTo30KB(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Max dimension 800px to start
+          const max_size = 800;
+          if (width > height) {
+            if (width > max_size) { height *= max_size / width; width = max_size; }
+          } else {
+            if (height > max_size) { width *= max_size / height; height = max_size; }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          let quality = 0.9;
+          let dataUrl = canvas.toDataURL('image/jpeg', quality);
+          
+          // Reduce quality until file size is < 30KB
+          while (dataUrl.length * 0.75 > 30 * 1024 && quality > 0.1) {
+            quality -= 0.1;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+          
+          resolve(dataUrl);
+        };
+        img.onerror = (error) => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  window.admHandleImageUpload = async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const statusEl = $('adm-img-status');
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--warn)';
+    statusEl.textContent = '⏳ Compressing image to <30KB...';
+
+    try {
+      // 1. Compress
+      const compressedDataUrl = await compressImageTo30KB(file);
+      const blob = dataURItoBlob(compressedDataUrl);
+      const sizeKB = (blob.size / 1024).toFixed(1);
+      
+      statusEl.textContent = `⏳ Compressed to ${sizeKB}KB. Uploading to Cloudinary...`;
+
+      // 2. Upload to Cloudinary
+      if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+        throw new Error('Cloudinary config missing in Firestore (siteSettings/cloudinary)');
+      }
+
+      const formData = new FormData();
+      formData.append('file', blob);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      formData.append('folder', 'toego/notifications');
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      if (data.secure_url) {
+        // 3. Set URL to input
+        $('adm-image').value = data.secure_url;
+        admUpdatePreview();
+        statusEl.style.color = 'var(--success)';
+        statusEl.textContent = `✅ Image Uploaded (${sizeKB}KB)`;
+        setTimeout(() => statusEl.style.display = 'none', 3000);
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (err) {
+      statusEl.style.color = 'var(--error)';
+      statusEl.textContent = '❌ ' + err.message;
+      console.error(err);
+    }
+    
+    // Reset file input
+    event.target.value = '';
+  };
+
+  // ── Send Notification ──
   window.admSend = async function(){
     const user = auth.currentUser;
     if (!user) { showStatus('adm-send-status', 'Login required', 'error'); return; }
@@ -380,7 +517,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       try {
         const tokensSnap = await db.collection('fcm_tokens').get();
         const tokens = tokensSnap.docs.map(d => d.data().token).filter(Boolean);
-        if (!tokens.length) throw new Error('No FCM tokens found. Visit shop-home.html and allow notifications first.');
+        if (!tokens.length) throw new Error('No FCM tokens found. Visit shop-home.html and allow notifications.');
         fcmMessage.tokens = tokens;
       } catch(e) {
         showStatus('adm-send-status', e.message, 'error');
@@ -390,7 +527,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     }
 
     try {
-      // Cloudflare Worker ko sirf message bhej rahe hain
       const res = await fetch(CLOUDFLARE_WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -398,11 +534,13 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       });
       const data = await res.json();
       
-      if (res.ok && data.name) {
-        showStatus('adm-send-status', '✓ Notification sent successfully!', 'success');
-        admLog('Sent: ' + title, 'ok');
+      // ✅ FIXED SUCCESS CHECK LOGIC
+      if (res.ok && data.success) {
+        let msg = '✓ Sent! Success: ' + (data.successCount || 0) + ', Failed: ' + (data.failureCount || 0);
+        showStatus('adm-send-status', msg, 'success');
+        admLog(msg, 'ok');
       } else {
-        throw new Error(data.error || JSON.stringify(data));
+        throw new Error(data.error || 'Failed to send');
       }
     } catch (err) {
       showStatus('adm-send-status', '✕ Error: ' + err.message, 'error');
