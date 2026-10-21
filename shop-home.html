@@ -839,11 +839,26 @@ document.addEventListener('DOMContentLoaded', function() {
     if (Notification.permission !== 'granted') return;
 
     try {
-      const token = await _messaging.getToken({ vapidKey: VAPID_KEY });
-      if (!token) { console.log('[FCM] No token'); return; }
-      _fcmToken = token;
-      console.log('[FCM] Token:', token);
+      // 1. Service Worker register karein (Relative path ke saath)
+      let registration = null;
+      if ('serviceWorker' in navigator) {
+        registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+        console.log('✅ Service Worker registered:', registration.scope);
+      }
 
+      // 2. Token generate karein (Registration object pass karke)
+      const token = await _messaging.getToken({ 
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: registration 
+      });
+
+      if (!token) { 
+        console.log('❌ [FCM] No token found'); 
+        return; 
+      }
+      console.log('✅ [FCM] Token generated:', token);
+
+      // 3. Token ko Firestore mein save karein
       const u = auth.currentUser;
       const data = {
         token: token,
@@ -858,23 +873,22 @@ document.addEventListener('DOMContentLoaded', function() {
         data.name = u.displayName || (u.email || '').split('@')[0] || 'User';
       }
 
-      // Save token in Firestore
       try {
         await db.collection('fcm_tokens').doc(token).set(data, { merge: true });
-        console.log('[FCM] Token saved to Firestore ✓');
+        console.log('✅ [FCM] Token saved to Firestore successfully!');
       } catch(e) {
-        console.warn('[FCM] Token save failed:', e.message);
+        console.error('❌ [FCM] Token save failed:', e.message);
       }
 
-      // Subscribe to all-users topic for broadcast
+      // 4. Subscribe to Topic
       try {
         await _messaging.subscribeToTopic('all-users');
-        console.log('[FCM] Subscribed to topic: all-users ✓');
+        console.log('✅ [FCM] Subscribed to topic: all-users');
       } catch(e) {
-        console.warn('[FCM] Topic subscribe failed:', e.message);
+        console.log('⚠️ [FCM] Topic subscribe failed:', e.message);
       }
     } catch (err) {
-      console.warn('[FCM] Registration error:', err && err.message);
+      console.error('❌ [FCM] Registration error:', err);
     }
   }
 
