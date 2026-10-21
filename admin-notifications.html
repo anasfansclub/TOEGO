@@ -176,7 +176,9 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   const CLOUDFLARE_WORKER_URL = 'https://toego-notification-worker.divinebatteriess.workers.dev/';
   const ADMIN_EMAILS = ['anasfansclub@gmail.com'];
-  const LOGO_URL = 'https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg'; // ✅ AAPKA NAYA LOGO
+  
+  // ✅ AAPKA LOGO
+  const LOGO_URL = 'https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg';
   
   let CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME"; 
   let CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
@@ -204,7 +206,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     }
   }).catch(()=>{});
 
-  // ✅ Naye aur Unique Templates (High Conversions)
   const TEMPLATES = [
     { cat:'fomo', title:'🔥 Bhai, 10 Minute me Sale khatam!', body:'Aapke liye special deal 10 minute me end ho rahi hai. Abhi check karo!', url:'/products.html' },
     { cat:'fomo', title:'😱 Sirf 3 Piece Bache Hain!', body:'Aapka pasandida product jald hi out of stock ho jayega. Jaldi karo!', url:'/products.html' },
@@ -422,21 +423,23 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     $('adm-send-btn').textContent = 'Sending…';
     showStatus('adm-send-status', 'Notification bhej raha hoon…', 'info');
 
-    // ✅ Yahan aapka naya LOGO set kiya gaya hai
+    // ✅ Payload for both Mobile & Desktop
     const fcmMessage = {
-      notification: { title: title, body: body },
-      data: {
-        title: title, body: body, image: image || '', url: url || '/shop-home.html'
-      },
       webpush: {
-        fcmOptions: { link: url || 'https://toego.in/shop-home.html' },
+        fcm_options: { link: url || 'https://toego.in/shop-home.html' },
         notification: {
           title: title,
           body: body,
-          icon: LOGO_URL, // Naya logo
+          icon: LOGO_URL,
           badge: LOGO_URL,
           image: image || undefined
         }
+      },
+      data: {
+        title: title, 
+        body: body, 
+        image: image || '', 
+        url: url || 'https://toego.in/shop-home.html'
       }
     };
 
