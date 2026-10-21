@@ -488,7 +488,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   </div>
 </div>
 
-<!-- ✅ NEW BLINKIT STYLE MAP ADDRESS MODAL -->
+<!-- ✅ BLINKIT STYLE MAP ADDRESS MODAL -->
 <div class="tg-modal" id="tg-addr-modal">
   <div class="tg-modal-card" style="padding-bottom: 20px;">
     <div class="tg-modal-head">
@@ -2500,7 +2500,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   async function setSavedAddresses(list) {
     if (currentUser) {
       try { await db.collection('users').doc(currentUser.uid).set({ addresses: list, updatedAt: FV.serverTimestamp() }, { merge: true }); }
-      catch(e) { toast('Could not save address', 'error'); }
+      catch(e) { toast('Could not save address', 'error'); console.error('Save address error:', e); }
     } else {
       try { localStorage.setItem(ADDR_LIST_KEY, JSON.stringify(list)); } catch(e) {}
     }
@@ -2640,7 +2640,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (el) el.classList.add('active');
   };
 
-  // ✅ BLINKIT STYLE MAP SETUP WITH FALLBACK
+  // ✅ FIXED MAP & LOCATION SETUP
   let tgMap = null;
   let tgGeocodeTimeout = null;
 
@@ -2650,7 +2650,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
     tgMap = L.map('tg-addr-map', { zoomControl: false, attributionControl: false }).setView([lat, lng], 16);
     
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    // ✅ Use OpenStreetMap standard tiles (NO API KEY REQUIRED)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
     }).addTo(tgMap);
 
@@ -2873,7 +2874,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (idx < 0) idx = list.length - 1;
       pendingAddrIndex = idx;
       try { localStorage.setItem(ADDR_LAST_IDX, String(idx)); } catch(e) {}
-    } catch(e) {}
+    } catch(e) { console.error('Save failed:', e); }
     
     tgCloseAddr();
     toast('Address saved', 'success');
