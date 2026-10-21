@@ -433,7 +433,7 @@ a{color:inherit;text-decoration:none;}
   const PROD_CACHE_PREFIX = 'toego_prod_v2_';
   const PROD_CACHE_TTL = 30 * 60 * 1000;
   const ALL_PROD_CACHE_KEY = 'toego_allprod_v2';
-  const HOME_PROD_CACHE_KEY = 'toego_home_prod_v23';   /* ✅ FIXED: v20 → v23 (match home) */
+  const HOME_PROD_CACHE_KEY = 'toego_home_prod_v23';
   const ALL_PROD_CACHE_TTL = 10 * 60 * 1000;
   const ALL_PROD_LIMIT = 60;
   const THEME_CACHE_KEY = 'toego_theme_v2';
@@ -734,7 +734,6 @@ a{color:inherit;text-decoration:none;}
     _productFetchInProgress = true;
     let fresh = null, fetchErr = null;
 
-    /* ✅ FIXED: spread order — id last so doc ID always wins */
     try { const snapCache = await withTimeout(db.collection('products').doc(pid).get({ source: 'cache' }), PRODUCT_FETCH_TIMEOUT); if (snapCache && snapCache.exists) fresh = { ...snapCache.data(), id: snapCache.id }; } catch(e) {}
     if (!fresh) { try { const snapServer = await withTimeout(db.collection('products').doc(pid).get(), PRODUCT_FETCH_TIMEOUT); if (snapServer && snapServer.exists) fresh = { ...snapServer.data(), id: snapServer.id }; } catch(e) { fetchErr = e; } }
     if (!fresh) { try { const snapServer2 = await withTimeout(db.collection('products').doc(pid).get({ source: 'server' }), PRODUCT_FETCH_TIMEOUT); if (snapServer2 && snapServer2.exists) fresh = { ...snapServer2.data(), id: snapServer2.id }; } catch(e) {} }
@@ -768,7 +767,6 @@ a{color:inherit;text-decoration:none;}
     try {
       unsubProductDoc = db.collection('products').doc(pid).onSnapshot(snap => {
         if (!snap.exists) return;
-        /* ✅ FIXED: spread order */
         const fresh = { ...snap.data(), id: snap.id };
         const changed = !PRODUCT || PRODUCT.rating !== fresh.rating || PRODUCT.ratingCount !== fresh.ratingCount || PRODUCT.stock !== fresh.stock || JSON.stringify(PRODUCT.sizeStock) !== JSON.stringify(fresh.sizeStock);
         PRODUCT = fresh;
@@ -1038,7 +1036,8 @@ a{color:inherit;text-decoration:none;}
         dt.setDate(dt.getDate() + days);
         const eta = dt.toLocaleDateString('en-IN', {day:'numeric', month:'short'});
         result.className = 'tg-pincode-result show ok';
-        result.innerHTML = '✓ Delivers by <b>' + eta + '</b> · ' + (days <= 3 ? 'Free' : '₹40') + ' delivery';
+        // ✅ FIXED: Hamesha "Free" dikhega, ₹40 nahi
+        result.innerHTML = '✓ Delivers by <b>' + eta + '</b> · Free delivery';
       } else {
         result.className = 'tg-pincode-result show fail';
         result.textContent = '✕ Sorry, we don\'t deliver to this pincode yet';
@@ -1088,13 +1087,11 @@ a{color:inherit;text-decoration:none;}
       if (!PRODUCT) return;
       let list = [];
       if (PRODUCT.category) {
-        /* ✅ FIXED: spread order */
         try { const q = await withTimeout(db.collection('products').where('active','==',true).where('category','==',PRODUCT.category).limit(12).get(), 8000); list = q.docs.map(d => ({ ...d.data(), id: d.id })).filter(x => x.id !== PRODUCT.id); }
         catch(e) { try { const q = await withTimeout(db.collection('products').where('category','==',PRODUCT.category).limit(12).get(), 8000); list = q.docs.map(d => ({ ...d.data(), id: d.id })).filter(x => x.id !== PRODUCT.id); } catch(e2) {} }
       }
       if (list.length < 4) { const fromAll = ALL_PRODUCTS.filter(x => !list.find(y => y.id === x.id)); list = list.concat(fromAll.slice(0, 12 - list.length)); }
-      if (!list.length) { /* ✅ FIXED: spread order */
-        try { const snap = await withTimeout(db.collection('products').limit(12).get(), 8000); list = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(x => x.id !== PRODUCT.id); } catch(e) {} }
+      if (!list.length) { try { const snap = await withTimeout(db.collection('products').limit(12).get(), 8000); list = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(x => x.id !== PRODUCT.id); } catch(e) {} }
       renderRelated(list.slice(0, 12));
     } catch(e) {
       if (ALL_PRODUCTS.length) renderRelated(ALL_PRODUCTS.slice(0, 12));
@@ -1147,7 +1144,6 @@ a{color:inherit;text-decoration:none;}
       try { snap = await withTimeout(db.collection('products').where('active','==',true).limit(ALL_PROD_LIMIT).get(), 8000); }
       catch(e) { try { snap = await withTimeout(db.collection('products').limit(ALL_PROD_LIMIT).get(), 8000); } catch(e2) { _allProductsFetching = false; return; } }
       if (snap && !snap.empty) {
-        /* ✅ FIXED: spread order */
         const list = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(p => p && p.id !== (PRODUCT && PRODUCT.id));
         ALL_PRODUCTS = list; cacheAllProducts(list); renderAllProducts(); _allProductsFetched = true;
       }
@@ -1167,7 +1163,6 @@ a{color:inherit;text-decoration:none;}
     try {
       db.collection('reviews').where('productId', '==', pid).get({ source: 'cache' }).then(snap => {
         if (!snap.empty) {
-          /* ✅ FIXED: spread order */
           REVIEWS = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
           renderReviewsBlock();
           renderRatingBreakdown();
@@ -1177,7 +1172,6 @@ a{color:inherit;text-decoration:none;}
     } catch(e) {}
     try {
       unsubReviews = db.collection('reviews').where('productId', '==', pid).onSnapshot(snap => {
-        /* ✅ FIXED: spread order */
         REVIEWS = snap.docs.map(d => ({ ...d.data(), id: d.id })).filter(r => r && r.active !== false).sort((a, b) => { const at = a.createdAt?.toDate?.()?.getTime?.() || 0; const bt = b.createdAt?.toDate?.()?.getTime?.() || 0; return bt - at; });
         _reviewsLoaded = true;
         renderReviewsBlock();
@@ -1261,7 +1255,6 @@ a{color:inherit;text-decoration:none;}
         .limit(1).get();
       if (!rSnap.empty) {
         const doc = rSnap.docs[0];
-        /* ✅ FIXED: spread order */
         MY_REVIEW = { ...doc.data(), id: doc.id };
         HAS_REVIEWED = true;
         updateReviewButton();
@@ -1277,7 +1270,6 @@ a{color:inherit;text-decoration:none;}
       const promises = queries.map(async (field) => {
         try {
           const snap = await db.collection('orders').where(field, '==', uid).limit(100).get();
-          /* ✅ FIXED: spread order */
           snap.docs.forEach(d => ordersMap.set(d.id, { ...d.data(), id: d.id }));
         } catch(e) {}
       });
@@ -1286,7 +1278,6 @@ a{color:inherit;text-decoration:none;}
       if (email) {
         try {
           const snap = await db.collection('orders').where('userEmail', '==', email).limit(50).get();
-          /* ✅ FIXED: spread order */
           snap.docs.forEach(d => ordersMap.set(d.id, { ...d.data(), id: d.id }));
         } catch(e) {}
       }
