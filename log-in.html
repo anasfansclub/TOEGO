@@ -334,9 +334,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     FIREBASE INIT
+     FIREBASE INIT & PERSISTENCE
      ═══════════════════════════════════════════════════════════════ */
   let auth, db, FV;
+  let persistencePromise = Promise.resolve();
+
   try {
     if (!window.__TOEGO_FB__) {
       window.__TOEGO_FB__ = firebase.initializeApp({
@@ -351,13 +353,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     auth = firebase.auth();
     db = firebase.firestore();
     FV = firebase.firestore.FieldValue;
-  } catch(e) { console.error('[init]', e); }
 
-  /* Persistence — LOCAL with SESSION fallback (better than NONE) */
-  try {
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .catch(() => auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(() => {}));
-  } catch(e) {}
+    // ✅ CRITICAL FIX: Await persistence before any auth calls
+    persistencePromise = auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .catch(() => auth.setPersistence(firebase.auth.Auth.Persistence.SESSION))
+      .catch(() => {});
+  } catch(e) { console.error('[init]', e); }
 
   /* ═══════════════════════════════════════════════════════════════
      SHOW LOADING IF GOOGLE PENDING (legacy safety — no-op now)
@@ -582,6 +583,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 
     setSubmitLoading(true, mode === 'signup' ? 'Creating account…' : 'Logging in…');
 
+    // ✅ Await persistence before auth
+    await persistencePromise;
+
     /* TIER 1: SDK */
     try {
       console.log('[tier1] SDK', mode);
@@ -654,18 +658,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     ✅ FIXED: GOOGLE LOGIN — POPUP ONLY, NO REDIRECT
+     GOOGLE LOGIN — ROBUST HANDLING
      ═══════════════════════════════════════════════════════════════ */
-  googleBtn.addEventListener('click', function() {
+  googleBtn.addEventListener('click', async function() {
     if (googleBtn.disabled) return;
 
     setGoogleLoading(true);
 
+    // ✅ Await persistence before Google auth
+    await persistencePromise;
+
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    /* No await before signInWithPopup — preserves user gesture */
-    auth.signInWithPopup(provider).then(async function(result) {
+    try {
+      // Try popup
+      const result = await auth.signInWithPopup(provider);
       if (result && result.user) {
         console.log('[google] popup success:', result.user.email);
         clearPendingGoogle();
@@ -681,17 +689,35 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       } else {
         setGoogleLoading(false);
       }
-    }).catch(async function(err) {
+    } catch (err) {
       const code = err && err.code;
       console.log('[google] error:', code);
 
-      /* User closed popup — silent, just re-enable button */
+      // ✅ CRITICAL FIX: Handle missing-initial-state gracefully
+      // This means the user actually logged in, but the state was lost.
+      if (code === 'auth/missing-initial-state') {
+        console.log('[google] missing state — waiting for onAuthStateChanged');
+        // Keep loading state, wait for onAuthStateChanged
+        setTimeout(() => {
+          if (!auth.currentUser && !_redirected) {
+            setGoogleLoading(false);
+            showModal({
+              type: 'error',
+              title: 'Login Interrupted',
+              desc: 'Browser ne storage block kiya. Kripya <b>third-party cookies</b> allow karein ya <b>normal mode</b> me try karein.',
+              primaryText: 'Retry',
+              onPrimary: () => setTimeout(() => googleBtn.click(), 150)
+            });
+          }
+        }, 3000);
+        return;
+      }
+
       if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
         setGoogleLoading(false);
         return;
       }
 
-      /* Popup blocked — clear instructions */
       if (code === 'auth/popup-blocked') {
         setGoogleLoading(false);
         showModal({
@@ -705,7 +731,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      /* In-app browser (Instagram, Facebook, etc.) */
       if (code === 'auth/operation-not-supported-in-this-environment') {
         setGoogleLoading(false);
         showModal({
@@ -717,7 +742,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      /* Network issue */
       if (code === 'auth/network-request-failed') {
         setGoogleLoading(false);
         showModal({
@@ -730,7 +754,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      /* Domain not authorized */
       if (code === 'auth/unauthorized-domain') {
         setGoogleLoading(false);
         showModal({
@@ -742,7 +765,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      /* Account disabled */
       if (code === 'auth/user-disabled') {
         setGoogleLoading(false);
         showModal({
@@ -754,7 +776,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      /* Storage errors — try recovery from current user */
       if (code === 'auth/web-storage-unsupported' || code === 'auth/internal-error') {
         if (auth.currentUser) {
           let idToken = '';
@@ -778,13 +799,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      /* Any other error */
       setGoogleLoading(false);
       showError(err);
-    });
+    }
   });
 
-  /* ═══ Redirect return (no-op now — safe) ═══ */
+  /* ═══ Redirect return (safety net) ═══ */
   (async function handleRedirectReturn() {
     try {
       const result = await auth.getRedirectResult();
@@ -824,14 +844,12 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         });
         return;
       }
-      /* Not logged in — clear any stale cache, stay on login page */
       console.log('[session-restore] not logged in — showing login form');
       safeRemove(AUTH_CACHE_KEY);
       safeRemove(SESSION_KEY);
       return;
     }
 
-    /* Subsequent fires — user just logged in */
     if (user && !_redirected) {
       console.log('[auth-state] user present:', user.email);
       clearPendingGoogle();
