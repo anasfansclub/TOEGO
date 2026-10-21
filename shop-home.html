@@ -880,8 +880,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('✅ [FCM] Token saved to Firestore successfully!');
 
       // 5. Topic subscribe karein
-      await _messaging.subscribeToTopic('all-users');
-      console.log('✅ [FCM] Subscribed to all-users');
+     
 
     } catch (err) {
       console.error('❌ [FCM] Registration error:', err);
