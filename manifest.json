@@ -1,0 +1,20 @@
+{
+  "name": "TOEGO",
+  "short_name": "TOEGO",
+  "start_url": "/shop-home.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2963eb",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
