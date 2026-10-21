@@ -9,20 +9,17 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://toego.in/shop-home.html">
 
-<!-- ✅ FAVICON ADDED HERE -->
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-<!-- ✅ OPEN GRAPH FOR WHATSAPP/FACEBOOK SHARING -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://toego.in/shop-home.html">
 <meta property="og:title" content="TOEGO - Shop Smart, Save Big!">
 <meta property="og:description" content="Discover the best deals on footwear, slippers, shoes, watches, bags, and electronics at TOEGO.in. Fast delivery guaranteed.">
 <meta property="og:image" content="https://toego.in/og-image.jpg">
 
-<!-- ✅ TWITTER CARD -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TOEGO - Online Shopping">
 <meta name="twitter:description" content="Shop smart, save big on footwear, fashion, and more at toego.in.">
@@ -45,15 +42,25 @@ html,body{margin:0!important;padding:0!important;width:100%!important;max-width:
 #wrapwrap,#wrap,main,main#wrap{width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;}
 header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bottom,.o_footer,#footer,.o_footer_copyright,.o_breadcrumb,.breadcrumb,.o_website_edit_toolbar,.o_notification_manager,.o_editor_banner,.o_loading_indicator{display:none!important;}
 
-#tg-splash{position:fixed;inset:0;background:linear-gradient(135deg,#2874f0 0%,#1a5dc7 50%,#0f1729 100%);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;will-change:opacity;pointer-events:none;}
+/* ═══════════ SPLASH — BLINKIT/MEESHO STYLE ═══════════ */
+#tg-splash{position:fixed;inset:0;background:linear-gradient(135deg,#2874f0 0%,#1a5dc7 50%,#0f1729 100%);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;will-change:opacity;pointer-events:none;overflow:hidden;}
 #tg-splash.gone{display:none!important;}
-#tg-splash.hide{opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s;pointer-events:none;}
-.tg-splash-logo{font-weight:900;font-style:italic;color:#fff;font-size:clamp(48px,12vw,110px);letter-spacing:-3px;line-height:1;}
+#tg-splash.hide{opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s ease;pointer-events:none;}
+.tg-splash-inner{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px;}
+.tg-splash-logo-wrap{animation:tgSplashLogoPop 900ms cubic-bezier(.34,1.56,.64,1) forwards;transform-origin:center center;opacity:0;}
+.tg-splash-logo{font-weight:900;font-style:italic;color:#fff;font-size:clamp(52px,13vw,118px);letter-spacing:-3px;line-height:1;text-shadow:0 10px 40px rgba(0,0,0,0.35);}
 .tg-splash-logo span{color:#ffe500;}
-.tg-splash-tag{color:#ffe500;font-size:clamp(11px,1.8vw,16px);font-style:italic;font-weight:500;margin-top:14px;letter-spacing:5px;text-transform:uppercase;}
-.tg-splash-loader{width:min(200px,60vw);height:4px;background:rgba(255,255,255,0.2);border-radius:999px;margin:40px auto 0;overflow:hidden;position:relative;}
-.tg-splash-loader::after{content:'';position:absolute;top:0;bottom:0;width:40%;background:#ffe500;border-radius:999px;animation:tgSplashLoad 1s ease-in-out infinite;}
-@keyframes tgSplashLoad{0%{left:-40%;}100%{left:100%;}}
+.tg-splash-tag{color:#ffe500;font-size:clamp(11px,1.8vw,16px);font-style:italic;font-weight:600;margin-top:16px;letter-spacing:6px;text-transform:uppercase;opacity:0;animation:tgSplashFadeUp .65s .5s ease-out forwards;}
+.tg-splash-loader{width:min(220px,65vw);height:4px;background:rgba(255,255,255,0.15);border-radius:999px;margin-top:28px;overflow:hidden;position:relative;opacity:0;animation:tgSplashFadeUp .5s .75s ease-out forwards;}
+.tg-splash-loader-bar{position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,#ffe500,#ffc400,#ffe500);border-radius:999px;animation:tgSplashLoaderSlide 1.3s cubic-bezier(.4,0,.6,1) infinite;box-shadow:0 0 12px rgba(255,229,0,0.6);}
+.tg-splash-dots{display:flex;gap:9px;margin-top:16px;opacity:0;animation:tgSplashFadeUp .5s .95s ease-out forwards;}
+.tg-splash-dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.55);animation:tgSplashDotPulse 1.4s ease-in-out infinite;}
+.tg-splash-dots span:nth-child(2){animation-delay:.18s;}
+.tg-splash-dots span:nth-child(3){animation-delay:.36s;}
+@keyframes tgSplashLogoPop{0%{transform:scale(0.35) rotate(-12deg);opacity:0;}55%{transform:scale(1.18) rotate(3deg);opacity:1;}80%{transform:scale(0.96) rotate(-1deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+@keyframes tgSplashFadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes tgSplashLoaderSlide{0%{left:-45%;}100%{left:105%;}}
+@keyframes tgSplashDotPulse{0%,80%,100%{transform:scale(0.55);opacity:0.35;}40%{transform:scale(1);opacity:1;}}
 
 #tg-meesho{background:#f5f5f6;color:#212121;min-height:100vh;padding-top:var(--hdr-h);padding-bottom:68px;overflow-x:hidden;width:100%;position:relative;}
 #tg-meesho *{box-sizing:border-box;}
@@ -63,7 +70,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 #tg-meesho input{font:inherit;}
 #tg-meesho svg{display:block;}
 
-.tg-mhd{background:var(--tg-primary);position:fixed;top:0;left:0;right:0;z-index:1000;height:58px;box-shadow:0 1px 3px rgba(0,0,0,0.12);contain:layout paint;}
+/* ═══════════ HEADER — FIXED #2963eb ═══════════ */
+.tg-mhd{background:#2963eb;position:fixed;top:0;left:0;right:0;z-index:1000;height:58px;box-shadow:0 1px 3px rgba(0,0,0,0.12);contain:layout paint;}
 .tg-mhd-inner{width:100%;padding:8px 16px;display:flex;align-items:center;gap:12px;height:58px;overflow:hidden;}
 .tg-mlogo{display:flex;align-items:center;gap:8px;padding-right:2px;flex-shrink:0;}
 .tg-mlogo-mark{width:34px;height:34px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--tg-primary);font-weight:900;font-style:italic;font-size:20px;flex-shrink:0;}
@@ -76,8 +84,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 .tg-mhd-actions{display:flex;align-items:center;gap:2px;margin-left:auto;flex-shrink:0;}
 .tg-mhd-btn{color:#fff;padding:8px 12px;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;position:relative;height:42px;}
 .tg-mhd-btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.tg-mcart-badge{position:absolute;top:3px;right:5px;background:#ff6161;color:#fff;font-size:10px;font-weight:700;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid var(--tg-primary);}
-.tg-mbell.has-new::after{content:'';position:absolute;top:6px;right:6px;width:9px;height:9px;background:#ffe500;border-radius:50%;border:1.5px solid var(--tg-primary);}
+.tg-mcart-badge{position:absolute;top:3px;right:5px;background:#ff6161;color:#fff;font-size:10px;font-weight:700;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid #2963eb;}
+.tg-mbell.has-new::after{content:'';position:absolute;top:6px;right:6px;width:9px;height:9px;background:#ffe500;border-radius:50%;border:1.5px solid #2963eb;}
 @media (min-width:1025px){
   .tg-mhd{transition:height .2s ease;}
   .tg-mhd.scrolled{height:52px;}
@@ -575,11 +583,15 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 </head>
 <body>
 
+<!-- ═══════════ SPLASH HTML — BLINKIT/MEESHO STYLE ═══════════ -->
 <div id="tg-splash">
-  <div style="text-align:center;">
-    <div class="tg-splash-logo">TOE<span>GO</span></div>
+  <div class="tg-splash-inner">
+    <div class="tg-splash-logo-wrap">
+      <div class="tg-splash-logo">TOE<span>GO</span></div>
+    </div>
     <div class="tg-splash-tag">Explore Plus</div>
-    <div class="tg-splash-loader"></div>
+    <div class="tg-splash-loader"><div class="tg-splash-loader-bar"></div></div>
+    <div class="tg-splash-dots"><span></span><span></span><span></span></div>
   </div>
 </div>
 
@@ -694,7 +706,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-/* SPLASH (1.2 SECONDS - FIRST TIME ONLY) */
+/* SPLASH (2.6 SECONDS - FIRST TIME ONLY) — Blinkit/Meesho style */
 (function() {
   var el = document.getElementById('tg-splash');
   if (!el) return;
@@ -721,17 +733,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   var hideNow = function() {
     if (!el || el.classList.contains('gone')) return;
     el.classList.add('hide');
-    setTimeout(function() { if (el) el.classList.add('gone'); }, 300);
+    setTimeout(function() { if (el) el.classList.add('gone'); }, 500);
   };
   
-  // ✅ 1.2 Seconds (1200ms) TIMING SET KI HAI
-  setTimeout(hideNow, 1200);
-  
-  if (document.readyState === 'complete') setTimeout(hideNow, 0);
-  else window.addEventListener('load', function() { setTimeout(hideNow, 0); }, { once: true });
+  // ✅ 2.6 Seconds — Blinkit/Meesho style splash
+  setTimeout(hideNow, 2600);
 })();
 
-/* THEME CACHE */
+/* THEME CACHE — header fixed #2963eb */
 (function() {
   try {
     var c = localStorage.getItem('toego_theme_colors');
@@ -743,8 +752,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     document.documentElement.style.backgroundColor = t.primary;
     var metas = document.querySelectorAll('meta[name="theme-color"]');
     for (var i = 0; i < metas.length; i++) metas[i].setAttribute('content', t.primary);
+    /* ✅ Header fixed #2963eb */
     var hd = document.getElementById('tg-mhd');
-    if (hd) hd.style.background = t.primary;
+    if (hd) hd.style.background = '#2963eb';
   } catch(e) {}
 })();
 </script>
@@ -1178,7 +1188,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     tileMeta.setAttribute('content', primary);
 
-    const hd = document.getElementById('tg-mhd'); if (hd) hd.style.background = primary;
+    /* ✅ Header is FIXED #2963eb — theme change won't touch it */
+    const hd = document.getElementById('tg-mhd'); if (hd) hd.style.background = '#2963eb';
     const sp = document.getElementById('tg-splash'); if (sp) sp.style.background = `linear-gradient(135deg, ${primary} 0%, ${dark} 50%, #0f1729 100%)`;
 
     document.documentElement.style.backgroundColor = primary;
