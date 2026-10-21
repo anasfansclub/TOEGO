@@ -94,6 +94,20 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   .tg-mhd.scrolled .tg-msearch{max-width:100%;}
 }
 
+/* ═══════════ PUSH NOTIFICATION PERMISSION BANNER ═══════════ */
+.tg-notif-banner{position:fixed;bottom:80px;left:12px;right:12px;background:linear-gradient(135deg,#2963eb,#1a4fc7);color:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,0.28);z-index:9997;display:none;align-items:center;gap:12px;animation:tgNotifBannerIn .4s cubic-bezier(.34,1.56,.64,1);}
+.tg-notif-banner.show{display:flex;}
+@keyframes tgNotifBannerIn{from{transform:translateY(120%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.tg-notif-banner-icon{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.tg-notif-banner-body{flex:1;min-width:0;}
+.tg-notif-banner-title{font-size:13.5px;font-weight:800;margin-bottom:2px;}
+.tg-notif-banner-text{font-size:11.5px;opacity:0.9;line-height:1.35;}
+.tg-notif-banner-btn{background:#fff;color:#2963eb;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:800;white-space:nowrap;flex-shrink:0;cursor:pointer;border:none;}
+.tg-notif-banner-close{position:absolute;top:6px;right:8px;background:transparent;border:none;color:rgba(255,255,255,0.7);font-size:14px;cursor:pointer;padding:4px;line-height:1;}
+@media (min-width:769px){
+  .tg-notif-banner{left:auto;right:20px;bottom:100px;max-width:380px;top:auto;}
+}
+
 .tg-sp{position:fixed;inset:0;background:rgba(15,23,41,0.55);z-index:99998;display:none;opacity:0;transition:opacity .18s ease;overflow:hidden;touch-action:pan-y;}
 .tg-sp.show{display:block;opacity:1;}
 .tg-sp-inner{background:#fff;border-radius:0 0 20px 20px;box-shadow:0 12px 40px rgba(0,0,0,0.28);padding:14px 16px 18px;animation:tgSpSlide .28s cubic-bezier(.34,1.2,.64,1);max-height:100vh;overflow-y:auto;}
@@ -595,6 +609,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   </div>
 </div>
 
+<!-- ═══════════ PUSH NOTIFICATION PERMISSION BANNER ═══════════ -->
+<div class="tg-notif-banner" id="tg-notif-banner">
+  <div class="tg-notif-banner-icon">🔔</div>
+  <div class="tg-notif-banner-body">
+    <div class="tg-notif-banner-title">Notifications On Karein</div>
+    <div class="tg-notif-banner-text">Sale, naye products aur offers ki updates seedha paayein</div>
+  </div>
+  <button class="tg-notif-banner-btn" onclick="tgEnableNotifs()">Enable</button>
+  <button class="tg-notif-banner-close" onclick="tgDismissNotifBanner()">✕</button>
+</div>
+
 <div id="tg-meesho">
   <header class="tg-mhd" id="tg-mhd">
     <div class="tg-mhd-inner">
@@ -704,6 +729,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
 <script>
 /* SPLASH (2.6 SECONDS - FIRST TIME ONLY) — Blinkit/Meesho style */
@@ -781,6 +807,117 @@ document.addEventListener('DOMContentLoaded', function() {
   try { db.enablePersistence({ synchronizeTabs: false }).catch(() => {}); } catch(e) {}
 
   const FV = firebase.firestore.FieldValue;
+
+  // ═══════════════════════════════════════════════
+  // ✅ PUSH NOTIFICATION (FCM) SETUP
+  // ═══════════════════════════════════════════════
+  const VAPID_KEY = "BAn0Fb7ff1ZDDrvbE-IFvBNWAZTD1tUb7XE3bYxv1p8wo-C4v7AeIlwDGMwX-DuKVPx5ZuOmxrhM_pxnHc3_QUY"; // ⚠️ Firebase Console → Project Settings → Cloud Messaging → Web Push certificates → Generate Key Pair → Copy karke yahan paste karo
+
+  let _messaging = null;
+  let _fcmToken = null;
+  try {
+    _messaging = firebase.messaging();
+    _messaging.onMessage((payload) => {
+      console.log('[FCM] Foreground message:', payload);
+      const n = payload.notification || {};
+      const data = payload.data || {};
+      const title = n.title || 'TOEGO';
+      const body = n.body || '';
+      const img = n.image || data.image || '';
+      // Show top in-app notification
+      try { tgMShowTopNotif(title, body, data.url || '/shop-home.html'); } catch(e) {}
+      // Also Firestore notification list refresh
+      try { loadNotifs(); } catch(e) {}
+    });
+  } catch(e) {
+    console.warn('[FCM] Messaging not available:', e.message);
+  }
+
+  async function tgRegisterFCM() {
+    if (!_messaging) return;
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+
+    try {
+      const token = await _messaging.getToken({ vapidKey: VAPID_KEY });
+      if (!token) { console.log('[FCM] No token'); return; }
+      _fcmToken = token;
+      console.log('[FCM] Token:', token);
+
+      const u = auth.currentUser;
+      const data = {
+        token: token,
+        updatedAt: FV.serverTimestamp(),
+        userAgent: navigator.userAgent,
+        platform: navigator.platform || '',
+        lang: navigator.language || ''
+      };
+      if (u) {
+        data.uid = u.uid;
+        data.email = u.email || '';
+        data.name = u.displayName || (u.email || '').split('@')[0] || 'User';
+      }
+
+      // Save token in Firestore
+      try {
+        await db.collection('fcm_tokens').doc(token).set(data, { merge: true });
+        console.log('[FCM] Token saved to Firestore ✓');
+      } catch(e) {
+        console.warn('[FCM] Token save failed:', e.message);
+      }
+
+      // Subscribe to all-users topic for broadcast
+      try {
+        await _messaging.subscribeToTopic('all-users');
+        console.log('[FCM] Subscribed to topic: all-users ✓');
+      } catch(e) {
+        console.warn('[FCM] Topic subscribe failed:', e.message);
+      }
+    } catch (err) {
+      console.warn('[FCM] Registration error:', err && err.message);
+    }
+  }
+
+  // Show banner if permission not decided yet
+  function tgMaybeShowNotifBanner() {
+    try {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default') {
+        if (localStorage.getItem('toego_notif_dismissed') === '1') return;
+        const b = document.getElementById('tg-notif-banner');
+        if (b) {
+          setTimeout(() => b.classList.add('show'), 3500);
+        }
+      }
+    } catch(e) {}
+  }
+
+  // User clicks "Enable" button
+  window.tgEnableNotifs = async function() {
+    try {
+      if (!('Notification' in window)) { toast('Browser supports nahi karta', 'error'); return; }
+      
+      const perm = await Notification.requestPermission();
+      const banner = document.getElementById('tg-notif-banner');
+      if (banner) banner.classList.remove('show');
+      
+      if (perm === 'granted') {
+        toast('🔔 Notifications enable ho gaye!', 'success');
+        await tgRegisterFCM();
+      } else if (perm === 'denied') {
+        toast('Notifications block ho gaye', 'info');
+        try { localStorage.setItem('toego_notif_dismissed', '1'); } catch(e) {}
+      }
+    } catch(e) {
+      console.warn(e);
+    }
+  };
+
+  window.tgDismissNotifBanner = function() {
+    const b = document.getElementById('tg-notif-banner');
+    if (b) b.classList.remove('show');
+    try { localStorage.setItem('toego_notif_dismissed', '1'); } catch(e) {}
+  };
 
   /* STATE */
   let CONFIG = null;
@@ -2656,6 +2793,11 @@ document.addEventListener('DOMContentLoaded', function() {
       watchCart(u.uid); loadWishlist();
       if (Date.now() - _trackerLastLoad > 60000) loadTracker();
       loadRecentlyViewed();
+
+      // ✅ FCM — register if permission already granted
+      if ('Notification' in window && Notification.permission === 'granted') {
+        setTimeout(() => { tgRegisterFCM(); }, 1500);
+      }
     } else {
       if (lb) lb.href = 'log-in.html';
       if (am) am.href = 'log-in.html';
@@ -2725,6 +2867,21 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(() => { 
     if (!document.hidden) { try { watchNotifs(); } catch(e) {} }
   }, 8000);
+
+  // ✅ FCM — show permission banner after splash
+  setTimeout(() => {
+    if (auth.currentUser) {
+      tgMaybeShowNotifBanner();
+    } else {
+      // Even without login, can ask for notification permission (guest)
+      tgMaybeShowNotifBanner();
+    }
+  }, 4000);
+
+  // ✅ FCM — if permission granted at page load, register after splash
+  if ('Notification' in window && Notification.permission === 'granted') {
+    setTimeout(() => { tgRegisterFCM(); }, 5000);
+  }
 
   let _cartTimer = null;
   function _startCartTimer() {
