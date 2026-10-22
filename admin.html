@@ -463,6 +463,121 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 .tg-courier-info-v{font-weight:800;color:#212121;text-align:right;word-break:break-all;font-size:13.5px;}
 .tg-save-toolbar{display:flex;gap:8px;padding:10px 12px 0;flex-wrap:wrap;align-items:center;}
 .tg-save-toolbar .tg-srch{flex:1;min-width:200px;margin-bottom:0;}
+
+/* ============ ORDER MODAL v15 — COMPLETE CSS ============ */
+.tg-order-hd-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.tg-order-hd-actions button{padding:8px 12px;border-radius:8px;font-size:11.5px;font-weight:800;display:inline-flex;align-items:center;gap:5px;border:none;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.3px;}
+.tg-order-hd-actions .print-inv{background:#fff;color:#0f1729;}
+.tg-order-hd-actions .print-lbl{background:#ffe500;color:#0f1729;}
+.tg-order-hd-actions .copy-oid{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);}
+.tg-order-hd-actions button:hover{filter:brightness(1.1);transform:translateY(-1px);}
+
+.tg-cust-card{background:linear-gradient(135deg,#f0f5ff,#e0eaff);border:1.5px solid #2874f0;border-radius:12px;padding:14px;margin-bottom:14px;}
+.tg-cust-name{font-size:15px;font-weight:800;color:#0f1729;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.tg-cust-uid{font-size:10.5px;font-family:monospace;color:#888;background:#fff;padding:2px 6px;border-radius:4px;font-weight:600;word-break:break-all;}
+.tg-cust-row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#333;margin-top:6px;flex-wrap:wrap;word-break:break-word;}
+.tg-cust-row b{color:#666;font-weight:700;font-size:10.5px;text-transform:uppercase;min-width:56px;}
+.tg-cust-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.tg-cust-actions button{flex:1;min-width:76px;padding:10px 8px;border-radius:8px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;border:none;transition:all .15s;text-transform:uppercase;letter-spacing:.3px;}
+.tg-cust-actions .call{background:linear-gradient(135deg,#1b8a3a,#15803d);color:#fff;}
+.tg-cust-actions .wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;}
+.tg-cust-actions .email{background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;}
+.tg-cust-actions .hist{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;}
+.tg-cust-actions button:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.tg-cust-actions button svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.tg-cust-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(40,116,240,0.25);}
+.tg-cust-stat{background:#fff;border-radius:8px;padding:8px 6px;text-align:center;}
+.tg-cust-stat-n{font-size:15px;font-weight:900;color:#2874f0;line-height:1;}
+.tg-cust-stat-l{font-size:9px;color:#888;font-weight:700;text-transform:uppercase;margin-top:3px;letter-spacing:.3px;}
+
+.tg-addr-card{background:#f8f9fb;border:1.5px solid #e0e0e0;border-radius:12px;padding:14px;margin-bottom:14px;}
+.tg-addr-label{font-size:11px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.tg-addr-label svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;flex-shrink:0;}
+.tg-addr-badge{display:inline-block;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.4px;margin-left:6px;}
+.tg-addr-badge.home{background:#e0eaff;color:#2874f0;}
+.tg-addr-badge.work{background:#fff3e0;color:#fb641b;}
+.tg-addr-badge.other{background:#f3eefb;color:#7e57c2;}
+.tg-addr-body{font-size:13px;color:#333;line-height:1.65;word-break:break-word;}
+.tg-addr-body b{color:#0f1729;font-weight:700;}
+.tg-addr-empty{text-align:center;padding:16px;color:#c62828;font-size:12.5px;background:#fff;border-radius:8px;border:1.5px dashed #ef9a9a;font-weight:600;}
+
+.tg-tag-bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:10px;background:#fff;border:1.5px solid #e0e0e0;border-radius:10px;}
+.tg-order-tag{padding:5px 10px;border-radius:999px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
+.tg-order-tag.urgent{background:#fee2e2;color:#991b1b;border-color:#fca5a5;}
+.tg-order-tag.vip{background:#fef3c7;color:#92400e;border-color:#fcd34d;}
+.tg-order-tag.fraud{background:#fce7f3;color:#9d174d;border-color:#f9a8d4;}
+.tg-order-tag.bulk{background:#e0e7ff;color:#3730a3;border-color:#a5b4fc;}
+.tg-order-tag.active{transform:scale(1.05);box-shadow:0 2px 6px rgba(0,0,0,0.15);border-color:#0f1729;background:#0f1729;color:#fff;}
+.tg-tag-select{flex:1;min-width:140px;padding:7px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:12px;outline:none;background:#fff;font-family:inherit;cursor:pointer;}
+.tg-tag-select:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,.1);}
+
+.tg-pay-card-new{background:linear-gradient(135deg,#f0fff4,#e6f7ec);border:1.5px solid #a5d6b7;border-radius:12px;padding:14px;margin-bottom:14px;}
+.tg-pay-card-new.pending{background:linear-gradient(135deg,#fff8e1,#ffecb3);border-color:#ffe082;}
+.tg-pay-card-new.failed{background:linear-gradient(135deg,#ffebee,#ffcdd2);border-color:#ef9a9a;}
+.tg-pay-card-new h4{font-size:11.5px;font-weight:800;color:#0f1729;margin:0 0 10px;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px;}
+.tg-pay-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.tg-pay-grid .pay-k{font-size:9.5px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.tg-pay-grid .pay-v{font-size:12.5px;font-weight:800;color:#0f1729;word-break:break-all;margin-top:2px;}
+.tg-pay-pid{grid-column:1/-1;background:#fff;padding:8px 10px;border-radius:6px;font-family:monospace;font-size:11px;color:#0f1729;word-break:break-all;border:1px dashed #c5cad3;margin-top:6px;}
+
+.tg-admin-note{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:1.5px solid #ffb74d;border-radius:12px;padding:14px;margin-bottom:14px;}
+.tg-admin-note-title{font-size:11px;font-weight:800;color:#e65100;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.tg-admin-note textarea{width:100%;border:1.5px solid #ffb74d;border-radius:8px;padding:10px;font-size:12.5px;outline:none;background:#fff;font-family:inherit;resize:vertical;min-height:60px;box-sizing:border-box;}
+.tg-admin-note textarea:focus{border-color:#f57c00;box-shadow:0 0 0 3px rgba(245,124,0,.1);}
+.tg-admin-note-save{margin-top:8px;padding:9px 14px;background:linear-gradient(135deg,#f57c00,#e65100);color:#fff;border-radius:8px;font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;border:none;}
+.tg-admin-note-save:hover{filter:brightness(1.1);}
+
+.tg-seller-block{background:#f8f9fb;border:1.5px solid #e0e0e0;border-radius:10px;padding:12px;margin-bottom:10px;}
+.tg-seller-block-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.tg-seller-block-head b{font-size:13px;color:#0f1729;}
+.tg-seller-block-stats{display:flex;gap:10px;font-size:11px;color:#666;flex-wrap:wrap;}
+.tg-seller-block-stats span b{color:#0f1729;font-weight:800;}
+
+.tg-order-item-new{display:flex;gap:10px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eef1f6;margin-bottom:6px;}
+.tg-order-item-new:last-child{margin-bottom:0;}
+.tg-order-item-new .oimg{width:52px;height:52px;border-radius:6px;overflow:hidden;background:#f5f5f6;flex-shrink:0;}
+.tg-order-item-new .oimg img{width:100%;height:100%;object-fit:cover;display:block;}
+.tg-order-item-new .obody{flex:1;min-width:0;}
+.tg-order-item-new .oname{font-size:12.5px;font-weight:700;color:#0f1729;margin-bottom:3px;line-height:1.3;word-break:break-word;}
+.tg-order-item-new .ometa{font-size:11px;color:#888;margin-top:2px;}
+.tg-order-item-new .oprice{font-size:13px;font-weight:800;color:#1b8a3a;white-space:nowrap;}
+
+.tg-order-qr{background:#fff;border:1.5px solid #0f1729;border-radius:10px;padding:10px;display:flex;gap:12px;align-items:center;margin-bottom:14px;}
+.tg-order-qr canvas,.tg-order-qr img{width:80px;height:80px;display:block;border-radius:6px;flex-shrink:0;}
+.tg-order-qr-info{flex:1;min-width:0;font-size:11px;line-height:1.5;}
+.tg-order-qr-info b{font-family:monospace;font-size:12px;display:block;margin-bottom:4px;word-break:break-all;}
+
+.tg-order-courier-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.tg-order-courier-actions button{flex:1;min-width:120px;padding:11px;border-radius:8px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;border:none;transition:all .15s;}
+.tg-order-courier-actions button:hover{transform:translateY(-1px);filter:brightness(1.05);}
+
+.tg-fraud-flags-card{background:linear-gradient(135deg,#fce7f3,#fbcfe8);border:1.5px solid #f9a8d4;border-radius:10px;padding:12px;margin-bottom:12px;}
+.tg-fraud-flags-card h4{font-size:11px;font-weight:800;color:#9d174d;text-transform:uppercase;letter-spacing:.6px;margin:0 0 8px;display:flex;align-items:center;gap:6px;}
+.tg-fraud-flags-card ul{margin:0;padding-left:18px;font-size:12px;color:#831843;line-height:1.6;}
+.tg-fraud-flags-card ul li{margin-bottom:2px;}
+
+.tg-order-history-card{background:#fff;border:1.5px solid #e0e0e0;border-radius:10px;padding:12px;margin-bottom:12px;}
+.tg-order-history-card h4{font-size:11px;font-weight:800;color:#2874f0;text-transform:uppercase;letter-spacing:.6px;margin:0 0 8px;display:flex;align-items:center;gap:6px;}
+.tg-order-history-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;}
+.tg-order-history-grid>div{background:#f8f9fb;border-radius:6px;padding:8px 6px;text-align:center;}
+.tg-order-history-grid .n{font-size:15px;font-weight:900;color:#2874f0;line-height:1;}
+.tg-order-history-grid .l{font-size:9px;color:#888;font-weight:700;text-transform:uppercase;margin-top:3px;letter-spacing:.3px;}
+
+.tg-cust-order-row{padding:10px;border:1px solid #eef1f6;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;transition:all .15s;}
+.tg-cust-order-row:hover{background:#f0f5ff;border-color:#2874f0;}
+.tg-cust-order-row .left{flex:1;min-width:0;}
+.tg-cust-order-row .oid{font-family:monospace;font-size:12px;font-weight:800;color:#0f1729;word-break:break-all;}
+.tg-cust-order-row .odate{font-size:10.5px;color:#888;margin-top:2px;}
+.tg-cust-order-row .right{text-align:right;flex-shrink:0;}
+
+@media (max-width:520px){
+  .tg-pay-grid{grid-template-columns:1fr;}
+  .tg-cust-stats{grid-template-columns:repeat(3,1fr);}
+  .tg-order-history-grid{grid-template-columns:repeat(3,1fr);}
+  .tg-order-hd-actions button{font-size:10.5px;padding:7px 9px;}
+  .tg-cust-actions button{font-size:10px;padding:8px;min-width:64px;}
+  .tg-seller-block-head{flex-direction:column;align-items:flex-start;gap:4px;}
+}
 </style>
 </head>
 <body>
@@ -1315,6 +1430,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
 </div>
 
 <div class="tg-toasts" id="tg-toasts"></div>
+
+<!-- ✅ Customer Orders Modal -->
+<div class="tg-mod" id="mod-cust-orders">
+  <div class="tg-mod-c" style="max-width:600px;">
+    <div class="tg-mod-h">
+      <div class="tg-mod-t" id="mcust-title">Customer Orders</div>
+      <button class="tg-mod-x" onclick="tgCloseMod('mod-cust-orders')">✕</button>
+    </div>
+    <div id="mcust-body" style="max-height:70vh;overflow-y:auto;"></div>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -4077,94 +4203,458 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     tgExportOrdersExcelList(list, `TOEGO_Orders_${ORDER_FILTER}_${new Date().toISOString().slice(0,10)}`);
   };
 
-  window.tgOpenOrder = function(oid, skipHistory){
-    const o = ALL_ORDERS.find(x=>x.id===oid); if (!o) return;
-    const st = normStatus(o.status);
-    const cls = statusClass(o.status);
-    const items = Array.isArray(o.items)?o.items:[];
-    const subtotal = items.reduce((a,i)=>a+Number(i.price||0)*Number(i.qty||1),0);
-    const delivery = Number(o.deliveryCharge||o.delivery||0);
-    const gst = Number(o.gstAmount||o.gst||0);
-    const discount = Number(o.discount||o.couponDiscount||0);
-    const total = Number(o.total||0);
-    let itemsHtml = items.length ? items.map(it => {
-      const img = it.image || (it.images&&it.images[0]) || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T';
-      return '<div class="tg-od-item"><div class="tg-od-item-img"><img src="'+esc(img)+'"/></div><div class="tg-od-item-b"><div class="tg-od-item-n">'+esc(it.name||'Product')+'</div><div class="tg-od-item-s">Seller: '+esc(it.sellerName||'—')+' · Qty: '+Number(it.qty||1)+'</div></div><div class="tg-od-item-p">'+inr(Number(it.price||0)*Number(it.qty||1))+'</div></div>';
-    }).join('') : '<div style="padding:14px;text-align:center;color:#888;font-size:12.5px;">No items data</div>';
-    const tl = [];
-    tl.push({t:'Order Placed', s:fdate(o.createdAt)+' '+ftime(o.createdAt)});
-    if (st!=='pending'&&st!=='cancelled') tl.push({t:'Seller Accepted', s:o.acceptedAt||o.sellerAcceptedAt?fdate(o.acceptedAt||o.sellerAcceptedAt)+' '+ftime(o.acceptedAt||o.sellerAcceptedAt):'Done'});
-    if (['rtd','pickup','dispatched','delivered'].includes(st)) tl.push({t:'RTD (Ready to Dispatch)', s:o.rtdAt?fdate(o.rtdAt)+' '+ftime(o.rtdAt):'Done'});
-    if (['pickup','dispatched','delivered'].includes(st)) tl.push({t:'📦 Pickup Ready (Label Generated)', s:o.labelGeneratedAt?fdate(o.labelGeneratedAt)+' '+ftime(o.labelGeneratedAt):'Done'});
-    if (['dispatched','delivered'].includes(st)) tl.push({t:'Dispatched', s:(o.dispatchedAt?fdate(o.dispatchedAt):'Done') + (o.trackingId?' · '+o.trackingId:'')});
-    if (st==='delivered') tl.push({t:'Delivered', s:o.deliveredAt?fdate(o.deliveredAt)+' '+ftime(o.deliveredAt):'Done'});
-    if (st==='cancelled') tl.push({t:'Cancelled', s:o.cancelledAt?fdate(o.cancelledAt):'—'});
-    if (st==='return_requested') tl.push({t:'Return Requested', s:o.returnRequestedAt?fdate(o.returnRequestedAt):'Pending admin approval'});
-    if (st==='returned') tl.push({t:'Return Approved (₹150 cut)', s:o.returnApprovedAt?fdate(o.returnApprovedAt):'—'});
-    const tlHtml = tl.map(x=>'<div class="tg-od-tl-item"><div class="tg-od-tl-t">'+esc(x.t)+'</div><div class="tg-od-tl-s">'+esc(x.s)+'</div></div>').join('');
-    const addr = o.address || o.shippingAddress || o.deliveryAddress || {};
-    const addrStr = typeof addr==='string' ? addr : [addr.line1||addr.address||addr.street||'', addr.city||'', addr.state||'', addr.pincode||addr.zip||''].filter(Boolean).join(', ');
-    const canRTD = st==='accepted' || st==='pending';
-    const canCourierDispatch = st==='pickup';
-    const canDeliver = st==='dispatched';
-    const canCancel = !['cancelled','returned','delivered'].includes(st);
-    const isPendingReturn = st === 'return_requested';
-    let actionBtns = '';
-    if (canRTD) actionBtns += '<button class="tg-btn rtd" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkRTD(\''+esc(oid)+'\')">🚀 MARK RTD</button>';
-    if (canCourierDispatch) actionBtns += '<button class="tg-btn pri" style="flex:1;min-width:160px;padding:12px;justify-content:center;font-size:12px;" onclick="tgOpenCourierFromOrder(\''+esc(oid)+'\',\'dispatch\')">📦 Enter Courier & Dispatch</button>';
-    if (canDeliver) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkDeliveredDirect(\''+esc(oid)+'\')">✓ Mark Delivered</button>';
-    if (isPendingReturn) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgApproveReturn(\''+esc(oid)+'\')">✓ Approve Return</button><button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgRejectReturn(\''+esc(oid)+'\')">✕ Reject Return</button>';
-    if (canCancel && !isPendingReturn) actionBtns += '<button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCancelOrder(\''+esc(oid)+'\')">✕ Cancel</button>';
-    const courierHtml = (o.courierName || o.courierHub || o.trackingId) ? (
-      '<div class="tg-courier-info-card">' +
-        '<div class="tg-courier-info-title">📦 Courier Details</div>' +
-        (o.courierName ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Courier</span><span class="tg-courier-info-v">'+esc(o.courierName)+'</span></div>' : '') +
-        (o.courierHub ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Hub</span><span class="tg-courier-info-v">'+esc(o.courierHub)+'</span></div>' : '') +
-        (o.trackingId ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Tracking</span><span class="tg-courier-info-v">'+esc(o.trackingId)+'</span></div>' : '') +
-      '</div>'
-    ) : '';
-    document.getElementById('order-body').innerHTML =
-      '<div class="tg-od-hd">' +
-        '<div class="tg-od-hd-id">#'+esc((o.id||'').slice(0,14).toUpperCase())+'</div>' +
-        '<div class="tg-od-hd-date">Placed: '+fdate(o.createdAt)+' · '+ftime(o.createdAt)+'</div>' +
-        '<div class="tg-od-status"><span class="tg-pill '+cls+'">'+statusLabel(o.status)+'</span>' +
-          (o.paymentMethod?'<span class="tg-pill gry">'+(o.paymentMethod||'').toUpperCase()+'</span>':'') +
-          (o.paymentStatus?'<span class="tg-pill '+(o.paymentStatus==='paid'?'appr':(o.paymentStatus==='failed'?'rej':'pend'))+'">PAY: '+esc((o.paymentStatus||'').toUpperCase())+'</span>':'') +
+ /* ============================================================ */
+/* ============ v15 ORDER MODAL — COMPLETE FIX ================ */
+/* ============================================================ */
+
+/* 🔥 ADDRESS PARSER — cart.html 'line'/'pin' save karta hai, 'line1'/'pincode' NAHI */
+function fmtAddress(addr) {
+  const out = { lines:[], pin:'', city:'', state:'', district:'', locality:'', landmark:'', type:'home', name:'', phone:'', lat:'', lng:'', full:'—' };
+  if (!addr) return out;
+  if (typeof addr === 'string') { out.lines = [addr]; out.full = addr; return out; }
+  const l1 = addr.line || addr.line1 || addr.address || addr.street || '';
+  if (l1) out.lines.push(l1);
+  if (addr.locality) out.lines.push(addr.locality);
+  if (addr.landmark) out.lines.push('Near ' + addr.landmark);
+  const cityLine = [addr.city, addr.district && addr.district !== addr.city ? addr.district : '', addr.state].filter(Boolean).join(', ');
+  if (cityLine) out.lines.push(cityLine);
+  out.pin = String(addr.pin || addr.pincode || addr.zip || addr.postalCode || '');
+  out.city = addr.city || '';
+  out.state = addr.state || '';
+  out.district = addr.district || '';
+  out.locality = addr.locality || '';
+  out.landmark = addr.landmark || '';
+  out.type = (addr.type || 'home').toLowerCase();
+  out.name = addr.name || '';
+  out.phone = addr.phone || '';
+  out.lat = addr.lat || '';
+  out.lng = addr.lng || '';
+  out.full = [...out.lines, out.pin].filter(Boolean).join(', ') || '—';
+  return out;
+}
+
+function getCustomerId(o)    { return o.customerId || o.userId || o.uid || o.user_id || ''; }
+function getCustomerPhone(o) { const a = o.address || o.shippingAddress || {}; return o.userPhone || o.phone || a.phone || ''; }
+function getCustomerEmail(o) { const a = o.address || o.shippingAddress || {}; return o.userEmail || o.email || a.email || ''; }
+function getCustomerName(o)  { const a = o.address || o.shippingAddress || {}; return o.userName || o.customerName || a.name || ''; }
+
+window.tgOpenOrder = function(oid, skipHistory){
+  const o = ALL_ORDERS.find(x => x.id === oid);
+  if (!o) { toast('Order not found', 'err'); return; }
+  const st = normStatus(o.status);
+  const cls = statusClass(o.status);
+  const items = Array.isArray(o.items) ? o.items : [];
+  const subtotal = items.reduce((a,i)=>a+Number(i.price||0)*Number(i.qty||1), 0);
+  const delivery = Number(o.deliveryCharge || o.delivery || 0);
+  const gst = Number(o.gstAmount || o.gst || 0);
+  const discount = Number(o.discount || o.couponDiscount || 0);
+  const total = Number(o.total || 0);
+  const tags = Array.isArray(o.tags) ? o.tags.slice() : [];
+  const adminNote = o.adminNote || '';
+
+  const custId = getCustomerId(o);
+  const custName = getCustomerName(o) || '—';
+  const custPhone = getCustomerPhone(o);
+  const custEmail = getCustomerEmail(o);
+  const addr = fmtAddress(o.address || o.shippingAddress || o.deliveryAddress);
+
+  /* Seller breakdown */
+  const sellerGroups = {};
+  items.forEach(it => {
+    const sid = getItemSellerIds(it)[0] || 'unknown';
+    if (!sellerGroups[sid]) sellerGroups[sid] = { sid, name: it.sellerName || 'Unknown Seller', items: [], subtotal: 0, qty: 0 };
+    sellerGroups[sid].items.push(it);
+    sellerGroups[sid].subtotal += Number(it.price||0) * Number(it.qty||1);
+    sellerGroups[sid].qty += Number(it.qty||1);
+  });
+
+  /* Fraud flags */
+  const fraudFlags = [];
+  if (total > 5000 && (o.paymentMethod||'').toLowerCase() === 'cod') fraudFlags.push('High-value COD order (₹' + total.toLocaleString('en-IN') + ')');
+  if (!custPhone) fraudFlags.push('Customer phone missing');
+  if (!addr.lines.length) fraudFlags.push('Shipping address incomplete');
+  if (o.paymentStatus === 'paid_unverified') fraudFlags.push('Payment verification pending');
+
+  /* Items HTML */
+  const itemsHtml = items.length ? items.map(it => {
+    const img = it.image || (it.images && it.images[0]) || 'https://via.placeholder.com/100x100/f1f3f6/878787?text=T';
+    return '<div class="tg-order-item-new">' +
+      '<div class="oimg"><img src="' + esc(img) + '" alt=""></div>' +
+      '<div class="obody">' +
+        '<div class="oname">' + esc(it.name || 'Product') + '</div>' +
+        '<div class="ometa">' + (it.size ? 'Size: ' + esc(it.size) + ' · ' : '') + (it.color ? 'Color: ' + esc(it.color) + ' · ' : '') + 'Qty: ' + Number(it.qty||1) + '</div>' +
+        '<div class="ometa" style="color:#666;">Seller: <b style="color:#0f1729;">' + esc(it.sellerName || '—') + '</b></div>' +
+      '</div>' +
+      '<div class="oprice">' + inr(Number(it.price||0) * Number(it.qty||1)) + '</div>' +
+    '</div>';
+  }).join('') : '<div style="padding:14px;text-align:center;color:#888;font-size:12.5px;background:#f8f9fb;border-radius:8px;">No items data</div>';
+
+  /* Timeline */
+  const tl = [];
+  tl.push({t:'Order Placed', s:fdate(o.createdAt)+' '+ftime(o.createdAt)});
+  if (st!=='pending'&&st!=='cancelled') tl.push({t:'Seller Accepted', s:o.acceptedAt?fdate(o.acceptedAt):'Done'});
+  if (['rtd','pickup','dispatched','delivered'].includes(st)) tl.push({t:'RTD', s:o.rtdAt?fdate(o.rtdAt):'Done'});
+  if (['pickup','dispatched','delivered'].includes(st)) tl.push({t:'📦 Pickup Ready', s:o.labelGeneratedAt?fdate(o.labelGeneratedAt):'Done'});
+  if (['dispatched','delivered'].includes(st)) tl.push({t:'Dispatched', s:o.dispatchedAt?fdate(o.dispatchedAt):'Done'});
+  if (st==='delivered') tl.push({t:'Delivered', s:o.deliveredAt?fdate(o.deliveredAt):'Done'});
+  if (st==='cancelled') tl.push({t:'Cancelled', s:o.cancelledAt?fdate(o.cancelledAt):'—'});
+  if (st==='return_requested') tl.push({t:'Return Requested', s:'Pending admin approval'});
+  if (st==='returned') tl.push({t:'Return Approved (₹150 cut)', s:o.returnApprovedAt?fdate(o.returnApprovedAt):'—'});
+  const tlHtml = tl.map(x=>'<div class="tg-od-tl-item"><div class="tg-od-tl-t">'+esc(x.t)+'</div><div class="tg-od-tl-s">'+esc(x.s)+'</div></div>').join('');
+
+  /* Contact actions */
+  const phoneDigits = String(custPhone).replace(/\D/g, '');
+  const waPhone = phoneDigits.length === 10 ? '91' + phoneDigits : phoneDigits;
+  const contactHtml = '<div class="tg-cust-actions">' +
+    (custPhone ? '<button class="call" onclick="window.location.href=\'tel:' + esc(custPhone) + '\'"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>Call</button>' : '') +
+    (custPhone ? '<button class="wa" onclick="window.open(\'https://wa.me/' + esc(waPhone) + '?text=' + encodeURIComponent('Hi ' + custName + ', regarding your TOEGO order #' + oid.slice(0,10).toUpperCase()) + '\',\'_blank\')"><svg viewBox="0 0 24 24"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 0 0 3.8.97h.01a7.93 7.93 0 0 0 5.58-13.55Z"/></svg>WA</button>' : '') +
+    (custEmail ? '<button class="email" onclick="window.location.href=\'mailto:' + esc(custEmail) + '?subject=' + encodeURIComponent('TOEGO Order #' + oid.slice(0,10).toUpperCase()) + '\'"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</button>' : '') +
+    (custId ? '<button class="hist" onclick="tgOpenCustomerOrders(\'' + jsEsc(custId) + '\',\'' + jsEsc(custName) + '\')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>History</button>' : '') +
+  '</div>';
+
+  /* Customer card */
+  const custCard = '<div class="tg-cust-card">' +
+    '<div class="tg-cust-name">👤 ' + esc(custName) + (custId ? ' <span class="tg-cust-uid">' + esc(custId.slice(0,16)) + '...</span>' : '') + '</div>' +
+    (custPhone ? '<div class="tg-cust-row"><b>Phone</b><span>' + esc(custPhone) + '</span></div>' : '') +
+    (custEmail ? '<div class="tg-cust-row"><b>Email</b><span>' + esc(custEmail) + '</span></div>' : '') +
+    contactHtml +
+    '<div class="tg-cust-stats" id="cust-stats-' + esc(oid) + '">' +
+      '<div class="tg-cust-stat"><div class="tg-cust-stat-n" id="cstat-total-' + esc(oid) + '">…</div><div class="tg-cust-stat-l">Orders</div></div>' +
+      '<div class="tg-cust-stat"><div class="tg-cust-stat-n" id="cstat-spent-' + esc(oid) + '">…</div><div class="tg-cust-stat-l">Lifetime</div></div>' +
+      '<div class="tg-cust-stat"><div class="tg-cust-stat-n" id="cstat-deliv-' + esc(oid) + '">…</div><div class="tg-cust-stat-l">Delivered</div></div>' +
+    '</div>' +
+  '</div>';
+
+  /* Address card — FIXED */
+  const addrCard = '<div class="tg-addr-card">' +
+    '<div class="tg-addr-label"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Shipping Address<span class="tg-addr-badge ' + esc(addr.type) + '">' + esc((addr.type||'home').toUpperCase()) + '</span></div>' +
+    (addr.lines.length || addr.pin ?
+      '<div class="tg-addr-body">' +
+        (addr.name ? '<b>' + esc(addr.name) + '</b>' + (addr.phone ? ' · 📱 ' + esc(addr.phone) : '') + '<br>' : '') +
+        addr.lines.map(l => esc(l)).join('<br>') +
+        (addr.pin ? '<br><b>PIN: ' + esc(addr.pin) + '</b>' : '') +
+        (addr.lat && addr.lng ? '<div style="margin-top:6px;font-size:11px;color:#888;">📍 GPS: ' + esc(addr.lat) + ', ' + esc(addr.lng) + '</div>' : '') +
+      '</div>' :
+      '<div class="tg-addr-empty">⚠ Address incomplete — customer se confirm karo</div>'
+    ) +
+  '</div>';
+
+  /* Payment card */
+  const payStatus = (o.paymentStatus||'pending').toLowerCase();
+  let payCls = '';
+  if (payStatus === 'paid') payCls = '';
+  else if (payStatus === 'failed' || payStatus === 'paid_unverified') payCls = 'failed';
+  else payCls = 'pending';
+  const payCard = '<div class="tg-pay-card-new ' + payCls + '">' +
+    '<h4>💳 Payment Details</h4>' +
+    '<div class="tg-pay-grid">' +
+      '<div><div class="pay-k">Method</div><div class="pay-v">' + esc((o.paymentMethod||'COD').toUpperCase()) + '</div></div>' +
+      '<div><div class="pay-k">Status</div><div class="pay-v">' + esc(payStatus.toUpperCase()) + '</div></div>' +
+      (o.couponCode ? '<div><div class="pay-k">Coupon</div><div class="pay-v">' + esc(o.couponCode) + (discount?' (−'+inr(discount)+')':'') + '</div></div>' : '') +
+      (o.deliveryEstimate ? '<div><div class="pay-k">Delivery</div><div class="pay-v">' + esc(o.deliveryEstimate) + '</div></div>' : '') +
+    '</div>' +
+    (o.paymentId ? '<div class="tg-pay-pid">RZP ID: ' + esc(o.paymentId) + '</div>' : '') +
+  '</div>';
+
+  /* Tags */
+  const tagTypes = ['urgent','vip','fraud','bulk'];
+  const tagBar = '<div class="tg-tag-bar">' +
+    tagTypes.map(t => '<span class="tg-order-tag ' + t + (tags.includes(t)?' active':'') + '" onclick="tgToggleOrderTag(\'' + jsEsc(oid) + '\',\'' + t + '\')">' +
+      ({urgent:'🚨 URGENT',vip:'⭐ VIP',fraud:'🛑 FRAUD',bulk:'📦 BULK'})[t] + '</span>').join('') +
+    '<select class="tg-tag-select" onchange="tgAddCustomTag(\'' + jsEsc(oid) + '\',this.value);this.value=\'\';">' +
+      '<option value="">+ Add custom tag…</option>' +
+      ['priority','hold','verify-address','callback','gift','return-risk'].map(t => '<option value="' + t + '"' + (tags.includes(t)?' disabled':'') + '>' + t + '</option>').join('') +
+    '</select>' +
+  '</div>';
+  const customTags = tags.filter(t => !tagTypes.includes(t));
+  const customTagsHtml = customTags.length ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">' +
+    customTags.map(t => '<span class="tg-order-tag active" onclick="tgToggleOrderTag(\''+jsEsc(oid)+'\',\''+jsEsc(t)+'\')">' + esc(t) + ' ✕</span>').join('') +
+  '</div>' : '';
+
+  /* Admin note */
+  const noteHtml = '<div class="tg-admin-note">' +
+    '<div class="tg-admin-note-title">📝 Internal Admin Note</div>' +
+    '<textarea id="ord-admin-note-' + esc(oid) + '" placeholder="Private note — customer ko nahi dikhega…">' + esc(adminNote) + '</textarea>' +
+    '<button class="tg-admin-note-save" onclick="tgSaveAdminNote(\'' + jsEsc(oid) + '\')">💾 Save Note</button>' +
+  '</div>';
+
+  /* Fraud card */
+  const fraudHtml = fraudFlags.length ? '<div class="tg-fraud-flags-card"><h4>🚨 Fraud Flags (' + fraudFlags.length + ')</h4><ul>' + fraudFlags.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul></div>' : '';
+
+  /* Seller breakdown */
+  const sellerHtml = Object.values(sellerGroups).map(sg =>
+    '<div class="tg-seller-block">' +
+      '<div class="tg-seller-block-head">' +
+        '<b>🏪 ' + esc(sg.name) + '</b>' +
+        '<div class="tg-seller-block-stats"><span>Items: <b>' + sg.items.length + '</b></span><span>Qty: <b>' + sg.qty + '</b></span><span>Total: <b>' + inr(sg.subtotal) + '</b></span></div>' +
+      '</div>' +
+      sg.items.map(it => {
+        const img = it.image || '';
+        return '<div class="tg-order-item-new">' +
+          '<div class="oimg"><img src="' + esc(img) + '" alt=""></div>' +
+          '<div class="obody"><div class="oname">' + esc(it.name) + '</div>' +
+          '<div class="ometa">' + (it.size?'Size: '+esc(it.size)+' · ':'') + 'Qty: ' + Number(it.qty||1) + '</div></div>' +
+          '<div class="oprice">' + inr(Number(it.price||0)*Number(it.qty||1)) + '</div>' +
+        '</div>';
+      }).join('') +
+    '</div>'
+  ).join('');
+
+  /* Courier card */
+  const courierHtml = (o.courierName || o.courierHub || o.trackingId) ?
+    '<div class="tg-courier-info-card">' +
+      '<div class="tg-courier-info-title">📦 Courier Details</div>' +
+      (o.courierName ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Courier</span><span class="tg-courier-info-v">' + esc(o.courierName) + '</span></div>' : '') +
+      (o.courierHub ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Hub</span><span class="tg-courier-info-v">' + esc(o.courierHub) + '</span></div>' : '') +
+      (o.trackingId ? '<div class="tg-courier-info-row"><span class="tg-courier-info-k">Tracking</span><span class="tg-courier-info-v">' + esc(o.trackingId) + '</span></div>' : '') +
+    '</div>' : '';
+
+  /* Print actions */
+  const printActions = '<div class="tg-order-hd-actions">' +
+    '<button class="print-inv" onclick="tgPrintOrder(\'' + jsEsc(oid) + '\',\'invoice\')">🖨️ Invoice</button>' +
+    '<button class="print-lbl" onclick="tgPrintOrder(\'' + jsEsc(oid) + '\',\'label\')">🏷️ Label</button>' +
+    '<button class="copy-oid" onclick="tgCopyText(\'' + jsEsc(oid) + '\',this)">📋 Copy ID</button>' +
+  '</div>';
+
+  /* Status buttons */
+  const canRTD = st==='accepted' || st==='pending';
+  const canCourierDispatch = st==='pickup';
+  const canDeliver = st==='dispatched';
+  const canCancel = !['cancelled','returned','delivered'].includes(st);
+  const isPendingReturn = st === 'return_requested';
+  let actionBtns = '';
+  if (canRTD) actionBtns += '<button class="tg-btn rtd" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkRTD(\'' + esc(oid) + '\')">🚀 MARK RTD</button>';
+  if (canCourierDispatch) actionBtns += '<button class="tg-btn pri" style="flex:1;min-width:160px;padding:12px;justify-content:center;font-size:12px;" onclick="tgOpenCourierFromOrder(\'' + esc(oid) + '\',\'dispatch\')">📦 Enter Courier & Dispatch</button>';
+  if (canDeliver) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkDeliveredDirect(\'' + esc(oid) + '\')">✓ Mark Delivered</button>';
+  if (isPendingReturn) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgApproveReturn(\''+esc(oid)+'\')">✓ Approve Return</button><button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCloseMod(\'mod-order\');tgRejectReturn(\''+esc(oid)+'\')">✕ Reject</button>';
+  if (canCancel && !isPendingReturn) actionBtns += '<button class="tg-btn dan" style="flex:1;min-width:100px;padding:12px;justify-content:center;font-size:12px;" onclick="tgCancelOrder(\'' + esc(oid) + '\')">✕ Cancel</button>';
+
+  /* ============ RENDER MODAL ============ */
+  document.getElementById('order-body').innerHTML =
+    '<div class="tg-od-hd">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">' +
+        '<div>' +
+          '<div class="tg-od-hd-id">#' + esc((o.id||'').slice(0,14).toUpperCase()) + '</div>' +
+          '<div class="tg-od-hd-date">Placed: ' + fdate(o.createdAt) + ' · ' + ftime(o.createdAt) + '</div>' +
+        '</div>' +
+        '<div>' +
+          '<span class="tg-pill ' + cls + '">' + statusLabel(o.status) + '</span> ' +
+          '<span class="tg-pill gry">' + esc((o.paymentMethod||'COD').toUpperCase()) + '</span>' +
         '</div>' +
       '</div>' +
-      courierHtml +
-      '<div class="tg-od-info-grid">' +
-        '<div class="tg-od-info-card"><div class="tg-od-info-card-t">Customer</div><div class="tg-od-info-card-v">'+esc(o.userName||o.customerName||'—')+'</div><div style="font-size:11.5px;color:#666;margin-top:3px;">'+esc(o.userEmail||o.email||'')+'<br>'+esc(o.userPhone||o.phone||'—')+'</div></div>' +
-        '<div class="tg-od-info-card"><div class="tg-od-info-card-t">Shipping</div><div class="tg-od-info-card-v" style="font-size:12px;">'+esc(addrStr||'—')+'</div></div>' +
-      '</div>' +
-      '<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;">Order Timeline</div>' +
-      '<div class="tg-od-timeline">'+tlHtml+'</div>' +
-      '<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin:14px 0 8px;">Items ('+items.length+')</div>' +
-      '<div class="tg-od-items">'+itemsHtml+'</div>' +
-      '<div class="tg-od-total">' +
-        '<div class="tg-od-total-row"><span>Subtotal</span><b>'+inr(subtotal)+'</b></div>' +
-        (delivery?'<div class="tg-od-total-row"><span>Delivery</span><b>'+inr(delivery)+'</b></div>':'') +
-        (gst?'<div class="tg-od-total-row"><span>GST</span><b>'+inr(gst)+'</b></div>':'') +
-        (discount?'<div class="tg-od-total-row" style="color:#1b8a3a;"><span>Discount</span><b>− '+inr(discount)+'</b></div>':'') +
-        '<div class="tg-od-total-row final"><span>Total</span><span>'+inr(total)+'</span></div>' +
-      '</div>' +
-      '<div class="tg-fld"><label>Update Status</label><select id="ord-status-sel">' +
-        '<option value="pending" '+(st==='pending'?'selected':'')+'>Pending</option>' +
-        '<option value="accepted" '+(st==='accepted'?'selected':'')+'>Seller Accepted</option>' +
-        '<option value="rtd" '+(st==='rtd'?'selected':'')+'>Ready for Label</option>' +
-        '<option value="pickup" '+(st==='pickup'?'selected':'')+'>📦 Pickup Ready</option>' +
-        '<option value="dispatched" '+(st==='dispatched'?'selected':'')+'>Dispatched</option>' +
-        '<option value="delivered" '+(st==='delivered'?'selected':'')+'>Delivered</option>' +
-        '<option value="cancelled" '+(st==='cancelled'?'selected':'')+'>Cancelled</option>' +
-        '<option value="returned" '+(st==='returned'?'selected':'')+'>Returned</option>' +
-      '</select></div>' +
-      '<div class="tg-fld"><label>Tracking ID (optional)</label><input type="text" id="ord-track" value="'+esc(o.trackingId||'')+'" placeholder="e.g. DTDC123456"></div>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">'+actionBtns+'</div>' +
-      '<div class="tg-mod-a"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-order\')">Close</button><button class="tg-mod-b pri" onclick="tgSaveOrderStatus(\''+esc(oid)+'\')">Save Status</button></div>';
-    openMod('mod-order');
-    if (!skipHistory) pushHistory({ view: CUR_VIEW, modal: 'order', orderId: oid });
-  };
+      printActions +
+    '</div>' +
+    tagBar + customTagsHtml + custCard + addrCard + fraudHtml + payCard + courierHtml +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">' + actionBtns + '</div>' +
+    '<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin:14px 0 8px;">Order Timeline</div>' +
+    '<div class="tg-od-timeline">' + tlHtml + '</div>' +
+    '<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin:14px 0 8px;">Items (' + items.length + ')</div>' +
+    '<div class="tg-od-items">' + itemsHtml + '</div>' +
+    (sellerHtml ? '<div style="font-size:12px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin:14px 0 8px;">Seller Breakdown</div>' + sellerHtml : '') +
+    '<div class="tg-od-total">' +
+      '<div class="tg-od-total-row"><span>Subtotal</span><b>' + inr(subtotal) + '</b></div>' +
+      (delivery ? '<div class="tg-od-total-row"><span>Delivery</span><b>' + inr(delivery) + '</b></div>' : '') +
+      (gst ? '<div class="tg-od-total-row"><span>GST</span><b>' + inr(gst) + '</b></div>' : '') +
+      (discount ? '<div class="tg-od-total-row" style="color:#1b8a3a;"><span>Discount</span><b>− ' + inr(discount) + '</b></div>' : '') +
+      '<div class="tg-od-total-row final"><span>Total</span><span>' + inr(total) + '</span></div>' +
+    '</div>' +
+    noteHtml +
+    '<div class="tg-fld"><label>Update Status</label><select id="ord-status-sel">' +
+      '<option value="pending" ' + (st==='pending'?'selected':'') + '>Pending</option>' +
+      '<option value="accepted" ' + (st==='accepted'?'selected':'') + '>Seller Accepted</option>' +
+      '<option value="rtd" ' + (st==='rtd'?'selected':'') + '>Ready for Label</option>' +
+      '<option value="pickup" ' + (st==='pickup'?'selected':'') + '>📦 Pickup Ready</option>' +
+      '<option value="dispatched" ' + (st==='dispatched'?'selected':'') + '>Dispatched</option>' +
+      '<option value="delivered" ' + (st==='delivered'?'selected':'') + '>Delivered</option>' +
+      '<option value="cancelled" ' + (st==='cancelled'?'selected':'') + '>Cancelled</option>' +
+      '<option value="returned" ' + (st==='returned'?'selected':'') + '>Returned</option>' +
+    '</select></div>' +
+    '<div class="tg-fld"><label>Tracking ID (optional)</label><input type="text" id="ord-track" value="' + esc(o.trackingId||'') + '" placeholder="e.g. DTDC123456"></div>' +
+    '<div class="tg-mod-a"><button class="tg-mod-b gho" onclick="tgCloseMod(\'mod-order\')">Close</button><button class="tg-mod-b pri" onclick="tgSaveOrderStatus(\'' + esc(oid) + '\')">Save Status</button></div>';
 
+  openMod('mod-order');
+  if (!skipHistory) pushHistory({ view: CUR_VIEW, modal: 'order', orderId: oid });
+
+  /* Async load customer stats */
+  if (custId) {
+    const orders = ALL_ORDERS.filter(x => getCustomerId(x) === custId);
+    const delivered = orders.filter(x => normStatus(x.status) === 'delivered');
+    const spent = delivered.reduce((a,x) => a + Number(x.total||0), 0);
+    setTimeout(() => {
+      const tEl = document.getElementById('cstat-total-' + oid);
+      const sEl = document.getElementById('cstat-spent-' + oid);
+      const dEl = document.getElementById('cstat-deliv-' + oid);
+      if (tEl) tEl.textContent = orders.length;
+      if (sEl) sEl.textContent = inr(spent);
+      if (dEl) dEl.textContent = delivered.length;
+    }, 50);
+  }
+};
+
+/* ============ CUSTOMER ORDERS MODAL ============ */
+window.tgOpenCustomerOrders = function(custId, custName) {
+  const orders = ALL_ORDERS.filter(o => getCustomerId(o) === custId);
+  orders.sort((a,b) => {
+    const at = a.createdAt?.toDate?.()?.getTime?.() || 0;
+    const bt = b.createdAt?.toDate?.()?.getTime?.() || 0;
+    return bt - at;
+  });
+  document.getElementById('mcust-title').textContent = '📜 ' + (custName || 'Customer') + ' — All Orders (' + orders.length + ')';
+  let html = '';
+  const delivered = orders.filter(o => normStatus(o.status) === 'delivered');
+  const spent = delivered.reduce((a,o) => a + Number(o.total||0), 0);
+  const returned = orders.filter(o => normStatus(o.status) === 'returned').length;
+  html += '<div class="tg-order-history-grid">' +
+    '<div><div class="n">' + orders.length + '</div><div class="l">Total Orders</div></div>' +
+    '<div><div class="n">' + inr(spent) + '</div><div class="l">Delivered Revenue</div></div>' +
+    '<div><div class="n">' + returned + '</div><div class="l">Returns</div></div>' +
+  '</div>';
+  if (!orders.length) {
+    html += '<div class="tg-empty" style="padding:30px 20px;"><div class="tg-empty-i">📦</div><div class="tg-empty-t">No orders</div><div class="tg-empty-d">This customer has no orders yet</div></div>';
+  } else {
+    html += orders.map(o => {
+      const ocls = statusClass(o.status);
+      const odate = fdate(o.createdAt);
+      const oitems = (o.items||[]).reduce((a,i)=>a+Number(i.qty||1),0);
+      return '<div class="tg-cust-order-row" onclick="tgCloseMod(\'mod-cust-orders\');setTimeout(function(){tgOpenOrder(\''+jsEsc(o.id)+'\')},250)">' +
+        '<div class="left">' +
+          '<div class="oid">#' + esc((o.id||'').slice(0,12).toUpperCase()) + '</div>' +
+          '<div class="odate">' + odate + ' · ' + oitems + ' items</div>' +
+        '</div>' +
+        '<div class="right">' +
+          '<div style="font-size:14px;font-weight:900;color:#0f1729;">' + inr(o.total||0) + '</div>' +
+          '<span class="tg-pill ' + ocls + '" style="margin-top:4px;">' + statusLabel(o.status) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+  document.getElementById('mcust-body').innerHTML = html;
+  openMod('mod-cust-orders');
+};
+
+/* ============ TAGS ============ */
+window.tgToggleOrderTag = async function(oid, tag) {
+  const o = ALL_ORDERS.find(x => x.id === oid);
+  if (!o) return;
+  const current = Array.isArray(o.tags) ? o.tags.slice() : [];
+  const idx = current.indexOf(tag);
+  if (idx >= 0) current.splice(idx, 1);
+  else current.push(tag);
+  try {
+    await db.collection('orders').doc(oid).update({ tags: current, updatedAt: FV.serverTimestamp() });
+    o.tags = current;
+    toast('Tag ' + (idx>=0?'removed':'added') + ': ' + tag, 'suc');
+    tgOpenOrder(oid, true);
+  } catch(e) { toast('Failed: ' + e.message, 'err'); }
+};
+
+window.tgAddCustomTag = async function(oid, tag) {
+  if (!tag) return;
+  const o = ALL_ORDERS.find(x => x.id === oid);
+  if (!o) return;
+  const current = Array.isArray(o.tags) ? o.tags.slice() : [];
+  if (current.includes(tag)) return;
+  current.push(tag);
+  try {
+    await db.collection('orders').doc(oid).update({ tags: current, updatedAt: FV.serverTimestamp() });
+    o.tags = current;
+    toast('Tag added: ' + tag, 'suc');
+    tgOpenOrder(oid, true);
+  } catch(e) { toast('Failed: ' + e.message, 'err'); }
+};
+
+/* ============ ADMIN NOTE ============ */
+window.tgSaveAdminNote = async function(oid) {
+  const el = document.getElementById('ord-admin-note-' + oid);
+  if (!el) return;
+  const note = el.value || '';
+  try {
+    await db.collection('orders').doc(oid).update({ adminNote: note, adminNoteUpdatedAt: FV.serverTimestamp(), adminNoteUpdatedBy: USER.uid });
+    const o = ALL_ORDERS.find(x => x.id === oid);
+    if (o) o.adminNote = note;
+    toast('✓ Note saved', 'suc');
+  } catch(e) { toast('Failed: ' + e.message, 'err'); }
+};
+
+/* ============ PRINT INVOICE / LABEL ============ */
+window.tgPrintOrder = function(oid, type) {
+  const o = ALL_ORDERS.find(x => x.id === oid);
+  if (!o) { toast('Order not found', 'err'); return; }
+  const items = Array.isArray(o.items) ? o.items : [];
+  const addr = fmtAddress(o.address || o.shippingAddress || {});
+  const custName = getCustomerName(o) || '—';
+  const custPhone = getCustomerPhone(o);
+  const custEmail = getCustomerEmail(o);
+  const subtotal = items.reduce((a,i)=>a+Number(i.price||0)*Number(i.qty||1), 0);
+  const delivery = Number(o.deliveryCharge || o.delivery || 0);
+  const gst = Number(o.gstAmount || o.gst || 0);
+  const discount = Number(o.discount || o.couponDiscount || 0);
+  const total = Number(o.total || 0);
+  const oidStr = (o.id||'').slice(0,14).toUpperCase();
+
+  let body = '';
+  if (type === 'invoice') {
+    body = '<div class="inv-header"><h1>TOEGO</h1><div class="inv-sub">Tax Invoice</div></div>' +
+      '<div class="inv-row"><div><b>Invoice #:</b> ' + oidStr + '</div><div><b>Date:</b> ' + fdate(o.createdAt) + '</div></div>' +
+      '<div class="inv-row"><div><b>Customer:</b> ' + esc(custName) + '</div><div><b>Phone:</b> ' + esc(custPhone) + '</div></div>' +
+      (custEmail ? '<div class="inv-row"><div><b>Email:</b> ' + esc(custEmail) + '</div></div>' : '') +
+      '<div class="inv-addr"><b>Ship To:</b><br>' + addr.lines.map(esc).join('<br>') + (addr.pin ? '<br>PIN: ' + esc(addr.pin) : '') + '</div>' +
+      '<table class="inv-table"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody>' +
+        items.map(it => '<tr><td>' + esc(it.name) + (it.size?' ('+esc(it.size)+')':'') + '</td><td>' + Number(it.qty||1) + '</td><td>' + inr(Number(it.price||0)) + '</td><td>' + inr(Number(it.price||0)*Number(it.qty||1)) + '</td></tr>').join('') +
+      '</tbody></table>' +
+      '<div class="inv-totals">' +
+        '<div>Subtotal: <b>' + inr(subtotal) + '</b></div>' +
+        (delivery ? '<div>Delivery: <b>' + inr(delivery) + '</b></div>' : '') +
+        (gst ? '<div>GST: <b>' + inr(gst) + '</b></div>' : '') +
+        (discount ? '<div>Discount: <b>− ' + inr(discount) + '</b></div>' : '') +
+        '<div class="inv-total-final">Total: <b>' + inr(total) + '</b></div>' +
+      '</div>' +
+      '<div class="inv-footer">Thank you for shopping with TOEGO!<br>Payment: ' + esc((o.paymentMethod||'COD').toUpperCase()) + ' · Status: ' + esc((o.paymentStatus||'pending').toUpperCase()) + '</div>';
+  } else {
+    /* Label — small courier label */
+    body = '<div class="lbl-ship"><div class="lbl-brand">TOEGO</div><div class="lbl-type">SHIPPING LABEL</div></div>' +
+      '<div class="lbl-block"><div class="lbl-k">Order ID</div><div class="lbl-v big">' + oidStr + '</div></div>' +
+      '<div class="lbl-block"><div class="lbl-k">Ship To</div><div class="lbl-v"><b>' + esc(addr.name || custName) + '</b><br>' + esc(custPhone) + '<br>' + addr.lines.map(esc).join('<br>') + (addr.pin ? '<br><b>PIN: ' + esc(addr.pin) + '</b>' : '') + '</div></div>' +
+      '<div class="lbl-block"><div class="lbl-k">From</div><div class="lbl-v">' + esc((items[0] && items[0].sellerName) || 'TOEGO Seller') + '</div></div>' +
+      '<div class="lbl-block"><div class="lbl-k">Payment</div><div class="lbl-v big">' + esc((o.paymentMethod||'COD').toUpperCase()) + ' · ' + inr(total) + '</div></div>' +
+      '<div class="lbl-block"><div class="lbl-k">Items (' + items.length + ')</div><div class="lbl-v small">' + items.map(it => esc(it.name) + ' × ' + Number(it.qty||1)).join('<br>') + '</div></div>' +
+      '<div class="lbl-barcode">|||| ||| |||| | |||| ||| ||||</div>' +
+      '<div class="lbl-code">' + oidStr + '</div>';
+  }
+
+  const css = '<style>' +
+    'body{font-family:Arial,sans-serif;color:#000;background:#fff;margin:0;padding:20px;}' +
+    '.inv-header{text-align:center;border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:16px;}' +
+    '.inv-header h1{margin:0;font-size:28px;letter-spacing:2px;}' +
+    '.inv-sub{font-size:12px;color:#666;margin-top:4px;}' +
+    '.inv-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:12.5px;}' +
+    '.inv-addr{background:#f5f5f5;padding:10px;border-radius:6px;margin:12px 0;font-size:12.5px;line-height:1.5;}' +
+    '.inv-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px;}' +
+    '.inv-table th,.inv-table td{border:1px solid #ccc;padding:8px;text-align:left;}' +
+    '.inv-table th{background:#f0f0f0;font-size:11px;text-transform:uppercase;}' +
+    '.inv-totals{text-align:right;margin-top:14px;font-size:13px;line-height:1.8;}' +
+    '.inv-total-final{font-size:18px;font-weight:900;border-top:2px solid #000;padding-top:8px;margin-top:8px;}' +
+    '.inv-footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px dashed #999;font-size:11px;color:#666;}' +
+    '.lbl-ship{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:14px;}' +
+    '.lbl-brand{font-size:26px;font-weight:900;letter-spacing:2px;}' +
+    '.lbl-type{font-size:11px;font-weight:700;background:#000;color:#fff;padding:4px 10px;}' +
+    '.lbl-block{border:2px solid #000;padding:10px;margin-bottom:10px;}' +
+    '.lbl-k{font-size:10px;font-weight:900;text-transform:uppercase;margin-bottom:4px;color:#666;letter-spacing:1px;}' +
+    '.lbl-v{font-size:13px;line-height:1.5;}' +
+    '.lbl-v.big{font-size:16px;font-weight:900;}' +
+    '.lbl-v.small{font-size:11px;}' +
+    '.lbl-barcode{font-family:monospace;font-size:24px;letter-spacing:-2px;text-align:center;margin-top:14px;}' +
+    '.lbl-code{font-family:monospace;font-size:13px;text-align:center;letter-spacing:2px;margin-top:4px;font-weight:800;}' +
+    '@page{margin:10mm;}' +
+    '@media print{body{padding:0;}}' +
+  '</style>';
+
+  const w = window.open('', '_blank', 'width=800,height=900');
+  if (!w) { toast('Popup blocked — allow popups for printing', 'err'); return; }
+  w.document.write('<!DOCTYPE html><html><head><title>' + (type==='invoice'?'Invoice':'Label') + ' #' + oidStr + '</title>' + css + '</head><body>' + body + '</body></html>');
+  w.document.close();
+  setTimeout(() => { try { w.focus(); w.print(); } catch(e) {} }, 400);
+};
   window.tgOpenCourierFromOrder = function(oid, mode) {
     document.getElementById('mod-order').classList.remove('show');
     document.body.style.overflow = '';
