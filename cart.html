@@ -524,6 +524,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     <div class="tg-modal-field"><label>Flat / House No., Building Name *</label><textarea id="tg-addr-line" placeholder="e.g. Flat 301, ABC Apartments" maxlength="180" autocomplete="street-address"></textarea></div>
 
+    <div class="tg-modal-field"><label>Landmark (optional)</label><input type="text" id="tg-addr-landmark" placeholder="e.g. Near SBI Bank" maxlength="80"></div>
+
     <div class="tg-modal-field"><label>Area / Locality</label><input type="text" id="tg-addr-locality" placeholder="Auto-filled by map" maxlength="60"></div>
 
     <div class="tg-modal-row">
@@ -644,6 +646,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     console.warn('[cart] Cloud Functions unavailable:', e.message);
   }
 
+  // ✅ FIX #1: withTimeout helper
+  function withTimeout(promise, ms) {
+    return new Promise((resolve, reject) => {
+      const t = setTimeout(() => reject(new Error('timeout')), ms);
+      promise.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+    });
+  }
+
   try { db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, merge: true }); } catch(e) {}
   try { db.enablePersistence({ synchronizeTabs: true }).catch(() => {}); } catch(e) {}
 
@@ -664,7 +674,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const DELETED_CART_TTL = 45000;
   const NS_MARK = '__no_';
   const PENDING_QTY_TTL = 8000;
-  const COD_LIMIT = 500;
+  // ✅ FIX #4: COD_LIMIT is now mutable (from settings)
+  let COD_LIMIT = 500;
 
   let _lastOrderAttempt = 0;
   const ORDER_COOLDOWN_MS = 5000;
@@ -701,9 +712,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
   const _deletedItems = new Map();
 
+  // ✅ FIX #2: sessionStorage instead of localStorage
   function _bootDeletedItems() {
     try {
-      const raw = localStorage.getItem(DELETED_CART_KEY);
+      const raw = sessionStorage.getItem(DELETED_CART_KEY);
       if (!raw) return;
       const arr = JSON.parse(raw);
       if (!Array.isArray(arr)) return;
@@ -725,8 +737,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       _deletedItems.forEach((ts, id) => {
         if (now - ts < DELETED_CART_TTL) arr.push({ id, ts });
       });
-      if (arr.length) localStorage.setItem(DELETED_CART_KEY, JSON.stringify(arr));
-      else localStorage.removeItem(DELETED_CART_KEY);
+      if (arr.length) sessionStorage.setItem(DELETED_CART_KEY, JSON.stringify(arr));
+      else sessionStorage.removeItem(DELETED_CART_KEY);
     } catch(e) {}
   }
 
@@ -807,7 +819,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (!c || (now - c.ts) > PCACHE_TTL) missing.push(id);
     }
     if (!missing.length) return;
-    const CHUNK = 30;
+    // ✅ FIX #3: CHUNK 10 (Firestore `in` limit safe)
+    const CHUNK = 10;
     const chunks = [];
     for (let i = 0; i < missing.length; i += CHUNK) chunks.push(missing.slice(i, i + CHUNK));
     await Promise.all(chunks.map(async chunk => {
@@ -934,6 +947,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         };
       }
     } catch(e) {}
+    // ✅ FIX #4: Load COD limit from siteSettings/policy
+    try {
+      const ps = await db.collection('siteSettings').doc('policy').get({ source: 'cache' })
+        .catch(() => db.collection('siteSettings').doc('policy').get());
+      if (ps && ps.exists) {
+        const pd = ps.data() || {};
+        if (pd.codLimit != null) COD_LIMIT = Number(pd.codLimit) || 500;
+      }
+    } catch(e) {}
     applyPaymentUI();
     updateTotals();
   }
@@ -953,6 +975,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         applyPaymentUI();
         updateTotals();
       }, err => console.warn('[cart payment listener]', err && err.message));
+    } catch(e) {}
+    // ✅ FIX #4: Watch COD limit changes
+    try {
+      db.collection('siteSettings').doc('policy').onSnapshot(snap => {
+        if (!snap.exists) return;
+        const pd = snap.data() || {};
+        if (pd.codLimit != null) COD_LIMIT = Number(pd.codLimit) || 500;
+      }, () => {});
     } catch(e) {}
   }
 
@@ -1262,6 +1292,17 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const deduped = dedupeCart(cartItems);
       if (deduped.length !== cartItems.length) cartItems = deduped;
     }
+    // ✅ FIX #7: Stable sort by addedAt (prevents UI flicker on snapshot updates)
+    cartItems = cartItems.slice().sort((a, b) => {
+      const getTs = (x) => {
+        if (!x || x.addedAt == null) return 0;
+        if (typeof x.addedAt === 'number') return x.addedAt;
+        if (x.addedAt.toDate) { try { return x.addedAt.toDate().getTime(); } catch(e) { return 0; } }
+        if (x.addedAt.seconds) return x.addedAt.seconds * 1000;
+        return 0;
+      };
+      return getTs(a) - getTs(b);
+    });
 
     if (loading) loading.style.display = 'none';
 
@@ -2483,6 +2524,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     catch(e) { userProfile = null; }
   }
 
+  // ✅ FIX #6: Address fetch error toast
   async function getSavedAddresses() {
     if (currentUser) {
       try {
@@ -2491,7 +2533,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           const arr = snap.data().addresses;
           if (Array.isArray(arr)) return arr;
         }
-      } catch(e) {}
+      } catch(e) {
+        console.warn('[addresses] load failed:', e && e.message);
+        toast('Addresses load nahi ho paye. Network check karein.', 'error');
+      }
       return [];
     }
     try { const arr = JSON.parse(localStorage.getItem(ADDR_LIST_KEY) || '[]'); return Array.isArray(arr) ? arr : []; }
@@ -2649,7 +2694,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       tgMap.remove();
     }
     tgMap = L.map('tg-addr-map', { zoomControl: false, attributionControl: false }).setView([lat, lng], 16);
-    
+
     // ✅ Use OpenStreetMap standard tiles (NO API KEY REQUIRED)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
@@ -2659,18 +2704,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const center = tgMap.getCenter();
       document.getElementById('tg-addr-lat').value = center.lat;
       document.getElementById('tg-addr-lng').value = center.lng;
-      
+
       if (tgGeocodeTimeout) clearTimeout(tgGeocodeTimeout);
       tgGeocodeTimeout = setTimeout(() => {
         reverseGeocode(center.lat, center.lng);
-      }, 1000);
+      }, 1500);
     });
   }
 
   window.tgDetectLocation = function() {
     const btn = document.getElementById('tg-loc-btn');
     const originalText = btn.innerHTML;
-    
+
     if (!navigator.geolocation) {
       toast('Aapka browser location support nahi karta', 'error');
       return;
@@ -2683,16 +2728,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        
+
         if (tgMap) {
           tgMap.setView([lat, lng], 17);
         }
-        
+
         document.getElementById('tg-addr-lat').value = lat;
         document.getElementById('tg-addr-lng').value = lng;
-        
+
         reverseGeocode(lat, lng);
-        
+
         btn.innerHTML = originalText;
         btn.disabled = false;
       },
@@ -2701,7 +2746,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         let msg = 'Location unavailable. Check GPS/Network.';
         if (error.code === 1) msg = 'Location permission denied.';
         if (error.code === 3) msg = 'Location request timed out.';
-        
+
         toast('⚠️ ' + msg + ' Trying IP-based location.', 'error');
         fallbackToIpLocation(btn, originalText);
       },
@@ -2711,28 +2756,28 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
   async function fallbackToIpLocation(btn, originalText) {
     btn.innerHTML = '<svg style="animation:spin 1s linear infinite;" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Finding via IP...';
-    
+
     try {
       const res = await fetch('https://ipapi.co/json/');
       const data = await res.json();
-      
+
       if (data && data.latitude && data.longitude) {
         const lat = data.latitude;
         const lng = data.longitude;
-        
+
         if (tgMap) {
           tgMap.setView([lat, lng], 14);
         }
-        
+
         document.getElementById('tg-addr-lat').value = lat;
         document.getElementById('tg-addr-lng').value = lng;
-        
+
         if (data.city) document.getElementById('tg-addr-city').value = data.city;
         if (data.region) document.getElementById('tg-addr-state').value = data.region;
         if (data.postal) document.getElementById('tg-addr-pin').value = data.postal;
-        
+
         reverseGeocode(lat, lng);
-        
+
         toast('✓ Approximate location loaded. Drag map to adjust.', 'success');
       } else {
         throw new Error('IP location failed');
@@ -2765,10 +2810,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=en`);
       const data = await res.json();
-      
+
       if (data && data.address) {
         const a = data.address;
-        
+
         const area = a.suburb || a.neighbourhood || a.residential || a.road || a.city_district || a.county || '';
         const city = a.city || a.town || a.village || a.municipality || a.county || '';
         const state = a.state || a.state_district || '';
@@ -2806,31 +2851,31 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       b.classList.toggle('active', b.dataset.type === 'home');
     });
     document.getElementById('tg-addr-default').checked = false;
-    
+
     try {
       const saved = getAddr();
       if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
       if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone;
     } catch(e) {}
-    
+
     if (userProfile) {
       const nameEl = document.getElementById('tg-addr-name');
       const phoneEl = document.getElementById('tg-addr-phone');
       if (!nameEl.value && userProfile.name) nameEl.value = userProfile.name;
       if (!phoneEl.value && userProfile.phone) phoneEl.value = userProfile.phone;
     }
-    
-    ['tg-addr-line','tg-addr-locality','tg-addr-landmark','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state','tg-addr-lat','tg-addr-lng'].forEach(id => {
+
+    ['tg-addr-line','tg-addr-landmark','tg-addr-locality','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state','tg-addr-lat','tg-addr-lng'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
-    
+
     document.getElementById('tg-addr-save-text').textContent = 'Save & Continue';
     document.getElementById('tg-addr-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
-    
+
     setTimeout(() => {
-      initTgMap(28.6139, 77.2090); 
+      initTgMap(28.6139, 77.2090);
     }, 300);
   };
 
@@ -2839,10 +2884,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.body.style.overflow = '';
   };
 
+  // ✅ FIX #5: Landmark now included
   window.tgSaveAddr = async function() {
     const name = (document.getElementById('tg-addr-name').value || '').trim();
     const phone = (document.getElementById('tg-addr-phone').value || '').trim();
     const line = (document.getElementById('tg-addr-line').value || '').trim();
+    const landmark = (document.getElementById('tg-addr-landmark')?.value || '').trim();
     const locality = (document.getElementById('tg-addr-locality').value || '').trim();
     const city = (document.getElementById('tg-addr-city').value || '').trim();
     const pin = (document.getElementById('tg-addr-pin').value || '').trim();
@@ -2860,13 +2907,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!/^\d{6}$/.test(pin)) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
     if (!state) { toast('Please enter state', 'error'); return; }
 
-    pendingAddress = { name, phone, line, locality, city, pin, district, state, type, isDefault, lat, lng, country: 'India' };
+    pendingAddress = { name, phone, line, landmark, locality, city, pin, district, state, type, isDefault, lat, lng, country: 'India' };
     setAddr(pendingAddress);
     setPin(pin);
     const cityEl = document.getElementById('tg-pin-city');
     if (cityEl) cityEl.textContent = city + ' - ' + pin;
     refreshDeliveryTagsInPlace();
-    
+
     try {
       const list = await addAddressToList(pendingAddress);
       const key = (pendingAddress.line||'').toLowerCase() + '|' + (pendingAddress.pin||'') + '|' + (pendingAddress.phone||'');
@@ -2875,7 +2922,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       pendingAddrIndex = idx;
       try { localStorage.setItem(ADDR_LAST_IDX, String(idx)); } catch(e) {}
     } catch(e) { console.error('Save failed:', e); }
-    
+
     tgCloseAddr();
     toast('Address saved', 'success');
     tgOpenPayModal();
@@ -2941,7 +2988,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return _razorpayPromise;
   }
 
+  // ✅ FIX #12: Duplicate click prevention
+  let _payInFlight = false;
   window.tgConfirmPay = async function() {
+    if (_payInFlight) { toast('Payment already in progress…', 'info'); return; }
     const t = calcTotals();
     if (t.itemCount === 0) { toast('Cart is empty', 'error'); return; }
     if (!pendingAddress) { toast('Please add delivery address', 'error'); tgClosePay(); return; }
@@ -2959,14 +3009,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         return;
       }
       tgClosePay();
-      tgStartRazorpay(t);
+      _payInFlight = true;
+      try {
+        await tgStartRazorpay(t);
+      } finally {
+        setTimeout(() => { _payInFlight = false; }, 3000);
+      }
     } else {
       if (t.grand > COD_LIMIT) {
         toast('COD limit ₹' + COD_LIMIT + ' hai. Online payment use karein.', 'error');
         return;
       }
       tgClosePay();
-      tgCreateOrder(t, { paymentMethod: 'cod', paymentId: null, paymentStatus: 'pending' });
+      _payInFlight = true;
+      try {
+        await tgCreateOrder(t, { paymentMethod: 'cod', paymentId: null, paymentStatus: 'pending' });
+      } finally {
+        setTimeout(() => { _payInFlight = false; }, 2000);
+      }
     }
   };
 
@@ -2995,6 +3055,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return out;
   }
 
+  // ✅ FIX #9: Parallel settings loads (order 1-2 sec faster)
   async function tgVerifyCartServerSide(clientItems) {
     if (!Array.isArray(clientItems) || !clientItems.length) {
       throw new Error('Cart is empty');
@@ -3003,7 +3064,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const pids = [...new Set(clientItems.map(it => it.productId).filter(Boolean))];
     if (!pids.length) throw new Error('Invalid cart items');
 
-    const freshProds = await fetchFreshProductsServer(pids);
+    const [freshProds, commSnap, psSnap] = await Promise.all([
+      withTimeout(fetchFreshProductsServer(pids), 12000),
+      db.collection('siteSettings').doc('seller').get({ source: 'server' }).catch(() => null),
+      db.collection('siteSettings').doc('payment').get({ source: 'server' }).catch(() => null)
+    ]);
     if (Object.keys(freshProds).length === 0) {
       throw new Error('Unable to verify products. Check your internet and try again.');
     }
@@ -3170,18 +3235,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
 
     let commPct = 0;
-    try {
-      const ss = await db.collection('siteSettings').doc('seller').get({ source: 'server' });
-      if (ss.exists) commPct = Number(ss.data().commissionPercent || 0);
-    } catch(e) {}
+    if (commSnap && commSnap.exists) commPct = Number(commSnap.data().commissionPercent || 0);
 
     const cartCommission = commPct !== 0 ? Math.round(subtotal * commPct / 100) : 0;
 
     let gstEnabled = true;
-    try {
-      const ps = await db.collection('siteSettings').doc('payment').get({ source: 'server' });
-      if (ps.exists) gstEnabled = ps.data().gstEnabled !== false;
-    } catch(e) {}
+    if (psSnap && psSnap.exists) gstEnabled = psSnap.data().gstEnabled !== false;
 
     if (!gstEnabled) {
       gstIncludedTotal = 0;
@@ -3208,9 +3267,21 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     };
   }
 
+  // ✅ FIX #10: Idempotency — same paymentId se 2 orders na bane
   async function tgCreateOrderSecure(verified, payInfo, cartDocIds) {
     if (!currentUser) throw new Error('Not logged in');
     if (!verified || !verified.items || !verified.items.length) throw new Error('Invalid order data');
+
+    if (payInfo.paymentId) {
+      try {
+        const dupSnap = await db.collection('orders')
+          .where('paymentId', '==', payInfo.paymentId).limit(1).get();
+        if (!dupSnap.empty) {
+          console.log('[order] Duplicate payment — returning existing:', dupSnap.docs[0].id);
+          return dupSnap.docs[0].id;
+        }
+      } catch(e) { console.warn('[idempotency]', e && e.message); }
+    }
 
     const orderRef = db.collection('orders').doc();
     const cartColRef = db.collection('carts').doc(currentUser.uid).collection('items');
@@ -3300,6 +3371,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return orderRef.id;
   }
 
+  // ✅ FIX #11: Verify fail ho to bhi order create (paid_unverified)
   async function tgStartRazorpay(t) {
     if (!currentUser) { toast('Please log in', 'error'); return; }
 
@@ -3329,12 +3401,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (functions) {
       try {
         const createFn = functions.httpsCallable('createRazorpayOrder');
-        const res = await createFn({
+        const res = await withTimeout(createFn({
           amount: amountPaise,
           name: pendingAddress.name,
           phone: pendingAddress.phone,
           uid: currentUser.uid
-        });
+        }), 12000);
         if (res && res.data && res.data.order_id) {
           razorpayOrder = res.data;
           verifyFn = functions.httpsCallable('verifyRazorpayPayment');
@@ -3369,21 +3441,23 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         coupon: verified.coupon ? verified.coupon.code : ''
       },
       handler: async function(response) {
+        // ✅ FIX #11: verify fail ho to bhi order banao — paid_unverified flag ke saath
+        let verifiedOnServer = false;
         if (verifyFn) {
           try {
-            const v = await verifyFn({
+            const v = await withTimeout(verifyFn({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
-            });
-            if (!v || !v.data || !v.data.verified) {
-              toast('❌ Payment verification failed. Contact support with ID: ' + response.razorpay_payment_id, 'error');
-              return;
-            }
+            }), 12000);
+            verifiedOnServer = !!(v && v.data && v.data.verified);
           } catch(err) {
-            toast('Payment received but verification failed. Contact support with ID: ' + response.razorpay_payment_id, 'error');
-            return;
+            console.warn('[verify] CF failed — saving as paid_unverified:', err && err.message);
           }
+        }
+        const paymentStatusFinal = verifiedOnServer ? 'paid' : 'paid_unverified';
+        if (!verifiedOnServer) {
+          toast('💳 Payment received! Order confirming…', 'info');
         }
 
         const placeBtns = ['tg-place-order', 'tg-m-btn'].map(id => document.getElementById(id)).filter(Boolean);
@@ -3399,7 +3473,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
           const orderId = await tgCreateOrderSecure(
             verified,
-            { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: 'paid' },
+            { paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id, paymentStatus: paymentStatusFinal },
             docsToDelete
           );
 
@@ -3640,11 +3714,44 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   })();
 
+  // ✅ FIX #8: Guest cart → login merge
+  async function tgMergeGuestCart(uid) {
+    try {
+      const guestCart = getGuestCart();
+      if (!guestCart.length) return;
+      toast('Merging your cart…', 'info');
+      const colRef = db.collection('carts').doc(uid).collection('items');
+      let merged = 0;
+      for (const it of guestCart) {
+        if (!it.productId) continue;
+        const docId = makeGuestId(it);
+        try {
+          const docRef = colRef.doc(docId);
+          const existing = await docRef.get();
+          if (existing.exists) {
+            const oldQty = Number(existing.data().qty || 1);
+            const newQty = Math.min(10, oldQty + Number(it.qty || 1));
+            await docRef.update({ qty: newQty, updatedAt: FV.serverTimestamp() });
+          } else {
+            const { id, ...clean } = it;
+            await docRef.set({ ...clean, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+          }
+          merged++;
+        } catch(e) { console.warn('[merge] item failed:', e.message); }
+      }
+      try { localStorage.removeItem(GUEST_CART_KEY); } catch(e) {}
+      try { localStorage.removeItem(SELECTED_KEY); } catch(e) {}
+      if (merged > 0) toast('✓ ' + merged + ' item(s) merged to your cart', 'success');
+    } catch(e) { console.warn('[merge guest cart]', e); }
+  }
+
   auth.onAuthStateChanged(async (u) => {
     const prevUser = currentUser;
+    const wasGuest = !prevUser;
     currentUser = u;
     if (u) {
       try { localStorage.setItem(LAST_UID_KEY, u.uid); } catch(e) {}
+      if (wasGuest) { try { await tgMergeGuestCart(u.uid); } catch(e) {} }
     }
     if (prevUser && !u) { selectedIds = new Set(); saveSelected(); }
     loadCart();
