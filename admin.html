@@ -4411,8 +4411,22 @@ window.tgOpenOrder = function(oid, skipHistory){
     '<button class="tg-admin-note-save" onclick="tgSaveAdminNote(\'' + jsEsc(oid) + '\')">💾 Save Note</button>' +
   '</div>';
 
-  /* Fraud card */
-  const fraudHtml = fraudFlags.length ? '<div class="tg-fraud-flags-card"><h4>🚨 Fraud Flags (' + fraudFlags.length + ')</h4><ul>' + fraudFlags.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul></div>' : '';
+   /* Fraud card with Verify Button */
+  const fraudHtml = fraudFlags.length ? `
+    <div class="tg-fraud-flags-card">
+      <h4>🚨 Fraud Flags (${fraudFlags.length})</h4>
+      <ul>${fraudFlags.map(f => '<li>' + esc(f) + '</li>').join('')}</ul>
+      ${o.paymentStatus === 'paid_unverified' ? `
+        <button class="tg-btn pri" style="margin-top:10px; width:100%; font-size:12px; background:linear-gradient(135deg,#1b8a3a,#15803d);" onclick="tgVerifyManualPayment('${esc(oid)}')">
+          ✓ Verify Payment & Mark as Paid
+        </button>
+      ` : `
+        <button class="tg-btn out" style="margin-top:10px; width:100%; font-size:12px;" onclick="tgClearFraudFlags('${esc(oid)}')">
+          ✓ Clear Flags (Mark as Safe)
+        </button>
+      `}
+    </div>
+  ` : '';
 
   /* Seller breakdown */
   const sellerHtml = Object.values(sellerGroups).map(sg =>
@@ -5919,6 +5933,34 @@ window.tgBulkPrintLabels = function() {
       toast('Failed to update order: ' + e.message, 'err');
     }
   };
+  window.tgVerifyManualPayment = async function(oid) {
+  try {
+    await db.collection('orders').doc(oid).update({ 
+      paymentStatus: 'paid',
+      verifiedManually: true,
+      verifiedBy: USER.uid,
+      updatedAt: FV.serverTimestamp() 
+    });
+    toast('✓ Payment Verified & Marked as Paid', 'suc');
+    tgOpenOrder(oid, true); // Refresh popup
+  } catch(e) {
+    toast('Failed to verify: ' + e.message, 'err');
+  }
+};
+
+window.tgClearFraudFlags = async function(oid) {
+  try {
+    await db.collection('orders').doc(oid).update({ 
+      fraudCleared: true, 
+      fraudClearedBy: USER.uid,
+      updatedAt: FV.serverTimestamp() 
+    });
+    toast('✓ Flags Cleared', 'suc');
+    tgOpenOrder(oid, true); // Refresh popup
+  } catch(e) {
+    toast('Failed to clear flags: ' + e.message, 'err');
+  }
+};
 })();
 </script>
 </body>
