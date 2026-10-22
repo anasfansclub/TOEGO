@@ -1441,8 +1441,40 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     </div>
     <div id="mcust-body" style="max-height:70vh;overflow-y:auto;"></div>
   </div>
-</div>
 
+</div>
+<!-- Razorpay Manual Refund Modal -->
+<div class="tg-mod" id="mod-refund-manual">
+  <div class="tg-mod-c" style="max-width:450px;">
+    <div class="tg-mod-h">
+      <div class="tg-mod-t">💸 Manage Razorpay Refund</div>
+      <button class="tg-mod-x" onclick="tgCloseMod('mod-refund-manual')">✕</button>
+    </div>
+    
+    <div style="background:#fff3e0;border:1.5px solid #ffb74d;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:#e65100;">
+      <b>Note:</b> Manual Refund Process
+    </div>
+
+    <div class="tg-fld">
+      <label>1. Open Razorpay Dashboard</label>
+      <button class="tg-btn pri" style="width:100%;padding:10px;" onclick="tgOpenRazorpayDash()">🌐 Open Razorpay</button>
+      <div style="font-size:11px;color:#666;margin-top:5px;">Dashboard me jaa kar Customer ko manually refund karein.</div>
+    </div>
+
+    <div class="tg-fld" style="margin-top:15px;">
+      <label>2. Enter Refund Details</label>
+      <input type="text" id="man-refund-id" placeholder="Razorpay Refund ID / ARN (e.g. rfnd_xxxx)" style="margin-bottom:8px;">
+      <input type="number" id="man-refund-amt" placeholder="Refunded Amount (₹)">
+    </div>
+
+    <input type="hidden" id="man-refund-oid">
+    
+    <div class="tg-mod-a">
+      <button class="tg-mod-b gho" onclick="tgCloseMod('mod-refund-manual')">Cancel</button>
+      <button class="tg-mod-b suc" onclick="tgMarkAsRefunded()">✓ Mark as Refunded</button>
+    </div>
+  </div>
+</div>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -4424,6 +4456,11 @@ window.tgOpenOrder = function(oid, skipHistory){
   const canCancel = !['cancelled','returned','delivered'].includes(st);
   const isPendingReturn = st === 'return_requested';
   let actionBtns = '';
+    // ✅ Refund Button Logic
+  const isRzpPaid = (o.paymentMethod || '').toLowerCase() === 'razorpay' && o.paymentStatus === 'paid';
+  if (isRzpPaid) {
+    actionBtns += `<button class="tg-btn pri" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;background:linear-gradient(135deg,#ff9800,#f57c00);" onclick="tgOpenRefundManual('${esc(oid)}')">💸 Refund</button>`;
+  }
   if (canRTD) actionBtns += '<button class="tg-btn rtd" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkRTD(\'' + esc(oid) + '\')">🚀 MARK RTD</button>';
   if (canCourierDispatch) actionBtns += '<button class="tg-btn pri" style="flex:1;min-width:160px;padding:12px;justify-content:center;font-size:12px;" onclick="tgOpenCourierFromOrder(\'' + esc(oid) + '\',\'dispatch\')">📦 Enter Courier & Dispatch</button>';
   if (canDeliver) actionBtns += '<button class="tg-btn suc" style="flex:1;min-width:140px;padding:12px;justify-content:center;font-size:12px;" onclick="tgMarkDeliveredDirect(\'' + esc(oid) + '\')">✓ Mark Delivered</button>';
@@ -5832,6 +5869,56 @@ window.tgBulkPrintLabels = function() {
     try { w.focus(); w.print(); } catch(e) {} 
   }, 500);
 };
+
+  /* ============================================================ */
+  /* ============ MANUAL REFUND LOGIC (Without Cloud) =========== */
+  /* ============================================================ */
+
+  window.tgOpenRefundManual = function(oid) {
+    const o = ALL_ORDERS.find(x => x.id === oid);
+    if (!o) return;
+
+    document.getElementById('man-refund-oid').value = oid;
+    document.getElementById('man-refund-id').value = o.refundId || '';
+    document.getElementById('man-refund-amt').value = o.refundAmount || o.total;
+    
+    openMod('mod-refund-manual');
+  };
+
+  window.tgOpenRazorpayDash = function() {
+    window.open('https://dashboard.razorpay.com/app/payments', '_blank');
+  };
+
+  window.tgMarkAsRefunded = async function() {
+    const oid = document.getElementById('man-refund-oid').value;
+    const refId = document.getElementById('man-refund-id').value.trim();
+    const refAmt = Number(document.getElementById('man-refund-amt').value || 0);
+
+    if (!refId) { toast('Please enter Razorpay Refund ID', 'err'); return; }
+    if (refAmt <= 0) { toast('Enter valid refund amount', 'err'); return; }
+
+    try {
+      const o = ALL_ORDERS.find(x => x.id === oid);
+      const isFullRefund = refAmt >= Number(o.total || 0);
+
+      await db.collection('orders').doc(oid).update({
+        paymentStatus: isFullRefund ? 'refunded' : 'partially_refunded',
+        status: isFullRefund ? 'cancelled' : o.status,
+        refundId: refId,
+        refundAmount: refAmt,
+        refundedAt: FV.serverTimestamp(),
+        refundedBy: USER.uid,
+        updatedAt: FV.serverTimestamp()
+      });
+
+      toast('✅ Order marked as Refunded!', 'suc');
+      tgCloseMod('mod-refund-manual');
+      tgCloseMod('mod-order');
+    } catch(e) {
+      console.error(e);
+      toast('Failed to update order: ' + e.message, 'err');
+    }
+  };
 })();
 </script>
 </body>
