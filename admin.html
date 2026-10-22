@@ -855,7 +855,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input type="text" id="lbl-srch" placeholder="Search by order ID, customer, phone, tracking..." oninput="renderLabels()">
         </div>
-        <button class="tg-btn pri" onclick="tgExportLabelsExcel()">📥 Export Labels</button>
+                <button class="tg-btn pri" onclick="tgExportLabelsExcel()">📥 Export Labels</button>
+        <button class="tg-btn suc" style="background:linear-gradient(135deg,#1b8a3a,#15803d);color:#fff;border:none;" onclick="tgBulkPrintLabels()">🖨️ Print 4x6 Labels</button>
       </div>
       <div class="tg-chip-w"><div class="tg-chips" id="lbl-chips">
         <div class="tg-chip active" data-f="all" onclick="tgLblFilter('all')">All <span class="tg-chip-c" id="lbc-all">0</span></div>
@@ -5720,7 +5721,117 @@ window.tgPrintOrder = function(oid, type) {
     SHOP_CFG = snap.exists ? snap.data() : { hero: [], sections: {}, midBanners: [], featured: [], flashSale: {}, returnPolicy: '', returnDays: 7 };
     renderSiteData();
   }, () => {});
+/* ============================================================ */
+/* ============ 4x6 THERMAL BULK LABEL PRINTING =============== */
+/* ============================================================ */
+window.tgBulkPrintLabels = function() {
+  const ids = Array.from(SELECTED_LABELS);
+  if (!ids.length) { toast('Pehle orders select karo (checkbox lagao)', 'err'); return; }
+  
+  const orders = ALL_ORDERS.filter(o => ids.includes(o.id));
+  if (!orders.length) { toast('Selected orders not found', 'err'); return; }
 
+  let html = '<!DOCTYPE html><html><head><title>Bulk Print Labels</title>';
+  
+  // CSS for 4x6 Thermal Label
+  html += `<style>
+    @page { size: 4in 6in; margin: 0; }
+    body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #fff; }
+    .label-page { 
+      width: 4in; height: 6in; padding: 0.15in; box-sizing: border-box; 
+      page-break-after: always; display: flex; flex-direction: column; justify-content: space-between; 
+      margin: 0 auto; border-bottom: 1px dashed #ccc; 
+    }
+    @media print { 
+      .label-page { border-bottom: none; } 
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+    .header { border-bottom: 2px solid #000; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: flex-end; }
+    .brand { font-size: 26px; font-weight: 900; letter-spacing: 1.5px; line-height: 1; }
+    .courier-info { text-align: right; font-size: 11px; font-weight: bold; }
+    .barcode { font-family: monospace; font-size: 22px; text-align: center; margin: 10px 0 5px 0; letter-spacing: -2px; }
+    .order-id { font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+    .ship-to { font-size: 12px; font-weight: bold; background: #000; color: #fff; padding: 3px 8px; display: inline-block; margin-bottom: 5px; }
+    .address-box { border: 2px dashed #000; padding: 10px; margin-bottom: 10px; }
+    .name { font-size: 15px; font-weight: bold; margin-bottom: 3px; }
+    .address { font-size: 12px; line-height: 1.3; margin-bottom: 5px; }
+    .pincode { font-size: 22px; font-weight: 900; border: 2px solid #000; padding: 4px; text-align: center; margin-top: 5px; letter-spacing: 2px; }
+    .items-table { width: 100%; font-size: 11px; border-collapse: collapse; margin-bottom: 5px; }
+    .items-table td, .items-table th { border-bottom: 1px solid #ccc; padding: 4px 0; }
+    .payment { font-size: 18px; font-weight: 900; text-align: center; margin: 8px 0; padding: 8px; border: 2px solid #000; }
+    .payment.cod { background: #000; color: #fff; }
+    .footer { border-top: 1px solid #000; padding-top: 5px; font-size: 10px; text-align: center; }
+  </style></head><body>`;
+
+  orders.forEach(o => {
+    // Address format karna (jo humne pichle fix me banaya tha)
+    const addr = fmtAddress(o.address || o.shippingAddress || {});
+    const items = o.items || [];
+    const payment = (o.paymentMethod || 'COD').toUpperCase();
+    const amount = Number(o.total || 0);
+    const isCod = payment === 'COD';
+    const sellerName = (items[0] && items[0].sellerName) || 'TOEGO Seller';
+    const courierName = (o.courierName || 'DELHIVERY').toUpperCase();
+    const tracking = o.trackingId || 'TRK' + o.id.slice(-8).toUpperCase();
+    
+    const totalItems = items.reduce((a,i)=>a+Number(i.qty||1),0);
+
+    html += `
+      <div class="label-page">
+        <div>
+          <div class="header">
+            <div class="brand">TOEGO</div>
+            <div class="courier-info">
+              <div>${courierName}</div>
+              <div>${tracking}</div>
+            </div>
+          </div>
+
+          <div class="barcode">|| ||| || |||| ||| |||| ||| ||| ||</div>
+          <div class="order-id">#${o.id.slice(0,14).toUpperCase()}</div>
+
+          <div class="ship-to">SHIP TO:</div>
+          <div class="address-box">
+            <div class="name">${esc(addr.name || o.userName || o.customerName || 'Customer')}</div>
+            <div class="address">${addr.lines.map(esc).join(', ')}</div>
+            <div class="pincode">${esc(addr.pin || 'PIN N/A')}</div>
+            <div style="font-size:13px; font-weight:bold; text-align:center; margin-top:8px;">
+              📞 ${esc(o.userPhone || o.phone || addr.phone || '')}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:11px; font-weight:bold; margin-bottom:4px;">ITEMS (${totalItems}):</div>
+          <table class="items-table">
+            ${items.map(it => `<tr><td>${esc(it.name)} (${esc(it.size||'-')})</td><td style="text-align:right;">x${Number(it.qty||1)}</td></tr>`).join('')}
+          </table>
+          
+          <div class="payment ${isCod ? 'cod' : ''}">
+            ${isCod ? `COLLECT CASH: ₹${amount}` : `PREPAID: ₹${amount}`}
+          </div>
+          
+          <div class="footer">
+            <div><b>Return To:</b> ${esc(sellerName)}, ${esc(o.courierHub || 'Seller Address')}</div>
+            <div style="margin-top:3px;">If undelivered, return to origin.</div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { toast('Popup blocked! Allow popups to print labels.', 'err'); return; }
+  w.document.write(html);
+  w.document.close();
+  
+  // Print dialog open karne ke liye delay
+  setTimeout(() => { 
+    try { w.focus(); w.print(); } catch(e) {} 
+  }, 500);
+};
 })();
 </script>
 </body>
