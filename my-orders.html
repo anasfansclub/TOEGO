@@ -802,7 +802,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let unsubTrack = null;
   let TRACK_ID = null;
 
-  // ✅ NEW: Track reviews to hide Review button after submit
   let REVIEWED_PIDS = new Set();
   let USER_REVIEWS = [];
   let editingReviewId = null;
@@ -926,15 +925,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     const isCancelled = ['cancelled', 'returned', 'return_requested'].includes(status);
 
-    // ✅ canCancel: only pending/seller_accepted
     const canCancel = ['pending', 'seller_accepted'].includes(status);
 
-    // ✅ canReturn: only delivered + within 7 days
     const deliveredMs = tsMs(o.deliveredAt);
     const withinReturnWindow = !deliveredMs || (Date.now() - deliveredMs) < 7 * 24 * 3600 * 1000;
     const canReturn = status === 'delivered' && withinReturnWindow && items.length > 0;
 
-    // ✅ Review: already-reviewed product → don't show "Review", show "Reviewed · Edit"
     const firstItem = items[0] || null;
     const firstItemPid = firstItem ? String(firstItem.productId || '') : '';
     const alreadyReviewed = !!(firstItemPid && REVIEWED_PIDS.has(firstItemPid));
@@ -1228,6 +1224,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (otherWrap) otherWrap.classList.toggle('show', cancelReason === 'Other reason');
     document.getElementById('tg-cancel-confirm').disabled = !cancelReason;
   };
+
+  // ✅ FIX: Cancel with stock restore transaction
   window.tgConfirmCancel = async function() {
     if (!cancelTargetId || !cancelReason) return;
     const otherText = (document.getElementById('tg-cancel-other-text')?.value || '').trim();
@@ -1255,10 +1253,48 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (Array.isArray(o.sellerIds)) o.sellerIds.forEach(s => sellerIds.add(String(s)));
         if (sellerIds.size) update.sellerIds = Array.from(sellerIds);
       }
-      await db.collection('orders').doc(cancelTargetId).update(update);
-      toast('Order cancelled ✓', 'success');
+
+      // ✅ Transaction: cancel + restore stock atomically
+      await db.runTransaction(async (tx) => {
+        const orderRef = db.collection('orders').doc(cancelTargetId);
+        const orderSnap = await tx.get(orderRef);
+        if (!orderSnap.exists) throw new Error('Order not found');
+        const orderData = orderSnap.data();
+        const orderStatus = normStatus(orderData);
+        if (orderStatus === 'cancelled') throw new Error('Order already cancelled');
+        if (['dispatched', 'delivered', 'return_requested', 'returned'].includes(orderStatus)) {
+          throw new Error('This order cannot be cancelled anymore');
+        }
+
+        const itemsToRestore = Array.isArray(orderData.items) ? orderData.items : [];
+        const productEntries = [];
+        for (const it of itemsToRestore) {
+          if (it.productId) {
+            productEntries.push({ ref: db.collection('products').doc(it.productId), item: it });
+          }
+        }
+        const productSnaps = await Promise.all(productEntries.map(p => tx.get(p.ref)));
+
+        tx.update(orderRef, update);
+
+        for (let i = 0; i < productSnaps.length; i++) {
+          const snap = productSnaps[i];
+          const item = productEntries[i].item;
+          if (!snap.exists) continue;
+          const pdata = snap.data();
+          const qty = Number(item.qty || 1);
+          const pUpd = { stock: FV.increment(qty), updatedAt: FV.serverTimestamp() };
+          if (item.size && pdata.sizeStock && pdata.sizeStock[item.size] != null) {
+            pUpd['sizeStock.' + item.size] = FV.increment(qty);
+          }
+          tx.update(productEntries[i].ref, pUpd);
+        }
+      });
+
+      toast('Order cancelled ✓ Stock restored', 'success');
       tgCloseCancel();
     } catch(err) {
+      console.error('[cancel]', err);
       toast('Failed: ' + (err.message || 'Error'), 'error');
       btn.disabled = false; btn.textContent = 'Cancel Order';
     }
@@ -1330,7 +1366,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  // ✅ NEW: Reorder — add all items back to cart
+  // ✅ FIX: Reorder with stock check
   window.tgReorder = async function(id) {
     const o = ALL_ORDERS.find(x => (x.id || x.orderId) === id);
     if (!o) { toast('Order not found', 'error'); return; }
@@ -1338,17 +1374,35 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const items = Array.isArray(o.items) ? o.items : [];
     if (!items.length) { toast('No items to reorder', 'error'); return; }
 
-    toast('Adding items to cart…', 'info');
-    let added = 0, failed = 0;
+    toast('Checking stock & adding to cart…', 'info');
+    let added = 0, outOfStock = 0, unavailable = 0;
+
     for (const it of items) {
       try {
         const pid = it.productId;
-        if (!pid) { failed++; continue; }
+        if (!pid) { unavailable++; continue; }
+
+        // ✅ Check fresh stock
+        const prodSnap = await db.collection('products').doc(pid).get();
+        if (!prodSnap.exists || prodSnap.data().active === false) { unavailable++; continue; }
+        const p = prodSnap.data();
+
+        const qtyNeeded = Number(it.qty || 1);
+        const sizeStock = p.sizeStock || {};
+        const availStock = (it.size && sizeStock[it.size] != null)
+          ? Number(sizeStock[it.size])
+          : Number(p.stock || 0);
+
+        if (availStock <= 0) { outOfStock++; continue; }
+
+        const qtyToAdd = Math.min(qtyNeeded, Math.min(10, availStock));
         const docId = pid + '|' + (it.size || '') + '|' + (it.color || '');
         const ref = db.collection('carts').doc(USER.uid).collection('items').doc(docId);
         const snap = await ref.get();
         if (snap.exists) {
-          await ref.update({ qty: FV.increment(Number(it.qty || 1)), updatedAt: FV.serverTimestamp() });
+          const curQty = Number(snap.data().qty || 1);
+          const finalQty = Math.min(10, curQty + qtyToAdd);
+          await ref.update({ qty: finalQty, updatedAt: FV.serverTimestamp() });
         } else {
           await ref.set({
             productId: pid,
@@ -1356,7 +1410,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
             price: Number(it.price || 0),
             mrp: Number(it.mrp || 0),
             image: it.image || '',
-            qty: Number(it.qty || 1),
+            qty: qtyToAdd,
             size: it.size || '',
             color: it.color || '',
             sellerId: it.sellerId || it.seller_id || '',
@@ -1366,12 +1420,20 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           });
         }
         added++;
-      } catch(e) { failed++; }
+      } catch(e) {
+        console.warn('[reorder] item failed:', e.message);
+        unavailable++;
+      }
     }
 
     if (added > 0) {
-      toast('✓ ' + added + ' item' + (added > 1 ? 's' : '') + ' added to cart', 'success');
-      setTimeout(() => { location.href = 'cart.html'; }, 800);
+      let msg = '✓ ' + added + ' item' + (added > 1 ? 's' : '') + ' added to cart';
+      if (outOfStock > 0) msg += ' · ' + outOfStock + ' out of stock';
+      if (unavailable > 0) msg += ' · ' + unavailable + ' unavailable';
+      toast(msg, 'success');
+      setTimeout(() => { location.href = 'cart.html'; }, 900);
+    } else if (outOfStock > 0) {
+      toast('All items are out of stock', 'error');
     } else {
       toast('Could not add items to cart', 'error');
     }
@@ -1504,7 +1566,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     else toast('Please allow popups', 'error');
   };
 
-  // ✅ UPDATED: tgOpenReview — supports edit if already reviewed
   window.tgOpenReview = function(pid, name) {
     if (!pid) { toast('Product not available for review', 'error'); return; }
     pid = String(pid);
@@ -1512,7 +1573,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     const existing = USER_REVIEWS.find(r => String(r.productId) === pid);
 
     if (existing) {
-      // EDIT MODE
       editingReviewId = existing.id;
       reviewTargetPid = pid;
       reviewTargetName = name || existing.productName || '';
@@ -1540,7 +1600,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
       return;
     }
 
-    // NEW REVIEW MODE
     editingReviewId = null;
     reviewTargetPid = pid;
     reviewTargetName = name || '';
@@ -1577,7 +1636,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     document.querySelectorAll('#tg-star-pick svg').forEach(s => { s.classList.toggle('active', Number(s.dataset.star) <= n); });
   };
 
-  // ✅ UPDATED: tgSubmitReview — supports edit + dup guard + local state update
   window.tgSubmitReview = async function() {
     if (!USER) { toast('Please log in', 'error'); return; }
     if (!reviewTargetPid) return;
@@ -1591,7 +1649,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     btn.textContent = editingReviewId ? 'Updating…' : 'Submitting…';
 
     try {
-      // ═══ EDIT MODE ═══
       if (editingReviewId) {
         const oldReview = USER_REVIEWS.find(r => r.id === editingReviewId);
         const oldRating = Number(oldReview?.rating || 0);
@@ -1604,7 +1661,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
           updatedAt: FV.serverTimestamp()
         });
 
-        // Adjust product rating average
         try {
           const prodRef = db.collection('products').doc(reviewTargetPid);
           const prodSnap = await prodRef.get();
@@ -1622,7 +1678,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
           }
         } catch(e) { console.warn('Rating update failed:', e && e.message); }
 
-        // Update local state
         const idx = USER_REVIEWS.findIndex(r => r.id === editingReviewId);
         if (idx >= 0) {
           USER_REVIEWS[idx] = { ...USER_REVIEWS[idx], rating: reviewRating, title, text, images: rvImages.slice() };
@@ -1635,8 +1690,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
         return;
       }
 
-      // ═══ NEW REVIEW ═══
-      // Guard against duplicates
       if (REVIEWED_PIDS.has(String(reviewTargetPid))) {
         toast('You already reviewed this product', 'info');
         tgCloseReview();
@@ -1662,7 +1715,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
 
       const newRef = await db.collection('reviews').add(payload);
 
-      // Update product's aggregate rating
       try {
         const prodRef = db.collection('products').doc(reviewTargetPid);
         const prodSnap = await prodRef.get();
@@ -1682,7 +1734,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
         }
       } catch(e) { console.warn('Product rating update failed:', e && e.message); }
 
-      // ✅ Update local state immediately → hide Review button
       REVIEWED_PIDS.add(String(reviewTargetPid));
       USER_REVIEWS.push({
         id: newRef.id,
@@ -1698,7 +1749,7 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
 
       toast('Review submitted ✓ Thank you!', 'success');
       tgCloseReview();
-      renderOrders();  // ✅ refresh UI to show "Reviewed · Edit"
+      renderOrders();
     } catch(err) {
       console.error('Review submit failed:', err);
       toast('Failed: ' + (err.message || 'Error'), 'error');
@@ -1707,7 +1758,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     }
   };
 
-  // ✅ NEW: loadUserReviews — fetches all user's existing reviews
   async function loadUserReviews() {
     REVIEWED_PIDS.clear();
     USER_REVIEWS = [];
@@ -1722,27 +1772,13 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
         if (pid) REVIEWED_PIDS.add(pid);
         USER_REVIEWS.push(r);
       });
-      console.log('[reviews] already reviewed:', Array.from(REVIEWED_PIDS));
     } catch(e) {
       console.warn('[reviews] load failed:', e && e.message);
     }
     try { renderOrders(); } catch(e) {}
   }
 
-  function userMatchesOrder(o, uid, email, phone) {
-    const cands = [
-      o.customerId, o.userId, o.uid, o.user_id, o.customer_id,
-      o.customer && o.customer.id, o.user && o.user.id, o.user && o.user.uid,
-      o.buyerId, o.buyer && o.buyer.id,
-      o.userEmail, o.email, o.customerEmail,
-      o.userPhone, o.phone, o.customerPhone
-    ].filter(Boolean).map(x => String(x).toLowerCase());
-    if (cands.includes(uid.toLowerCase())) return true;
-    if (email && cands.includes(email)) return true;
-    if (phone && cands.some(c => c.replace(/\D/g,'') === phone)) return true;
-    return false;
-  }
-
+  // ✅ FIX: Simplified loadOrders — removed fallback 100-scan (read bomb) + userMatchesOrder
   function loadOrders() {
     if (!USER) {
       ordersReady = true;
@@ -1763,8 +1799,6 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     unsubOrders = [];
 
     const uid = USER.uid;
-    const email = (USER.email || '').toLowerCase();
-    const phone = (USER.phoneNumber || '').replace(/\D/g, '');
     const col = db.collection('orders');
 
     const cachedArr = loadOrdersCache(uid) || [];
@@ -1800,6 +1834,7 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
       }
     };
 
+    // Query 1: customerId
     try {
       const u1 = col.where('customerId', '==', uid).limit(100).onSnapshot(snap => {
         snap.docs.forEach(d => liveMap.set(d.id, { id: d.id, ...d.data() }));
@@ -1817,6 +1852,7 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
       l1Done = true;
     }
 
+    // Query 2: userId (legacy support)
     try {
       const u2 = col.where('userId', '==', uid).limit(100).onSnapshot(snap => {
         snap.docs.forEach(d => liveMap.set(d.id, { id: d.id, ...d.data() }));
@@ -1835,34 +1871,7 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
       l2Done = true;
     }
 
-    setTimeout(() => {
-      if (l1Done || l2Done) return;
-      try {
-        const u3 = col.orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
-          snap.docs.forEach(d => {
-            const o = { id: d.id, ...d.data() };
-            if (userMatchesOrder(o, uid, email, phone)) liveMap.set(d.id, o);
-          });
-          l1Done = true;
-          l2Done = true;
-          mergeAndRender(true);
-        }, () => {
-          l1Done = true;
-          l2Done = true;
-          l1Err = true;
-          l2Err = true;
-          mergeAndRender(true);
-        });
-        unsubOrders.push(u3);
-      } catch(e) {
-        l1Done = true;
-        l2Done = true;
-        l1Err = true;
-        l2Err = true;
-        mergeAndRender(true);
-      }
-    }, 2500);
-
+    // Safety: ensure render after 6s max
     setTimeout(() => {
       if (!ordersReady) {
         ordersReady = true;
@@ -1924,7 +1933,7 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
       return;
     }
     loadOrders();
-    loadUserReviews();   // ✅ NEW: fetch existing reviews
+    loadUserReviews();
     updateCartBadge();
   });
 
