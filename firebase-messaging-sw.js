@@ -16,17 +16,22 @@ self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
 const messaging = firebase.messaging();
+
 // ✅ Chrome PWA install requirement ke liye fetch handler
 self.addEventListener('fetch', function(event) {
   // Yeh khaali handler hai, bas Chrome ko batata hai ki hum PWA hain
 });
+
 messaging.onBackgroundMessage((payload) => {
   console.log('[SW] Background message received:', payload);
   
+  // 🔥 FIX: Payload me 'notification' aur 'data' dono ko check karo
+  const notification = payload.notification || {};
   const data = payload.data || {};
-  const title = data.title || 'TOEGO Alert!';
-  const body = data.body || 'Check out our new offers!';
-  const image = data.image || '';
+  
+  const title = notification.title || data.title || 'TOEGO Alert!';
+  const body = notification.body || data.body || 'Check out our new offers!';
+  const image = notification.image || data.image || '';
   const clickUrl = data.url || 'https://toego.in/shop-home.html';
   
   // ✅ AAPKA LOGO
@@ -34,15 +39,12 @@ messaging.onBackgroundMessage((payload) => {
 
   const options = {
     body: body,
-    // ⚠️ Android Chrome ke liye icon 1:1 ratio me hona chahiye. 
-    // Agar aapka logo square nahi hai, toh use square crop karein.
     icon: LOGO_URL,    
-    // Badge 72x72 PNG hona chahiye
     badge: LOGO_URL,   
     image: image || undefined,
     data: { url: clickUrl },
     vibrate: [200, 100, 200],
-    tag: 'toego-main-notification', // ✅ Spam rokega
+    tag: 'toego-main-notification',
     renotify: true
   };
 
