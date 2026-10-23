@@ -576,6 +576,27 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   }
 
   /* ═══════════════════════════════════════════════════════════════
+     ⭐ NEW: RECOVER FROM auth.currentUser
+     (When popup/redirect fails but sign-in actually succeeded)
+     ═══════════════════════════════════════════════════════════════ */
+  async function recoverFromCurrentUser(reason) {
+    if (!auth || !auth.currentUser) return false;
+    if (_redirected) return true;
+    console.log('[recover] using currentUser (' + (reason || '') + '):', auth.currentUser.email);
+    clearPendingGoogle();
+    let idToken = '';
+    try { idToken = await auth.currentUser.getIdToken(); } catch(e) {}
+    await handleSuccess({
+      uid: auth.currentUser.uid,
+      email: auth.currentUser.email || '',
+      name: auth.currentUser.displayName || (auth.currentUser.email || '').split('@')[0] || 'User',
+      photoURL: auth.currentUser.photoURL || '',
+      idToken: idToken
+    });
+    return true;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
      EMAIL/PASSWORD SUBMIT
      ═══════════════════════════════════════════════════════════════ */
   form.addEventListener('submit', async (e) => {
@@ -663,7 +684,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     ✅ GOOGLE LOGIN — MOBILE = REDIRECT, DESKTOP = POPUP
+     ✅ GOOGLE LOGIN — FULLY FIXED
+     - Mobile → redirect
+     - Desktop → popup + multi-layer fallback
+     - currentUser recovery on any popup error
      ═══════════════════════════════════════════════════════════════ */
   googleBtn.addEventListener('click', async function() {
     if (googleBtn.disabled) return;
@@ -679,20 +703,25 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       return;
     }
 
+    // Agar pehle se signed in hai toh seedha redirect
+    if (auth.currentUser) {
+      await recoverFromCurrentUser('pre-click');
+      return;
+    }
+
     setGoogleLoading(true);
     await persistencePromise;
 
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    // ✅ MOBILE: Use redirect (no desktop-style popup)
-    // ✅ DESKTOP: Use popup (faster UX)
+    /* ───────── MOBILE → REDIRECT ───────── */
     if (IS_MOBILE) {
       console.log('[google] mobile → redirect');
       setPendingGoogle();
       try {
         await auth.signInWithRedirect(provider);
-        // Page will navigate away. On return, getRedirectResult handles it.
+        // Page navigates away. Return is handled by getRedirectResult().
       } catch (err) {
         clearPendingGoogle();
         setGoogleLoading(false);
@@ -711,9 +740,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       return;
     }
 
-    // Desktop: popup with redirect fallback
+    /* ───────── DESKTOP → POPUP + FALLBACKS ───────── */
     try {
       const result = await auth.signInWithPopup(provider);
+
+      // Case A: normal success
       if (result && result.user) {
         console.log('[google] popup success:', result.user.email);
         clearPendingGoogle();
@@ -726,19 +757,52 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           photoURL: result.user.photoURL || '',
           idToken: idToken
         });
-      } else {
-        setGoogleLoading(false);
+        return;
       }
+
+      // Case B: result missing user but auth.currentUser set
+      if (await recoverFromCurrentUser('result-no-user')) return;
+
+      // Case C: wait a moment for auth state to propagate
+      await new Promise(r => setTimeout(r, 800));
+      if (await recoverFromCurrentUser('result-no-user-delayed')) return;
+
+      setGoogleLoading(false);
+      showModal({
+        type: 'error',
+        title: 'Sign-in Incomplete',
+        desc: 'Google se sign-in complete nahi hua. Please try again.',
+        primaryText: 'Retry',
+        onPrimary: () => setTimeout(() => googleBtn.click(), 150)
+      });
+
     } catch (err) {
       const code = err && err.code;
-      console.log('[google] error:', code);
+      console.log('[google] popup error:', code);
 
-      // Popup blocked or storage issue → redirect fallback
-      if (code === 'auth/popup-blocked' ||
-          code === 'auth/missing-initial-state' ||
-          code === 'auth/web-storage-unsupported' ||
-          code === 'auth/internal-error' ||
-          code === 'auth/operation-not-supported-in-this-environment') {
+      // 🔥 MOST IMPORTANT — sign-in may have SUCCEEDED despite error
+      if (await recoverFromCurrentUser('catch-immediate')) return;
+
+      // wait for auth state to propagate (Chrome 3rd-party cookie delay)
+      await new Promise(r => setTimeout(r, 700));
+      if (await recoverFromCurrentUser('catch-delayed')) return;
+
+      // User genuinely closed popup → silent
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        setGoogleLoading(false);
+        return;
+      }
+
+      // These → fallback to redirect (more reliable than popup)
+      const redirectFallbackCodes = [
+        'auth/popup-blocked',
+        'auth/missing-initial-state',
+        'auth/web-storage-unsupported',
+        'auth/internal-error',
+        'auth/operation-not-supported-in-this-environment',
+        'auth/network-request-failed'
+      ];
+      if (redirectFallbackCodes.indexOf(code) !== -1) {
         console.log('[google] falling back to redirect');
         setPendingGoogle();
         try {
@@ -757,42 +821,14 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
 
-      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
-        setGoogleLoading(false);
-        return;
-      }
-
-      if (code === 'auth/network-request-failed') {
-        setGoogleLoading(false);
-        showModal({
-          type: 'error',
-          title: 'No Internet',
-          desc: 'Internet connection check karein.',
-          primaryText: 'Retry',
-          onPrimary: () => setTimeout(() => googleBtn.click(), 150)
-        });
-        return;
-      }
-
       if (code === 'auth/unauthorized-domain') {
         setGoogleLoading(false);
-        showModal({
-          type: 'error',
-          title: 'Configuration Error',
-          desc: 'Ye domain Firebase me authorized nahi hai.',
-          primaryText: 'OK'
-        });
+        showModal({ type: 'error', title: 'Configuration Error', desc: 'Ye domain Firebase me authorized nahi hai.', primaryText: 'OK' });
         return;
       }
-
       if (code === 'auth/user-disabled') {
         setGoogleLoading(false);
-        showModal({
-          type: 'error',
-          title: 'Account Disabled',
-          desc: 'Ye Google account block hai.',
-          primaryText: 'OK'
-        });
+        showModal({ type: 'error', title: 'Account Disabled', desc: 'Ye Google account block hai.', primaryText: 'OK' });
         return;
       }
 
@@ -802,7 +838,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   });
 
   /* ═══════════════════════════════════════════════════════════════
-     REDIRECT RETURN HANDLER (for mobile)
+     REDIRECT RETURN HANDLER (fixed)
      ═══════════════════════════════════════════════════════════════ */
   (async function handleRedirectReturn() {
     try {
@@ -819,17 +855,30 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
           photoURL: result.user.photoURL || '',
           idToken: idToken
         });
-      } else {
-        // No result. Check if we came back from redirect
-        if (isPendingGoogle()) {
-          console.log('[redirect-return] pending but no result — showing form');
-          clearPendingGoogle();
-          hideAuthLoading();
-          setGoogleLoading(false);
-        }
+        return;
+      }
+
+      // Redirect result null BUT auth.currentUser set → recover
+      if (auth.currentUser && isPendingGoogle()) {
+        console.log('[redirect-return] using currentUser fallback');
+        if (await recoverFromCurrentUser('redirect-return')) return;
+      }
+
+      // No user, no pending → fresh visit (nothing to do)
+      if (isPendingGoogle()) {
+        console.log('[redirect-return] pending but no result — waiting for auth state…');
+        // Don't hide immediately — let onAuthStateChanged / failsafe handle it
+        setTimeout(() => {
+          if (!auth.currentUser && !_redirected && isPendingGoogle()) {
+            clearPendingGoogle();
+            hideAuthLoading();
+            setGoogleLoading(false);
+          }
+        }, 3000);
       }
     } catch (err) {
       console.log('[redirect-return] error:', err && err.code);
+      if (await recoverFromCurrentUser('redirect-return-error')) return;
       clearPendingGoogle();
       hideAuthLoading();
       setGoogleLoading(false);
@@ -837,7 +886,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
   })();
 
   /* ═══════════════════════════════════════════════════════════════
-     SESSION RESTORE
+     SESSION RESTORE (fixed — pending me cache clear nahi karte)
      ═══════════════════════════════════════════════════════════════ */
   let _authCheckFirst = true;
   auth.onAuthStateChanged(async (user) => {
@@ -845,6 +894,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       _authCheckFirst = false;
       if (user && !_redirected) {
         console.log('[session-restore] Firebase confirms:', user.email);
+        clearPendingGoogle();
         showAuthLoading('Welcome back!', true);
         let idToken = '';
         try { idToken = await user.getIdToken(); } catch(e) {}
@@ -858,8 +908,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         return;
       }
       console.log('[session-restore] not logged in — showing login form');
-      safeRemove(AUTH_CACHE_KEY);
-      safeRemove(SESSION_KEY);
+      if (!isPendingGoogle()) {           // ⬅️ Fixed: don't clear while pending
+        safeRemove(AUTH_CACHE_KEY);
+        safeRemove(SESSION_KEY);
+      }
       return;
     }
 
@@ -878,7 +930,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     }
   });
 
-  /* Failsafe */
+  /* Failsafe (15s — enough for slow redirect roundtrip) */
   setTimeout(() => {
     if (isPendingGoogle() && !auth.currentUser && !_redirected) {
       console.log('[failsafe] restoring login form');
@@ -886,7 +938,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       hideAuthLoading();
       setGoogleLoading(false);
     }
-  }, 8000);
+  }, 15000);
 
   window.addEventListener('pageshow', (e) => {
     if (e.persisted && auth.currentUser && !_redirected) {
