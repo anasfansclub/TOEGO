@@ -3,7 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>All Products — TOEGO</title>
+
+<!-- ✅ SEO TITLE & DESCRIPTION -->
+<title>Shop All Products Online at Best Prices | TOEGO</title>
+<meta name="description" content="Browse our wide collection of footwear, fashion, watches, and electronics at TOEGO. Get the best deals, fast delivery, and easy returns across India.">
+<link rel="canonical" href="https://toego.in/categories.html">
+
+<!-- ✅ SOCIAL MEDIA (OG) TAGS -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toego.in/categories.html">
+<meta property="og:title" content="Shop All Products Online at TOEGO">
+<meta property="og:description" content="Discover the best deals on footwear, fashion, watches, and more at TOEGO.">
+<meta property="og:image" content="https://toego.in/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- ✅ JSON-LD SCHEMA FOR COLLECTION PAGE -->
+<script type="application/ld+json" id="tg-collection-schema">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "All Products",
+  "url": "https://toego.in/categories.html",
+  "description": "Browse our wide collection of products at TOEGO.",
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": []
+  }
+}
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
@@ -181,6 +209,9 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 </style>
 </head>
 <body>
+
+<!-- ✅ SEO H1 FALLBACK -->
+<h1 id="tg-seo-h1" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">Shop All Products Online at TOEGO</h1>
 
 <div id="tg-meesho">
 
@@ -524,6 +555,39 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     } catch(err) { if (err && err.name === 'AbortError') return; toast('Share failed', 'error'); }
   };
 
+  /* ✅ DYNAMIC SEO UPDATER */
+  function updateDynamicSEO(category, searchQuery) {
+    try {
+      let pageTitle = "Shop All Products Online at Best Prices | TOEGO";
+      let pageDesc = "Browse our wide collection of footwear, fashion, watches, and electronics at TOEGO. Get the best deals, fast delivery, and easy returns.";
+      let h1Text = "Shop All Products Online at TOEGO";
+
+      if (searchQuery) {
+        pageTitle = `Search Results for "${searchQuery}" | TOEGO`;
+        pageDesc = `Find the best deals on ${searchQuery} at TOEGO. Shop online with fast delivery and easy returns.`;
+        h1Text = `Search Results for "${searchQuery}"`;
+      } else if (category && category !== 'all') {
+        const catName = category.charAt(0).toUpperCase() + category.slice(1);
+        pageTitle = `Buy ${catName} Online at Best Prices | TOEGO`;
+        pageDesc = `Shop the latest ${catName} collection at TOEGO. Explore top brands, best prices, and exclusive offers with fast delivery across India.`;
+        h1Text = `Buy ${catName} Online`;
+      }
+
+      document.title = pageTitle;
+      
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if(!metaDesc) {
+          metaDesc = document.createElement('meta');
+          metaDesc.name = 'description';
+          document.head.appendChild(metaDesc);
+      }
+      metaDesc.content = pageDesc;
+
+      const h1El = document.getElementById('tg-seo-h1');
+      if (h1El) h1El.textContent = h1Text;
+    } catch(e) {}
+  }
+
   /* URL PARAMS */
   function readUrlParams() {
     try {
@@ -533,8 +597,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       filters.search = (p.get('q') || '').trim();
       const sale = p.get('sale');
       filters.sale = sale ? Number(sale) : null;
-      const title = p.get('title');
-      if (title) document.title = title + ' — TOEGO';
+      
+      updateDynamicSEO(filters.category, filters.search);
     } catch(e) {}
   }
   readUrlParams();
@@ -572,7 +636,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     displayCount = PAGE_SIZE;
     document.querySelectorAll('.tg-fb-chip[data-cat]').forEach(c => c.classList.remove('active'));
     if (el) el.classList.add('active');
+    
+    updateDynamicSEO(cat, filters.search);
     renderProducts(true);
+
     /* Update URL */
     try {
       const url = new URL(window.location);
@@ -617,6 +684,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   document.getElementById('tg-search-input').addEventListener('input', debounce(function() {
     filters.search = this.value.trim().toLowerCase();
     displayCount = PAGE_SIZE;
+    updateDynamicSEO(filters.category, filters.search);
     renderProducts(true);
   }, 250));
   document.getElementById('tg-search-input').addEventListener('keydown', function(e) {
@@ -740,6 +808,22 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     } else {
       moreWrap.style.display = 'none';
     }
+
+    /* ✅ Update ItemList Schema dynamically for Google */
+    try {
+      const schemaEl = document.getElementById('tg-collection-schema');
+      if (schemaEl) {
+        const schema = JSON.parse(schemaEl.textContent);
+        schema.mainEntity.itemListElement = toShow.slice(0, 10).map((p, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": "https://toego.in/product.html?id=" + p.id,
+          "name": p.name,
+          "image": p.image || (p.images && p.images[0]) || "https://toego.in/og-image.jpg"
+        }));
+        schemaEl.textContent = JSON.stringify(schema);
+      }
+    } catch(e) {}
   }
 
   window.tgLoadMore = function() {
@@ -929,11 +1013,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   if (filters.search) {
     const inp = document.getElementById('tg-search-input');
     if (inp) inp.value = filters.search;
-  }
-
-  /* Page title based on category */
-  if (filters.category !== 'all') {
-    document.title = (filters.category.charAt(0).toUpperCase() + filters.category.slice(1)) + ' — TOEGO';
   }
 
 })();
