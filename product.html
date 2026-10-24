@@ -3,7 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Product — TOEGO</title>
+
+<!-- ✅ OPTIMIZED SEO TITLE & DESCRIPTION -->
+<title>Buy Products Online at Best Price | TOEGO</title>
+<meta name="description" content="Shop high-quality products online at TOEGO. Check best prices, ratings, reviews, and offers. Get fast delivery and easy returns across India.">
+<link rel="canonical" href="https://toego.in/product.html">
+
+<!-- ✅ DYNAMIC JSON-LD SCHEMA (JS will update this) -->
+<script type="application/ld+json" id="tg-product-schema">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "TOEGO Product",
+  "image": "https://toego.in/og-image.jpg",
+  "description": "Shop smart on TOEGO.",
+  "brand": { "@type": "Brand", "name": "TOEGO" },
+  "offers": { "@type": "Offer", "url": "https://toego.in/product.html", "priceCurrency": "INR", "price": "0", "availability": "https://schema.org/InStock" }
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com">
@@ -56,7 +74,6 @@ a{color:inherit;text-decoration:none;}
 .tg-slider-dot.active{background:#fff;width:24px;border-radius:999px;}
 .tg-slider-count{position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.55);color:#fff;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;z-index:5;letter-spacing:0.3px;}
 
-/* ✅ NEW: Sale tag badge on main product image */
 .tg-slider-tag{position:absolute;top:14px;left:14px;background:#d32f2f;color:#fff;font-size:11.5px;font-weight:900;padding:6px 14px;border-radius:6px;text-transform:uppercase;letter-spacing:0.6px;white-space:nowrap;z-index:6;box-shadow:0 3px 10px rgba(0,0,0,0.28);max-width:60%;overflow:hidden;text-overflow:ellipsis;}
 .tg-slider-tag.sale{background:#d32f2f;}
 .tg-slider-tag.hot{background:#fb641b;}
@@ -207,7 +224,6 @@ a{color:inherit;text-decoration:none;}
 .tg-rel-img{aspect-ratio:1/1;background:#fff;overflow:hidden;position:relative;padding:2px;}
 .tg-rel-img img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
 
-/* ✅ NEW: Sale tag badge on related/all products cards */
 .tg-rel-badge{position:absolute;top:6px;left:6px;background:#d32f2f;color:#fff;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px;white-space:nowrap;z-index:3;max-width:80%;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 4px rgba(0,0,0,0.22);}
 .tg-rel-badge.sale{background:#d32f2f;}
 .tg-rel-badge.hot{background:#fb641b;}
@@ -325,6 +341,9 @@ a{color:inherit;text-decoration:none;}
 </style>
 </head>
 <body id="tg-body" class="tg-hide-actions">
+
+<!-- ✅ SEO H1 FALLBACK -->
+<h1 style="display:none;">Product Details - Buy Online at TOEGO</h1>
 
 <header class="tg-hd">
   <div class="tg-hd-inner">
@@ -582,7 +601,6 @@ a{color:inherit;text-decoration:none;}
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
   function fmtBytes(b) { if (!b) return ''; if (b < 1024) return b + 'B'; return (b/1024).toFixed(1) + 'KB'; }
 
-  // ✅ NEW: Sale tag helper (same logic as home page)
   function getSaleTag(p) {
     if (!p || !p.saleTag || !String(p.saleTag).trim()) return null;
     const tag = String(p.saleTag).trim();
@@ -732,6 +750,56 @@ a{color:inherit;text-decoration:none;}
     return computeRatingFromReviews();
   }
 
+  // ✅ NEW: Google SEO Dynamic Update
+  function updateSEO() {
+    if(!PRODUCT) return;
+    try {
+      const pName = PRODUCT.name || 'Product';
+      const pPrice = Number(PRODUCT.price || 0);
+      const pImg = getImages()[0];
+      const pDesc = PRODUCT.description || `Buy ${pName} online at TOEGO. Best price ${inr(pPrice)}. Fast delivery and easy returns.`;
+      
+      // Update Title & Meta
+      document.title = pName + ' - Buy Online at Best Price | TOEGO';
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if(!metaDesc) {
+          metaDesc = document.createElement('meta');
+          metaDesc.name = 'description';
+          document.head.appendChild(metaDesc);
+      }
+      metaDesc.content = pDesc.substring(0, 160);
+      document.getElementById('tg-hd-title').textContent = pName;
+
+      // Update Schema
+      const schemaScript = document.getElementById('tg-product-schema');
+      if(schemaScript) {
+          const schemaData = {
+              "@context": "https://schema.org/",
+              "@type": "Product",
+              "name": pName,
+              "image": pImg,
+              "description": pDesc,
+              "brand": { "@type": "Brand", "name": PRODUCT.brand || "TOEGO" },
+              "offers": {
+                  "@type": "Offer",
+                  "url": "https://toego.in/product.html?id=" + PRODUCT.id,
+                  "priceCurrency": "INR",
+                  "price": pPrice,
+                  "availability": totalStock() > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+              }
+          };
+          if(getProductRatingData().count > 0) {
+              schemaData.aggregateRating = {
+                  "@type": "AggregateRating",
+                  "ratingValue": getProductRatingData().avg,
+                  "reviewCount": getProductRatingData().count
+              };
+          }
+          schemaScript.textContent = JSON.stringify(schemaData);
+      }
+    } catch(e) { console.warn('SEO Update Error:', e); }
+  }
+
   async function loadProduct() {
     const pid = getProductId();
     _currentProductId = pid;
@@ -742,8 +810,7 @@ a{color:inherit;text-decoration:none;}
     if (cached && cached.id) {
       PRODUCT = cached;
       try {
-        document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
-        document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
+        updateSEO(); // ✅ Dynamic SEO Update
         renderProduct();
       } catch(e) {}
     } else {
@@ -752,8 +819,7 @@ a{color:inherit;text-decoration:none;}
         PRODUCT = homeCached;
         cacheProduct(pid, PRODUCT);
         try {
-          document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
-          document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
+          updateSEO(); // ✅ Dynamic SEO Update
           renderProduct();
         } catch(e) {}
       }
@@ -772,8 +838,7 @@ a{color:inherit;text-decoration:none;}
     if (fresh) {
       PRODUCT = fresh;
       cacheProduct(pid, PRODUCT);
-      document.getElementById('tg-hd-title').textContent = PRODUCT.name || 'Product';
-      document.title = (PRODUCT.name || 'Product') + ' — TOEGO';
+      updateSEO(); // ✅ Dynamic SEO Update
       try { renderProduct(); } catch(e) { showError('Failed to display product', e.message || 'An error occurred.', true); return; }
     } else if (!PRODUCT) {
       const msg = fetchErr ? (fetchErr.message === 'timeout' ? 'Connection timed out.' : 'Could not load product.') : 'This product may have been removed.';
@@ -850,7 +915,6 @@ a{color:inherit;text-decoration:none;}
     const sellerName = PRODUCT.sellerName || PRODUCT.shopName || (PRODUCT.seller && PRODUCT.seller.shopName) || 'TOEGO Store';
     const sellerInit = String(sellerName).trim().charAt(0).toUpperCase() || 'T';
 
-    // ✅ NEW: Sale tag badge for main product image slider
     const mainSaleTag = getSaleTag(PRODUCT);
     const mainTagHtml = mainSaleTag ? '<div class="tg-slider-tag ' + mainSaleTag.cls + '">' + esc(mainSaleTag.text) + '</div>' : '';
 
@@ -1154,7 +1218,6 @@ a{color:inherit;text-decoration:none;}
     const oosClass = isOOS ? ' out-of-stock' : '';
     const clickAttr = isOOS ? '' : 'onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'"';
     const ratingHtml = rating > 0 ? '<div class="tg-rel-rating"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' + rating.toFixed(1) + ' (' + ratingCount + ')</div>' : '';
-    // ✅ NEW: Sale tag badge for related/all products cards
     const saleTag = getSaleTag(p);
     const badgeHtml = saleTag ? '<div class="tg-rel-badge ' + saleTag.cls + '">' + esc(saleTag.text) + '</div>' : '';
     return '<div class="tg-rel-card' + oosClass + '" ' + clickAttr + '><div class="tg-rel-img">' + badgeHtml + '<img src="' + esc(img) + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/200x200/f1f3f6/878787?text=T\'" /></div><div class="tg-rel-body">' + ratingHtml + '<div class="tg-rel-title">' + esc(p.name || 'Product') + '</div><div><span class="tg-rel-price">' + inr(price) + '</span>' + (mrp > price ? '<span class="tg-rel-mrp">' + inr(mrp) + '</span>' : '') + (off > 0 ? '<span class="tg-rel-off">' + off + '% off</span>' : '') + '</div></div></div>';
@@ -1839,9 +1902,18 @@ a{color:inherit;text-decoration:none;}
     setTimeout(() => { btn.disabled = false; btn.innerHTML = origHTML; }, 400);
   };
 
+  // ✅ FIXED: INSTANT BUY NOW BUTTON
   window.tgBuyNow = async function() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
+
+    const btn = document.getElementById('tg-buy-btn');
+    if (btn.disabled) return;
+    
+    // Immediate visual feedback
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = '⚡ Processing...';
+    btn.disabled = true;
 
     const item = buildCartItem();
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
@@ -1850,35 +1922,24 @@ a{color:inherit;text-decoration:none;}
     try { sessionStorage.setItem('toego_buy_now_qty', String(QTY)); } catch(e) {}
 
     if (!currentUser) {
+      // Guest Flow: Write to LocalStorage instantly and redirect
       try {
         let cart = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
         const existing = cart.find(x => ((x.productId||x.id) + '|' + (x.size||'') + '|' + (x.color||'')) === docId);
-        if (existing) {
-          existing.qty = QTY;
-        } else {
-          cart.push({ ...item, addedAt: Date.now() });
-        }
+        if (existing) { existing.qty = QTY; } else { cart.push({ ...item, addedAt: Date.now() }); }
         localStorage.setItem(GUEST_CART, JSON.stringify(cart));
       } catch(e) {}
       location.href = 'log-in.html?redirect=' + encodeURIComponent('cart.html?buynow=' + encodeURIComponent(docId));
       return;
     }
 
+    // Logged In Flow: Fire-and-forget to Firebase, then redirect instantly
     try {
       const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-      const snap = await ref.get({ source: 'cache' });
-      if (snap.exists) {
-        await ref.update({ qty: QTY, updatedAt: FV.serverTimestamp() });
-      } else {
-        await ref.set({ ...item, qty: QTY, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
-      }
-    } catch(e) {
-      try {
-        const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-        await ref.set({ ...item, qty: QTY, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true });
-      } catch(e2) {}
-    }
-
+      // Don't await this, redirect immediately to give speed
+      ref.set({ ...item, qty: QTY, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true }).catch(e => console.warn(e));
+    } catch(e) {}
+    
     location.href = 'cart.html?buynow=' + encodeURIComponent(docId);
   };
 
