@@ -3,7 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Categories — TOEGO</title>
+
+<!-- ✅ OPTIMIZED SEO TITLE & DESCRIPTION -->
+<title>Shop by Categories | Buy Footwear & Fashion Online | TOEGO</title>
+<meta name="description" content="Explore all categories at TOEGO. Shop the latest trends in footwear, fashion, watches, and electronics at the best prices with fast delivery.">
+<link rel="canonical" href="https://toego.in/categories.html">
+
+<!-- ✅ SOCIAL MEDIA (OG) TAGS -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toego.in/categories.html">
+<meta property="og:title" content="Shop by Categories at TOEGO">
+<meta property="og:description" content="Explore the latest trends in footwear, fashion, watches, and more.">
+<meta property="og:image" content="https://toego.in/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- ✅ JSON-LD SCHEMA FOR COLLECTION PAGE -->
+<script type="application/ld+json" id="tg-collection-schema">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Shop by Categories",
+  "url": "https://toego.in/categories.html",
+  "description": "Explore all categories at TOEGO.",
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": []
+  }
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -154,6 +182,9 @@ a{color:inherit;text-decoration:none;}
 </style>
 </head>
 <body>
+
+<!-- ✅ SEO H1 FALLBACK (Dynamically update hoga) -->
+<h1 id="tg-seo-h1" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">Shop by Categories at TOEGO</h1>
 
 <header class="tg-hd">
   <a href="shop-home.html" class="tg-hd-back" aria-label="Back">
@@ -348,6 +379,29 @@ a{color:inherit;text-decoration:none;}
   function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
   function tsToMs(ts) { if (!ts) return 0; if (typeof ts.toDate === 'function') return ts.toDate().getTime(); if (typeof ts === 'number') return ts; if (ts.seconds) return ts.seconds * 1000; return 0; }
 
+  /* ✅ DYNAMIC SEO UPDATER */
+  function updateDynamicSEO(catName) {
+    try {
+      let pageTitle = "Shop by Categories | Buy Footwear & Fashion Online | TOEGO";
+      let pageDesc = "Explore all categories at TOEGO. Shop the latest trends in footwear, fashion, watches, and electronics at the best prices.";
+      let h1Text = "Shop by Categories at TOEGO";
+
+      if (catName && catName !== 'All') {
+        pageTitle = `Buy ${catName} Online at Best Prices | TOEGO`;
+        pageDesc = `Shop the latest ${catName} collection at TOEGO. Explore top brands, best prices, and exclusive offers with fast delivery across India.`;
+        h1Text = `Buy ${catName} Online`;
+      }
+
+      document.title = pageTitle;
+      
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if(metaDesc) metaDesc.content = pageDesc;
+
+      const h1El = document.getElementById('tg-seo-h1');
+      if (h1El) h1El.textContent = h1Text;
+    } catch(e) {}
+  }
+
   /* ═══════ FIREBASE + PERSISTENCE ═══════ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
@@ -362,11 +416,8 @@ a{color:inherit;text-decoration:none;}
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  /* 🔥 FIX #1: ENABLE FIRESTORE PERSISTENCE — instant repeat loads */
   try {
-    db.enablePersistence({ synchronizeTabs: false }).catch(function(err) {
-      // Silently ignore (multi-tab or unsupported browser)
-    });
+    db.enablePersistence({ synchronizeTabs: false }).catch(function(err) {});
   } catch(e) {}
 
   window.db = db; window.auth = auth; window.firebase = firebase;
@@ -377,11 +428,9 @@ a{color:inherit;text-decoration:none;}
     if (_v && _v.toLowerCase() !== 'all') pendingCatSlug = _v;
   } catch(e) {}
 
-  /* ✅ Cache keys */
   const CACHE_CATS = 'toego_cat_cats_v4';
   const CACHE_PRODS = 'toego_cat_prods_v4';
 
-  /* ═══════ VOICE SEARCH (deferred) ═══════ */
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
     recognition = new SpeechRecognition();
@@ -401,7 +450,6 @@ a{color:inherit;text-decoration:none;}
     try { recognition.start(); } catch(e) {}
   };
 
-  /* ═══════ CART BADGE (lightweight) ═══════ */
   function extractCartCount(raw) {
     if (!raw) return 0;
     let c; try { c = JSON.parse(raw); } catch(e) { return 0; }
@@ -479,7 +527,6 @@ a{color:inherit;text-decoration:none;}
     if (productsReady) renderProducts(true);
   }
 
-  /* ═══════ HELPERS ═══════ */
   function isProductVisible(p) {
     if (p.active === false) return false;
     if (p.hidden === true) return false;
@@ -491,7 +538,6 @@ a{color:inherit;text-decoration:none;}
     return true;
   }
 
-  /* 🔥 FIX #2: SLIM PRODUCT — strip unused fields for cache (5× faster parse) */
   function slimProduct(p) {
     return {
       id: p.id,
@@ -534,14 +580,12 @@ a{color:inherit;text-decoration:none;}
     return list.includes(s);
   }
 
-  /* 🔥 FIX #3: SLIM CACHE — 100 products max, stripped fields, quota-safe */
   function persistCache() {
     try {
       const slimProds = ALL_PRODUCTS.slice(0, 100).map(slimProduct);
       localStorage.setItem(CACHE_CATS, JSON.stringify(ALL_CATEGORIES));
       localStorage.setItem(CACHE_PRODS, JSON.stringify(slimProds));
     } catch(e) {
-      // Quota exceeded — clear products cache but keep categories
       try { localStorage.removeItem(CACHE_PRODS); } catch(x) {}
     }
   }
@@ -561,6 +605,11 @@ a{color:inherit;text-decoration:none;}
         hasCache = true;
         if (currentCatId !== 'all' && !ALL_CATEGORIES.find(x => x.id === currentCatId)) { currentCatId = 'all'; currentSubName = 'all'; }
         renderSidebar(); renderSubcats(); renderProducts(true);
+        
+        // ✅ Update SEO on Cache Load
+        const cObj = ALL_CATEGORIES.find(x => x.id === currentCatId);
+        updateDynamicSEO(cObj ? cObj.name : 'All');
+        
         return true;
       }
     } catch(e) {}
@@ -582,20 +631,22 @@ a{color:inherit;text-decoration:none;}
     if (currentCatId !== 'all' && !cats.find(c => c.id === currentCatId)) { currentCatId = 'all'; currentSubName = 'all'; }
     ALL_CATEGORIES = cats;
     renderSidebar(); renderSubcats();
+    
+    // ✅ Update SEO on Category Load
+    const cObj = cats.find(c => c.id === currentCatId);
+    updateDynamicSEO(cObj ? cObj.name : 'All');
+    
     if (productsReady) renderProducts();
   }
 
-  /* ═══════ FIRESTORE LISTENERS (optimized) ═══════ */
   function setupListeners() {
     if (unsubCats) { try { unsubCats(); } catch(e) {} unsubCats = null; }
     if (unsubProds) { try { unsubProds(); } catch(e) {} unsubProds = null; }
     if (!hasCache) setProgress(true);
 
-    /* 🔥 FIX #4: Products limit 300 → 100 (3× less data) */
     try {
       unsubProds = db.collection('products').limit(100).onSnapshot(snap => {
         const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
-        // Skip empty cache snapshots — wait for server
         if (prods.length === 0 && snap.metadata.fromCache && !_serverProductsReceived && ALL_PRODUCTS.length === 0) {
           return;
         }
@@ -613,7 +664,6 @@ a{color:inherit;text-decoration:none;}
       });
     } catch(e) { productsReady = true; _serverProductsReceived = true; setProgress(false); }
 
-    /* Categories — onSnapshot only (removed redundant .get()) */
     try {
       unsubCats = db.collection('categories').onSnapshot(snap => {
         const cats = snap.docs.map(normalizeCategory).filter(c => c.name).sort((a,b) => a.order - b.order);
@@ -641,7 +691,6 @@ a{color:inherit;text-decoration:none;}
     setProgress(true); setupListeners();
   };
 
-  /* ═══════ RENDER: SIDEBAR ═══════ */
   function renderSidebar() {
     const el = document.getElementById('tg-sidebar');
     if (!el) return;
@@ -653,7 +702,6 @@ a{color:inherit;text-decoration:none;}
     if (!ALL_CATEGORIES.length) { el.innerHTML = html; return; }
     html += ALL_CATEGORIES.map((c, idx) => {
       const active = currentCatId === c.id ? 'active' : '';
-      /* Eager 6 only — sidebar shows about 6 at a time */
       const loadingAttr = idx < 6 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
       let imgTag;
       if (c.image) {
@@ -693,7 +741,6 @@ a{color:inherit;text-decoration:none;}
     scroll.innerHTML = html;
   }
 
-  /* ═══════ RENDER: PRODUCTS ═══════ */
   function renderProducts(force) {
     updateFilterUI();
     const grid = document.getElementById('tg-prod-grid');
@@ -749,7 +796,6 @@ a{color:inherit;text-decoration:none;}
       return;
     }
 
-    /* 🔥 FIX #5: Eager 4 → 2, no LQIP — plain lazy is faster */
     grid.innerHTML = filtered.map((p, idx) => {
       const img = p.image || (p.images && p.images[0]) || '';
       const imgUrl = cardImgUrl(img, 350);
@@ -769,9 +815,24 @@ a{color:inherit;text-decoration:none;}
         <div class="tg-prod-body"><div class="tg-prod-name">${esc(p.name)}</div><div class="tg-prod-price-row"><span class="tg-prod-price">₹${price.toLocaleString('en-IN')}</span>${old > price ? `<span class="tg-prod-mrp">₹${old.toLocaleString('en-IN')}</span>` : ''}</div></div>
       </div>`;
     }).join('');
+
+    /* ✅ Update ItemList Schema dynamically for Google */
+    try {
+      const schemaEl = document.getElementById('tg-collection-schema');
+      if (schemaEl) {
+        const schema = JSON.parse(schemaEl.textContent);
+        schema.mainEntity.itemListElement = filtered.slice(0, 10).map((p, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": "https://toego.in/product.html?id=" + p.id,
+          "name": p.name,
+          "image": p.image || (p.images && p.images[0]) || "https://toego.in/og-image.jpg"
+        }));
+        schemaEl.textContent = JSON.stringify(schema);
+      }
+    } catch(e) {}
   }
 
-  /* ═══════ HANDLERS ═══════ */
   window.tgSelectCat = function(id) {
     pendingCatSlug = null; currentCatId = id; currentSubName = 'all';
     searchQuery = '';
@@ -782,6 +843,11 @@ a{color:inherit;text-decoration:none;}
       url.searchParams.set('cat', id === 'all' ? 'all' : slugify(ALL_CATEGORIES.find(c => c.id === id)?.name || ''));
       history.replaceState(null, '', url.toString());
     } catch(e) {}
+    
+    // ✅ Update SEO on Category Click
+    const catObj = ALL_CATEGORIES.find(c => c.id === id);
+    updateDynamicSEO(catObj ? catObj.name : 'All');
+    
     renderSidebar(); renderSubcats(); renderProducts(true);
     document.getElementById('tg-prod-scroll').scrollTop = 0;
   };
@@ -972,9 +1038,8 @@ a{color:inherit;text-decoration:none;}
   window.addEventListener('pageshow', updateCartBadge);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) updateCartBadge(); });
 
-  /* ═══════ BOOT SEQUENCE ═══════ */
-  loadLocalCache();                          // instant from cache
-  setupListeners();                          // firestore listeners
+  loadLocalCache();                          
+  setupListeners();                          
   auth.onAuthStateChanged(u => checkAdmin(u));
   updateCartBadge();
   updateOnlineStatus();
