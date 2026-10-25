@@ -32,7 +32,7 @@
   <meta name="twitter:description" content="Shop smart, save big on footwear, fashion, and more at toego.in.">
   <meta name="twitter:image" content="https://res.cloudinary.com/dkbytis5y/image/upload/v1792946094/converted_ixesch.png">
 
-  <!-- ✅ GOOGLE SCHEMA MARKUP (ONLINE STORE + WEBSITE + BREADCRUMBS + ITEMLIST) -->
+  <!-- ✅ GOOGLE SCHEMA MARKUP -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -121,7 +121,7 @@
   
 <style>
 /* =========================================================
-   TUMHARA SAARA CSS YAHAN SAME RAHEGA (Bina kisi change ke)
+   TUMHARA SAARA CSS YAHAN SAME RAHEGA
    ========================================================= */
 :root{--tg-primary:#2874f0;--tg-primary-dark:#1a5dc7;--hdr-h:58px;}
 *,*::before,*::after{box-sizing:border-box;}
@@ -129,7 +129,6 @@ html,body{margin:0!important;padding:0!important;width:100%!important;max-width:
 #wrapwrap,#wrap,main,main#wrap{width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;}
 header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bottom,.o_footer,#footer,.o_footer_copyright,.o_breadcrumb,.breadcrumb,.o_website_edit_toolbar,.o_notification_manager,.o_editor_banner,.o_loading_indicator{display:none!important;}
 
-/* ═══════════ SPLASH — BLINKIT/MEESHO STYLE ═══════════ */
 #tg-splash{position:fixed;inset:0;background:linear-gradient(135deg,#2874f0 0%,#1a5dc7 50%,#0f1729 100%);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;will-change:opacity;pointer-events:none;overflow:hidden;}
 #tg-splash.gone{display:none!important;}
 #tg-splash.hide{opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s ease;pointer-events:none;}
@@ -157,7 +156,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 #tg-meesho input{font:inherit;}
 #tg-meesho svg{display:block;}
 
-/* ═══════════ HEADER — FIXED #2963eb ═══════════ */
 .tg-mhd{background:#2963eb;position:fixed;top:0;left:0;right:0;z-index:1000;height:58px;box-shadow:0 1px 3px rgba(0,0,0,0.12);contain:layout paint;}
 .tg-mhd-inner{width:100%;padding:8px 16px;display:flex;align-items:center;gap:12px;height:58px;overflow:hidden;}
 .tg-mlogo{display:flex;align-items:center;gap:8px;padding-right:2px;flex-shrink:0;}
@@ -181,7 +179,6 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   .tg-mhd.scrolled .tg-msearch{max-width:100%;}
 }
 
-/* ═══════════ PUSH NOTIFICATION PERMISSION BANNER ═══════════ */
 .tg-notif-banner{position:fixed;bottom:80px;left:12px;right:12px;background:linear-gradient(135deg,#2963eb,#1a4fc7);color:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,0.28);z-index:9997;display:none;align-items:center;gap:12px;animation:tgNotifBannerIn .4s cubic-bezier(.34,1.56,.64,1);}
 .tg-notif-banner.show{display:flex;}
 @keyframes tgNotifBannerIn{from{transform:translateY(120%);opacity:0;}to{transform:translateY(0);opacity:1;}}
@@ -684,7 +681,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 </head>
 <body>
 
-<!-- ✅ HIDDEN H1 TAG FOR SEO (Google ko page ka main topic batane ke liye) -->
+<!-- ✅ HIDDEN H1 TAG FOR SEO -->
 <h1 style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">TOEGO - Online Shopping for Footwear, Fashion, Watches & Electronics in India</h1>
 
 <!-- ═══════════ SPLASH HTML — BLINKIT/MEESHO STYLE ═══════════ -->
@@ -722,10 +719,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
         <span class="tg-msearch-placeholder">Search for products, brands and more</span>
       </div>
       <div class="tg-mhd-actions">
-        <button class="tg-mhd-btn tg-mbell" id="tg-mbell" onclick="tgMToggleBell(event)"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></button>
-        <a href="wishlist.html" class="tg-mhd-btn"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg></a>
-        <a href="cart.html" class="tg-mhd-btn"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg><span class="tg-mcart-badge" id="tg-mcart-badge" style="display:none;">0</span></a>
-        <a href="log-in.html" class="tg-mhd-btn" id="tg-mlogin-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"></path></svg></a>
+        <button class="tg-mhd-btn tg-mbell" id="tg-mbell" onclick="tgMToggleBell(event)" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></button>
+        <a href="wishlist.html" class="tg-mhd-btn" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg></a>
+        <a href="cart.html" class="tg-mhd-btn" aria-label="Cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg><span class="tg-mcart-badge" id="tg-mcart-badge" style="display:none;">0</span></a>
+        <a href="log-in.html" class="tg-mhd-btn" id="tg-mlogin-btn" aria-label="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"></path></svg></a>
       </div>
     </div>
   </header>
@@ -749,6 +746,30 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     <div class="tg-mnotif-list" id="tg-mnotif-list"><div class="tg-mnotif-empty">Loading…</div></div>
   </div>
   <div class="tg-mmain" id="tg-mmain"></div>
+  
+  <!-- ✅ STATIC SEO CONTENT SECTION (Footer ke upar) -->
+  <section style="background: #fff; padding: 30px 20px; margin: 20px 0; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+    <div style="max-width: 1000px; margin: 0 auto;">
+      <h2 style="font-size: 20px; font-weight: 800; color: #212121; margin-bottom: 15px;">Welcome to TOEGO - India's Smart Online Shopping Destination</h2>
+      <p style="font-size: 14px; color: #555; line-height: 1.6; margin-bottom: 15px;">
+        TOEGO is your one-stop online store for the latest footwear, fashion, watches, bags, and electronic accessories. We bring you top-quality products at unbeatable prices. Whether you are looking for stylish sneakers, comfortable slippers, elegant watches, or daily-use electronics, we have everything you need. Enjoy fast delivery, secure payments, and easy returns across India.
+      </p>
+      <h3 style="font-size: 16px; font-weight: 700; color: #212121; margin-bottom: 10px;">Why Shop at TOEGO?</h3>
+      <ul style="font-size: 14px; color: #555; line-height: 1.6; padding-left: 20px; margin-bottom: 15px;">
+        <li><strong>Wide Range:</strong> Choose from thousands of products across footwear, fashion, and electronics.</li>
+        <li><strong>Best Prices:</strong> We offer the best deals and discounts so you can save more.</li>
+        <li><strong>Fast Delivery:</strong> Quick and reliable shipping to your doorstep.</li>
+        <li><strong>Secure Shopping:</strong> 100% safe and secure payment gateways.</li>
+      </ul>
+      <h3 style="font-size: 16px; font-weight: 700; color: #212121; margin-bottom: 10px;">Frequently Asked Questions (FAQs)</h3>
+      <div style="font-size: 14px; color: #555; line-height: 1.6;">
+        <p style="margin-bottom: 8px;"><strong>Q: How can I track my order?</strong><br>You can track your order by logging into your TOEGO account and visiting the "My Orders" section.</p>
+        <p style="margin-bottom: 8px;"><strong>Q: What is the return policy?</strong><br>We offer a hassle-free return policy. Please check our Returns page for more details.</p>
+        <p><strong>Q: Do you deliver across India?</strong><br>Yes, we deliver to almost all pin codes across India with fast and reliable shipping partners.</p>
+      </div>
+    </div>
+  </section>
+
   <footer class="tg-mft">
     <div class="tg-mft-inner">
       <div><h5>Shop</h5><a href="products.html">All Products</a><a href="products.html?sort=newest">New Arrivals</a><a href="products.html?sale=50">Sale</a></div>
@@ -756,7 +777,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       <div><h5>Company</h5><a href="about.html">About Us</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div>
       <div><h5>Sell on TOEGO</h5><a href="seller-apply.html">Become a Seller</a><a href="seller.html">Seller Dashboard</a></div>
     </div>
-    <div class="tg-mft-bottom">© 2025 TOEGO.com · Made in India 🇮🇳</div>
+    <div class="tg-mft-bottom">© 2025 TOEGO.in · Made in India </div>
   </footer>
   <nav class="tg-mbnav">
     <a href="shop-home.html" class="tg-mbnav-item active"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path></svg><span>Home</span></a>
@@ -822,10 +843,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
 
 <script>
-/* =========================================================
-   TUMHARA SAARA JAVASCRIPT YAHAN SAME RAHEGA (Bina kisi change ke)
-   ========================================================= */
-/* SPLASH (2.6 SECONDS - FIRST TIME ONLY) — Blinkit/Meesho style */
+/* SPLASH (1.2 SECONDS - FIXED SPEED) — Blinkit/Meesho style */
 (function() {
   var el = document.getElementById('tg-splash');
   if (!el) return;
@@ -855,8 +873,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     setTimeout(function() { if (el) el.classList.add('gone'); }, 500);
   };
   
-  // ✅ 2.6 Seconds — Blinkit/Meesho style splash
-  setTimeout(hideNow, 2600);
+  // ✅ 1.2 Seconds — Google Speed ke liye best
+  setTimeout(hideNow, 1200);
 })();
 
 /* THEME CACHE — header fixed #2963eb */
@@ -929,11 +947,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (Notification.permission !== 'granted') return;
 
     try {
-      // 1. Service Worker register karein
       const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
       console.log('✅ Service Worker registered:', registration.scope);
 
-      // 2. ✅ SERVICE WORKER KE ACTIVE HONE KA WAIT KAREIN (Mobile AbortError Fix)
       if (registration.installing || registration.waiting) {
         await new Promise((resolve) => {
           const worker = registration.installing || registration.waiting;
@@ -944,7 +960,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ Service Worker activated');
       }
 
-      // 3. Ab token generate karein (Registration object pass karke)
       const token = await _messaging.getToken({ 
         vapidKey: VAPID_KEY,
         serviceWorkerRegistration: registration 
@@ -956,7 +971,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       console.log('✅ [FCM] Token generated:', token);
 
-      // 4. Firestore mein save karein
       const u = auth.currentUser;
       const data = {
         token: token,
@@ -1075,6 +1089,9 @@ document.addEventListener('DOMContentLoaded', function() {
     { name:'Watches', icon:'⌚' }
   ];
 
+  // ✅ Cloudinary Limit Fallback (Base64 SVG - Kabhi load fail nahi hoga)
+  const FALLBACK_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f1f3f6'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='14' fill='%23878787' dominant-baseline='middle' text-anchor='middle'%3EImage Unavailable%3C/text%3E%3C/svg%3E";
+
   function toast(msg, type='info') {
     const w = document.getElementById('tg-mtoasts');
     if (!w) return;
@@ -1114,7 +1131,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') !== -1 && url.indexOf('/upload/') !== -1) {
       if (url.indexOf('/upload/q_auto') === -1 && url.indexOf('/upload/w_') === -1 && url.indexOf('/upload/c_') === -1) {
-        return url.replace('/upload/', '/upload/f_auto,q_auto:good,w_900,c_limit/');
+        // ✅ q_auto:eco (Size kam, bandwidth bachegi)
+        return url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_800,c_limit/');
       }
     }
     return url;
@@ -1124,6 +1142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
     if (/\/upload\/[^/]*[qwfcs]_/.test(url)) return url;
+    // ✅ w_400 (Bandwidth bachegi)
     return url.replace('/upload/', '/upload/f_auto,q_auto:eco,w_400,c_limit/');
   }
 
@@ -1233,7 +1252,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const imgUrl = optimizeImgUrl(b.image);
       const eager = i < 2 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
       slidesHtml += '<div class="tg-mabanner-slide ' + (i===0?'active':'') + '" data-idx="' + i + '" onclick="location.href=\'' + esc(link) + '\'">' +
-        '<img src="' + esc(imgUrl) + '" alt="' + esc(b.title||'Banner') + '" ' + eager + ' decoding="async" />' +
+        '<img src="' + esc(imgUrl) + '" alt="' + esc(b.title||'Banner') + '" ' + eager + ' decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'" />' +
         (hasContent ? '<div class="tg-mabanner-content">' +
           (b.title ? '<div class="tg-mabanner-title">' + esc(b.title) + '</div>' : '') +
           (b.subtitle ? '<div class="tg-mabanner-sub">' + esc(b.subtitle) + '</div>' : '') +
@@ -1717,7 +1736,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const catKey = String(c.name).toLowerCase();
       const active = currentCategory === catKey ? 'active' : '';
       const img = c.image
-        ? '<img src="' + esc(cardImgUrl(c.image, 100)) + '" alt="' + esc(c.name) + '" loading="lazy" decoding="async" onerror="this.style.display=\'none\';this.parentNode.textContent=\'📦\';" />'
+        ? '<img src="' + esc(cardImgUrl(c.image, 100)) + '" alt="' + esc(c.name) + '" loading="lazy" decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'" />'
         : esc(c.icon || '📦');
       html += '<div class="tg-mcat-pill ' + active + '" data-cat="' + esc(catKey) + '" onclick="tgMSelectCategory(\'' + esc(catKey) + '\', this)">' +
         '<div class="tg-mcat-pill-img">' + img + '</div>' +
@@ -2260,6 +2279,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!force && sig === _productsSig) return;
     _productsSig = sig;
 
+    // ✅ FIX: Quick Picks now shows 6 products (as requested)
     const quickPicks = applySortWithTimer(filtered, 6);
     const trendingArr = applySortWithTimer(filtered, 10);
     const bestArr = applySortWithTimer(filtered, 10);
@@ -2301,7 +2321,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const showTimer = endMs > Date.now();
     return '<div class="tg-mini' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-mini-img">' +
-        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" ' + loadingAttr + ' decoding="async" onerror="this.src=\'https://via.placeholder.com/200x200/f1f3f6/878787?text=T\'" />' +
+        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" ' + loadingAttr + ' decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'" />' +
       '</div>' +
       '<div class="tg-mini-body">' +
         (showTimer ? '<span class="tg-mini-timer tg-mcard-timer" data-end="' + endMs + '">' + timerHtml(endMs) + '</span>' : '') +
@@ -2377,8 +2397,8 @@ document.addEventListener('DOMContentLoaded', function() {
     return '<div class="tg-mcard' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-mcard-img">' +
         badgeHtml +
-        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" ' + loadingAttr + ' decoding="async" onerror="this.src=\'https://via.placeholder.com/300x300/f1f3f6/878787?text=T\'" />' +
-        '<button class="tg-mcard-wish" data-pid="' + esc(p.id) + '" onclick="tgMToggleWish(event,\'' + p.id + '\',this)"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>' +
+        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" ' + loadingAttr + ' decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'" />' +
+        '<button class="tg-mcard-wish" data-pid="' + esc(p.id) + '" onclick="tgMToggleWish(event,\'' + p.id + '\',this)" aria-label="Add to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>' +
       '</div>' +
       '<div class="tg-mcard-body">' +
         (showTimer ? '<span class="tg-mcard-timer" data-end="' + endMs + '">' + timerHtml(endMs) + '</span>' : '') +
@@ -2391,8 +2411,8 @@ document.addEventListener('DOMContentLoaded', function() {
         '</div>' +
         '<div class="tg-mcard-assured">' + assuredSvg() + 'TOEGO Assured</div>' +
         '<div class="tg-card-actions">' +
-          '<button class="tg-btn-add" onclick="event.stopPropagation();event.preventDefault();tgMSmartAdd(\'' + p.id + '\',\'' + pnameEsc + '\',' + price + ',\'' + imgEsc + '\')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Add</span></button>' +
-          '<button class="tg-btn-share" data-img="' + esc(img) + '" data-pid="' + p.id + '" data-pname="' + pnameEsc + '" onclick="event.stopPropagation();event.preventDefault();tgMShareBtn(event)"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg></button>' +
+          '<button class="tg-btn-add" onclick="event.stopPropagation();event.preventDefault();tgMSmartAdd(\'' + p.id + '\',\'' + pnameEsc + '\',' + price + ',\'' + imgEsc + '\')" aria-label="Add to Cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Add</span></button>' +
+          '<button class="tg-btn-share" data-img="' + esc(img) + '" data-pid="' + p.id + '" data-pname="' + pnameEsc + '" onclick="event.stopPropagation();event.preventDefault();tgMShareBtn(event)" aria-label="Share Product"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg></button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -2425,8 +2445,8 @@ document.addEventListener('DOMContentLoaded', function() {
     return '<div class="tg-lcard' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-lcard-img">' +
         (saleTag ? '<div class="tg-mcard-badges"><span class="tg-mcard-badge ' + saleTag.cls + '">' + esc(saleTag.text) + '</span></div>' : '') +
-        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/400x400/f1f3f6/878787?text=T\'" />' +
-        '<button class="tg-lcard-wish" data-pid="' + esc(p.id) + '" onclick="tgMToggleWish(event,\'' + p.id + '\',this)"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>' +
+        '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'" />' +
+        '<button class="tg-lcard-wish" data-pid="' + esc(p.id) + '" onclick="tgMToggleWish(event,\'' + p.id + '\',this)" aria-label="Add to Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>' +
       '</div>' +
       '<div class="tg-lcard-body">' +
         (showTimer ? '<span class="tg-mcard-timer" data-end="' + endMs + '">' + timerHtml(endMs) + '</span>' : '') +
@@ -2439,8 +2459,8 @@ document.addEventListener('DOMContentLoaded', function() {
         '</div>' +
         '<div class="tg-lcard-assured">' + assuredSvg() + 'TOEGO Assured</div>' +
         '<div class="tg-lcard-actions">' +
-          '<button class="tg-btn-add" onclick="event.stopPropagation();event.preventDefault();tgMSmartAdd(\'' + p.id + '\',\'' + pnameEsc + '\',' + price + ',\'' + imgEsc + '\')"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Add</span></button>' +
-          '<button class="tg-btn-share" data-img="' + esc(img) + '" data-pid="' + p.id + '" data-pname="' + pnameEsc + '" onclick="event.stopPropagation();event.preventDefault();tgMShareBtn(event)"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg></button>' +
+          '<button class="tg-btn-add" onclick="event.stopPropagation();event.preventDefault();tgMSmartAdd(\'' + p.id + '\',\'' + pnameEsc + '\',' + price + ',\'' + imgEsc + '\')" aria-label="Add to Cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Add</span></button>' +
+          '<button class="tg-btn-share" data-img="' + esc(img) + '" data-pid="' + p.id + '" data-pname="' + pnameEsc + '" onclick="event.stopPropagation();event.preventDefault();tgMShareBtn(event)" aria-label="Share Product"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg></button>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -2536,7 +2556,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const raw = p.image || (Array.isArray(p.images) && p.images[0]) || '';
       const imgUrl = cardImgUrl(raw);
       return '<div class="tg-mrecent-card" onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'">' +
-      '<div class="tg-mrecent-img"><img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" onerror="this.src=\'https://via.placeholder.com/100x100/f1f3f6/878787?text=T\'" /></div>' +
+      '<div class="tg-mrecent-img"><img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" loading="lazy" decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'" /></div>' +
       '<div class="tg-mrecent-name">' + esc(p.name||'') + '</div>' +
     '</div>';
     }).join('');
