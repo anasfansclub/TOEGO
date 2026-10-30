@@ -6,65 +6,138 @@
 <title>TOEGO Admin — Push Notifications</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2963eb;--primary-dark:#1a4fc7;--bg:#f1f3f6;--card:#fff;--text:#212121;--muted:#878787;--border:#e0e0e0;--success:#388e3c;--error:#d32f2f;--warn:#f57c00;}
+:root{
+  --primary:#2963eb;--primary-dark:#1a4fc7;--bg:#f1f3f6;--card:#fff;
+  --text:#212121;--muted:#878787;--border:#e0e0e0;
+  --success:#388e3c;--error:#d32f2f;--warn:#f57c00;
+  --shadow:0 1px 4px rgba(0,0,0,0.06);
+}
 *{box-sizing:border-box;}
 body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-.adm-header{background:var(--primary);color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
-.adm-header h1{margin:0;font-size:20px;font-weight:900;font-style:italic;}
+
+.adm-header{background:var(--primary);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.15);position:sticky;top:0;z-index:100;}
+.adm-header h1{margin:0;font-size:20px;font-weight:900;font-style:italic;letter-spacing:0.5px;}
 .adm-header h1 span{color:#ffe500;}
-.adm-header .badge{background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;}
-.adm-wrap{max-width:1200px;margin:0 auto;padding:20px 16px 60px;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-@media(max-width:900px){.adm-wrap{grid-template-columns:1fr;}}
-.adm-card{background:var(--card);border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);padding:22px;margin-bottom:20px;}
+.adm-header-actions{display:flex;align-items:center;gap:10px;}
+.badge{background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;}
+.logout-btn{background:rgba(255,255,255,0.15);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
+.logout-btn.show{display:inline-block;}
+.logout-btn:hover{background:rgba(255,255,255,0.25);}
+
+.adm-main{max-width:1200px;margin:0 auto;padding:20px 16px 80px;}
+.adm-hidden{display:none!important;}
+.adm-login-wrap{max-width:420px;margin:60px auto;padding:0 16px;}
+
+.adm-tabs-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;background:#fff;padding:8px;border-radius:12px;box-shadow:var(--shadow);}
+.adm-tab-btn{flex:1;min-width:110px;padding:12px 18px;border-radius:8px;background:transparent;border:none;font-size:13px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.adm-tab-btn:hover{background:var(--bg);color:var(--text);}
+.adm-tab-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(41,99,235,0.3);}
+
+.adm-card{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:22px;margin-bottom:20px;}
 .adm-card h2{margin:0 0 16px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;}
+
 .adm-field{margin-bottom:14px;}
 .adm-field label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
-.adm-field input,.adm-field textarea,.adm-field select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;}
+.adm-field input,.adm-field textarea,.adm-field select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;background:#fff;}
 .adm-field input:focus,.adm-field textarea:focus,.adm-field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(41,99,235,0.1);}
 .adm-field textarea{min-height:80px;resize:vertical;}
+.adm-char{font-size:11px;color:var(--muted);text-align:right;margin-top:4px;font-weight:600;}
+
 .adm-btn{padding:13px 22px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;white-space:nowrap;}
 .adm-btn.primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(41,99,235,0.3);}
 .adm-btn.primary:hover{filter:brightness(1.08);}
 .adm-btn.primary:disabled{opacity:0.6;cursor:not-allowed;}
+.adm-btn.danger{background:var(--error);color:#fff;}
+.adm-btn.danger:hover{filter:brightness(1.08);}
+.adm-btn.ghost{background:var(--bg);color:var(--text);border:1.5px solid var(--border);}
+.adm-btn.ghost:hover{background:#e4e7ec;}
 .adm-btn.block{width:100%;}
+
 .adm-status{padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-top:12px;display:none;}
 .adm-status.show{display:block;}
 .adm-status.success{background:#e6f7ec;color:#1b8a3a;}
 .adm-status.error{background:#ffebee;color:#c62828;}
 .adm-status.info{background:#e3f2fd;color:#1565c0;}
-.adm-templates{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:400px;overflow-y:auto;padding-right:4px;}
-@media(max-width:520px){.adm-templates{grid-template-columns:1fr;}}
-.adm-tpl{border:1.5px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .15s;background:#fafbfc;}
-.adm-tpl:hover{border-color:var(--primary);background:#f0f5ff;}
-.adm-tpl.active{border-color:var(--primary);background:#f0f5ff;box-shadow:0 0 0 3px rgba(41,99,235,0.12);}
-.adm-tpl-title{font-size:13px;font-weight:800;margin-bottom:3px;}
-.adm-tpl-body{font-size:11.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.adm-preview{background:linear-gradient(135deg,#2874f0,#0f1729);border-radius:12px;padding:24px;color:#fff;margin-bottom:16px;min-height:140px;display:flex;flex-direction:column;justify-content:center;}
+
+.adm-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;}
+@media(max-width:900px){.adm-grid{grid-template-columns:1fr;}}
+
+.adm-preview{background:linear-gradient(135deg,#2874f0,#0f1729);border-radius:12px;padding:22px;color:#fff;margin-bottom:16px;min-height:140px;display:flex;flex-direction:column;justify-content:center;}
 .adm-preview-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:0.7;margin-bottom:8px;font-weight:700;}
-.adm-preview-title{font-size:17px;font-weight:800;margin-bottom:4px;}
-.adm-preview-body{font-size:13px;opacity:0.9;line-height:1.45;}
-.adm-preview-img{margin-top:10px;border-radius:8px;overflow:hidden;max-height:120px;}
-.adm-preview-img img{width:100%;height:100%;object-fit:cover;}
-.adm-log{background:#0f1729;color:#a5d6ff;border-radius:8px;padding:14px;font-family:monospace;font-size:12px;max-height:180px;overflow-y:auto;line-height:1.6;}
-.adm-log .ok{color:#4ade80;}
-.adm-log .err{color:#f87171;}
-.adm-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
-.adm-tab{padding:8px 16px;border-radius:999px;background:var(--bg);border:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);}
-.adm-tab.active{background:var(--primary);color:#fff;}
-.adm-hidden{display:none!important;}
+.adm-preview-title{font-size:17px;font-weight:800;margin-bottom:4px;word-break:break-word;}
+.adm-preview-body{font-size:13px;opacity:0.9;line-height:1.45;word-break:break-word;}
+.adm-preview-img{margin-top:10px;border-radius:8px;overflow:hidden;max-height:140px;}
+.adm-preview-img img{width:100%;height:100%;object-fit:cover;display:block;}
+
+.img-upload-wrap{display:flex;gap:10px;align-items:center;}
+.img-upload-wrap input[type="url"]{flex:1;}
+.img-upload-btn{background:#f1f3f6;border:1.5px solid var(--border);padding:11px 15px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.img-upload-btn:hover{background:#e4e7ec;}
+
+.history-toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.history-toolbar input[type="search"]{flex:1;min-width:180px;border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;}
+.history-toolbar input:focus{border-color:var(--primary);}
+.history-toolbar select{border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;font-weight:600;cursor:pointer;}
+.history-toolbar .spacer{flex:1;}
+.history-count{font-size:12px;color:var(--muted);font-weight:700;}
+
+.history-list{display:flex;flex-direction:column;gap:10px;}
+.hist-item{display:flex;gap:12px;padding:14px;background:#fafbfc;border:1.5px solid var(--border);border-radius:10px;transition:all .15s;}
+.hist-item:hover{border-color:var(--primary);background:#f0f5ff;}
+.hist-status-bar{width:4px;border-radius:3px;background:var(--success);flex-shrink:0;}
+.hist-status-bar.partial{background:var(--warn);}
+.hist-status-bar.failed{background:var(--error);}
+.hist-main{flex:1;min-width:0;}
+.hist-header{display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;align-items:flex-start;}
+.hist-title{font-size:13.5px;font-weight:800;word-break:break-word;}
+.hist-time{font-size:11px;color:var(--muted);white-space:nowrap;font-weight:600;flex-shrink:0;}
+.hist-body{font-size:12px;color:#555;line-height:1.45;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.hist-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:10.5px;color:var(--muted);font-weight:700;}
+.hist-meta span{background:rgba(0,0,0,0.05);padding:3px 8px;border-radius:999px;}
+.hist-badge{padding:3px 10px!important;border-radius:999px!important;color:#fff;}
+.hist-badge.success{background:var(--success);}
+.hist-badge.partial{background:var(--warn);}
+.hist-badge.failed{background:var(--error);}
+.hist-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+.hist-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+.hist-btn{padding:6px 10px;border:none;border-radius:6px;background:#fff;border:1.5px solid var(--border);cursor:pointer;font-size:13px;transition:all .15s;line-height:1;}
+.hist-btn:hover{background:var(--bg);}
+.hist-btn.delete:hover{background:#ffebee;border-color:var(--error);}
+.hist-btn.load:hover{background:#e3f2fd;border-color:var(--primary);}
+
+.adm-empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;font-weight:600;line-height:1.6;}
+.adm-empty .big{font-size:48px;margin-bottom:12px;display:block;opacity:0.4;}
+
+.tpl-filters{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.tpl-filter{padding:8px 16px;border-radius:999px;background:var(--bg);border:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);}
+.tpl-filter.active{background:var(--primary);color:#fff;}
+.adm-templates{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.adm-tpl{border:1.5px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;background:#fafbfc;}
+.adm-tpl:hover{border-color:var(--primary);background:#f0f5ff;}
+.adm-tpl-title{font-size:13px;font-weight:800;margin-bottom:5px;word-break:break-word;}
+.adm-tpl-body{font-size:11.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+
 .adm-loading{position:fixed;inset:0;background:#fff;z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
 .adm-loading.hidden{display:none;}
 .adm-loading-spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:var(--primary);border-radius:50%;animation:admSpin .8s linear infinite;}
 @keyframes admSpin{to{transform:rotate(360deg);}}
 .adm-loading-text{font-size:15px;color:#666;font-weight:600;text-align:center;padding:0 20px;}
-.adm-header .logout-btn{background:rgba(255,255,255,0.15);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:none;}
-.adm-header .logout-btn.show{display:inline-block;}
-.adm-header .logout-btn:hover{background:rgba(255,255,255,0.25);}
-.adm-header-actions{display:flex;align-items:center;gap:10px;}
-.img-upload-wrap { display: flex; gap: 10px; align-items: center; }
-.img-upload-wrap input[type="url"] { flex: 1; }
-.img-upload-btn { background: #f1f3f6; border: 1.5px solid var(--border); padding: 11px 15px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; white-space: nowrap;}
-.img-upload-btn:hover { background: #e4e7ec; }
+
+.adm-toast-container{position:fixed;top:80px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+.adm-toast{background:#212121;color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:opacity .3s, transform .3s;min-width:200px;max-width:320px;}
+.adm-toast.success{background:#1b8a3a;}
+.adm-toast.error{background:#c62828;}
+.adm-toast.info{background:#1565c0;}
+
+.adm-log{background:#0f1729;color:#a5d6ff;border-radius:8px;padding:14px;font-family:monospace;font-size:12px;max-height:200px;overflow-y:auto;line-height:1.6;}
+.adm-log .ok{color:#4ade80;}
+.adm-log .err{color:#f87171;}
+
+@media(max-width:520px){
+  .adm-tabs-bar .adm-tab-btn{font-size:12px;padding:10px 8px;}
+  .hist-thumb{display:none;}
+  .hist-actions{flex-direction:row;}
+}
 </style>
 </head>
 <body>
@@ -82,9 +155,10 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   </div>
 </header>
 
-<div class="adm-wrap">
-  <div>
-    <div class="adm-card" id="adm-login-card">
+<!-- LOGIN VIEW -->
+<div id="adm-login-view" class="adm-hidden">
+  <div class="adm-login-wrap">
+    <div class="adm-card">
       <h2>🔐 Admin Login</h2>
       <div class="adm-field">
         <label>Email</label>
@@ -97,73 +171,118 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       <button class="adm-btn primary block" id="adm-login-btn" onclick="admLogin()">Login</button>
       <div class="adm-status" id="adm-login-status"></div>
     </div>
+  </div>
+</div>
 
-    <div class="adm-card adm-hidden" id="adm-compose-card">
-      <h2>📢 Send Notification</h2>
-
-      <div class="adm-preview">
-        <div class="adm-preview-label">🔔 Live Preview</div>
-        <div class="adm-preview-title" id="adm-preview-title">Notification Title</div>
-        <div class="adm-preview-body" id="adm-preview-body">Notification body text will appear here…</div>
-        <div class="adm-preview-img adm-hidden" id="adm-preview-img-wrap"><img id="adm-preview-img" src="" alt=""></div>
-      </div>
-
-      <div class="adm-field">
-        <label>Title *</label>
-        <input type="text" id="adm-title" placeholder="🔥 50% OFF Sale!" maxlength="100" oninput="admUpdatePreview()">
-      </div>
-      <div class="adm-field">
-        <label>Body *</label>
-        <textarea id="adm-body" placeholder="Aaj hi shop karo, limited time deal!" maxlength="300" oninput="admUpdatePreview()"></textarea>
-      </div>
-      
-      <div class="adm-field">
-        <label>Image (Auto 30KB Cloudinary)</label>
-        <div class="img-upload-wrap">
-          <input type="url" id="adm-image" placeholder="Image URL ya upload karein..." oninput="admUpdatePreview()">
-          <button class="img-upload-btn" onclick="document.getElementById('adm-image-file').click()">
-            📤 Upload
-          </button>
-          <input type="file" id="adm-image-file" accept="image/*" style="display:none" onchange="admHandleImageUpload(event)">
-        </div>
-        <div id="adm-img-status" style="font-size:12px; margin-top:6px; font-weight:600; color:var(--warn); display:none;"></div>
-      </div>
-
-      <div class="adm-field">
-        <label>Click URL (optional)</label>
-        <input type="text" id="adm-url" placeholder="/shop-home.html">
-      </div>
-      <div class="adm-field">
-        <label>Send to</label>
-        <select id="adm-target">
-          <option value="all">Saare users (multicast tokens)</option>
-          <option value="topic:all-users">Topic: all-users</option>
-        </select>
-      </div>
-
-      <button class="adm-btn primary block" id="adm-send-btn" onclick="admSend()">🚀 Send Notification</button>
-      <div class="adm-status" id="adm-send-status"></div>
-    </div>
+<!-- APP VIEW -->
+<div id="adm-app" class="adm-main adm-hidden">
+  <div class="adm-tabs-bar">
+    <button class="adm-tab-btn active" data-tab="compose" onclick="admSwitchTab('compose')">📢 Compose</button>
+    <button class="adm-tab-btn" data-tab="history" onclick="admSwitchTab('history')">📜 History</button>
+    <button class="adm-tab-btn" data-tab="templates" onclick="admSwitchTab('templates')">📋 Templates</button>
   </div>
 
-  <div>
-    <div class="adm-card adm-hidden" id="adm-templates-card">
+  <!-- COMPOSE -->
+  <section id="adm-panel-compose" class="adm-panel">
+    <div class="adm-grid">
+      <div>
+        <div class="adm-card">
+          <h2>📢 Send Notification</h2>
+          <div class="adm-field">
+            <label>Title *</label>
+            <input type="text" id="adm-title" placeholder="🔥 50% OFF Sale!" maxlength="100" oninput="admUpdatePreview();admUpdateCharCounters()">
+            <div class="adm-char"><span id="adm-title-count">0</span>/100</div>
+          </div>
+          <div class="adm-field">
+            <label>Body *</label>
+            <textarea id="adm-body" placeholder="Aaj hi shop karo, limited time deal!" maxlength="300" oninput="admUpdatePreview();admUpdateCharCounters()"></textarea>
+            <div class="adm-char"><span id="adm-body-count">0</span>/300</div>
+          </div>
+          <div class="adm-field">
+            <label>Image (auto-compressed &lt;20KB → Cloudinary)</label>
+            <div class="img-upload-wrap">
+              <input type="url" id="adm-image" placeholder="Image URL ya upload karein..." oninput="admUpdatePreview()">
+              <button class="img-upload-btn" onclick="document.getElementById('adm-image-file').click()">📤 Upload</button>
+              <input type="file" id="adm-image-file" accept="image/*" style="display:none" onchange="admHandleImageUpload(event)">
+            </div>
+            <div id="adm-img-status" style="font-size:12px;margin-top:6px;font-weight:600;color:var(--warn);display:none;"></div>
+          </div>
+          <div class="adm-field">
+            <label>Click URL (optional)</label>
+            <input type="text" id="adm-url" placeholder="/shop-home.html">
+          </div>
+          <div class="adm-field">
+            <label>Send to</label>
+            <select id="adm-target">
+              <option value="all">Saare users (multicast tokens)</option>
+              <option value="topic:all-users">Topic: all-users</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:8px;">
+            <button class="adm-btn ghost" onclick="admClearForm()" style="flex:0 0 auto;">🗑 Clear</button>
+            <button class="adm-btn primary" id="adm-send-btn" onclick="admSend()" style="flex:1;">🚀 Send Notification</button>
+          </div>
+          <div class="adm-status" id="adm-send-status"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="adm-card">
+          <h2>👁️ Live Preview</h2>
+          <div class="adm-preview">
+            <div class="adm-preview-label">🔔 Notification Preview</div>
+            <div class="adm-preview-title" id="adm-preview-title">Notification Title</div>
+            <div class="adm-preview-body" id="adm-preview-body">Notification body text will appear here…</div>
+            <div class="adm-preview-img adm-hidden" id="adm-preview-img-wrap"><img id="adm-preview-img" src="" alt=""></div>
+          </div>
+        </div>
+        <div class="adm-card">
+          <h2>📜 Send Log (this session)</h2>
+          <div class="adm-log" id="adm-log"><div style="opacity:0.5;">Abhi tak koi notification nahi bheja…</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="adm-panel-history" class="adm-panel adm-hidden">
+    <div class="adm-card">
+      <h2 style="justify-content:space-between;">
+        <span>📜 Notification History</span>
+        <span class="history-count" id="adm-history-count">0 items</span>
+      </h2>
+      <div class="history-toolbar">
+        <input type="search" id="adm-history-search" placeholder="🔍 Search title / body / target…" oninput="admOnHistorySearch(this.value)">
+        <select id="adm-history-filter" onchange="admOnHistoryFilter(this.value)">
+          <option value="all">All status</option>
+          <option value="success">✓ Success</option>
+          <option value="partial">⚠ Partial</option>
+          <option value="failed">✕ Failed</option>
+        </select>
+        <div class="spacer"></div>
+        <button class="adm-btn ghost" onclick="admRefreshHistory()" title="Refresh">🔄 Refresh</button>
+        <button class="adm-btn danger" onclick="admDeleteAllHistory(event)" title="Delete all">🗑️ Delete All</button>
+      </div>
+      <div class="history-list" id="adm-history-list">
+        <div class="adm-empty"><span class="big">📭</span>Loading history…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section id="adm-panel-templates" class="adm-panel adm-hidden">
+    <div class="adm-card">
       <h2>📋 Unique Templates</h2>
       <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Template par click karo — form auto-fill ho jayega</div>
-      <div class="adm-tabs" id="adm-tpl-tabs">
-        <button class="adm-tab active" data-cat="all" onclick="admFilterTpl('all',this)">All</button>
-        <button class="adm-tab" data-cat="fomo" onclick="admFilterTpl('fomo',this)">🔥 FOMO</button>
-        <button class="adm-tab" data-cat="cart" onclick="admFilterTpl('cart',this)">🛒 Cart</button>
-        <button class="adm-tab" data-cat="festival" onclick="admFilterTpl('festival',this)">🎉 Festival</button>
+      <div class="tpl-filters" id="adm-tpl-filters">
+        <button class="tpl-filter active" data-cat="all" onclick="admFilterTpl('all',this)">All</button>
+        <button class="tpl-filter" data-cat="fomo" onclick="admFilterTpl('fomo',this)">🔥 FOMO</button>
+        <button class="tpl-filter" data-cat="cart" onclick="admFilterTpl('cart',this)">🛒 Cart</button>
+        <button class="tpl-filter" data-cat="festival" onclick="admFilterTpl('festival',this)">🎉 Festival</button>
       </div>
       <div class="adm-templates" id="adm-templates-list"></div>
     </div>
-
-    <div class="adm-card adm-hidden" id="adm-log-card">
-      <h2>📜 Send Log</h2>
-      <div class="adm-log" id="adm-log"><div style="opacity:0.5;">Abhi tak koi notification nahi bheja…</div></div>
-    </div>
-  </div>
+  </section>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -176,11 +295,11 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   const CLOUDFLARE_WORKER_URL = 'https://toego-notification-worker.divinebatteriess.workers.dev/';
   const ADMIN_EMAILS = ['anasfansclub@gmail.com'];
-  
-  const LOGO_URL = 'https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg';
-  
-  let CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME"; 
-  let CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; 
+  const HISTORY_COLLECTION = 'notification_history';
+  const HISTORY_LIMIT = 300;
+
+  let CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";
+  let CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
 
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
@@ -194,7 +313,6 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   }
   const auth = firebase.auth();
   const db = firebase.firestore();
-
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
   db.collection('siteSettings').doc('cloudinary').get().then(snap => {
@@ -219,47 +337,71 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   ];
 
   let TPL_FILTER = 'all';
+  let historyData = [];
+  let historyFilter = 'all';
+  let historySearch = '';
+  let historyUnsub = null;
+  let isAdmin = false;
 
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function showStatus(id, msg, type){ const el = $(id); if(!el) return; el.className = 'adm-status show ' + type; el.textContent = msg; }
   function hideLoading(){ const el = $('adm-loading'); if (el) el.classList.add('hidden'); }
   function showLoading(text){ const el = $('adm-loading'); if (el) { el.classList.remove('hidden'); const t = el.querySelector('.adm-loading-text'); if (t && text) t.textContent = text; } }
+  function isWhitelistedAdmin(email) { if (!email) return false; return ADMIN_EMAILS.some(a => a.toLowerCase() === email.toLowerCase().trim()); }
 
-  function isWhitelistedAdmin(email) {
-    if (!email) return false;
-    return ADMIN_EMAILS.some(a => a.toLowerCase() === email.toLowerCase().trim());
+  function toast(msg, type){
+    type = type || 'info';
+    let c = $('adm-toast-container');
+    if (!c) { c = document.createElement('div'); c.id = 'adm-toast-container'; c.className = 'adm-toast-container'; document.body.appendChild(c); }
+    const t = document.createElement('div');
+    t.className = 'adm-toast ' + type;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-10px)'; }, 2600);
+    setTimeout(() => t.remove(), 3200);
   }
 
+  function formatTime(date){
+    if (!date) return 'Just now';
+    const diff = (Date.now() - date.getTime()) / 1000;
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+    return date.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  function formatFullTime(date){
+    if (!date) return '—';
+    return date.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  /* AUTH */
   function showAdminPanel(user) {
+    isAdmin = true;
     $('adm-auth-badge').textContent = '✓ Admin — ' + (user.email || user.uid);
-    $('adm-login-card').classList.add('adm-hidden');
-    $('adm-compose-card').classList.remove('adm-hidden');
-    $('adm-templates-card').classList.remove('adm-hidden');
-    $('adm-log-card').classList.remove('adm-hidden');
+    $('adm-login-view').classList.add('adm-hidden');
+    $('adm-app').classList.remove('adm-hidden');
     $('adm-logout-btn').classList.add('show');
     renderTemplates();
+    admUpdateCharCounters();
+    startHistoryListener();
     hideLoading();
   }
-
   function showLoginForm(reason) {
+    isAdmin = false;
     $('adm-auth-badge').textContent = reason || 'Not logged in';
-    $('adm-login-card').classList.remove('adm-hidden');
-    $('adm-compose-card').classList.add('adm-hidden');
-    $('adm-templates-card').classList.add('adm-hidden');
-    $('adm-log-card').classList.add('adm-hidden');
+    $('adm-login-view').classList.remove('adm-hidden');
+    $('adm-app').classList.add('adm-hidden');
     $('adm-logout-btn').classList.remove('show');
+    stopHistoryListener();
     hideLoading();
   }
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) { showLoginForm('Not logged in'); return; }
-    if (isWhitelistedAdmin(user.email)) {
-      showAdminPanel(user);
-    } else {
-      showLoginForm('Not an admin');
-      showStatus('adm-login-status', 'Yeh account admin nahi hai.', 'error');
-    }
+    if (isWhitelistedAdmin(user.email)) showAdminPanel(user);
+    else { showLoginForm('Not an admin'); showStatus('adm-login-status', 'Yeh account admin nahi hai.', 'error'); }
   });
 
   window.admLogin = function() {
@@ -279,34 +421,41 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     auth.signOut().then(() => { hideLoading(); $('adm-email').value = ''; $('adm-password').value = ''; $('adm-login-status').classList.remove('show'); }).catch(e => { hideLoading(); alert(e.message); });
   };
 
+  /* TABS */
+  window.admSwitchTab = function(tab){
+    document.querySelectorAll('.adm-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.adm-panel').forEach(p => p.classList.add('adm-hidden'));
+    const panel = $('adm-panel-' + tab);
+    if (panel) panel.classList.remove('adm-hidden');
+  };
+
+  /* TEMPLATES */
   function renderTemplates(){
     const list = $('adm-templates-list'); if (!list) return;
     const filtered = TPL_FILTER === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.cat === TPL_FILTER);
     list.innerHTML = filtered.map((t) => {
       const idx = TEMPLATES.indexOf(t);
-      return '<div class="adm-tpl" data-idx="' + idx + '" onclick="admPickTpl(' + idx + ')"><div class="adm-tpl-title">' + esc(t.title) + '</div><div class="adm-tpl-body">' + esc(t.body) + '</div></div>';
+      return '<div class="adm-tpl" onclick="admPickTpl(' + idx + ')"><div class="adm-tpl-title">' + esc(t.title) + '</div><div class="adm-tpl-body">' + esc(t.body) + '</div></div>';
     }).join('');
   }
-
   window.admFilterTpl = function(cat, btn){
     TPL_FILTER = cat;
-    document.querySelectorAll('#adm-tpl-tabs .adm-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tpl-filter').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     renderTemplates();
   };
-
   window.admPickTpl = function(idx){
     const t = TEMPLATES[idx]; if (!t) return;
     $('adm-title').value = t.title || '';
     $('adm-body').value = t.body || '';
     $('adm-url').value = t.url || '';
     $('adm-image').value = '';
-    document.querySelectorAll('.adm-tpl').forEach(el => el.classList.remove('active'));
-    const el = document.querySelector('.adm-tpl[data-idx="' + idx + '"]');
-    if (el) el.classList.add('active');
-    admUpdatePreview();
+    admUpdatePreview(); admUpdateCharCounters();
+    admSwitchTab('compose');
+    toast('Template loaded into form', 'success');
   };
 
+  /* PREVIEW */
   window.admUpdatePreview = function(){
     $('adm-preview-title').textContent = ($('adm-title').value || 'Notification Title');
     $('adm-preview-body').textContent = ($('adm-body').value || 'Notification body text will appear here…');
@@ -316,17 +465,23 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     if (img && /^https?:\/\//.test(img)) { imgEl.src = img; wrap.classList.remove('adm-hidden'); }
     else { wrap.classList.add('adm-hidden'); imgEl.src = ''; }
   };
+  window.admUpdateCharCounters = function(){
+    $('adm-title-count').textContent = ($('adm-title').value || '').length;
+    $('adm-body-count').textContent = ($('adm-body').value || '').length;
+  };
 
+  /* IMAGE — compress to 20KB then upload to Cloudinary */
   function dataURItoBlob(dataURI) {
-    const byteString = atob(dataURI.split(',')[1]);
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const parts = dataURI.split(',');
+    const byteString = atob(parts[1]);
+    const mimeString = parts[0].split(':')[1].split(';')[0];
     const ab = new ArrayBuffer(byteString.length);
     const ia = new Uint8Array(ab);
     for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
     return new Blob([ab], { type: mimeString });
   }
 
-  function compressImageTo30KB(file) {
+  function compressImageTo20KB(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -334,81 +489,125 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         const img = new Image();
         img.src = event.target.result;
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-          const max_size = 800;
-          if (width > height) { if (width > max_size) { height *= max_size / width; width = max_size; } } 
-          else { if (height > max_size) { width *= max_size / height; height = max_size; } }
-          
-          canvas.width = width; canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
+          const targetBytes = 20 * 1024;
+          let maxDim = 900;
           let quality = 0.9;
-          let dataUrl = canvas.toDataURL('image/jpeg', quality);
-          while (dataUrl.length * 0.75 > 30 * 1024 && quality > 0.1) {
-            quality -= 0.1;
+          let dataUrl = '';
+          let attempts = 0;
+          while (attempts < 30) {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            if (w > h) { if (w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; } }
+            else { if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; } }
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
             dataUrl = canvas.toDataURL('image/jpeg', quality);
+            if (dataUrl.length * 0.75 <= targetBytes) break;
+            if (quality > 0.35) quality -= 0.08;
+            else { maxDim = Math.max(200, Math.round(maxDim * 0.85)); quality = 0.7; }
+            attempts++;
           }
           resolve(dataUrl);
         };
-        img.onerror = (error) => reject(error);
+        img.onerror = reject;
       };
-      reader.onerror = (error) => reject(error);
+      reader.onerror = reject;
     });
   }
 
   window.admHandleImageUpload = async function(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     const statusEl = $('adm-img-status');
     statusEl.style.display = 'block';
     statusEl.style.color = 'var(--warn)';
-    statusEl.textContent = '⏳ Compressing image to <30KB...';
-
+    statusEl.textContent = '⏳ Compressing image to <20KB...';
     try {
-      const compressedDataUrl = await compressImageTo30KB(file);
+      const compressedDataUrl = await compressImageTo20KB(file);
       const blob = dataURItoBlob(compressedDataUrl);
       const sizeKB = (blob.size / 1024).toFixed(1);
-      
       statusEl.textContent = `⏳ Compressed to ${sizeKB}KB. Uploading to Cloudinary...`;
-
       if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET || CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME') {
-        throw new Error('Cloudinary config missing! Please set keys in code.');
+        throw new Error('Cloudinary config missing! siteSettings/cloudinary me cloudName & uploadPreset set karo.');
       }
-
       const formData = new FormData();
       formData.append('file', blob);
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
       formData.append('folder', 'toego/notifications');
-
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: formData
-      });
-
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
       const data = await res.json();
       if (data.secure_url) {
         $('adm-image').value = data.secure_url;
         admUpdatePreview();
         statusEl.style.color = 'var(--success)';
-        statusEl.textContent = `✅ Image Uploaded (${sizeKB}KB)`;
-        setTimeout(() => statusEl.style.display = 'none', 3000);
+        statusEl.textContent = `✅ Uploaded (${sizeKB}KB)`;
+        setTimeout(() => statusEl.style.display = 'none', 3500);
+        toast('Image uploaded successfully', 'success');
       } else {
-        throw new Error(data.error?.message || 'Upload failed');
+        throw new Error((data.error && data.error.message) || 'Upload failed');
       }
     } catch (err) {
       statusEl.style.color = 'var(--error)';
       statusEl.textContent = '❌ ' + err.message;
+      toast('Image upload failed: ' + err.message, 'error');
     }
     event.target.value = '';
   };
 
+  /* CLEAR FORM */
+  window.admClearForm = function() {
+    if (!confirm('Form clear karna hai?')) return;
+    $('adm-title').value = '';
+    $('adm-body').value = '';
+    $('adm-image').value = '';
+    $('adm-url').value = '';
+    $('adm-target').value = 'all';
+    admUpdatePreview(); admUpdateCharCounters();
+    toast('Form cleared', 'info');
+  };
+
+  /* SEND */
+  function buildFcmMessage(opts) {
+    return {
+      data: {
+        title: opts.title,
+        body: opts.body,
+        image: opts.image || '',
+        url: opts.url || '/shop-home.html'
+      },
+      webpush: { headers: { Urgency: 'high' } }
+    };
+  }
+
+  async function resolveTargetTokens(target, fcmMessage) {
+    if (target.startsWith('topic:')) {
+      fcmMessage.topic = target.split(':')[1];
+      return;
+    }
+    const tokensSnap = await db.collection('fcm_tokens').get();
+    const rawTokens = tokensSnap.docs.map(d => d.data().token).filter(Boolean);
+    const uniqueTokens = Array.from(new Set(rawTokens));
+    if (!uniqueTokens.length) throw new Error('No FCM tokens found. Visit shop-home and allow notifications.');
+    fcmMessage.tokens = uniqueTokens;
+  }
+
+  async function sendToWorker(fcmMessage) {
+    const res = await fetch(CLOUDFLARE_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: fcmMessage })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'Failed to send');
+    return data;
+  }
+
   window.admSend = async function(){
     const user = auth.currentUser;
-    if (!user) { showStatus('adm-send-status', 'Login required', 'error'); return; }
+    if (!user || !isAdmin) { showStatus('adm-send-status', 'Login required', 'error'); return; }
 
     const title = ($('adm-title').value || '').trim();
     const body = ($('adm-body').value || '').trim();
@@ -418,61 +617,53 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
     if (!title && !body) { showStatus('adm-send-status', 'Title ya body daalo', 'error'); return; }
 
-    $('adm-send-btn').disabled = true;
-    $('adm-send-btn').textContent = 'Sending…';
+    const btn = $('adm-send-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
     showStatus('adm-send-status', 'Notification bhej raha hoon…', 'info');
 
-    const fcmMessage = {
-      data: {
-        title: title,
-        body: body,
-        image: image || '',
-        url: url || '/shop-home.html'
-      },
-      webpush: {
-        headers: { Urgency: 'high' }
-      }
-    };
-
-    if (target.startsWith('topic:')) {
-      fcmMessage.topic = target.split(':')[1];
-    } else {
-      try {
-        const tokensSnap = await db.collection('fcm_tokens').get();
-        const rawTokens = tokensSnap.docs.map(d => d.data().token).filter(Boolean);
-        
-        // ✅ TOKENS DEDUPLICATION: Ek user ko sirf ek hi baar notification jayegi
-        const uniqueTokens = [...new Set(rawTokens)];
-        
-        if (!uniqueTokens.length) throw new Error('No FCM tokens found. Visit shop-home and allow notifications.');
-        fcmMessage.tokens = uniqueTokens;
-      } catch(e) {
-        showStatus('adm-send-status', e.message, 'error');
-        $('adm-send-btn').disabled = false; $('adm-send-btn').textContent = '🚀 Send Notification';
-        return;
-      }
-    }
+    const fcmMessage = buildFcmMessage({ title, body, image, url, target });
+    let successCount = 0, failureCount = 0;
 
     try {
-      const res = await fetch(CLOUDFLARE_WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: fcmMessage })
-      });
-      const data = await res.json();
-      
-      if (res.ok && data.success) {
-        let msg = '✓ Sent! Success: ' + (data.successCount || 0) + ', Failed: ' + (data.failureCount || 0);
-        showStatus('adm-send-status', msg, 'success');
-        admLog(msg, 'ok');
-      } else {
-        throw new Error(data.error || 'Failed to send');
+      await resolveTargetTokens(target, fcmMessage);
+      const data = await sendToWorker(fcmMessage);
+      successCount = data.successCount || 0;
+      failureCount = data.failureCount || 0;
+      const status = (failureCount === 0 && successCount > 0) ? 'success'
+                   : (successCount > 0 ? 'partial' : 'failed');
+      const msg = `✓ Sent! Success: ${successCount}, Failed: ${failureCount}`;
+      showStatus('adm-send-status', msg, 'success');
+      admLog(msg, 'ok');
+
+      try {
+        await db.collection(HISTORY_COLLECTION).add({
+          title, body, image, url, target,
+          successCount, failureCount, status,
+          sentBy: user.email || user.uid,
+          sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+          clientSentAt: Date.now()
+        });
+      } catch (histErr) {
+        console.warn('History save failed:', histErr);
+        admLog('⚠ History save failed: ' + histErr.message, 'err');
       }
     } catch (err) {
       showStatus('adm-send-status', '✕ Error: ' + err.message, 'error');
       admLog('ERROR: ' + err.message, 'err');
+      try {
+        await db.collection(HISTORY_COLLECTION).add({
+          title, body, image, url, target,
+          successCount: 0, failureCount: 0, status: 'failed',
+          sentBy: user.email || user.uid,
+          errorMessage: err.message,
+          sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+          clientSentAt: Date.now()
+        });
+      } catch(e) {}
     } finally {
-      $('adm-send-btn').disabled = false; $('adm-send-btn').textContent = '🚀 Send Notification';
+      btn.disabled = false;
+      btn.textContent = '🚀 Send Notification';
     }
   };
 
@@ -483,8 +674,150 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     el.innerHTML = line + el.innerHTML;
   }
 
+  /* HISTORY */
+  function startHistoryListener() {
+    stopHistoryListener();
+    const list = $('adm-history-list');
+    if (list) list.innerHTML = '<div class="adm-empty"><span class="big">📭</span>Loading history…</div>';
+    historyUnsub = db.collection(HISTORY_COLLECTION)
+      .orderBy('sentAt', 'desc')
+      .limit(HISTORY_LIMIT)
+      .onSnapshot(
+        snap => {
+          historyData = snap.docs.map(d => Object.assign({ id: d.id }, d.data() || {}));
+          admRenderHistory();
+        },
+        err => {
+          console.error('History listener error:', err);
+          const el = $('adm-history-list');
+          if (el) el.innerHTML = '<div class="adm-empty"><span class="big">⚠️</span>History load nahi ho payi.<br><small>' + esc(err.message) + '</small><br><br><small>Firestore rules me notification_history collection allow karo.</small></div>';
+        }
+      );
+  }
+  function stopHistoryListener() {
+    if (historyUnsub) { try { historyUnsub(); } catch(e){} historyUnsub = null; }
+  }
+  window.admRefreshHistory = function() { startHistoryListener(); toast('History refreshed', 'info'); };
+
+  function statusLabel(s) {
+    if (s === 'partial') return '⚠ Partial';
+    if (s === 'failed') return '✕ Failed';
+    return '✓ Success';
+  }
+
+  window.admRenderHistory = function(){
+    const list = $('adm-history-list');
+    if (!list) return;
+    let filtered = historyData.slice();
+    if (historyFilter !== 'all') filtered = filtered.filter(h => (h.status || 'success') === historyFilter);
+    if (historySearch) {
+      const q = historySearch.toLowerCase();
+      filtered = filtered.filter(h =>
+        (h.title || '').toLowerCase().includes(q) ||
+        (h.body || '').toLowerCase().includes(q) ||
+        (h.target || '').toLowerCase().includes(q)
+      );
+    }
+    $('adm-history-count').textContent = filtered.length + ' of ' + historyData.length + ' items';
+
+    if (!filtered.length) {
+      list.innerHTML = '<div class="adm-empty"><span class="big">📭</span>' +
+        (historyData.length ? 'Koi match nahi mila.' : 'Abhi tak koi notification nahi bheja.') +
+        '</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(h => {
+      const sentAt = (h.sentAt && h.sentAt.toDate) ? h.sentAt.toDate()
+                   : (h.clientSentAt ? new Date(h.clientSentAt) : null);
+      const time = sentAt ? formatTime(sentAt) : 'Just now';
+      const fullTime = sentAt ? formatFullTime(sentAt) : '—';
+      const statusCls = h.status || 'success';
+      const thumb = h.image ? '<img src="' + esc(h.image) + '" class="hist-thumb" alt="" onerror="this.style.display=\'none\'">' : '';
+      return '' +
+        '<div class="hist-item">' +
+          '<div class="hist-status-bar ' + statusCls + '"></div>' +
+          '<div class="hist-main">' +
+            '<div class="hist-header">' +
+              '<div class="hist-title">' + esc(h.title || '(no title)') + '</div>' +
+              '<div class="hist-time" title="' + esc(fullTime) + '">' + esc(time) + '</div>' +
+            '</div>' +
+            '<div class="hist-body">' + esc(h.body || '') + '</div>' +
+            '<div class="hist-meta">' +
+              '<span class="hist-badge ' + statusCls + '">' + statusLabel(statusCls) + '</span>' +
+              '<span>🎯 ' + esc(h.target || 'all') + '</span>' +
+              '<span>✓ ' + (h.successCount || 0) + '</span>' +
+              (h.failureCount ? '<span style="color:#d32f2f">✕ ' + h.failureCount + '</span>' : '') +
+              (h.url ? '<span>🔗 ' + esc(h.url) + '</span>' : '') +
+              (h.sentBy ? '<span>👤 ' + esc(h.sentBy) + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+          thumb +
+          '<div class="hist-actions">' +
+            '<button class="hist-btn load" onclick="admLoadFromHistory(\'' + h.id + '\')" title="Load into form">📥</button>' +
+            '<button class="hist-btn delete" onclick="admDeleteHistoryItem(\'' + h.id + '\')" title="Delete">🗑️</button>' +
+          '</div>' +
+        '</div>';
+    }).join('');
+  };
+
+  window.admOnHistorySearch = function(v){ historySearch = (v || '').trim(); admRenderHistory(); };
+  window.admOnHistoryFilter = function(v){ historyFilter = v || 'all'; admRenderHistory(); };
+
+  window.admLoadFromHistory = function(id) {
+    const item = historyData.find(h => h.id === id);
+    if (!item) return;
+    $('adm-title').value = item.title || '';
+    $('adm-body').value = item.body || '';
+    $('adm-image').value = item.image || '';
+    $('adm-url').value = item.url || '';
+    $('adm-target').value = item.target || 'all';
+    admUpdatePreview(); admUpdateCharCounters();
+    admSwitchTab('compose');
+    toast('Loaded into form. Review and send.', 'info');
+  };
+
+  window.admDeleteHistoryItem = async function(id) {
+    const item = historyData.find(h => h.id === id);
+    const title = (item && item.title) || 'this notification';
+    if (!confirm('Delete history item?\n\n"' + title + '"')) return;
+    try {
+      await db.collection(HISTORY_COLLECTION).doc(id).delete();
+      toast('Deleted', 'success');
+    } catch (err) {
+      toast('Delete failed: ' + err.message, 'error');
+    }
+  };
+
+  window.admDeleteAllHistory = async function(ev) {
+    if (!historyData.length) { toast('History already empty', 'info'); return; }
+    if (!confirm('Delete ALL ' + historyData.length + ' history items?\n\nYe action undo nahi hoga.')) return;
+    const btn = (ev && ev.target) ? ev.target.closest('button') : null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
+    try {
+      let totalDeleted = 0;
+      while (true) {
+        const snap = await db.collection(HISTORY_COLLECTION).limit(400).get();
+        if (snap.empty) break;
+        const batch = db.batch();
+        snap.docs.forEach(d => batch.delete(d.ref));
+        await batch.commit();
+        totalDeleted += snap.size;
+        if (snap.size < 400) break;
+      }
+      toast('Deleted ' + totalDeleted + ' items', 'success');
+    } catch (err) {
+      toast('Delete failed: ' + err.message, 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '🗑️ Delete All'; }
+    }
+  };
+
   setTimeout(() => {
-    if (!$('adm-loading').classList.contains('hidden')) { hideLoading(); if (!auth.currentUser) showLoginForm('Not logged in'); }
+    if (!$('adm-loading').classList.contains('hidden')) {
+      hideLoading();
+      if (!auth.currentUser) showLoginForm('Not logged in');
+    }
   }, 8000);
 
 })();
