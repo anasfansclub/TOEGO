@@ -1949,6 +1949,103 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     padding-top: 62px !important;
   }
 }
+/* ═══════════════════════════════════════════════════════════
+   HEADER FINAL SMOOTH FIX (Grid Layout, No Lag, Search Visible)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  
+  /* 1. Header Box (Smooth height transition) */
+  .tg-mhd {
+    height: 112px !important;
+    transition: height 0.25s ease !important;
+    overflow: hidden !important; /* Content ko andar rakhega */
+    contain: layout paint; /* 🔥 Lag fix */
+  }
+  
+  /* 2. Grid Layout for Perfect Alignment */
+  .tg-mhd-inner {
+    display: grid !important;
+    grid-template-columns: 1fr auto; /* Logo space aur Icons space */
+    grid-template-rows: 40px 1fr;    /* Pehli line Logo, dusri line Search */
+    gap: 8px 10px;
+    height: 112px !important;
+    padding: 10px 12px !important;
+    align-items: center;
+    transition: height 0.25s ease, padding 0.25s ease !important;
+  }
+  
+  /* 3. Page Padding Fix (JS lag fix) - Ise change nahi hone denge */
+  #tg-meesho, #tg-meesho.tg-pad-scrolled {
+    padding-top: 112px !important;
+    transition: none !important;
+  }
+
+  /* 4. Top Row: Logo (Left) */
+  .tg-mlogo {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex !important;
+    align-items: center;
+    height: 40px !important;
+  }
+  
+  /* 5. Top Row: Icons (Right) */
+  .tg-mhd-actions {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    height: 40px !important;
+    margin: 0 !important;
+  }
+
+  /* 6. Bottom Row: Search Bar */
+  .tg-msearch {
+    grid-column: 1 / -1; /* Poori width lega */
+    grid-row: 2;
+    height: 44px !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* =========================================
+     🔥 SCROLLED STATE (Jab user scroll kare)
+     ========================================= */
+  
+  /* Header chhota hoga */
+  .tg-mhd.tg-scrolled {
+    height: 60px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15) !important;
+  }
+  
+  /* Grid ko ek line me collapse karo */
+  .tg-mhd.tg-scrolled .tg-mhd-inner {
+    grid-template-rows: 1fr; /* Sirf ek row bachegi */
+    height: 60px !important;
+    padding: 8px 12px !important;
+  }
+  
+  /* Logo ko smoothly gayab karo */
+  .tg-mhd.tg-scrolled .tg-mlogo {
+    display: none !important;
+  }
+  
+  /* Search Bar left side pe aayega */
+  .tg-mhd.tg-scrolled .tg-msearch {
+    grid-column: 1;
+    grid-row: 1;
+    height: 42px !important;
+    border: 2px solid #ffe500 !important;
+  }
+  
+  /* Icons (Wishlist, Cart, etc.) right side pe rahenge */
+  .tg-mhd.tg-scrolled .tg-mhd-actions {
+    grid-column: 2;
+    grid-row: 1;
+    height: 42px !important;
+  }
+}
 </style>
 </head>
 <body>
