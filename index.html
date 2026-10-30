@@ -1670,6 +1670,285 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     max-height: 320px !important;
   }
 }
+/* ═══════════════════════════════════════════════════════════
+   TOEGO CARD + PRICE SIZE BOOST — Halka sa bada
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1️⃣ PRICE — har card me thoda bada + bold */
+.tg-mcard-price {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+}
+.tg-lcard-price {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+.tg-mini-price {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+.tg-mcard-mrp, .tg-lcard-mrp {
+  font-size: 11.5px !important;
+}
+.tg-mini-mrp {
+  font-size: 10px !important;
+}
+.tg-mcard-off, .tg-lcard-off {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+.tg-mini-off {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+/* 2️⃣ TITLE — thoda bada, readable */
+.tg-mcard-title {
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  min-height: 36px !important;
+}
+.tg-lcard-title {
+  font-size: 14.5px !important;
+  font-weight: 500 !important;
+  min-height: 40px !important;
+}
+.tg-mini-title {
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  min-height: 30px !important;
+  line-height: 1.3 !important;
+}
+
+/* 3️⃣ CARD BODY — padding thoda bada, breathing room */
+.tg-mcard-body {
+  padding: 10px 11px 12px !important;
+  gap: 5px !important;
+}
+.tg-lcard-body {
+  padding: 12px 12px 14px !important;
+  gap: 6px !important;
+}
+.tg-mini-body {
+  padding: 8px 8px 10px !important;
+}
+
+/* 4️⃣ ADD TO CART BUTTON — price ke saath match kare */
+#tg-meesho .tg-btn-add {
+  padding: 8px 10px !important;
+  font-size: 11.5px !important;
+  min-height: 32px !important;
+}
+#tg-meesho .tg-btn-add svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+#tg-meesho .tg-btn-share {
+  flex: 0 0 30px !important;
+  max-width: 30px !important;
+  min-height: 32px !important;
+}
+#tg-meesho .tg-lcard-actions .tg-btn-add {
+  padding: 9px 12px !important;
+  font-size: 12.5px !important;
+  min-height: 36px !important;
+}
+#tg-meesho .tg-lcard-actions .tg-btn-share {
+  flex: 0 0 34px !important;
+  max-width: 34px !important;
+  min-height: 36px !important;
+}
+
+/* 5️⃣ RATING BADGE — thoda bada */
+.tg-mcard-rating, .tg-lcard-rating {
+  padding: 3px 7px !important;
+}
+.tg-mcard-rating-star {
+  font-size: 10.5px !important;
+}
+.tg-mcard-rating-count {
+  font-size: 9.5px !important;
+}
+.tg-lcard-rating-star {
+  font-size: 11.5px !important;
+}
+.tg-lcard-rating-count {
+  font-size: 10.5px !important;
+}
+
+/* 6️⃣ CARD GRID — gap thoda bada, cards ko room mile */
+.tg-mmini {
+  gap: 8px !important;
+  padding: 6px 10px 14px !important;
+}
+.tg-mgrid {
+  gap: 8px !important;
+  padding: 6px 10px 14px !important;
+}
+.tg-mgrid-lg {
+  gap: 10px !important;
+  padding: 6px 10px 14px !important;
+}
+.tg-mgrid.scroll > * {
+  flex: 0 0 155px !important;
+  min-width: 155px !important;
+}
+
+/* 7️⃣ IMAGE — thoda bada breathing room ke liye border-radius consistent */
+.tg-mcard-img, .tg-lcard-img {
+  border-radius: 4px 4px 0 0 !important;
+}
+
+/* 8️⃣ MOBILE specific — Quick Picks / Trending cards */
+@media (max-width: 768px) {
+  .tg-mcard-price { font-size: 15px !important; }
+  .tg-lcard-price { font-size: 16px !important; }
+  .tg-mini-price { font-size: 13px !important; }
+  
+  .tg-mcard-title { font-size: 12.5px !important; min-height: 34px !important; }
+  .tg-mini-title { font-size: 11px !important; min-height: 28px !important; }
+  .tg-lcard-title { font-size: 13.5px !important; min-height: 38px !important; }
+  
+  .tg-mgrid.scroll > * {
+    flex: 0 0 150px !important;
+    min-width: 150px !important;
+  }
+  
+  #tg-meesho .tg-btn-add {
+    padding: 7px 8px !important;
+    font-size: 11px !important;
+    min-height: 30px !important;
+  }
+  #tg-meesho .tg-btn-add svg {
+    width: 11px !important;
+    height: 11px !important;
+  }
+}
+
+/* 9️⃣ DESKTOP — thoda aur bada */
+@media (min-width: 769px) {
+  .tg-mcard-price { font-size: 18px !important; }
+  .tg-lcard-price { font-size: 20px !important; }
+  .tg-mini-price { font-size: 15px !important; }
+  
+  .tg-mcard-title { font-size: 14px !important; }
+  .tg-lcard-title { font-size: 15px !important; }
+  .tg-mini-title { font-size: 12px !important; }
+  
+  #tg-meesho .tg-btn-add {
+    padding: 9px 12px !important;
+    font-size: 12.5px !important;
+    min-height: 36px !important;
+  }
+}
+
+/* 🔟 ASSURED tag — chhota sa, price ke saath balance */
+.tg-mcard-assured, .tg-lcard-assured {
+  font-size: 9.5px !important;
+  margin-top: 2px !important;
+}
+/* ═══════════════════════════════════════════════════════════
+   STEP 1: PERFORMANCE CSS FIX — Lag 100% Kill
+   ═══════════════════════════════════════════════════════════ */
+
+/* 🔥 #1 CAUSE: fixed background — remove karo */
+#tg-meesho {
+  background-attachment: scroll !important;
+  background-image: none !important;
+  background-color: #f1f3f6 !important;
+}
+
+/* 🔥 #2 CAUSE: Saari continuous animations band */
+.tg-msearch-placeholder,
+.tg-mcart-badge,
+.tg-mflash-cta,
+.tg-mflash,
+.tg-mabanner-slide::after,
+.tg-mcat-pill-img::after,
+.tg-msec-btn::before,
+.tg-mcard::before,
+.tg-mbell.has-new {
+  animation: none !important;
+}
+
+/* 🔥 #3 CAUSE: Heavy hover glow/blur remove */
+.tg-mcard::before,
+.tg-lcard::before,
+.tg-msec-btn::before,
+.tg-mabanner-slide::after,
+.tg-mcat-pill-img::after {
+  display: none !important;
+}
+
+/* 🔥 #4 CAUSE: transition:all → sirf transform */
+.tg-mcard, .tg-lcard, .tg-mini {
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  overflow: hidden !important; /* content-visibility ke saath zaroori */
+  contain: layout style !important;
+}
+
+.tg-mcat-pill {
+  transition: none !important;
+}
+
+/* 🔥 #5 CAUSE: Backdrop blur — bahut expensive */
+.tg-sp,
+.tg-mvoice,
+.tg-mabanner-dots,
+.tg-mabanner-count,
+.tg-mnotif-panel {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.tg-mabanner-dots,
+.tg-mabanner-count {
+  background: rgba(0,0,0,.65) !important;
+}
+
+/* 🔥 #6 CAUSE: Mobile pe hover effects disable */
+@media (max-width: 768px) {
+  .tg-mcard:hover,
+  .tg-lcard:hover,
+  .tg-mini:hover,
+  .tg-mcat-pill:hover,
+  .tg-mcat-pill:hover .tg-mcat-pill-img,
+  .tg-mcard:hover .tg-mcard-img img,
+  .tg-lcard:hover .tg-lcard-img img {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* content-visibility correctly size */
+  .tg-mcard,
+  .tg-lcard {
+    content-visibility: auto !important;
+    contain-intrinsic-size: auto 260px !important;
+  }
+  .tg-mini {
+    content-visibility: auto !important;
+    contain-intrinsic-size: auto 180px !important;
+  }
+  
+  /* Banner shine remove */
+  .tg-mabanner-slide::after {
+    display: none !important;
+  }
+}
+
+/* 🔥 #7 CAUSE: Scroll header transitions — trim */
+.tg-mhd {
+  transition: none !important;
+}
+/* ═══════════════════════════════════════════════════════════
+   BUG FIX: Scroll header padding (white gap fix)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #tg-meesho.tg-pad-scrolled {
+    padding-top: 62px !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1700,9 +1979,11 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 <div id="tg-meesho">
   <header class="tg-mhd" id="tg-mhd">
     <div class="tg-mhd-inner">
-      <a href="shop-home.html" class="tg-mlogo">
-        <div class="tg-mlogo-mark">T</div>
-        <span class="tg-mlogo-text">TOE<span>GO</span></span>
+            <a href="shop-home.html" class="tg-mlogo" style="display:flex; align-items:center; gap:8px;">
+        <img src="https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg" 
+             alt="TOEGO" 
+             style="height:38px; width:38px; border-radius:8px; object-fit:cover; box-shadow:0 2px 6px rgba(0,0,0,0.15); background:#fff;" />
+        <span class="tg-mlogo-text" style="font-size:22px; margin:0; padding:0;">TOE<span>GO</span></span>
       </a>
       <div class="tg-msearch" id="tg-msearch-bar" onclick="tgOpenSearchModal()" role="button" tabindex="0" aria-label="Open search">
         <span class="tg-msearch-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
@@ -1759,24 +2040,214 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     </div>
   </section>
 
-  <!-- ✅ PLAY STORE APP DOWNLOAD BUTTON -->
-  <div style="padding: 28px 16px; text-align: center; background: linear-gradient(135deg,#f5f7fb,#eef3ff); margin: 16px 0 0; border-radius: 10px;">
-    <div style="margin-bottom: 14px; font-size: 15px; font-weight: 800; color: #212121;">📱 Download the TOEGO App</div>
-    <a href="https://play.google.com/store/apps/details?id=com.ntiht.wallpaper.rox&hl" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 12px; background: #000; color: #fff; padding: 12px 22px; border-radius: 10px; text-decoration: none; box-shadow: 0 4px 14px rgba(0,0,0,0.2); transition: transform .15s;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <!-- ✅ TOEGO APP DOWNLOAD CARD — Premium + Real Logo -->
+<div id="tg-app-download" style="padding: 16px 14px 8px; margin: 16px 0 0;">
+
+  <div style="
+    background: linear-gradient(145deg, #1a1f36 0%, #2c1b4d 50%, #4a1d5c 100%);
+    border-radius: 20px;
+    padding: 24px 20px 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px -12px rgba(74, 29, 92, 0.4);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  ">
+
+    <!-- Decorative blurred orbs -->
+    <div style="position:absolute;top:-80px;right:-60px;width:220px;height:220px;background:radial-gradient(circle, rgba(255,100,140,0.35) 0%, transparent 70%);border-radius:50%;pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-100px;left:-60px;width:240px;height:240px;background:radial-gradient(circle, rgba(120,80,255,0.35) 0%, transparent 70%);border-radius:50%;pointer-events:none;"></div>
+    <div style="position:absolute;top:40%;left:50%;width:180px;height:180px;background:radial-gradient(circle, rgba(255,200,80,0.15) 0%, transparent 70%);border-radius:50%;transform:translateX(-50%);pointer-events:none;"></div>
+
+    <!-- Top row: App identity + rating -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;position:relative;z-index:2;">
+      <div style="
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(255,229,0,0.35), inset 0 0 0 2px rgba(255,255,255,0.15);
+        background: #fff;
+      ">
+        <img src="https://res.cloudinary.com/kshufv2s/image/upload/v1792601941/511898-50kb_rriscx.jpg"
+             alt="TOEGO App"
+             style="width:100%;height:100%;object-fit:cover;display:block;"
+             loading="lazy" />
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="color:#fff;font-size:19px;font-weight:800;letter-spacing:-0.3px;line-height:1.2;margin-bottom:4px;">TOEGO <span style="color:#ffe500;">App</span></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.7);">
+          <span style="display:inline-flex;align-items:center;gap:3px;">
+            <span style="color:#ffc107;font-size:13px;">★★★★★</span>
+            <b style="color:#fff;font-weight:700;">4.5</b>
+          </span>
+          <span style="opacity:0.4;">•</span>
+          <span style="font-weight:600;">10L+ Downloads</span>
+        </div>
+      </div>
+      <div style="
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      ">✓ VERIFIED</div>
+    </div>
+
+    <!-- Cashback highlight block -->
+    <div style="
+      background: linear-gradient(135deg, rgba(255,229,0,0.18) 0%, rgba(255,196,0,0.12) 100%);
+      border: 1.5px solid rgba(255,229,0,0.4);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    ">
+      <div style="
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #ffe500 0%, #ffc400 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 900;
+        color: #0d47a1;
+        flex-shrink: 0;
+        box-shadow: 0 6px 16px rgba(255,229,0,0.4);
+        line-height: 1;
+        text-align: center;
+        flex-direction: column;
+      ">
+        <span style="font-size:9px;font-weight:700;opacity:0.75;letter-spacing:0.5px;">GET</span>
+        <span style="font-size:20px;letter-spacing:-1px;">₹100</span>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="color:#ffe500;font-size:14px;font-weight:900;letter-spacing:0.2px;line-height:1.2;margin-bottom:3px;">Welcome Cashback Offer</div>
+        <div style="color:rgba(255,255,255,0.85);font-size:11.5px;font-weight:500;line-height:1.35;">On your first order • Auto-applied</div>
+      </div>
+      <div style="
+        background: rgba(255,229,0,0.2);
+        border: 1px solid rgba(255,229,0,0.4);
+        color:#ffe500;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        flex-shrink: 0;
+        text-transform: uppercase;
+      ">New User</div>
+    </div>
+
+    <!-- Trust badges row -->
+    <div style="
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 2;
+      padding: 0 4px;
+    ">
+      <div style="text-align:center;flex:1;">
+        <div style="width:38px;height:38px;margin:0 auto 6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;">🔒</div>
+        <div style="color:rgba(255,255,255,0.9);font-size:10px;font-weight:700;letter-spacing:0.2px;">100% Safe</div>
+      </div>
+      <div style="text-align:center;flex:1;">
+        <div style="width:38px;height:38px;margin:0 auto 6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;">⚡</div>
+        <div style="color:rgba(255,255,255,0.9);font-size:10px;font-weight:700;letter-spacing:0.2px;">Fast Delivery</div>
+      </div>
+      <div style="text-align:center;flex:1;">
+        <div style="width:38px;height:38px;margin:0 auto 6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;">🎁</div>
+        <div style="color:rgba(255,255,255,0.9);font-size:10px;font-weight:700;letter-spacing:0.2px;">Free Gift</div>
+      </div>
+      <div style="text-align:center;flex:1;">
+        <div style="width:38px;height:38px;margin:0 auto 6px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;">💯</div>
+        <div style="color:rgba(255,255,255,0.9);font-size:10px;font-weight:700;letter-spacing:0.2px;">Best Prices</div>
+      </div>
+    </div>
+
+    <!-- Play Store Button -->
+    <a href="https://play.google.com/store/apps/details?id=com.ntiht.wallpaper.rox&hl" target="_blank" rel="noopener noreferrer" style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #ffffff;
+      color: #000;
+      padding: 13px 22px;
+      border-radius: 14px;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 -2px 0 rgba(0,0,0,0.06);
+      position: relative;
+      z-index: 2;
+      transition: transform 0.15s ease;
+    ">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3.6 1.8L13.8 12 3.6 22.2c-.4-.2-.6-.6-.6-1.1V2.9c0-.5.2-.9.6-1.1z" fill="#00c853"/>
         <path d="M17.8 15.5L13.8 12l4-3.5 3.7 2.1c1.1.6 1.1 2.2 0 2.8l-3.7 2.1z" fill="#ffc107"/>
         <path d="M3.6 22.2L13.8 12l4 3.5-12.4 7.1c-.6.3-1.4.2-1.8-.4z" fill="#d32f2f"/>
         <path d="M17.8 8.5L13.8 12 3.6 1.8c.5-.5 1.3-.6 1.9-.3l12.3 7z" fill="#1976d2"/>
       </svg>
-      <div style="text-align: left; line-height: 1.15;">
-        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; opacity: 0.8;">GET IT ON</div>
-        <div style="font-size: 17px; font-weight: 700;">Google Play</div>
+      <div style="text-align:left;line-height:1.1;">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.3px;opacity:0.7;font-weight:700;">Download on</div>
+        <div style="font-size:17px;font-weight:800;letter-spacing:-0.3px;">Google Play</div>
       </div>
+      <div style="margin-left:auto;background:#0d47a1;color:#fff;font-size:10px;font-weight:800;padding:5px 10px;border-radius:8px;letter-spacing:0.3px;">FREE</div>
     </a>
-  </div>
 
-  <footer class="tg-mft">
+    <!-- Bottom caption -->
+    <div style="text-align:center;color:rgba(255,255,255,0.65);font-size:10.5px;margin-top:12px;position:relative;z-index:2;font-weight:500;letter-spacing:0.2px;">
+      🎁 Free delivery on orders above ₹499 · No hidden charges
+    </div>
+
+  </div>
+</div>
+
+<!-- ✅ Detection: App me hide, Chrome me show -->
+<script>
+(function() {
+  try {
+    var el = document.getElementById('tg-app-download');
+    if (!el) return;
+
+    var ua = navigator.userAgent || '';
+    var hide = false;
+
+    // PWA / TWA (installed app)
+    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) hide = true;
+    if (window.navigator.standalone === true) hide = true;
+
+    // Android WebView
+    if (/Android/.test(ua) && /wv/.test(ua)) hide = true;
+
+    // iOS WebView (app ke andar, Safari nahi)
+    if (/iPhone|iPad|iPod/.test(ua) && !/Safari/.test(ua)) hide = true;
+
+    // Android app referrer
+    if (document.referrer && document.referrer.indexOf('android-app://') === 0) hide = true;
+
+    // Custom TOEGO UA
+    if (/toego/i.test(ua)) hide = true;
+
+    if (hide) el.style.display = 'none';
+  } catch(e) {}
+})();
+</script>
+
+<footer class="tg-mft">
     <div class="tg-mft-inner">
       <div><h5>Shop</h5><a href="products.html">All Products</a><a href="products.html?sort=newest">New Arrivals</a><a href="products.html?sale=50">Sale</a></div>
       <div><h5>Help</h5><a href="payments.html">Payments</a><a href="shipping.html">Shipping</a><a href="returns.html">Returns</a></div>
@@ -3223,7 +3694,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const trendingArr = applySortWithTimer(filtered, 10);
     const bestArr = applySortWithTimer(filtered, 10);
     const newArr = applySortWithTimer(filtered, 10);
-    const allArr = applySortWithTimer(filtered, PRODUCTS_RENDER_ALL_LIMIT);
+        const isMobile = window.innerWidth < 768;
+    const renderLimit = isMobile ? 20 : PRODUCTS_RENDER_ALL_LIMIT;
+    const allArr = applySortWithTimer(filtered, renderLimit);
 
     const set = (id, arr, fn) => { 
       const el = document.getElementById(id); 
@@ -3412,28 +3885,50 @@ document.addEventListener('DOMContentLoaded', function() {
     _timerEls = document.querySelectorAll('.tg-mcard-timer[data-end]');
   }
 
+    /* ✅ PERFORMANCE FIX: Timer - only textContent, off-screen skip, 2s interval */
   setInterval(() => {
     if (document.hidden || !_timerEls.length) return;
     const now = Date.now();
     const pad = n => String(n).padStart(2, '0');
-    const len = _timerEls.length;
-    for (let i = 0; i < len; i++) {
+    const vh = window.innerHeight;
+    for (let i = 0; i < _timerEls.length; i++) {
       const el = _timerEls[i];
       if (!el.isConnected) continue;
       const end = Number(el.dataset.end);
       if (!end) continue;
       const diff = end - now;
       if (diff <= 0) { el.remove(); continue; }
+
+      /* 🔥 SKIP off-screen timers — 80% DOM work gone */
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > vh + 100) continue;
+
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff % 86400000) / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
-      let txt;
-      if (d > 0) txt = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + d + 'D</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
-      else txt = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
-      if (el.innerHTML !== txt) el.innerHTML = txt;
+      const segs = el.querySelectorAll('.tg-tmr-seg');
+
+      /* Structure badla (day appear/disappear) → rebuild */
+      if (d > 0 && segs.length === 3) {
+        el.innerHTML = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + d + 'D</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
+      } else if (d === 0 && segs.length === 4) {
+        el.innerHTML = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
+      } else if (segs.length >= 3) {
+        /* ✅ Sirf textContent update — DOM rebuild nahi */
+        if (d > 0) {
+          if (segs[0]) segs[0].textContent = d + 'D';
+          if (segs[1]) segs[1].textContent = pad(h) + 'H';
+          if (segs[2]) segs[2].textContent = pad(m) + 'M';
+          if (segs[3]) segs[3].textContent = pad(s) + 'S';
+        } else {
+          if (segs[0]) segs[0].textContent = pad(h) + 'H';
+          if (segs[1]) segs[1].textContent = pad(m) + 'M';
+          if (segs[2]) segs[2].textContent = pad(s) + 'S';
+        }
+      }
     }
-  }, 1000);
+  }, 2000);  /* 1s → 2s */
 
   window.tgMShareBtn = function(e) {
     e.stopPropagation();
@@ -3693,7 +4188,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const grid = document.getElementById('tg-msearch-grid'); if (!grid) return;
     const q = currentSearch; if (!q) return;
     const title = document.getElementById('tg-msearch-title'), sub = document.getElementById('tg-msearch-sub');
-    const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), null);
+    const isMobileSR = window.innerWidth < 768;
+const searchLimit = isMobileSR ? 20 : null;
+const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), searchLimit);
     if (title) title.textContent = 'Results for "' + q + '"';
     if (sub) sub.textContent = matches.length ? matches.length + ' product' + (matches.length>1?'s':'') + ' found' : 'No products matched';
     grid.innerHTML = matches.length ? matches.map((p, i) => largeCard(p, i)).join('') : '<div class="tg-mempty"><div class="tg-mempty-icon">🔍</div><h3 style="margin:0 0 4px;color:#212121;font-size:15px;">No products found</h3><p style="margin:0;font-size:13px;">Try a different keyword</p></div>';
@@ -3977,22 +4474,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if(!hd || !app) return;
     
     var isScrolled = false;
+    var raf = null;
     
     window.addEventListener('scroll', function(){
-      if(window.innerWidth >= 1025) return; // Desktop pe kaam nahi karega
-      
-      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-      
-      if(y > 70 && !isScrolled){
-        isScrolled = true;
-        hd.classList.add('tg-scrolled');
-        app.style.paddingTop = '62px'; 
-      } 
-      else if(y < 25 && isScrolled){
-        isScrolled = false;
-        hd.classList.remove('tg-scrolled');
-        app.style.paddingTop = ''; 
-      }
+      /* 🔥 rAF throttle — ek frame me sirf ek baar check */
+      if(raf) return;
+      raf = requestAnimationFrame(function(){
+        raf = null;
+        if(window.innerWidth >= 1025) return;
+        
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        
+        if(y > 70 && !isScrolled){
+  isScrolled = true;
+  hd.classList.add('tg-scrolled');
+  app.classList.add('tg-pad-scrolled');
+} 
+else if(y < 25 && isScrolled){
+  isScrolled = false;
+  hd.classList.remove('tg-scrolled');
+  app.classList.remove('tg-pad-scrolled');
+}
+      });
     }, {passive:true});
   }
   
