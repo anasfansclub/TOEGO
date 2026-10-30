@@ -1590,6 +1590,86 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     font-size: 12px !important;
   }
 }
+/* ═══════════════════════════════════════════════════════════
+   TOEGO BANNER FULL WIDTH FIX — Half White Space Remove
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Banner container ko full width do */
+.tg-mabanner-card {
+  margin: 8px 0 12px 0 !important;
+  padding: 0 !important;
+  border-radius: 8px !important;
+}
+
+/* 2. Banner box ka size fix karo (Mobile pe 16:9 best rehta hai) */
+.tg-mabanner {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16/9 !important; 
+  max-height: 220px !important;
+  min-height: 140px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #f0f2f5 !important; /* Fallback color */
+}
+
+/* 3. Track ko 100% width do */
+.tg-mabanner-track {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+}
+
+/* 4. Har slide ko exactly 100% width do */
+.tg-mabanner-slide {
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* 5. 🔥 MAIN FIX: Image ko force karo poora cover karne ke liye */
+.tg-mabanner-slide img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* Image stretch hogi bina white space ke */
+  object-position: center !important;
+  display: block !important;
+}
+
+/* 6. Text/Button overlay ko thoda adjust karo */
+.tg-mabanner-content {
+  padding: 14px 16px !important;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%) !important;
+}
+
+/* Mobile specific tweaks */
+@media (max-width: 768px) {
+  .tg-mabanner {
+    aspect-ratio: 16/8 !important; /* Mobile pe thoda chhota height */
+    max-height: 180px !important;
+    min-height: 130px !important;
+  }
+  .tg-mabanner-title { font-size: 15px !important; }
+  .tg-mabanner-sub { font-size: 11px !important; }
+  .tg-mabanner-btn { padding: 6px 14px !important; font-size: 10px !important; }
+  
+  .tg-mabanner-arrow { 
+    width: 26px !important; 
+    height: 26px !important; 
+  }
+  .tg-mabanner-arrow.prev { left: 6px !important; }
+  .tg-mabanner-arrow.next { right: 6px !important; }
+}
+
+/* Desktop pe banner bada aur premium */
+@media (min-width: 769px) {
+  .tg-mabanner {
+    aspect-ratio: 21/7 !important; /* Desktop pe wide banner */
+    max-height: 320px !important;
+  }
+}
 </style>
 </head>
 <body>
