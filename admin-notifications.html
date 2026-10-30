@@ -29,12 +29,12 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .adm-login-wrap{max-width:420px;margin:60px auto;padding:0 16px;}
 
 .adm-tabs-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;background:#fff;padding:8px;border-radius:12px;box-shadow:var(--shadow);}
-.adm-tab-btn{flex:1;min-width:110px;padding:12px 18px;border-radius:8px;background:transparent;border:none;font-size:13px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.adm-tab-btn{flex:1;min-width:100px;padding:12px 14px;border-radius:8px;background:transparent;border:none;font-size:13px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .adm-tab-btn:hover{background:var(--bg);color:var(--text);}
 .adm-tab-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(41,99,235,0.3);}
 
 .adm-card{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:22px;margin-bottom:20px;}
-.adm-card h2{margin:0 0 16px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.adm-card h2{margin:0 0 16px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 
 .adm-field{margin-bottom:14px;}
 .adm-field label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
@@ -43,7 +43,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .adm-field textarea{min-height:80px;resize:vertical;}
 .adm-char{font-size:11px;color:var(--muted);text-align:right;margin-top:4px;font-weight:600;}
 
-.adm-btn{padding:13px 22px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;white-space:nowrap;}
+.adm-btn{padding:12px 20px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;white-space:nowrap;}
 .adm-btn.primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(41,99,235,0.3);}
 .adm-btn.primary:hover{filter:brightness(1.08);}
 .adm-btn.primary:disabled{opacity:0.6;cursor:not-allowed;}
@@ -52,6 +52,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .adm-btn.ghost{background:var(--bg);color:var(--text);border:1.5px solid var(--border);}
 .adm-btn.ghost:hover{background:#e4e7ec;}
 .adm-btn.block{width:100%;}
+.adm-btn.sm{padding:8px 14px;font-size:12px;}
 
 .adm-status{padding:12px 16px;border-radius:8px;font-size:13px;font-weight:600;margin-top:12px;display:none;}
 .adm-status.show{display:block;}
@@ -74,40 +75,65 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .img-upload-btn{background:#f1f3f6;border:1.5px solid var(--border);padding:11px 15px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .img-upload-btn:hover{background:#e4e7ec;}
 
-.history-toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-.history-toolbar input[type="search"]{flex:1;min-width:180px;border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+@media(max-width:700px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:#fff;border-radius:10px;padding:14px;box-shadow:var(--shadow);}
+.stat-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px;}
+.stat-value{font-size:22px;font-weight:900;color:var(--text);line-height:1.1;}
+.stat-value.blue{color:var(--primary);}
+.stat-value.green{color:var(--success);}
+.stat-value.orange{color:var(--warn);}
+
+/* HISTORY TOOLBAR */
+.history-toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.history-toolbar input[type="search"]{flex:1;min-width:160px;border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;}
 .history-toolbar input:focus{border-color:var(--primary);}
 .history-toolbar select{border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13px;font-family:inherit;outline:none;background:#fff;font-weight:600;cursor:pointer;}
-.history-toolbar .spacer{flex:1;}
-.history-count{font-size:12px;color:var(--muted);font-weight:700;}
 
-.history-list{display:flex;flex-direction:column;gap:10px;}
-.hist-item{display:flex;gap:12px;padding:14px;background:#fafbfc;border:1.5px solid var(--border);border-radius:10px;transition:all .15s;}
+/* BULK BAR */
+.bulk-bar{display:flex;align-items:center;gap:10px;background:#e3f2fd;border:1.5px solid #90caf9;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:13px;font-weight:700;flex-wrap:wrap;}
+.bulk-bar .spacer{flex:1;}
+
+/* HISTORY LIST — SINGLE LINE ON MOBILE */
+.history-list{display:flex;flex-direction:column;gap:8px;}
+.hist-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fafbfc;border:1.5px solid var(--border);border-radius:10px;transition:all .15s;}
 .hist-item:hover{border-color:var(--primary);background:#f0f5ff;}
-.hist-status-bar{width:4px;border-radius:3px;background:var(--success);flex-shrink:0;}
+.hist-status-bar{width:4px;height:34px;border-radius:2px;background:var(--success);flex-shrink:0;}
 .hist-status-bar.partial{background:var(--warn);}
 .hist-status-bar.failed{background:var(--error);}
-.hist-main{flex:1;min-width:0;}
-.hist-header{display:flex;justify-content:space-between;gap:10px;margin-bottom:4px;align-items:flex-start;}
-.hist-title{font-size:13.5px;font-weight:800;word-break:break-word;}
-.hist-time{font-size:11px;color:var(--muted);white-space:nowrap;font-weight:600;flex-shrink:0;}
-.hist-body{font-size:12px;color:#555;line-height:1.45;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.hist-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:10.5px;color:var(--muted);font-weight:700;}
-.hist-meta span{background:rgba(0,0,0,0.05);padding:3px 8px;border-radius:999px;}
-.hist-badge{padding:3px 10px!important;border-radius:999px!important;color:#fff;}
+.hist-check{width:18px;height:18px;flex-shrink:0;cursor:pointer;accent-color:var(--primary);}
+.hist-content{flex:1;min-width:0;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.hist-title{flex:1;min-width:0;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
+.hist-badge{font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;color:#fff;flex-shrink:0;white-space:nowrap;}
 .hist-badge.success{background:var(--success);}
 .hist-badge.partial{background:var(--warn);}
 .hist-badge.failed{background:var(--error);}
-.hist-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;flex-shrink:0;}
-.hist-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
-.hist-btn{padding:6px 10px;border:none;border-radius:6px;background:#fff;border:1.5px solid var(--border);cursor:pointer;font-size:13px;transition:all .15s;line-height:1;}
-.hist-btn:hover{background:var(--bg);}
-.hist-btn.delete:hover{background:#ffebee;border-color:var(--error);}
-.hist-btn.load:hover{background:#e3f2fd;border-color:var(--primary);}
+.hist-time{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;flex-shrink:0;}
+.hist-actions{display:flex;gap:4px;flex-shrink:0;}
+.hist-btn{width:32px;height:32px;border:none;border-radius:6px;background:#f1f3f6;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;padding:0;}
+.hist-btn:hover{background:#e4e7ec;}
+.hist-btn.delete:hover{background:#ffebee;}
 
+/* MOBILE COMPACT */
+@media(max-width:600px){
+  .hist-item{padding:8px 10px;gap:6px;}
+  .hist-status-bar{height:28px;width:3px;}
+  .hist-check{width:16px;height:16px;}
+  .hist-content{gap:6px;}
+  .hist-title{font-size:12px;}
+  .hist-badge{display:none;}
+  .hist-time{font-size:10px;}
+  .hist-actions{gap:3px;}
+  .hist-btn{width:28px;height:28px;font-size:11px;}
+  .hist-actions .hist-btn.preview{display:none;} /* row is clickable, no need */
+}
+
+/* EMPTY STATE */
 .adm-empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;font-weight:600;line-height:1.6;}
 .adm-empty .big{font-size:48px;margin-bottom:12px;display:block;opacity:0.4;}
 
+/* TEMPLATES */
 .tpl-filters{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
 .tpl-filter{padding:8px 16px;border-radius:999px;background:var(--bg);border:none;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);}
 .tpl-filter.active{background:var(--primary);color:#fff;}
@@ -117,26 +143,45 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 .adm-tpl-title{font-size:13px;font-weight:800;margin-bottom:5px;word-break:break-word;}
 .adm-tpl-body{font-size:11.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 
+/* LOADING */
 .adm-loading{position:fixed;inset:0;background:#fff;z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
 .adm-loading.hidden{display:none;}
 .adm-loading-spinner{width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:var(--primary);border-radius:50%;animation:admSpin .8s linear infinite;}
 @keyframes admSpin{to{transform:rotate(360deg);}}
 .adm-loading-text{font-size:15px;color:#666;font-weight:600;text-align:center;padding:0 20px;}
 
-.adm-toast-container{position:fixed;top:80px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+/* TOASTS */
+.adm-toast-container{position:fixed;top:80px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:calc(100vw - 40px);}
 .adm-toast{background:#212121;color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:opacity .3s, transform .3s;min-width:200px;max-width:320px;}
 .adm-toast.success{background:#1b8a3a;}
 .adm-toast.error{background:#c62828;}
 .adm-toast.info{background:#1565c0;}
 
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-content{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-close{position:absolute;top:12px;right:12px;background:#f1f3f6;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+.modal-close:hover{background:#e4e7ec;color:var(--text);}
+.modal-title{font-size:16px;font-weight:800;margin:0 0 14px;padding-right:40px;}
+.modal-row{margin-bottom:12px;}
+.modal-label{font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:0.3px;margin-bottom:4px;}
+.modal-value{font-size:13.5px;line-height:1.5;word-break:break-word;}
+.modal-value.img{display:flex;justify-content:center;}
+.modal-value.img img{max-width:100%;max-height:220px;border-radius:8px;object-fit:cover;}
+.modal-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:11px;}
+.modal-meta span{background:#f1f3f6;padding:4px 10px;border-radius:999px;font-weight:700;color:var(--muted);}
+.modal-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.modal-actions .adm-btn{flex:1;min-width:120px;}
+
+/* LOG */
 .adm-log{background:#0f1729;color:#a5d6ff;border-radius:8px;padding:14px;font-family:monospace;font-size:12px;max-height:200px;overflow-y:auto;line-height:1.6;}
 .adm-log .ok{color:#4ade80;}
 .adm-log .err{color:#f87171;}
 
 @media(max-width:520px){
   .adm-tabs-bar .adm-tab-btn{font-size:12px;padding:10px 8px;}
-  .hist-thumb{display:none;}
-  .hist-actions{flex-direction:row;}
+  .adm-card{padding:16px;}
+  .adm-btn.sm{padding:7px 10px;font-size:11px;}
 }
 </style>
 </head>
@@ -246,11 +291,30 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   <!-- HISTORY -->
   <section id="adm-panel-history" class="adm-panel adm-hidden">
+
+    <!-- STATS -->
+    <div class="stats-row" id="adm-stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Sent</div>
+        <div class="stat-value blue" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Today</div>
+        <div class="stat-value orange" id="stat-today">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Success Rate</div>
+        <div class="stat-value green" id="stat-rate">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Failed</div>
+        <div class="stat-value" id="stat-failed" style="color:var(--error)">0</div>
+      </div>
+    </div>
+
     <div class="adm-card">
-      <h2 style="justify-content:space-between;">
-        <span>📜 Notification History</span>
-        <span class="history-count" id="adm-history-count">0 items</span>
-      </h2>
+      <h2>📜 Notification History</h2>
+
       <div class="history-toolbar">
         <input type="search" id="adm-history-search" placeholder="🔍 Search title / body / target…" oninput="admOnHistorySearch(this.value)">
         <select id="adm-history-filter" onchange="admOnHistoryFilter(this.value)">
@@ -259,10 +323,29 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
           <option value="partial">⚠ Partial</option>
           <option value="failed">✕ Failed</option>
         </select>
-        <div class="spacer"></div>
-        <button class="adm-btn ghost" onclick="admRefreshHistory()" title="Refresh">🔄 Refresh</button>
-        <button class="adm-btn danger" onclick="admDeleteAllHistory(event)" title="Delete all">🗑️ Delete All</button>
+        <select id="adm-history-date" onchange="admOnHistoryDate(this.value)">
+          <option value="all">All time</option>
+          <option value="today">Today</option>
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+        </select>
+        <select id="adm-history-sort" onchange="admOnHistorySort(this.value)">
+          <option value="desc">Newest first</option>
+          <option value="asc">Oldest first</option>
+        </select>
+        <button class="adm-btn ghost sm" onclick="admRefreshHistory()" title="Refresh">🔄</button>
+        <button class="adm-btn ghost sm" onclick="admExportHistory()" title="Export JSON">📥</button>
+        <button class="adm-btn danger sm" onclick="admDeleteAllHistory(event)" title="Delete all">🗑️ All</button>
       </div>
+
+      <!-- Bulk bar -->
+      <div class="bulk-bar adm-hidden" id="adm-bulk-bar">
+        <span><span id="adm-bulk-count">0</span> selected</span>
+        <div class="spacer"></div>
+        <button class="adm-btn danger sm" onclick="admDeleteSelected()">🗑️ Delete Selected</button>
+        <button class="adm-btn ghost sm" onclick="admClearSelection()">Cancel</button>
+      </div>
+
       <div class="history-list" id="adm-history-list">
         <div class="adm-empty"><span class="big">📭</span>Loading history…</div>
       </div>
@@ -279,10 +362,20 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         <button class="tpl-filter" data-cat="fomo" onclick="admFilterTpl('fomo',this)">🔥 FOMO</button>
         <button class="tpl-filter" data-cat="cart" onclick="admFilterTpl('cart',this)">🛒 Cart</button>
         <button class="tpl-filter" data-cat="festival" onclick="admFilterTpl('festival',this)">🎉 Festival</button>
+        <button class="tpl-filter" data-cat="general" onclick="admFilterTpl('general',this)">💬 General</button>
       </div>
       <div class="adm-templates" id="adm-templates-list"></div>
     </div>
   </section>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div id="adm-modal" class="modal-overlay adm-hidden">
+  <div class="modal-content">
+    <button class="modal-close" onclick="admCloseModal()">×</button>
+    <h3 class="modal-title" id="adm-modal-title">Notification Details</h3>
+    <div id="adm-modal-body"></div>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -340,8 +433,11 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   let historyData = [];
   let historyFilter = 'all';
   let historySearch = '';
+  let historyDate = 'all';
+  let historySort = 'desc';
   let historyUnsub = null;
   let isAdmin = false;
+  const selectedIds = new Set();
 
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
@@ -366,14 +462,18 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     if (!date) return 'Just now';
     const diff = (Date.now() - date.getTime()) / 1000;
     if (diff < 60) return 'Just now';
-    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
-    if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
-    return date.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    if (diff < 3600) return Math.floor(diff/60) + 'm';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h';
+    if (diff < 604800) return Math.floor(diff/86400) + 'd';
+    return date.toLocaleDateString('en-IN', { day:'2-digit', month:'short' });
   }
   function formatFullTime(date){
     if (!date) return '—';
     return date.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+  function getItemDate(h) {
+    return (h.sentAt && h.sentAt.toDate) ? h.sentAt.toDate()
+         : (h.clientSentAt ? new Date(h.clientSentAt) : null);
   }
 
   /* AUTH */
@@ -470,7 +570,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     $('adm-body-count').textContent = ($('adm-body').value || '').length;
   };
 
-  /* IMAGE — compress to 20KB then upload to Cloudinary */
+  /* IMAGE COMPRESS + UPLOAD */
   function dataURItoBlob(dataURI) {
     const parts = dataURI.split(',');
     const byteString = atob(parts[1]);
@@ -545,14 +645,14 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         statusEl.style.color = 'var(--success)';
         statusEl.textContent = `✅ Uploaded (${sizeKB}KB)`;
         setTimeout(() => statusEl.style.display = 'none', 3500);
-        toast('Image uploaded successfully', 'success');
+        toast('Image uploaded', 'success');
       } else {
         throw new Error((data.error && data.error.message) || 'Upload failed');
       }
     } catch (err) {
       statusEl.style.color = 'var(--error)';
       statusEl.textContent = '❌ ' + err.message;
-      toast('Image upload failed: ' + err.message, 'error');
+      toast('Image failed: ' + err.message, 'error');
     }
     event.target.value = '';
   };
@@ -617,6 +717,10 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
     if (!title && !body) { showStatus('adm-send-status', 'Title ya body daalo', 'error'); return; }
 
+    if (target === 'all' || target === 'topic:all-users') {
+      if (!confirm('⚠️ Ye notification SAARE users ko jayegi.\n\nTitle: ' + title + '\n\nAage badhein?')) return;
+    }
+
     const btn = $('adm-send-btn');
     btn.disabled = true;
     btn.textContent = 'Sending…';
@@ -635,6 +739,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       const msg = `✓ Sent! Success: ${successCount}, Failed: ${failureCount}`;
       showStatus('adm-send-status', msg, 'success');
       admLog(msg, 'ok');
+      toast('Notification sent: ' + successCount + ' success, ' + failureCount + ' failed', 'success');
 
       try {
         await db.collection(HISTORY_COLLECTION).add({
@@ -647,10 +752,12 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
       } catch (histErr) {
         console.warn('History save failed:', histErr);
         admLog('⚠ History save failed: ' + histErr.message, 'err');
+        toast('History save failed — Firestore rules check karo', 'error');
       }
     } catch (err) {
       showStatus('adm-send-status', '✕ Error: ' + err.message, 'error');
       admLog('ERROR: ' + err.message, 'err');
+      toast('Send failed: ' + err.message, 'error');
       try {
         await db.collection(HISTORY_COLLECTION).add({
           title, body, image, url, target,
@@ -686,6 +793,7 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         snap => {
           historyData = snap.docs.map(d => Object.assign({ id: d.id }, d.data() || {}));
           admRenderHistory();
+          admUpdateStats();
         },
         err => {
           console.error('History listener error:', err);
@@ -700,16 +808,46 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
   window.admRefreshHistory = function() { startHistoryListener(); toast('History refreshed', 'info'); };
 
   function statusLabel(s) {
-    if (s === 'partial') return '⚠ Partial';
-    if (s === 'failed') return '✕ Failed';
-    return '✓ Success';
+    if (s === 'partial') return '⚠';
+    if (s === 'failed') return '✕';
+    return '✓';
+  }
+
+  function admUpdateStats() {
+    const total = historyData.length;
+    let today = 0, totalSuccess = 0, totalFail = 0;
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    historyData.forEach(h => {
+      const d = getItemDate(h);
+      if (d && d.getTime() >= startOfDay) today++;
+      totalSuccess += (h.successCount || 0);
+      totalFail += (h.failureCount || 0);
+    });
+
+    $('stat-total').textContent = total;
+    $('stat-today').textContent = today;
+    $('stat-failed').textContent = totalFail;
+
+    const totalAttempts = totalSuccess + totalFail;
+    if (totalAttempts > 0) {
+      const rate = Math.round((totalSuccess / totalAttempts) * 100);
+      $('stat-rate').textContent = rate + '%';
+    } else {
+      $('stat-rate').textContent = '—';
+    }
   }
 
   window.admRenderHistory = function(){
     const list = $('adm-history-list');
     if (!list) return;
+
     let filtered = historyData.slice();
-    if (historyFilter !== 'all') filtered = filtered.filter(h => (h.status || 'success') === historyFilter);
+
+    if (historyFilter !== 'all') {
+      filtered = filtered.filter(h => (h.status || 'success') === historyFilter);
+    }
     if (historySearch) {
       const q = historySearch.toLowerCase();
       filtered = filtered.filter(h =>
@@ -718,7 +856,27 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         (h.target || '').toLowerCase().includes(q)
       );
     }
-    $('adm-history-count').textContent = filtered.length + ' of ' + historyData.length + ' items';
+    if (historyDate !== 'all') {
+      const now = Date.now();
+      let cutoff;
+      if (historyDate === 'today') {
+        const d = new Date();
+        cutoff = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      } else if (historyDate === 'week') {
+        cutoff = now - 7 * 86400000;
+      } else {
+        cutoff = now - 30 * 86400000;
+      }
+      filtered = filtered.filter(h => {
+        const d = getItemDate(h);
+        return d && d.getTime() >= cutoff;
+      });
+    }
+    filtered.sort((a, b) => {
+      const da = getItemDate(a), db_ = getItemDate(b);
+      const ta = da ? da.getTime() : 0, tb = db_ ? db_.getTime() : 0;
+      return historySort === 'desc' ? tb - ta : ta - tb;
+    });
 
     if (!filtered.length) {
       list.innerHTML = '<div class="adm-empty"><span class="big">📭</span>' +
@@ -728,34 +886,23 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     }
 
     list.innerHTML = filtered.map(h => {
-      const sentAt = (h.sentAt && h.sentAt.toDate) ? h.sentAt.toDate()
-                   : (h.clientSentAt ? new Date(h.clientSentAt) : null);
+      const sentAt = getItemDate(h);
       const time = sentAt ? formatTime(sentAt) : 'Just now';
-      const fullTime = sentAt ? formatFullTime(sentAt) : '—';
       const statusCls = h.status || 'success';
-      const thumb = h.image ? '<img src="' + esc(h.image) + '" class="hist-thumb" alt="" onerror="this.style.display=\'none\'">' : '';
+      const checked = selectedIds.has(h.id) ? 'checked' : '';
       return '' +
-        '<div class="hist-item">' +
+        '<div class="hist-item" data-id="' + esc(h.id) + '">' +
           '<div class="hist-status-bar ' + statusCls + '"></div>' +
-          '<div class="hist-main">' +
-            '<div class="hist-header">' +
-              '<div class="hist-title">' + esc(h.title || '(no title)') + '</div>' +
-              '<div class="hist-time" title="' + esc(fullTime) + '">' + esc(time) + '</div>' +
-            '</div>' +
-            '<div class="hist-body">' + esc(h.body || '') + '</div>' +
-            '<div class="hist-meta">' +
-              '<span class="hist-badge ' + statusCls + '">' + statusLabel(statusCls) + '</span>' +
-              '<span>🎯 ' + esc(h.target || 'all') + '</span>' +
-              '<span>✓ ' + (h.successCount || 0) + '</span>' +
-              (h.failureCount ? '<span style="color:#d32f2f">✕ ' + h.failureCount + '</span>' : '') +
-              (h.url ? '<span>🔗 ' + esc(h.url) + '</span>' : '') +
-              (h.sentBy ? '<span>👤 ' + esc(h.sentBy) + '</span>' : '') +
-            '</div>' +
+          '<input type="checkbox" class="hist-check" ' + checked + ' onchange="admToggleSelect(\'' + h.id + '\', this.checked)">' +
+          '<div class="hist-content" onclick="admOpenPreview(\'' + h.id + '\')">' +
+            '<div class="hist-title">' + esc(h.title || '(no title)') + '</div>' +
+            '<span class="hist-badge ' + statusCls + '">' + statusLabel(statusCls) + '</span>' +
+            '<span class="hist-time">' + esc(time) + '</span>' +
           '</div>' +
-          thumb +
           '<div class="hist-actions">' +
-            '<button class="hist-btn load" onclick="admLoadFromHistory(\'' + h.id + '\')" title="Load into form">📥</button>' +
-            '<button class="hist-btn delete" onclick="admDeleteHistoryItem(\'' + h.id + '\')" title="Delete">🗑️</button>' +
+            '<button class="hist-btn preview" onclick="event.stopPropagation();admOpenPreview(\'' + h.id + '\')" title="Preview">👁</button>' +
+            '<button class="hist-btn" onclick="event.stopPropagation();admLoadFromHistory(\'' + h.id + '\')" title="Load">📥</button>' +
+            '<button class="hist-btn delete" onclick="event.stopPropagation();admDeleteHistoryItem(\'' + h.id + '\')" title="Delete">🗑</button>' +
           '</div>' +
         '</div>';
     }).join('');
@@ -763,6 +910,79 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
 
   window.admOnHistorySearch = function(v){ historySearch = (v || '').trim(); admRenderHistory(); };
   window.admOnHistoryFilter = function(v){ historyFilter = v || 'all'; admRenderHistory(); };
+  window.admOnHistoryDate = function(v){ historyDate = v || 'all'; admRenderHistory(); };
+  window.admOnHistorySort = function(v){ historySort = v === 'asc' ? 'asc' : 'desc'; admRenderHistory(); };
+
+  /* SELECT */
+  window.admToggleSelect = function(id, checked) {
+    if (checked) selectedIds.add(id); else selectedIds.delete(id);
+    admUpdateBulkBar();
+  };
+  function admUpdateBulkBar() {
+    const bar = $('adm-bulk-bar');
+    const c = $('adm-bulk-count');
+    if (c) c.textContent = selectedIds.size;
+    if (bar) bar.classList.toggle('adm-hidden', selectedIds.size === 0);
+  }
+  window.admClearSelection = function() {
+    selectedIds.clear();
+    document.querySelectorAll('.hist-check').forEach(cb => cb.checked = false);
+    admUpdateBulkBar();
+  };
+
+  window.admDeleteSelected = async function() {
+    const ids = Array.from(selectedIds);
+    if (!ids.length) return;
+    if (!confirm('Delete ' + ids.length + ' selected items?')) return;
+    let deleted = 0, failed = 0;
+    try {
+      // Firestore batch limit = 500
+      for (let i = 0; i < ids.length; i += 400) {
+        const batch = db.batch();
+        ids.slice(i, i + 400).forEach(id => batch.delete(db.collection(HISTORY_COLLECTION).doc(id)));
+        await batch.commit();
+        deleted += ids.slice(i, i + 400).length;
+      }
+      selectedIds.clear();
+      admUpdateBulkBar();
+      toast('Deleted ' + deleted + ' items', 'success');
+    } catch (err) {
+      toast('Delete failed: ' + err.message, 'error');
+    }
+  };
+
+  /* PREVIEW MODAL */
+  window.admOpenPreview = function(id) {
+    const h = historyData.find(x => x.id === id);
+    if (!h) return;
+    const sentAt = getItemDate(h);
+    const statusCls = h.status || 'success';
+    const body = $('adm-modal-body');
+    body.innerHTML = '' +
+      '<div class="modal-row"><div class="modal-label">Title</div><div class="modal-value">' + esc(h.title || '(no title)') + '</div></div>' +
+      '<div class="modal-row"><div class="modal-label">Body</div><div class="modal-value">' + esc(h.body || '—') + '</div></div>' +
+      (h.image ? '<div class="modal-row"><div class="modal-label">Image</div><div class="modal-value img"><img src="' + esc(h.image) + '" onerror="this.style.display=\'none\'"></div></div>' : '') +
+      (h.url ? '<div class="modal-row"><div class="modal-label">Click URL</div><div class="modal-value">' + esc(h.url) + '</div></div>' : '') +
+      '<div class="modal-row"><div class="modal-label">Sent At</div><div class="modal-value">' + esc(formatFullTime(sentAt)) + '</div></div>' +
+      '<div class="modal-meta">' +
+        '<span class="hist-badge ' + statusCls + '" style="color:#fff">' + statusLabel(statusCls) + ' ' + statusCls.toUpperCase() + '</span>' +
+        '<span>🎯 ' + esc(h.target || 'all') + '</span>' +
+        '<span>✓ ' + (h.successCount || 0) + '</span>' +
+        '<span>✕ ' + (h.failureCount || 0) + '</span>' +
+        (h.sentBy ? '<span>👤 ' + esc(h.sentBy) + '</span>' : '') +
+      '</div>' +
+      (h.errorMessage ? '<div class="modal-row" style="margin-top:12px"><div class="modal-label">Error</div><div class="modal-value" style="color:var(--error)">' + esc(h.errorMessage) + '</div></div>' : '') +
+      '<div class="modal-actions">' +
+        '<button class="adm-btn ghost" onclick="admLoadFromHistory(\'' + h.id + '\');admCloseModal()">📥 Load into form</button>' +
+        '<button class="adm-btn danger" onclick="admDeleteHistoryItem(\'' + h.id + '\');admCloseModal()">🗑 Delete</button>' +
+      '</div>';
+    $('adm-modal').classList.remove('adm-hidden');
+  };
+  window.admCloseModal = function() { $('adm-modal').classList.add('adm-hidden'); };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') admCloseModal(); });
+  document.addEventListener('click', e => {
+    if (e.target && e.target.id === 'adm-modal') admCloseModal();
+  });
 
   window.admLoadFromHistory = function(id) {
     const item = historyData.find(h => h.id === id);
@@ -783,6 +1003,8 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
     if (!confirm('Delete history item?\n\n"' + title + '"')) return;
     try {
       await db.collection(HISTORY_COLLECTION).doc(id).delete();
+      selectedIds.delete(id);
+      admUpdateBulkBar();
       toast('Deleted', 'success');
     } catch (err) {
       toast('Delete failed: ' + err.message, 'error');
@@ -805,14 +1027,49 @@ body{margin:0;font-family:'Roboto',Arial,sans-serif;background:var(--bg);color:v
         totalDeleted += snap.size;
         if (snap.size < 400) break;
       }
+      selectedIds.clear();
+      admUpdateBulkBar();
       toast('Deleted ' + totalDeleted + ' items', 'success');
     } catch (err) {
       toast('Delete failed: ' + err.message, 'error');
     } finally {
-      if (btn) { btn.disabled = false; btn.textContent = '🗑️ Delete All'; }
+      if (btn) { btn.disabled = false; btn.textContent = '🗑️ All'; }
     }
   };
 
+  /* EXPORT */
+  window.admExportHistory = function() {
+    if (!historyData.length) { toast('Kuch export karne ko nahi hai', 'info'); return; }
+    const exportData = historyData.map(h => {
+      const d = getItemDate(h);
+      return {
+        id: h.id,
+        title: h.title || '',
+        body: h.body || '',
+        image: h.image || '',
+        url: h.url || '',
+        target: h.target || 'all',
+        successCount: h.successCount || 0,
+        failureCount: h.failureCount || 0,
+        status: h.status || 'success',
+        sentBy: h.sentBy || '',
+        sentAt: d ? d.toISOString() : null,
+        errorMessage: h.errorMessage || ''
+      };
+    });
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'toego-notification-history-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('Exported ' + exportData.length + ' items', 'success');
+  };
+
+  /* SAFETY TIMEOUT */
   setTimeout(() => {
     if (!$('adm-loading').classList.contains('hidden')) {
       hideLoading();
