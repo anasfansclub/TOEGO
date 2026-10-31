@@ -2046,6 +2046,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     height: 42px !important;
   }
 }
+/* ═══════════════════════════════════════════════════════════
+   HEADER & CHROME COLOR MATCH FIX (Solid Blue)
+   ═══════════════════════════════════════════════════════════ */
+.tg-mhd {
+  background: #2874f0 !important; /* Gradient hatakar solid blue */
+  background-image: none !important;
+}
 </style>
 </head>
 <body>
@@ -2979,7 +2986,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const byId = document.getElementById('tg-theme-color-meta');
-    if (byId) byId.setAttribute('content', primary);
+if (byId) byId.setAttribute('content', '#2874f0');
 
     let tileMeta = document.querySelector('meta[name="msapplication-TileColor"]');
     if (!tileMeta) {
@@ -2989,7 +2996,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     tileMeta.setAttribute('content', primary);
 
-    const hd = document.getElementById('tg-mhd'); if (hd) hd.style.background = '#2963eb';
+    const hd = document.getElementById('tg-mhd'); if (hd) hd.style.background = '#2874f0';
     const sp = document.getElementById('tg-splash'); if (sp) sp.style.background = `linear-gradient(135deg, ${primary} 0%, ${dark} 50%, #0f1729 100%)`;
 
     document.documentElement.style.backgroundColor = primary;
