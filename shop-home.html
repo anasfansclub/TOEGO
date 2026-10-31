@@ -2055,6 +2055,17 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   background-image: none !important;
 }
 </style>
+<script type="speculationrules">
+{
+  "prerender": [
+    {
+      "source": "list",
+      "urls": ["products.html", "cart.html", "wishlist.html", "categories.html"],
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -3987,54 +3998,48 @@ if (byId) byId.setAttribute('content', '#2874f0');
   }
 
   let _timerEls = [];
+  
+  const _timerObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ e.target.dataset.vis = e.isIntersecting ? '1' : '0'; });
+  }, { rootMargin: '150px' });
+
   function _refreshTimerEls() {
     _timerEls = document.querySelectorAll('.tg-mcard-timer[data-end]');
+    _timerEls.forEach(function(el){ _timerObs.observe(el); });
   }
 
-    /* ✅ PERFORMANCE FIX: Timer - only textContent, off-screen skip, 2s interval */
-  setInterval(() => {
+  setInterval(function() {
     if (document.hidden || !_timerEls.length) return;
-    const now = Date.now();
-    const pad = n => String(n).padStart(2, '0');
-    const vh = window.innerHeight;
-    for (let i = 0; i < _timerEls.length; i++) {
-      const el = _timerEls[i];
+    var now = Date.now();
+    var pad = function(n){ return String(n).padStart(2, '0'); };
+    for (var i = 0; i < _timerEls.length; i++) {
+      var el = _timerEls[i];
       if (!el.isConnected) continue;
-      const end = Number(el.dataset.end);
+      if (el.dataset.vis === '0') continue;
+      var end = Number(el.dataset.end);
       if (!end) continue;
-      const diff = end - now;
+      var diff = end - now;
       if (diff <= 0) { el.remove(); continue; }
-
-      /* 🔥 SKIP off-screen timers — 80% DOM work gone */
-      const r = el.getBoundingClientRect();
-      if (r.bottom < -100 || r.top > vh + 100) continue;
-
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      const segs = el.querySelectorAll('.tg-tmr-seg');
-
-      /* Structure badla (day appear/disappear) → rebuild */
-      if (d > 0 && segs.length === 3) {
-        el.innerHTML = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + d + 'D</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
-      } else if (d === 0 && segs.length === 4) {
-        el.innerHTML = '<span class="tg-tmr-ic">⚡</span><span class="tg-tmr-seg">' + pad(h) + 'H</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(m) + 'M</span><span class="tg-tmr-colon">:</span><span class="tg-tmr-seg">' + pad(s) + 'S</span>';
-      } else if (segs.length >= 3) {
-        /* ✅ Sirf textContent update — DOM rebuild nahi */
-        if (d > 0) {
-          if (segs[0]) segs[0].textContent = d + 'D';
-          if (segs[1]) segs[1].textContent = pad(h) + 'H';
-          if (segs[2]) segs[2].textContent = pad(m) + 'M';
-          if (segs[3]) segs[3].textContent = pad(s) + 'S';
-        } else {
-          if (segs[0]) segs[0].textContent = pad(h) + 'H';
-          if (segs[1]) segs[1].textContent = pad(m) + 'M';
-          if (segs[2]) segs[2].textContent = pad(s) + 'S';
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      var segs = el.querySelectorAll('.tg-tmr-seg');
+      if (segs.length >= 3) {
+        if (d > 0 && segs.length === 4) {
+          segs[0].textContent = d + 'D';
+          segs[1].textContent = pad(h) + 'H';
+          segs[2].textContent = pad(m) + 'M';
+          segs[3].textContent = pad(s) + 'S';
+        } else if (segs.length === 3) {
+          segs[0].textContent = pad(h) + 'H';
+          segs[1].textContent = pad(m) + 'M';
+          segs[2].textContent = pad(s) + 'S';
         }
       }
     }
-  }, 2000);  /* 1s → 2s */
+  }, 2000);  
+    
 
   window.tgMShareBtn = function(e) {
     e.stopPropagation();
@@ -4619,6 +4624,44 @@ else if(y < 25 && isScrolled){
   } else { 
     initScrollHeader(); 
   }
+})();
+</script>
+<script>
+(function(){
+  var prefetched = new Set();
+  function prefetch(url){
+    if(!url || prefetched.has(url)) return;
+    if(url.indexOf('http') === 0 && url.indexOf(location.host) === -1) return;
+    if(url.indexOf('javascript:') === 0) return;
+    prefetched.add(url);
+    try {
+      var link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = url;
+      link.as = 'document';
+      document.head.appendChild(link);
+    } catch(e) {}
+  }
+  function getUrlFromEl(el){
+    if(!el) return '';
+    var a = el.closest('a[href]');
+    if(a && a.href && a.host === location.host) return a.href;
+    var card = el.closest('[onclick*="location.href"]');
+    if(card){
+      var m = card.getAttribute('onclick').match(/location\.href\s*=\s*['"]([^'"]+)['"]/);
+      if(m) return m[1];
+    }
+    return '';
+  }
+  document.addEventListener('mouseover', function(e){
+    var u = getUrlFromEl(e.target); if(u) prefetch(u);
+  }, {passive:true});
+  document.addEventListener('touchstart', function(e){
+    var u = getUrlFromEl(e.target); if(u) prefetch(u);
+  }, {passive:true});
+  ['products.html','cart.html','wishlist.html','account.html','my-orders.html','categories.html'].forEach(function(p){
+    setTimeout(function(){ prefetch(p); }, 3000);
+  });
 })();
 </script>
 </body>
