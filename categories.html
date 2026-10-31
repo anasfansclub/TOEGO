@@ -32,14 +32,26 @@
 }
 </script>
 
+<!-- ✅ SPEED OPTIMIZATIONS -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
 <link rel="dns-prefetch" href="https://res.cloudinary.com">
-<link rel="preconnect" href="https://api.cloudinary.com">
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+<script type="speculationrules">
+{
+  "prerender": [
+    {
+      "source": "list",
+      "urls": ["shop-home.html", "cart.html"],
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
+
 <style>
 :root{--primary:#2874f0;--tg-primary:#2874f0;--primary-light:#f0f5ff;--text-main:#212121;--text-muted:#878787;--border:#e0e0e0;--bg-main:#ffffff;--bg-sec:#f1f3f6;--nav-h:60px;}
 *,*::before,*::after{box-sizing:border-box;}
@@ -48,6 +60,8 @@ img{max-width:100%;display:block;}
 button{font:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 input{font:inherit;}
 a{color:inherit;text-decoration:none;}
+
+/* ═══ HEADER ═══ */
 .tg-hd{background:#fff;position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 1px 4px rgba(0,0,0,0.08);height:58px;display:flex;align-items:center;padding:0 16px;gap:12px;}
 .tg-hd-back{width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--text-main);flex-shrink:0;}
 .tg-hd-back svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.2;}
@@ -62,6 +76,8 @@ a{color:inherit;text-decoration:none;}
 .tg-hd-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--text-main);position:relative;flex-shrink:0;}
 .tg-hd-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;}
 .tg-hd-badge{position:absolute;top:0px;right:0px;background:#ff6161;color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid #fff;}
+
+/* ═══ LAYOUT & SCROLL ═══ */
 .tg-progress{position:fixed;top:58px;left:0;height:2px;width:0;background:var(--primary);z-index:1002;opacity:0;box-shadow:0 0 6px rgba(40,116,240,0.5);}
 .tg-offline{position:fixed;top:58px;left:0;right:0;z-index:998;background:#f57c00;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:5px;display:none;}
 .tg-offline.show{display:block;}
@@ -69,57 +85,114 @@ a{color:inherit;text-decoration:none;}
 .tg-admin-bar.show{display:flex;}
 .tg-admin-bar-info{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;}
 .tg-admin-bar-btn{background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:6px 12px;border-radius:4px;display:flex;align-items:center;gap:4px;}
+
 .tg-container{display:flex;height:calc(100vh - 58px - var(--nav-h) - env(safe-area-inset-bottom,0px));margin-top:58px;background:#fff;}
 .tg-admin-mode .tg-container{height:calc(100vh - 98px - var(--nav-h) - env(safe-area-inset-bottom,0px));margin-top:98px;}
-.tg-sidebar{width:110px;background:var(--bg-sec);overflow-y:auto;-webkit-overflow-scrolling:touch;border-right:1px solid var(--border);flex-shrink:0;scrollbar-width:none;padding-bottom:20px;overscroll-behavior:contain;touch-action:pan-y;}
+
+/* ═══ SIDEBAR (SMOOTH + SMALLER) ═══ */
+.tg-sidebar{
+  width:95px;background:var(--bg-sec);overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; /* 🔥 ALAG SCROLL */
+  border-right:1px solid var(--border);flex-shrink:0;
+  scrollbar-width:none;padding-bottom:20px;
+}
 .tg-sidebar::-webkit-scrollbar{display:none;}
-.tg-side-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 6px;gap:8px;cursor:pointer;font-size:11px;font-weight:500;color:var(--text-muted);text-align:center;position:relative;border-bottom:1px solid #e8e8e8;transition:background 0.15s;}
+
+.tg-side-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:12px 4px; /* 🔥 Chota kar diya */
+  gap:4px;cursor:pointer;font-size:10px;font-weight:500;color:var(--text-muted);
+  text-align:center;position:relative;border-bottom:1px solid #e8e8e8;transition:background 0.15s;
+}
 .tg-side-item.active{background:#fff;color:var(--primary);font-weight:700;border-right:3px solid var(--primary);border-bottom-color:transparent;}
 .tg-side-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--primary);}
-.tg-side-icon{font-size:40px;line-height:1;display:flex;align-items:center;justify-content:center;min-height:64px;position:relative;}
-.tg-side-icon img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.08);background:#f8f9fb;}
+
+.tg-side-icon{
+  font-size:32px;line-height:1;display:flex;align-items:center;justify-content:center;
+  min-height:48px; /* 🔥 6 items fit honge */
+  position:relative;
+}
+.tg-side-icon img{
+  width:48px;height:48px;border-radius:50%;object-fit:cover;
+  border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.08);background:#f8f9fb;
+}
 .tg-side-item.active .tg-side-icon img{border-color:var(--primary-light);box-shadow:0 1px 6px rgba(40,116,240,0.25);}
 .tg-side-text{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.2;}
+
+/* ═══ CONTENT AREA ═══ */
 .tg-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff;position:relative;}
-.tg-subcats-wrap{padding:14px 16px;border-bottom:1px solid #f0f0f0;background:#fff;flex-shrink:0;}
-.tg-subcats-scroll{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+.tg-subcats-wrap{padding:10px 12px;border-bottom:1px solid #f0f0f0;background:#fff;flex-shrink:0;}
+.tg-subcats-scroll{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
 .tg-subcats-scroll::-webkit-scrollbar{display:none;}
-.tg-subcat-chip{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:76px;cursor:pointer;position:relative;}
-.tg-subcat-img{width:68px;height:68px;border-radius:50%;background:#f8f9fb;display:flex;align-items:center;justify-content:center;font-size:32px;border:1px solid #eee;overflow:hidden;transition:transform 0.15s;}
+.tg-subcat-chip{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px;cursor:pointer;position:relative;}
+.tg-subcat-img{width:56px;height:56px;border-radius:50%;background:#f8f9fb;display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid #eee;overflow:hidden;transition:transform 0.15s;}
 .tg-subcat-chip:active .tg-subcat-img{transform:scale(0.94);}
 .tg-subcat-img img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
-.tg-subcat-name{font-size:11px;font-weight:500;color:var(--text-main);text-align:center;line-height:1.2;}
-.tg-filter-bar{position:sticky;top:0;z-index:90;background:#fff;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;padding:10px 16px;gap:12px;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,0.02);}
-.tg-fb-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border:1px solid var(--border);border-radius:4px;background:#fff;font-size:13px;font-weight:500;color:var(--text-main);position:relative;}
+.tg-subcat-name{font-size:10px;font-weight:500;color:var(--text-main);text-align:center;line-height:1.2;}
+
+.tg-filter-bar{position:sticky;top:0;z-index:90;background:#fff;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;padding:8px 12px;gap:8px;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,0.02);}
+.tg-fb-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;background:#fff;font-size:12px;font-weight:500;color:var(--text-main);position:relative;}
 .tg-fb-btn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-light);font-weight:700;}
-.tg-fb-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;}
+.tg-fb-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
 .tg-fb-count{position:absolute;top:-6px;right:-6px;background:#ff6161;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #fff;}
-.tg-active-chips-wrap{background:#fff;overflow-x:auto;scrollbar-width:none;padding:8px 16px;border-bottom:1px solid #f0f0f0;flex-shrink:0;}
+
+.tg-active-chips-wrap{background:#fff;overflow-x:auto;scrollbar-width:none;padding:8px 12px;border-bottom:1px solid #f0f0f0;flex-shrink:0;}
 .tg-active-chips-wrap::-webkit-scrollbar{display:none;}
 .tg-active-chips{display:flex;gap:8px;width:max-content;}
 .tg-ac{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);border:1px solid #d0e2ff;color:var(--primary);font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;white-space:nowrap;}
 .tg-ac button{width:16px;height:16px;border-radius:50%;background:rgba(40,116,240,0.15);color:var(--primary);font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
-.tg-prod-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:90px;overscroll-behavior:contain;touch-action:pan-y;}
-.tg-prod-count{padding:12px 16px 0;font-size:12px;color:var(--text-muted);font-weight:500;min-height:20px;}
-.tg-prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px 16px 16px;}
-.tg-prod-card{border:1px solid #f0f0f0;border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,0.02);transition:transform 0.2s,box-shadow 0.2s;position:relative;}
+
+/* ═══ PRODUCTS SCROLL (SMOOTH) ═══ */
+.tg-prod-scroll{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; /* 🔥 ALAG SCROLL */
+  padding-bottom:90px;touch-action:pan-y;
+}
+.tg-prod-count{padding:10px 12px 0;font-size:12px;color:var(--text-muted);font-weight:500;min-height:20px;}
+
+.tg-prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px 12px 16px;}
+.tg-prod-card{
+  border:1px solid #f0f0f0;border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;
+  display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,0.02);
+  transition:transform 0.2s,box-shadow 0.2s;position:relative;
+  content-visibility:auto;contain-intrinsic-size:auto 260px; /* 🔥 FAST RENDER */
+}
 .tg-prod-card:active{transform:scale(0.98);}
 @media (hover:hover){.tg-prod-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-1px);}}
 .tg-prod-img{width:100%;aspect-ratio:4/5;background:#fafafa;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
 .tg-prod-img img{width:100%;height:100%;object-fit:contain;display:block;}
-.tg-discount-badge{position:absolute;top:8px;right:0;background:linear-gradient(135deg,#ff4d4d,#f9cb28);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:8px 0 0 8px;z-index:2;text-transform:uppercase;box-shadow:-2px 2px 6px rgba(255,77,77,0.4);letter-spacing:0.5px;}
-.tg-prod-tag-badge{position:absolute;top:8px;left:8px;background:#212121;color:#fff;font-size:9px;font-weight:800;padding:3px 6px;border-radius:4px;z-index:2;text-transform:uppercase;box-shadow:0 2px 4px rgba(0,0,0,0.2);letter-spacing:0.5px;}
+
+/* ═══ TAGS & BADGES FIX ═══ */
+.tg-discount-badge{
+  position:absolute;top:8px;right:0;background:linear-gradient(135deg,#ff4d4d,#f9cb28);
+  color:#fff;font-size:9px; /* 🔥 Chota kar diya */
+  font-weight:800;padding:2px 6px;border-radius:4px 0 0 4px;z-index:2;
+  text-transform:uppercase;box-shadow:-2px 2px 6px rgba(255,77,77,0.4);letter-spacing:0.3px;
+}
+.tg-prod-tag-badge{
+  position:absolute;top:8px;left:8px;background:#212121;color:#fff;
+  font-size:8px; /* 🔥 Chota */
+  font-weight:800;padding:2px 6px;border-radius:4px;z-index:2;
+  text-transform:uppercase;box-shadow:0 2px 4px rgba(0,0,0,0.2);letter-spacing:0.3px;
+  max-width:65%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; /* 🔥 CUT NAHI HOGA */
+}
 .tg-prod-tag-badge.hot{background:#f57c00;}
 .tg-prod-tag-badge.new{background:#388e3c;}
-.tg-prod-body{padding:10px;text-align:center;border-top:1px solid #f8f9fb;}
-.tg-prod-name{font-size:12px;font-weight:500;color:var(--text-main);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;margin-bottom:6px;}
-.tg-prod-price-row{display:flex;align-items:baseline;justify-content:center;gap:6px;}
-.tg-prod-price{font-size:15px;font-weight:800;color:#212121;}
-.tg-prod-mrp{font-size:11px;color:#878787;text-decoration:line-through;font-weight:500;}
+
+.tg-prod-body{padding:8px;text-align:center;border-top:1px solid #f8f9fb;}
+.tg-prod-name{font-size:12px;font-weight:500;color:var(--text-main);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;margin-bottom:4px;}
+.tg-prod-price-row{display:flex;align-items:baseline;justify-content:center;gap:4px;}
+.tg-prod-price{font-size:14px;font-weight:800;color:#212121;}
+.tg-prod-mrp{font-size:10px;color:#878787;text-decoration:line-through;font-weight:500;}
+
 .tg-empty{text-align:center;padding:40px 20px;color:var(--text-muted);grid-column:1/-1;font-size:13px;}
 .tg-skel{background:linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%);background-size:200% 100%;animation:tgShim 1.2s infinite;border-radius:4px;}
 @keyframes tgShim{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 .tg-skel-card{aspect-ratio:4/5.5;}
+
+/* ═══ ADMIN BUTTONS ═══ */
 .tg-admin-btn-wrap{position:absolute;bottom:8px;right:8px;display:none;gap:6px;z-index:10;flex-direction:row;}
 .tg-admin-mode .tg-admin-btn-wrap{display:flex;}
 .tg-adm-btn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.9);color:#333;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.2);border:1px solid #eee;backdrop-filter:blur(4px);}
@@ -132,9 +205,11 @@ a{color:inherit;text-decoration:none;}
 .tg-subcat-chip .tg-admin-btn-wrap{top:-3px;right:-3px;bottom:auto;gap:2px;}
 .tg-subcat-chip .tg-adm-btn{width:20px;height:20px;}
 .tg-subcat-chip .tg-adm-btn svg{width:10px;height:10px;}
-.tg-add-subcat{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:76px;cursor:pointer;opacity:0.85;}
+.tg-add-subcat{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:64px;cursor:pointer;opacity:0.85;}
 .tg-add-subcat .tg-subcat-img{border:1.5px dashed var(--primary);color:var(--primary);background:transparent;}
 .tg-add-subcat .tg-subcat-name{color:var(--primary);font-weight:600;}
+
+/* ═══ MODALS & BOTTOM NAV ═══ */
 .tg-modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99999;display:none;align-items:flex-end;justify-content:center;}
 .tg-modal.show{display:flex;}
 .tg-sheet{width:100%;max-width:500px;background:#fff;border-radius:16px 16px 0 0;padding:20px;max-height:85vh;overflow-y:auto;animation:tgSlideUp .2s;}
@@ -164,22 +239,28 @@ a{color:inherit;text-decoration:none;}
 .tg-top-btn.show{display:flex;}
 .tg-top-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.5;}
 .tg-admin-mode .tg-top-btn{display:none!important;}
+
 .tg-mbnav{position:fixed!important;bottom:0!important;left:0!important;right:0!important;background:#fff;border-top:1px solid #e0e0e0;display:flex;z-index:9999;box-shadow:0 -1px 4px rgba(0,0,0,0.05);padding-bottom:env(safe-area-inset-bottom,0);}
 .tg-mbnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px;gap:3px;font-size:10px;color:#666;font-weight:600;position:relative;text-decoration:none;transition:color 0.15s;}
 .tg-mbnav-item.active{color:var(--tg-primary);}
 .tg-mbnav-item:active{background:#f8f9fb;}
 .tg-mbnav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;}
 .tg-mbnav-badge{position:absolute;top:4px;right:calc(50% - 20px);background:#ff6161;color:#fff;font-size:9px;font-weight:700;min-width:15px;height:15px;border-radius:8px;display:none;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid #fff;}
+
 .tg-toasts{position:fixed;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:100000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
 .tg-toast{padding:10px 20px;background:#212121;color:#fff;font-size:13px;border-radius:4px;font-weight:500;animation:tgToastIn .2s;}
 @keyframes tgToastIn{from{transform:translateY(20px);opacity:0;}to{transform:none;opacity:1;}}
 .tg-toast.success{background:#388e3c;}
 .tg-toast.error{background:#d32f2f;}
-.tg-lqip-img{opacity:0;transition:opacity 0.25s ease;}
-.tg-lqip-img.loaded{opacity:1;}
-@media (min-width:600px){.tg-prod-grid{grid-template-columns:repeat(3,1fr);}.tg-sidebar{width:140px;padding-bottom:24px;}.tg-side-icon{font-size:44px;min-height:76px;}.tg-side-icon img{width:76px;height:76px;}.tg-side-item{padding:20px 10px;font-size:12.5px;gap:10px;}.tg-subcat-img{width:76px;height:76px;font-size:36px;}.tg-subcat-chip,.tg-add-subcat{min-width:84px;}}
+
+@media (min-width:600px){.tg-prod-grid{grid-template-columns:repeat(3,1fr);}.tg-sidebar{width:120px;}.tg-side-icon{min-height:64px;}.tg-side-icon img{width:64px;height:64px;}.tg-side-item{padding:16px 8px;font-size:11px;gap:6px;}.tg-subcat-img{width:68px;height:68px;font-size:32px;}.tg-subcat-chip,.tg-add-subcat{min-width:76px;}}
 @media (min-width:900px){.tg-container{max-width:1200px;margin-left:auto;margin-right:auto;border-left:1px solid #eee;border-right:1px solid #eee;}.tg-prod-grid{grid-template-columns:repeat(4,1fr);}.tg-modal{align-items:center;}.tg-sheet{border-radius:12px;max-width:450px;}}
 </style>
+
+<!-- ✅ Firebase Scripts DEFERRED for Instant Render -->
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
 
@@ -214,9 +295,13 @@ a{color:inherit;text-decoration:none;}
 
 <div class="tg-container">
   <div class="tg-sidebar" id="tg-sidebar">
-    <div style="padding:10px;"><div class="tg-skel" style="height:64px; border-radius:50%;"></div></div>
-    <div style="padding:10px;"><div class="tg-skel" style="height:64px; border-radius:50%;"></div></div>
-    <div style="padding:10px;"><div class="tg-skel" style="height:64px; border-radius:50%;"></div></div>
+    <!-- Skeleton for Sidebar -->
+    <div style="padding:12px 8px;"><div class="tg-skel" style="height:48px; width:48px; border-radius:50%; margin:0 auto;"></div></div>
+    <div style="padding:12px 8px;"><div class="tg-skel" style="height:48px; width:48px; border-radius:50%; margin:0 auto;"></div></div>
+    <div style="padding:12px 8px;"><div class="tg-skel" style="height:48px; width:48px; border-radius:50%; margin:0 auto;"></div></div>
+    <div style="padding:12px 8px;"><div class="tg-skel" style="height:48px; width:48px; border-radius:50%; margin:0 auto;"></div></div>
+    <div style="padding:12px 8px;"><div class="tg-skel" style="height:48px; width:48px; border-radius:50%; margin:0 auto;"></div></div>
+    <div style="padding:12px 8px;"><div class="tg-skel" style="height:48px; width:48px; border-radius:50%; margin:0 auto;"></div></div>
   </div>
   <div class="tg-content">
     <div class="tg-subcats-wrap" id="tg-subcats-wrap" style="display:none;"><div class="tg-subcats-scroll" id="tg-subcats-scroll"></div></div>
@@ -310,12 +395,52 @@ a{color:inherit;text-decoration:none;}
 
 <div class="tg-toasts" id="tg-toasts"></div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script>
+// ⚡ INSTANT PAINT (0ms Load): Cache se turant UI render karega
+(function(){
+  try {
+    const cachedCats = JSON.parse(localStorage.getItem('toego_cat_cats_v4') || 'null');
+    const cachedProds = JSON.parse(localStorage.getItem('toego_cat_prods_v4') || 'null');
+    if(!cachedCats && !cachedProds) return;
+
+    // Sidebar render (Instant)
+    if (cachedCats && cachedCats.length) {
+      const sidebar = document.getElementById('tg-sidebar');
+      if (sidebar) {
+        let html = `<div class="tg-side-item active" onclick="tgSelectCat('all')"><div class="tg-side-icon">🛍️</div><div class="tg-side-text">All</div></div>`;
+        html += cachedCats.map((c, idx) => {
+          let imgTag = c.image ? `<img src="${c.image.replace('/upload/', '/upload/f_auto,q_50,w_150,c_limit/')}" loading="eager" decoding="async" alt="${c.name}">` : c.icon;
+          return `<div class="tg-side-item" onclick="tgSelectCat('${c.id}')"><div class="tg-side-icon">${imgTag}</div><div class="tg-side-text">${c.name}</div></div>`;
+        }).join('');
+        sidebar.innerHTML = html;
+      }
+    }
+
+    // Products render (Instant)
+    if (cachedProds && cachedProds.length) {
+      const grid = document.getElementById('tg-prod-grid');
+      if (grid) {
+        grid.innerHTML = cachedProds.slice(0, 20).map((p, idx) => {
+          const img = p.image ? p.image.replace('/upload/', '/upload/f_auto,q_50,w_350,c_limit/') : '';
+          const price = Number(p.price || 0);
+          const old = Number(p.compareAtPrice || p.mrp || 0);
+          const disc = old > price ? Math.round((1 - price/old)*100) : 0;
+          const tag = p.saleTag || p.tag || '';
+          let tagHtml = tag ? `<div class="tg-prod-tag-badge">${tag}</div>` : '';
+          let discHtml = disc > 0 ? `<div class="tg-discount-badge">${disc}% OFF</div>` : '';
+          return `<div class="tg-prod-card" onclick="location.href='product.html?id=${p.id}'">
+            <div class="tg-prod-img">${tagHtml}${discHtml}${img ? `<img src="${img}" loading="lazy" decoding="async" alt="${p.name}">` : `<span style="font-size:30px;">📦</span>`}</div>
+            <div class="tg-prod-body"><div class="tg-prod-name">${p.name}</div><div class="tg-prod-price-row"><span class="tg-prod-price">₹${price.toLocaleString('en-IN')}</span>${old > price ? `<span class="tg-prod-mrp">₹${old.toLocaleString('en-IN')}</span>` : ''}</div></div>
+          </div>`;
+        }).join('');
+      }
+    }
+  } catch(e) {}
+})();
+</script>
 
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   'use strict';
   const SUPER_ADMIN_EMAIL = 'anasfansclub@toego.in';
   let IS_ADMIN = false, ALL_CATEGORIES = [], ALL_PRODUCTS = [];
@@ -327,7 +452,6 @@ a{color:inherit;text-decoration:none;}
   let _productsSig = '', _sidebarSig = '', _subcatsSig = '', _progressOn = false;
   let _serverProductsReceived = false;
 
-  /* ═══════ FAST IMAGE URL (cached) ═══════ */
   const _imgUrlCache = new Map();
   function cardImgUrl(url, width) {
     if (!url || typeof url !== 'string') return url || '';
@@ -379,7 +503,6 @@ a{color:inherit;text-decoration:none;}
   function slugify(s) { return String(s||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
   function tsToMs(ts) { if (!ts) return 0; if (typeof ts.toDate === 'function') return ts.toDate().getTime(); if (typeof ts === 'number') return ts; if (ts.seconds) return ts.seconds * 1000; return 0; }
 
-  /* ✅ DYNAMIC SEO UPDATER */
   function updateDynamicSEO(catName) {
     try {
       let pageTitle = "Shop by Categories | Buy Footwear & Fashion Online | TOEGO";
@@ -393,16 +516,13 @@ a{color:inherit;text-decoration:none;}
       }
 
       document.title = pageTitle;
-      
       let metaDesc = document.querySelector('meta[name="description"]');
       if(metaDesc) metaDesc.content = pageDesc;
-
       const h1El = document.getElementById('tg-seo-h1');
       if (h1El) h1El.textContent = h1Text;
     } catch(e) {}
   }
 
-  /* ═══════ FIREBASE + PERSISTENCE ═══════ */
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
       apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
@@ -416,9 +536,7 @@ a{color:inherit;text-decoration:none;}
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  try {
-    db.enablePersistence({ synchronizeTabs: false }).catch(function(err) {});
-  } catch(e) {}
+  try { db.enablePersistence({ synchronizeTabs: false }).catch(function(err) {}); } catch(e) {}
 
   window.db = db; window.auth = auth; window.firebase = firebase;
 
@@ -540,20 +658,13 @@ a{color:inherit;text-decoration:none;}
 
   function slimProduct(p) {
     return {
-      id: p.id,
-      name: p.name || '',
-      price: Number(p.price || 0),
+      id: p.id, name: p.name || '', price: Number(p.price || 0),
       compareAtPrice: Number(p.compareAtPrice || p.mrp || 0),
       image: p.image || (Array.isArray(p.images) && p.images[0]) || '',
-      category: p.category || '',
-      categoryId: p.categoryId || p.category_id || '',
-      categoryName: p.categoryName || '',
-      subCategory: p.subCategory || p.subcategory || '',
-      rating: Number(p.rating || 0),
-      saleTag: p.saleTag || '',
-      tag: p.tag || '',
-      active: p.active !== false,
-      createdAtMs: tsToMs(p.createdAt)
+      category: p.category || '', categoryId: p.categoryId || p.category_id || '',
+      categoryName: p.categoryName || '', subCategory: p.subCategory || p.subcategory || '',
+      rating: Number(p.rating || 0), saleTag: p.saleTag || '', tag: p.tag || '',
+      active: p.active !== false, createdAtMs: tsToMs(p.createdAt)
     };
   }
 
@@ -605,11 +716,8 @@ a{color:inherit;text-decoration:none;}
         hasCache = true;
         if (currentCatId !== 'all' && !ALL_CATEGORIES.find(x => x.id === currentCatId)) { currentCatId = 'all'; currentSubName = 'all'; }
         renderSidebar(); renderSubcats(); renderProducts(true);
-        
-        // ✅ Update SEO on Cache Load
         const cObj = ALL_CATEGORIES.find(x => x.id === currentCatId);
         updateDynamicSEO(cObj ? cObj.name : 'All');
-        
         return true;
       }
     } catch(e) {}
@@ -631,11 +739,8 @@ a{color:inherit;text-decoration:none;}
     if (currentCatId !== 'all' && !cats.find(c => c.id === currentCatId)) { currentCatId = 'all'; currentSubName = 'all'; }
     ALL_CATEGORIES = cats;
     renderSidebar(); renderSubcats();
-    
-    // ✅ Update SEO on Category Load
     const cObj = cats.find(c => c.id === currentCatId);
     updateDynamicSEO(cObj ? cObj.name : 'All');
-    
     if (productsReady) renderProducts();
   }
 
@@ -647,9 +752,7 @@ a{color:inherit;text-decoration:none;}
     try {
       unsubProds = db.collection('products').limit(100).onSnapshot(snap => {
         const prods = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(isProductVisible);
-        if (prods.length === 0 && snap.metadata.fromCache && !_serverProductsReceived && ALL_PRODUCTS.length === 0) {
-          return;
-        }
+        if (prods.length === 0 && snap.metadata.fromCache && !_serverProductsReceived && ALL_PRODUCTS.length === 0) return;
         ALL_PRODUCTS = prods;
         productsReady = true;
         if (!snap.metadata.fromCache) _serverProductsReceived = true;
@@ -657,10 +760,7 @@ a{color:inherit;text-decoration:none;}
         renderProducts(true);
         if (!snap.metadata.fromCache) setProgress(false);
       }, () => {
-        productsReady = true;
-        _serverProductsReceived = true;
-        setProgress(false);
-        renderProducts(true);
+        productsReady = true; _serverProductsReceived = true; setProgress(false); renderProducts(true);
       });
     } catch(e) { productsReady = true; _serverProductsReceived = true; setProgress(false); }
 
@@ -816,17 +916,13 @@ a{color:inherit;text-decoration:none;}
       </div>`;
     }).join('');
 
-    /* ✅ Update ItemList Schema dynamically for Google */
     try {
       const schemaEl = document.getElementById('tg-collection-schema');
       if (schemaEl) {
         const schema = JSON.parse(schemaEl.textContent);
         schema.mainEntity.itemListElement = filtered.slice(0, 10).map((p, index) => ({
-          "@type": "ListItem",
-          "position": index + 1,
-          "url": "https://toego.in/product.html?id=" + p.id,
-          "name": p.name,
-          "image": p.image || (p.images && p.images[0]) || "https://toego.in/og-image.jpg"
+          "@type": "ListItem", "position": index + 1, "url": "https://toego.in/product.html?id=" + p.id,
+          "name": p.name, "image": p.image || (p.images && p.images[0]) || "https://toego.in/og-image.jpg"
         }));
         schemaEl.textContent = JSON.stringify(schema);
       }
@@ -843,11 +939,8 @@ a{color:inherit;text-decoration:none;}
       url.searchParams.set('cat', id === 'all' ? 'all' : slugify(ALL_CATEGORIES.find(c => c.id === id)?.name || ''));
       history.replaceState(null, '', url.toString());
     } catch(e) {}
-    
-    // ✅ Update SEO on Category Click
     const catObj = ALL_CATEGORIES.find(c => c.id === id);
     updateDynamicSEO(catObj ? catObj.name : 'All');
-    
     renderSidebar(); renderSubcats(); renderProducts(true);
     document.getElementById('tg-prod-scroll').scrollTop = 0;
   };
@@ -883,9 +976,7 @@ a{color:inherit;text-decoration:none;}
   window.tgApplyFilters = function() { filterMinPrice = tempMinPrice; filterMaxPrice = tempMaxPrice; filterRating = tempRating; tgCloseModal('tg-filter-modal'); renderProducts(true); };
   window.tgClearFilters = function() { tempMinPrice = 0; tempMaxPrice = 999999; tempRating = 0; filterMinPrice = 0; filterMaxPrice = 999999; filterRating = 0; refreshFilterModalUI(); renderProducts(true); tgCloseModal('tg-filter-modal'); };
   window.tgClearAll = function() {
-    searchQuery = '';
-    document.getElementById('tg-search-input').value = '';
-    document.getElementById('tg-search-clear').style.display = 'none';
+    searchQuery = ''; document.getElementById('tg-search-input').value = ''; document.getElementById('tg-search-clear').style.display = 'none';
     filterMinPrice = 0; filterMaxPrice = 999999; filterRating = 0;
     tempMinPrice = 0; tempMaxPrice = 999999; tempRating = 0;
     renderProducts(true);
@@ -1038,8 +1129,8 @@ a{color:inherit;text-decoration:none;}
   window.addEventListener('pageshow', updateCartBadge);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) updateCartBadge(); });
 
-  loadLocalCache();                          
-  setupListeners();                          
+  loadLocalCache();
+  setupListeners();
   auth.onAuthStateChanged(u => checkAdmin(u));
   updateCartBadge();
   updateOnlineStatus();
@@ -1047,7 +1138,7 @@ a{color:inherit;text-decoration:none;}
 
   if (hasCache) setTimeout(() => setProgress(false), 300);
 
-})();
+});
 </script>
 </body>
 </html>
