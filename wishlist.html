@@ -11,6 +11,19 @@
 <link rel="preconnect" href="https://firestore.googleapis.com">
 <link rel="dns-prefetch" href="https://www.gstatic.com">
 
+<!-- ✅ INSTANT NAVIGATION (Chrome) -->
+<script type="speculationrules">
+{
+  "prerender": [
+    {
+      "source": "list",
+      "urls": ["cart.html", "shop-home.html", "my-orders.html"],
+      "eagerness": "moderate"
+    }
+  ]
+}
+</script>
+
 <!-- ✅ Firebase Scripts with DEFER (Page rendering block nahi hogi) -->
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -60,7 +73,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 @media (min-width: 900px) { .tg-wishlist { grid-template-columns: repeat(4, 1fr); } }
 @media (min-width: 1200px) { .tg-wishlist { grid-template-columns: repeat(5, 1fr); } }
 
-.tg-card { background: #fff; border: 1px solid #ececec; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .22s, transform .22s, border-color .22s; box-shadow: 0 1px 2px rgba(15,23,41,0.04); position: relative; contain: layout style paint; }
+/* ⚡ PERFORMANCE BOOST: content-visibility lagaya hai */
+.tg-card { background: #fff; border: 1px solid #ececec; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .22s, transform .22s, border-color .22s; box-shadow: 0 1px 2px rgba(15,23,41,0.04); position: relative; contain: layout style paint; content-visibility: auto; contain-intrinsic-size: auto 300px; }
 .tg-card:hover { box-shadow: 0 10px 24px rgba(15,23,41,0.10); transform: translateY(-3px); border-color: #dfe6f3; }
 .tg-card-img { aspect-ratio: 1/1; position: relative; overflow: hidden; background: linear-gradient(135deg,#fafbfc,#eef1f6); cursor: pointer; }
 .tg-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
@@ -72,7 +86,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-card-badge.new { background: linear-gradient(135deg,#16a34a,#15803d); }
 .tg-card-badge.out { background: linear-gradient(135deg,#616161,#424242); }
 
-.tg-card-remove { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 3; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all .18s; }
+/* ⚡ PERFORMANCE FIX: backdrop-filter hataya, solid bg diya */
+.tg-card-remove { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; z-index: 3; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all .18s; }
 .tg-card-remove:hover { background: #ffebee; transform: scale(1.1); }
 .tg-card-remove svg { width: 15px; height: 15px; stroke: #ff4343; fill: #ff4343; stroke-width: 2; }
 
@@ -140,7 +155,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-toast.error { background: #d32f2f; }
 .tg-toast.info { background: #2874f0; }
 
-.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px; animation: tgFadeIn .2s; }
+.tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,0.6); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 20px; animation: tgFadeIn .2s; }
 .tg-modal.show { display: flex; }
 @keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
 .tg-modal-card { background: #fff; border-radius: 14px; padding: 24px 22px 22px; max-width: 400px; width: 100%; text-align: center; animation: tgPopIn .3s cubic-bezier(.34,1.56,.64,1); }
@@ -233,7 +248,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     <div class="tg-wishlist" id="tg-wishlist" style="display:none;"></div>
 
-    <!-- ✅ FIX: Skeleton ab by default dikhega, page blank nahi lagega -->
     <div class="tg-wishlist" id="tg-loading" style="display:grid;">
       <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
       <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
@@ -276,8 +290,161 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 <div class="tg-toasts" id="tg-toasts"></div>
 
+<!-- ⚡ GLOBAL TEMPLATE FUNCTION (Used by Instant Paint & Main Script) -->
 <script>
-// ✅ FIX: DOMContentLoaded wrapper taaki defer scripts load hone ke baad hi JS chale
+window.__buildWishCard__ = function(p, index) {
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+  
+  function cardImgUrl(url, width) {
+    if (!url || typeof url !== 'string') return url || '';
+    if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
+    const w = width || 300;
+    const parts = url.split('/upload/');
+    if (parts.length < 2) return url;
+    const segs = parts[1].split('/');
+    while (segs.length > 1 && (segs[0].indexOf('_') !== -1 || segs[0].indexOf(',') !== -1) && segs[0].indexOf('.') === -1) { segs.shift(); }
+    return parts[0] + '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit/' + segs.join('/');
+  }
+
+  function isOutOfStock(p) {
+    if (!p) return false;
+    if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
+      let total = 0;
+      Object.values(p.sizeStock).forEach(v => { total += Number(v||0); });
+      return total <= 0;
+    }
+    return Number(p.stock || 0) <= 0;
+  }
+  function isLowStock(p) {
+    if (!p) return false;
+    if (p.sizeStock && typeof p.sizeStock === 'object' && Object.keys(p.sizeStock).length) {
+      let total = 0;
+      Object.values(p.sizeStock).forEach(v => { total += Number(v||0); });
+      return total > 0 && total < 10;
+    }
+    const s = Number(p.stock || 0);
+    return s > 0 && s < 10;
+  }
+  function getProductRating(p) {
+    const rating = Number(p.rating || 0);
+    const count = Number(p.ratingCount || 0);
+    if (rating > 0 && count > 0) return { avg: rating, count, hasRating: true };
+    return { avg: 0, count: 0, hasRating: false };
+  }
+
+  const price = Number(p.price || 0);
+  const mrp = Number(p.compareAtPrice || p.mrp || 0);
+  const disc = mrp > price ? Math.round((1 - price/mrp) * 100) : 0;
+  const rawImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/300x300/f1f3f6/878787?text=TOEGO';
+  const img = cardImgUrl(rawImg, 300);
+  const eager = index < 4 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+
+  const rating = getProductRating(p);
+  let ratingHtml = '';
+  if (rating.hasRating) {
+    ratingHtml = '<div class="tg-card-rating"><span class="tg-card-rating-star">' + rating.avg.toFixed(1) + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-card-rating-count">(' + rating.count + ')</span></div>';
+  } else {
+    ratingHtml = '<div class="tg-card-rating no-rating"><span class="tg-card-rating-star">New <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span></div>';
+  }
+
+  const oos = isOutOfStock(p);
+  const lowStock = isLowStock(p);
+  let stockHtml = '';
+  if (oos) stockHtml = '<span class="tg-card-stock out">✕ Out of Stock</span>';
+  else if (lowStock) stockHtml = '<span class="tg-card-stock low">⚠ Low Stock</span>';
+  else stockHtml = '<span class="tg-card-stock ok">✓ In Stock</span>';
+
+  let badges = '';
+  if (p.saleTag) {
+    const tag = String(p.saleTag).trim();
+    let cls = 'sale';
+    if (tag.toLowerCase().includes('hot')) cls = 'hot';
+    if (tag.toLowerCase().includes('new')) cls = 'new';
+    badges += '<span class="tg-card-badge ' + cls + '">' + esc(tag) + '</span>';
+  }
+  if (oos) badges += '<span class="tg-card-badge out">SOLD OUT</span>';
+
+  return `
+    <div class="tg-card" data-pid="${esc(p.id)}">
+      <div class="tg-card-img" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">
+        ${badges ? '<div class="tg-card-badges">' + badges + '</div>' : ''}
+        <img src="${esc(img)}" alt="${esc(p.name || '')}" ${eager} decoding="async" />
+        <button class="tg-card-remove" onclick="event.stopPropagation();tgRemoveFromWishlist('${esc(p.id)}')" title="Remove from wishlist">
+          <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+        </button>
+      </div>
+      <div class="tg-card-body">
+        ${ratingHtml}
+        <div class="tg-card-title" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">${esc(p.name || 'Product')}</div>
+        <div class="tg-card-price-row">
+          <span class="tg-card-price">${fmtINR(price)}</span>
+          ${mrp > price ? '<span class="tg-card-mrp">' + fmtINR(mrp) + '</span>' : ''}
+          ${disc > 0 ? '<span class="tg-card-off">' + disc + '% off</span>' : ''}
+        </div>
+        ${stockHtml}
+        <div class="tg-card-actions">
+          <button class="tg-btn-cart" onclick="tgMoveToCart('${esc(p.id)}')" ${oos ? 'disabled' : ''}>
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
+            <span>${oos ? 'Sold Out' : 'Add to Cart'}</span>
+          </button>
+          <button class="tg-btn-trash" onclick="tgRemoveFromWishlist('${esc(p.id)}')" title="Remove">
+            <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+// ⚡ INSTANT PAINT (0ms Load): Cache se turant UI render karega
+(function(){
+  try {
+    const lastUid = localStorage.getItem('toego_acc_last_uid');
+    if(!lastUid) return;
+    
+    const raw = localStorage.getItem('toego_wishlist_cache_v3_' + lastUid);
+    if(!raw) return;
+    
+    const cache = JSON.parse(raw);
+    if(!cache || !cache.data || cache.data.length === 0) return;
+    
+    const grid = document.getElementById('tg-wishlist');
+    const loading = document.getElementById('tg-loading');
+    const toolbar = document.getElementById('tg-toolbar');
+    const empty = document.getElementById('tg-empty');
+    const loginPrompt = document.getElementById('tg-login-prompt');
+    
+    if (grid && loading && toolbar) {
+      loading.style.display = 'none';
+      if(empty) empty.style.display = 'none';
+      if(loginPrompt) loginPrompt.style.display = 'none';
+      
+      grid.style.display = 'grid';
+      grid.innerHTML = cache.data.map((p, i) => window.__buildWishCard__(p, i)).join('');
+      
+      toolbar.style.display = 'flex';
+      document.getElementById('tg-toolbar-sub').textContent = cache.data.length + ' item' + (cache.data.length === 1 ? '' : 's') + ' saved';
+      document.getElementById('tg-hd-count').textContent = '(' + cache.data.length + ')';
+      
+      // Cart count instant update
+      try {
+        const cart = JSON.parse(localStorage.getItem('toego_cart_guest') || '[]');
+        const cCount = cart.reduce((s,i) => s + Number(i.qty||1), 0);
+        if(cCount > 0) {
+          const cb = document.getElementById('tg-cart-badge');
+          const cbm = document.getElementById('tg-bnav-badge');
+          if(cb) { cb.textContent = cCount; cb.style.display = 'flex'; }
+          if(cbm) { cbm.textContent = cCount; cbm.style.display = 'flex'; }
+        }
+      } catch(e) {}
+    }
+  } catch(e) { console.warn('[Instant Paint]', e); }
+})();
+</script>
+
+<!-- ⚡ MAIN SCRIPT -->
+<script>
 document.addEventListener('DOMContentLoaded', function() {
   'use strict';
 
@@ -295,9 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
-  try {
-    db.enablePersistence({ synchronizeTabs: false }).catch(() => {});
-  } catch(e) {}
+  try { db.enablePersistence({ synchronizeTabs: false }).catch(() => {}); } catch(e) {}
 
   const GUEST_CART = 'toego_cart_guest';
   const WISHLIST_CACHE_PREFIX = 'toego_wishlist_cache_v3_';
@@ -316,18 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let renderScheduled = false;
   let _lastRenderHash = '';
 
-  function cardImgUrl(url, width) {
-    if (!url || typeof url !== 'string') return url || '';
-    if (url.indexOf('res.cloudinary.com') === -1 || url.indexOf('/upload/') === -1) return url;
-    const w = width || 300;
-    const parts = url.split('/upload/');
-    if (parts.length < 2) return url;
-    const segs = parts[1].split('/');
-    while (segs.length > 1 && (segs[0].indexOf('_') !== -1 || segs[0].indexOf(',') !== -1) && segs[0].indexOf('.') === -1) {
-      segs.shift();
-    }
-    return parts[0] + '/upload/f_auto,q_auto:eco,w_' + w + ',c_limit/' + segs.join('/');
-  }
+  function cardImgUrl(url, width) { /* Handled in global function */ return url; }
 
   const _pCache = new Map();
   let _pCacheDirty = false;
@@ -420,16 +574,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     return hasArr(p.sizes) || hasArr(p.colors) || hasArr(p.variants) || hasArr(p.sizeStock);
   }
-  function getSaleTag(p) {
-    if (!p.saleTag || !String(p.saleTag).trim()) return null;
-    const tag = String(p.saleTag).trim();
-    const lower = tag.toLowerCase();
-    let cls = 'custom';
-    if (lower.includes('sale') || lower.includes('off') || lower.includes('deal')) cls = 'sale';
-    else if (lower.includes('hot') || lower.includes('trending')) cls = 'hot';
-    else if (lower.includes('new')) cls = 'new';
-    return { text: tag, cls };
-  }
 
   function getWishCacheKey() { return WISHLIST_CACHE_PREFIX + (USER ? USER.uid : 'guest'); }
   function saveWishCache() {
@@ -500,8 +644,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const hash = WISHLIST_IDS.join('|') + '::' + Object.keys(PRODUCTS).length;
     const ids = WISHLIST_IDS || [];
     const products = ids.map(id => PRODUCTS[id]).filter(Boolean);
-    const stillLoading = products.length < ids.length;
-
+    
+    // ⚡ If hash is same, don't re-render. This prevents flicker on instant paint.
     if (hash === _lastRenderHash && products.length > 0) return;
     _lastRenderHash = hash;
 
@@ -525,76 +669,12 @@ document.addEventListener('DOMContentLoaded', function() {
       if (loading) loading.style.display = 'none';
       if (grid) {
         grid.style.display = 'grid';
-        // ✅ FIX: Pass index to enable eager loading
-        grid.innerHTML = products.map((p, i) => productCard(p, i)).join('');
+        grid.innerHTML = products.map((p, i) => window.__buildWishCard__(p, i)).join('');
       }
     } else {
       if (grid) grid.style.display = 'none';
       if (loading) loading.style.display = 'grid';
     }
-  }
-
-  // ✅ FIX: Added index param for eager image loading
-  function productCard(p, index) {
-    const price = Number(p.price || 0);
-    const mrp = Number(p.compareAtPrice || p.mrp || 0);
-    const disc = mrp > price ? Math.round((1 - price/mrp) * 100) : 0;
-    const rawImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/300x300/f1f3f6/878787?text=TOEGO';
-    const img = cardImgUrl(rawImg, 300);
-    
-    // ✅ FIX: Eager load first 4 images
-    const eager = index < 4 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
-
-    const rating = getProductRating(p);
-    let ratingHtml = '';
-    if (rating.hasRating) {
-      ratingHtml = '<div class="tg-card-rating"><span class="tg-card-rating-star">' + rating.avg.toFixed(1) + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-card-rating-count">(' + rating.count + ')</span></div>';
-    } else {
-      ratingHtml = '<div class="tg-card-rating no-rating"><span class="tg-card-rating-star">New <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span></div>';
-    }
-
-    const oos = isOutOfStock(p);
-    const lowStock = isLowStock(p);
-    let stockHtml = '';
-    if (oos) stockHtml = '<span class="tg-card-stock out">✕ Out of Stock</span>';
-    else if (lowStock) stockHtml = '<span class="tg-card-stock low">⚠ Low Stock</span>';
-    else stockHtml = '<span class="tg-card-stock ok">✓ In Stock</span>';
-
-    const saleTag = getSaleTag(p);
-    let badges = '';
-    if (saleTag) badges += '<span class="tg-card-badge ' + saleTag.cls + '">' + esc(saleTag.text) + '</span>';
-    if (oos) badges += '<span class="tg-card-badge out">SOLD OUT</span>';
-
-    return `
-      <div class="tg-card" data-pid="${esc(p.id)}">
-        <div class="tg-card-img" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">
-          ${badges ? '<div class="tg-card-badges">' + badges + '</div>' : ''}
-          <img src="${esc(img)}" alt="${esc(p.name || '')}" ${eager} decoding="async" />
-          <button class="tg-card-remove" onclick="event.stopPropagation();tgRemoveFromWishlist('${esc(p.id)}')" title="Remove from wishlist">
-            <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
-          </button>
-        </div>
-        <div class="tg-card-body">
-          ${ratingHtml}
-          <div class="tg-card-title" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">${esc(p.name || 'Product')}</div>
-          <div class="tg-card-price-row">
-            <span class="tg-card-price">${fmtINR(price)}</span>
-            ${mrp > price ? '<span class="tg-card-mrp">' + fmtINR(mrp) + '</span>' : ''}
-            ${disc > 0 ? '<span class="tg-card-off">' + disc + '% off</span>' : ''}
-          </div>
-          ${stockHtml}
-          <div class="tg-card-actions">
-            <button class="tg-btn-cart" onclick="tgMoveToCart('${esc(p.id)}')" ${oos ? 'disabled' : ''}>
-              <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg>
-              <span>${oos ? 'Sold Out' : 'Add to Cart'}</span>
-            </button>
-            <button class="tg-btn-trash" onclick="tgRemoveFromWishlist('${esc(p.id)}')" title="Remove">
-              <svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
   }
 
   async function fetchProductsFast(ids) {
@@ -687,7 +767,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       return added > 0;
     } catch(e) {
-      console.warn('[wishlist] product fetch failed:', e && e.message);
       return false;
     }
   }
@@ -705,8 +784,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const hadCache = hydrateFromCaches();
     if (hadCache && WISHLIST_IDS.length) {
-      _lastRenderHash = '';
-      render();
+      // _lastRenderHash = ''; // Don't reset hash, let render() do it
+      scheduleRender();
     }
 
     if (WISHLIST_IDS.length) {
@@ -741,7 +820,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (idsChanged || Object.keys(PRODUCTS).length !== newIds.length) {
         _lastRenderHash = '';
-        render();
+        scheduleRender();
       }
 
       const missing = newIds.filter(id => !PRODUCTS[id]);
@@ -751,20 +830,11 @@ document.addEventListener('DOMContentLoaded', function() {
         saveWishCache();
       }
     }, err => {
-      console.warn('[wishlist] subscribe err:', err && err.message);
       if (!WISHLIST_IDS.length) {
         _lastRenderHash = '';
         render();
       }
     });
-
-    if (!hadCache || !WISHLIST_IDS.length) {
-      if (!WISHLIST_IDS.length) {
-        const loading = document.getElementById('tg-loading');
-        const grid = document.getElementById('tg-wishlist');
-        if (loading && grid && grid.style.display === 'none') loading.style.display = 'grid';
-      }
-    }
   }
 
   window.tgRemoveFromWishlist = function(pid) {
@@ -827,28 +897,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const sellerName = p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '';
     const docId = pid + '||';
     const item = {
-      productId: pid,
-      name: p.name || 'Product',
+      productId: pid, name: p.name || 'Product',
       price: Number(p.price || 0),
       mrp: Number(p.compareAtPrice || p.mrp || 0),
       image: (p.images && p.images[0]) || p.image || '',
       qty: 1, size: '', color: '',
-      weight: Number(p.weight || 0),
-      gst: Number(p.gst || 0),
+      weight: Number(p.weight || 0), gst: Number(p.gst || 0),
       sellerId: sellerId, sellerName: sellerName
     };
 
     try {
       const ref = db.collection('carts').doc(USER.uid).collection('items').doc(docId);
-      await ref.set({
-        ...item,
-        addedAt: FV.serverTimestamp(),
-        updatedAt: FV.serverTimestamp()
-      }, { merge: true });
-
+      await ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true });
       await db.collection('wishlists').doc(USER.uid).set({
-        items: FV.arrayRemove(pid),
-        updatedAt: FV.serverTimestamp()
+        items: FV.arrayRemove(pid), updatedAt: FV.serverTimestamp()
       }, { merge: true });
     } catch(e) {
       WISHLIST_IDS = backupIds;
@@ -902,8 +964,7 @@ document.addEventListener('DOMContentLoaded', function() {
       ok = available.length;
 
       await db.collection('wishlists').doc(USER.uid).set({
-        items: FV.arrayRemove(...movedIds),
-        updatedAt: FV.serverTimestamp()
+        items: FV.arrayRemove(...movedIds), updatedAt: FV.serverTimestamp()
       }, { merge: true });
 
       saveWishCache();
@@ -956,9 +1017,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('tg-confirm-modal').classList.remove('show');
     confirmCb = null;
   };
-  window.tgDoConfirm = async function() {
-    if (confirmCb) await confirmCb();
-  };
+  window.tgDoConfirm = async function() { if (confirmCb) await confirmCb(); };
   document.getElementById('tg-confirm-modal').addEventListener('click', (e) => {
     if (e.target.id === 'tg-confirm-modal') tgCloseConfirm();
   });
@@ -984,6 +1043,8 @@ document.addEventListener('DOMContentLoaded', function() {
   auth.onAuthStateChanged((u) => {
     USER = u;
     if (u) {
+      // Save last uid for instant paint on next visit
+      try { localStorage.setItem('toego_acc_last_uid', u.uid); } catch(e) {}
       watchCart(u.uid);
       loadWishlist();
     } else {
