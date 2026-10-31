@@ -4,13 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>My Wishlist — TOEGO</title>
+
+<!-- ✅ Preconnect & DNS Prefetch -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com">
 <link rel="dns-prefetch" href="https://www.gstatic.com">
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" crossorigin>
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" crossorigin>
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js" crossorigin>
+
+<!-- ✅ Firebase Scripts with DEFER (Page rendering block nahi hogi) -->
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 <style>
@@ -226,9 +231,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </button>
     </div>
 
-    <div class="tg-wishlist" id="tg-wishlist"></div>
+    <div class="tg-wishlist" id="tg-wishlist" style="display:none;"></div>
 
-    <div class="tg-wishlist" id="tg-loading" style="display:none;">
+    <!-- ✅ FIX: Skeleton ab by default dikhega, page blank nahi lagega -->
+    <div class="tg-wishlist" id="tg-loading" style="display:grid;">
       <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
       <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
       <div class="tg-card loading" style="aspect-ratio:auto;"><div class="tg-card-img" style="aspect-ratio:1/1;"></div><div class="tg-card-body"><div style="height:14px;width:60%;"></div><div style="height:14px;width:85%;"></div><div style="height:14px;width:40%;"></div></div></div>
@@ -270,12 +276,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 <div class="tg-toasts" id="tg-toasts"></div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
 <script>
-(function() {
+// ✅ FIX: DOMContentLoaded wrapper taaki defer scripts load hone ke baad hi JS chale
+document.addEventListener('DOMContentLoaded', function() {
   'use strict';
 
   if (!window.__TOEGO_FB__) {
@@ -461,7 +464,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (unsubCart) { try { unsubCart(); } catch(e){} unsubCart = null; }
     if (!uid) { cartItems = getGuestCart(); updateCartBadge(); return; }
     unsubCart = db.collection('carts').doc(uid).collection('items').onSnapshot(snap => {
-      // ✅ FIXED: Spread order (id last)
       cartItems = snap.docs.map(d => ({ ...d.data(), id: d.id }));
       updateCartBadge();
     }, () => {});
@@ -523,7 +525,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (loading) loading.style.display = 'none';
       if (grid) {
         grid.style.display = 'grid';
-        grid.innerHTML = products.map(productCard).join('');
+        // ✅ FIX: Pass index to enable eager loading
+        grid.innerHTML = products.map((p, i) => productCard(p, i)).join('');
       }
     } else {
       if (grid) grid.style.display = 'none';
@@ -531,12 +534,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  function productCard(p) {
+  // ✅ FIX: Added index param for eager image loading
+  function productCard(p, index) {
     const price = Number(p.price || 0);
     const mrp = Number(p.compareAtPrice || p.mrp || 0);
     const disc = mrp > price ? Math.round((1 - price/mrp) * 100) : 0;
     const rawImg = p.image || (p.images && p.images[0]) || 'https://via.placeholder.com/300x300/f1f3f6/878787?text=TOEGO';
     const img = cardImgUrl(rawImg, 300);
+    
+    // ✅ FIX: Eager load first 4 images
+    const eager = index < 4 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
 
     const rating = getProductRating(p);
     let ratingHtml = '';
@@ -562,7 +569,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div class="tg-card" data-pid="${esc(p.id)}">
         <div class="tg-card-img" onclick="location.href='product.html?id=${encodeURIComponent(p.id)}'">
           ${badges ? '<div class="tg-card-badges">' + badges + '</div>' : ''}
-          <img src="${esc(img)}" alt="${esc(p.name || '')}" loading="lazy" decoding="async" />
+          <img src="${esc(img)}" alt="${esc(p.name || '')}" ${eager} decoding="async" />
           <button class="tg-card-remove" onclick="event.stopPropagation();tgRemoveFromWishlist('${esc(p.id)}')" title="Remove from wishlist">
             <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
           </button>
@@ -615,7 +622,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           .get();
         const got = new Set();
         snap.forEach(d => {
-          // ✅ FIXED: Spread order (id last)
           const data = { ...d.data(), id: d.id };
           _pSet(d.id, data);
           results[d.id] = data;
@@ -626,7 +632,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         await Promise.all(chunk.map(async id => {
           try {
             const d = await db.collection('products').doc(id).get();
-            // ✅ FIXED: Spread order (id last)
             const data = d.exists ? { ...d.data(), id: d.id } : null;
             _pSet(id, data);
             if (data) results[id] = data;
@@ -987,7 +992,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   });
 
-})();
+});
 </script>
 </body>
 </html>
