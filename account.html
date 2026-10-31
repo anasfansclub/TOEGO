@@ -6,7 +6,16 @@
 <title>My Account — TOEGO</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+<link rel="preconnect" href="https://securetoken.googleapis.com">
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+
+<!-- ⚡ PRELOAD FIREBASE SDK FOR SPEED -->
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js">
+
 <meta name="theme-color" content="#2874f0" id="tg-theme-meta">
 
 <style>
@@ -45,6 +54,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   transform: translateY(-8px) scale(0.97);
   transform-origin: top right;
   transition: opacity .18s, transform .18s, visibility .18s;
+  will-change: transform, opacity;
 }
 .tg-menu.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 .tg-menu-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; font-size: 14px; color: #212121; cursor: pointer; transition: background .15s; }
@@ -134,7 +144,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-profile-edit:hover { background: rgba(255,255,255,0.25); }
 .tg-profile-edit svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-/* ═══ SMALL SELLER / ADMIN PILLS ═══ */
 .tg-profile-mini-actions {
   display: none;
   gap: 6px;
@@ -171,32 +180,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   stroke-linejoin: round;
   flex-shrink: 0;
 }
-.tg-mini-pill.seller {
-  background: rgba(255,229,0,0.9);
-  color: #212121;
-  border-color: rgba(255,229,0,1);
-}
+.tg-mini-pill.seller { background: rgba(255,229,0,0.9); color: #212121; border-color: rgba(255,229,0,1); }
 .tg-mini-pill.seller:active { background: #ffe500; transform: translateY(1px); }
-.tg-mini-pill.admin {
-  background: rgba(255,255,255,0.95);
-  color: #d32f2f;
-  border-color: #fff;
-}
+.tg-mini-pill.admin { background: rgba(255,255,255,0.95); color: #d32f2f; border-color: #fff; }
 .tg-mini-pill.admin:active { background: #fff; transform: translateY(1px); }
-.tg-mini-pill.pending {
-  background: rgba(255,255,255,0.25);
-  color: #fff;
-  border-color: rgba(255,255,255,0.35);
-  cursor: default;
-}
-.tg-mini-pill.rejected {
-  background: rgba(255,255,255,0.25);
-  color: #fff;
-  border-color: rgba(255,255,255,0.35);
-}
+.tg-mini-pill.pending { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.35); cursor: default; }
+.tg-mini-pill.rejected { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.35); }
 .tg-mini-pill.rejected:active { background: rgba(255,255,255,0.4); transform: translateY(1px); }
 
-/* ═══ HIDE OLD BIG BANNER (using pills instead) ═══ */
 .tg-seller-banner { display: none !important; }
 
 .tg-stats {
@@ -214,7 +205,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-stat-num { font-size: 20px; font-weight: 800; color: var(--tg-primary); margin-bottom: 2px; }
 .tg-stat-label { font-size: 11px; color: #666; font-weight: 600; }
 
-.tg-sec { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+/* ⚡ PERFORMANCE BOOST: content-visibility */
+.tg-sec { 
+  background: #fff; 
+  border-radius: 12px; 
+  margin-bottom: 12px; 
+  overflow: hidden; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06); 
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
 .tg-sec-title { padding: 14px 18px 6px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.8px; }
 
 .tg-orders { display: grid; grid-template-columns: repeat(4, 1fr); padding: 10px 8px 16px; gap: 4px; }
@@ -262,10 +262,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .tg-bnav-badge { position: absolute; top: 4px; right: calc(50% - 20px); background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
 
-.tg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s ease; }
+.tg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; display: none; align-items: flex-end; justify-content: center; animation: tgFadeIn .2s ease; will-change: opacity; }
 .tg-modal.show { display: flex; }
 @keyframes tgFadeIn { from { opacity: 0; } to { opacity: 1; } }
-.tg-modal-card { width: 100%; max-width: 520px; background: #fff; border-radius: 18px 18px 0 0; padding: 24px 22px 26px; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); max-height: 88vh; overflow-y: auto; }
+.tg-modal-card { width: 100%; max-width: 520px; background: #fff; border-radius: 18px 18px 0 0; padding: 24px 22px 26px; animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1); max-height: 88vh; overflow-y: auto; will-change: transform; }
 @keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 .tg-modal-title { font-size: 18px; font-weight: 800; }
@@ -685,10 +685,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 <div class="tg-toasts" id="tg-toasts"></div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     ⚡ INSTANT PAINT — runs BEFORE Firebase SDKs load
-     Uses last-cached UID → 0ms render
-     ═══════════════════════════════════════════════════════════ -->
 <script>
 (function(){
   'use strict';
@@ -700,7 +696,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const LAST_UID_KEY = 'toego_acc_last_uid';
   const CACHE_TTL = 30 * 60 * 1000;
 
-  /* ─── SAFE STORAGE ─── */
   const _mem = new Map();
   function safeGet(k) {
     try { const v = localStorage.getItem(k); if (v !== null) return v; } catch(e) {}
@@ -726,7 +721,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try { safeSet(k, JSON.stringify({ data, time: Date.now() })); } catch(e) {}
   }
 
-  /* ─── UI REFS ─── */
   const $avatar = document.getElementById('tg-avatar');
   const $name = document.getElementById('tg-p-name');
   const $email = document.getElementById('tg-p-email');
@@ -734,13 +728,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const $badgeWrap = document.getElementById('tg-p-badge-wrap');
   const $miniActions = document.getElementById('tg-profile-mini-actions');
 
-  /* ─── INITIAL FROM NAME ─── */
   function initialFromName(name) {
     if (!name) return 'T';
     return name.trim().charAt(0).toUpperCase();
   }
 
-  /* ─── RENDER PROFILE ─── */
   function renderProfileUI(userLike, d) {
     d = d || {};
     userLike = userLike || {};
@@ -763,6 +755,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const img = document.createElement('img');
         img.src = photo;
         img.alt = name;
+        img.decoding = 'async'; /* ⚡ SPEED FIX */
         img.onerror = function() { $avatar.textContent = initialFromName(name); };
         $avatar.appendChild(img);
       }
@@ -796,7 +789,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   }
 
-  /* ─── ⭐ RENDER SELLER/ADMIN PILLS (small) ⭐ ─── */
   function renderSellerPills(status, data) {
     if (!$miniActions) return;
     data = data || {};
@@ -814,13 +806,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       $miniActions.innerHTML = '<a href="seller-apply.html" class="tg-mini-pill rejected"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>Try Again</a>';
       $miniActions.classList.add('show');
     } else {
-      /* No app → "Become Seller" pill */
       $miniActions.innerHTML = '<a href="seller-apply.html" class="tg-mini-pill pending"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Become Seller</a>';
       $miniActions.classList.add('show');
     }
   }
 
-  /* ─── RENDER STATS ─── */
   function renderStatsUI(stats) {
     stats = stats || { orders: 0, wish: 0, cart: 0, coupons: 0 };
     const o = document.getElementById('tg-stat-orders');
@@ -842,7 +832,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
   }
 
-  /* ─── ⚡ INSTANT PAINT FROM LAST CACHED UID ─── */
   (function paintFromCache() {
     const lastUid = safeGet(LAST_UID_KEY);
     if (!lastUid) return;
@@ -863,7 +852,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   })();
 
-  /* ─── EXPOSE TO MAIN SCRIPT ─── */
   window.__TG_ACC__ = {
     renderProfileUI: renderProfileUI,
     renderSellerPills: renderSellerPills,
@@ -887,22 +875,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" defer></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js" defer></script>
 
-<!-- ═══════════════════════════════════════════════════════════
-     ⚡ MAIN LOGIC — runs after Firebase SDKs are loaded
-     ═══════════════════════════════════════════════════════════ -->
 <script>
 (function() {
   'use strict';
 
-  function waitForFirebase(cb, tries) {
-    tries = tries || 0;
-    if (typeof firebase !== 'undefined' && firebase.auth) return cb();
-    if (tries > 200) return console.warn('[account] firebase timeout');
-    setTimeout(() => waitForFirebase(cb, tries + 1), 30);
-  }
-
-  waitForFirebase(function() {
+  /* ⚡ FASTER WAIT LOGIC (uses DOMContentLoaded instead of 30ms polling) */
+  function startApp() {
     const T = window.__TG_ACC__;
+    if (!T) return setTimeout(startApp, 50);
+    
     const SUPER_ADMIN_EMAIL = T.SUPER_ADMIN_EMAIL;
     const PROFILE_CACHE_PREFIX = T.PROFILE_CACHE_PREFIX;
     const STATS_CACHE_PREFIX = T.STATS_CACHE_PREFIX;
@@ -926,7 +907,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     let LAST_INIT_UID = null;
     let USER_DOC = null;
 
-    /* ═══ THEME ═══ */
     const themeMeta = document.getElementById('tg-theme-meta');
     function adjustColor(hex, pct) {
       try {
@@ -962,7 +942,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       } catch(e) {}
     })();
 
-    /* ═══ TOAST ═══ */
     function toast(msg, type) {
       type = type || 'info';
       const w = document.getElementById('tg-toasts');
@@ -974,7 +953,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       setTimeout(() => el.remove(), 2400);
     }
 
-    /* ═══ 3-DOT MENU ═══ */
     const menuBtn = document.getElementById('tg-3dot-btn');
     const menu = document.getElementById('tg-3dot-menu');
     menuBtn.addEventListener('click', (e) => {
@@ -987,7 +965,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     });
 
-    /* ═══ GLOBAL FUNCTIONS ═══ */
     window.tgEditProfile = function() {
       menu.classList.remove('show');
       document.getElementById('tg-edit-modal').classList.add('show');
@@ -1140,7 +1117,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     };
 
-    /* ═══ STATS LOADER ═══ */
     async function loadStatsParallel(user) {
       const uid = user.uid;
       const ordersP = (async () => {
@@ -1187,7 +1163,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return stats;
     }
 
-    /* ═══ SELLER STATUS RESOLVER (from snap) ═══ */
     function resolveSellerStatusFromSnap(user, userData, sellerSnap) {
       userData = userData || {};
       const role = (userData.role || 'customer').toLowerCase();
@@ -1214,9 +1189,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       ⚡ ULTRA-FAST INIT — PARALLEL queries, cache-first paint
-       ═══════════════════════════════════════════════════════════ */
     async function initFast(user) {
       if (!user) {
         window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
@@ -1225,15 +1197,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (LAST_INIT_UID === user.uid) return;
       LAST_INIT_UID = user.uid;
 
-      /* Save last uid for instant paint on next visit */
       T.safeSet(LAST_UID_KEY, user.uid);
 
-      /* STEP 1: Paint from cache (INSTANT, 0ms) */
       const cachedProfile = T.cacheGet(PROFILE_CACHE_PREFIX + user.uid);
       const cachedStats = T.cacheGet(STATS_CACHE_PREFIX + user.uid);
       const cachedSeller = T.cacheGet(SELLER_CACHE_PREFIX + user.uid);
 
-      /* Preload avatar */
       const photo = (cachedProfile && (cachedProfile.photoURL || cachedProfile._photoURL)) || user.photoURL;
       if (photo) { const pre = new Image(); pre.src = photo; }
 
@@ -1247,12 +1216,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         }
       }
 
-      /* STEP 2: Fire ALL queries in PARALLEL (no sequential waits) */
       const profileP = db.collection('users').doc(user.uid).get().catch(() => null);
       const sellerP = db.collection('sellers').doc(user.uid).get().catch(() => null);
-      const statsP = loadStatsParallel(user).catch(() => null); /* fire-and-forget */
+      const statsP = loadStatsParallel(user).catch(() => null);
 
-      /* STEP 3: Process profile + seller in parallel */
       const [profileSnap, sellerSnap] = await Promise.all([profileP, sellerP]);
 
       let userData = {};
@@ -1261,10 +1228,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         USER_DOC = userData;
       }
 
-      /* Render profile with fresh data */
       T.renderProfileUI(user, userData);
 
-      /* Cache fresh profile */
       T.cacheSet(PROFILE_CACHE_PREFIX + user.uid, {
         ...userData,
         _displayName: user.displayName || '',
@@ -1272,19 +1237,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         _email: user.email || ''
       });
 
-      /* Resolve seller pills */
       const sellerStatus = resolveSellerStatusFromSnap(user, userData, sellerSnap);
       T.renderSellerPills(sellerStatus.status, sellerStatus.data);
       T.cacheSet(SELLER_CACHE_PREFIX + user.uid, { status: sellerStatus.status, data: sellerStatus.data });
 
-      /* Show admin section if applicable */
       const role = (userData.role || 'customer').toLowerCase();
       const isSuperAdmin = user.email === SUPER_ADMIN_EMAIL;
       if (isSuperAdmin || role === 'admin' || role === 'superadmin') {
         document.getElementById('tg-admin-sec').style.display = 'block';
       }
 
-      /* Auto-upgrade role if seller approved but user doc lagging */
       if (sellerStatus.status === 'approved' && role !== 'seller') {
         db.collection('users').doc(user.uid).set({
           role: 'seller', updatedAt: FV.serverTimestamp()
@@ -1293,11 +1255,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         T.renderProfileUI(user, userData);
       }
 
-      /* Stats already cached, no need to await */
       statsP.catch(() => {});
     }
 
-    /* ═══ RESTORE LOCAL SETTINGS ═══ */
     (function() {
       try {
         const dm = localStorage.getItem('toego_dark_mode') === '1';
@@ -1309,7 +1269,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       } catch(e) {}
     })();
 
-    /* ═══ AUTH GUARD — fast path first, then listener ═══ */
     if (auth.currentUser) {
       initFast(auth.currentUser);
     }
@@ -1324,7 +1283,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     });
 
-  });
+  }
+
+  // ⚡ FAST START: Run as soon as DOM is ready (deferred scripts will load in parallel)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+  } else {
+    startApp();
+  }
+
 })();
 </script>
 </body>
