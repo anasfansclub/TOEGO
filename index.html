@@ -293,7 +293,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 .tg-mhd-btn{color:#fff;padding:8px 14px;border-radius:8px;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;position:relative;height:42px;transition:background-color .15s ease;}
 .tg-mhd-btn:hover{background:rgba(255,255,255,.12);}
 .tg-mhd-btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.tg-mcart-badge{position:absolute;top:3px;right:6px;background:#ff6161;color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid #2963eb;box-shadow:0 1px 2px rgba(0,0,0,.15);}
+.tg-mcart-badge,.tg-wishlist-badge{position:absolute;top:3px;right:6px;background:#ff6161;color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:1.5px solid #2963eb;box-shadow:0 1px 2px rgba(0,0,0,.15);}
 .tg-mbell.has-new::after{content:'';position:absolute;top:6px;right:6px;width:9px;height:9px;background:#ffe500;border-radius:50%;border:1.5px solid #2963eb;box-shadow:0 0 0 2px rgba(255,229,0,.25);}
 @media (min-width:1025px){.tg-mhd{transition:height .2s ease;}.tg-mhd.scrolled{height:52px;}.tg-mhd.scrolled .tg-mhd-inner{height:52px;padding:5px 14px;gap:10px;}.tg-mhd.scrolled .tg-mlogo,.tg-mhd.scrolled .tg-mhd-actions{opacity:0;max-width:0;overflow:hidden;padding:0;margin:0;pointer-events:none;}.tg-mhd.scrolled .tg-msearch{max-width:100%;}}
 
@@ -1379,7 +1379,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 }
 
 /* 2️⃣ HEADER CART BADGE — chhota, clean */
-.tg-mcart-badge{
+.tg-mcart-badge,
+.tg-wishlist-badge{
   min-width:15px!important;height:15px!important;
   font-size:9px!important;font-weight:700!important;
   border:1.5px solid #2963eb!important;
@@ -2095,7 +2096,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
       </div>
       <div class="tg-mhd-actions">
         <button class="tg-mhd-btn tg-mbell" id="tg-mbell" onclick="tgMToggleBell(event)" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg></button>
-        <a href="wishlist.html" class="tg-mhd-btn" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg></a>
+        <a href="wishlist.html" class="tg-mhd-btn" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg><span class="tg-wishlist-badge" id="tg-wishlist-badge" style="display:none;">0</span></a>
         <a href="cart.html" class="tg-mhd-btn" aria-label="Cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg><span class="tg-mcart-badge" id="tg-mcart-badge" style="display:none;">0</span></a>
         <a href="log-in.html" class="tg-mhd-btn" id="tg-mlogin-btn" aria-label="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"></path></svg></a>
       </div>
@@ -2364,6 +2365,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     <a href="shop-home.html" class="tg-mbnav-item active"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"></path><path d="M5 10v10h14V10"></path></svg><span>Home</span></a>
     <a href="categories.html" class="tg-mbnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg><span>Categories</span></a>
     <a href="cart.html" class="tg-mbnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"></circle><circle cx="18" cy="21" r="1.5"></circle><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"></path></svg><span>Cart</span><span class="tg-mbnav-badge" id="tg-mcart-badge-m" style="display:none;">0</span></a>
+    <a href="wishlist.html" class="tg-mbnav-item"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"></path></svg><span>Wishlist</span></a>
     <a href="my-orders.html" class="tg-mbnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"></path><path d="M4 8v12h16V8"></path><path d="M10 12h4"></path></svg><span>Orders</span></a>
     <a href="account.html" class="tg-mbnav-item" id="tg-maccount-btn-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"></path></svg><span>Account</span></a>
   </nav>
@@ -4354,10 +4356,18 @@ const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), 
       updateAllWishStates();
     } catch(e) {}
   }
-  function updateAllWishStates() {
+ function updateAllWishStates() {
     document.querySelectorAll('.tg-mcard-wish, .tg-lcard-wish').forEach(btn => {
       btn.classList.toggle('active', wishSet.has(btn.dataset.pid));
     });
+    updateWishlistBadge();
+  }
+  function updateWishlistBadge() {
+    const el = document.getElementById('tg-wishlist-badge');
+    if (!el) return;
+    const n = wishSet.size;
+    el.textContent = n;
+    el.style.display = n > 0 ? 'flex' : 'none';
   }
   window.tgMToggleWish = async function(e, pid, btn) {
     e.stopPropagation();
@@ -4374,6 +4384,7 @@ const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), 
         await ref.set({ items: FV.arrayUnion(pid), updatedAt: FV.serverTimestamp() }, { merge: true });
         wishSet.add(pid); toast('❤ Saved', 'success');
       }
+      updateWishlistBadge();
     } catch(err) { toast('Error', 'error'); btn.classList.toggle('active'); }
   };
 
