@@ -46,22 +46,88 @@ a{color:inherit;text-decoration:none;}
 .tg-search-input{flex:1;padding:10px 14px;border:1px solid #d4d5d9;border-radius:4px;font-size:15px;outline:none;}
 .tg-search-input:focus{border-color:var(--tg-primary);}
 .tg-search-close{padding:10px;font-weight:700;color:#282c3f;cursor:pointer;}
+/* ✅ Search Results List */
+.tg-search-results{flex:1;overflow-y:auto;padding:8px 16px 20px;-webkit-overflow-scrolling:touch;}
+.tg-search-section-title{font-size:11px;font-weight:800;color:#999;text-transform:uppercase;letter-spacing:0.6px;padding:12px 0 8px;}
+.tg-search-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;}
+.tg-search-item:hover,.tg-search-item:active{background:#f0f5ff;}
+.tg-search-item-img{width:56px;height:56px;border-radius:10px;overflow:hidden;background:#f8f9fb;flex-shrink:0;border:1px solid #eee;}
+.tg-search-item-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.tg-search-item-info{flex:1;min-width:0;}
+.tg-search-item-name{font-size:14px;font-weight:600;color:#212121;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px;}
+.tg-search-item-price{font-size:13.5px;font-weight:800;color:var(--tg-primary);}
+.tg-search-empty{text-align:center;padding:50px 20px;color:#999;font-size:13.5px;line-height:1.6;}
+.tg-search-empty b{color:#212121;}
+.tg-search-tags{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0 16px;}
+.tg-search-tag{font-size:12.5px;color:#212121;background:#f1f3f6;padding:8px 14px;border-radius:20px;cursor:pointer;font-weight:600;transition:all .15s;border:1px solid transparent;}
+.tg-search-tag:hover,.tg-search-tag:active{background:var(--tg-primary-light);color:var(--tg-primary);border-color:var(--tg-primary);}
 .tg-wrap{padding-top:58px;padding-bottom:170px;min-height:100vh;}
 .tg-co{max-width:1280px;margin:0 auto;padding:14px;}
+/* ✅ Product card (with .tg-main) - edge to edge, koi space nahi */
+.tg-co > .tg-card:has(.tg-main){
+  margin:-14px -14px 12px !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+@media (max-width:900px){
+  .tg-co{padding:0 !important;}
+  .tg-co > .tg-card:has(.tg-main){
+    margin:0 0 10px !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+  }
+  /* Baaki cards ko padding wapas do */
+  .tg-co > .tg-card:not(:has(.tg-main)){
+    margin:10px 12px !important;
+  }
+}
 .tg-card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:12px;overflow:hidden;}
 .tg-skel{background:linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%);background-size:200% 100%;animation:tgShim 1.2s infinite;border-radius:8px;}
 @keyframes tgShim{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
 .tg-load{display:grid;grid-template-columns:500px 1fr;gap:22px;padding:18px;}
 @media (max-width:900px){.tg-load{grid-template-columns:1fr;}}
-.tg-main{display:grid;grid-template-columns:500px 1fr;gap:22px;padding:18px;}
-@media (max-width:900px){.tg-main{grid-template-columns:1fr;padding:12px;gap:16px;}}
-.tg-gallery{position:sticky;top:70px;height:fit-content;}
-@media (max-width:900px){.tg-gallery{position:static;}}
-.tg-slider{position:relative;aspect-ratio:3/4;background:#fff;border-radius:0;overflow:hidden;user-select:none;touch-action:pan-y;}
+.tg-main{display:grid;grid-template-columns:500px 1fr;gap:0 !important;padding:0 !important;}
+.tg-info{padding:18px 22px !important;}
+@media (max-width:900px){
+  .tg-main{grid-template-columns:1fr !important;padding:0 !important;gap:0 !important;}
+  .tg-info{padding:16px !important;}
+}
+.tg-gallery{position:sticky;top:70px;height:fit-content;padding:0 !important;}
+.tg-slider{
+  position:relative !important;
+  aspect-ratio:1/1 !important;
+  background:#f8f9fb !important;
+  border-radius:0 !important;
+  overflow:hidden !important;
+  user-select:none !important;
+  touch-action:pan-y !important;
+  width:100% !important;
+}
+@media (max-width:900px){
+  .tg-gallery{position:static !important;padding:0 !important;}
+  .tg-slider{aspect-ratio:1/1 !important;}
+}
 .tg-slider-track{display:flex;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;}
 .tg-slider-track.no-trans{transition:none;}
-.tg-slide{flex:0 0 100%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;cursor:zoom-in;background:#fff;}
-.tg-slide img{width:100%;height:100%;object-fit:contain;object-position:center;pointer-events:none;display:block;}
+.tg-slide{
+  flex:0 0 100% !important;
+  width:100% !important;
+  height:100% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:zoom-in !important;
+  background:#f8f9fb !important;
+  padding:0 !important;
+}
+.tg-slide img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;  /* ✅ Full fill - no white bars */
+  object-position:center !important;
+  pointer-events:none !important;
+  display:block !important;
+}
 @media (max-width:900px){ .tg-slider{aspect-ratio:3/4;} .tg-slide img{object-fit:contain;} }
 .tg-slider-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:0 2px 8px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background .15s;}
 .tg-slider-arrow:hover{background:#fff;}
@@ -507,9 +573,10 @@ a{color:inherit;text-decoration:none;}
 <div class="tg-search-overlay" id="tg-search-overlay">
   <div class="tg-search-header">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#282c3f" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    <input type="text" class="tg-search-input" id="tg-search-input" placeholder="Search for products, brands and more...">
+    <input type="text" class="tg-search-input" id="tg-search-input" placeholder="Search for products, brands and more..." autocomplete="off" oninput="tgSearchInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();tgSearchSubmit()}">
     <span class="tg-search-close" onclick="tgCloseSearch()">Cancel</span>
   </div>
+  <div class="tg-search-results" id="tg-search-results"></div>
 </div>
 
 <div class="tg-wrap" id="tg-wrap">
@@ -821,8 +888,113 @@ a{color:inherit;text-decoration:none;}
   function tago(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; if (s < 604800) return Math.floor(s/86400)+'d ago'; return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
   function fmtBytes(b) { if (!b) return ''; if (b < 1024) return b + 'B'; return (b/1024).toFixed(1) + 'KB'; }
-window.tgOpenSearch = function() { document.getElementById('tg-search-overlay').classList.add('show'); document.getElementById('tg-search-input').focus(); };
-window.tgCloseSearch = function() { document.getElementById('tg-search-overlay').classList.remove('show'); };
+window.tgOpenSearch = function() { 
+  const overlay = document.getElementById('tg-search-overlay');
+  const input = document.getElementById('tg-search-input');
+  if (!overlay) return;
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+  
+  // Load products if not loaded
+  if (!ALL_PRODUCTS || ALL_PRODUCTS.length < 5) {
+    db.collection('products').where('active','==',true).limit(60).get()
+      .then(snap => {
+        ALL_PRODUCTS = snap.docs.map(d => ({ ...d.data(), id: d.id }))
+          .filter(p => p && p.id !== (PRODUCT && PRODUCT.id));
+        if (input && input.value.trim()) tgSearchInput(input.value);
+      })
+         .catch(() => {
+        const r = document.getElementById('tg-search-results');
+        if (r) r.innerHTML = '<div class="tg-search-empty">Products load nahi hue.<br><span style="font-size:12px;color:#bbb;">Network check karke retry karo</span></div>';
+      });
+  }
+  
+  // Show popular searches initially
+  tgSearchInput(input ? input.value : '');
+  
+  setTimeout(() => { if (input) input.focus(); }, 100);
+};
+
+window.tgCloseSearch = function() { 
+  document.getElementById('tg-search-overlay').classList.remove('show'); 
+  document.body.style.overflow = '';
+};
+
+// ✅ NEW: Live search as user types
+window.tgSearchInput = function(q) {
+  const results = document.getElementById('tg-search-results');
+  if (!results) return;
+  q = String(q || '').trim().toLowerCase();
+  
+  // Empty query → show popular searches
+  if (!q) {
+    const popularTags = ['shoes', 'slippers', 'sandals', 'watches', 'bags', 'electronics', 'sale'];
+    results.innerHTML = 
+      '<div class="tg-search-section-title">Popular Searches</div>' +
+      '<div class="tg-search-tags">' +
+        popularTags.map(t => `<span class="tg-search-tag" onclick="tgQuickSearch('${t}')">${t}</span>`).join('') +
+      '</div>';
+    return;
+  }
+  
+  // Ensure products loaded
+  if (!ALL_PRODUCTS || ALL_PRODUCTS.length < 5) {
+    results.innerHTML = '<div class="tg-search-empty">Searching…</div>';
+    return;
+  }
+  
+  // Filter products
+  const matches = ALL_PRODUCTS.filter(p => {
+    if (!p) return false;
+    const hay = [
+      p.name, p.title, p.brand, p.category, p.subCategory, p.description,
+      Array.isArray(p.tags) ? p.tags.join(' ') : p.tags
+    ].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+  
+  if (!matches.length) {
+    results.innerHTML = '<div class="tg-search-empty">No products found for "<b>' + esc(q) + '</b>"<br><span style="font-size:12px;color:#bbb;margin-top:8px;display:block;">Try a different keyword</span></div>';
+    return;
+  }
+  
+  // Show matches
+  results.innerHTML = 
+    '<div class="tg-search-section-title">' + matches.length + ' result' + (matches.length > 1 ? 's' : '') + ' found</div>' +
+    matches.slice(0, 15).map(p => {
+      const img = cardImgUrl(p.image || (p.images && p.images[0]) || '', 200);
+      const price = Number(p.price || 0);
+      return '<div class="tg-search-item" onclick="tgGoToProduct(\'' + escapeAttr(p.id) + '\')">' +
+        '<div class="tg-search-item-img"><img src="' + esc(img) + '" onerror="this.src=\'https://via.placeholder.com/100/f1f3f6/878787?text=T\'"></div>' +
+        '<div class="tg-search-item-info">' +
+          '<div class="tg-search-item-name">' + esc(p.name || 'Product') + '</div>' +
+          '<div class="tg-search-item-price">' + inr(price) + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('') +
+    (matches.length > 15 ? '<div style="padding:14px 0;text-align:center;"><button onclick="tgSearchSubmit()" style="padding:12px 24px;background:var(--tg-primary);color:#fff;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;width:100%;">View all ' + matches.length + ' results →</button></div>' : '');
+};
+
+// ✅ NEW: Quick tag click
+window.tgQuickSearch = function(t) {
+  const input = document.getElementById('tg-search-input');
+  if (input) { input.value = t; tgSearchInput(t); }
+};
+
+// ✅ NEW: Go to product
+window.tgGoToProduct = function(id) {
+  tgCloseSearch();
+  window.location.href = 'product.html?id=' + encodeURIComponent(id);
+};
+
+// ✅ NEW: Submit search (Enter key)
+window.tgSearchSubmit = function() {
+  const input = document.getElementById('tg-search-input');
+  const q = (input ? input.value : '').trim();
+  if (!q) return;
+  tgCloseSearch();
+  window.location.href = 'shop-home.html?q=' + encodeURIComponent(q);
+};
   function getSaleTag(p) {
     if (!p || !p.saleTag || !String(p.saleTag).trim()) return null;
     const tag = String(p.saleTag).trim();
@@ -1303,7 +1475,7 @@ window.tgCloseSearch = function() { document.getElementById('tg-search-overlay')
       '<div class="tg-rb-bars">' + [5,4,3,2,1].map(star => {
         const cnt = dist[star] || 0;
         const pct = total > 0 ? (cnt / total) * 100 : 0;
-        return '<div class="tg-rb-row" onclick="tgFilterAllReviews(\'' + star + '\', null); tgOpenAllReviews()"><div class="tg-rb-row-label">' + star + ' ★</div><div class="tg-rb-row-bar"><div class="tg-rb-row-fill" style="width:' + pct + '%;"></div></div><div class="tg-rb-row-count">' + cnt + '</div></div>';
+        return '<div class="tg-rb-row" onclick="tgFilterAllReviews(\'' + star + '\', null); tgOpenAllReviews(true)"><div class="tg-rb-row-label">' + star + ' ★</div><div class="tg-rb-row-bar"><div class="tg-rb-row-fill" style="width:' + pct + '%;"></div></div><div class="tg-rb-row-count">' + cnt + '</div></div>';
       }).join('') + '</div>' +
     '</div>';
   }
@@ -1358,13 +1530,19 @@ window.tgCloseSearch = function() { document.getElementById('tg-search-overlay')
     let mouseDown = false;
     slider.addEventListener('mousedown', (e) => { mouseDown = true; _sliderDrag.down = true; _sliderDrag.startX = e.clientX; _sliderDrag.deltaX = 0; sliderTrack.classList.add('no-trans'); e.preventDefault(); });
     slider.addEventListener('mousemove', (e) => { if (!mouseDown) return; _sliderDrag.deltaX = e.clientX - _sliderDrag.startX; sliderTrack.style.transform = 'translateX(' + (-SLIDER_INDEX * slider.offsetWidth + _sliderDrag.deltaX) + 'px)'; });
-    slider.addEventListener('mouseup', () => {
+        slider.addEventListener('mouseup', () => {
       if (!mouseDown) return;
       mouseDown = false; sliderTrack.classList.remove('no-trans');
       const threshold = slider.offsetWidth * 0.2, s = sliderTrack.children.length;
+      const moved = Math.abs(_sliderDrag.deltaX) > 10;
       if (_sliderDrag.deltaX < -threshold && SLIDER_INDEX < s - 1) SLIDER_INDEX++;
       else if (_sliderDrag.deltaX > threshold && SLIDER_INDEX > 0) SLIDER_INDEX--;
       _sliderDrag.deltaX = 0; updateSlider();
+      if (moved) {
+        const blockFn = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
+        slider.addEventListener('click', blockFn, true);
+        setTimeout(() => slider.removeEventListener('click', blockFn, true), 300);
+      }
     });
     slider.addEventListener('mouseleave', () => { if (!mouseDown) return; mouseDown = false; sliderTrack.classList.remove('no-trans'); updateSlider(); });
   }
@@ -1876,11 +2054,15 @@ function renderAllProducts() {
     return '<div class="tg-review' + (isMine ? ' mine' : '') + '"><div class="tg-review-head"><span class="tg-review-star">' + rating + ' <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="tg-review-name">' + esc(r.userName || r.name || 'Verified Buyer') + verified + mineBadge + editBtn + '</span><span class="tg-review-date">' + esc(tago(r.createdAt)) + '</span></div>' + (r.title ? '<div style="font-size:13.5px;font-weight:700;margin-top:4px;">' + esc(r.title) + '</div>' : '') + (r.text ? '<div class="tg-review-text">' + esc(r.text) + '</div>' : '') + imgs + '</div>';
   }
 
-  window.tgOpenAllReviews = function() {
+    window.tgOpenAllReviews = function(preserveFilter) {
     document.getElementById('tg-ar-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
-    AR_FILTER = 'all';
-    document.querySelectorAll('#tg-ar-filter .tg-ar-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
+    if (!preserveFilter) {
+      AR_FILTER = 'all';
+      document.querySelectorAll('#tg-ar-filter .tg-ar-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
+    } else {
+      document.querySelectorAll('#tg-ar-filter .tg-ar-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === AR_FILTER));
+    }
     renderAllReviewsModal();
   };
   window.tgCloseAllReviews = function() { document.getElementById('tg-ar-modal').classList.remove('show'); document.body.style.overflow = ''; };
@@ -1995,6 +2177,7 @@ function renderAllProducts() {
       return;
     }
     if (!PRODUCT) return;
+    document.getElementById('tg-rv-submit').disabled = false;
     if (HAS_REVIEWED && MY_REVIEW) {
       EDITING_REVIEW_ID = MY_REVIEW.id;
       rvRating = Math.round(Number(MY_REVIEW.rating || 0));
@@ -2149,21 +2332,30 @@ function renderAllProducts() {
     btn.textContent = isEdit ? 'Updating…' : 'Submitting…';
     try {
       const userName = currentUser.displayName || (currentUser.email || '').split('@')[0] || 'Customer';
-      if (isEdit) {
+        if (isEdit) {
         await db.collection('reviews').doc(EDITING_REVIEW_ID).update({
           rating: rvRating, title, text, images: rvImages.slice(), image: rvImages[0] || '', updatedAt: FV.serverTimestamp()
         });
+        MY_REVIEW = {
+          ...(MY_REVIEW || {}),
+          id: EDITING_REVIEW_ID,
+          rating: rvRating, title: title, text: text, images: rvImages.slice()
+        };
         toast(TOAST_MSGS.reviewUpdateSuccess, 'success');
         tgRvClose();
         return;
       }
       if (HAS_REVIEWED) { toast(TOAST_MSGS.alreadyReviewed, 'error'); return; }
-      await db.collection('reviews').add({
+      const newDocRef = await db.collection('reviews').add({
         productId: PRODUCT.id, productName: PRODUCT.name || '', userId: currentUser.uid, userName,
         userEmail: currentUser.email || '', rating: rvRating, title, text,
         images: rvImages.slice(), image: rvImages[0] || '', verified: true, active: true,
         createdAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp()
       });
+      MY_REVIEW = {
+        id: newDocRef.id, rating: rvRating, title: title, text: text,
+        images: rvImages.slice(), userName: userName
+      };
       try {
         const prodRef = db.collection('products').doc(PRODUCT.id);
         const prodSnap = await prodRef.get();
@@ -2389,21 +2581,6 @@ function renderAllProducts() {
     });
   })();
 
-  document.addEventListener('keydown', (e) => {
-    const v = document.getElementById('tg-img-viewer');
-    if (v && v.classList.contains('show')) {
-      if (e.key === 'Escape' || e.key === 'Esc') { tgCloseViewer(); return; }
-      if (e.key === 'ArrowLeft') { tgViewerPrev(); return; }
-      if (e.key === 'ArrowRight') { tgViewerNext(); return; }
-    }
-    if (e.key === 'Escape' || e.key === 'Esc') {
-      const ar = document.getElementById('tg-ar-modal'); if (ar && ar.classList.contains('show')) tgCloseAllReviews();
-      const sh = document.getElementById('tg-share-modal'); if (sh && sh.classList.contains('show')) tgCloseShare();
-      const sc = document.getElementById('tg-size-chart-modal'); if (sc && sc.classList.contains('show')) tgCloseSizeChart();
-      const qa = document.getElementById('tg-qa-modal'); if (qa && qa.classList.contains('show')) tgCloseQA();
-      const nt = document.getElementById('tg-notify-modal'); if (nt && nt.classList.contains('show')) tgCloseNotify();
-    }
-  });
 
   function validateSelection() {
     if (!PRODUCT) return false;
@@ -2490,6 +2667,7 @@ function renderAllProducts() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
     const btn = document.getElementById('tg-buy-btn');
+    if (!btn) return;
     if (btn.disabled) return;
     btn.innerHTML = '⚡ Processing...';
     btn.disabled = true;
@@ -2580,6 +2758,39 @@ function renderAllProducts() {
       if (el && el.querySelector('.tg-skel')) showError('Taking too long to load', 'Please check your internet connection and try again.', true);
     }
   }, 15000);
+
+  // ✅ ESC key se sab overlays close karo
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' && e.key !== 'Esc') return;
+
+    // 1. Search overlay (sabse upar)
+    const search = document.getElementById('tg-search-overlay');
+    if (search && search.classList.contains('show')) { tgCloseSearch(); return; }
+
+    // 2. Image viewer
+    const viewer = document.getElementById('tg-img-viewer');
+    if (viewer && viewer.classList.contains('show')) { tgCloseViewer(); return; }
+
+    // 3. All reviews modal
+    const ar = document.getElementById('tg-ar-modal');
+    if (ar && ar.classList.contains('show')) { tgCloseAllReviews(); return; }
+
+    // 4. Review write/edit modal
+    const rv = document.getElementById('tg-rv-modal');
+    if (rv && rv.classList.contains('show')) { tgRvClose(); return; }
+
+    // 5. Baaki simple modals
+    const simpleModals = [
+      ['tg-share-modal',     tgCloseShare],
+      ['tg-size-chart-modal',tgCloseSizeChart],
+      ['tg-qa-modal',        tgCloseQA],
+      ['tg-notify-modal',    tgCloseNotify]
+    ];
+    for (let i = 0; i < simpleModals.length; i++) {
+      const m = document.getElementById(simpleModals[i][0]);
+      if (m && m.classList.contains('show')) { simpleModals[i][1](); return; }
+    }
+  });
 
   loadProduct();
 })();
