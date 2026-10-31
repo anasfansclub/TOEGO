@@ -709,6 +709,7 @@ a{color:inherit;text-decoration:none;}
   let sliderTrack = null;
   let rvRating = 0;
   let rvImages = [];
+  let unsubCart = null;
   let unsubReviews = null;
   let unsubQA = null;
   let unsubProductDoc = null;
@@ -2440,6 +2441,8 @@ function renderAllProducts() {
     if (!validateSelection()) return;
     const item = buildCartItem();
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
+
+    // ✅ GUEST MODE
     if (!currentUser) {
       try {
         let cart = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
@@ -2452,14 +2455,22 @@ function renderAllProducts() {
       } catch(e) { toast('Could not add to cart', 'error'); }
       return;
     }
-    toast(TOAST_MSGS.addCart, 'success');
-    updateCartBadge();
+
+    // ✅ LOGGED-IN MODE — Badge update AFTER write completes
     const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-    ref.get({ source: 'cache' }).then(snap => {
+    ref.get().then(snap => {
       if (snap.exists) return ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
       return ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+    }).then(() => {
+      toast(TOAST_MSGS.addCart, 'success');
+      // Badge update ab onSnapshot se automatic hoga
+      // Agar onSnapshot fail ho toh manual fallback:
+      setTimeout(() => updateCartBadge(), 300);
     }).catch(() => {
-      return ref.set({ ...item, qty: FV.increment(QTY), addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true });
+      return ref.set({ ...item, qty: FV.increment(QTY), addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true }).then(() => {
+        toast(TOAST_MSGS.addCart, 'success');
+        setTimeout(() => updateCartBadge(), 300);
+      });
     }).catch(err => { console.warn('Cart write failed:', err && err.message); });
   }
 
@@ -2504,16 +2515,40 @@ function renderAllProducts() {
   };
 
   function updateCartBadge() {
-    let n = 0;
-    if (currentUser) {
-      db.collection('carts').doc(currentUser.uid).collection('items').get({ source: 'cache' })
-        .catch(() => db.collection('carts').doc(currentUser.uid).collection('items').get())
-        .then(snap => { snap.forEach(d => { n += Number(d.data().qty||1); }); const el = document.getElementById('tg-cart-badge'); if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; } })
-        .catch(() => {});
-    } else {
-      try { const c = JSON.parse(localStorage.getItem(GUEST_CART) || '[]'); n = c.reduce((a,i) => a + Number(i.qty||1), 0); } catch(e) {}
-      const el = document.getElementById('tg-cart-badge'); if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; }
+    // Guest mode → localStorage se
+    if (!currentUser) {
+      try {
+        const c = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
+        const n = c.reduce((a,i) => a + Number(i.qty||1), 0);
+        const el = document.getElementById('tg-cart-badge');
+        if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; }
+      } catch(e) {}
+      return;
     }
+    // Logged-in mode → Firestore server se (NOT cache)
+    db.collection('carts').doc(currentUser.uid).collection('items').get({ source: 'server' })
+      .catch(() => db.collection('carts').doc(currentUser.uid).collection('items').get())
+      .then(snap => {
+        let n = 0;
+        snap.forEach(d => { n += Number(d.data().qty||1); });
+        const el = document.getElementById('tg-cart-badge');
+        if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; }
+      })
+      .catch(() => {});
+  }
+
+  // ✅ NEW: Real-time cart watcher (logged-in ke liye)
+  function watchCart(uid) {
+    if (unsubCart) { try { unsubCart(); } catch(e) {} unsubCart = null; }
+    if (!uid) { updateCartBadge(); return; }
+    try {
+      unsubCart = db.collection('carts').doc(uid).collection('items').onSnapshot(snap => {
+        let n = 0;
+        snap.forEach(d => { n += Number(d.data().qty || 1); });
+        const el = document.getElementById('tg-cart-badge');
+        if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; }
+      }, () => {});
+    } catch(e) {}
   }
 
   window.addEventListener('resize', () => {
@@ -2523,11 +2558,13 @@ function renderAllProducts() {
       setTimeout(() => sliderTrack.classList.remove('no-trans'), 50);
     }
   });
-
   auth.onAuthStateChanged((u) => {
   const wasLoggedIn = !!currentUser;
   currentUser = u;
-  updateCartBadge();
+  
+  // ✅ Real-time cart watcher start karo
+  watchCart(u ? u.uid : null);
+  
   
    updateWishlistBadge();
   if (PRODUCT && PRODUCT.id && wasLoggedIn !== !!u) {
