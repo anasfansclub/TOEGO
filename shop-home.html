@@ -2344,6 +2344,66 @@ document.addEventListener('DOMContentLoaded', function() {
   try { db.enablePersistence({ synchronizeTabs: false }).catch(() => {}); } catch(e) {}
 
   const FV = firebase.firestore.FieldValue;
+  /* ═══════════════════════════════════════════════════════════
+   ⚡ SERVER TIME SYNC — Flash timer के लिए accurate time
+   ═══════════════════════════════════════════════════════════ */
+let _serverOffset = 0;
+
+// पहले cached offset load करो (instant, ताकि returning users को तुरंत सही time मिले)
+try {
+  const cached = localStorage.getItem('tg_server_offset');
+  if (cached) {
+    const c = JSON.parse(cached);
+    if (c && c.offset != null && (Date.now() - c.ts) < 2 * 60 * 60 * 1000) {
+      _serverOffset = Number(c.offset) || 0;
+      console.log('[servertime] cached offset loaded:', Math.round(_serverOffset) + 'ms');
+    }
+  }
+} catch(e) {}
+
+// 🔥 हर जगह Date.now() की जगह इस function को use करेंगे
+function getServerNow() {
+  return Date.now() + _serverOffset;
+}
+
+// Server से accurate time fetch करो
+async function syncServerTime() {
+  try {
+    const reqStart = Date.now();
+    const sep = window.location.href.indexOf('?') === -1 ? '?' : '&';
+    const url = window.location.href.split('#')[0] + sep + '_st=' + reqStart;
+
+    const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+    const dateHdr = res.headers.get('date');
+
+    if (dateHdr) {
+      const serverMs = new Date(dateHdr).getTime();
+      const rtt = Date.now() - reqStart;
+      // Date header response generate होने का समय है — round-trip का आधा जोड़ो
+      _serverOffset = (serverMs - reqStart) + (rtt / 2);
+
+      try {
+        localStorage.setItem('tg_server_offset', JSON.stringify({
+          offset: _serverOffset,
+          ts: Date.now()
+        }));
+      } catch(e) {}
+
+      console.log('[servertime] ✓ synced. offset:', Math.round(_serverOffset) + 'ms, rtt:', rtt + 'ms');
+      return true;
+    }
+  } catch(e) {
+    console.warn('[servertime] sync failed (using device time):', e.message);
+  }
+  return false;
+}
+
+// Background में sync चलाओ, और sync होते ही flash timer refresh कर दो
+syncServerTime().then(ok => {
+  if (ok && document.getElementById('tg-fh')) {
+    try { startFlashTimer(); } catch(e) {}
+  }
+});
 
   const VAPID_KEY = "BAn0Fb7ff1ZDDrvbE-IFvBNWAZTD1tUb7XE3bYxv1p8wo-C4v7AeIlwDGMwX-DuKVPx5ZuOmxrhM_pxnHc3_QUY";
   
@@ -2640,7 +2700,7 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (v.seconds != null) ms = v.seconds * 1000;
         else if (v instanceof Date) ms = v.getTime();
         else ms = new Date(v).getTime();
-        if (ms && ms > 0 && !isNaN(ms) && ms > Date.now() - 86400000) return ms;
+      if (ms && ms > 0 && !isNaN(ms) && ms > getServerNow() - 86400000) return ms;
       } catch(e) {}
     }
     if (p.sale && (p.sale.endsAt || p.sale.endTime || p.sale.end)) return getSaleEndMs({ saleEndsAt: p.sale.endsAt || p.sale.endTime || p.sale.end });
@@ -2650,7 +2710,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return 0;
   }
 
-  function hasActiveTimer(p) { return getSaleEndMs(p) > Date.now(); }
+  function hasActiveTimer(p) { return getSaleEndMs(p) > getServerNow(); }
 
   function getAllAdminBanners() {
     const slots = ['slot1','slot2','slot3','slot4','slot5','slot6'];
@@ -3345,7 +3405,7 @@ if (byId) byId.setAttribute('content', '#2874f0');
     }
     if (fs.endTime) {
   const endMs = parseEndTime(fs.endTime);
-  if (endMs && endMs <= Date.now()) {
+  if (endMs && endMs <= getServerNow()) {
     if (window.__flashTimer) { clearInterval(window.__flashTimer); window.__flashTimer = null; }
     c.innerHTML = '';
     return;
@@ -3393,7 +3453,7 @@ function getFlashEnd() {
       const end = getFlashEnd();
       const eh = document.getElementById('tg-fh');
       if (!eh || !end) return;
-      const diff = end - Date.now();
+      const diff = end - getServerNow();
       if (diff <= 0) {
         const c = document.getElementById('tg-mflash-container');
         if (c) c.innerHTML = '';
@@ -3712,7 +3772,7 @@ function getFlashEnd() {
     const oosCls = isOOS ? ' out-of-stock' : '';
     const clickAttr = isOOS ? '' : 'onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'"';
     const endMs = getSaleEndMs(p);
-    const showTimer = endMs > Date.now();
+    const showTimer = endMs > getServerNow();
     return '<div class="tg-mini' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-mini-img">' +
         '<img src="' + esc(imgUrl) + '" alt="' + esc(p.name||'') + '" ' + loadingAttr + ' decoding="async" onerror="this.src=\'' + FALLBACK_IMG + '\'" />' +
@@ -3745,7 +3805,7 @@ function getFlashEnd() {
   }
 
   function timerHtml(endMs) {
-    const diff = endMs - Date.now();
+  const diff = endMs - getServerNow();
     if (diff <= 0) return '';
     const pad = n => String(n).padStart(2, '0');
     const d = Math.floor(diff / 86400000);
@@ -3779,7 +3839,7 @@ function getFlashEnd() {
     }
 
     const endMs = getSaleEndMs(p);
-    const showTimer = endMs > Date.now();
+    const showTimer = endMs > getServerNow();
     const saleTag = getSaleTag(p);
     const badgeHtml = saleTag ? '<div class="tg-mcard-badges"><span class="tg-mcard-badge ' + saleTag.cls + '">' + esc(saleTag.text) + '</span></div>' : '';
     const pnameEsc = esc((p.name||'Product').replace(/'/g,''));
@@ -3833,7 +3893,7 @@ function getFlashEnd() {
     }
 
     const endMs = getSaleEndMs(p);
-    const showTimer = endMs > Date.now();
+   const showTimer = endMs > getServerNow();
     const saleTag = getSaleTag(p);
     const pnameEsc = esc((p.name||'Product').replace(/'/g,''));
     const imgEsc = esc(img);
@@ -3882,8 +3942,8 @@ function getFlashEnd() {
   }
 
   setInterval(function() {
-    if (document.hidden || !_timerEls.length) return;
-    var now = Date.now();
+  if (document.hidden || !_timerEls.length) return;
+  var now = getServerNow();
     var pad = function(n){ return String(n).padStart(2, '0'); };
     for (var i = 0; i < _timerEls.length; i++) {
       var el = _timerEls[i];
