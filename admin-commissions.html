@@ -119,6 +119,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-search input { width: 100%; height: 38px; padding: 0 14px 0 38px; border: 1.5px solid #e0e0e0; border-radius: 999px; font-size: 13px; outline: none; background: #fff; transition: border-color .15s,box-shadow .15s; }
 .tg-search input:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,.1); }
 .tg-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: #999; fill: none; stroke-width: 2.2; }
+.tg-btn-export { background: #fff; border: 1.5px solid #388e3c; color: #388e3c; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: all .2s; }
+.tg-btn-export:hover { background: #388e3c; color: #fff; }
 
 /* ═══════════ CARDS ═══════════ */
 .tg-cards { display: flex; flex-direction: column; gap: 10px; }
@@ -280,6 +282,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-adjust-tab { flex: 1; padding: 9px; border: 1.5px solid #e0e0e0; border-radius: 8px; background: #fff; font-size: 12px; font-weight: 800; color: #666; cursor: pointer; transition: all .15s; }
 .tg-adjust-tab.active { background: #2874f0; color: #fff; border-color: #2874f0; }
 .tg-adjust-tab.active.debit { background: #d32f2f; border-color: #d32f2f; }
+
+.tg-copy-box { background: #e8f0fe; border: 1px dashed #2874f0; color: #1a5dc7; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.tg-copy-box span { font-size: 14px; font-weight: 800; font-family: monospace; }
+.tg-copy-btn { background: #2874f0; color: #fff; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 800; cursor: pointer; }
 
 /* ═══════════ TOASTS ═══════════ */
 .tg-toasts { position: fixed; bottom: 24px; right: 24px; z-index: 999999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 32px); }
@@ -496,7 +502,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           <div class="tg-filter active" data-filter="all">All</div>
           <div class="tg-filter" data-filter="pending">⏳ Pending</div>
           <div class="tg-filter" data-filter="approved">✓ Approved</div>
-          <div class="tg-filter" data-filter="processing">⚙ Processing</div>
           <div class="tg-filter" data-filter="paid">💸 Paid</div>
           <div class="tg-filter" data-filter="rejected">✕ Rejected</div>
         </div>
@@ -504,6 +509,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input type="text" id="wd-search" placeholder="Search name, email, UPI...">
         </div>
+        <button class="tg-btn-export" onclick="exportWithdrawalsCSV()">
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Excel
+        </button>
       </div>
       <div class="tg-cards" id="wd-list"><div class="tg-spinner"></div></div>
     </div>
@@ -527,6 +536,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           <input type="text" id="rf-search" placeholder="Search buyer, referrer, order ID...">
         </div>
+        <button class="tg-btn-export" onclick="exportReferralsCSV()">
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Excel
+        </button>
       </div>
       <div class="tg-cards" id="rf-list"><div class="tg-spinner"></div></div>
     </div>
@@ -651,6 +664,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <div class="tg-row"><span class="lbl">Amount</span><span class="val big" id="wd-info-amount">₹0</span></div>
         <div class="tg-row"><span class="lbl">Method</span><span class="val" id="wd-info-method">—</span></div>
         <div class="tg-row"><span class="lbl">Current Status</span><span class="val" id="wd-info-status">—</span></div>
+      </div>
+      <!-- Auto Copy Box -->
+      <div class="tg-copy-box" id="wd-copy-container" style="display:none;">
+        <span id="wd-copy-val">—</span>
+        <button class="tg-copy-btn" onclick="copyWdDetail()">Copy</button>
       </div>
       <div class="tg-field">
         <label>Admin Note (shown to user)</label>
@@ -792,6 +810,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let PENDING_WD_ACTION = { wdId: null, newStatus: null, action: null };
   let CURRENT_USER_DETAIL = null;
   let CURRENT_SECTION = 'dashboard';
+  let _copyWdDetail = '';
 
   let _unsubWithdrawals = null;
   let _unsubReferrals = null;
@@ -855,6 +874,50 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     newBtn.addEventListener('click', () => { closeModal('confirm-modal'); onYes(); });
     openModal('confirm-modal');
   }
+
+  window.copyWdDetail = function() {
+    if (!_copyWdDetail) return;
+    navigator.clipboard.writeText(_copyWdDetail).then(() => {
+      toast('✓ Copied to clipboard', 'success');
+    }).catch(() => {
+      toast('Copy failed', 'error');
+    });
+  };
+
+  // ═══ EXCEL EXPORT ═══
+  function downloadCSV(csvContent, fileName) {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  window.exportWithdrawalsCSV = function() {
+    if (!WITHDRAWALS.length) return toast('No withdrawals to export', 'info');
+    let csv = "Date,User Name,User Email,Amount,Method,UPI/Bank Details,Status\n";
+    WITHDRAWALS.forEach(w => {
+      let details = '';
+      if (w.method === 'upi') details = 'UPI: ' + (w.upiId || '');
+      else details = 'Bank: ' + (w.bankDetails?.holder || '') + ' A/C: ' + (w.bankDetails?.accountNumber || '') + ' IFSC: ' + (w.bankDetails?.ifsc || '');
+      details = details.replace(/,/g, ' '); 
+      csv += `"${fmtDate(w.requestedAt)}","${w.userName || ''}","${w.userEmail || ''}","${w.amount}","${w.method || ''}","${details}","${w.status}"\n`;
+    });
+    downloadCSV(csv, `withdrawals_${new Date().toISOString().slice(0,10)}.csv`);
+  };
+
+  window.exportReferralsCSV = function() {
+    if (!REFERRALS.length) return toast('No referrals to export', 'info');
+    let csv = "Date,Buyer Name,Order ID,Order Amount,Commission (%),Commission Amount,Status,Referrer ID\n";
+    REFERRALS.forEach(r => {
+      csv += `"${fmtDate(r.createdAt)}","${r.buyerName || ''}","${r.orderId || ''}","${r.orderAmount || 0}","${r.commissionPercent || 0}","${r.commissionAmount || 0}","${r.status}","${r.referrerId}"\n`;
+    });
+    downloadCSV(csv, `referrals_${new Date().toISOString().slice(0,10)}.csv`);
+  };
 
   // ═══ SIDEBAR ═══
   const sidebar = document.getElementById('tg-sidebar');
@@ -1035,14 +1098,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
     el.innerHTML = list.map(w => {
       const status = String(w.status || 'pending').toLowerCase();
-      const statusLabel = { pending: 'Pending', approved: 'Approved', processing: 'Processing', paid: 'Paid', rejected: 'Rejected', cancelled: 'Cancelled' }[status] || status;
+      const statusLabel = { pending: 'Pending', approved: 'Approved', paid: 'Paid', rejected: 'Rejected', cancelled: 'Cancelled' }[status] || status;
       const method = String(w.method || 'upi').toLowerCase();
       const isUpi = method === 'upi';
+      
+      // Make UPI/Bank prominent
       const detailsHtml = isUpi
-        ? '<div class="tg-row"><span class="lbl">📱 UPI ID</span><span class="val mono">' + esc(w.upiId || '—') + '</span></div>'
-        : '<div class="tg-row"><span class="lbl">🏦 Holder</span><span class="val">' + esc(w.bankDetails?.holder || '—') + '</span></div>' +
-          '<div class="tg-row"><span class="lbl">Account</span><span class="val mono">' + esc(String(w.bankDetails?.accountNumber || '').replace(/\d(?=\d{4})/g, '•')) + '</span></div>' +
-          '<div class="tg-row"><span class="lbl">IFSC</span><span class="val mono">' + esc(w.bankDetails?.ifsc || '—') + '</span></div>';
+        ? '<div class="tg-row" style="background:#e8f0fe;padding:8px;border-radius:6px;margin:4px 0;"><span class="lbl" style="color:#1a5dc7;font-weight:700;">📱 UPI ID</span><span class="val mono" style="color:#1a5dc7;font-size:14px;">' + esc(w.upiId || '—') + '</span></div>'
+        : '<div style="background:#e8f0fe;padding:8px;border-radius:6px;margin:4px 0;">' +
+          '<div class="tg-row"><span class="lbl" style="color:#1a5dc7;font-weight:700;">🏦 Holder</span><span class="val" style="color:#1a5dc7;">' + esc(w.bankDetails?.holder || '—') + '</span></div>' +
+          '<div class="tg-row"><span class="lbl" style="color:#1a5dc7;font-weight:700;">Account</span><span class="val mono" style="color:#1a5dc7;">' + esc(w.bankDetails?.accountNumber || '—') + '</span></div>' +
+          '<div class="tg-row"><span class="lbl" style="color:#1a5dc7;font-weight:700;">IFSC</span><span class="val mono" style="color:#1a5dc7;">' + esc(w.bankDetails?.ifsc || '—') + '</span></div>' +
+          '</div>';
 
       const actions = [];
       if (status === 'pending') {
@@ -1063,9 +1130,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           '<span class="tg-badge ' + status + '">' + statusLabel + '</span>' +
         '</div>' +
         '<div class="tg-card-body">' +
-          '<div class="tg-row"><span class="lbl">Amount</span><span class="val big">' + fmtINR(w.amount) + '</span></div>' +
+          '<div class="tg-row"><span class="lbl">Requested Amount</span><span class="val big">' + fmtINR(w.amount) + '</span></div>' +
           detailsHtml +
-          '<div class="tg-row"><span class="lbl">Requested</span><span class="val">' + fmtDate(w.requestedAt) + '</span></div>' +
+          '<div class="tg-row" style="margin-top:6px;"><span class="lbl">Date</span><span class="val">' + fmtDate(w.requestedAt) + '</span></div>' +
           (w.processedAt ? '<div class="tg-row"><span class="lbl">Processed</span><span class="val">' + fmtDate(w.processedAt) + '</span></div>' : '') +
           (w.adminNote ? '<div class="tg-note"><b>Admin note:</b> ' + esc(w.adminNote) + '</div>' : '') +
         '</div>' +
@@ -1078,14 +1145,32 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const w = WITHDRAWALS.find(x => x.id === wdId);
     if (!w) return toast('Not found', 'error');
     PENDING_WD_ACTION = { wdId, newStatus, action: w };
+    
     document.getElementById('wd-action-title').textContent =
       newStatus === 'approved' ? '✓ Approve Withdrawal' :
       newStatus === 'rejected' ? '✕ Reject Withdrawal' :
       newStatus === 'paid' ? '💸 Mark as Paid' : '↺ Reopen';
+      
     document.getElementById('wd-info-user').textContent = w.userName || '—';
     document.getElementById('wd-info-amount').textContent = fmtINR(w.amount);
-    document.getElementById('wd-info-method').textContent = String(w.method || 'upi').toUpperCase() + ' — ' + (w.upiId || (w.bankDetails?.accountNumber ? 'A/C XXXX' + String(w.bankDetails.accountNumber).slice(-4) : '—'));
+    
+    const isUpi = (w.method || 'upi') === 'upi';
+    const methodText = isUpi ? 'UPI — ' + (w.upiId || '—') : 'BANK — ' + (w.bankDetails?.holder || '') + ' (' + (w.bankDetails?.accountNumber || '') + ')';
+    document.getElementById('wd-info-method').textContent = methodText;
     document.getElementById('wd-info-status').textContent = String(w.status || 'pending').toUpperCase();
+    
+    // Copy Box logic
+    const copyBox = document.getElementById('wd-copy-container');
+    const copyVal = document.getElementById('wd-copy-val');
+    if (newStatus === 'paid' || newStatus === 'approved') {
+      copyBox.style.display = 'flex';
+      _copyWdDetail = isUpi ? w.upiId : (w.bankDetails?.accountNumber || '');
+      copyVal.textContent = methodText;
+    } else {
+      copyBox.style.display = 'none';
+      _copyWdDetail = '';
+    }
+
     document.getElementById('wd-admin-note').value = '';
     document.getElementById('wd-action-buttons').innerHTML =
       '<button class="tg-btn ghost" onclick="closeModal(\'wd-action-modal\')">Cancel</button>' +
@@ -1547,13 +1632,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const el = document.getElementById('ud-trans-list');
     el.innerHTML = '<div class="tg-spinner" style="margin:14px auto;"></div>';
     try {
-      const snap = await db.collection('wallet_transactions').where('userId', '==', uid).orderBy('createdAt', 'desc').limit(20).get();
+      const snap = await db.collection('wallet_transactions').where('userId', '==', uid).limit(50).get();
       const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       if (!list.length) {
         el.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:12.5px;">No transactions yet</div>';
         return;
       }
-      el.innerHTML = list.map(t => {
+      el.innerHTML = list.slice(0, 20).map(t => {
         const isC = isCreditType(t.type);
         const sign = isC ? '+' : '-';
         return '<div class="tg-trans-item" style="padding:10px 12px;">' +
