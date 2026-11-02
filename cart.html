@@ -737,6 +737,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   };
 
   let SELLER_GLOBAL = { commissionPercent: 0 };
+  let _settingsLoaded = false;
 
   const _pCache = new Map();
   let _pCacheDirty = false;
@@ -874,11 +875,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }));
   }
 
-  function _pickNum(obj, keys) {
+function _pickNum(obj, keys) {
     if (!obj) return null;
     for (const k of keys) {
       const v = obj[k];
-      if (v != null && !isNaN(Number(v)) && Number(v) > 0) return Number(v);
+      if (v != null && !isNaN(Number(v)) && Number(v) >= 0) return Number(v);
     }
     return null;
   }
@@ -895,14 +896,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     return items.map(it => {
       const p = _pGet(it.productId);
       if (!p) return it;
-      const productGst = _pickNum(p, ['gst', 'gstPercent', 'gstRate', 'tax']) || 0;
+     const productGst = _pickNum(p, ['gst', 'gstPercent', 'gstRate', 'tax']);
       return {
         ...it,
         sellerId: it.sellerId || p.sellerId || p.seller_id || p.sid || p.sellerUid || '',
         sellerName: it.sellerName || p.sellerName || p.shopName || (p.seller && p.seller.shopName) || '',
         rating: (it.rating != null) ? it.rating : _pickNum(p, ['rating','avgRating','averageRating','stars','ratingAvg']),
         ratingCount: (it.ratingCount != null) ? it.ratingCount : _pickCount(p, ['ratingCount','reviewCount','numReviews','ratingsCount','totalRatings','totalReviews','reviewsCount']),
-        gst: (it.gst != null && Number(it.gst) >= 0) ? Number(it.gst) : productGst,
+        gst: (it.gst != null && Number(it.gst) >= 0) ? Number(it.gst) : (productGst != null ? productGst : 18),
         gstIncluded: (it.gstIncluded != null) ? it.gstIncluded : (p.gstIncluded === true)
       };
     });
@@ -988,6 +989,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         if (pd.codLimit != null) COD_LIMIT = Number(pd.codLimit) || 500;
       }
     } catch(e) {}
+_settingsLoaded = true;
     applyPaymentUI();
     updateTotals();
   }
@@ -1100,8 +1102,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let _pendingCartDeletes = new Set();
   let _activeBuyNowId = null;
   const _pendingQty = new Map();
+  const _pendingCartItems = new Map();
+  const PENDING_CART_TTL = 30000;
   let _bootRendered = false;
-
   let availableCoupons = [];
   let appliedCoupon = null;
   let unsubCoupons = null;
@@ -1175,6 +1178,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try { localStorage.setItem(SELECTED_KEY, JSON.stringify([...selectedIds])); } catch(e) {}
   }
 
+  // 🔥 Consume pending items from sessionStorage (instant render)
+  function _consumePendingCartItems() {
+    try {
+      const raw = sessionStorage.getItem('toego_pending_items');
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      sessionStorage.removeItem('toego_pending_items');
+      if (!Array.isArray(arr)) return [];
+      const now = Date.now();
+      return arr.filter(p => p && p.item && p.docId && (now - p.ts) < 60000);
+    } catch(e) { return []; }
+  }
   function loadPin() {
     const pin = getPin();
     const city = document.getElementById('tg-pin-city');
@@ -1868,7 +1883,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
   };
 
-  window.tgRemoveItem = async function(docId, skipConfirm) {
+   window.tgRemoveItem = function(docId, skipConfirm) {
     const item = cartItems.find(it => it.id === docId);
     if (!item) {
       const orphan = _itemNodeMap.get(docId);
@@ -1877,9 +1892,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       return;
     }
 
+    // 🔥 INSTANT UI + TOAST (no await!)
     _pendingCartDeletes.add(docId);
     _markItemDeleted(docId);
     _pendingQty.delete(docId);
+    _pendingCartItems.delete(docId);
     cartItems = cartItems.filter(it => it.id !== docId);
     selectedIds.delete(docId);
     selectedIds.delete(NS_MARK + docId);
@@ -1887,70 +1904,69 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     _persistCartToMirror();
 
     renderCart(true);
+    if (!skipConfirm) toast('Removed from cart', 'success');
 
+    // 🔥 BACKGROUND server sync (fire-and-forget)
     if (currentUser) {
-      try {
-        await db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete();
-        setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
-        if (!skipConfirm) toast('Removed from cart', 'success');
-      } catch(err) {
-        const code = err && err.code;
-        const msg = String(err && err.message || '');
-        if (code === 'not-found' || msg.indexOf('not found') !== -1 || msg.indexOf('No document') !== -1) {
-          setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
-          if (!skipConfirm) toast('Removed from cart', 'success');
-          return;
-        }
-        _pendingCartDeletes.delete(docId);
-        toast('Could not remove item from server', 'error');
-        loadCart();
-      }
+      db.collection('carts').doc(currentUser.uid).collection('items').doc(docId).delete()
+        .then(() => setTimeout(() => _pendingCartDeletes.delete(docId), 5000))
+        .catch(err => {
+          const code = err && err.code;
+          const msg = String(err && err.message || '');
+          if (code === 'not-found' || msg.indexOf('not found') !== -1 || msg.indexOf('No document') !== -1) {
+            setTimeout(() => _pendingCartDeletes.delete(docId), 5000);
+            return;
+          }
+          _pendingCartDeletes.delete(docId);
+          toast('Could not remove from server — restoring', 'error');
+          loadCart();
+        });
     } else {
       setGuestCart(cartItems);
-      if (!skipConfirm) toast('Removed from cart', 'success');
     }
   };
 
-  window.tgRemoveSelected = async function() {
+   window.tgRemoveSelected = function() {
     const sel = getSelectedItems();
     if (!sel.length) { toast('No items selected', 'info'); return; }
 
     const idsToRemove = sel.map(it => it.id);
+
+    // 🔥 INSTANT
     idsToRemove.forEach(id => {
       _pendingCartDeletes.add(id);
       _markItemDeleted(id);
+      _pendingQty.delete(id);
+      _pendingCartItems.delete(id);
     });
 
     cartItems = cartItems.filter(it => !selectedIds.has(it.id));
     idsToRemove.forEach(id => {
       selectedIds.delete(id);
       selectedIds.delete(NS_MARK + id);
-      _pendingQty.delete(id);
     });
     saveSelected();
     _persistCartToMirror();
 
     renderCart(true);
+    toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
 
+    // 🔥 BACKGROUND
     if (currentUser) {
-      try {
-        const batch = db.batch();
-        const col = db.collection('carts').doc(currentUser.uid).collection('items');
-        idsToRemove.forEach(id => batch.delete(col.doc(id)));
-        await batch.commit();
-        setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 5000);
-        toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
-      } catch(err) {
-        idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
-        toast('Could not remove items', 'error');
-        loadCart();
-      }
+      const batch = db.batch();
+      const col = db.collection('carts').doc(currentUser.uid).collection('items');
+      idsToRemove.forEach(id => batch.delete(col.doc(id)));
+      batch.commit()
+        .then(() => setTimeout(() => idsToRemove.forEach(id => _pendingCartDeletes.delete(id)), 5000))
+        .catch(() => {
+          idsToRemove.forEach(id => _pendingCartDeletes.delete(id));
+          toast('Could not remove items from server', 'error');
+          loadCart();
+        });
     } else {
       setGuestCart(cartItems);
-      toast('Removed ' + idsToRemove.length + ' item(s)', 'success');
     }
   };
-
   window.tgMoveToWishlist = async function(docId) {
     if (!currentUser) {
       toast('Please log in to save to wishlist', 'info');
@@ -2030,7 +2046,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
             sellerId: p.sellerId || p.seller_id || '',
             sellerName: p.sellerName || '',
             rating: p.rating || null, ratingCount: p.ratingCount || null,
-            gst: Number(p.gst || 18), gstIncluded: p.gstIncluded === true,
+            gst: (p.gst != null && !isNaN(Number(p.gst))) ? Number(p.gst) : 18, gstIncluded: p.gstIncluded === true,
             addedAt: FV.serverTimestamp()
           };
           const ref = db.collection('carts').doc(currentUser.uid)
@@ -2345,11 +2361,36 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     };
     setTimeout(attemptFn, delays[0]);
   }
-
   function _quickBootRender() {
+    // 🔥 FIRST: consume pending items from sessionStorage (INSTANT render)
+    const pending = _consumePendingCartItems();
+    if (pending.length) {
+      const now = Date.now();
+      pending.forEach(p => {
+        const enriched = enrichFromCacheSync([{ ...p.item, id: p.docId, productId: p.item.productId }])[0];
+        const existing = cartItems.findIndex(it => it.id === enriched.id);
+        if (existing >= 0) cartItems[existing] = { ...cartItems[existing], ...enriched };
+        else cartItems.push(enriched);
+        _pendingCartItems.set(enriched.id, { ts: now, item: enriched });
+      });
+
+      selectedIds.clear();
+      cartItems.forEach(it => selectedIds.add(it.id));
+      saveSelected();
+
+      if (readBuyNowId()) clearBuyNowKeys();
+
+      const loading = document.getElementById('tg-loading');
+      if (loading) loading.style.display = 'none';
+      renderCart(true);
+      _bootRendered = true;
+      return true;
+    }
+
     if (readBuyNowId()) return false;
 
     try {
+
       const lastUid = localStorage.getItem(LAST_UID_KEY);
       if (lastUid) {
         const mirror = _loadMirror(lastUid);
@@ -2472,13 +2513,28 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     let _latestSnap = null;
     let _firstSnapshotDone = false;
 
-    async function processSnapshot(snap) {
+     async function processSnapshot(snap) {
       let raw = snap.docs.map(d => {
         const data = d.data();
         return { ...data, id: d.id, productId: data.productId || d.id };
       }).filter(it => !_pendingCartDeletes.has(it.id) && !_isItemDeleted(it.id));
 
       const snapIds = new Set(snap.docs.map(d => d.id));
+
+   // 🔥 MERGE pending items (from sessionStorage) that snapshot hasn't confirmed yet
+      const nowTs = Date.now();
+      _pendingCartItems.forEach((v, id) => {
+        if (nowTs - v.ts > PENDING_CART_TTL) {
+          _pendingCartItems.delete(id);
+          return;
+        }
+        if (snapIds.has(id)) {
+          _pendingCartItems.delete(id);
+        } else if (!_isItemDeleted(id) && !_pendingCartDeletes.has(id)) {
+          raw.push(v.item);
+          snapIds.add(id);
+        }
+      });
       _pendingCartDeletes.forEach(id => {
         if (!snapIds.has(id)) _pendingCartDeletes.delete(id);
       });
@@ -3012,8 +3068,14 @@ async function setSavedAddresses(list) {
       }
     }
 
-    if (!SETTINGS.razorpayEnabled && SETTINGS.codEnabled && !overLimit) pendingPayMethod = 'cod';
-    else pendingPayMethod = 'razorpay';
+if (!SETTINGS.razorpayEnabled && overLimit) {
+      pendingPayMethod = null;
+      toast('⚠ Order COD limit se zyada hai aur online payment unavailable hai. Chhoti cart banayein ya support se contact karein.', 'error');
+    } else if (!SETTINGS.razorpayEnabled && SETTINGS.codEnabled && !overLimit) {
+      pendingPayMethod = 'cod';
+    } else {
+      pendingPayMethod = 'razorpay';
+    }
 
     document.querySelectorAll('.tg-pay-opt').forEach(el => el.classList.toggle('active', el.dataset.method === pendingPayMethod));
     document.getElementById('tg-pay-modal').classList.add('show');
@@ -3024,8 +3086,12 @@ async function setSavedAddresses(list) {
     document.body.style.overflow = '';
     refreshDeliveryTagsInPlace();
   };
-  window.tgPickPay = function(method, el) {
+window.tgPickPay = function(method, el) {
     if (method === 'cod') {
+      if (!_settingsLoaded) {
+        toast('Payment settings load ho rahi hain, 1 second wait karein.', 'info');
+        return;
+      }
       const t = calcTotals();
       if (t.grand > COD_LIMIT) {
         toast('COD limit ₹' + COD_LIMIT + ' hai. Online payment use karein.', 'error');
@@ -3053,11 +3119,12 @@ async function setSavedAddresses(list) {
 
   // ✅ FIX #12: Duplicate click prevention
   let _payInFlight = false;
-  window.tgConfirmPay = async function() {
+window.tgConfirmPay = async function() {
     if (_payInFlight) { toast('Payment already in progress…', 'info'); return; }
+    if (!_settingsLoaded) { toast('Please wait — payment settings loading…', 'info'); return; }
     const t = calcTotals();
     if (t.itemCount === 0) { toast('Cart is empty', 'error'); return; }
-    if (!pendingAddress) { toast('Please add delivery address', 'error'); tgClosePay(); return; }
+    if (!pendingAddress) { toast('Please add delivery address', 'error'); tgClosePay(); return; } if (!pendingPayMethod) { toast('Koi valid payment method available nahi hai.', 'error'); return; }
 
     if (pendingPayMethod === 'razorpay') {
       if (!SETTINGS.razorpayEnabled) { toast('Online payment unavailable', 'error'); return; }
@@ -3174,7 +3241,7 @@ async function setSavedAddresses(list) {
       }
 
       const serverMrp = Number(p.compareAtPrice || p.mrp || serverPrice);
-      const gstPct = Number(p.gst || 18);
+      const gstPct = (p.gst != null && !isNaN(Number(p.gst))) ? Number(p.gst) : 18;
       const gstIncluded = p.gstIncluded === true;
       const lineTotal = serverPrice * qty;
 
@@ -3804,7 +3871,7 @@ async function setSavedAddresses(list) {
     console.log('═══════════════════════');
   };
 
-  setInterval(() => {
+ const _deliveryTagInterval = setInterval(() => {
     try {
       if (!cartItems.length || !_itemNodeMap.size) return;
       const dInfo = getDeliveryInfo();
@@ -3822,6 +3889,10 @@ async function setSavedAddresses(list) {
       });
     } catch(e) {}
   }, 1500);
+
+  window.addEventListener('pagehide', () => {
+    try { clearInterval(_deliveryTagInterval); } catch(e) {}
+  });
 
   loadSelected();
   loadPin();
