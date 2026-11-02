@@ -22,35 +22,63 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 /* ═══════════ TOP HEADER ═══════════ */
 .tg-hd { background: linear-gradient(135deg, #0d47a1 0%, #2874f0 100%); position: fixed; top: 0; left: 0; right: 0; z-index: 900; box-shadow: 0 2px 10px rgba(13,71,161,.3); }
-.tg-hd-inner { display: flex; align-items: center; gap: 12px; padding: 10px 16px; height: 60px; }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 16px; height: 60px; }
 .tg-hd-menu { width: 40px; height: 40px; border-radius: 8px; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s; }
 .tg-hd-menu:hover { background: rgba(255,255,255,.12); }
 .tg-hd-menu svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 800; letter-spacing: -.2px; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 16px; font-weight: 800; letter-spacing: -.2px; display: flex; align-items: center; gap: 8px; min-width: 0; }
 .tg-hd-title svg { width: 22px; height: 22px; stroke: #ffe500; fill: none; stroke-width: 2.4; flex-shrink: 0; }
 .tg-hd-title span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-hd-bell { position: relative; width: 40px; height: 40px; border-radius: 8px; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s; }
+.tg-hd-bell:hover { background: rgba(255,255,255,.12); }
+.tg-hd-bell svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-notif-badge { position: absolute; top: 4px; right: 4px; min-width: 18px; height: 18px; border-radius: 9px; background: #ffe500; color: #0f1a2e; font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center; padding: 0 4px; animation: bellPulse 1.8s infinite; }
+@keyframes bellPulse { 0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,229,0,.6); } 50% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(255,229,0,0); } }
 .tg-hd-badge { background: rgba(255,229,0,.22); color: #ffe500; border: 1px solid rgba(255,229,0,.45); padding: 4px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; flex-shrink: 0; }
 
-/* ═══════════ RED ERROR BANNER ═══════════ */
-.tg-error-banner { display: none; background: #ffebee; border: 1.5px solid #ffcdd2; border-radius: 12px; padding: 16px; margin-bottom: 16px; color: #b71c1c; box-shadow: 0 2px 8px rgba(211,47,47,.15); }
-.tg-error-banner.show { display: block; }
-.tg-error-banner h4 { margin: 0 0 6px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-.tg-error-banner p { margin: 0; font-size: 12.5px; line-height: 1.5; }
-.tg-error-banner code { background: rgba(0,0,0,.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: 700; }
+/* ═══════════ NOTIFICATION DRAWER ═══════════ */
+.tg-notif-overlay { position: fixed; inset: 0; background: rgba(15,23,41,.45); z-index: 950; display: none; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+.tg-notif-overlay.show { display: block; }
+.tg-notif-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 100vw; background: #fff; z-index: 960; transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; box-shadow: -8px 0 30px rgba(0,0,0,.15); }
+.tg-notif-drawer.open { transform: translateX(0); }
+.tg-notif-head { padding: 18px 20px; background: linear-gradient(135deg, #0d47a1, #2874f0); color: #fff; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.tg-notif-head-title { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.tg-notif-head-count { background: rgba(255,255,255,.2); padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 900; }
+.tg-notif-close { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.15); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.tg-notif-close:hover { background: rgba(255,255,255,.25); }
+.tg-notif-body { flex: 1; overflow-y: auto; padding: 14px; background: #f8f9fb; }
+.tg-notif-group { margin-bottom: 16px; }
+.tg-notif-group-title { font-size: 10.5px; font-weight: 900; color: #666; text-transform: uppercase; letter-spacing: 1px; padding: 0 4px 8px; display: flex; align-items: center; gap: 6px; }
+.tg-notif-group-title .dot { width: 6px; height: 6px; border-radius: 50%; }
+.tg-notif-item { background: #fff; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; border-left: 3px solid transparent; transition: all .15s; display: flex; gap: 12px; align-items: flex-start; }
+.tg-notif-item:hover { transform: translateX(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.tg-notif-item.high { border-left-color: #f57c00; }
+.tg-notif-item.medium { border-left-color: #2874f0; }
+.tg-notif-item.low { border-left-color: #388e3c; }
+.tg-notif-item-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; flex-shrink: 0; }
+.tg-notif-item.high .tg-notif-item-icon { background: #fff3e0; color: #e65100; }
+.tg-notif-item.medium .tg-notif-item-icon { background: #e0eaff; color: #1a5dc7; }
+.tg-notif-item.low .tg-notif-item-icon { background: #d1f0dd; color: #1b8a3a; }
+.tg-notif-item-body { flex: 1; min-width: 0; }
+.tg-notif-item-title { font-size: 13px; font-weight: 800; color: #212121; line-height: 1.3; margin-bottom: 3px; }
+.tg-notif-item-desc { font-size: 11.5px; color: #666; line-height: 1.4; margin-bottom: 4px; }
+.tg-notif-item-meta { font-size: 10.5px; color: #999; display: flex; gap: 8px; flex-wrap: wrap; }
+.tg-notif-item-arrow { color: #ccc; align-self: center; font-size: 16px; flex-shrink: 0; }
+.tg-notif-empty { text-align: center; padding: 60px 20px; color: #999; }
+.tg-notif-empty-icon { font-size: 50px; opacity: .3; margin-bottom: 12px; }
+.tg-notif-empty-title { font-size: 14px; font-weight: 800; color: #666; margin-bottom: 4px; }
+.tg-notif-empty-desc { font-size: 12px; }
 
 /* ═══════════ SIDEBAR ═══════════ */
 .tg-sidebar { position: fixed; top: 60px; left: 0; bottom: 0; width: var(--sidebar-w); background: linear-gradient(180deg, #0f1a2e 0%, #172337 100%); z-index: 850; overflow-y: auto; overflow-x: hidden; transform: translateX(-100%); transition: transform .28s cubic-bezier(.4,0,.2,1); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent; }
 .tg-sidebar::-webkit-scrollbar { width: 4px; }
 .tg-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 4px; }
 .tg-sidebar.open { transform: translateX(0); }
-
 .tg-sidebar-overlay { position: fixed; inset: 60px 0 0 0; background: rgba(15,23,41,.55); z-index: 800; display: none; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
 .tg-sidebar-overlay.show { display: block; }
-
 .tg-sidebar-inner { padding: 16px 0 30px; }
 .tg-sidebar-section { margin-bottom: 8px; }
 .tg-sidebar-label { color: rgba(255,255,255,.4); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; padding: 12px 20px 6px; }
-
 .tg-nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 20px; color: rgba(255,255,255,.72); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all .15s; position: relative; border-left: 3px solid transparent; }
 .tg-nav-item:hover { background: rgba(255,255,255,.05); color: #fff; }
 .tg-nav-item.active { background: linear-gradient(90deg, rgba(40,116,240,.25) 0%, rgba(40,116,240,.08) 100%); color: #fff; border-left-color: var(--tg-primary); }
@@ -60,7 +88,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-nav-label { flex: 1; }
 .tg-nav-count { background: rgba(255,255,255,.12); color: #fff; font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 999px; min-width: 22px; text-align: center; }
 .tg-nav-item.active .tg-nav-count { background: #ffe500; color: #0f1a2e; }
-
 .tg-sidebar-footer { margin-top: 20px; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08); }
 .tg-sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,.05); border-radius: 10px; }
 .tg-sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; font-size: 15px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -68,15 +95,20 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-sidebar-user-name { color: #fff; font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tg-sidebar-user-email { color: rgba(255,255,255,.5); font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* ═══════════ MAIN CONTENT ═══════════ */
+/* ═══════════ MAIN ═══════════ */
 .tg-wrap { padding-top: 60px; padding-bottom: 40px; min-height: 100vh; transition: margin-left .28s; }
 .tg-container { max-width: 1400px; margin: 0 auto; padding: 16px; }
+@media (min-width: 1025px) { .tg-wrap { margin-left: 0; } .tg-wrap.sidebar-open { margin-left: var(--sidebar-w); } .tg-sidebar-overlay { display: none !important; } }
 
-@media (min-width: 1025px) {
-  .tg-wrap { margin-left: 0; }
-  .tg-wrap.sidebar-open { margin-left: var(--sidebar-w); }
-  .tg-sidebar-overlay { display: none !important; }
-}
+/* ═══════════ ALERT STRIP ═══════════ */
+.tg-alert-strip { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border: 1.5px solid #ffb74d; border-radius: 14px; padding: 14px 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(245,124,0,.12); }
+.tg-alert-strip-icon { width: 42px; height: 42px; border-radius: 12px; background: #f57c00; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; animation: alertShake 2s infinite; }
+@keyframes alertShake { 0%,100% { transform: rotate(0); } 5%,15% { transform: rotate(-6deg); } 10%,20% { transform: rotate(6deg); } 25% { transform: rotate(0); } }
+.tg-alert-strip-body { flex: 1; min-width: 200px; }
+.tg-alert-strip-title { font-size: 14px; font-weight: 800; color: #e65100; margin-bottom: 2px; }
+.tg-alert-strip-desc { font-size: 12.5px; color: #6d4c00; line-height: 1.4; }
+.tg-alert-strip-btn { background: #f57c00; color: #fff; padding: 9px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 800; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(245,124,0,.3); transition: all .15s; }
+.tg-alert-strip-btn:hover { background: #e65100; transform: translateY(-1px); }
 
 /* ═══════════ KPI CARDS ═══════════ */
 .tg-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
@@ -86,6 +118,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-kpi.green::before { background: #388e3c; }
 .tg-kpi.amber::before { background: #f57c00; }
 .tg-kpi.pink::before { background: #e91e63; }
+.tg-kpi.clickable { cursor: pointer; transition: all .2s; }
+.tg-kpi.clickable:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+.tg-kpi.clickable:hover .tg-kpi-arrow { opacity: 1; transform: translateX(2px); }
+.tg-kpi.clickable:active { transform: translateY(0); }
 .tg-kpi-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
 .tg-kpi.blue .tg-kpi-icon { background: linear-gradient(135deg,#eef3ff,#d0e2ff); }
 .tg-kpi.blue .tg-kpi-icon svg { stroke: #2874f0; }
@@ -98,6 +134,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-kpi-icon svg { width: 22px; height: 22px; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .tg-kpi-val { font-size: 24px; font-weight: 900; color: #212121; line-height: 1.1; letter-spacing: -.5px; margin-bottom: 3px; }
 .tg-kpi-label { font-size: 11px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+.tg-kpi-arrow { position: absolute; bottom: 14px; right: 14px; color: #ccc; opacity: .3; transition: all .2s; font-size: 16px; font-weight: 900; }
 
 /* ═══════════ SECTION HEADER ═══════════ */
 .tg-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
@@ -139,14 +176,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-card-title-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .tg-card-title-text b { font-weight: 800; color: #212121; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tg-card-title-text small { font-size: 11.5px; color: #888; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
 .tg-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 900; padding: 5px 11px; border-radius: 999px; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
 .tg-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .tg-badge.pending { background: #fff3cd; color: #856404; }
 .tg-badge.approved, .tg-badge.processing { background: #e0eaff; color: #1a5dc7; }
 .tg-badge.paid, .tg-badge.credited, .tg-badge.completed { background: #d1f0dd; color: #1b8a3a; }
 .tg-badge.rejected, .tg-badge.cancelled { background: #ffebee; color: #c62828; }
-
 .tg-card-body { display: flex; flex-direction: column; gap: 8px; }
 .tg-row { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; gap: 10px; }
 .tg-row .lbl { color: #666; font-weight: 500; }
@@ -155,7 +190,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-row .val.big { font-size: 17px; font-weight: 900; color: #0d47a1; }
 .tg-row .val.green { color: #1b8a3a; }
 .tg-row .val.red { color: #c62828; }
-
 .tg-actions-row { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #e0e0e0; flex-wrap: wrap; }
 .tg-btn { padding: 9px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s; letter-spacing: .3px; white-space: nowrap; }
 .tg-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
@@ -171,67 +205,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-btn.ghost { background: #f1f3f6; color: #212121; border: 1.5px solid #e0e0e0; }
 .tg-btn.ghost:hover:not(:disabled) { background: #e8ecf1; }
 .tg-btn.small { padding: 6px 11px; font-size: 11px; }
-
+.tg-btn.icon-only { padding: 8px 10px; }
 .tg-note { margin-top: 8px; padding: 10px 12px; background: #fff8e1; border-left: 3px solid #f57c00; border-radius: 6px; font-size: 12px; color: #6d4c00; line-height: 1.4; }
 .tg-note b { font-weight: 800; }
-
-/* ═══════════ EMPTY ═══════════ */
 .tg-empty { background: #fff; border-radius: 12px; padding: 60px 24px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
 .tg-empty-icon { font-size: 60px; opacity: .3; margin-bottom: 14px; }
 .tg-empty-title { font-size: 16px; font-weight: 800; color: #212121; margin-bottom: 6px; }
 .tg-empty-desc { font-size: 13px; color: #666; line-height: 1.5; max-width: 320px; margin: 0 auto; }
 
-/* ═══════════ SETTINGS FORM ═══════════ */
-.tg-form-card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06); max-width: 640px; }
-.tg-form-title { font-size: 16px; font-weight: 800; color: #212121; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-.tg-form-desc { font-size: 12.5px; color: #666; margin-bottom: 20px; line-height: 1.5; }
-.tg-field { margin-bottom: 18px; }
-.tg-field label { display: block; font-size: 12px; font-weight: 800; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
-.tg-field input, .tg-field select { width: 100%; height: 44px; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 0 14px; font-size: 14px; outline: none; background: #fff; transition: border-color .15s,box-shadow .15s; }
-.tg-field input:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,.1); }
-.tg-field-hint { font-size: 11.5px; color: #888; margin-top: 5px; line-height: 1.4; }
-
-/* ═══════════ PRODUCT OVERRIDES ═══════════ */
-.tg-prod-row { background: #fff; border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 60px 1fr auto; gap: 12px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 8px; }
-.tg-prod-img { width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: #f5f5f6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #ccc; }
-.tg-prod-img img { width: 100%; height: 100%; object-fit: cover; }
-.tg-prod-body { min-width: 0; }
-.tg-prod-name { font-size: 13.5px; font-weight: 700; color: #212121; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tg-prod-meta { font-size: 11.5px; color: #888; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-.tg-prod-meta b { color: #212121; font-weight: 700; }
-.tg-prod-input-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.tg-prod-input-wrap input { width: 80px; height: 38px; border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 0 8px; font-size: 13px; text-align: center; font-weight: 700; outline: none; }
-.tg-prod-input-wrap input:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,.1); }
-.tg-prod-input-wrap .unit { font-size: 12px; color: #666; font-weight: 700; }
-.tg-prod-override-badge { font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 999px; letter-spacing: .3px; }
-.tg-prod-override-badge.custom { background: #ffe500; color: #212121; }
-.tg-prod-override-badge.default { background: #e0e0e0; color: #666; }
-
-/* ═══════════ USERS ═══════════ */
-.tg-users-list { display: flex; flex-direction: column; gap: 8px; }
-.tg-user-row { background: #fff; border-radius: 10px; padding: 12px 16px; display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); cursor: pointer; transition: box-shadow .15s,transform .1s; }
-.tg-user-row:hover { box-shadow: 0 3px 10px rgba(0,0,0,.08); transform: translateY(-1px); }
-.tg-user-wallet-mini { display: flex; gap: 10px; align-items: center; }
-.tg-user-wallet-mini .pill { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
-.tg-user-wallet-mini .pill.avail { background: #e0eaff; color: #1a5dc7; }
-.tg-user-wallet-mini .pill.pend { background: #fff3cd; color: #856404; }
-
-/* ═══════════ TRANSACTIONS ═══════════ */
-.tg-trans-list { display: flex; flex-direction: column; gap: 8px; }
-.tg-trans-item { padding: 12px 14px; background: #fff; border-radius: 10px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 12.5px; }
-.tg-trans-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; font-weight: 900; }
-.tg-trans-icon.credit { background: #d1f0dd; color: #1b8a3a; }
-.tg-trans-icon.debit { background: #ffebee; color: #c62828; }
-.tg-trans-body { flex: 1; min-width: 0; }
-.tg-trans-title { font-weight: 800; color: #212121; margin-bottom: 3px; font-size: 13px; }
-.tg-trans-user { font-size: 11.5px; color: #2874f0; font-weight: 700; margin-bottom: 2px; }
-.tg-trans-note { font-size: 11.5px; color: #666; line-height: 1.4; }
-.tg-trans-meta { font-size: 10.5px; color: #999; margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
-.tg-trans-amount { font-weight: 900; font-size: 15px; flex-shrink: 0; text-align: right; }
-.tg-trans-amount.credit { color: #1b8a3a; }
-.tg-trans-amount.debit { color: #c62828; }
-
-/* Dashboard quick action cards */
+/* ═══════════ DASHBOARD ═══════════ */
 .tg-dash-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
 .tg-dash-card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); cursor: pointer; transition: all .2s; text-align: center; border: 2px solid transparent; }
 .tg-dash-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.08); border-color: #2874f0; }
@@ -252,10 +234,84 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-dash-card-title { font-size: 14px; font-weight: 800; color: #212121; margin-bottom: 3px; }
 .tg-dash-card-desc { font-size: 11.5px; color: #888; line-height: 1.4; }
 
+/* Dashboard recent blocks */
+.tg-dash-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+.tg-dash-block { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.tg-dash-block-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.tg-dash-block-title { font-size: 13.5px; font-weight: 800; color: #212121; display: flex; align-items: center; gap: 8px; }
+.tg-dash-block-title .count-pill { background: #e0eaff; color: #1a5dc7; font-size: 10.5px; font-weight: 900; padding: 2px 8px; border-radius: 999px; }
+.tg-dash-block-link { font-size: 11.5px; font-weight: 800; color: #2874f0; cursor: pointer; }
+.tg-dash-block-link:hover { text-decoration: underline; }
+.tg-dash-mini-item { padding: 10px 0; border-bottom: 1px dashed #ececec; display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+.tg-dash-mini-item:last-child { border-bottom: none; padding-bottom: 0; }
+.tg-dash-mini-item:first-of-type { padding-top: 0; }
+.tg-dash-mini-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #fff; flex-shrink: 0; background: linear-gradient(135deg,#2874f0,#1a5dc7); }
+.tg-dash-mini-body { flex: 1; min-width: 0; }
+.tg-dash-mini-title { font-weight: 700; color: #212121; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-dash-mini-desc { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-dash-mini-amount { font-weight: 900; font-size: 13px; color: #0d47a1; flex-shrink: 0; }
+.tg-dash-mini-amount.green { color: #1b8a3a; }
+.tg-dash-mini-amount.amber { color: #e65100; }
+.tg-dash-empty { text-align: center; padding: 24px 12px; color: #999; font-size: 12px; }
+
+/* ═══════════ FORM ═══════════ */
+.tg-form-card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06); max-width: 640px; }
+.tg-form-title { font-size: 16px; font-weight: 800; color: #212121; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.tg-form-desc { font-size: 12.5px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+.tg-field { margin-bottom: 18px; }
+.tg-field label { display: block; font-size: 12px; font-weight: 800; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+.tg-field input, .tg-field select { width: 100%; height: 44px; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 0 14px; font-size: 14px; outline: none; background: #fff; transition: border-color .15s,box-shadow .15s; }
+.tg-field input:focus, .tg-field select:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,.1); }
+.tg-field-hint { font-size: 11.5px; color: #888; margin-top: 5px; line-height: 1.4; }
+
+/* ═══════════ PRODUCTS ═══════════ */
+.tg-prod-row { background: #fff; border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 60px 1fr auto; gap: 12px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 8px; }
+.tg-prod-img { width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: #f5f5f6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #ccc; }
+.tg-prod-img img { width: 100%; height: 100%; object-fit: cover; }
+.tg-prod-body { min-width: 0; }
+.tg-prod-name { font-size: 13.5px; font-weight: 700; color: #212121; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-prod-meta { font-size: 11.5px; color: #888; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.tg-prod-meta b { color: #212121; font-weight: 700; }
+.tg-prod-input-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.tg-prod-input-wrap input { width: 80px; height: 38px; border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 0 8px; font-size: 13px; text-align: center; font-weight: 700; outline: none; }
+.tg-prod-input-wrap input:focus { border-color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,.1); }
+.tg-prod-input-wrap .unit { font-size: 12px; color: #666; font-weight: 700; }
+.tg-prod-override-badge { font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 999px; letter-spacing: .3px; }
+.tg-prod-override-badge.custom { background: #ffe500; color: #212121; }
+.tg-prod-override-badge.default { background: #e0e0e0; color: #666; }
+
+/* ═══════════ USERS ═══════════ */
+.tg-users-list { display: flex; flex-direction: column; gap: 8px; }
+.tg-user-row { background: #fff; border-radius: 10px; padding: 12px 16px; display: grid; grid-template-columns: 40px 1fr auto auto; gap: 14px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); cursor: pointer; transition: box-shadow .15s,transform .1s; }
+.tg-user-row:hover { box-shadow: 0 3px 10px rgba(0,0,0,.08); transform: translateY(-1px); }
+.tg-user-wallet-mini { display: flex; gap: 10px; align-items: center; }
+.tg-user-wallet-mini .pill { font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+.tg-user-wallet-mini .pill.avail { background: #e0eaff; color: #1a5dc7; }
+.tg-user-wallet-mini .pill.pend { background: #fff3cd; color: #856404; }
+.tg-user-report-btn { width: 34px; height: 34px; border-radius: 8px; background: #e6f7ec; color: #1b8a3a; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+.tg-user-report-btn:hover { background: #1b8a3a; color: #fff; }
+.tg-user-report-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ═══════════ TRANSACTIONS ═══════════ */
+.tg-trans-list { display: flex; flex-direction: column; gap: 8px; }
+.tg-trans-item { padding: 12px 14px; background: #fff; border-radius: 10px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 12.5px; }
+.tg-trans-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; font-weight: 900; }
+.tg-trans-icon.credit { background: #d1f0dd; color: #1b8a3a; }
+.tg-trans-icon.debit { background: #ffebee; color: #c62828; }
+.tg-trans-body { flex: 1; min-width: 0; }
+.tg-trans-title { font-weight: 800; color: #212121; margin-bottom: 3px; font-size: 13px; }
+.tg-trans-user { font-size: 11.5px; color: #2874f0; font-weight: 700; margin-bottom: 2px; }
+.tg-trans-note { font-size: 11.5px; color: #666; line-height: 1.4; }
+.tg-trans-meta { font-size: 10.5px; color: #999; margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
+.tg-trans-amount { font-weight: 900; font-size: 15px; flex-shrink: 0; text-align: right; }
+.tg-trans-amount.credit { color: #1b8a3a; }
+.tg-trans-amount.debit { color: #c62828; }
+
 /* ═══════════ MODAL ═══════════ */
 .tg-modal { position: fixed; inset: 0; background: rgba(15,23,41,.65); z-index: 99999; display: none; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
 .tg-modal.show { display: flex; }
 .tg-modal-card { width: 100%; max-width: 560px; background: #fff; border-radius: 18px; padding: 24px; max-height: 90vh; overflow-y: auto; animation: tgModalIn .28s cubic-bezier(.34,1.56,.64,1); }
+.tg-modal-card.lg { max-width: 720px; }
 @keyframes tgModalIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 10px; }
 .tg-modal-title { font-size: 18px; font-weight: 800; color: #212121; display: flex; align-items: center; gap: 8px; }
@@ -264,7 +320,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-modal-body { font-size: 13.5px; line-height: 1.55; color: #212121; }
 .tg-modal-footer { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; flex-wrap: wrap; }
 .tg-modal-footer .tg-btn { padding: 11px 20px; font-size: 13px; }
-
 .tg-wallet-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 18px; }
 .tg-wallet-cell { background: linear-gradient(135deg,#f0f5ff,#e0eaff); border-radius: 10px; padding: 12px 8px; text-align: center; }
 .tg-wallet-cell.green { background: linear-gradient(135deg,#e6f7ec,#d1f0dd); }
@@ -275,17 +330,24 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-wallet-cell.amber .tg-wallet-val { color: #e65100; }
 .tg-wallet-cell.pink .tg-wallet-val { color: #c2185b; }
 .tg-wallet-lbl { font-size: 9.5px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: .3px; margin-top: 3px; }
-
 .tg-adjust-box { background: #f8f9fb; border-radius: 12px; padding: 16px; margin-top: 14px; }
 .tg-adjust-title { font-size: 12px; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
 .tg-adjust-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
 .tg-adjust-tab { flex: 1; padding: 9px; border: 1.5px solid #e0e0e0; border-radius: 8px; background: #fff; font-size: 12px; font-weight: 800; color: #666; cursor: pointer; transition: all .15s; }
 .tg-adjust-tab.active { background: #2874f0; color: #fff; border-color: #2874f0; }
 .tg-adjust-tab.active.debit { background: #d32f2f; border-color: #d32f2f; }
+.tg-copy-box { background: #e8f0fe; border: 1px dashed #2874f0; color: #1a5dc7; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+.tg-copy-box span { font-size: 13px; font-weight: 800; font-family: monospace; word-break: break-all; }
+.tg-copy-btn { background: #2874f0; color: #fff; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
 
-.tg-copy-box { background: #e8f0fe; border: 1px dashed #2874f0; color: #1a5dc7; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.tg-copy-box span { font-size: 14px; font-weight: 800; font-family: monospace; }
-.tg-copy-btn { background: #2874f0; color: #fff; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 800; cursor: pointer; }
+/* User detail tabs */
+.tg-tabs { display: flex; gap: 4px; border-bottom: 2px solid #ececec; margin: 18px 0 14px; overflow-x: auto; scrollbar-width: none; }
+.tg-tabs::-webkit-scrollbar { display: none; }
+.tg-tab { padding: 10px 14px; font-size: 12.5px; font-weight: 700; color: #888; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: all .15s; }
+.tg-tab:hover { color: #2874f0; }
+.tg-tab.active { color: #2874f0; border-bottom-color: #2874f0; }
+.tg-tab-panel { display: none; }
+.tg-tab-panel.active { display: block; }
 
 /* ═══════════ TOASTS ═══════════ */
 .tg-toasts { position: fixed; bottom: 24px; right: 24px; z-index: 999999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 32px); }
@@ -295,16 +357,25 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-toast.error { background: linear-gradient(135deg,#d32f2f,#b71c1c); }
 .tg-toast.info { background: linear-gradient(135deg,#2874f0,#1a5dc7); }
 
-/* ═══════════ SPINNER ═══════════ */
+/* ═══════════ SPINNER & ERROR ═══════════ */
 .tg-spinner { width: 32px; height: 32px; border: 3px solid #e0e6f0; border-top-color: #2874f0; border-radius: 50%; animation: tgSpin .8s linear infinite; margin: 24px auto; }
 @keyframes tgSpin { to { transform: rotate(360deg); } }
+.tg-error-banner { display: none; background: #ffebee; border: 1.5px solid #ffcdd2; border-radius: 12px; padding: 16px; margin-bottom: 16px; color: #b71c1c; box-shadow: 0 2px 8px rgba(211,47,47,.15); }
+.tg-error-banner.show { display: block; }
+.tg-error-banner h4 { margin: 0 0 6px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.tg-error-banner p { margin: 0; font-size: 12.5px; line-height: 1.5; }
+.tg-error-banner code { background: rgba(0,0,0,.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: 700; }
 
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 1024px) {
   .tg-kpis { grid-template-columns: repeat(2, 1fr); }
   .tg-dash-grid { grid-template-columns: repeat(2,1fr); }
+  .tg-dash-two-col { grid-template-columns: 1fr; }
+  .tg-notif-drawer { width: 360px; }
 }
 @media (max-width: 640px) {
+  .tg-hd-title { font-size: 14px; }
+  .tg-hd-badge { display: none; }
   .tg-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
   .tg-kpi { padding: 12px 14px; }
   .tg-kpi-val { font-size: 20px; }
@@ -322,15 +393,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-prod-img { width: 48px; height: 48px; }
   .tg-prod-input-wrap { grid-column: 1/-1; justify-content: flex-end; }
   .tg-wallet-grid { grid-template-columns: repeat(2,1fr); }
-  .tg-user-row { grid-template-columns: 36px 1fr; }
+  .tg-user-row { grid-template-columns: 36px 1fr auto; }
   .tg-user-wallet-mini { grid-column: 1/-1; justify-content: flex-start; flex-wrap: wrap; }
+  .tg-user-report-btn { grid-column: 3; grid-row: 1; }
   .tg-search { min-width: 0; flex: 1; }
+  .tg-notif-drawer { width: 100vw; }
+  .tg-alert-strip { padding: 12px 14px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ TOP HEADER ═══ -->
+<!-- ═══════════ HEADER ═══════════ -->
 <header class="tg-hd">
   <div class="tg-hd-inner">
     <button class="tg-hd-menu" id="tg-menu-btn" aria-label="Menu">
@@ -340,17 +414,37 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg>
       <span id="tg-hd-page-title">Commissions Control</span>
     </div>
+    <button class="tg-hd-bell" id="tg-bell-btn" aria-label="Notifications" onclick="toggleNotifDrawer()">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="tg-notif-badge" id="tg-notif-badge" style="display:none;">0</span>
+    </button>
     <div class="tg-hd-badge">ADMIN</div>
   </div>
 </header>
 
-<!-- ═══ SIDEBAR OVERLAY ═══ -->
-<div class="tg-sidebar-overlay" id="tg-sidebar-overlay"></div>
+<!-- ═══════════ NOTIFICATION DRAWER ═══════════ -->
+<div class="tg-notif-overlay" id="tg-notif-overlay" onclick="closeNotifDrawer()"></div>
+<aside class="tg-notif-drawer" id="tg-notif-drawer">
+  <div class="tg-notif-head">
+    <div class="tg-notif-head-title">
+      🔔 Notifications
+      <span class="tg-notif-head-count" id="tg-notif-head-count">0</span>
+    </div>
+    <button class="tg-notif-close" onclick="closeNotifDrawer()">✕</button>
+  </div>
+  <div class="tg-notif-body" id="tg-notif-body">
+    <div class="tg-notif-empty">
+      <div class="tg-notif-empty-icon">🔔</div>
+      <div class="tg-notif-empty-title">All clear!</div>
+      <div class="tg-notif-empty-desc">Koi pending alert nahi hai.</div>
+    </div>
+  </div>
+</aside>
 
-<!-- ═══ SIDEBAR ═══ -->
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<div class="tg-sidebar-overlay" id="tg-sidebar-overlay" onclick="closeSidebar()"></div>
 <aside class="tg-sidebar" id="tg-sidebar">
   <div class="tg-sidebar-inner">
-
     <div class="tg-sidebar-section">
       <div class="tg-sidebar-label">Overview</div>
       <div class="tg-nav-item active" data-section="dashboard" onclick="switchSection('dashboard')">
@@ -358,7 +452,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <div class="tg-nav-label">Dashboard</div>
       </div>
     </div>
-
     <div class="tg-sidebar-section">
       <div class="tg-sidebar-label">Finance</div>
       <div class="tg-nav-item" data-section="withdrawals" onclick="switchSection('withdrawals')">
@@ -377,7 +470,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <span class="tg-nav-count" id="nav-count-tx">0</span>
       </div>
     </div>
-
     <div class="tg-sidebar-section">
       <div class="tg-sidebar-label">Configuration</div>
       <div class="tg-nav-item" data-section="settings" onclick="switchSection('settings')">
@@ -390,7 +482,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <span class="tg-nav-count" id="nav-count-prod">0</span>
       </div>
     </div>
-
     <div class="tg-sidebar-section">
       <div class="tg-sidebar-label">Users</div>
       <div class="tg-nav-item" data-section="users" onclick="switchSection('users')">
@@ -399,7 +490,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <span class="tg-nav-count" id="nav-count-users">0</span>
       </div>
     </div>
-
     <div class="tg-sidebar-footer">
       <div class="tg-sidebar-user">
         <div class="tg-sidebar-avatar" id="tg-sidebar-avatar">A</div>
@@ -409,42 +499,54 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         </div>
       </div>
     </div>
-
   </div>
 </aside>
 
-<!-- ═══ MAIN WRAP ═══ -->
+<!-- ═══════════ MAIN ═══════════ -->
 <div class="tg-wrap" id="tg-wrap">
   <div class="tg-container">
-
-    <!-- ═══ ERROR BANNER ═══ -->
     <div class="tg-error-banner" id="tg-global-error">
       <h4>⚠️ Data Load Error</h4>
-      <p id="tg-error-msg">Kuch data load nahi ho paya. Check karo ki tumhara account Firestore me <code>admin</code> role rakhta hai ya nahi.</p>
+      <p id="tg-error-msg">Check karo ki tumhara account Firestore me <code>admin</code> role rakhta hai.</p>
     </div>
 
-    <!-- ═══════════ DASHBOARD ═══════════ -->
+    <!-- ═══ DASHBOARD ═══ -->
     <div class="tg-panel active" id="panel-dashboard">
+      <div class="tg-alert-strip" id="tg-alert-strip" style="display:none;">
+        <div class="tg-alert-strip-icon">🔔</div>
+        <div class="tg-alert-strip-body">
+          <div class="tg-alert-strip-title" id="tg-alert-strip-title">Attention needed</div>
+          <div class="tg-alert-strip-desc" id="tg-alert-strip-desc">Pending items found</div>
+        </div>
+        <button class="tg-alert-strip-btn" onclick="openNotifDrawer()">
+          View All →
+        </button>
+      </div>
+
       <div class="tg-kpis">
-        <div class="tg-kpi blue">
+        <div class="tg-kpi blue clickable" onclick="switchSection('users')">
           <div class="tg-kpi-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div class="tg-kpi-val" id="kpi-users">0</div>
           <div class="tg-kpi-label">Total Users</div>
+          <div class="tg-kpi-arrow">→</div>
         </div>
-        <div class="tg-kpi green">
+        <div class="tg-kpi green clickable" onclick="gotoWithFilter('referrals','rf-filters','credited')">
           <div class="tg-kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
           <div class="tg-kpi-val" id="kpi-commissions">₹0</div>
           <div class="tg-kpi-label">Total Commissions</div>
+          <div class="tg-kpi-arrow">→</div>
         </div>
-        <div class="tg-kpi amber">
+        <div class="tg-kpi amber clickable" onclick="gotoWithFilter('withdrawals','wd-filters','pending')">
           <div class="tg-kpi-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <div class="tg-kpi-val" id="kpi-pending-wd">₹0</div>
           <div class="tg-kpi-label">Pending Withdrawals</div>
+          <div class="tg-kpi-arrow">→</div>
         </div>
-        <div class="tg-kpi pink">
+        <div class="tg-kpi pink clickable" onclick="gotoWithFilter('referrals','rf-filters','pending')">
           <div class="tg-kpi-icon"><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
           <div class="tg-kpi-val" id="kpi-referrals">0</div>
-          <div class="tg-kpi-label">Total Referrals</div>
+          <div class="tg-kpi-label">Pending Referrals</div>
+          <div class="tg-kpi-arrow">→</div>
         </div>
       </div>
 
@@ -456,12 +558,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </div>
 
       <div class="tg-dash-grid">
-        <div class="tg-dash-card amber" onclick="switchSection('withdrawals')">
+        <div class="tg-dash-card amber" onclick="gotoWithFilter('withdrawals','wd-filters','pending')">
           <div class="tg-dash-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
           <div class="tg-dash-card-title">Withdrawals</div>
           <div class="tg-dash-card-desc">Approve or reject user withdrawal requests</div>
         </div>
-        <div class="tg-dash-card green" onclick="switchSection('referrals')">
+        <div class="tg-dash-card green" onclick="gotoWithFilter('referrals','rf-filters','pending')">
           <div class="tg-dash-card-icon"><svg viewBox="0 0 24 24"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
           <div class="tg-dash-card-title">Referrals</div>
           <div class="tg-dash-card-desc">Credit or cancel referral commissions</div>
@@ -479,7 +581,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <div class="tg-dash-card pink" onclick="switchSection('users')">
           <div class="tg-dash-card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div class="tg-dash-card-title">Users</div>
-          <div class="tg-dash-card-desc">Manage wallets & manual adjustments</div>
+          <div class="tg-dash-card-desc">Manage wallets, reports & adjustments</div>
         </div>
         <div class="tg-dash-card gray" onclick="switchSection('transactions')">
           <div class="tg-dash-card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg></div>
@@ -487,9 +589,38 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           <div class="tg-dash-card-desc">Every wallet change tracked</div>
         </div>
       </div>
+
+      <div class="tg-section-head" style="margin-top:6px;">
+        <div>
+          <div class="tg-section-title">⏱️ Recent Activity</div>
+          <div class="tg-section-desc">Latest pending items requiring your attention</div>
+        </div>
+      </div>
+      <div class="tg-dash-two-col">
+        <div class="tg-dash-block">
+          <div class="tg-dash-block-head">
+            <div class="tg-dash-block-title">
+              💸 Pending Withdrawals
+              <span class="count-pill" id="dash-pw-count">0</span>
+            </div>
+            <div class="tg-dash-block-link" onclick="gotoWithFilter('withdrawals','wd-filters','pending')">View all →</div>
+          </div>
+          <div id="dash-pending-wd"><div class="tg-dash-empty">Loading...</div></div>
+        </div>
+        <div class="tg-dash-block">
+          <div class="tg-dash-block-head">
+            <div class="tg-dash-block-title">
+              🎁 Pending Commissions
+              <span class="count-pill" id="dash-pr-count">0</span>
+            </div>
+            <div class="tg-dash-block-link" onclick="gotoWithFilter('referrals','rf-filters','pending')">View all →</div>
+          </div>
+          <div id="dash-pending-refs"><div class="tg-dash-empty">Loading...</div></div>
+        </div>
+      </div>
     </div>
 
-    <!-- ═══════════ WITHDRAWALS ═══════════ -->
+    <!-- ═══ WITHDRAWALS ═══ -->
     <div class="tg-panel" id="panel-withdrawals">
       <div class="tg-section-head">
         <div>
@@ -517,7 +648,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div class="tg-cards" id="wd-list"><div class="tg-spinner"></div></div>
     </div>
 
-    <!-- ═══════════ REFERRALS ═══════════ -->
+    <!-- ═══ REFERRALS ═══ -->
     <div class="tg-panel" id="panel-referrals">
       <div class="tg-section-head">
         <div>
@@ -544,7 +675,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div class="tg-cards" id="rf-list"><div class="tg-spinner"></div></div>
     </div>
 
-    <!-- ═══════════ TRANSACTIONS ═══════════ -->
+    <!-- ═══ TRANSACTIONS ═══ -->
     <div class="tg-panel" id="panel-transactions">
       <div class="tg-section-head">
         <div>
@@ -570,7 +701,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div class="tg-trans-list" id="tx-list"><div class="tg-spinner"></div></div>
     </div>
 
-    <!-- ═══════════ SETTINGS ═══════════ -->
+    <!-- ═══ SETTINGS ═══ -->
     <div class="tg-panel" id="panel-settings">
       <div class="tg-section-head">
         <div>
@@ -579,30 +710,23 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         </div>
       </div>
       <div class="tg-form-card">
-        <div class="tg-form-title">
-          <svg viewBox="0 0 24 24" width="22" height="22" style="stroke:#2874f0;fill:none;stroke-width:2.2;"><circle cx="12" cy="12" r="3"/></svg>
-          Global Defaults
-        </div>
+        <div class="tg-form-title">Global Defaults</div>
         <div class="tg-form-desc">Ye settings sabhi users pe apply hongi. Product-level override ke liye Product Overrides section use karein.</div>
-
         <div class="tg-field">
           <label>Default Commission Percent (%)</label>
           <input type="number" id="set-default-percent" min="0" max="100" step="0.5" placeholder="e.g. 5">
           <div class="tg-field-hint">Har referral pe default itna % commission milega (agar product override nahi hai to).</div>
         </div>
-
         <div class="tg-field">
           <label>Minimum Withdraw Amount (₹)</label>
           <input type="number" id="set-min-withdraw" min="0" step="1" placeholder="e.g. 100">
           <div class="tg-field-hint">User isse kam amount withdraw nahi kar sakta.</div>
         </div>
-
         <div class="tg-field">
           <label>Withdrawal Processing Days</label>
           <input type="number" id="set-processing-days" min="0" max="30" step="1" placeholder="e.g. 3">
           <div class="tg-field-hint">User ko message me dikhaya jayega — "N days me process hoga".</div>
         </div>
-
         <button class="tg-btn primary" style="width:100%;padding:14px;font-size:14px;" onclick="saveSettings()">
           <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Save Settings
@@ -610,7 +734,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </div>
     </div>
 
-    <!-- ═══════════ PRODUCTS ═══════════ -->
+    <!-- ═══ PRODUCTS ═══ -->
     <div class="tg-panel" id="panel-products">
       <div class="tg-section-head">
         <div>
@@ -631,12 +755,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div id="prod-list"><div class="tg-spinner"></div></div>
     </div>
 
-    <!-- ═══════════ USERS ═══════════ -->
+    <!-- ═══ USERS ═══ -->
     <div class="tg-panel" id="panel-users">
       <div class="tg-section-head">
         <div>
           <div class="tg-section-title">👥 Users & Wallets</div>
-          <div class="tg-section-desc">Click on any user to view wallet & manual adjust</div>
+          <div class="tg-section-desc">Click user to view wallet · Click 📥 to download Excel report</div>
         </div>
       </div>
       <div class="tg-toolbar">
@@ -665,7 +789,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         <div class="tg-row"><span class="lbl">Method</span><span class="val" id="wd-info-method">—</span></div>
         <div class="tg-row"><span class="lbl">Current Status</span><span class="val" id="wd-info-status">—</span></div>
       </div>
-      <!-- Auto Copy Box -->
       <div class="tg-copy-box" id="wd-copy-container" style="display:none;">
         <span id="wd-copy-val">—</span>
         <button class="tg-copy-btn" onclick="copyWdDetail()">Copy</button>
@@ -681,16 +804,22 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 <!-- ═══ USER DETAIL MODAL ═══ -->
 <div class="tg-modal" id="user-detail-modal">
-  <div class="tg-modal-card">
+  <div class="tg-modal-card lg">
     <div class="tg-modal-head">
-      <div class="tg-modal-title">👤 User Wallet</div>
+      <div class="tg-modal-title">👤 User Detail</div>
       <button class="tg-modal-close" onclick="closeModal('user-detail-modal')">✕</button>
     </div>
     <div class="tg-modal-body">
-      <div style="margin-bottom:14px;">
-        <div style="font-size:16px;font-weight:800;color:#212121;" id="ud-name">—</div>
-        <div style="font-size:12.5px;color:#666;margin-top:3px;" id="ud-email">—</div>
-        <div style="font-size:11.5px;color:#999;margin-top:2px;font-family:monospace;" id="ud-uid">—</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:16px;font-weight:800;color:#212121;" id="ud-name">—</div>
+          <div style="font-size:12.5px;color:#666;margin-top:3px;" id="ud-email">—</div>
+          <div style="font-size:11.5px;color:#999;margin-top:2px;font-family:monospace;" id="ud-uid">—</div>
+        </div>
+        <button class="tg-btn success small" id="ud-download-btn" onclick="downloadUserReport()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Report
+        </button>
       </div>
 
       <div class="tg-wallet-grid">
@@ -712,37 +841,50 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         </div>
       </div>
 
-      <div class="tg-adjust-box">
-        <div class="tg-adjust-title">⚙️ Manual Wallet Adjustment</div>
-        <div class="tg-adjust-tabs">
-          <button type="button" class="tg-adjust-tab active" data-type="credit" onclick="setAdjustType('credit', this)">➕ Credit</button>
-          <button type="button" class="tg-adjust-tab debit" data-type="debit" onclick="setAdjustType('debit', this)">➖ Debit</button>
-        </div>
-        <div class="tg-field">
-          <label>Adjust which field?</label>
-          <select id="ud-adjust-field">
-            <option value="available">Available (can withdraw)</option>
-            <option value="pending">Pending</option>
-            <option value="totalEarned">Total Earned</option>
-            <option value="withdrawn">Withdrawn</option>
-          </select>
-        </div>
-        <div class="tg-field">
-          <label>Amount (₹) *</label>
-          <input type="number" id="ud-adjust-amount" min="1" step="1" placeholder="e.g. 100">
-        </div>
-        <div class="tg-field">
-          <label>Reason *</label>
-          <input type="text" id="ud-adjust-note" placeholder="e.g. Bonus / Correction / Refund" maxlength="200">
-        </div>
-        <button class="tg-btn warning" style="width:100%;padding:12px;font-size:13px;" onclick="applyAdjustment()">
-          Apply Adjustment
-        </button>
+      <div class="tg-tabs">
+        <div class="tg-tab active" data-tab="transactions" onclick="switchUserTab('transactions')">📜 Transactions</div>
+        <div class="tg-tab" data-tab="referrals" onclick="switchUserTab('referrals')">🎁 Referrals</div>
+        <div class="tg-tab" data-tab="withdrawals" onclick="switchUserTab('withdrawals')">💸 Withdrawals</div>
+        <div class="tg-tab" data-tab="adjust" onclick="switchUserTab('adjust')">⚙️ Adjust</div>
       </div>
 
-      <div style="margin-top:18px;">
-        <div class="tg-adjust-title" style="margin-bottom:8px;">📜 Recent Transactions (last 20)</div>
+      <div class="tg-tab-panel active" id="ud-tab-transactions">
         <div id="ud-trans-list"><div class="tg-spinner"></div></div>
+      </div>
+      <div class="tg-tab-panel" id="ud-tab-referrals">
+        <div id="ud-ref-list"><div class="tg-spinner"></div></div>
+      </div>
+      <div class="tg-tab-panel" id="ud-tab-withdrawals">
+        <div id="ud-wd-list"><div class="tg-spinner"></div></div>
+      </div>
+      <div class="tg-tab-panel" id="ud-tab-adjust">
+        <div class="tg-adjust-box">
+          <div class="tg-adjust-title">⚙️ Manual Wallet Adjustment</div>
+          <div class="tg-adjust-tabs">
+            <button type="button" class="tg-adjust-tab active" data-type="credit" onclick="setAdjustType('credit', this)">➕ Credit</button>
+            <button type="button" class="tg-adjust-tab debit" data-type="debit" onclick="setAdjustType('debit', this)">➖ Debit</button>
+          </div>
+          <div class="tg-field">
+            <label>Adjust which field?</label>
+            <select id="ud-adjust-field">
+              <option value="available">Available (can withdraw)</option>
+              <option value="pending">Pending</option>
+              <option value="totalEarned">Total Earned</option>
+              <option value="withdrawn">Withdrawn</option>
+            </select>
+          </div>
+          <div class="tg-field">
+            <label>Amount (₹) *</label>
+            <input type="number" id="ud-adjust-amount" min="1" step="1" placeholder="e.g. 100">
+          </div>
+          <div class="tg-field">
+            <label>Reason *</label>
+            <input type="text" id="ud-adjust-note" placeholder="e.g. Bonus / Correction / Refund" maxlength="200">
+          </div>
+          <button class="tg-btn warning" style="width:100%;padding:12px;font-size:13px;" onclick="applyAdjustment()">
+            Apply Adjustment
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -811,6 +953,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let CURRENT_USER_DETAIL = null;
   let CURRENT_SECTION = 'dashboard';
   let _copyWdDetail = '';
+  let USER_REFERRALS_CACHE = [];
+  let USER_WITHDRAWALS_CACHE = [];
 
   let _unsubWithdrawals = null;
   let _unsubReferrals = null;
@@ -859,10 +1003,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   function showGlobalError(msg) {
     const b = document.getElementById('tg-global-error');
     const t = document.getElementById('tg-error-msg');
-    if (b && t) {
-      t.innerHTML = msg;
-      b.classList.add('show');
-    }
+    if (b && t) { t.innerHTML = msg; b.classList.add('show'); }
   }
 
   function confirmAction(title, body, onYes) {
@@ -879,14 +1020,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!_copyWdDetail) return;
     navigator.clipboard.writeText(_copyWdDetail).then(() => {
       toast('✓ Copied to clipboard', 'success');
-    }).catch(() => {
-      toast('Copy failed', 'error');
-    });
+    }).catch(() => { toast('Copy failed', 'error'); });
   };
 
-  // ═══ EXCEL EXPORT ═══
+  // ═══ CSV EXPORT ═══
   function downloadCSV(csvContent, fileName) {
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
@@ -896,27 +1036,118 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     link.click();
     document.body.removeChild(link);
   }
+  function q(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
 
   window.exportWithdrawalsCSV = function() {
     if (!WITHDRAWALS.length) return toast('No withdrawals to export', 'info');
-    let csv = "Date,User Name,User Email,Amount,Method,UPI/Bank Details,Status\n";
+    let csv = "Date,User Name,User Email,User ID,Amount,Method,UPI/Bank Details,Status,Admin Note\n";
     WITHDRAWALS.forEach(w => {
       let details = '';
       if (w.method === 'upi') details = 'UPI: ' + (w.upiId || '');
       else details = 'Bank: ' + (w.bankDetails?.holder || '') + ' A/C: ' + (w.bankDetails?.accountNumber || '') + ' IFSC: ' + (w.bankDetails?.ifsc || '');
-      details = details.replace(/,/g, ' '); 
-      csv += `"${fmtDate(w.requestedAt)}","${w.userName || ''}","${w.userEmail || ''}","${w.amount}","${w.method || ''}","${details}","${w.status}"\n`;
+      csv += [q(fmtDate(w.requestedAt)), q(w.userName || ''), q(w.userEmail || ''), q(w.userId || ''), q(w.amount || 0), q(w.method || ''), q(details), q(w.status || ''), q(w.adminNote || '')].join(',') + '\n';
     });
-    downloadCSV(csv, `withdrawals_${new Date().toISOString().slice(0,10)}.csv`);
+    downloadCSV(csv, 'withdrawals_' + new Date().toISOString().slice(0,10) + '.csv');
+    toast('✓ Exported', 'success');
   };
 
   window.exportReferralsCSV = function() {
     if (!REFERRALS.length) return toast('No referrals to export', 'info');
-    let csv = "Date,Buyer Name,Order ID,Order Amount,Commission (%),Commission Amount,Status,Referrer ID\n";
+    let csv = "Date,Buyer Name,Buyer ID,Order ID,Order Amount,Commission (%),Commission Amount,Status,Referrer ID\n";
     REFERRALS.forEach(r => {
-      csv += `"${fmtDate(r.createdAt)}","${r.buyerName || ''}","${r.orderId || ''}","${r.orderAmount || 0}","${r.commissionPercent || 0}","${r.commissionAmount || 0}","${r.status}","${r.referrerId}"\n`;
+      csv += [q(fmtDate(r.createdAt)), q(r.buyerName || ''), q(r.buyerId || ''), q(r.orderId || ''), q(r.orderAmount || 0), q(r.commissionPercent || 0), q(r.commissionAmount || 0), q(r.status || ''), q(r.referrerId || '')].join(',') + '\n';
     });
-    downloadCSV(csv, `referrals_${new Date().toISOString().slice(0,10)}.csv`);
+    downloadCSV(csv, 'referrals_' + new Date().toISOString().slice(0,10) + '.csv');
+    toast('✓ Exported', 'success');
+  };
+
+  // ═══ PER-USER FULL REPORT ═══
+  window.downloadUserReport = async function(uid) {
+    uid = uid || (CURRENT_USER_DETAIL && CURRENT_USER_DETAIL.uid);
+    if (!uid) return toast('No user selected', 'error');
+    toast('Generating report...', 'info');
+    try {
+      const [refSnap, wdSnap, txSnap, walletSnap, userDoc] = await Promise.all([
+        db.collection('referrals').where('referrerId', '==', uid).get(),
+        db.collection('withdrawals').where('userId', '==', uid).get(),
+        db.collection('wallet_transactions').where('userId', '==', uid).get(),
+        db.collection('users').doc(uid).collection('wallet').doc('summary').get(),
+        db.collection('users').doc(uid).get()
+      ]);
+      const u = userDoc.exists ? userDoc.data() : (USERS.find(x => x.uid === uid) || {});
+      const wallet = walletSnap.exists ? walletSnap.data() : {};
+      const referrals = refSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const withdrawals = wdSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const txs = txSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Sort
+      referrals.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
+      withdrawals.sort((a,b) => (b.requestedAt?.seconds||0) - (a.requestedAt?.seconds||0));
+      txs.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
+
+      let totalComm = 0, creditedComm = 0, pendingComm = 0, cancelledComm = 0;
+      referrals.forEach(r => {
+        const c = Number(r.commissionAmount || 0);
+        totalComm += c;
+        const s = String(r.status || '').toLowerCase();
+        if (s === 'credited' || s === 'approved') creditedComm += c;
+        else if (s === 'pending') pendingComm += c;
+        else if (s === 'cancelled') cancelledComm += c;
+      });
+
+      let csv = '';
+      csv += 'TOEGO — USER COMMISSION & WALLET REPORT\n';
+      csv += 'Generated,' + q(new Date().toLocaleString('en-IN')) + '\n\n';
+      csv += 'PROFILE\n';
+      csv += 'Name,' + q(u.name || u.displayName || '') + '\n';
+      csv += 'Email,' + q(u.email || '') + '\n';
+      csv += 'Phone,' + q(u.phone || u.phoneNumber || '') + '\n';
+      csv += 'UID,' + q(uid) + '\n';
+      csv += 'Role,' + q(u.role || 'user') + '\n';
+      csv += 'Referral Code,' + q(u.referralCode || u.myReferralCode || '') + '\n';
+      csv += 'Referred By,' + q(u.referredBy || u.referrerId || '') + '\n\n';
+
+      csv += 'WALLET SUMMARY\n';
+      csv += 'Available Balance,' + q(wallet.available || 0) + '\n';
+      csv += 'Pending Balance,' + q(wallet.pending || 0) + '\n';
+      csv += 'Total Earned,' + q(wallet.totalEarned || 0) + '\n';
+      csv += 'Total Withdrawn,' + q(wallet.withdrawn || 0) + '\n\n';
+
+      csv += 'COMMISSION SUMMARY\n';
+      csv += 'Total Referrals,' + q(referrals.length) + '\n';
+      csv += 'Total Commission,' + q(totalComm) + '\n';
+      csv += 'Credited Commission,' + q(creditedComm) + '\n';
+      csv += 'Pending Commission,' + q(pendingComm) + '\n';
+      csv += 'Cancelled Commission,' + q(cancelledComm) + '\n\n';
+
+      csv += 'REFERRALS / COMMISSIONS EARNED\n';
+      csv += 'Date,Order ID,Buyer Name,Order Amount,Commission %,Commission Amount,Status\n';
+      referrals.forEach(r => {
+        csv += [q(fmtDate(r.createdAt)), q(r.orderId || ''), q(r.buyerName || ''), q(r.orderAmount || 0), q(r.commissionPercent || 0), q(r.commissionAmount || 0), q(r.status || '')].join(',') + '\n';
+      });
+      csv += '\n';
+
+      csv += 'WITHDRAWALS\n';
+      csv += 'Date,Amount,Method,UPI/Bank,Status,Admin Note\n';
+      withdrawals.forEach(w => {
+        let m = w.method === 'upi' ? 'UPI: ' + (w.upiId || '') : 'Bank: ' + (w.bankDetails?.holder || '') + ' / ' + (w.bankDetails?.accountNumber || '');
+        csv += [q(fmtDate(w.requestedAt)), q(w.amount || 0), q(w.method || ''), q(m), q(w.status || ''), q(w.adminNote || '')].join(',') + '\n';
+      });
+      csv += '\n';
+
+      csv += 'WALLET TRANSACTIONS\n';
+      csv += 'Date,Type,Field,Amount,Note,Status\n';
+      txs.forEach(t => {
+        csv += [q(fmtDate(t.createdAt)), q(t.type || ''), q(t.field || ''), q(t.amount || 0), q(t.note || ''), q(t.status || '')].join(',') + '\n';
+      });
+
+      const safeName = (u.name || u.email || uid).replace(/[^a-z0-9]/gi, '_');
+      downloadCSV(csv, 'TOEGO_' + safeName + '_report_' + new Date().toISOString().slice(0,10) + '.csv');
+      toast('✓ Report downloaded', 'success');
+    } catch (e) {
+      console.error('[report]', e);
+      toast('Report failed: ' + e.message, 'error');
+    }
   };
 
   // ═══ SIDEBAR ═══
@@ -924,22 +1155,45 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const overlay = document.getElementById('tg-sidebar-overlay');
   const wrap = document.getElementById('tg-wrap');
 
-  function openSidebar() {
+  window.openSidebar = function() {
     sidebar.classList.add('open');
     if (window.innerWidth < 1025) overlay.classList.add('show');
     wrap.classList.add('sidebar-open');
-  }
-  function closeSidebar() {
+  };
+  window.closeSidebar = function() {
     sidebar.classList.remove('open');
     overlay.classList.remove('show');
     wrap.classList.remove('sidebar-open');
-  }
+  };
   function toggleSidebar() {
     if (sidebar.classList.contains('open')) closeSidebar();
     else openSidebar();
   }
   document.getElementById('tg-menu-btn').addEventListener('click', toggleSidebar);
-  overlay.addEventListener('click', closeSidebar);
+
+  // ═══ NOTIFICATIONS DRAWER ═══
+  const notifDrawer = document.getElementById('tg-notif-drawer');
+  const notifOverlay = document.getElementById('tg-notif-overlay');
+  window.openNotifDrawer = function() {
+    notifDrawer.classList.add('open');
+    notifOverlay.classList.add('show');
+    renderNotifications();
+  };
+  window.closeNotifDrawer = function() {
+    notifDrawer.classList.remove('open');
+    notifOverlay.classList.remove('show');
+  };
+  window.toggleNotifDrawer = function() {
+    if (notifDrawer.classList.contains('open')) closeNotifDrawer();
+    else openNotifDrawer();
+  };
+
+  window.gotoWithFilter = function(section, filterId, filterValue) {
+    closeNotifDrawer();
+    switchSection(section);
+    const f = document.querySelector('#' + filterId + ' .tg-filter[data-filter="' + filterValue + '"]');
+    if (f) setTimeout(() => f.click(), 50);
+  };
 
   const sectionTitles = {
     dashboard: 'Commissions Dashboard',
@@ -971,8 +1225,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       document.getElementById('tg-sidebar-avatar').textContent = initial(user.displayName || user.email || 'A');
       document.getElementById('tg-sidebar-user-name').textContent = user.displayName || (user.email || '').split('@')[0] || 'Admin';
       document.getElementById('tg-sidebar-user-email').textContent = user.email || user.uid;
-      
-      // Verify Admin Role
       try {
         const doc = await db.collection('users').doc(user.uid).get();
         if (doc.exists) {
@@ -982,7 +1234,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           }
         }
       } catch(e) {}
-
       initAll();
     } else {
       if (!_authFirstResolve) {
@@ -1053,15 +1304,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     _unsubWithdrawals = db.collection('withdrawals').orderBy('requestedAt', 'desc').limit(100).onSnapshot(
       snap => {
         WITHDRAWALS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderWithdrawals(); updateCounts(); loadKPIs();
+        renderWithdrawals(); updateCounts(); loadKPIs(); renderDashRecent(); updateNotifications();
       },
       err => {
         console.warn('[wd]', err);
-        // Fallback without orderBy
         db.collection('withdrawals').limit(100).get().then(s => {
           WITHDRAWALS = s.docs.map(d => ({ id: d.id, ...d.data() }));
           WITHDRAWALS.sort((a, b) => (b.requestedAt?.seconds || 0) - (a.requestedAt?.seconds || 0));
-          renderWithdrawals(); updateCounts(); loadKPIs();
+          renderWithdrawals(); updateCounts(); loadKPIs(); renderDashRecent(); updateNotifications();
         }).catch(e => {
           document.getElementById('wd-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load Withdrawals</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
           showGlobalError('Withdrawals load fail: ' + e.message);
@@ -1101,8 +1351,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       const statusLabel = { pending: 'Pending', approved: 'Approved', paid: 'Paid', rejected: 'Rejected', cancelled: 'Cancelled' }[status] || status;
       const method = String(w.method || 'upi').toLowerCase();
       const isUpi = method === 'upi';
-      
-      // Make UPI/Bank prominent
       const detailsHtml = isUpi
         ? '<div class="tg-row" style="background:#e8f0fe;padding:8px;border-radius:6px;margin:4px 0;"><span class="lbl" style="color:#1a5dc7;font-weight:700;">📱 UPI ID</span><span class="val mono" style="color:#1a5dc7;font-size:14px;">' + esc(w.upiId || '—') + '</span></div>'
         : '<div style="background:#e8f0fe;padding:8px;border-radius:6px;margin:4px 0;">' +
@@ -1110,7 +1358,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           '<div class="tg-row"><span class="lbl" style="color:#1a5dc7;font-weight:700;">Account</span><span class="val mono" style="color:#1a5dc7;">' + esc(w.bankDetails?.accountNumber || '—') + '</span></div>' +
           '<div class="tg-row"><span class="lbl" style="color:#1a5dc7;font-weight:700;">IFSC</span><span class="val mono" style="color:#1a5dc7;">' + esc(w.bankDetails?.ifsc || '—') + '</span></div>' +
           '</div>';
-
       const actions = [];
       if (status === 'pending') {
         actions.push('<button class="tg-btn success small" onclick="openWdAction(\'' + w.id + '\',\'approved\')">✓ Approve</button>');
@@ -1122,7 +1369,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       } else if (status === 'rejected') {
         actions.push('<button class="tg-btn warning small" onclick="openWdAction(\'' + w.id + '\',\'pending\')">↺ Reopen</button>');
       }
-
       return '<div class="tg-card ' + status + '">' +
         '<div class="tg-card-head">' +
           '<div class="tg-card-title"><div class="tg-avatar amber">' + esc(initial(w.userName || 'U')) + '</div>' +
@@ -1145,21 +1391,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const w = WITHDRAWALS.find(x => x.id === wdId);
     if (!w) return toast('Not found', 'error');
     PENDING_WD_ACTION = { wdId, newStatus, action: w };
-    
     document.getElementById('wd-action-title').textContent =
       newStatus === 'approved' ? '✓ Approve Withdrawal' :
       newStatus === 'rejected' ? '✕ Reject Withdrawal' :
       newStatus === 'paid' ? '💸 Mark as Paid' : '↺ Reopen';
-      
     document.getElementById('wd-info-user').textContent = w.userName || '—';
     document.getElementById('wd-info-amount').textContent = fmtINR(w.amount);
-    
     const isUpi = (w.method || 'upi') === 'upi';
     const methodText = isUpi ? 'UPI — ' + (w.upiId || '—') : 'BANK — ' + (w.bankDetails?.holder || '') + ' (' + (w.bankDetails?.accountNumber || '') + ')';
     document.getElementById('wd-info-method').textContent = methodText;
     document.getElementById('wd-info-status').textContent = String(w.status || 'pending').toUpperCase();
-    
-    // Copy Box logic
     const copyBox = document.getElementById('wd-copy-container');
     const copyVal = document.getElementById('wd-copy-val');
     if (newStatus === 'paid' || newStatus === 'approved') {
@@ -1170,7 +1411,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       copyBox.style.display = 'none';
       _copyWdDetail = '';
     }
-
     document.getElementById('wd-admin-note').value = '';
     document.getElementById('wd-action-buttons').innerHTML =
       '<button class="tg-btn ghost" onclick="closeModal(\'wd-action-modal\')">Cancel</button>' +
@@ -1189,7 +1429,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
     if (newStatus === 'paid') {
       closeModal('wd-action-modal');
-      confirmAction('Mark as Paid?', fmtINR(action.amount) + ' pending se withdrawn me chala jayega. Ye assume karta hai ki payment actually bhej di gayi hai. Confirm?', () => processWdAction(wdId, newStatus, action, adminNote));
+      confirmAction('Mark as Paid?', fmtINR(action.amount) + ' pending se withdrawn me chala jayega. Confirm?', () => processWdAction(wdId, newStatus, action, adminNote));
       return;
     }
     closeModal('wd-action-modal');
@@ -1243,15 +1483,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     _unsubReferrals = db.collection('referrals').orderBy('createdAt', 'desc').limit(100).onSnapshot(
       snap => {
         REFERRALS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderReferrals(); updateCounts(); loadKPIs();
+        renderReferrals(); updateCounts(); loadKPIs(); renderDashRecent(); updateNotifications();
       },
       err => {
         console.warn('[rf]', err);
-        // Fallback without orderBy
         db.collection('referrals').limit(100).get().then(s => {
           REFERRALS = s.docs.map(d => ({ id: d.id, ...d.data() }));
           REFERRALS.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-          renderReferrals(); updateCounts(); loadKPIs();
+          renderReferrals(); updateCounts(); loadKPIs(); renderDashRecent(); updateNotifications();
         }).catch(e => {
           document.getElementById('rf-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load Referrals</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
           showGlobalError('Referrals load fail: ' + e.message);
@@ -1579,6 +1818,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           '<span class="pill avail" id="u-avail-' + esc(u.uid) + '">₹0</span>' +
           '<span class="pill pend" id="u-pend-' + esc(u.uid) + '">₹0</span>' +
         '</div>' +
+        '<button class="tg-user-report-btn" title="Download Report" onclick="event.stopPropagation();downloadUserReport(\'' + esc(u.uid) + '\')">' +
+          '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+        '</button>' +
       '</div>';
     }).join('');
     loadUserWallets(list.map(u => u.uid));
@@ -1616,6 +1858,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     document.getElementById('ud-adjust-field').value = 'available';
     document.getElementById('ud-adjust-amount').value = '';
     document.getElementById('ud-adjust-note').value = '';
+    switchUserTab('transactions');
     openModal('user-detail-modal');
     try {
       const s = await db.collection('users').doc(uid).collection('wallet').doc('summary').get();
@@ -1626,6 +1869,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       document.getElementById('ud-withdraw').textContent = '₹' + Number(d.withdrawn || 0).toLocaleString('en-IN');
     } catch (e) {}
     loadUserTransactions(uid);
+    loadUserReferrals(uid);
+    loadUserWithdrawals(uid);
+  };
+
+  window.switchUserTab = function(tab) {
+    document.querySelectorAll('#user-detail-modal .tg-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('#user-detail-modal .tg-tab-panel').forEach(p => p.classList.toggle('active', p.id === 'ud-tab-' + tab));
   };
 
   async function loadUserTransactions(uid) {
@@ -1639,7 +1889,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         el.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:12.5px;">No transactions yet</div>';
         return;
       }
-      el.innerHTML = list.slice(0, 20).map(t => {
+      el.innerHTML = list.slice(0, 30).map(t => {
         const isC = isCreditType(t.type);
         const sign = isC ? '+' : '-';
         return '<div class="tg-trans-item" style="padding:10px 12px;">' +
@@ -1652,6 +1902,75 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           '<div class="tg-trans-amount ' + (isC ? 'credit' : 'debit') + '" style="font-size:13px;">' + sign + fmtINR(t.amount) + '</div>' +
         '</div>';
       }).join('');
+    } catch (e) {
+      el.innerHTML = '<div style="text-align:center;padding:16px;color:#d32f2f;font-size:12.5px;">Failed: ' + esc(e.message) + '</div>';
+    }
+  }
+
+  async function loadUserReferrals(uid) {
+    const el = document.getElementById('ud-ref-list');
+    el.innerHTML = '<div class="tg-spinner" style="margin:14px auto;"></div>';
+    try {
+      const snap = await db.collection('referrals').where('referrerId', '==', uid).limit(100).get();
+      const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      USER_REFERRALS_CACHE = list;
+      if (!list.length) {
+        el.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:12.5px;">No referrals yet — this user has not earned any commission</div>';
+        return;
+      }
+      let total = 0, credited = 0, pending = 0;
+      list.forEach(r => {
+        const c = Number(r.commissionAmount || 0);
+        total += c;
+        const s = String(r.status || '').toLowerCase();
+        if (s === 'credited' || s === 'approved') credited += c;
+        else if (s === 'pending') pending += c;
+      });
+      el.innerHTML =
+        '<div class="tg-wallet-grid" style="margin-bottom:14px;">' +
+          '<div class="tg-wallet-cell green"><div class="tg-wallet-val">' + fmtINR(credited) + '</div><div class="tg-wallet-lbl">Credited</div></div>' +
+          '<div class="tg-wallet-cell amber"><div class="tg-wallet-val">' + fmtINR(pending) + '</div><div class="tg-wallet-lbl">Pending</div></div>' +
+          '<div class="tg-wallet-cell"><div class="tg-wallet-val">' + fmtINR(total) + '</div><div class="tg-wallet-lbl">Total</div></div>' +
+          '<div class="tg-wallet-cell pink"><div class="tg-wallet-val">' + list.length + '</div><div class="tg-wallet-lbl">Count</div></div>' +
+        '</div>' +
+        list.slice(0, 20).map(r => {
+          const s = String(r.status || 'pending').toLowerCase();
+          const statusLabel = { pending: 'Pending', credited: 'Credited', approved: 'Credited', cancelled: 'Cancelled' }[s] || s;
+          return '<div class="tg-card ' + s + '" style="padding:10px 12px;margin-bottom:8px;">' +
+            '<div class="tg-row"><span class="lbl">Order #' + esc(String(r.orderId||'').slice(0,10).toUpperCase()) + '</span><span class="tg-badge ' + s + '">' + statusLabel + '</span></div>' +
+            '<div class="tg-row" style="margin-top:6px;"><span class="lbl">' + esc(r.buyerName || 'Buyer') + ' — Order: ' + fmtINR(r.orderAmount) + '</span><span class="val big green">+' + fmtINR(r.commissionAmount) + '</span></div>' +
+            '<div class="tg-row" style="margin-top:4px;"><span class="lbl" style="font-size:11px;">' + fmtDate(r.createdAt) + '</span><span class="lbl" style="font-size:11px;">' + (r.commissionPercent||0) + '%</span></div>' +
+          '</div>';
+        }).join('') +
+        (list.length > 20 ? '<div style="text-align:center;color:#888;font-size:11.5px;padding:8px;">+ ' + (list.length-20) + ' more — download report for all</div>' : '');
+    } catch (e) {
+      el.innerHTML = '<div style="text-align:center;padding:16px;color:#d32f2f;font-size:12.5px;">Failed: ' + esc(e.message) + '</div>';
+    }
+  }
+
+  async function loadUserWithdrawals(uid) {
+    const el = document.getElementById('ud-wd-list');
+    el.innerHTML = '<div class="tg-spinner" style="margin:14px auto;"></div>';
+    try {
+      const snap = await db.collection('withdrawals').where('userId', '==', uid).limit(100).get();
+      const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      list.sort((a, b) => (b.requestedAt?.seconds || 0) - (a.requestedAt?.seconds || 0));
+      USER_WITHDRAWALS_CACHE = list;
+      if (!list.length) {
+        el.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:12.5px;">No withdrawal requests yet</div>';
+        return;
+      }
+      el.innerHTML = list.slice(0, 20).map(w => {
+        const s = String(w.status || 'pending').toLowerCase();
+        const statusLabel = { pending: 'Pending', approved: 'Approved', paid: 'Paid', rejected: 'Rejected', cancelled: 'Cancelled' }[s] || s;
+        return '<div class="tg-card ' + s + '" style="padding:10px 12px;margin-bottom:8px;">' +
+          '<div class="tg-row"><span class="lbl">' + fmtDate(w.requestedAt) + '</span><span class="tg-badge ' + s + '">' + statusLabel + '</span></div>' +
+          '<div class="tg-row" style="margin-top:6px;"><span class="lbl">' + (w.method === 'upi' ? '📱 UPI' : '🏦 Bank') + '</span><span class="val big">' + fmtINR(w.amount) + '</span></div>' +
+          (w.adminNote ? '<div class="tg-note" style="margin-top:6px;font-size:11px;padding:6px 8px;"><b>Note:</b> ' + esc(w.adminNote) + '</div>' : '') +
+        '</div>';
+      }).join('') +
+      (list.length > 20 ? '<div style="text-align:center;color:#888;font-size:11.5px;padding:8px;">+ ' + (list.length-20) + ' more</div>' : '');
     } catch (e) {
       el.innerHTML = '<div style="text-align:center;padding:16px;color:#d32f2f;font-size:12.5px;">Failed: ' + esc(e.message) + '</div>';
     }
@@ -1705,15 +2024,154 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   function loadKPIs() {
     const totalComm = REFERRALS.filter(r => ['credited', 'approved'].includes(String(r.status || '').toLowerCase())).reduce((sum, r) => sum + Number(r.commissionAmount || 0), 0);
     const pendWd = WITHDRAWALS.filter(w => String(w.status || '').toLowerCase() === 'pending').reduce((sum, w) => sum + Number(w.amount || 0), 0);
+    const pendRefs = REFERRALS.filter(r => String(r.status || '').toLowerCase() === 'pending').length;
     document.getElementById('kpi-commissions').textContent = fmtINR(totalComm);
     document.getElementById('kpi-pending-wd').textContent = fmtINR(pendWd);
-    document.getElementById('kpi-referrals').textContent = REFERRALS.length;
+    document.getElementById('kpi-referrals').textContent = pendRefs;
   }
 
   function updateCounts() {
     document.getElementById('nav-count-wd').textContent = WITHDRAWALS.filter(w => String(w.status || '').toLowerCase() === 'pending').length;
     document.getElementById('nav-count-rf').textContent = REFERRALS.filter(r => String(r.status || '').toLowerCase() === 'pending').length;
     document.getElementById('nav-count-tx').textContent = TRANSACTIONS.length;
+  }
+
+  // ═══ DASHBOARD RECENT + ALERT STRIP ═══
+  function renderDashRecent() {
+    const pendingWds = WITHDRAWALS.filter(w => String(w.status || '').toLowerCase() === 'pending').slice(0, 5);
+    const pendingRefs = REFERRALS.filter(r => String(r.status || '').toLowerCase() === 'pending').slice(0, 5);
+
+    document.getElementById('dash-pw-count').textContent = WITHDRAWALS.filter(w => String(w.status || '').toLowerCase() === 'pending').length;
+    document.getElementById('dash-pr-count').textContent = REFERRALS.filter(r => String(r.status || '').toLowerCase() === 'pending').length;
+
+    const wdEl = document.getElementById('dash-pending-wd');
+    if (!pendingWds.length) {
+      wdEl.innerHTML = '<div class="tg-dash-empty">✅ No pending withdrawals</div>';
+    } else {
+      wdEl.innerHTML = pendingWds.map(w =>
+        '<div class="tg-dash-mini-item">' +
+          '<div class="tg-dash-mini-avatar" style="background:linear-gradient(135deg,#f57c00,#e65100);">' + esc(initial(w.userName || 'U')) + '</div>' +
+          '<div class="tg-dash-mini-body">' +
+            '<div class="tg-dash-mini-title">' + esc(w.userName || 'User') + '</div>' +
+            '<div class="tg-dash-mini-desc">' + esc(w.userEmail || w.userId || '') + ' · ' + fmtDate(w.requestedAt) + '</div>' +
+          '</div>' +
+          '<div class="tg-dash-mini-amount amber">' + fmtINR(w.amount) + '</div>' +
+        '</div>'
+      ).join('');
+    }
+
+    const rEl = document.getElementById('dash-pending-refs');
+    if (!pendingRefs.length) {
+      rEl.innerHTML = '<div class="tg-dash-empty">✅ No pending commissions</div>';
+    } else {
+      rEl.innerHTML = pendingRefs.map(r =>
+        '<div class="tg-dash-mini-item">' +
+          '<div class="tg-dash-mini-avatar" style="background:linear-gradient(135deg,#388e3c,#2e7d32);">' + esc(initial(r.buyerName || 'B')) + '</div>' +
+          '<div class="tg-dash-mini-body">' +
+            '<div class="tg-dash-mini-title">' + esc(r.buyerName || 'Buyer') + '</div>' +
+            '<div class="tg-dash-mini-desc">Order #' + esc(String(r.orderId||'').slice(0,10).toUpperCase()) + ' · ' + fmtDate(r.createdAt) + '</div>' +
+          '</div>' +
+          '<div class="tg-dash-mini-amount green">' + fmtINR(r.commissionAmount) + '</div>' +
+        '</div>'
+      ).join('');
+    }
+
+    // Alert strip
+    const totalPending = pendingWds.length + pendingRefs.length;
+    const strip = document.getElementById('tg-alert-strip');
+    if (totalPending > 0) {
+      strip.style.display = 'flex';
+      const wdCount = WITHDRAWALS.filter(w => String(w.status || '').toLowerCase() === 'pending').length;
+      const rfCount = REFERRALS.filter(r => String(r.status || '').toLowerCase() === 'pending').length;
+      const parts = [];
+      if (wdCount) parts.push(wdCount + ' withdrawal' + (wdCount>1?'s':''));
+      if (rfCount) parts.push(rfCount + ' commission' + (rfCount>1?'s':'') + ' awaiting credit');
+      document.getElementById('tg-alert-strip-title').textContent = '⚠️ ' + totalPending + ' pending item' + (totalPending>1?'s':'') + ' need your attention';
+      document.getElementById('tg-alert-strip-desc').textContent = parts.join(' · ');
+    } else {
+      strip.style.display = 'none';
+    }
+  }
+
+  // ═══ NOTIFICATIONS ═══
+  function updateNotifications() {
+    const pendingWds = WITHDRAWALS.filter(w => String(w.status || '').toLowerCase() === 'pending');
+    const pendingRefs = REFERRALS.filter(r => String(r.status || '').toLowerCase() === 'pending');
+    // Recent credits (last 24h)
+    const now = Date.now() / 1000;
+    const recentCredits = REFERRALS.filter(r => {
+      const s = String(r.status || '').toLowerCase();
+      const ts = r.creditedAt?.seconds || 0;
+      return (s === 'credited' || s === 'approved') && ts && (now - ts < 86400);
+    }).slice(0, 5);
+
+    const count = pendingWds.length + pendingRefs.length;
+    const badge = document.getElementById('tg-notif-badge');
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+
+    document.getElementById('tg-notif-head-count').textContent = count;
+
+    const el = document.getElementById('tg-notif-body');
+    if (!count && !recentCredits.length) {
+      el.innerHTML = '<div class="tg-notif-empty"><div class="tg-notif-empty-icon">🔔</div><div class="tg-notif-empty-title">All clear!</div><div class="tg-notif-empty-desc">Koi pending alert nahi hai.</div></div>';
+      return;
+    }
+
+    let html = '';
+    if (pendingWds.length) {
+      html += '<div class="tg-notif-group">' +
+        '<div class="tg-notif-group-title"><span class="dot" style="background:#f57c00;"></span> Pending Withdrawals · ' + pendingWds.length + '</div>' +
+        pendingWds.slice(0, 8).map(w =>
+          '<div class="tg-notif-item high" onclick="gotoWithFilter(\'withdrawals\',\'wd-filters\',\'pending\')">' +
+            '<div class="tg-notif-item-icon">💸</div>' +
+            '<div class="tg-notif-item-body">' +
+              '<div class="tg-notif-item-title">' + fmtINR(w.amount) + ' withdrawal request</div>' +
+              '<div class="tg-notif-item-desc">' + esc(w.userName || w.userEmail || 'User') + ' · ' + (w.method === 'upi' ? 'UPI' : 'Bank') + '</div>' +
+              '<div class="tg-notif-item-meta"><span>' + fmtDate(w.requestedAt) + '</span></div>' +
+            '</div>' +
+            '<div class="tg-notif-item-arrow">›</div>' +
+          '</div>'
+        ).join('') +
+        '</div>';
+    }
+    if (pendingRefs.length) {
+      html += '<div class="tg-notif-group">' +
+        '<div class="tg-notif-group-title"><span class="dot" style="background:#2874f0;"></span> Pending Commissions · ' + pendingRefs.length + '</div>' +
+        pendingRefs.slice(0, 8).map(r =>
+          '<div class="tg-notif-item medium" onclick="gotoWithFilter(\'referrals\',\'rf-filters\',\'pending\')">' +
+            '<div class="tg-notif-item-icon">🎁</div>' +
+            '<div class="tg-notif-item-body">' +
+              '<div class="tg-notif-item-title">' + fmtINR(r.commissionAmount) + ' commission ready</div>' +
+              '<div class="tg-notif-item-desc">' + esc(r.buyerName || 'Buyer') + ' · Order #' + esc(String(r.orderId||'').slice(0,10).toUpperCase()) + '</div>' +
+              '<div class="tg-notif-item-meta"><span>' + fmtDate(r.createdAt) + '</span></div>' +
+            '</div>' +
+            '<div class="tg-notif-item-arrow">›</div>' +
+          '</div>'
+        ).join('') +
+        '</div>';
+    }
+    if (recentCredits.length) {
+      html += '<div class="tg-notif-group">' +
+        '<div class="tg-notif-group-title"><span class="dot" style="background:#388e3c;"></span> Recently Credited · Last 24h</div>' +
+        recentCredits.map(r =>
+          '<div class="tg-notif-item low" onclick="gotoWithFilter(\'referrals\',\'rf-filters\',\'credited\')">' +
+            '<div class="tg-notif-item-icon">✓</div>' +
+            '<div class="tg-notif-item-body">' +
+              '<div class="tg-notif-item-title">' + fmtINR(r.commissionAmount) + ' credited</div>' +
+              '<div class="tg-notif-item-desc">' + esc(r.buyerName || 'Buyer') + ' · Order #' + esc(String(r.orderId||'').slice(0,10).toUpperCase()) + '</div>' +
+              '<div class="tg-notif-item-meta"><span>' + fmtDate(r.creditedAt) + '</span></div>' +
+            '</div>' +
+            '<div class="tg-notif-item-arrow">›</div>' +
+          '</div>'
+        ).join('') +
+        '</div>';
+    }
+    el.innerHTML = html;
+  }
+
+  function renderNotifications() {
+    updateNotifications();
   }
 
   // Sync init
