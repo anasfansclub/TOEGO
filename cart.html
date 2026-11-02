@@ -638,6 +638,26 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const db = firebase.firestore();
   const FV = firebase.firestore.FieldValue;
 
+  /* 🔗 REFERRAL CAPTURE (30-day) */
+  (function tgCaptureReferral(){
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const ref = p.get('ref');
+      if (ref && ref.length > 10) {
+        localStorage.setItem('toego_referrer', JSON.stringify({ uid: ref, ts: Date.now() }));
+      }
+    } catch(e) {}
+  })();
+  function tgGetReferrer(){
+    try {
+      const raw = localStorage.getItem('toego_referrer');
+      if (!raw) return '';
+      const r = JSON.parse(raw);
+      if (!r || !r.uid) return '';
+      if (Date.now() - r.ts > 30 * 24 * 60 * 60 * 1000) { localStorage.removeItem('toego_referrer'); return ''; }
+      return r.uid;
+    } catch(e){ return ''; }
+  }
   let functions = null;
   try {
     functions = firebase.functions();
@@ -3368,6 +3388,61 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       });
     });
 
+
+    /* 🔗 REFERRAL COMMISSION PROCESSING */
+    try {
+      const buyerRef = tgGetReferrer();
+      if (buyerRef && buyerRef !== currentUser.uid) {
+        let cfg = { defaultPercent: 5, productOverrides: {} };
+        try {
+          const c = await db.collection('siteSettings').doc('commission').get();
+          if (c.exists) cfg = { ...cfg, ...c.data() };
+        } catch(e) {}
+
+        let totalAmt = 0, totalComm = 0;
+        const lines = [];
+        for (const it of verified.items) {
+          const override = cfg.productOverrides?.[it.productId];
+          const pct = (override != null ? Number(override) : Number(cfg.defaultPercent || 5));
+          const lineAmt = Number(it.price) * Number(it.qty);
+          const lineComm = Math.round(lineAmt * pct / 100);
+          totalAmt += lineAmt;
+          totalComm += lineComm;
+          lines.push({
+            productId: it.productId,
+            name: it.name,
+            price: Number(it.price),
+            qty: Number(it.qty),
+            commissionPercent: pct,
+            commission: lineComm
+          });
+        }
+
+        if (totalComm > 0) {
+          const addr = pendingAddress || {};
+          await db.collection('referrals').add({
+            referrerId: buyerRef,
+            buyerId: currentUser.uid,
+            buyerName: addr.name || currentUser.displayName || (currentUser.email || '').split('@')[0] || 'User',
+            orderId: orderRef.id,
+            orderAmount: totalAmt,
+            items: lines,
+            commissionAmount: totalComm,
+            commissionPercent: cfg.defaultPercent || 5,
+            status: 'pending',
+            creditedAt: null,
+            createdAt: FV.serverTimestamp()
+          });
+
+          await db.collection('users').doc(buyerRef).collection('wallet').doc('summary').set({
+            pending: FV.increment(totalComm),
+            updatedAt: FV.serverTimestamp()
+          }, { merge: true });
+        }
+      }
+    } catch(refErr) {
+      console.warn('[referral] save failed:', refErr);
+    }
     return orderRef.id;
   }
 
