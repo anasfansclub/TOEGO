@@ -1974,29 +1974,30 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 @media (max-width: 768px) {
   
   /* 1. Header Box (Smooth height transition) */
-  .tg-mhd {
-    height: 112px !important;
-    transition: height 0.25s ease !important;
-    overflow: hidden !important; /* Content ko andar rakhega */
-    contain: layout paint; /* 🔥 Lag fix */
-  }
+.tg-mhd {
+  height: 112px !important;
+  transition: none !important;
+  overflow: hidden !important;
+  contain: layout paint;
+}
   
   /* 2. Grid Layout for Perfect Alignment */
-  .tg-mhd-inner {
-    display: grid !important;
-    grid-template-columns: 1fr auto; /* Logo space aur Icons space */
-    grid-template-rows: 40px 1fr;    /* Pehli line Logo, dusri line Search */
-    gap: 8px 10px;
-    height: 112px !important;
-    padding: 10px 12px !important;
-    align-items: center;
-    transition: height 0.25s ease, padding 0.25s ease !important;
-  }
+ .tg-mhd-inner {
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 40px 1fr;
+  gap: 8px 10px;
+  height: 112px !important;
+  padding: 10px 12px !important;
+  align-items: center;
+  transition: none !important;
+}
   
   /* 3. Page Padding — collapse ke saath shrink kare */
-  #tg-meesho {
-    padding-top: 112px !important;
-    transition: padding-top 0.25s ease !important;
+#tg-meesho {
+  padding-top: 112px !important;
+  transition: none !important;
+}
   }
   #tg-meesho.tg-pad-scrolled {
     padding-top: 60px !important;
