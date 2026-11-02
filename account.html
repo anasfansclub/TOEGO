@@ -11,7 +11,6 @@
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://www.gstatic.com">
 
-<!-- ⚡ PRELOAD FIREBASE SDK FOR SPEED -->
 <link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js">
 <link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js">
 <link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js">
@@ -30,6 +29,14 @@ a { color: inherit; text-decoration: none; }
 
 header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
 
+#tg-boot-overlay { position: fixed; inset: 0; background: #f1f3f6; z-index: 999999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; transition: opacity .35s ease, visibility .35s ease; }
+#tg-boot-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+.tg-boot-spinner { width: 44px; height: 44px; border: 3px solid #e0e6f0; border-top-color: var(--tg-primary); border-radius: 50%; animation: tgSpin 0.8s linear infinite; }
+@keyframes tgSpin { to { transform: rotate(360deg); } }
+.tg-boot-text { font-size: 13px; color: #666; font-weight: 500; letter-spacing: 0.3px; }
+.tg-boot-logo { font-size: 22px; font-weight: 900; font-style: italic; color: var(--tg-primary); letter-spacing: -0.5px; margin-bottom: 4px; }
+.tg-boot-logo span { color: #ffc400; }
+
 .tg-hd { background: var(--tg-primary); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
 .tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 56px; }
 .tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
@@ -42,20 +49,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-hd-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .tg-hd-badge { position: absolute; top: 4px; right: 4px; background: #ff6161; color: #fff; font-size: 9px; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; border: 1.5px solid var(--tg-primary); }
 
-.tg-menu {
-  position: fixed; top: 62px; right: 12px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.08);
-  min-width: 220px;
-  padding: 6px 0;
-  z-index: 1100;
-  opacity: 0; visibility: hidden;
-  transform: translateY(-8px) scale(0.97);
-  transform-origin: top right;
-  transition: opacity .18s, transform .18s, visibility .18s;
-  will-change: transform, opacity;
-}
+.tg-menu { position: fixed; top: 62px; right: 12px; background: #fff; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.08); min-width: 220px; padding: 6px 0; z-index: 1100; opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.97); transform-origin: top right; transition: opacity .18s, transform .18s, visibility .18s; will-change: transform, opacity; }
 .tg-menu.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 .tg-menu-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; font-size: 14px; color: #212121; cursor: pointer; transition: background .15s; }
 .tg-menu-item:hover { background: #f1f3f6; }
@@ -67,154 +61,64 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-wrap { min-height: 100vh; padding-top: 56px; padding-bottom: 76px; }
 .tg-container { max-width: 720px; margin: 0 auto; padding: 12px; }
 
-.tg-profile {
-  background: linear-gradient(135deg, var(--tg-primary) 0%, var(--tg-primary-dark) 100%);
-  border-radius: 12px;
-  padding: 20px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(40,116,240,0.25);
-}
-.tg-profile::after {
-  content: '';
-  position: absolute;
-  top: -60px; right: -60px;
-  width: 180px; height: 180px;
-  background: radial-gradient(circle, rgba(255,229,0,0.18), transparent 70%);
-  border-radius: 50%;
-}
-.tg-avatar {
-  width: 68px; height: 68px;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--tg-primary);
-  font-size: 28px;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 3px solid rgba(255,255,255,0.35);
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
-}
+.tg-profile { background: linear-gradient(135deg, var(--tg-primary) 0%, var(--tg-primary-dark) 100%); border-radius: 12px; padding: 20px; color: #fff; display: flex; align-items: center; gap: 16px; margin-bottom: 12px; position: relative; overflow: hidden; box-shadow: 0 4px 16px rgba(40,116,240,0.25); }
+.tg-profile::after { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,229,0,0.18), transparent 70%); border-radius: 50%; }
+.tg-avatar { width: 68px; height: 68px; border-radius: 50%; background: #fff; color: var(--tg-primary); font-size: 28px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 3px solid rgba(255,255,255,0.35); position: relative; z-index: 2; overflow: hidden; }
 .tg-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .tg-profile-body { flex: 1; min-width: 0; position: relative; z-index: 2; }
 .tg-profile-name { font-size: 18px; font-weight: 800; margin-bottom: 3px; letter-spacing: -0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tg-profile-email { font-size: 12.5px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tg-profile-phone { font-size: 12.5px; opacity: 0.85; margin-top: 2px; }
-.tg-profile-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: rgba(255,229,0,0.9);
-  color: #212121;
-  font-size: 10px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-top: 6px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-}
+.tg-profile-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,229,0,0.9); color: #212121; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; margin-top: 6px; letter-spacing: 0.4px; text-transform: uppercase; }
 .tg-profile-badge svg { width: 11px; height: 11px; fill: currentColor; }
 .tg-profile-badge.seller { background: #ffe500; color: #212121; }
 .tg-profile-badge.admin { background: #fff; color: #d32f2f; }
 .tg-profile-badge.superadmin { background: #fff; color: #7c3aed; }
-.tg-profile-edit {
-  position: relative;
-  z-index: 2;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  transition: background .15s;
-}
+.tg-profile-edit { position: relative; z-index: 2; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px; flex-shrink: 0; transition: background .15s; }
 .tg-profile-edit:hover { background: rgba(255,255,255,0.25); }
 .tg-profile-edit svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-.tg-profile-mini-actions {
-  display: none;
-  gap: 6px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 2;
-  align-items: center;
-}
+.tg-profile-mini-actions { display: none; gap: 6px; margin-top: 8px; flex-wrap: wrap; position: relative; z-index: 2; align-items: center; }
 .tg-profile-mini-actions.show { display: flex; }
-.tg-mini-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  text-decoration: none;
-  line-height: 1.4;
-  transition: all .15s;
-  white-space: nowrap;
-  border: 1px solid transparent;
-}
-.tg-mini-pill svg {
-  width: 10px;
-  height: 10px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex-shrink: 0;
-}
+.tg-mini-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; text-decoration: none; line-height: 1.4; transition: all .15s; white-space: nowrap; border: 1px solid transparent; }
+.tg-mini-pill svg { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 .tg-mini-pill.seller { background: rgba(255,229,0,0.9); color: #212121; border-color: rgba(255,229,0,1); }
-.tg-mini-pill.seller:active { background: #ffe500; transform: translateY(1px); }
 .tg-mini-pill.admin { background: rgba(255,255,255,0.95); color: #d32f2f; border-color: #fff; }
-.tg-mini-pill.admin:active { background: #fff; transform: translateY(1px); }
 .tg-mini-pill.pending { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.35); cursor: default; }
 .tg-mini-pill.rejected { background: rgba(255,255,255,0.25); color: #fff; border-color: rgba(255,255,255,0.35); }
-.tg-mini-pill.rejected:active { background: rgba(255,255,255,0.4); transform: translateY(1px); }
 
 .tg-seller-banner { display: none !important; }
 
-.tg-stats {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px 12px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
+.tg-stats { background: #fff; border-radius: 12px; padding: 16px 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .tg-stat { text-align: center; padding: 8px 4px; cursor: pointer; border-radius: 8px; transition: background .15s; }
 .tg-stat:hover { background: #f1f3f6; }
 .tg-stat-num { font-size: 20px; font-weight: 800; color: var(--tg-primary); margin-bottom: 2px; }
 .tg-stat-label { font-size: 11px; color: #666; font-weight: 600; }
 
-/* ⚡ PERFORMANCE BOOST: content-visibility */
-.tg-sec { 
-  background: #fff; 
-  border-radius: 12px; 
-  margin-bottom: 12px; 
-  overflow: hidden; 
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06); 
-  content-visibility: auto;
-  contain-intrinsic-size: auto 300px;
-}
+/* 💰 WALLET CARD */
+#tg-wallet-card { display: none; background: linear-gradient(135deg, #1a5dc7 0%, #2874f0 50%, #1565c0 100%); border-radius: 14px; padding: 18px; margin-bottom: 12px; color: #fff; box-shadow: 0 6px 20px rgba(40,116,240,.28); position: relative; overflow: hidden; }
+#tg-wallet-card::after { content: ''; position: absolute; top: -80px; right: -80px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(255,229,0,.22), transparent 70%); border-radius: 50%; pointer-events: none; }
+#tg-wallet-card::before { content: ''; position: absolute; bottom: -100px; left: -100px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(251,100,27,.16), transparent 70%); border-radius: 50%; pointer-events: none; }
+.tg-wc-inner { position: relative; z-index: 2; }
+.tg-wc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.tg-wc-title-row { display: flex; align-items: center; gap: 10px; }
+.tg-wc-icon { width: 40px; height: 40px; background: rgba(255,255,255,.22); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 21px; border: 1px solid rgba(255,255,255,.25); }
+.tg-wc-title { font-size: 14.5px; font-weight: 800; letter-spacing: -.2px; }
+.tg-wc-sub { font-size: 10.5px; opacity: .88; font-weight: 500; }
+.tg-wc-history-btn { background: rgba(255,255,255,.22); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 10.5px; font-weight: 800; text-decoration: none; border: 1px solid rgba(255,255,255,.25); letter-spacing: .3px; }
+.tg-wc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: rgba(255,255,255,.22); border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+.tg-wc-cell { background: rgba(26,93,199,.85); padding: 13px 6px; text-align: center; }
+.tg-wc-val { font-size: 19px; font-weight: 900; letter-spacing: -.4px; line-height: 1.1; }
+.tg-wc-val.pending { color: #ffe500; }
+.tg-wc-val.total { color: #86efac; }
+.tg-wc-label { font-size: 9.5px; opacity: .9; font-weight: 700; margin-top: 3px; letter-spacing: .3px; text-transform: uppercase; }
+.tg-wc-actions { display: flex; gap: 8px; }
+.tg-wc-btn { flex: 1; padding: 11px; border-radius: 9px; font-size: 12.5px; font-weight: 800; text-align: center; border: none; cursor: pointer; letter-spacing: .3px; }
+.tg-wc-btn.primary { background: #fff; color: #1a5dc7; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+.tg-wc-btn.primary:active { transform: scale(.98); }
+.tg-wc-btn.ghost { background: rgba(255,255,255,.22); color: #fff; border: 1px solid rgba(255,255,255,.35); text-decoration: none; display: flex; align-items: center; justify-content: center; }
+
+.tg-sec { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); content-visibility: auto; contain-intrinsic-size: auto 300px; }
 .tg-sec-title { padding: 14px 18px 6px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.8px; }
 
 .tg-orders { display: grid; grid-template-columns: repeat(4, 1fr); padding: 10px 8px 16px; gap: 4px; }
@@ -229,6 +133,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-list-item:hover { background: #f8f9fb; }
 .tg-list-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,#eef3ff,#e0eaff); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tg-list-icon svg { width: 20px; height: 20px; stroke: var(--tg-primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-list-icon.blue { background: linear-gradient(135deg,#eef3ff,#e0eaff); } .tg-list-icon.blue svg { stroke: var(--tg-primary); }
 .tg-list-icon.green { background: linear-gradient(135deg,#e6f7ec,#d1f0dd); } .tg-list-icon.green svg { stroke: #1b8a3a; }
 .tg-list-icon.orange { background: linear-gradient(135deg,#fff3e0,#ffe0b2); } .tg-list-icon.orange svg { stroke: #fb641b; }
 .tg-list-icon.pink { background: linear-gradient(135deg,#fce4ec,#f8bbd0); } .tg-list-icon.pink svg { stroke: #f43397; }
@@ -252,7 +157,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
 .tg-delete { text-align: center; padding: 6px 0 8px; font-size: 12.5px; color: #999; }
 .tg-delete a { color: #d32f2f; font-weight: 600; }
-.tg-delete a:hover { text-decoration: underline; }
 
 .tg-version { text-align: center; padding: 8px 0 20px; font-size: 11px; color: #aaa; letter-spacing: 0.3px; }
 
@@ -270,13 +174,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 .tg-modal-title { font-size: 18px; font-weight: 800; }
 .tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-.tg-modal-close:hover { background: #e0e0e0; }
 .tg-modal-field { margin-bottom: 16px; position: relative; }
 .tg-modal-field label { display: block; font-size: 12px; color: #666; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
 .tg-modal-field input, .tg-modal-field select { width: 100%; height: 46px; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 0 14px; font-size: 14.5px; color: #212121; outline: none; background: #fff; transition: border-color .15s; }
 .tg-modal-field input:focus, .tg-modal-field select:focus { border-color: var(--tg-primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
 .tg-modal-save { width: 100%; padding: 14px; border-radius: 10px; background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark)); color: #fff; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 6px 18px rgba(40,116,240,0.3); }
-.tg-modal-save:active { transform: translateY(1px); }
 .tg-modal-save:disabled { opacity: 0.75; cursor: not-allowed; }
 
 .tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
@@ -285,6 +187,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-toast.success { background: #388e3c; }
 .tg-toast.error { background: #d32f2f; }
 .tg-toast.info { background: var(--tg-primary); }
+
+/* WITHDRAW MODAL */
+.tg-wd-method-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.tg-wd-method-btn { padding: 12px 8px; border: 1.5px solid #e0e0e0; border-radius: 10px; background: #fff; color: #666; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s; }
+.tg-wd-method-btn.active { border-color: #2874f0; background: #f0f5ff; color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,.08); }
+.tg-wd-balance-box { background: #f0f5ff; border-radius: 10px; padding: 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; border: 1.5px solid #d0e2ff; }
+.tg-wd-balance-label { font-size: 12px; color: #1a5dc7; font-weight: 700; }
+.tg-wd-balance-val { font-size: 20px; font-weight: 900; color: #1a5dc7; }
 
 @media (max-width: 520px) {
   .tg-container { padding: 10px; }
@@ -301,10 +211,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-list-item { padding: 12px 14px; gap: 12px; }
   .tg-list-title { font-size: 14px; }
   .tg-modal-card { padding: 20px 18px 22px; }
+  .tg-wc-val { font-size: 17px; }
+  .tg-wc-cell { padding: 11px 4px; }
 }
 </style>
 
-<!-- ⚡ INSTANT THEME — runs before anything paints -->
 <script>
 (function() {
   try {
@@ -322,6 +233,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 </script>
 </head>
 <body>
+
+<!-- 🚀 BOOT OVERLAY — prevents redirect flash -->
+<div id="tg-boot-overlay">
+  <div class="tg-boot-logo">TOE<span>GO</span></div>
+  <div class="tg-boot-spinner"></div>
+  <div class="tg-boot-text">Loading your account…</div>
+</div>
 
 <header class="tg-hd" id="tg-hd">
   <div class="tg-hd-inner">
@@ -393,7 +311,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       </button>
     </div>
 
-    <!-- Hidden banner (kept for backward compatibility, but hidden via CSS) -->
     <div class="tg-seller-banner" id="tg-seller-banner" style="display:none;">
       <div class="tg-seller-icon" id="tg-seller-icon"></div>
       <div class="tg-seller-body">
@@ -416,6 +333,40 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       <div class="tg-stat" onclick="location.href='cart.html'">
         <div class="tg-stat-num" id="tg-stat-cart">0</div>
         <div class="tg-stat-label">Cart</div>
+      </div>
+    </div>
+
+    <!-- 💰 COMMISSION WALLET -->
+    <div id="tg-wallet-card">
+      <div class="tg-wc-inner">
+        <div class="tg-wc-head">
+          <div class="tg-wc-title-row">
+            <div class="tg-wc-icon">💰</div>
+            <div>
+              <div class="tg-wc-title">Commission Wallet</div>
+              <div class="tg-wc-sub">Earn by sharing products</div>
+            </div>
+          </div>
+          <a href="commission.html" class="tg-wc-history-btn">History</a>
+        </div>
+        <div class="tg-wc-grid">
+          <div class="tg-wc-cell">
+            <div class="tg-wc-val" id="tg-acc-cw-available">₹0</div>
+            <div class="tg-wc-label">Available</div>
+          </div>
+          <div class="tg-wc-cell">
+            <div class="tg-wc-val pending" id="tg-acc-cw-pending">₹0</div>
+            <div class="tg-wc-label">Pending</div>
+          </div>
+          <div class="tg-wc-cell">
+            <div class="tg-wc-val total" id="tg-acc-cw-total">₹0</div>
+            <div class="tg-wc-label">Total Earned</div>
+          </div>
+        </div>
+        <div class="tg-wc-actions">
+          <button class="tg-wc-btn primary" onclick="tgAccOpenWithdraw()">💸 Withdraw</button>
+          <a href="commission.html" class="tg-wc-btn ghost">View All</a>
+        </div>
       </div>
     </div>
 
@@ -460,6 +411,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     <div class="tg-sec">
       <div class="tg-sec-title">Account Settings</div>
       <div class="tg-list">
+        <div class="tg-list-item" onclick="location.href='commission.html'">
+          <div class="tg-list-icon green"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">My Commission</div>
+            <div class="tg-list-desc">Earnings & withdrawal history</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+
         <div class="tg-list-item" onclick="location.href='addresses.html'">
           <div class="tg-list-icon blue"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <div class="tg-list-body">
@@ -621,6 +581,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           </div>
           <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
         </div>
+        <div class="tg-list-item" onclick="location.href='admin-commissions.html'">
+          <div class="tg-list-icon green"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div class="tg-list-body">
+            <div class="tg-list-title">Commission Control</div>
+            <div class="tg-list-desc">Referrals & withdrawals</div>
+          </div>
+          <div class="tg-list-right"><svg class="tg-list-arrow" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
       </div>
     </div>
 
@@ -671,6 +639,63 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     </div>
     <button class="tg-modal-save" id="tg-edit-save" onclick="tgSaveProfile()">
       <span id="tg-edit-save-text">Save Changes</span>
+    </button>
+  </div>
+</div>
+
+<!-- 💸 WITHDRAW MODAL -->
+<div class="tg-modal" id="tg-acc-withdraw-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">💸 Withdraw Commission</div>
+      <button class="tg-modal-close" onclick="tgAccCloseWithdraw()">✕</button>
+    </div>
+
+    <div class="tg-wd-balance-box">
+      <div>
+        <div class="tg-wd-balance-label">Available Balance</div>
+        <div style="font-size:10.5px;color:#666;margin-top:3px;">Min withdraw: <span id="tg-acc-wd-min">₹100</span></div>
+      </div>
+      <div class="tg-wd-balance-val" id="tg-acc-wd-available">₹0</div>
+    </div>
+
+    <div class="tg-modal-field">
+      <label>Amount *</label>
+      <input type="number" id="tg-acc-wd-amount" placeholder="Enter amount" inputmode="numeric">
+    </div>
+
+    <div class="tg-modal-field">
+      <label>Payment Method *</label>
+      <div class="tg-wd-method-row">
+        <button type="button" class="tg-wd-method-btn active" data-method="upi" onclick="tgAccPickPayMethod('upi', this)">📱 UPI</button>
+        <button type="button" class="tg-wd-method-btn" data-method="bank" onclick="tgAccPickPayMethod('bank', this)">🏦 Bank Transfer</button>
+      </div>
+    </div>
+
+    <div id="tg-acc-upi-fields">
+      <div class="tg-modal-field">
+        <label>UPI ID *</label>
+        <input type="text" id="tg-acc-wd-upi" placeholder="yourname@upi" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div id="tg-acc-bank-fields" style="display:none;">
+      <div class="tg-modal-field">
+        <label>Account Holder Name *</label>
+        <input type="text" id="tg-acc-wd-holder" placeholder="Name as per bank">
+      </div>
+      <div class="tg-modal-field">
+        <label>Account Number *</label>
+        <input type="text" id="tg-acc-wd-accno" placeholder="Account number" inputmode="numeric">
+      </div>
+      <div class="tg-modal-field">
+        <label>IFSC Code *</label>
+        <input type="text" id="tg-acc-wd-ifsc" placeholder="e.g. SBIN0001234" maxlength="11" style="text-transform:uppercase;" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <button class="tg-modal-save" id="tg-acc-wd-submit" onclick="tgAccSubmitWithdraw()" style="background:linear-gradient(135deg,#388e3c,#2e7d32);">
+      Request Withdraw
     </button>
   </div>
 </div>
@@ -755,7 +780,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         const img = document.createElement('img');
         img.src = photo;
         img.alt = name;
-        img.decoding = 'async'; /* ⚡ SPEED FIX */
+        img.decoding = 'async';
         img.onerror = function() { $avatar.textContent = initialFromName(name); };
         $avatar.appendChild(img);
       }
@@ -867,7 +892,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     SELLER_CACHE_PREFIX: SELLER_CACHE_PREFIX,
     LAST_UID_KEY: LAST_UID_KEY
   };
-
 })();
 </script>
 
@@ -879,11 +903,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 (function() {
   'use strict';
 
-  /* ⚡ FASTER WAIT LOGIC (uses DOMContentLoaded instead of 30ms polling) */
   function startApp() {
     const T = window.__TG_ACC__;
     if (!T) return setTimeout(startApp, 50);
-    
+
     const SUPER_ADMIN_EMAIL = T.SUPER_ADMIN_EMAIL;
     const PROFILE_CACHE_PREFIX = T.PROFILE_CACHE_PREFIX;
     const STATS_CACHE_PREFIX = T.STATS_CACHE_PREFIX;
@@ -904,8 +927,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const db = firebase.firestore();
     const FV = firebase.firestore.FieldValue;
 
+    // ⚡ FIX: Force LOCAL persistence so session survives redirects
+    try { auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {}); } catch(e) {}
+
     let LAST_INIT_UID = null;
     let USER_DOC = null;
+    let _authFirstResolve = false;
+    let _redirected = false;
 
     const themeMeta = document.getElementById('tg-theme-meta');
     function adjustColor(hex, pct) {
@@ -952,6 +980,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       w.appendChild(el);
       setTimeout(() => el.remove(), 2400);
     }
+    window.__accToast = toast;
+
+    function hideBootOverlay() {
+      const o = document.getElementById('tg-boot-overlay');
+      if (!o) return;
+      o.classList.add('hide');
+      setTimeout(() => { try { o.remove(); } catch(e) {} }, 500);
+    }
+    // Safety net: hide overlay after 4s no matter what
+    setTimeout(hideBootOverlay, 4000);
 
     const menuBtn = document.getElementById('tg-3dot-btn');
     const menu = document.getElementById('tg-3dot-menu');
@@ -1053,6 +1091,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         }
         try { localStorage.removeItem(LAST_UID_KEY); } catch(e) {}
         try { sessionStorage.removeItem(LAST_UID_KEY); } catch(e) {}
+        _redirected = true;
         await auth.signOut();
         toast('Logged out successfully', 'success');
         setTimeout(() => location.href = 'log-in.html', 500);
@@ -1074,6 +1113,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           localStorage.removeItem(LAST_UID_KEY);
         } catch(e) {}
         toast('Account deleted', 'success');
+        _redirected = true;
         setTimeout(() => location.href = 'shop-home.html', 600);
       }).catch(err => {
         if (err.code === 'auth/requires-recent-login') {
@@ -1109,13 +1149,168 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (!u) return;
       const code = 'TOE' + u.uid.slice(0, 6).toUpperCase();
       const msg = 'Hey! Use my TOEGO referral code ' + code + ' to get ₹100 off on your first order.';
-      const url = window.location.origin;
+      const url = window.location.origin + '/shop-home.html?ref=' + u.uid;
       if (navigator.share) {
         navigator.share({ title: 'TOEGO Referral', text: msg, url }).catch(() => {});
       } else {
-        navigator.clipboard.writeText(msg + ' ' + url).then(() => toast('Referral code copied ✓', 'success'));
+        navigator.clipboard.writeText(msg + ' ' + url).then(() => toast('Referral link copied ✓', 'success'));
       }
     };
+
+    /* ═══════════ 💰 COMMISSION WALLET ═══════════ */
+    let _accWalletData = null;
+    let _accWalletUnsub = null;
+    let _accWalletConfig = { defaultPercent: 5, minWithdraw: 100 };
+    let _accSelectedMethod = 'upi';
+
+    async function tgAccLoadWallet(uid) {
+      const card = document.getElementById('tg-wallet-card');
+      if (!card) return;
+      if (!uid) { card.style.display = 'none'; return; }
+      card.style.display = 'block';
+
+      try {
+        const cfgSnap = await db.collection('siteSettings').doc('commission').get();
+        if (cfgSnap.exists) _accWalletConfig = { defaultPercent: 5, minWithdraw: 100, ...cfgSnap.data() };
+      } catch(e) {}
+
+      const wdMin = document.getElementById('tg-acc-wd-min');
+      if (wdMin) wdMin.textContent = '₹' + (_accWalletConfig.minWithdraw || 100);
+
+      if (_accWalletUnsub) { try { _accWalletUnsub(); } catch(e) {} }
+      try {
+        _accWalletUnsub = db.collection('users').doc(uid).collection('wallet').doc('summary').onSnapshot(snap => {
+          _accWalletData = snap.exists ? snap.data() : { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+          _accUpdateWalletUI();
+        }, () => {
+          _accWalletData = { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+          _accUpdateWalletUI();
+        });
+      } catch(e) {
+        _accWalletData = { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+        _accUpdateWalletUI();
+      }
+    }
+
+    function _accUpdateWalletUI() {
+      const d = _accWalletData || {};
+      const a = document.getElementById('tg-acc-cw-available');
+      const p = document.getElementById('tg-acc-cw-pending');
+      const t = document.getElementById('tg-acc-cw-total');
+      if (a) a.textContent = '₹' + Number(d.available || 0).toLocaleString('en-IN');
+      if (p) p.textContent = '₹' + Number(d.pending || 0).toLocaleString('en-IN');
+      if (t) t.textContent = '₹' + Number(d.totalEarned || 0).toLocaleString('en-IN');
+    }
+
+    window.tgAccOpenWithdraw = function() {
+      const avail = Number(_accWalletData?.available || 0);
+      const min = Number(_accWalletConfig?.minWithdraw || 100);
+      if (avail < min) { toast('Minimum ₹' + min + ' required to withdraw', 'error'); return; }
+      document.getElementById('tg-acc-wd-available').textContent = '₹' + avail.toLocaleString('en-IN');
+      document.getElementById('tg-acc-wd-amount').value = avail;
+      document.getElementById('tg-acc-wd-upi').value = '';
+      document.getElementById('tg-acc-wd-holder').value = '';
+      document.getElementById('tg-acc-wd-accno').value = '';
+      document.getElementById('tg-acc-wd-ifsc').value = '';
+      _accSelectedMethod = 'upi';
+      document.querySelectorAll('.tg-wd-method-btn').forEach(b => {
+        const isUpi = b.dataset.method === 'upi';
+        b.classList.toggle('active', isUpi);
+      });
+      document.getElementById('tg-acc-upi-fields').style.display = 'block';
+      document.getElementById('tg-acc-bank-fields').style.display = 'none';
+      document.getElementById('tg-acc-withdraw-modal').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.tgAccCloseWithdraw = function() {
+      document.getElementById('tg-acc-withdraw-modal').classList.remove('show');
+      document.body.style.overflow = '';
+    };
+
+    window.tgAccPickPayMethod = function(method, el) {
+      _accSelectedMethod = method;
+      document.querySelectorAll('.tg-wd-method-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.method === method);
+      });
+      document.getElementById('tg-acc-upi-fields').style.display = method === 'upi' ? 'block' : 'none';
+      document.getElementById('tg-acc-bank-fields').style.display = method === 'bank' ? 'block' : 'none';
+    };
+
+    window.tgAccSubmitWithdraw = async function() {
+      const u = auth.currentUser;
+      if (!u) return;
+      const amt = Number(document.getElementById('tg-acc-wd-amount').value || 0);
+      const avail = Number(_accWalletData?.available || 0);
+      const min = Number(_accWalletConfig?.minWithdraw || 100);
+      if (amt < min) return toast('Minimum ₹' + min, 'error');
+      if (amt > avail) return toast('Amount exceeds available balance', 'error');
+
+      let payload = {};
+      if (_accSelectedMethod === 'upi') {
+        const upi = (document.getElementById('tg-acc-wd-upi').value || '').trim();
+        if (!upi || !/^[\w.\-]{2,}@[\w]{2,}$/.test(upi)) return toast('Valid UPI ID daalo', 'error');
+        payload = { method: 'upi', upiId: upi };
+      } else {
+        const holder = (document.getElementById('tg-acc-wd-holder').value || '').trim();
+        const accno = (document.getElementById('tg-acc-wd-accno').value || '').trim();
+        const ifsc = (document.getElementById('tg-acc-wd-ifsc').value || '').trim().toUpperCase();
+        if (!holder) return toast('Account holder name required', 'error');
+        if (!accno || accno.length < 6) return toast('Valid account number required', 'error');
+        if (!ifsc || ifsc.length !== 11) return toast('Valid 11-character IFSC required', 'error');
+        payload = { method: 'bank', bankDetails: { holder: holder, accountNumber: accno, ifsc: ifsc } };
+      }
+
+      const btn = document.getElementById('tg-acc-wd-submit');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        await db.runTransaction(async (tx) => {
+          const wRef = db.collection('users').doc(u.uid).collection('wallet').doc('summary');
+          const wSnap = await tx.get(wRef);
+          const curAvail = Number(wSnap.data()?.available || 0);
+          if (curAvail < amt) throw new Error('Insufficient balance');
+          tx.set(wRef, {
+            available: curAvail - amt,
+            pending: Number(wSnap.data()?.pending || 0) + amt,
+            updatedAt: FV.serverTimestamp()
+          }, { merge: true });
+          tx.set(db.collection('withdrawals').doc(), {
+            userId: u.uid,
+            userName: u.displayName || (u.email || '').split('@')[0] || 'User',
+            userEmail: u.email || '',
+            amount: amt,
+            ...payload,
+            status: 'pending',
+            requestedAt: FV.serverTimestamp(),
+            adminNote: '',
+            processedAt: null
+          });
+          tx.set(db.collection('wallet_transactions').doc(), {
+            userId: u.uid,
+            type: 'withdraw_request',
+            amount: amt,
+            note: 'Withdrawal requested via ' + (payload.method === 'upi' ? 'UPI: ' + payload.upiId : 'Bank: ' + payload.bankDetails.accountNumber.slice(-4)),
+            status: 'pending',
+            createdAt: FV.serverTimestamp()
+          });
+        });
+        toast('✅ Withdraw request submitted!', 'success');
+        tgAccCloseWithdraw();
+      } catch(err) {
+        toast(err.message || 'Failed to submit', 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Request Withdraw';
+      }
+    };
+
+    /* Load wallet when auth user available */
+    function ensureWalletLoaded(uid) {
+      if (!uid) return;
+      try { tgAccLoadWallet(uid); } catch(e) { console.warn('[wallet]', e); }
+    }
+    window.__accEnsureWallet = ensureWalletLoaded;
+
+    /* ═══════════ DATA LOADERS ═══════════ */
 
     async function loadStatsParallel(user) {
       const uid = user.uid;
@@ -1190,10 +1385,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     }
 
     async function initFast(user) {
-      if (!user) {
-        window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
-        return;
-      }
+      if (!user) return;
       if (LAST_INIT_UID === user.uid) return;
       LAST_INIT_UID = user.uid;
 
@@ -1215,6 +1407,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           if (adminSec) adminSec.style.display = 'block';
         }
       }
+
+      // 🔥 WALLET LOAD — IMMEDIATE
+      ensureWalletLoaded(user.uid);
 
       const profileP = db.collection('users').doc(user.uid).get().catch(() => null);
       const sellerP = db.collection('sellers').doc(user.uid).get().catch(() => null);
@@ -1269,29 +1464,72 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       } catch(e) {}
     })();
 
-    if (auth.currentUser) {
-      initFast(auth.currentUser);
-    }
+    /* ═══════════ 🔥 FIXED AUTH FLOW — NO REDIRECT LOOP ═══════════ */
+    /*
+     * Problem: After Google login, log-in.html redirects to account.html.
+     *          But Firebase hasn't restored the session yet in the new page.
+     *          onAuthStateChanged fires null briefly → we redirect back → LOOP.
+     *
+     * Fix: 
+     *   1. Show boot overlay while we wait
+     *   2. On FIRST null, wait 1.2s and re-check auth.currentUser
+     *   3. Only redirect if STILL null after that
+     *   4. If user available at any point, hide overlay and load
+     */
+
+    let _nullCount = 0;
 
     auth.onAuthStateChanged((user) => {
-      if (!user) {
-        window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
-        return;
-      }
-      if (user.uid !== LAST_INIT_UID) {
-        initFast(user);
+      if (user) {
+        _authFirstResolve = true;
+        hideBootOverlay();
+        if (user.uid !== LAST_INIT_UID) {
+          initFast(user);
+        } else {
+          // Already init'd — just refresh wallet
+          ensureWalletLoaded(user.uid);
+        }
+      } else {
+        // No user
+        if (!_authFirstResolve) {
+          _authFirstResolve = true;
+          _nullCount++;
+          // First fire with null — give Firebase time to restore from indexedDB
+          setTimeout(() => {
+            if (auth.currentUser) {
+              // Restored in the meantime — onAuthStateChanged will fire again with user
+              return;
+            }
+            if (!_redirected) {
+              _redirected = true;
+              hideBootOverlay();
+              window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
+            }
+          }, 1500);
+        } else {
+          // Real logout — redirect clean
+          if (!_redirected) {
+            _redirected = true;
+            hideBootOverlay();
+            window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
+          }
+        }
       }
     });
 
+    // Fallback: if user is already present synchronously, init immediately
+    if (auth.currentUser) {
+      hideBootOverlay();
+      initFast(auth.currentUser);
+      ensureWalletLoaded(auth.currentUser.uid);
+    }
   }
 
-  // ⚡ FAST START: Run as soon as DOM is ready (deferred scripts will load in parallel)
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startApp);
   } else {
     startApp();
   }
-
 })();
 </script>
 </body>
