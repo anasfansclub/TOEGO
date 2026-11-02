@@ -2650,11 +2650,19 @@ function renderAllProducts() {
     };
   }
 
- function addToCartInternal() {
+function addToCartInternal() {
     if (!PRODUCT) return;
     if (!validateSelection()) return;
     const item = buildCartItem();
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
+
+    // 🔥 Save to sessionStorage for INSTANT cart render
+    try {
+      let pending = JSON.parse(sessionStorage.getItem('toego_pending_items') || '[]');
+      pending = pending.filter(p => p.docId !== docId);
+      pending.push({ docId, item: { ...item, qty: QTY }, ts: Date.now() });
+      sessionStorage.setItem('toego_pending_items', JSON.stringify(pending));
+    } catch(e) {}
 
     // 🔥 INSTANT feedback — toast + badge (before any network)
     toast(TOAST_MSGS.addCart, 'success');
@@ -2709,6 +2717,14 @@ window.tgAddToCart = function() {
   // Save buy-now intent
   try { sessionStorage.setItem('toego_buy_now_doc', docId); } catch(e) {}
   try { sessionStorage.setItem('toego_buy_now_qty', String(QTY)); } catch(e) {}
+  
+  // 🔥 Save item for INSTANT cart render
+  try {
+    let pending = JSON.parse(sessionStorage.getItem('toego_pending_items') || '[]');
+    pending = pending.filter(p => p.docId !== docId);
+    pending.push({ docId, item: { ...item, qty: QTY }, ts: Date.now() });
+    sessionStorage.setItem('toego_pending_items', JSON.stringify(pending));
+  } catch(e) {}
   
   // Guest user
   if (!currentUser) {
