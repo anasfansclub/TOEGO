@@ -46,7 +46,6 @@ a{color:inherit;text-decoration:none;}
 .tg-search-input{flex:1;padding:10px 14px;border:1px solid #d4d5d9;border-radius:4px;font-size:15px;outline:none;}
 .tg-search-input:focus{border-color:var(--tg-primary);}
 .tg-search-close{padding:10px;font-weight:700;color:#282c3f;cursor:pointer;}
-/* ✅ Search Results List */
 .tg-search-results{flex:1;overflow-y:auto;padding:8px 16px 20px;-webkit-overflow-scrolling:touch;}
 .tg-search-section-title{font-size:11px;font-weight:800;color:#999;text-transform:uppercase;letter-spacing:0.6px;padding:12px 0 8px;}
 .tg-search-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;}
@@ -63,23 +62,11 @@ a{color:inherit;text-decoration:none;}
 .tg-search-tag:hover,.tg-search-tag:active{background:var(--tg-primary-light);color:var(--tg-primary);border-color:var(--tg-primary);}
 .tg-wrap{padding-top:58px;padding-bottom:170px;min-height:100vh;}
 .tg-co{max-width:1280px;margin:0 auto;padding:14px;}
-/* ✅ Product card (with .tg-main) - edge to edge, koi space nahi */
-.tg-co > .tg-card:has(.tg-main){
-  margin:-14px -14px 12px !important;
-  border-radius:0 !important;
-  box-shadow:none !important;
-}
+.tg-co > .tg-card:has(.tg-main){margin:-14px -14px 12px !important;border-radius:0 !important;box-shadow:none !important;}
 @media (max-width:900px){
   .tg-co{padding:0 !important;}
-  .tg-co > .tg-card:has(.tg-main){
-    margin:0 0 10px !important;
-    border-radius:0 !important;
-    box-shadow:none !important;
-  }
-  /* Baaki cards ko padding wapas do */
-  .tg-co > .tg-card:not(:has(.tg-main)){
-    margin:10px 12px !important;
-  }
+  .tg-co > .tg-card:has(.tg-main){margin:0 0 10px !important;border-radius:0 !important;box-shadow:none !important;}
+  .tg-co > .tg-card:not(:has(.tg-main)){margin:10px 12px !important;}
 }
 .tg-card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:12px;overflow:hidden;}
 .tg-skel{background:linear-gradient(90deg,#f0f0f0 0%,#e8e8e8 50%,#f0f0f0 100%);background-size:200% 100%;animation:tgShim 1.2s infinite;border-radius:8px;}
@@ -93,41 +80,12 @@ a{color:inherit;text-decoration:none;}
   .tg-info{padding:16px !important;}
 }
 .tg-gallery{position:sticky;top:70px;height:fit-content;padding:0 !important;}
-.tg-slider{
-  position:relative !important;
-  aspect-ratio:1/1 !important;
-  background:#f8f9fb !important;
-  border-radius:0 !important;
-  overflow:hidden !important;
-  user-select:none !important;
-  touch-action:pan-y !important;
-  width:100% !important;
-}
-@media (max-width:900px){
-  .tg-gallery{position:static !important;padding:0 !important;}
-  .tg-slider{aspect-ratio:1/1 !important;}
-}
+.tg-slider{position:relative !important;aspect-ratio:1/1 !important;background:#f8f9fb !important;border-radius:0 !important;overflow:hidden !important;user-select:none !important;touch-action:pan-y !important;width:100% !important;}
+@media (max-width:900px){.tg-gallery{position:static !important;padding:0 !important;}.tg-slider{aspect-ratio:1/1 !important;}}
 .tg-slider-track{display:flex;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;}
 .tg-slider-track.no-trans{transition:none;}
-.tg-slide{
-  flex:0 0 100% !important;
-  width:100% !important;
-  height:100% !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  cursor:zoom-in !important;
-  background:#f8f9fb !important;
-  padding:0 !important;
-}
-.tg-slide img{
-  width:100% !important;
-  height:100% !important;
-  object-fit:cover !important;  /* ✅ Full fill - no white bars */
-  object-position:center !important;
-  pointer-events:none !important;
-  display:block !important;
-}
+.tg-slide{flex:0 0 100% !important;width:100% !important;height:100% !important;display:flex !important;align-items:center !important;justify-content:center !important;cursor:zoom-in !important;background:#f8f9fb !important;padding:0 !important;}
+.tg-slide img{width:100% !important;height:100% !important;object-fit:cover !important;object-position:center !important;pointer-events:none !important;display:block !important;}
 @media (max-width:900px){ .tg-slider{aspect-ratio:3/4;} .tg-slide img{object-fit:contain;} }
 .tg-slider-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:0 2px 8px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background .15s;}
 .tg-slider-arrow:hover{background:#fff;}
@@ -205,7 +163,6 @@ a{color:inherit;text-decoration:none;}
 .tg-qty button:disabled{color:#ccc;cursor:not-allowed;}
 .tg-qty-val{min-width:46px;height:40px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border-left:2px solid #e0e0e0;border-right:2px solid #e0e0e0;}
 
-/* ✅ NEW: Badges, Offers, Highlights, Delivery Info, EMI */
 .tg-badges-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .tg-badge-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11.5px;font-weight:700;}
 .tg-badge-pill.free-del{background:#e6f7ec;color:#1b8a3a;}
@@ -472,7 +429,6 @@ a{color:inherit;text-decoration:none;}
 .tg-ar-chip.active{background:var(--tg-primary);color:#fff;border-color:var(--tg-primary);}
 .tg-ar-empty{text-align:center;padding:50px 20px;color:#999;}
 
-/* ✅ FIXED: Image Viewer - close button click issue */
 .tg-img-viewer{position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:9999999;display:none;align-items:center;justify-content:center;padding:0;cursor:zoom-out;animation:tgFadeIn .2s;overflow:hidden;touch-action:none;isolation:isolate;}
 .tg-img-viewer.show{display:flex;}
 @keyframes tgFadeIn{from{opacity:0;}to{opacity:1;}}
@@ -606,7 +562,6 @@ a{color:inherit;text-decoration:none;}
   </button>
 </div>
 
-<!-- ✅ SHARE MODAL -->
 <div class="tg-modal" id="tg-share-modal">
   <div class="tg-modal-card">
     <div class="tg-modal-head"><div class="tg-modal-title">Share this product</div><button class="tg-modal-close" onclick="tgCloseShare()">✕</button></div>
@@ -618,7 +573,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ✅ SIZE CHART MODAL -->
 <div class="tg-modal" id="tg-size-chart-modal">
   <div class="tg-modal-card">
     <div class="tg-modal-head"><div class="tg-modal-title">📏 Size Chart</div><button class="tg-modal-close" onclick="tgCloseSizeChart()">✕</button></div>
@@ -634,7 +588,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ✅ Q&A ASK MODAL -->
 <div class="tg-modal tg-qa-form-modal" id="tg-qa-modal">
   <div class="tg-modal-card">
     <div class="tg-modal-head"><div class="tg-modal-title">Ask a Question</div><button class="tg-modal-close" onclick="tgCloseQA()">✕</button></div>
@@ -646,7 +599,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ✅ NOTIFY ME MODAL -->
 <div class="tg-modal" id="tg-notify-modal">
   <div class="tg-modal-card">
     <div class="tg-modal-head"><div class="tg-modal-title">🔔 Notify Me</div><button class="tg-modal-close" onclick="tgCloseNotify()">✕</button></div>
@@ -660,7 +612,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- Review modal -->
 <div class="tg-rv-modal" id="tg-rv-modal">
   <div class="tg-rv-card">
     <div class="tg-rv-head"><div class="tg-rv-title" id="tg-rv-modal-title">Write a Review</div><button class="tg-rv-close" onclick="tgRvClose()">✕</button></div>
@@ -710,7 +661,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- ✅ FIXED IMAGE VIEWER -->
 <div class="tg-img-viewer" id="tg-img-viewer">
   <button class="tg-img-viewer-reset" id="tg-viewer-reset" onclick="tgViewerReset(event)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset</button>
   <span class="tg-viewer-counter hidden" id="tg-viewer-counter">1 / 1</span>
@@ -731,6 +681,21 @@ a{color:inherit;text-decoration:none;}
 <script>
 (function(){
   'use strict';
+
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ NEW: CAPTURE REFERRAL FROM URL — runs FIRST before anything
+     So if visitor lands on product.html?id=X&ref=USER_A, the referral
+     gets saved to localStorage immediately and survives the cart flow.
+     ═══════════════════════════════════════════════════════════════ */
+  (function tgCaptureReferralEarly(){
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const ref = p.get('ref');
+      if (ref && ref.length > 10) {
+        localStorage.setItem('toego_referrer', JSON.stringify({ uid: ref, ts: Date.now() }));
+      }
+    } catch(e) {}
+  })();
 
   if (!window.__TOEGO_FB__) {
     window.__TOEGO_FB__ = firebase.initializeApp({
@@ -803,6 +768,11 @@ a{color:inherit;text-decoration:none;}
   let viewerIndex = 0;
   let currentSizeChartTab = 'footwear';
 
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ NEW: COMMISSION CONFIG (admin settings — default % + product override)
+     ═══════════════════════════════════════════════════════════════ */
+  let COMMISSION_CONFIG = { defaultPercent: 5, productOverrides: {} };
+
   const DEFAULT_TOAST_MSGS = {
     addCart: 'Added to cart', loginRequired: 'Please log in to continue',
     reviewSuccess: 'Review submitted ✓ Thank you!', reviewUpdateSuccess: 'Review updated ✓',
@@ -864,6 +834,40 @@ a{color:inherit;text-decoration:none;}
     try { localStorage.setItem(CLOUD_CACHE_KEY, JSON.stringify(d)); } catch(e) {}
   }).catch(() => {});
 
+  /* ═══════════════════════════════════════════════════════════════
+     ✅ NEW: LOAD COMMISSION CONFIG (defaultPercent + productOverrides)
+     ═══════════════════════════════════════════════════════════════ */
+  db.collection('siteSettings').doc('commission').get().then(s => {
+    if (!s.exists) return;
+    const d = s.data() || {};
+    COMMISSION_CONFIG.defaultPercent = Number(d.defaultPercent || 5);
+    COMMISSION_CONFIG.productOverrides = d.productOverrides || {};
+    try { if (PRODUCT) renderCommissionBadge(); } catch(e) {}
+  }).catch(() => {});
+
+  function getProductCommissionPct() {
+    if (!PRODUCT) return Number(COMMISSION_CONFIG.defaultPercent || 5);
+    const override = COMMISSION_CONFIG.productOverrides[PRODUCT.id];
+    return override != null ? Number(override) : Number(COMMISSION_CONFIG.defaultPercent || 5);
+  }
+
+  function renderCommissionBadge() {
+    const el = document.getElementById('tg-commission-badge');
+    if (!el) return;
+    if (!currentUser || !PRODUCT) { el.innerHTML = ''; return; }
+    const commPct = getProductCommissionPct();
+    const commAmt = Math.round(Number(PRODUCT.price || 0) * commPct / 100);
+    if (commPct <= 0 || commAmt <= 0) { el.innerHTML = ''; return; }
+    el.innerHTML = '<div style="background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1.5px solid #ffe500;border-radius:10px;padding:12px 14px;margin:14px 0;display:flex;align-items:center;gap:10px;">' +
+      '<div style="font-size:22px;">💰</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:12.5px;font-weight:800;color:#856404;">Earn commission on sharing!</div>' +
+        '<div style="font-size:11.5px;color:#856404;margin-top:2px;line-height:1.4;">Get <b>' + commPct + '% (' + inr(commAmt) + ')</b> in your wallet when someone buys through your share link</div>' +
+      '</div>' +
+      '<button onclick="tgOpenShare()" style="background:#fb641b;color:#fff;padding:8px 12px;border-radius:6px;font-size:11px;font-weight:800;border:none;cursor:pointer;white-space:nowrap;">Share</button>' +
+    '</div>';
+  }
+
   function toast(msg, type) {
     type = type || 'info';
     const w = document.getElementById('tg-toasts');
@@ -888,6 +892,7 @@ a{color:inherit;text-decoration:none;}
   function tago(d){ if(!d) return ''; const dt = d.toDate?d.toDate():new Date(d); const s = Math.floor((Date.now()-dt.getTime())/1000); if (s < 60) return 'Just now'; if (s < 3600) return Math.floor(s/60)+'m ago'; if (s < 86400) return Math.floor(s/3600)+'h ago'; if (s < 604800) return Math.floor(s/86400)+'d ago'; return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
   function escapeAttr(s) { return String(s||'').replace(/'/g, "&#39;").replace(/"/g, '&quot;'); }
   function fmtBytes(b) { if (!b) return ''; if (b < 1024) return b + 'B'; return (b/1024).toFixed(1) + 'KB'; }
+
 window.tgOpenSearch = function() { 
   const overlay = document.getElementById('tg-search-overlay');
   const input = document.getElementById('tg-search-input');
@@ -895,7 +900,6 @@ window.tgOpenSearch = function() {
   overlay.classList.add('show');
   document.body.style.overflow = 'hidden';
   
-  // Load products if not loaded
   if (!ALL_PRODUCTS || ALL_PRODUCTS.length < 5) {
     db.collection('products').where('active','==',true).limit(60).get()
       .then(snap => {
@@ -909,7 +913,6 @@ window.tgOpenSearch = function() {
       });
   }
   
-  // Show popular searches initially
   tgSearchInput(input ? input.value : '');
   
   setTimeout(() => { if (input) input.focus(); }, 100);
@@ -920,13 +923,11 @@ window.tgCloseSearch = function() {
   document.body.style.overflow = '';
 };
 
-// ✅ NEW: Live search as user types
 window.tgSearchInput = function(q) {
   const results = document.getElementById('tg-search-results');
   if (!results) return;
   q = String(q || '').trim().toLowerCase();
   
-  // Empty query → show popular searches
   if (!q) {
     const popularTags = ['shoes', 'slippers', 'sandals', 'watches', 'bags', 'electronics', 'sale'];
     results.innerHTML = 
@@ -937,13 +938,11 @@ window.tgSearchInput = function(q) {
     return;
   }
   
-  // Ensure products loaded
   if (!ALL_PRODUCTS || ALL_PRODUCTS.length < 5) {
     results.innerHTML = '<div class="tg-search-empty">Searching…</div>';
     return;
   }
   
-  // Filter products
   const matches = ALL_PRODUCTS.filter(p => {
     if (!p) return false;
     const hay = [
@@ -958,7 +957,6 @@ window.tgSearchInput = function(q) {
     return;
   }
   
-  // Show matches
   results.innerHTML = 
     '<div class="tg-search-section-title">' + matches.length + ' result' + (matches.length > 1 ? 's' : '') + ' found</div>' +
     matches.slice(0, 15).map(p => {
@@ -975,19 +973,16 @@ window.tgSearchInput = function(q) {
     (matches.length > 15 ? '<div style="padding:14px 0;text-align:center;"><button onclick="tgSearchSubmit()" style="padding:12px 24px;background:var(--tg-primary);color:#fff;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;width:100%;">View all ' + matches.length + ' results →</button></div>' : '');
 };
 
-// ✅ NEW: Quick tag click
 window.tgQuickSearch = function(t) {
   const input = document.getElementById('tg-search-input');
   if (input) { input.value = t; tgSearchInput(t); }
 };
 
-// ✅ NEW: Go to product
 window.tgGoToProduct = function(id) {
   tgCloseSearch();
   window.location.href = 'product.html?id=' + encodeURIComponent(id);
 };
 
-// ✅ NEW: Submit search (Enter key)
 window.tgSearchSubmit = function() {
   const input = document.getElementById('tg-search-input');
   const q = (input ? input.value : '').trim();
@@ -1356,14 +1351,13 @@ window.tgSearchSubmit = function() {
   '<button class="tg-view-similar" onclick="document.getElementById(\'tg-related\').scrollIntoView({behavior:\'smooth\'})"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>View Similar</button>' +
   '</div>';
 
-
-
   const html = '<div class="tg-main">' +
     '<div class="tg-gallery">' + sliderHtml + '</div>' +
     '<div class="tg-info">' +
       '<div class="tg-brand" style="font-size:20px;font-weight:700;color:#282c3f;margin-bottom:4px;">' + esc(PRODUCT.brand || 'TOEGO') + '</div>' +
       '<h1 class="tg-title" style="font-size:16px;color:#535766;font-weight:400;line-height:1.4;margin:0 0 16px;">' + esc(PRODUCT.name || 'Product') + '</h1>' +
       '<div class="tg-price-row" style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px;"><span class="tg-price" style="font-size:24px;font-weight:700;color:#282c3f;">' + inr(price) + '</span>' + (mrp > price ? '<span class="tg-mrp" style="font-size:16px;color:#94969f;text-decoration:line-through;">MRP ' + inr(mrp) + '</span><span class="tg-off" style="font-size:16px;color:#ff905a;font-weight:700;">(' + off + '% OFF)</span>' : '') + '</div>' +
+      '<div id="tg-commission-badge"></div>' +
       '<div id="tg-main-rating"></div>' +
       '<div class="tg-trust-badges" style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:1px solid #eaeaec;border-bottom:1px solid #eaeaec;margin-bottom:24px;gap:10px;flex-wrap:wrap;">' +
         '<div class="tg-trust-item" style="display:flex;align-items:center;gap:8px;font-size:12px;color:#282c3f;font-weight:600;"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#282c3f;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;"><path d="m9 12 2 2 4-4"/><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Z"/></svg><span>100% Original<br>Products</span></div>' +
@@ -1405,6 +1399,7 @@ window.tgSearchSubmit = function() {
   else { addBtn.disabled = false; addBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> ADD TO BAG'; }
 
   updateMainRating();
+  renderCommissionBadge();
   initSlider();
   renderReviewsBlock();
   renderCustomerPhotos();
@@ -1642,13 +1637,22 @@ window.tgSelectColor = function(c) {
     }, 600);
   };
 
-  /* ✅ SHARE FUNCTIONS */
+  /* ✅ SHARE FUNCTIONS — WITH REFERRAL TRACKING & COMMISSION BANNER */
   window.tgOpenShare = function() {
     if (!PRODUCT) return;
-    const url = window.location.origin + window.location.pathname + '?id=' + PRODUCT.id;
+    
+    // ✅ Referral tracking: append &ref=UID for logged-in users
+    const refQ = currentUser ? '&ref=' + encodeURIComponent(currentUser.uid) : '';
+    const url = window.location.origin + window.location.pathname + '?id=' + PRODUCT.id + refQ;
     const name = PRODUCT.name || 'Product';
     const price = Number(PRODUCT.price || 0);
-    const text = '🛍️ ' + name + '\n💰 ₹' + price.toLocaleString('en-IN') + '\n🔗 Buy on TOEGO: ' + url;
+    const commPct = getProductCommissionPct();
+    const commAmt = Math.round(price * commPct / 100);
+    
+    let text = '🛍️ ' + name + '\n💰 ₹' + price.toLocaleString('en-IN') + '\n🔗 Buy on TOEGO: ' + url;
+    if (currentUser && commPct > 0) {
+      text += '\n\n💸 Use my link and I earn ' + commPct + '% commission!';
+    }
 
     document.getElementById('tg-share-url-input').value = url;
 
@@ -1670,6 +1674,38 @@ window.tgSelectColor = function(c) {
       '<div class="tg-share-btn" onclick="tgShareAction(' + i + ')"><div class="tg-share-icon" style="background:' + s.bg + '33;color:' + s.bg + ';">' + s.icon + '</div><div class="tg-share-btn-label">' + s.name + '</div></div>'
     ).join('');
     window.__shareActions = shares.map(s => s.action);
+    
+    // ✅ Commission banner
+    const modal = document.getElementById('tg-share-modal');
+    let banner = modal.querySelector('.tg-share-commission-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.className = 'tg-share-commission-banner';
+      const head = modal.querySelector('.tg-modal-head');
+      if (head) head.insertAdjacentElement('afterend', banner);
+    }
+    if (currentUser && commPct > 0) {
+      banner.innerHTML = '<div style="padding:14px 16px;background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1.5px solid #ffe500;border-radius:10px;margin-bottom:14px;display:flex;align-items:center;gap:12px;">' +
+        '<div style="font-size:28px;">💰</div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:13px;font-weight:800;color:#856404;">You earn commission!</div>' +
+          '<div style="font-size:11.5px;color:#856404;margin-top:3px;line-height:1.4;">When someone buys via your link, you earn <b>' + commPct + '% (' + inr(commAmt) + ')</b> in your wallet</div>' +
+        '</div>' +
+        '<div style="background:#ffe500;color:#212121;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap;">' + commPct + '%</div>' +
+      '</div>';
+      banner.style.display = 'block';
+    } else if (!currentUser && commPct > 0) {
+      banner.innerHTML = '<div style="padding:14px 16px;background:#f0f5ff;border:1.5px solid #d0e2ff;border-radius:10px;margin-bottom:14px;display:flex;align-items:center;gap:10px;">' +
+        '<div style="font-size:22px;">🔐</div>' +
+        '<div style="flex:1;font-size:12px;color:#1a5dc7;font-weight:600;line-height:1.4;">Login to earn <b>' + commPct + '% commission</b> when you share this product</div>' +
+        '<a href="log-in.html" style="background:#2874f0;color:#fff;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:800;text-decoration:none;white-space:nowrap;">Login</a>' +
+      '</div>';
+      banner.style.display = 'block';
+    } else {
+      banner.innerHTML = '';
+      banner.style.display = 'none';
+    }
+    
     document.getElementById('tg-share-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
   };
@@ -2378,13 +2414,9 @@ function renderAllProducts() {
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════════
-     ✅ FIXED FULLSCREEN VIEWER - Close button 1st click me kaam karega
-     ══════════════════════════════════════════════════════════════════ */
   let vwScale = 1, vwLastScale = 1, vwStartDist = 0, vwPanX = 0, vwPanY = 0, vwStartX = 0, vwStartY = 0, vwIsPanning = false, vwLastTap = 0;
   let swStartX = 0, swStartY = 0, swDeltaX = 0;
 
-  /* ✅ Check if touch/click target is a UI control */
   function vwIsUIControl(e) {
     const t = e.target;
     if (!t) return false;
@@ -2504,7 +2536,6 @@ function renderAllProducts() {
     const v = document.getElementById('tg-img-viewer'), img = document.getElementById('tg-viewer-img');
     if (!v || !img) return;
 
-    /* ✅ FIX: Skip touch handlers if touching UI controls */
     v.addEventListener('touchstart', (e) => {
       if (vwIsUIControl(e)) return;
       const hint = document.getElementById('tg-img-viewer-hint'); if (hint) hint.classList.add('hide');
@@ -2574,9 +2605,8 @@ function renderAllProducts() {
     window.addEventListener('mouseup', () => { mouseDown = false; img.classList.remove('no-trans'); });
     v.addEventListener('wheel', (e) => { e.preventDefault(); const delta = e.deltaY > 0 ? -0.15 : 0.15; vwScale = Math.min(5, Math.max(0.8, vwScale + delta)); vwApply(); }, { passive: false });
 
-    /* ✅ FIX: Click on background closes, but not if target is any UI control */
     v.addEventListener('click', (e) => {
-      if (vwIsUIControl(e)) return; // Let button's own onclick handle it
+      if (vwIsUIControl(e)) return;
       if (e.target === v) { tgCloseViewer(); }
     });
   })();
@@ -2619,7 +2649,6 @@ function renderAllProducts() {
     const item = buildCartItem();
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
 
-    // ✅ GUEST MODE
     if (!currentUser) {
       try {
         let cart = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
@@ -2633,15 +2662,12 @@ function renderAllProducts() {
       return;
     }
 
-    // ✅ LOGGED-IN MODE — Badge update AFTER write completes
     const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
     ref.get().then(snap => {
       if (snap.exists) return ref.update({ qty: FV.increment(QTY), updatedAt: FV.serverTimestamp() });
       return ref.set({ ...item, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
     }).then(() => {
       toast(TOAST_MSGS.addCart, 'success');
-      // Badge update ab onSnapshot se automatic hoga
-      // Agar onSnapshot fail ho toh manual fallback:
       setTimeout(() => updateCartBadge(), 300);
     }).catch(() => {
       return ref.set({ ...item, qty: FV.increment(QTY), addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() }, { merge: true }).then(() => {
@@ -2693,7 +2719,6 @@ function renderAllProducts() {
   };
 
   function updateCartBadge() {
-    // Guest mode → localStorage se
     if (!currentUser) {
       try {
         const c = JSON.parse(localStorage.getItem(GUEST_CART) || '[]');
@@ -2703,7 +2728,6 @@ function renderAllProducts() {
       } catch(e) {}
       return;
     }
-    // Logged-in mode → Firestore server se (NOT cache)
     db.collection('carts').doc(currentUser.uid).collection('items').get({ source: 'server' })
       .catch(() => db.collection('carts').doc(currentUser.uid).collection('items').get())
       .then(snap => {
@@ -2715,7 +2739,6 @@ function renderAllProducts() {
       .catch(() => {});
   }
 
-  // ✅ NEW: Real-time cart watcher (logged-in ke liye)
   function watchCart(uid) {
     if (unsubCart) { try { unsubCart(); } catch(e) {} unsubCart = null; }
     if (!uid) { updateCartBadge(); return; }
@@ -2740,11 +2763,13 @@ function renderAllProducts() {
   const wasLoggedIn = !!currentUser;
   currentUser = u;
   
-  // ✅ Real-time cart watcher start karo
   watchCart(u ? u.uid : null);
   
-  
    updateWishlistBadge();
+  
+  /* ✅ NEW: Re-render commission badge on login change */
+  try { renderCommissionBadge(); } catch(e) {}
+  
   if (PRODUCT && PRODUCT.id && wasLoggedIn !== !!u) {
     _eligibilityRetryCount = 0;
     setTimeout(() => { try { checkReviewEligibility(PRODUCT.id); } catch(e) {} }, 300);
@@ -2759,27 +2784,21 @@ function renderAllProducts() {
     }
   }, 15000);
 
-  // ✅ ESC key se sab overlays close karo
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
 
-    // 1. Search overlay (sabse upar)
     const search = document.getElementById('tg-search-overlay');
     if (search && search.classList.contains('show')) { tgCloseSearch(); return; }
 
-    // 2. Image viewer
     const viewer = document.getElementById('tg-img-viewer');
     if (viewer && viewer.classList.contains('show')) { tgCloseViewer(); return; }
 
-    // 3. All reviews modal
     const ar = document.getElementById('tg-ar-modal');
     if (ar && ar.classList.contains('show')) { tgCloseAllReviews(); return; }
 
-    // 4. Review write/edit modal
     const rv = document.getElementById('tg-rv-modal');
     if (rv && rv.classList.contains('show')) { tgRvClose(); return; }
 
-    // 5. Baaki simple modals
     const simpleModals = [
       ['tg-share-modal',     tgCloseShare],
       ['tg-size-chart-modal',tgCloseSizeChart],
