@@ -2606,6 +2606,7 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   let CONFIG = null;
+  let COMMISSION_CONFIG = { defaultPercent: 5, productOverrides: {} };
   let allProducts = [];
   let allReviews = [];
   let cartItems = [];
@@ -2681,6 +2682,23 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN'); }
+
+  function getCommissionPct(pid) {
+    const override = COMMISSION_CONFIG.productOverrides[pid];
+    return override != null ? Number(override) : Number(COMMISSION_CONFIG.defaultPercent || 5);
+  }
+
+  db.collection('siteSettings').doc('commission').get().then(s => {
+    if (s.exists) {
+      const d = s.data();
+      COMMISSION_CONFIG.defaultPercent = Number(d.defaultPercent || 5);
+      COMMISSION_CONFIG.productOverrides = d.productOverrides || {};
+      if (allProducts.length) {
+        _productsSig = '';
+        renderProducts(true);
+      }
+    }
+  }).catch(() => {});
 
   function getCache(k, ttl) {
     try {
@@ -3926,6 +3944,9 @@ if (byId) byId.setAttribute('content', '#2874f0');
     const oosCls = isOOS ? ' out-of-stock' : '';
     const clickAttr = isOOS ? '' : 'onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'"';
     const tagEsc = saleTag ? esc(saleTag.text).replace(/"/g, '&quot;') : '';
+    
+    const commPct = getCommissionPct(p.id);
+    const commHtml = '<div style="font-size:10px;color:#e65100;font-weight:700;margin-top:2px;display:flex;align-items:center;gap:3px;">💰 Earn ' + commPct + '% on share</div>';
 
     return '<div class="tg-mcard' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-mcard-img">' +
@@ -3943,6 +3964,7 @@ if (byId) byId.setAttribute('content', '#2874f0');
           (disc>0 ? '<span class="tg-mcard-off">' + disc + '% off</span>' : '') +
         '</div>' +
         '<div class="tg-mcard-assured">' + assuredSvg() + 'TOEGO Assured</div>' +
+        commHtml +
         '<div class="tg-card-actions">' +
           '<button class="tg-btn-add" onclick="event.stopPropagation();event.preventDefault();tgMSmartAdd(\'' + p.id + '\',\'' + pnameEsc + '\',' + price + ',\'' + imgEsc + '\')" aria-label="Add to Cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Add</span></button>' +
           '<button class="tg-btn-share" data-img="' + esc(img) + '" data-pid="' + p.id + '" data-pname="' + pnameEsc + '" data-price="' + price + '" data-mrp="' + old + '" data-disc="' + disc + '" data-tag="' + tagEsc + '" onclick="event.stopPropagation();event.preventDefault();tgMShareBtn(event)" aria-label="Share Product"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg></button>' +
@@ -3976,6 +3998,9 @@ if (byId) byId.setAttribute('content', '#2874f0');
     const clickAttr = isOOS ? '' : 'onclick="location.href=\'product.html?id=' + encodeURIComponent(p.id) + '\'"';
     const tagEsc = saleTag ? esc(saleTag.text).replace(/"/g, '&quot;') : '';
 
+    const commPct = getCommissionPct(p.id);
+    const commHtml = '<div style="font-size:11px;color:#e65100;font-weight:700;margin-top:3px;display:flex;align-items:center;gap:3px;">💰 Earn ' + commPct + '% on share</div>';
+
     return '<div class="tg-lcard' + oosCls + '" ' + clickAttr + '>' +
       '<div class="tg-lcard-img">' +
         (saleTag ? '<div class="tg-mcard-badges"><span class="tg-mcard-badge ' + saleTag.cls + '">' + esc(saleTag.text) + '</span></div>' : '') +
@@ -3992,6 +4017,7 @@ if (byId) byId.setAttribute('content', '#2874f0');
           (disc>0 ? '<span class="tg-lcard-off">' + disc + '% off</span>' : '') +
         '</div>' +
         '<div class="tg-lcard-assured">' + assuredSvg() + 'TOEGO Assured</div>' +
+        commHtml +
         '<div class="tg-lcard-actions">' +
           '<button class="tg-btn-add" onclick="event.stopPropagation();event.preventDefault();tgMSmartAdd(\'' + p.id + '\',\'' + pnameEsc + '\',' + price + ',\'' + imgEsc + '\')" aria-label="Add to Cart"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5" fill="currentColor"/><circle cx="18" cy="21" r="1.5" fill="currentColor"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Add</span></button>' +
           '<button class="tg-btn-share" data-img="' + esc(img) + '" data-pid="' + p.id + '" data-pname="' + pnameEsc + '" data-price="' + price + '" data-mrp="' + old + '" data-disc="' + disc + '" data-tag="' + tagEsc + '" onclick="event.stopPropagation();event.preventDefault();tgMShareBtn(event)" aria-label="Share Product"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg></button>' +
@@ -4083,6 +4109,14 @@ if (byId) byId.setAttribute('content', '#2874f0');
       lines.push(priceLine);
     }
     if (tag) lines.push('✨ Offer: ' + tag);
+    
+    const commPct = getCommissionPct(id);
+    if (_u) {
+      lines.push('💸 Use my link and I earn ' + commPct + '% commission!');
+    } else {
+      lines.push('🔐 Login to earn ' + commPct + '% commission on sharing!');
+    }
+    
     lines.push('');
     lines.push('🔗 Buy now on TOEGO 👉 ' + url);
     
