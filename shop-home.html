@@ -2133,6 +2133,59 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     <div class="tg-mnotif-list" id="tg-mnotif-list"><div class="tg-mnotif-empty">Loading…</div></div>
   </div>
   <div class="tg-mmain" id="tg-mmain"></div>
+  <!-- 💰 COMMISSION WALLET -->
+<div id="tg-wallet-card" style="display:none;background:#fff;margin:12px 14px;border-radius:14px;box-shadow:0 2px 12px rgba(15,23,41,0.08);overflow:hidden;">
+  <div style="padding:16px 18px;background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:38px;height:38px;background:rgba(255,255,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">💰</div>
+      <div>
+        <div style="font-size:15px;font-weight:800;">Commission Wallet</div>
+        <div style="font-size:11px;opacity:0.85;">Earn by sharing products</div>
+      </div>
+    </div>
+    <a href="commission.html" style="background:rgba(255,255,255,0.22);color:#fff;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:700;text-decoration:none;">History</a>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#eef2f8;">
+    <div style="background:#fff;padding:14px 8px;text-align:center;">
+      <div style="font-size:20px;font-weight:900;color:#2874f0;" id="tg-cw-available">₹0</div>
+      <div style="font-size:10.5px;color:#666;font-weight:600;">Available</div>
+    </div>
+    <div style="background:#fff;padding:14px 8px;text-align:center;">
+      <div style="font-size:20px;font-weight:900;color:#f57c00;" id="tg-cw-pending">₹0</div>
+      <div style="font-size:10.5px;color:#666;font-weight:600;">Pending</div>
+    </div>
+    <div style="background:#fff;padding:14px 8px;text-align:center;">
+      <div style="font-size:20px;font-weight:900;color:#388e3c;" id="tg-cw-total">₹0</div>
+      <div style="font-size:10.5px;color:#666;font-weight:600;">Total</div>
+    </div>
+  </div>
+  <div style="padding:14px 16px;display:flex;gap:8px;">
+    <button onclick="tgOpenWithdraw()" style="flex:1;padding:11px;background:linear-gradient(135deg,#388e3c,#2e7d32);color:#fff;border-radius:9px;font-size:12.5px;font-weight:800;border:none;cursor:pointer;">💸 Withdraw</button>
+    <a href="commission.html" style="flex:1;padding:11px;background:#f0f5ff;color:#2874f0;border-radius:9px;font-size:12.5px;font-weight:800;text-align:center;text-decoration:none;border:1.5px solid #d0e2ff;">View All</a>
+  </div>
+</div>
+
+<!-- 💸 WITHDRAW MODAL -->
+<div id="tg-withdraw-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,41,0.65);z-index:99999;align-items:flex-end;justify-content:center;">
+  <div style="width:100%;max-width:480px;background:#fff;border-radius:18px 18px 0 0;padding:22px 20px 26px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-size:18px;font-weight:800;">💸 Withdraw Commission</div>
+      <button onclick="tgCloseWithdraw()" style="width:32px;height:32px;border-radius:50%;background:#f1f3f6;border:none;font-size:14px;cursor:pointer;">✕</button>
+    </div>
+    <div style="background:#f0f5ff;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#1a5dc7;">
+      Available: <b id="tg-wd-available" style="font-size:16px;">₹0</b>
+      <div style="font-size:11px;color:#666;margin-top:3px;">Min withdraw: <span id="tg-wd-min">₹100</span></div>
+    </div>
+    <label style="display:block;font-size:11.5px;color:#666;font-weight:700;margin-bottom:6px;text-transform:uppercase;">Amount *</label>
+    <input type="number" id="tg-wd-amount" placeholder="Enter amount" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;margin-bottom:12px;">
+    <label style="display:block;font-size:11.5px;color:#666;font-weight:700;margin-bottom:6px;text-transform:uppercase;">UPI ID *</label>
+    <input type="text" id="tg-wd-upi" placeholder="yourname@upi" style="width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;margin-bottom:16px;">
+    <div style="display:flex;gap:10px;">
+      <button onclick="tgCloseWithdraw()" style="flex:0 0 40%;padding:13px;background:#f1f3f6;color:#212121;border-radius:10px;font-size:14px;font-weight:700;border:none;cursor:pointer;">Cancel</button>
+      <button onclick="tgSubmitWithdraw()" id="tg-wd-submit" style="flex:1;padding:13px;background:linear-gradient(135deg,#388e3c,#2e7d32);color:#fff;border-radius:10px;font-size:14px;font-weight:800;border:none;cursor:pointer;">Request Withdraw</button>
+    </div>
+  </div>
+</div>
   
   <section style="background: #fff; padding: 30px 20px; margin: 20px 0; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
     <div style="max-width: 1000px; margin: 0 auto;">
@@ -4059,7 +4112,9 @@ if (byId) byId.setAttribute('content', '#2874f0');
   /* ✅ SHARE with FULL DETAILS (price, MRP, discount, tag) */
   window.tgMShare = async function(id, name, imgUrl, price, mrp, disc, tag) {
     const basePath = window.location.pathname.replace(/[^/]*$/, '');
-    const url = window.location.origin + basePath + 'product.html?id=' + encodeURIComponent(id);
+    const _u = auth.currentUser;
+    const _refQ = _u ? ('&ref=' + encodeURIComponent(_u.uid)) : '';
+    const url = window.location.origin + basePath + 'product.html?id=' + encodeURIComponent(id) + _refQ;
     
     const p = Number(price || 0);
     const m = Number(mrp || 0);
@@ -4331,13 +4386,114 @@ const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), 
       }, () => {});
     } catch(e) {}
   }
+
+/* ═══════ COMMISSION WALLET ═══════ */
+let _walletData = null, _walletUnsub = null, _walletConfig = { defaultPercent: 5, minWithdraw: 100 };
+
+async function tgLoadWallet(uid) {
+  const card = document.getElementById('tg-wallet-card');
+  if (!card) return;
+  if (!uid) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  try {
+    const cfgSnap = await db.collection('siteSettings').doc('commission').get();
+    if (cfgSnap.exists) _walletConfig = { defaultPercent: 5, minWithdraw: 100, ...cfgSnap.data() };
+  } catch(e) {}
+  const wdMin = document.getElementById('tg-wd-min'); if (wdMin) wdMin.textContent = '₹' + (_walletConfig.minWithdraw || 100);
+
+  if (_walletUnsub) { try { _walletUnsub(); } catch(e) {} }
+  try {
+    _walletUnsub = db.collection('users').doc(uid).collection('wallet').doc('summary').onSnapshot(snap => {
+      _walletData = snap.exists ? snap.data() : { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+      _updateWalletUI();
+    }, () => {
+      _walletData = { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+      _updateWalletUI();
+    });
+  } catch(e) { _walletData = { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 }; _updateWalletUI(); }
+}
+
+function _updateWalletUI() {
+  const d = _walletData || {};
+  const a = document.getElementById('tg-cw-available');
+  const p = document.getElementById('tg-cw-pending');
+  const t = document.getElementById('tg-cw-total');
+  if (a) a.textContent = '₹' + Number(d.available || 0).toLocaleString('en-IN');
+  if (p) p.textContent = '₹' + Number(d.pending || 0).toLocaleString('en-IN');
+  if (t) t.textContent = '₹' + Number(d.totalEarned || 0).toLocaleString('en-IN');
+}
+
+window.tgOpenWithdraw = function() {
+  const avail = Number(_walletData?.available || 0);
+  const min = Number(_walletConfig?.minWithdraw || 100);
+  if (avail < min) { toast('Minimum ₹' + min + ' required to withdraw', 'error'); return; }
+  document.getElementById('tg-wd-available').textContent = '₹' + avail.toLocaleString('en-IN');
+  document.getElementById('tg-wd-amount').value = avail;
+  document.getElementById('tg-wd-upi').value = '';
+  document.getElementById('tg-withdraw-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+window.tgCloseWithdraw = function() {
+  document.getElementById('tg-withdraw-modal').style.display = 'none';
+  document.body.style.overflow = '';
+};
+window.tgSubmitWithdraw = async function() {
+  const u = auth.currentUser;
+  if (!u) return;
+  const amt = Number(document.getElementById('tg-wd-amount').value || 0);
+  const upi = (document.getElementById('tg-wd-upi').value || '').trim();
+  const avail = Number(_walletData?.available || 0);
+  const min = Number(_walletConfig?.minWithdraw || 100);
+  if (amt < min) return toast('Minimum ₹' + min, 'error');
+  if (amt > avail) return toast('Amount exceeds available', 'error');
+  if (!upi || !/^[\w.\-]{2,}@[\w]{2,}$/.test(upi)) return toast('Valid UPI ID daalo', 'error');
+
+  const btn = document.getElementById('tg-wd-submit');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    await db.runTransaction(async (tx) => {
+      const wRef = db.collection('users').doc(u.uid).collection('wallet').doc('summary');
+      const wSnap = await tx.get(wRef);
+      const curAvail = Number(wSnap.data()?.available || 0);
+      if (curAvail < amt) throw new Error('Insufficient balance');
+      tx.set(wRef, { available: curAvail - amt, pending: Number(wSnap.data()?.pending || 0) + amt, updatedAt: FV.serverTimestamp() }, { merge: true });
+      tx.set(db.collection('withdrawals').doc(), {
+        userId: u.uid, userName: u.displayName || (u.email||'').split('@')[0] || 'User',
+        userEmail: u.email || '', amount: amt, upiId: upi,
+        status: 'pending', requestedAt: FV.serverTimestamp(),
+        adminNote: '', processedAt: null
+      });
+    });
+    toast('✅ Withdraw request submitted!', 'success');
+    tgCloseWithdraw();
+  } catch(err) {
+    toast(err.message || 'Failed', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Request Withdraw';
+  }
+};
+
+auth.onAuthStateChanged((u) => {
+  try { tgLoadWallet(u ? u.uid : null); } catch(e) {}
+});
+  function tgGetReferrer() {
+  try {
+    const raw = localStorage.getItem('toego_referrer');
+    if (!raw) return '';
+    const r = JSON.parse(raw);
+    if (!r || !r.uid) return '';
+    if (Date.now() - r.ts > 30 * 24 * 60 * 60 * 1000) { localStorage.removeItem('toego_referrer'); return ''; }
+    return r.uid;
+  } catch(e) { return ''; }
+}
   window.tgMAddCartFromCard = async function(p) {
     const u = auth.currentUser;
+    const refId = tgGetReferrer();
     if (!u) {
       const cart = getGuestCart();
       const ex = cart.find(x => x.productId === p.id);
       if (ex) ex.qty = (Number(ex.qty)||1) + 1;
-      else cart.push({ productId: p.id, name: p.name, price: p.price, image: p.image, qty: 1, sellerId: p.sellerId || '', sellerName: p.sellerName || '' });
+      else cart.push({ productId: p.id, name: p.name, price: p.price, image: p.image, qty: 1, sellerId: p.sellerId || '', sellerName: p.sellerName || '', referrerId: refId || '' });
       setGuestCart(cart); cartItems = cart; updateCartBadge();
       toast('✓ Added to cart', 'success');
       return;
@@ -4346,7 +4502,7 @@ const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), 
       const itemRef = db.collection('carts').doc(u.uid).collection('items').doc(p.id);
       const snap = await itemRef.get();
       if (snap.exists) await itemRef.update({ qty: FV.increment(1), updatedAt: FV.serverTimestamp() });
-      else await itemRef.set({ productId: p.id, name: p.name, price: Number(p.price)||0, image: p.image||'', qty: 1, sellerId: p.sellerId||'', sellerName: p.sellerName||'', addedAt: FV.serverTimestamp() });
+      else await itemRef.set({ productId: p.id, name: p.name, price: Number(p.price)||0, image: p.image||'', qty: 1, sellerId: p.sellerId||'', sellerName: p.sellerName||'', referrerId: refId || '', addedAt: FV.serverTimestamp() });
       toast('✓ Added to cart', 'success');
     } catch(err) { toast('Failed', 'error'); }
   };
