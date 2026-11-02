@@ -29,14 +29,6 @@ a { color: inherit; text-decoration: none; }
 
 header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
 
-#tg-boot-overlay { position: fixed; inset: 0; background: #f1f3f6; z-index: 999999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; transition: opacity .35s ease, visibility .35s ease; }
-#tg-boot-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-.tg-boot-spinner { width: 44px; height: 44px; border: 3px solid #e0e6f0; border-top-color: var(--tg-primary); border-radius: 50%; animation: tgSpin 0.8s linear infinite; }
-@keyframes tgSpin { to { transform: rotate(360deg); } }
-.tg-boot-text { font-size: 13px; color: #666; font-weight: 500; letter-spacing: 0.3px; }
-.tg-boot-logo { font-size: 22px; font-weight: 900; font-style: italic; color: var(--tg-primary); letter-spacing: -0.5px; margin-bottom: 4px; }
-.tg-boot-logo span { color: #ffc400; }
-
 .tg-hd { background: var(--tg-primary); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); width: 100%; }
 .tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 56px; }
 .tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
@@ -112,11 +104,81 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-wc-val.pending { color: #ffe500; }
 .tg-wc-val.total { color: #86efac; }
 .tg-wc-label { font-size: 9.5px; opacity: .9; font-weight: 700; margin-top: 3px; letter-spacing: .3px; text-transform: uppercase; }
-.tg-wc-actions { display: flex; gap: 8px; }
-.tg-wc-btn { flex: 1; padding: 11px; border-radius: 9px; font-size: 12.5px; font-weight: 800; text-align: center; border: none; cursor: pointer; letter-spacing: .3px; }
-.tg-wc-btn.primary { background: #fff; color: #1a5dc7; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
-.tg-wc-btn.primary:active { transform: scale(.98); }
-.tg-wc-btn.ghost { background: rgba(255,255,255,.22); color: #fff; border: 1px solid rgba(255,255,255,.35); text-decoration: none; display: flex; align-items: center; justify-content: center; }
+
+/* ═══ CIRCLE ACTION BUTTONS ═══ */
+.tg-wc-actions {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  padding: 6px 0 2px;
+  margin-top: 4px;
+}
+.tg-wc-circle-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  letter-spacing: .3px;
+  transition: transform .15s;
+}
+.tg-wc-circle-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  border: 2px solid rgba(255,255,255,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.22s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
+}
+.tg-wc-circle-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.4), transparent 70%);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.tg-wc-circle-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  position: relative;
+  z-index: 2;
+}
+.tg-wc-circle-action.primary .tg-wc-circle-icon {
+  background: #fff;
+  border-color: #fff;
+  box-shadow: 0 6px 22px rgba(255,255,255,0.35), 0 0 0 4px rgba(255,255,255,0.15);
+}
+.tg-wc-circle-action.primary .tg-wc-circle-icon svg {
+  stroke: #1a5dc7;
+}
+.tg-wc-circle-action:hover .tg-wc-circle-icon {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+.tg-wc-circle-action:hover .tg-wc-circle-icon::before {
+  opacity: 1;
+}
+.tg-wc-circle-action:active .tg-wc-circle-icon {
+  transform: scale(0.94);
+}
 
 .tg-sec { background: #fff; border-radius: 12px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); content-visibility: auto; contain-intrinsic-size: auto 300px; }
 .tg-sec-title { padding: 14px 18px 6px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -189,12 +251,68 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-toast.info { background: var(--tg-primary); }
 
 /* WITHDRAW MODAL */
-.tg-wd-method-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-.tg-wd-method-btn { padding: 12px 8px; border: 1.5px solid #e0e0e0; border-radius: 10px; background: #fff; color: #666; font-size: 12.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s; }
-.tg-wd-method-btn.active { border-color: #2874f0; background: #f0f5ff; color: #2874f0; box-shadow: 0 0 0 3px rgba(40,116,240,.08); }
 .tg-wd-balance-box { background: #f0f5ff; border-radius: 10px; padding: 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; border: 1.5px solid #d0e2ff; }
 .tg-wd-balance-label { font-size: 12px; color: #1a5dc7; font-weight: 700; }
 .tg-wd-balance-val { font-size: 20px; font-weight: 900; color: #1a5dc7; }
+
+/* ═══ CIRCLE METHOD PICKER ═══ */
+.tg-wd-method-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.tg-wd-method-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 18px 8px 14px;
+  border: 2px solid #e8ebf0;
+  border-radius: 16px;
+  background: #fff;
+  color: #666;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+}
+.tg-wd-method-btn .tg-wd-method-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#f0f5ff,#e0eaff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: inset 0 0 0 2px rgba(40,116,240,0.05);
+}
+.tg-wd-method-btn span {
+  color: #888;
+  font-weight: 700;
+  letter-spacing: .2px;
+  transition: color .15s;
+}
+.tg-wd-method-btn:hover {
+  border-color: #c5d8fa;
+  transform: translateY(-2px);
+}
+.tg-wd-method-btn.active {
+  border-color: #2874f0;
+  background: linear-gradient(135deg,#f5f9ff,#e8f0fe);
+  box-shadow: 0 8px 24px rgba(40,116,240,0.15), 0 0 0 3px rgba(40,116,240,0.08);
+}
+.tg-wd-method-btn.active .tg-wd-method-circle {
+  background: linear-gradient(135deg,#2874f0,#1a5dc7);
+  box-shadow: 0 6px 18px rgba(40,116,240,0.45);
+  transform: scale(1.08);
+}
+.tg-wd-method-btn.active span {
+  color: #1a5dc7;
+}
 
 @media (max-width: 520px) {
   .tg-container { padding: 10px; }
@@ -213,6 +331,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   .tg-modal-card { padding: 20px 18px 22px; }
   .tg-wc-val { font-size: 17px; }
   .tg-wc-cell { padding: 11px 4px; }
+  .tg-wc-actions { gap: 22px; }
+  .tg-wc-circle-icon { width: 50px; height: 50px; }
+  .tg-wc-circle-icon svg { width: 22px; height: 22px; }
 }
 </style>
 
@@ -233,13 +354,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 </script>
 </head>
 <body>
-
-<!-- 🚀 BOOT OVERLAY — prevents redirect flash -->
-<div id="tg-boot-overlay">
-  <div class="tg-boot-logo">TOE<span>GO</span></div>
-  <div class="tg-boot-spinner"></div>
-  <div class="tg-boot-text">Loading your account…</div>
-</div>
 
 <header class="tg-hd" id="tg-hd">
   <div class="tg-hd-inner">
@@ -364,8 +478,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           </div>
         </div>
         <div class="tg-wc-actions">
-          <button class="tg-wc-btn primary" onclick="tgAccOpenWithdraw()">💸 Withdraw</button>
-          <a href="commission.html" class="tg-wc-btn ghost">View All</a>
+          <button type="button" class="tg-wc-circle-action primary" onclick="tgAccOpenWithdraw()">
+            <div class="tg-wc-circle-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span>Withdraw</span>
+          </button>
+          <a href="commission.html" class="tg-wc-circle-action">
+            <div class="tg-wc-circle-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+            </div>
+            <span>History</span>
+          </a>
         </div>
       </div>
     </div>
@@ -667,8 +791,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     <div class="tg-modal-field">
       <label>Payment Method *</label>
       <div class="tg-wd-method-row">
-        <button type="button" class="tg-wd-method-btn active" data-method="upi" onclick="tgAccPickPayMethod('upi', this)">📱 UPI</button>
-        <button type="button" class="tg-wd-method-btn" data-method="bank" onclick="tgAccPickPayMethod('bank', this)">🏦 Bank Transfer</button>
+        <button type="button" class="tg-wd-method-btn active" data-method="upi" onclick="tgAccPickPayMethod('upi', this)">
+          <div class="tg-wd-method-circle">📱</div>
+          <span>UPI</span>
+        </button>
+        <button type="button" class="tg-wd-method-btn" data-method="bank" onclick="tgAccPickPayMethod('bank', this)">
+          <div class="tg-wd-method-circle">🏦</div>
+          <span>Bank Account</span>
+        </button>
       </div>
     </div>
 
@@ -927,7 +1057,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     const db = firebase.firestore();
     const FV = firebase.firestore.FieldValue;
 
-    // ⚡ FIX: Force LOCAL persistence so session survives redirects
+    // ⚡ Force LOCAL persistence so session survives redirects
     try { auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {}); } catch(e) {}
 
     let LAST_INIT_UID = null;
@@ -981,15 +1111,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       setTimeout(() => el.remove(), 2400);
     }
     window.__accToast = toast;
-
-    function hideBootOverlay() {
-      const o = document.getElementById('tg-boot-overlay');
-      if (!o) return;
-      o.classList.add('hide');
-      setTimeout(() => { try { o.remove(); } catch(e) {} }, 500);
-    }
-    // Safety net: hide overlay after 4s no matter what
-    setTimeout(hideBootOverlay, 4000);
 
     const menuBtn = document.getElementById('tg-3dot-btn');
     const menu = document.getElementById('tg-3dot-menu');
@@ -1202,10 +1323,38 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       if (t) t.textContent = '₹' + Number(d.totalEarned || 0).toLocaleString('en-IN');
     }
 
-    window.tgAccOpenWithdraw = function() {
+    // ✅ Withdraw opens even if wallet not loaded yet — fetches fresh data
+    window.tgAccOpenWithdraw = async function() {
+      const u = auth.currentUser;
+      if (!u) { toast('Please log in first', 'error'); return; }
+
+      if (!_accWalletData) {
+        try {
+          const snap = await db.collection('users').doc(u.uid).collection('wallet').doc('summary').get();
+          _accWalletData = snap.exists ? snap.data() : { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+          _accUpdateWalletUI();
+        } catch(e) {
+          _accWalletData = { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+        }
+      }
+
+      if (!_accWalletConfig || !_accWalletConfig.minWithdraw) {
+        try {
+          const cfgSnap = await db.collection('siteSettings').doc('commission').get();
+          if (cfgSnap.exists) _accWalletConfig = { defaultPercent: 5, minWithdraw: 100, ...cfgSnap.data() };
+        } catch(e) {}
+        const wdMin = document.getElementById('tg-acc-wd-min');
+        if (wdMin) wdMin.textContent = '₹' + (_accWalletConfig.minWithdraw || 100);
+      }
+
       const avail = Number(_accWalletData?.available || 0);
       const min = Number(_accWalletConfig?.minWithdraw || 100);
-      if (avail < min) { toast('Minimum ₹' + min + ' required to withdraw', 'error'); return; }
+
+      if (avail < min) {
+        toast('Minimum ₹' + min + ' required. Your balance: ₹' + avail.toLocaleString('en-IN'), 'error');
+        return;
+      }
+
       document.getElementById('tg-acc-wd-available').textContent = '₹' + avail.toLocaleString('en-IN');
       document.getElementById('tg-acc-wd-amount').value = avail;
       document.getElementById('tg-acc-wd-upi').value = '';
@@ -1303,7 +1452,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       }
     };
 
-    /* Load wallet when auth user available */
     function ensureWalletLoaded(uid) {
       if (!uid) return;
       try { tgAccLoadWallet(uid); } catch(e) { console.warn('[wallet]', e); }
@@ -1408,7 +1556,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
         }
       }
 
-      // 🔥 WALLET LOAD — IMMEDIATE
       ensureWalletLoaded(user.uid);
 
       const profileP = db.collection('users').doc(user.uid).get().catch(() => null);
@@ -1464,62 +1611,46 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       } catch(e) {}
     })();
 
-    /* ═══════════ 🔥 FIXED AUTH FLOW — NO REDIRECT LOOP ═══════════ */
+    /* ═══════════ ⚡ INSTANT AUTH FLOW — NO LOADING, NO SPLASH ═══════════ */
     /*
-     * Problem: After Google login, log-in.html redirects to account.html.
-     *          But Firebase hasn't restored the session yet in the new page.
-     *          onAuthStateChanged fires null briefly → we redirect back → LOOP.
-     *
-     * Fix: 
-     *   1. Show boot overlay while we wait
-     *   2. On FIRST null, wait 1.2s and re-check auth.currentUser
-     *   3. Only redirect if STILL null after that
-     *   4. If user available at any point, hide overlay and load
+     * Fast path:
+     *   1. No boot overlay, no splash. Page shows instantly.
+     *   2. Sync check: if auth.currentUser exists → init immediately
+     *   3. Listener fires:
+     *      - user → init + refresh wallet
+     *      - null on first fire → give Firebase just 300ms to restore from LOCAL storage
+     *        → then redirect to login (only if STILL null)
      */
-
-    let _nullCount = 0;
 
     auth.onAuthStateChanged((user) => {
       if (user) {
         _authFirstResolve = true;
-        hideBootOverlay();
         if (user.uid !== LAST_INIT_UID) {
           initFast(user);
         } else {
-          // Already init'd — just refresh wallet
           ensureWalletLoaded(user.uid);
         }
       } else {
-        // No user
         if (!_authFirstResolve) {
           _authFirstResolve = true;
-          _nullCount++;
-          // First fire with null — give Firebase time to restore from indexedDB
           setTimeout(() => {
-            if (auth.currentUser) {
-              // Restored in the meantime — onAuthStateChanged will fire again with user
-              return;
-            }
+            if (auth.currentUser) return;
             if (!_redirected) {
               _redirected = true;
-              hideBootOverlay();
               window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
             }
-          }, 1500);
+          }, 300);
         } else {
-          // Real logout — redirect clean
           if (!_redirected) {
             _redirected = true;
-            hideBootOverlay();
             window.location.replace('log-in.html?redirect=' + encodeURIComponent('account.html'));
           }
         }
       }
     });
 
-    // Fallback: if user is already present synchronously, init immediately
+    // ⚡ SYNC CHECK — if user is already in auth.currentUser, init instantly (no delay)
     if (auth.currentUser) {
-      hideBootOverlay();
       initFast(auth.currentUser);
       ensureWalletLoaded(auth.currentUser.uid);
     }
