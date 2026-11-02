@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Commission — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+
+<meta name="theme-color" content="#2874f0" id="tg-theme-meta">
+
+<style>
+:root { --tg-primary: #2874f0; --tg-primary-dark: #1a5dc7; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100vw; overflow-x: hidden; background: #f1f3f6; font-family: 'Roboto', Arial, sans-serif; color: #212121; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+
+header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_footer, #footer, .o_footer_copyright, .o_breadcrumb, .breadcrumb, .o_website_edit_toolbar, .o_notification_manager, .o_editor_banner, .o_loading_indicator { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; overflow: hidden !important; }
+
+/* ═══ HEADER ═══ */
+.tg-hd { background: var(--tg-primary); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+.tg-hd-inner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 56px; }
+.tg-hd-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; border-radius: 50%; flex-shrink: 0; }
+.tg-hd-back:hover { background: rgba(255,255,255,0.12); }
+.tg-hd-back svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.tg-hd-title { flex: 1; color: #fff; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+
+/* ═══ WRAP ═══ */
+.tg-wrap { min-height: 100vh; padding-top: 56px; padding-bottom: 76px; }
+.tg-container { max-width: 720px; margin: 0 auto; padding: 12px; }
+
+/* ═══ HERO WALLET CARD ═══ */
+.tg-hero {
+  background: linear-gradient(135deg, #1a5dc7 0%, #2874f0 50%, #1565c0 100%);
+  border-radius: 18px;
+  padding: 22px 20px 20px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(40,116,240,.32);
+  margin-bottom: 14px;
+}
+.tg-hero::after { content: ''; position: absolute; top: -100px; right: -100px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,229,0,.25), transparent 70%); border-radius: 50%; pointer-events: none; }
+.tg-hero::before { content: ''; position: absolute; bottom: -130px; left: -130px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(251,100,27,.18), transparent 70%); border-radius: 50%; pointer-events: none; }
+.tg-hero-inner { position: relative; z-index: 2; }
+.tg-hero-label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; opacity: .85; margin-bottom: 6px; }
+.tg-hero-amount { font-size: 42px; font-weight: 900; letter-spacing: -1.8px; line-height: 1.05; margin-bottom: 4px; }
+.tg-hero-sub { font-size: 12px; opacity: .85; font-weight: 500; margin-bottom: 20px; }
+.tg-hero-split { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: rgba(255,255,255,.22); border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+.tg-hero-cell { background: rgba(26,93,199,.75); padding: 13px 6px; text-align: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.tg-hero-cell-val { font-size: 18px; font-weight: 900; letter-spacing: -.4px; line-height: 1.1; }
+.tg-hero-cell-val.pending { color: #ffe500; }
+.tg-hero-cell-val.total { color: #86efac; }
+.tg-hero-cell-label { font-size: 9.5px; opacity: .9; font-weight: 700; margin-top: 3px; letter-spacing: .3px; text-transform: uppercase; }
+
+/* ═══ CIRCLE ACTIONS ═══ */
+.tg-actions {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  padding: 4px 0 0;
+}
+.tg-circle-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: .3px;
+  transition: transform .15s;
+}
+.tg-circle-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  border: 2px solid rgba(255,255,255,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.22s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
+}
+.tg-circle-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tg-circle-action.primary .tg-circle-icon {
+  background: #fff;
+  border-color: #fff;
+  box-shadow: 0 6px 22px rgba(255,255,255,0.4), 0 0 0 4px rgba(255,255,255,0.18);
+}
+.tg-circle-action.primary .tg-circle-icon svg { stroke: #1a5dc7; }
+.tg-circle-action:hover .tg-circle-icon {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+.tg-circle-action:active .tg-circle-icon { transform: scale(0.94); }
+
+/* ═══ QUICK STATS ROW ═══ */
+.tg-quick-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.tg-qs {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-qs-val { font-size: 20px; font-weight: 900; color: var(--tg-primary); line-height: 1.1; margin-bottom: 3px; }
+.tg-qs-label { font-size: 10.5px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+
+/* ═══ TABS ═══ */
+.tg-tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 12px;
+  padding: 5px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 62px;
+  z-index: 100;
+}
+.tg-tab {
+  flex: 1;
+  padding: 11px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #666;
+  text-align: center;
+  cursor: pointer;
+  transition: all .18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.tg-tab.active {
+  background: linear-gradient(135deg, var(--tg-primary), var(--tg-primary-dark));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(40,116,240,.3);
+}
+.tg-tab-badge {
+  background: rgba(0,0,0,.15);
+  color: inherit;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 800;
+  min-width: 18px;
+}
+.tg-tab.active .tg-tab-badge { background: rgba(255,255,255,.3); }
+
+/* ═══ LIST CARDS ═══ */
+.tg-list { display: flex; flex-direction: column; gap: 10px; }
+.tg-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.tg-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+.tg-card-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #212121;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.tg-card-title-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-card-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #eef3ff, #e0eaff);
+  color: var(--tg-primary);
+  font-size: 14px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tg-badge {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 9px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tg-badge.pending { background: #fff3cd; color: #856404; border: 1px solid #ffe69c; }
+.tg-badge.credited { background: #d1f0dd; color: #1b8a3a; border: 1px solid #a3ddb8; }
+.tg-badge.cancelled, .tg-badge.rejected { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+.tg-badge.approved, .tg-badge.processing { background: #e0eaff; color: #1a5dc7; border: 1px solid #c5d8fa; }
+.tg-badge.paid { background: #d1f0dd; color: #1b8a3a; border: 1px solid #a3ddb8; }
+
+.tg-card-body { display: flex; flex-direction: column; gap: 8px; }
+.tg-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  gap: 10px;
+}
+.tg-card-row .label { color: #666; font-weight: 500; }
+.tg-card-row .val { color: #212121; font-weight: 700; }
+.tg-card-row .val.mono { font-family: 'SF Mono', Consolas, monospace; font-size: 11.5px; letter-spacing: -.2px; }
+.tg-card-row .val.green { color: #1b8a3a; }
+.tg-card-row .val.blue { color: var(--tg-primary); }
+
+.tg-commission-line {
+  background: linear-gradient(135deg, #f0f9f4, #e6f7ec);
+  border: 1px solid #c8e6c9;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tg-commission-line .label { color: #1b8a3a; font-weight: 700; font-size: 12px; }
+.tg-commission-line .val { color: #0d5c22; font-weight: 900; font-size: 18px; letter-spacing: -.4px; }
+
+.tg-commission-line.rejected-line {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  border-color: #fecaca;
+}
+.tg-commission-line.rejected-line .label { color: #c62828; }
+.tg-commission-line.rejected-line .val { color: #b71c1c; }
+
+.tg-items-details {
+  margin-top: 6px;
+  padding: 10px 12px;
+  background: #f8f9fb;
+  border-radius: 8px;
+  font-size: 11.5px;
+  color: #666;
+  border: 1px dashed #e0e0e0;
+}
+.tg-items-details-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  font-weight: 800;
+  color: #888;
+  margin-bottom: 6px;
+}
+.tg-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px dashed #ececec;
+}
+.tg-item-row:last-child { border-bottom: none; }
+.tg-item-row-name { flex: 1; color: #212121; font-weight: 500; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-item-row-qty { color: #888; font-weight: 600; font-size: 11px; flex-shrink: 0; }
+.tg-item-row-comm { color: #1b8a3a; font-weight: 800; font-size: 11.5px; flex-shrink: 0; }
+
+.tg-admin-note {
+  margin-top: 8px;
+  padding: 9px 12px;
+  background: #fff8e1;
+  border-left: 3px solid #f57c00;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #6d4c00;
+  line-height: 1.4;
+}
+
+.tg-empty {
+  background: #fff;
+  border-radius: 12px;
+  padding: 44px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.tg-empty-icon { font-size: 56px; opacity: .35; margin-bottom: 12px; }
+.tg-empty-title { font-size: 15px; font-weight: 800; color: #212121; margin-bottom: 6px; }
+.tg-empty-desc { font-size: 12.5px; color: #666; line-height: 1.5; margin: 0 auto; max-width: 280px; }
+
+.tg-skel {
+  background: linear-gradient(90deg, #f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: tgShimmer 1.2s infinite;
+  border-radius: 8px;
+}
+@keyframes tgShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.tg-skel-card { padding: 16px; background: #fff; border-radius: 12px; margin-bottom: 10px; }
+.tg-skel-line { height: 12px; margin-bottom: 8px; }
+.tg-skel-line.w-70 { width: 70%; }
+.tg-skel-line.w-40 { width: 40%; }
+.tg-skel-line.w-90 { width: 90%; }
+.tg-skel-line.h-20 { height: 20px; }
+
+/* ═══ MODALS ═══ */
+.tg-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99999; display: none; align-items: flex-end; justify-content: center; }
+.tg-modal.show { display: flex; }
+.tg-modal-card {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  padding: 24px 22px 26px;
+  animation: tgSlideUp .3s cubic-bezier(.34,1.2,.64,1);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+@keyframes tgSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.tg-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.tg-modal-title { font-size: 18px; font-weight: 800; color: #212121; }
+.tg-modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f3f6; color: #666; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+.tg-modal-field { margin-bottom: 16px; }
+.tg-modal-field label { display: block; font-size: 12px; color: #666; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+.tg-modal-field input {
+  width: 100%;
+  height: 46px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 14.5px;
+  color: #212121;
+  outline: none;
+  background: #fff;
+  transition: border-color .15s;
+}
+.tg-modal-field input:focus { border-color: var(--tg-primary); box-shadow: 0 0 0 3px rgba(40,116,240,0.10); }
+.tg-modal-save {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #388e3c, #2e7d32);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 18px rgba(56,142,60,0.3);
+  cursor: pointer;
+}
+.tg-modal-save:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.tg-wd-balance-box {
+  background: #f0f5ff;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1.5px solid #d0e2ff;
+}
+.tg-wd-balance-label { font-size: 12px; color: #1a5dc7; font-weight: 700; }
+.tg-wd-balance-val { font-size: 20px; font-weight: 900; color: #1a5dc7; }
+
+.tg-wd-method-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.tg-wd-method-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 18px 8px 14px;
+  border: 2px solid #e8ebf0;
+  border-radius: 16px;
+  background: #fff;
+  color: #666;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.tg-wd-method-btn .tg-wd-method-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f0f5ff, #e0eaff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: inset 0 0 0 2px rgba(40,116,240,0.05);
+}
+.tg-wd-method-btn span { color: #888; font-weight: 700; letter-spacing: .2px; transition: color .15s; }
+.tg-wd-method-btn:hover { border-color: #c5d8fa; transform: translateY(-2px); }
+.tg-wd-method-btn.active {
+  border-color: var(--tg-primary);
+  background: linear-gradient(135deg, #f5f9ff, #e8f0fe);
+  box-shadow: 0 8px 24px rgba(40,116,240,0.15), 0 0 0 3px rgba(40,116,240,0.08);
+}
+.tg-wd-method-btn.active .tg-wd-method-circle {
+  background: linear-gradient(135deg, #2874f0, #1a5dc7);
+  box-shadow: 0 6px 18px rgba(40,116,240,0.45);
+  transform: scale(1.08);
+}
+.tg-wd-method-btn.active span { color: #1a5dc7; }
+
+/* ═══ TOASTS ═══ */
+.tg-toasts { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 8px; max-width: calc(100vw - 24px); pointer-events: none; }
+.tg-toast {
+  padding: 12px 20px;
+  background: #212121;
+  color: #fff;
+  font-size: 13px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  pointer-events: auto;
+  font-weight: 500;
+  animation: tgToastIn .3s;
+}
+@keyframes tgToastIn { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tg-toast.success { background: #388e3c; }
+.tg-toast.error { background: #d32f2f; }
+.tg-toast.info { background: var(--tg-primary); }
+
+/* ═══ BOTTOM NAV ═══ */
+.tg-bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; display: flex; z-index: 9999; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); padding-bottom: env(safe-area-inset-bottom, 0); }
+.tg-bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; gap: 3px; font-size: 10px; color: #666; font-weight: 600; transition: color .15s; }
+.tg-bnav-item.active { color: var(--tg-primary); }
+.tg-bnav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 520px) {
+  .tg-container { padding: 10px; }
+  .tg-hero { padding: 20px 16px 18px; border-radius: 16px; }
+  .tg-hero-amount { font-size: 36px; }
+  .tg-hero-cell-val { font-size: 16px; }
+  .tg-circle-icon { width: 52px; height: 52px; }
+  .tg-circle-icon svg { width: 22px; height: 22px; }
+  .tg-qs-val { font-size: 17px; }
+  .tg-card { padding: 12px 14px; }
+  .tg-card-row { font-size: 12px; }
+  .tg-modal-card { padding: 20px 18px 22px; }
+}
+</style>
+
+<script>
+(function() {
+  try {
+    var c = localStorage.getItem('toego_theme_colors') || sessionStorage.getItem('toego_theme_colors');
+    if (!c) return;
+    var t = JSON.parse(c);
+    if (t && t.primary) {
+      document.documentElement.style.setProperty('--tg-primary', t.primary);
+      document.documentElement.style.setProperty('--tg-primary-dark', t.dark || t.primary);
+      var m = document.getElementById('tg-theme-meta');
+      if (m) m.setAttribute('content', t.primary);
+    }
+  } catch(e) {}
+})();
+</script>
+</head>
+<body>
+
+<header class="tg-hd">
+  <div class="tg-hd-inner">
+    <a href="account.html" class="tg-hd-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="tg-hd-title">My Commission</div>
+  </div>
+</header>
+
+<div class="tg-wrap">
+  <div class="tg-container">
+
+    <!-- ═══ HERO WALLET CARD ═══ -->
+    <div class="tg-hero">
+      <div class="tg-hero-inner">
+        <div class="tg-hero-label">Available Balance</div>
+        <div class="tg-hero-amount" id="tg-hero-amount">₹0</div>
+        <div class="tg-hero-sub" id="tg-hero-sub">Min withdraw ₹100</div>
+
+        <div class="tg-hero-split">
+          <div class="tg-hero-cell">
+            <div class="tg-hero-cell-val" id="tg-hero-available">₹0</div>
+            <div class="tg-hero-cell-label">Available</div>
+          </div>
+          <div class="tg-hero-cell">
+            <div class="tg-hero-cell-val pending" id="tg-hero-pending">₹0</div>
+            <div class="tg-hero-cell-label">Pending</div>
+          </div>
+          <div class="tg-hero-cell">
+            <div class="tg-hero-cell-val total" id="tg-hero-total">₹0</div>
+            <div class="tg-hero-cell-label">Total Earned</div>
+          </div>
+        </div>
+
+        <div class="tg-actions">
+          <button type="button" class="tg-circle-action primary" onclick="tgOpenWithdraw()">
+            <div class="tg-circle-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span>Withdraw</span>
+          </button>
+          <button type="button" class="tg-circle-action" onclick="tgShareRefer()">
+            <div class="tg-circle-icon">
+              <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+            </div>
+            <span>Refer</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ QUICK STATS ═══ -->
+    <div class="tg-quick-stats">
+      <div class="tg-qs">
+        <div class="tg-qs-val" id="tg-qs-referrals">0</div>
+        <div class="tg-qs-label">Referrals</div>
+      </div>
+      <div class="tg-qs">
+        <div class="tg-qs-val" id="tg-qs-withdrawn">₹0</div>
+        <div class="tg-qs-label">Withdrawn</div>
+      </div>
+      <div class="tg-qs">
+        <div class="tg-qs-val" id="tg-qs-orders">0</div>
+        <div class="tg-qs-label">Orders</div>
+      </div>
+    </div>
+
+    <!-- ═══ TABS ═══ -->
+    <div class="tg-tabs">
+      <div class="tg-tab active" data-tab="referrals" onclick="tgSwitchTab('referrals')">
+        <span>Referrals</span>
+        <span class="tg-tab-badge" id="tg-tab-badge-referrals">0</span>
+      </div>
+      <div class="tg-tab" data-tab="withdrawals" onclick="tgSwitchTab('withdrawals')">
+        <span>Withdrawals</span>
+        <span class="tg-tab-badge" id="tg-tab-badge-withdrawals">0</span>
+      </div>
+    </div>
+
+    <!-- ═══ CONTENT ═══ -->
+    <div id="tg-content">
+      <div class="tg-skel-card">
+        <div class="tg-skel tg-skel-line w-70"></div>
+        <div class="tg-skel tg-skel-line w-40"></div>
+        <div class="tg-skel tg-skel-line w-90 h-20"></div>
+      </div>
+      <div class="tg-skel-card">
+        <div class="tg-skel tg-skel-line w-70"></div>
+        <div class="tg-skel tg-skel-line w-40"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ WITHDRAW MODAL ═══ -->
+<div class="tg-modal" id="tg-withdraw-modal">
+  <div class="tg-modal-card">
+    <div class="tg-modal-head">
+      <div class="tg-modal-title">💸 Withdraw Commission</div>
+      <button class="tg-modal-close" onclick="tgCloseWithdraw()">✕</button>
+    </div>
+
+    <div class="tg-wd-balance-box">
+      <div>
+        <div class="tg-wd-balance-label">Available Balance</div>
+        <div style="font-size:10.5px;color:#666;margin-top:3px;">Min withdraw: <span id="tg-wd-min">₹100</span></div>
+      </div>
+      <div class="tg-wd-balance-val" id="tg-wd-available">₹0</div>
+    </div>
+
+    <div class="tg-modal-field">
+      <label>Amount *</label>
+      <input type="number" id="tg-wd-amount" placeholder="Enter amount" inputmode="numeric">
+    </div>
+
+    <div class="tg-modal-field">
+      <label>Payment Method *</label>
+      <div class="tg-wd-method-row">
+        <button type="button" class="tg-wd-method-btn active" data-method="upi" onclick="tgPickMethod('upi', this)">
+          <div class="tg-wd-method-circle">📱</div>
+          <span>UPI</span>
+        </button>
+        <button type="button" class="tg-wd-method-btn" data-method="bank" onclick="tgPickMethod('bank', this)">
+          <div class="tg-wd-method-circle">🏦</div>
+          <span>Bank Account</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="tg-upi-fields">
+      <div class="tg-modal-field">
+        <label>UPI ID *</label>
+        <input type="text" id="tg-wd-upi" placeholder="yourname@upi" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div id="tg-bank-fields" style="display:none;">
+      <div class="tg-modal-field">
+        <label>Account Holder Name *</label>
+        <input type="text" id="tg-wd-holder" placeholder="Name as per bank">
+      </div>
+      <div class="tg-modal-field">
+        <label>Account Number *</label>
+        <input type="text" id="tg-wd-accno" placeholder="Account number" inputmode="numeric">
+      </div>
+      <div class="tg-modal-field">
+        <label>IFSC Code *</label>
+        <input type="text" id="tg-wd-ifsc" placeholder="e.g. SBIN0001234" maxlength="11" style="text-transform:uppercase;" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <button class="tg-modal-save" id="tg-wd-submit" onclick="tgSubmitWithdraw()">
+      Request Withdraw
+    </button>
+  </div>
+</div>
+
+<nav class="tg-bnav">
+  <a href="shop-home.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="categories.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Categories</span></a>
+  <a href="cart.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg><span>Cart</span></a>
+  <a href="my-orders.html" class="tg-bnav-item"><svg viewBox="0 0 24 24"><path d="M6 2h12l2 6H4z"/><path d="M4 8v12h16V8"/><path d="M10 12h4"/></svg><span>Orders</span></a>
+  <a href="account.html" class="tg-bnav-item active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"/></svg><span>Account</span></a>
+</nav>
+
+<div class="tg-toasts" id="tg-toasts"></div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  try { auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {}); } catch(e) {}
+
+  let currentUser = null;
+  let _redirected = false;
+  let _authFirstResolve = false;
+
+  let WALLET_DATA = { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+  let WALLET_CONFIG = { defaultPercent: 5, minWithdraw: 100 };
+  let REFERRALS = [];
+  let WITHDRAWALS = [];
+  let SELECTED_METHOD = 'upi';
+  let CURRENT_TAB = 'referrals';
+
+  let _unsubWallet = null;
+  let _unsubReferrals = null;
+  let _unsubWithdrawals = null;
+
+  /* ═══ UTILS ═══ */
+  function toast(msg, type) {
+    type = type || 'info';
+    const w = document.getElementById('tg-toasts');
+    if (!w) return;
+    const el = document.createElement('div');
+    el.className = 'tg-toast ' + type;
+    el.textContent = msg;
+    w.appendChild(el);
+    setTimeout(() => el.remove(), 2600);
+  }
+  function fmtINR(n) {
+    return '₹' + Number(n || 0).toLocaleString('en-IN');
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function initialFromName(name) {
+    if (!name) return '?';
+    return String(name).trim().charAt(0).toUpperCase();
+  }
+  function toDateMs(ts) {
+    if (!ts) return 0;
+    if (typeof ts === 'number') return ts;
+    if (ts.toDate && typeof ts.toDate === 'function') {
+      try { return ts.toDate().getTime(); } catch(e) { return 0; }
+    }
+    if (ts.seconds) return ts.seconds * 1000;
+    const d = new Date(ts);
+    return isNaN(d.getTime()) ? 0 : d.getTime();
+  }
+  function fmtDate(ts) {
+    const ms = toDateMs(ts);
+    if (!ms) return '';
+    const d = new Date(ms);
+    const now = new Date();
+    const diff = now.getTime() - ms;
+    if (diff < 60 * 1000) return 'Just now';
+    if (diff < 60 * 60 * 1000) return Math.floor(diff / 60000) + 'm ago';
+    if (diff < 24 * 60 * 60 * 1000) return Math.floor(diff / 3600000) + 'h ago';
+    if (diff < 7 * 24 * 60 * 60 * 1000) return Math.floor(diff / 86400000) + 'd ago';
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  /* ═══ WALLET UI ═══ */
+  function updateHeroUI() {
+    const avail = Number(WALLET_DATA.available || 0);
+    const pend = Number(WALLET_DATA.pending || 0);
+    const total = Number(WALLET_DATA.totalEarned || 0);
+    const withdrawn = Number(WALLET_DATA.withdrawn || 0);
+    const min = Number(WALLET_CONFIG.minWithdraw || 100);
+
+    document.getElementById('tg-hero-amount').textContent = fmtINR(avail);
+    document.getElementById('tg-hero-available').textContent = fmtINR(avail);
+    document.getElementById('tg-hero-pending').textContent = fmtINR(pend);
+    document.getElementById('tg-hero-total').textContent = fmtINR(total);
+    document.getElementById('tg-hero-sub').textContent = avail >= min
+      ? 'Ready to withdraw · Min ₹' + min
+      : 'Min withdraw ₹' + min + ' · ' + fmtINR(Math.max(0, min - avail)) + ' more needed';
+
+    document.getElementById('tg-qs-withdrawn').textContent = fmtINR(withdrawn);
+  }
+
+  function updateTabBadges() {
+    document.getElementById('tg-tab-badge-referrals').textContent = REFERRALS.length;
+    document.getElementById('tg-tab-badge-withdrawals').textContent = WITHDRAWALS.length;
+    document.getElementById('tg-qs-referrals').textContent = REFERRALS.length;
+  }
+
+  /* ═══ STATUS HELPERS ═══ */
+  function refStatusLabel(s) {
+    s = String(s || 'pending').toLowerCase();
+    return { pending: 'Pending', credited: 'Credited', approved: 'Credited', cancelled: 'Cancelled' }[s] || 'Pending';
+  }
+  function refStatusClass(s) {
+    s = String(s || 'pending').toLowerCase();
+    if (s === 'credited' || s === 'approved') return 'credited';
+    if (s === 'cancelled') return 'cancelled';
+    return 'pending';
+  }
+  function wdStatusLabel(s) {
+    s = String(s || 'pending').toLowerCase();
+    return {
+      pending: 'Pending', approved: 'Approved', processing: 'Processing',
+      paid: 'Paid', rejected: 'Rejected', cancelled: 'Cancelled'
+    }[s] || 'Pending';
+  }
+  function wdStatusClass(s) {
+    s = String(s || 'pending').toLowerCase();
+    if (s === 'paid') return 'paid';
+    if (s === 'approved' || s === 'processing') return 'approved';
+    if (s === 'rejected' || s === 'cancelled') return 'rejected';
+    return 'pending';
+  }
+
+  /* ═══ RENDER: REFERRALS ═══ */
+  function renderReferrals() {
+    const el = document.getElementById('tg-content');
+    if (!REFERRALS.length) {
+      el.innerHTML = '<div class="tg-empty">' +
+        '<div class="tg-empty-icon">🎁</div>' +
+        '<div class="tg-empty-title">No referrals yet</div>' +
+        '<div class="tg-empty-desc">Share products with friends and earn commission on every order they place!</div>' +
+      '</div>';
+      return;
+    }
+
+    el.innerHTML = '<div class="tg-list">' + REFERRALS.map(r => {
+      const buyerName = r.buyerName || 'Customer';
+      const initial = initialFromName(buyerName);
+      const statusCls = refStatusClass(r.status);
+      const statusLbl = refStatusLabel(r.status);
+      const comm = Number(r.commissionAmount || 0);
+      const orderAmt = Number(r.orderAmount || 0);
+      const pct = Number(r.commissionPercent || 0);
+      const items = Array.isArray(r.items) ? r.items : [];
+
+      let itemsHtml = '';
+      if (items.length) {
+        itemsHtml = '<div class="tg-items-details">' +
+          '<div class="tg-items-details-title">Products (' + items.length + ')</div>' +
+          items.map(it => {
+            const nm = esc(it.name || 'Item');
+            const qty = Number(it.qty || 1);
+            const c = Number(it.commission || 0);
+            return '<div class="tg-item-row">' +
+              '<div class="tg-item-row-name">' + nm + '</div>' +
+              '<div class="tg-item-row-qty">×' + qty + '</div>' +
+              '<div class="tg-item-row-comm">+' + fmtINR(c) + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }
+
+      return '<div class="tg-card">' +
+        '<div class="tg-card-head">' +
+          '<div class="tg-card-title">' +
+            '<div class="tg-card-avatar">' + esc(initial) + '</div>' +
+            '<div class="tg-card-title-text">' + esc(buyerName) + '</div>' +
+          '</div>' +
+          '<span class="tg-badge ' + statusCls + '">' + statusLbl + '</span>' +
+        '</div>' +
+        '<div class="tg-card-body">' +
+          '<div class="tg-card-row"><span class="label">Order Amount</span><span class="val">' + fmtINR(orderAmt) + '</span></div>' +
+          '<div class="tg-card-row"><span class="label">Order ID</span><span class="val mono">#' + esc(String(r.orderId || '').slice(0, 10).toUpperCase()) + '</span></div>' +
+          (pct ? '<div class="tg-card-row"><span class="label">Commission Rate</span><span class="val blue">' + pct + '%</span></div>' : '') +
+          '<div class="tg-card-row"><span class="label">Date</span><span class="val">' + fmtDate(r.createdAt) + '</span></div>' +
+          itemsHtml +
+        '</div>' +
+        '<div class="tg-commission-line' + (statusCls === 'cancelled' ? ' rejected-line' : '') + '">' +
+          '<span class="label">' + (statusCls === 'credited' ? '✓ Commission Earned' : statusCls === 'cancelled' ? '✕ Commission Cancelled' : '⏳ Commission Pending') + '</span>' +
+          '<span class="val">' + fmtINR(comm) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+
+  /* ═══ RENDER: WITHDRAWALS ═══ */
+  function renderWithdrawals() {
+    const el = document.getElementById('tg-content');
+    if (!WITHDRAWALS.length) {
+      el.innerHTML = '<div class="tg-empty">' +
+        '<div class="tg-empty-icon">💸</div>' +
+        '<div class="tg-empty-title">No withdrawals yet</div>' +
+        '<div class="tg-empty-desc">Once your available balance reaches the minimum, you can request a withdrawal.</div>' +
+      '</div>';
+      return;
+    }
+
+    el.innerHTML = '<div class="tg-list">' + WITHDRAWALS.map(w => {
+      const amt = Number(w.amount || 0);
+      const statusCls = wdStatusClass(w.status);
+      const statusLbl = wdStatusLabel(w.status);
+      const method = String(w.method || 'upi').toLowerCase();
+
+      let methodHtml = '';
+      if (method === 'upi') {
+        methodHtml = '<div class="tg-card-row"><span class="label">📱 UPI ID</span><span class="val mono">' + esc(w.upiId || '—') + '</span></div>';
+      } else if (method === 'bank') {
+        const bd = w.bankDetails || {};
+        const accLast4 = String(bd.accountNumber || '').slice(-4) || '—';
+        methodHtml = '<div class="tg-card-row"><span class="label">🏦 Bank</span><span class="val">' + esc(bd.holder || '—') + ' · XXXX' + esc(accLast4) + '</span></div>' +
+          '<div class="tg-card-row"><span class="label">IFSC</span><span class="val mono">' + esc(bd.ifsc || '—') + '</span></div>';
+      }
+
+      const adminNote = w.adminNote && String(w.adminNote).trim()
+        ? '<div class="tg-admin-note">💬 <b>Admin note:</b> ' + esc(w.adminNote) + '</div>'
+        : '';
+
+      return '<div class="tg-card">' +
+        '<div class="tg-card-head">' +
+          '<div class="tg-card-title">' +
+            '<div class="tg-card-avatar" style="background:linear-gradient(135deg,#e6f7ec,#d1f0dd);color:#1b8a3a;font-size:16px;">₹</div>' +
+            '<div class="tg-card-title-text">Withdrawal</div>' +
+          '</div>' +
+          '<span class="tg-badge ' + statusCls + '">' + statusLbl + '</span>' +
+        '</div>' +
+        '<div class="tg-card-body">' +
+          methodHtml +
+          '<div class="tg-card-row"><span class="label">Requested</span><span class="val">' + fmtDate(w.requestedAt) + '</span></div>' +
+          (w.processedAt ? '<div class="tg-card-row"><span class="label">' + (statusCls === 'paid' ? 'Paid on' : statusCls === 'rejected' ? 'Rejected on' : 'Processed on') + '</span><span class="val">' + fmtDate(w.processedAt) + '</span></div>' : '') +
+          adminNote +
+        '</div>' +
+        '<div class="tg-commission-line' + (statusCls === 'rejected' ? ' rejected-line' : '') + '">' +
+          '<span class="label">Amount</span>' +
+          '<span class="val">' + fmtINR(amt) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+  }
+
+  function renderContent() {
+    if (CURRENT_TAB === 'referrals') renderReferrals();
+    else renderWithdrawals();
+    updateTabBadges();
+  }
+
+  window.tgSwitchTab = function(tab) {
+    CURRENT_TAB = tab;
+    document.querySelectorAll('.tg-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === tab);
+    });
+    renderContent();
+  };
+
+  /* ═══ LOAD DATA ═══ */
+  async function loadConfig() {
+    try {
+      const snap = await db.collection('siteSettings').doc('commission').get();
+      if (snap.exists) {
+        WALLET_CONFIG = { defaultPercent: 5, minWithdraw: 100, ...snap.data() };
+      }
+    } catch(e) {}
+    document.getElementById('tg-wd-min').textContent = '₹' + (WALLET_CONFIG.minWithdraw || 100);
+  }
+
+  function loadWallet() {
+    if (!currentUser) return;
+    if (_unsubWallet) { try { _unsubWallet(); } catch(e) {} }
+
+    _unsubWallet = db.collection('users').doc(currentUser.uid).collection('wallet').doc('summary')
+      .onSnapshot(snap => {
+        WALLET_DATA = snap.exists ? snap.data() : { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+        updateHeroUI();
+      }, err => {
+        console.warn('[wallet]', err && err.message);
+        WALLET_DATA = { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+        updateHeroUI();
+      });
+  }
+
+  function loadReferrals() {
+    if (!currentUser) return;
+    if (_unsubReferrals) { try { _unsubReferrals(); } catch(e) {} }
+
+    _unsubReferrals = db.collection('referrals')
+      .where('referrerId', '==', currentUser.uid)
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .onSnapshot(snap => {
+        REFERRALS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (CURRENT_TAB === 'referrals') renderContent();
+        else updateTabBadges();
+      }, err => {
+        console.warn('[referrals]', err && err.message);
+        // Fallback without orderBy (in case index missing)
+        db.collection('referrals')
+          .where('referrerId', '==', currentUser.uid)
+          .limit(50)
+          .get()
+          .then(s => {
+            REFERRALS = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            REFERRALS.sort((a, b) => toDateMs(b.createdAt) - toDateMs(a.createdAt));
+            if (CURRENT_TAB === 'referrals') renderContent();
+            else updateTabBadges();
+          })
+          .catch(() => { REFERRALS = []; if (CURRENT_TAB === 'referrals') renderContent(); });
+      });
+  }
+
+  function loadWithdrawals() {
+    if (!currentUser) return;
+    if (_unsubWithdrawals) { try { _unsubWithdrawals(); } catch(e) {} }
+
+    _unsubWithdrawals = db.collection('withdrawals')
+      .where('userId', '==', currentUser.uid)
+      .orderBy('requestedAt', 'desc')
+      .limit(50)
+      .onSnapshot(snap => {
+        WITHDRAWALS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (CURRENT_TAB === 'withdrawals') renderContent();
+        else updateTabBadges();
+      }, err => {
+        console.warn('[withdrawals]', err && err.message);
+        db.collection('withdrawals')
+          .where('userId', '==', currentUser.uid)
+          .limit(50)
+          .get()
+          .then(s => {
+            WITHDRAWALS = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            WITHDRAWALS.sort((a, b) => toDateMs(b.requestedAt) - toDateMs(a.requestedAt));
+            if (CURRENT_TAB === 'withdrawals') renderContent();
+            else updateTabBadges();
+          })
+          .catch(() => { WITHDRAWALS = []; if (CURRENT_TAB === 'withdrawals') renderContent(); });
+      });
+  }
+
+  function loadOrderCount() {
+    if (!currentUser) return;
+    db.collection('orders').where('customerId', '==', currentUser.uid).limit(200).get()
+      .then(s => { document.getElementById('tg-qs-orders').textContent = s.size; })
+      .catch(() => {
+        db.collection('orders').where('userId', '==', currentUser.uid).limit(200).get()
+          .then(s => { document.getElementById('tg-qs-orders').textContent = s.size; })
+          .catch(() => {});
+      });
+  }
+
+  /* ═══ WITHDRAW MODAL ═══ */
+  window.tgOpenWithdraw = async function() {
+    if (!currentUser) { toast('Please log in first', 'error'); return; }
+
+    // Fetch fresh wallet if not loaded
+    if (!WALLET_DATA || (WALLET_DATA.available === 0 && WALLET_DATA.pending === 0 && WALLET_DATA.totalEarned === 0)) {
+      try {
+        const snap = await db.collection('users').doc(currentUser.uid).collection('wallet').doc('summary').get();
+        WALLET_DATA = snap.exists ? snap.data() : { available: 0, pending: 0, totalEarned: 0, withdrawn: 0 };
+        updateHeroUI();
+      } catch(e) {}
+    }
+
+    const avail = Number(WALLET_DATA.available || 0);
+    const min = Number(WALLET_CONFIG.minWithdraw || 100);
+
+    if (avail < min) {
+      toast('Minimum ₹' + min + ' required. Your balance: ' + fmtINR(avail), 'error');
+      return;
+    }
+
+    document.getElementById('tg-wd-available').textContent = fmtINR(avail);
+    document.getElementById('tg-wd-amount').value = avail;
+    document.getElementById('tg-wd-upi').value = '';
+    document.getElementById('tg-wd-holder').value = '';
+    document.getElementById('tg-wd-accno').value = '';
+    document.getElementById('tg-wd-ifsc').value = '';
+    SELECTED_METHOD = 'upi';
+    document.querySelectorAll('.tg-wd-method-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.method === 'upi');
+    });
+    document.getElementById('tg-upi-fields').style.display = 'block';
+    document.getElementById('tg-bank-fields').style.display = 'none';
+    document.getElementById('tg-withdraw-modal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.tgCloseWithdraw = function() {
+    document.getElementById('tg-withdraw-modal').classList.remove('show');
+    document.body.style.overflow = '';
+  };
+
+  window.tgPickMethod = function(method, el) {
+    SELECTED_METHOD = method;
+    document.querySelectorAll('.tg-wd-method-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.method === method);
+    });
+    document.getElementById('tg-upi-fields').style.display = method === 'upi' ? 'block' : 'none';
+    document.getElementById('tg-bank-fields').style.display = method === 'bank' ? 'block' : 'none';
+  };
+
+  window.tgSubmitWithdraw = async function() {
+    if (!currentUser) return;
+    const amt = Number(document.getElementById('tg-wd-amount').value || 0);
+    const avail = Number(WALLET_DATA.available || 0);
+    const min = Number(WALLET_CONFIG.minWithdraw || 100);
+
+    if (amt < min) return toast('Minimum ' + fmtINR(min), 'error');
+    if (amt > avail) return toast('Amount exceeds available balance', 'error');
+
+    let payload = {};
+    if (SELECTED_METHOD === 'upi') {
+      const upi = (document.getElementById('tg-wd-upi').value || '').trim();
+      if (!upi || !/^[\w.\-]{2,}@[\w]{2,}$/.test(upi)) return toast('Valid UPI ID daalo', 'error');
+      payload = { method: 'upi', upiId: upi };
+    } else {
+      const holder = (document.getElementById('tg-wd-holder').value || '').trim();
+      const accno = (document.getElementById('tg-wd-accno').value || '').trim();
+      const ifsc = (document.getElementById('tg-wd-ifsc').value || '').trim().toUpperCase();
+      if (!holder) return toast('Account holder name required', 'error');
+      if (!accno || accno.length < 6) return toast('Valid account number required', 'error');
+      if (!ifsc || ifsc.length !== 11) return toast('Valid 11-character IFSC required', 'error');
+      payload = { method: 'bank', bankDetails: { holder, accountNumber: accno, ifsc } };
+    }
+
+    const btn = document.getElementById('tg-wd-submit');
+    btn.disabled = true; btn.textContent = 'Sending…';
+
+    try {
+      await db.runTransaction(async (tx) => {
+        const wRef = db.collection('users').doc(currentUser.uid).collection('wallet').doc('summary');
+        const wSnap = await tx.get(wRef);
+        const curAvail = Number(wSnap.data()?.available || 0);
+        if (curAvail < amt) throw new Error('Insufficient balance');
+
+        tx.set(wRef, {
+          available: curAvail - amt,
+          pending: Number(wSnap.data()?.pending || 0) + amt,
+          updatedAt: FV.serverTimestamp()
+        }, { merge: true });
+
+        tx.set(db.collection('withdrawals').doc(), {
+          userId: currentUser.uid,
+          userName: currentUser.displayName || (currentUser.email || '').split('@')[0] || 'User',
+          userEmail: currentUser.email || '',
+          amount: amt,
+          ...payload,
+          status: 'pending',
+          requestedAt: FV.serverTimestamp(),
+          adminNote: '',
+          processedAt: null
+        });
+
+        tx.set(db.collection('wallet_transactions').doc(), {
+          userId: currentUser.uid,
+          type: 'withdraw_request',
+          amount: amt,
+          note: 'Withdrawal requested via ' + (payload.method === 'upi'
+            ? 'UPI: ' + payload.upiId
+            : 'Bank: ' + payload.bankDetails.accountNumber.slice(-4)),
+          status: 'pending',
+          createdAt: FV.serverTimestamp()
+        });
+      });
+
+      toast('✅ Withdraw request submitted!', 'success');
+      tgCloseWithdraw();
+      loadWithdrawals();
+    } catch (err) {
+      toast(err.message || 'Failed to submit', 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Request Withdraw';
+    }
+  };
+
+  /* ═══ SHARE REFERRAL ═══ */
+  window.tgShareRefer = function() {
+    if (!currentUser) return;
+    const code = 'TOE' + currentUser.uid.slice(0, 6).toUpperCase();
+    const url = window.location.origin + '/shop-home.html?ref=' + currentUser.uid;
+    const msg = '🛍️ Shop on TOEGO and get ₹100 OFF your first order!\n\nUse my referral link:\n' + url + '\n\nCode: ' + code;
+
+    if (navigator.share) {
+      navigator.share({ title: 'TOEGO Referral', text: msg, url })
+        .catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(msg)
+        .then(() => toast('Referral link copied ✓', 'success'))
+        .catch(() => toast('Copy failed', 'error'));
+    } else {
+      toast('Referral: ' + code, 'info');
+    }
+  };
+
+  /* ═══ AUTH ═══ */
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      _authFirstResolve = true;
+      if (currentUser && currentUser.uid === user.uid) return;
+      currentUser = user;
+
+      loadConfig().then(() => {
+        loadWallet();
+        loadReferrals();
+        loadWithdrawals();
+        loadOrderCount();
+      });
+    } else {
+      if (!_authFirstResolve) {
+        _authFirstResolve = true;
+        setTimeout(() => {
+          if (auth.currentUser) return;
+          if (!_redirected) {
+            _redirected = true;
+            window.location.replace('log-in.html?redirect=' + encodeURIComponent('commission.html'));
+          }
+        }, 300);
+      } else {
+        if (!_redirected) {
+          _redirected = true;
+          window.location.replace('log-in.html?redirect=' + encodeURIComponent('commission.html'));
+        }
+      }
+    }
+  });
+
+  // Sync init if user already loaded
+  if (auth.currentUser) {
+    currentUser = auth.currentUser;
+    loadConfig().then(() => {
+      loadWallet();
+      loadReferrals();
+      loadWithdrawals();
+      loadOrderCount();
+    });
+  }
+
+  // Modal backdrop click
+  document.querySelectorAll('.tg-modal').forEach(m => {
+    m.addEventListener('click', (e) => {
+      if (e.target === m) {
+        m.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
