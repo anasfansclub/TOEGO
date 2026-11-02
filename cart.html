@@ -34,6 +34,16 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-hd-back svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 .tg-hd-title { flex:1; color:#fff; font-size:17px; font-weight:700; letter-spacing:-.2px; display:flex; align-items:center; gap:8px; }
 .tg-hd-count { font-size:12.5px; font-weight:500; opacity:.85; }
+/* ⚡ Referral Status Light (tiny dot) */
+.tg-ref-dot{
+  width:8px;height:8px;border-radius:50%;
+  display:inline-block;margin-left:6px;vertical-align:middle;
+  animation:tgRefPulse 2s ease-in-out infinite;flex-shrink:0;
+}
+.tg-ref-dot.yellow{background:#fbbf24;box-shadow:0 0 4px rgba(251,191,36,.8);}
+.tg-ref-dot.green{background:#22c55e;box-shadow:0 0 4px rgba(34,197,94,.8);}
+.tg-ref-dot.red{background:#ef4444;box-shadow:0 0 4px rgba(239,68,68,.8);}
+@keyframes tgRefPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(0.85);}}
 .tg-hd-actions { display:flex; gap:2px; flex-shrink:0; }
 .tg-hd-btn { width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#fff; border-radius:50%; position:relative; transition:background .15s; }
 .tg-hd-btn:hover { background:rgba(255,255,255,.12); }
@@ -349,7 +359,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <header class="tg-hd">
   <div class="tg-hd-inner">
     <a href="shop-home.html" class="tg-hd-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
-    <div class="tg-hd-title">My Cart <span class="tg-hd-count" id="tg-hd-count"></span></div>
+    <div class="tg-hd-title">My Cart <span class="tg-hd-count" id="tg-hd-count"></span><span class="tg-ref-dot" id="tg-ref-dot" style="display:none;" title="Referral status"></span></div>
     <div class="tg-hd-actions">
       <a href="wishlist.html" class="tg-hd-btn" aria-label="Wishlist"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg></a>
     </div>
@@ -359,18 +369,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <div class="tg-wrap">
   <div class="tg-container" id="tg-container">
     <div class="tg-left" id="tg-left">
-            <!-- ✅ REFERRAL BAR START -->
-      <div class="tg-referral-bar" id="tg-referral-bar" style="display:none;background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1.5px solid #ffe500;border-radius:10px;padding:12px 14px;margin-bottom:10px;align-items:center;gap:10px;">
-        <div style="font-size:22px;">💰</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:12.5px;font-weight:800;color:#856404;">Referred by a friend</div>
-          <div style="font-size:11px;color:#856404;margin-top:2px;line-height:1.4;">They will earn commission when you order</div>
-        </div>
-      </div>
-      <div id="tg-referral-warning" style="display:none;background:#fff3cd;border:1.5px solid #ffc107;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#856404;line-height:1.4;">
-        ⚠️ <b>Note:</b> You opened your own referral link — commission will not be generated.
-      </div>
-      <!-- ✅ REFERRAL BAR END -->
+ <!-- Referral indicator is now a tiny dot in the header (id="tg-ref-dot") -->
 
       <div class="tg-pin">
         <div class="tg-pin-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
@@ -2558,13 +2557,42 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   }
 
   // ✅ FIX #6: Address fetch error toast
+// ⚡ ULTRA FAST: Cache-first address loading
   async function getSavedAddresses() {
     if (currentUser) {
+      const cacheKey = 'toego_addr_cache_' + currentUser.uid;
+      // 1️⃣ CACHE FIRST (instant)
+      try {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const arr = JSON.parse(cached);
+          if (Array.isArray(arr)) {
+            // Refresh in background (fire & forget)
+            setTimeout(async () => {
+              try {
+                const snap = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
+                if (snap.exists) {
+                  const fresh = snap.data().addresses;
+                  if (Array.isArray(fresh)) {
+                    localStorage.setItem(cacheKey, JSON.stringify(fresh));
+                  }
+                }
+              } catch(e) {}
+            }, 100);
+            return arr;
+          }
+        }
+      } catch(e) {}
+
+      // 2️⃣ Cache miss — fetch from server
       try {
         const snap = await db.collection('users').doc(currentUser.uid).get();
         if (snap.exists) {
           const arr = snap.data().addresses;
-          if (Array.isArray(arr)) return arr;
+          if (Array.isArray(arr)) {
+            try { localStorage.setItem(cacheKey, JSON.stringify(arr)); } catch(e) {}
+            return arr;
+          }
         }
       } catch(e) {
         console.warn('[addresses] load failed:', e && e.message);
@@ -2575,8 +2603,10 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     try { const arr = JSON.parse(localStorage.getItem(ADDR_LIST_KEY) || '[]'); return Array.isArray(arr) ? arr : []; }
     catch(e) { return []; }
   }
-  async function setSavedAddresses(list) {
+async function setSavedAddresses(list) {
     if (currentUser) {
+      // ⚡ Write to cache immediately
+      try { localStorage.setItem('toego_addr_cache_' + currentUser.uid, JSON.stringify(list)); } catch(e) {}
       try { await db.collection('users').doc(currentUser.uid).set({ addresses: list, updatedAt: FV.serverTimestamp() }, { merge: true }); }
       catch(e) { toast('Could not save address', 'error'); console.error('Save address error:', e); }
     } else {
@@ -3098,7 +3128,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     if (!pids.length) throw new Error('Invalid cart items');
 
     const [freshProds, commSnap, psSnap] = await Promise.all([
-      withTimeout(fetchFreshProductsServer(pids), 12000),
+      withTimeout(fetchFreshProductsServer(pids), 8000),
       db.collection('siteSettings').doc('seller').get({ source: 'server' }).catch(() => null),
       db.collection('siteSettings').doc('payment').get({ source: 'server' }).catch(() => null)
     ]);
@@ -3402,140 +3432,131 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
 
 
-      /* 🔗 REFERRAL COMMISSION PROCESSING */
+      // ⚡ REFERRAL: Fire-and-forget (background, non-blocking)
+    tgProcessReferralAsync(verified, orderRef.id, currentUser.uid, pendingAddress).catch(e => {
+      console.error('[referral] background error:', e);
+    });
+
+    return orderRef.id;
+  }
+
+  /* ⚡ Background Referral Processing — non-blocking */
+  async function tgProcessReferralAsync(verified, orderId, buyerUid, addr) {
     try {
       const buyerRef = tgGetReferrer();
-      const myUid = currentUser.uid;
-
-      console.log('[referral] === REFERRAL CHECK ===');
-      console.log('[referral] buyerRef:', buyerRef || '(empty)');
-      console.log('[referral] currentUser.uid:', myUid);
-
-      if (!buyerRef) {
-        console.warn('[referral] ❌ SKIP — localStorage me referrer nahi mila (Link me &ref= nahi tha ya clear ho gaya)');
-      } else if (buyerRef === myUid) {
-        console.warn('[referral] ❌ SKIP — Self-referral block (Tune apna hi link khola hai)');
-      } else {
-        console.log('[referral] ✅ Proceeding with referral');
-
-        let cfg = { defaultPercent: 5, productOverrides: {} };
-        try {
-          const c = await db.collection('siteSettings').doc('commission').get();
-          if (c.exists) cfg = { ...cfg, ...c.data() };
-        } catch(cfgErr) {
-          console.warn('[referral] Config load failed, using default 5%');
-        }
-
-        let totalAmt = 0, totalComm = 0;
-        const lines = [];
-        for (const it of verified.items) {
-          const override = cfg.productOverrides?.[it.productId];
-          const pct = (override != null ? Number(override) : Number(cfg.defaultPercent || 5));
-          const lineAmt = Number(it.price) * Number(it.qty);
-          const lineComm = Math.round(lineAmt * pct / 100);
-          totalAmt += lineAmt;
-          totalComm += lineComm;
-          lines.push({
-            productId: it.productId,
-            name: it.name,
-            price: Number(it.price),
-            qty: Number(it.qty),
-            commissionPercent: pct,
-            commission: lineComm
-          });
-        }
-
-        console.log('[referral] Calculated — orderAmount:', totalAmt, 'commission:', totalComm);
-
-        if (totalComm > 0) {
-          const addr = pendingAddress || {};
-          
-          try {
-            const refRes = await db.collection('referrals').add({
-              referrerId: buyerRef,
-              buyerId: myUid,
-              buyerName: addr.name || currentUser.displayName || (currentUser.email || '').split('@')[0] || 'User',
-              orderId: orderRef.id,
-              orderAmount: totalAmt,
-              items: lines,
-              commissionAmount: totalComm,
-              commissionPercent: Number(cfg.defaultPercent || 5),
-              status: 'pending',
-              creditedAt: null,
-              createdAt: FV.serverTimestamp()
-            });
-            console.log('[referral] ✅ Referral record created. ID:', refRes.id);
-          } catch(refAddErr) {
-            console.error('[referral] ❌ referrals.add() FAILED:', refAddErr.code, refAddErr.message);
-          }
-
-          try {
-            await db.collection('users').doc(buyerRef).collection('wallet').doc('summary').set({
-              pending: FV.increment(totalComm),
-              updatedAt: FV.serverTimestamp()
-            }, { merge: true });
-            console.log('[referral] ✅ Wallet credited (pending +' + totalComm + ') to:', buyerRef);
-          } catch(walletErr) {
-            console.error('[referral] ❌ Wallet write FAILED:', walletErr.code, walletErr.message);
-          }
-        } else {
-          console.warn('[referral] ❌ SKIP — totalComm is 0');
-        }
+      if (!buyerRef) return;
+      if (buyerRef === buyerUid) {
+        console.log('[referral] skip self');
+        return;
       }
-    } catch(refErr) {
-      console.error('[referral] ❌ FATAL ERROR:', refErr);
+
+      let cfg = { defaultPercent: 5, productOverrides: {} };
+      try {
+        const c = await db.collection('siteSettings').doc('commission').get();
+        if (c.exists) cfg = { ...cfg, ...c.data() };
+      } catch(e) {}
+
+      let totalAmt = 0, totalComm = 0;
+      const lines = [];
+      for (const it of verified.items) {
+        const override = cfg.productOverrides?.[it.productId];
+        const pct = (override != null ? Number(override) : Number(cfg.defaultPercent || 5));
+        const lineAmt = Number(it.price) * Number(it.qty);
+        const lineComm = Math.round(lineAmt * pct / 100);
+        totalAmt += lineAmt;
+        totalComm += lineComm;
+        lines.push({
+          productId: it.productId, name: it.name,
+          price: Number(it.price), qty: Number(it.qty),
+          commissionPercent: pct, commission: lineComm
+        });
+      }
+
+      if (totalComm <= 0) return;
+
+      const buyerName = (addr && addr.name) || 'User';
+
+      // ⚡ Parallel writes (referral record + wallet)
+      await Promise.all([
+        db.collection('referrals').add({
+          referrerId: buyerRef, buyerId: buyerUid, buyerName, orderId,
+          orderAmount: totalAmt, items: lines,
+          commissionAmount: totalComm,
+          commissionPercent: Number(cfg.defaultPercent || 5),
+          status: 'pending', creditedAt: null,
+          createdAt: FV.serverTimestamp()
+        }),
+        db.collection('users').doc(buyerRef).collection('wallet').doc('summary').set({
+          pending: FV.increment(totalComm),
+          updatedAt: FV.serverTimestamp()
+        }, { merge: true })
+      ]);
+
+      console.log('[referral] ✓ Background processing done — ₹' + totalComm);
+    } catch(e) {
+      console.error('[referral] background failure:', e);
     }
-    return orderRef.id;
   }
 
   // ✅ FIX #11: Verify fail ho to bhi order create (paid_unverified)
   async function tgStartRazorpay(t) {
     if (!currentUser) { toast('Please log in', 'error'); return; }
 
-    toast('🔒 Verifying cart...', 'info');
-    let verified;
-    try {
-      verified = await tgVerifyCartServerSide(t.sel);
-    } catch(e) {
-      toast('❌ ' + (e.message || 'Cannot proceed'), 'error');
+    // 🔥 ULTRA FAST: Fire all 3 operations in parallel
+    const clientAmountPaise = Math.round(t.grand * 100);
+    const keyId = SETTINGS.razorpayKeyId;
+
+    toast('🔒 Preparing payment...', 'info');
+
+    // Parallel: verify cart + create Razorpay order + ensure SDK
+    const [_rzpLoad, verifiedResult, orderResult] = await Promise.allSettled([
+      ensureRazorpay(),
+      tgVerifyCartServerSide(t.sel),
+      functions ? (async () => {
+        try {
+          const createFn = functions.httpsCallable('createRazorpayOrder');
+          const res = await withTimeout(createFn({
+            amount: clientAmountPaise,
+            name: pendingAddress.name,
+            phone: pendingAddress.phone,
+            uid: currentUser.uid
+          }), 8000);
+          return res && res.data && res.data.order_id ? res.data : null;
+        } catch(err) {
+          console.warn('[razorpay] CF failed:', err && err.message);
+          return null;
+        }
+      })() : Promise.resolve(null)
+    ]);
+
+    // Check verify result
+    if (verifiedResult.status !== 'fulfilled') {
+      toast('❌ ' + (verifiedResult.reason?.message || 'Cannot proceed'), 'error');
       return;
     }
-
+    const verified = verifiedResult.value;
     if (!verified || !verified.items.length) { toast('Cart is empty', 'error'); return; }
     if (verified.grand <= 0) { toast('Invalid amount', 'error'); return; }
 
     const amountPaise = Math.round(verified.grand * 100);
-    const keyId = SETTINGS.razorpayKeyId;
+
+    // Amount safety check (client vs server)
+    if (Math.abs(amountPaise - clientAmountPaise) > 100) {
+      toast('❌ Prices changed. Please refresh and try again.', 'error');
+      return;
+    }
 
     if (typeof Razorpay === 'undefined') {
       toast('Payment gateway not loaded. Check internet.', 'error');
       return;
     }
 
-    let razorpayOrder = null;
-    let verifyFn = null;
+    let razorpayOrder = orderResult.status === 'fulfilled' ? orderResult.value : null;
+    let verifyFn = razorpayOrder ? functions.httpsCallable('verifyRazorpayPayment') : null;
 
-    if (functions) {
-      try {
-        const createFn = functions.httpsCallable('createRazorpayOrder');
-        const res = await withTimeout(createFn({
-          amount: amountPaise,
-          name: pendingAddress.name,
-          phone: pendingAddress.phone,
-          uid: currentUser.uid
-        }), 12000);
-        if (res && res.data && res.data.order_id) {
-          razorpayOrder = res.data;
-          verifyFn = functions.httpsCallable('verifyRazorpayPayment');
-
-          if (razorpayOrder.amount && Math.abs(razorpayOrder.amount - amountPaise) > 100) {
-            toast('❌ Amount mismatch detected. Contact support.', 'error');
-            return;
-          }
-        }
-      } catch(err) {
-        console.warn('[razorpay] CF failed:', err && err.message);
-      }
+    if (razorpayOrder && razorpayOrder.amount && Math.abs(razorpayOrder.amount - amountPaise) > 100) {
+      toast('❌ Amount mismatch detected. Contact support.', 'error');
+      return;
     }
 
     const options = {
@@ -3566,7 +3587,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
-            }), 12000);
+            }), 8000);
             verifiedOnServer = !!(v && v.data && v.data.verified);
           } catch(err) {
             console.warn('[verify] CF failed — saving as paid_unverified:', err && err.message);
@@ -3804,42 +3825,46 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
   loadSelected();
   loadPin();
-    // ✅ NEW: Show referral bar if captured
-  (function tgShowReferralBar() {
-    const bar = document.getElementById('tg-referral-bar');
-    const warning = document.getElementById('tg-referral-warning');
-    
-    function doShow() {
+// ⚡ Referral status: tiny dot (yellow=guest captured, green=active, red=self)
+  (function tgReferralDot() {
+    const dot = document.getElementById('tg-ref-dot');
+    function setDot(state) {
+      if (!dot) return;
+      if (!state) { dot.style.display = 'none'; return; }
+      dot.style.display = 'inline-block';
+      dot.className = 'tg-ref-dot ' + state;
+      dot.title = state === 'green' ? 'Referral active' :
+                  state === 'yellow' ? 'Referral captured — login to activate' :
+                  'Self-referral — will not count';
+    }
+    function refresh() {
       try {
         const raw = localStorage.getItem('toego_referrer');
-        if (!raw) {
-          if (bar) bar.style.display = 'none';
-          if (warning) warning.style.display = 'none';
-          return;
-        }
+        if (!raw) return setDot(null);
         const r = JSON.parse(raw);
-        if (!r || !r.uid) return;
-        
-        const cu = firebase.auth().currentUser;
-        if (cu && cu.uid === r.uid) {
-          if (bar) bar.style.display = 'none';
-          if (warning) warning.style.display = 'block';
-          return;
+        if (!r || !r.uid) return setDot(null);
+        if (Date.now() - r.ts > 30 * 24 * 60 * 60 * 1000) {
+          localStorage.removeItem('toego_referrer');
+          return setDot(null);
         }
-        if (warning) warning.style.display = 'none';
-        if (bar) bar.style.display = 'flex';
-      } catch(e) {}
+        const cu = firebase.auth().currentUser;
+        if (cu && cu.uid === r.uid) return setDot('red');
+        if (!cu) return setDot('yellow');
+        return setDot('green');
+      } catch(e) { setDot(null); }
     }
-
-    doShow();
-    setTimeout(doShow, 500);
-    setTimeout(doShow, 1500);
-    firebase.auth().onAuthStateChanged(doShow);
+    refresh();
+    setTimeout(refresh, 400);
+    setTimeout(refresh, 1500);
+    firebase.auth().onAuthStateChanged(refresh);
   })();
   loadAppliedCouponFromStorage();
   updateCouponCard();
 
   _quickBootRender();
+
+  // ⚡ PRELOAD Razorpay SDK in background (2s after page load)
+  setTimeout(() => { try { ensureRazorpay().catch(() => {}); } catch(e) {} }, 2000);
 
   loadPaymentSettings();
   loadCoupons();
