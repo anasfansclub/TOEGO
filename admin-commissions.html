@@ -31,122 +31,39 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-hd-title span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tg-hd-badge { background: rgba(255,229,0,.22); color: #ffe500; border: 1px solid rgba(255,229,0,.45); padding: 4px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; flex-shrink: 0; }
 
+/* ═══════════ RED ERROR BANNER ═══════════ */
+.tg-error-banner { display: none; background: #ffebee; border: 1.5px solid #ffcdd2; border-radius: 12px; padding: 16px; margin-bottom: 16px; color: #b71c1c; box-shadow: 0 2px 8px rgba(211,47,47,.15); }
+.tg-error-banner.show { display: block; }
+.tg-error-banner h4 { margin: 0 0 6px; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.tg-error-banner p { margin: 0; font-size: 12.5px; line-height: 1.5; }
+.tg-error-banner code { background: rgba(0,0,0,.08); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-weight: 700; }
+
 /* ═══════════ SIDEBAR ═══════════ */
-.tg-sidebar {
-  position: fixed;
-  top: 60px;
-  left: 0;
-  bottom: 0;
-  width: var(--sidebar-w);
-  background: linear-gradient(180deg, #0f1a2e 0%, #172337 100%);
-  z-index: 850;
-  overflow-y: auto;
-  overflow-x: hidden;
-  transform: translateX(-100%);
-  transition: transform .28s cubic-bezier(.4,0,.2,1);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,.15) transparent;
-}
+.tg-sidebar { position: fixed; top: 60px; left: 0; bottom: 0; width: var(--sidebar-w); background: linear-gradient(180deg, #0f1a2e 0%, #172337 100%); z-index: 850; overflow-y: auto; overflow-x: hidden; transform: translateX(-100%); transition: transform .28s cubic-bezier(.4,0,.2,1); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent; }
 .tg-sidebar::-webkit-scrollbar { width: 4px; }
 .tg-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 4px; }
 .tg-sidebar.open { transform: translateX(0); }
 
-/* Overlay when sidebar open on mobile */
-.tg-sidebar-overlay {
-  position: fixed;
-  inset: 60px 0 0 0;
-  background: rgba(15,23,41,.55);
-  z-index: 800;
-  display: none;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-}
+.tg-sidebar-overlay { position: fixed; inset: 60px 0 0 0; background: rgba(15,23,41,.55); z-index: 800; display: none; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
 .tg-sidebar-overlay.show { display: block; }
 
 .tg-sidebar-inner { padding: 16px 0 30px; }
-
 .tg-sidebar-section { margin-bottom: 8px; }
 .tg-sidebar-label { color: rgba(255,255,255,.4); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; padding: 12px 20px 6px; }
 
-.tg-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 20px;
-  color: rgba(255,255,255,.72);
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .15s;
-  position: relative;
-  border-left: 3px solid transparent;
-}
+.tg-nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 20px; color: rgba(255,255,255,.72); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all .15s; position: relative; border-left: 3px solid transparent; }
 .tg-nav-item:hover { background: rgba(255,255,255,.05); color: #fff; }
-.tg-nav-item.active {
-  background: linear-gradient(90deg, rgba(40,116,240,.25) 0%, rgba(40,116,240,.08) 100%);
-  color: #fff;
-  border-left-color: var(--tg-primary);
-}
-.tg-nav-item.active::after {
-  content: '';
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ffe500;
-  box-shadow: 0 0 8px rgba(255,229,0,.8);
-}
-.tg-nav-icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.tg-nav-item.active { background: linear-gradient(90deg, rgba(40,116,240,.25) 0%, rgba(40,116,240,.08) 100%); color: #fff; border-left-color: var(--tg-primary); }
+.tg-nav-item.active::after { content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; border-radius: 50%; background: #ffe500; box-shadow: 0 0 8px rgba(255,229,0,.8); }
+.tg-nav-icon { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .tg-nav-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .tg-nav-label { flex: 1; }
-.tg-nav-count {
-  background: rgba(255,255,255,.12);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 900;
-  padding: 2px 7px;
-  border-radius: 999px;
-  min-width: 22px;
-  text-align: center;
-}
+.tg-nav-count { background: rgba(255,255,255,.12); color: #fff; font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 999px; min-width: 22px; text-align: center; }
 .tg-nav-item.active .tg-nav-count { background: #ffe500; color: #0f1a2e; }
 
-.tg-sidebar-footer {
-  margin-top: 20px;
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255,255,255,.08);
-}
-.tg-sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: rgba(255,255,255,.05);
-  border-radius: 10px;
-}
-.tg-sidebar-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #2874f0, #1a5dc7);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+.tg-sidebar-footer { margin-top: 20px; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08); }
+.tg-sidebar-user { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,.05); border-radius: 10px; }
+.tg-sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; font-size: 15px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tg-sidebar-user-info { flex: 1; min-width: 0; }
 .tg-sidebar-user-name { color: #fff; font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tg-sidebar-user-email { color: rgba(255,255,255,.5); font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -155,7 +72,6 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-wrap { padding-top: 60px; padding-bottom: 40px; min-height: 100vh; transition: margin-left .28s; }
 .tg-container { max-width: 1400px; margin: 0 auto; padding: 16px; }
 
-/* Desktop: push content */
 @media (min-width: 1025px) {
   .tg-wrap { margin-left: 0; }
   .tg-wrap.sidebar-open { margin-left: var(--sidebar-w); }
@@ -494,6 +410,12 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <!-- ═══ MAIN WRAP ═══ -->
 <div class="tg-wrap" id="tg-wrap">
   <div class="tg-container">
+
+    <!-- ═══ ERROR BANNER ═══ -->
+    <div class="tg-error-banner" id="tg-global-error">
+      <h4>⚠️ Data Load Error</h4>
+      <p id="tg-error-msg">Kuch data load nahi ho paya. Check karo ki tumhara account Firestore me <code>admin</code> role rakhta hai ya nahi.</p>
+    </div>
 
     <!-- ═══════════ DASHBOARD ═══════════ -->
     <div class="tg-panel active" id="panel-dashboard">
@@ -915,6 +837,15 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   function closeModal(id) { document.getElementById(id).classList.remove('show'); }
   window.closeModal = closeModal;
 
+  function showGlobalError(msg) {
+    const b = document.getElementById('tg-global-error');
+    const t = document.getElementById('tg-error-msg');
+    if (b && t) {
+      t.innerHTML = msg;
+      b.classList.add('show');
+    }
+  }
+
   function confirmAction(title, body, onYes) {
     document.getElementById('confirm-title').textContent = title;
     document.getElementById('confirm-body').textContent = body;
@@ -977,6 +908,18 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       document.getElementById('tg-sidebar-avatar').textContent = initial(user.displayName || user.email || 'A');
       document.getElementById('tg-sidebar-user-name').textContent = user.displayName || (user.email || '').split('@')[0] || 'Admin';
       document.getElementById('tg-sidebar-user-email').textContent = user.email || user.uid;
+      
+      // Verify Admin Role
+      try {
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          const role = doc.data().role;
+          if (role !== 'admin' && role !== 'superadmin' && user.email !== 'anasfansclub@toego.in') {
+             showGlobalError("Tumhara account Firestore me <code>admin</code> nahi hai. Data load nahi hoga. Firebase Console > users > " + user.uid + " > role: 'admin' set karo.");
+          }
+        }
+      } catch(e) {}
+
       initAll();
     } else {
       if (!_authFirstResolve) {
@@ -1000,6 +943,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     } catch (e) {
       console.error('[init]', e);
       toast('Init error: ' + e.message, 'error');
+      showGlobalError('Init Error: ' + e.message);
     }
   }
 
@@ -1050,12 +994,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       },
       err => {
         console.warn('[wd]', err);
+        // Fallback without orderBy
         db.collection('withdrawals').limit(100).get().then(s => {
           WITHDRAWALS = s.docs.map(d => ({ id: d.id, ...d.data() }));
           WITHDRAWALS.sort((a, b) => (b.requestedAt?.seconds || 0) - (a.requestedAt?.seconds || 0));
           renderWithdrawals(); updateCounts(); loadKPIs();
         }).catch(e => {
-          document.getElementById('wd-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+          document.getElementById('wd-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load Withdrawals</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+          showGlobalError('Withdrawals load fail: ' + e.message);
         });
       }
     );
@@ -1216,12 +1162,14 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       },
       err => {
         console.warn('[rf]', err);
+        // Fallback without orderBy
         db.collection('referrals').limit(100).get().then(s => {
           REFERRALS = s.docs.map(d => ({ id: d.id, ...d.data() }));
           REFERRALS.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
           renderReferrals(); updateCounts(); loadKPIs();
         }).catch(e => {
-          document.getElementById('rf-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+          document.getElementById('rf-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load Referrals</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+          showGlobalError('Referrals load fail: ' + e.message);
         });
       }
     );
@@ -1369,7 +1317,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           TRANSACTIONS.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
           renderTransactions(); updateCounts();
         }).catch(e => {
-          document.getElementById('tx-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+          document.getElementById('tx-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load Transactions</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+          showGlobalError('Transactions load fail: ' + e.message);
         });
       }
     );
@@ -1436,7 +1385,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       renderProducts();
       document.getElementById('nav-count-prod').textContent = PRODUCTS.length;
     } catch (e) {
-      document.getElementById('prod-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+      document.getElementById('prod-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load Products</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+      showGlobalError('Products load fail: ' + e.message);
     }
   }
 
@@ -1512,7 +1462,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
       document.getElementById('nav-count-users').textContent = USERS.length;
       document.getElementById('kpi-users').textContent = USERS.length;
     } catch (e) {
-      document.getElementById('users-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+      document.getElementById('users-list').innerHTML = '<div class="tg-empty"><div class="tg-empty-icon">⚠️</div><div class="tg-empty-title">Failed to load Users</div><div class="tg-empty-desc">' + esc(e.message) + '</div></div>';
+      showGlobalError('Users load fail: ' + e.message);
     }
   }
 
