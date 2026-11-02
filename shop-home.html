@@ -814,7 +814,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
    ═══════════════════════════════════════════════════════════ */
 
 /* ── HEADER: Deep gradient + yellow accent line ── */
-.tg-mhd{background:linear-gradient(135deg,#0d47a1 0%,#2874f0 50%,#1976d2 100%)!important;height:64px!important;box-shadow:0 4px 20px rgba(13,71,161,.35)!important;}
+.tg-mhd{background:linear-gradient(135deg,#0d47a1 0%,#2874f0 50%,#1976d2 100%)!important;height:58px!important;box-shadow:0 4px 20px rgba(13,71,161,.35)!important;}
 .tg-mhd::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ffe500,#ffc400,#ffe500)!important;}
 .tg-mhd-inner{height:64px!important;padding:8px 20px!important;gap:16px!important;}
 
@@ -1240,9 +1240,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     padding: 8px 14px !important; 
     flex-wrap: nowrap !important; 
   }
-  /* Logo aur icons hide ho jayenge */
-  .tg-mhd.tg-scrolled .tg-mlogo, 
-  .tg-mhd.tg-scrolled .tg-mhd-actions { 
+  /* Logo hide hoga, icons visible rahenge */
+  .tg-mhd.tg-scrolled .tg-mlogo { 
     display: none !important; 
   }
   /* Search bar full width ho jayega */
@@ -1253,6 +1252,10 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     margin: 0 !important; 
     height: 46px !important; 
     border: 2px solid #ffe500 !important; 
+  }
+   /* Tablet scroll padding fix */
+  #tg-meesho.tg-pad-scrolled {
+    padding-top: 62px !important;
   }
 }
 /* ═══════════════════════════════════════════════════════════
@@ -1371,9 +1374,24 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   .tg-mabanner{aspect-ratio:16/8!important;max-height:130px!important;}
 }
 
-/* Desktop: banner thoda bada par controlled */
+/* Desktop: banner thoda bada par controlled — ZERO CROP */
 @media(min-width:769px){
-  .tg-mabanner{max-height:280px!important;}
+  .tg-mabanner{
+    aspect-ratio:16/7!important;
+    max-height:420px!important;
+    min-height:220px!important;
+    background:linear-gradient(135deg,#eef3ff,#e0eaff)!important;
+  }
+  .tg-mabanner-slide{
+    background:linear-gradient(135deg,#eef3ff,#e0eaff)!important;
+  }
+  .tg-mabanner-slide img{
+    object-fit:contain!important;
+    object-position:center!important;
+  }
+  .tg-mabanner-title{font-size:22px!important;}
+  .tg-mabanner-sub{font-size:13px!important;}
+}
   .tg-mabanner-title{font-size:22px!important;}
   .tg-mabanner-sub{font-size:13px!important;}
 }
@@ -1946,8 +1964,8 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
    BUG FIX: Scroll header padding (white gap fix)
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  #tg-meesho.tg-pad-scrolled {
-    padding-top: 62px !important;
+#tg-meesho.tg-pad-scrolled {
+    padding-top: 60px !important;
   }
 }
 /* ═══════════════════════════════════════════════════════════
@@ -1975,10 +1993,13 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     transition: height 0.25s ease, padding 0.25s ease !important;
   }
   
-  /* 3. Page Padding Fix (JS lag fix) - Ise change nahi hone denge */
-  #tg-meesho, #tg-meesho.tg-pad-scrolled {
+  /* 3. Page Padding — collapse ke saath shrink kare */
+  #tg-meesho {
     padding-top: 112px !important;
-    transition: none !important;
+    transition: padding-top 0.25s ease !important;
+  }
+  #tg-meesho.tg-pad-scrolled {
+    padding-top: 60px !important;
   }
 
   /* 4. Top Row: Logo (Left) */
@@ -2314,7 +2335,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
     if (!t || !t.primary) return;
     document.documentElement.style.setProperty('--tg-primary', t.primary);
     if (t.dark) document.documentElement.style.setProperty('--tg-primary-dark', t.dark);
-    document.documentElement.style.backgroundColor = t.primary;
+  document.documentElement.style.backgroundColor = '#f1f3f6';
     var metas = document.querySelectorAll('meta[name="theme-color"]');
     for (var i = 0; i < metas.length; i++) metas[i].setAttribute('content', t.primary);
     var hd = document.getElementById('tg-mhd');
@@ -2518,7 +2539,14 @@ syncServerTime().then(ok => {
   let _catsServerConfirmed = false;
   let _productsLoading = false;
   let _productsLoaded = false;
-  let _reviewsLoaded = false;
+  let _reviewFetchTimer = null;
+  function scheduleReviewFetch() {
+    if (_reviewFetchTimer) clearTimeout(_reviewFetchTimer);
+    _reviewFetchTimer = setTimeout(() => {
+      _reviewFetchTimer = null;
+      loadReviewsForProducts().catch(() => {});
+    }, 250);
+  }
 
   const _shuffleSeed = (Date.now() % 1000000007) ^ Math.floor(Math.random() * 2147483647);
   const _hashCache = new Map();
@@ -2541,6 +2569,8 @@ syncServerTime().then(ok => {
   const CATS_CACHE = 'toego_home_cats_v23';
   const THEME_KEY = 'toego_theme_colors';
   const BANNER_CACHE = 'toego_home_banners_v23';
+  const RATINGS_CACHE = 'toego_home_ratings_v1';
+const RATINGS_TTL = 30 * 60 * 1000;
 
   const CFG_TTL = 24 * 60 * 60 * 1000;
   const PROD_TTL = 30 * 60 * 1000;
@@ -2617,7 +2647,34 @@ syncServerTime().then(ok => {
       } catch(e2) { return false; }
     }
   }
+  let _ratingsMap = new Map();
 
+  function loadRatingsCache() {
+    try {
+      const raw = localStorage.getItem(RATINGS_CACHE);
+      if (!raw) return;
+      const obj = JSON.parse(raw);
+      const now = Date.now();
+      for (const pid in obj) {
+        const r = obj[pid];
+        if (r && r.ts && (now - r.ts) < RATINGS_TTL && r.count > 0) {
+          _ratingsMap.set(pid, r);
+        }
+      }
+      console.log('[ratings] cache loaded:', _ratingsMap.size, 'products');
+    } catch(e) {}
+  }
+
+  function saveRatingsCache() {
+    try {
+      const obj = {};
+      const now = Date.now();
+      for (const [pid, r] of _ratingsMap) {
+        if ((now - r.ts) < RATINGS_TTL) obj[pid] = r;
+      }
+      localStorage.setItem(RATINGS_CACHE, JSON.stringify(obj));
+    } catch(e) {}
+  }
   function optimizeImgUrl(url) {
     if (!url || typeof url !== 'string') return url || '';
     if (url.indexOf('res.cloudinary.com') !== -1 && url.indexOf('/upload/') !== -1) {
@@ -2928,7 +2985,7 @@ if (byId) byId.setAttribute('content', '#2874f0');
     const hd = document.getElementById('tg-mhd'); if (hd) hd.style.background = '#2874f0';
     const sp = document.getElementById('tg-splash'); if (sp) sp.style.background = `linear-gradient(135deg, ${primary} 0%, ${dark} 50%, #0f1729 100%)`;
 
-    document.documentElement.style.backgroundColor = primary;
+     document.documentElement.style.backgroundColor = '#f1f3f6';
 
     try { localStorage.setItem(THEME_KEY, JSON.stringify({ primary, dark })); } catch(e) {}
   }
@@ -3551,9 +3608,8 @@ function getFlashEnd() {
               renderProducts(true);
             }
             
-            if (!_reviewsLoaded && allProducts.length) {
-              _reviewsLoaded = true;
-              setTimeout(() => { loadReviewsForProducts().catch(() => {}); }, 3000);
+            if (allProducts.length) {
+              scheduleReviewFetch();
             }
           },
           err => {
@@ -3587,22 +3643,69 @@ function getFlashEnd() {
       if (!allProducts.length) renderProducts(true);
     }
   }
-
   async function loadReviewsForProducts() {
     try {
-      const pids = allProducts.slice(0, 15).map(p => p.id).filter(Boolean);
-      if (!pids.length) return;
-      const all = [];
-      for (let i = 0; i < pids.length; i += 10) {
-        const chunk = pids.slice(i, i + 10);
-        try {
-          const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(120).get();
-          snap.forEach(d => all.push({ ...d.data(), id: d.id }));
-        } catch(e) {}
+      const allPids = allProducts.map(p => p.id).filter(Boolean);
+      if (!allPids.length) return;
+
+      const now = Date.now();
+      const pids = allPids.filter(pid => {
+        const cached = _ratingsMap.get(pid);
+        return !cached || (now - cached.ts) > RATINGS_TTL;
+      });
+
+      if (!pids.length) {
+        console.log('[ratings] all fresh from cache:', _ratingsMap.size);
+        updateRatingsInPlace();
+        return;
       }
+
+      console.log('[ratings] fetching for', pids.length, 'products');
+
+      const all = [];
+      const chunks = [];
+      for (let i = 0; i < pids.length; i += 10) chunks.push(pids.slice(i, i + 10));
+
+      for (let i = 0; i < chunks.length; i += 3) {
+        const batch = chunks.slice(i, i + 3);
+        await Promise.all(batch.map(async chunk => {
+          try {
+            const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(300).get();
+            snap.forEach(d => all.push({ ...d.data(), id: d.id }));
+          } catch(e) {}
+        }));
+      }
+
       allReviews = all;
+
+      const agg = new Map();
+      all.forEach(r => {
+        const pid = r.productId;
+        if (!pid) return;
+        const rt = Number(r.rating || 0);
+        if (rt <= 0) return;
+        if (!agg.has(pid)) agg.set(pid, { sum: 0, count: 0 });
+        const a = agg.get(pid);
+        a.sum += rt;
+        a.count += 1;
+      });
+
+      agg.forEach((a, pid) => {
+        if (a.count > 0) {
+          _ratingsMap.set(pid, {
+            avg: a.sum / a.count,
+            count: a.count,
+            ts: now
+          });
+        }
+      });
+
+      saveRatingsCache();
       updateRatingsInPlace();
-    } catch(e) {}
+      console.log('[ratings] ✓ loaded', agg.size, 'products,', all.length, 'reviews total');
+    } catch(e) {
+      console.warn('[ratings] load failed:', e && e.message);
+    }
   }
 
   function updateRatingsInPlace() {
@@ -3625,12 +3728,18 @@ function getFlashEnd() {
   }
 
   function getProductRating(pid) {
+    const cached = _ratingsMap.get(pid);
+    if (cached && cached.count > 0) {
+      return { avg: cached.avg, count: cached.count, hasRating: true };
+    }
     const reviews = allReviews.filter(r => r.productId === pid);
     if (!reviews.length) return { avg: 0, count: 0, hasRating: false };
     let sum = 0, cnt = 0;
     reviews.forEach(r => { const rt = Number(r.rating || 0); if (rt > 0) { sum += rt; cnt++; } });
     if (!cnt) return { avg: 0, count: 0, hasRating: false };
-    return { avg: sum / cnt, count: cnt, hasRating: true };
+    const result = { avg: sum / cnt, count: cnt, hasRating: true };
+    _ratingsMap.set(pid, { ...result, ts: Date.now() });
+    return result;
   }
 
   function filterByCategory(list) {
@@ -4253,6 +4362,48 @@ const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), 
   }
 
   function getGuestCart() { try { return JSON.parse(localStorage.getItem(GUEST_CART)||'[]'); } catch(e) { return []; } }
+    let _lastAuthUser = null;
+
+async function tgMergeGuestCartHome(uid) {
+    try {
+      const guestCart = getGuestCart();
+      if (!guestCart.length) return;
+      const colRef = db.collection('carts').doc(uid).collection('items');
+      const failedItems = [];
+      let merged = 0;
+      for (const it of guestCart) {
+        if (!it.productId) continue;
+        try {
+          const ref = colRef.doc(it.productId);
+          const snap = await ref.get();
+          if (snap.exists) {
+            const oldQty = Number(snap.data().qty || 1);
+            const newQty = Math.min(10, oldQty + Number(it.qty || 1));
+            await ref.update({ qty: newQty, updatedAt: FV.serverTimestamp() });
+          } else {
+            const { id, ...clean } = it;
+            await ref.set({ ...clean, addedAt: FV.serverTimestamp(), updatedAt: FV.serverTimestamp() });
+          }
+          merged++;
+        } catch(e) {
+          failedItems.push(it);
+        }
+      }
+
+      if (failedItems.length > 0) {
+        try { localStorage.setItem(GUEST_CART, JSON.stringify(failedItems)); } catch(e) {}
+      } else {
+        try { localStorage.removeItem(GUEST_CART); } catch(e) {}
+      }
+
+      if (merged > 0) {
+        toast('✓ ' + merged + ' item(s) cart mein add ho gaye', 'success');
+      }
+      if (failedItems.length > 0) {
+        toast('⚠️ ' + failedItems.length + ' item(s) merge nahi hue — retry karenge', 'error');
+      }
+    } catch(e) {}
+  }
   function setGuestCart(arr) { try { localStorage.setItem(GUEST_CART, JSON.stringify(arr)); } catch(e) {} }
   function cartCount(items) { return (items||[]).reduce((s,i)=>s+Number(i.qty||1),0); }
   function updateCartBadge() {
@@ -4440,13 +4591,15 @@ const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), 
         }, () => {});
     } catch(e) {}
   }
-
-  auth.onAuthStateChanged(u => {
+auth.onAuthStateChanged(async u => {
+    const wasGuest = !_lastAuthUser;
+    _lastAuthUser = u;
     const lb = document.getElementById('tg-mlogin-btn');
     const am = document.getElementById('tg-maccount-btn-m');
     if (u) {
       if (lb) lb.href = 'account.html';
       if (am) am.href = 'account.html';
+      if (wasGuest) { try { await tgMergeGuestCartHome(u.uid); } catch(e) {} }
       watchCart(u.uid); loadWishlist();
       if (Date.now() - _trackerLastLoad > 60000) loadTracker();
       loadRecentlyViewed();
@@ -4471,6 +4624,8 @@ const matches = applySortWithTimer(allProducts.filter(p => matchProduct(p, q)), 
   /* ✅ preloadCacheBoot - NO product cache (always fresh from Firebase) */
   (function preloadCacheBoot() {
     try {
+      loadRatingsCache();
+
       const cfg = getCache(CFG_CACHE, CFG_TTL);
       if (cfg) CONFIG = mergeDeep(DEFAULT_CONFIG, cfg);
 
