@@ -359,6 +359,19 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 <div class="tg-wrap">
   <div class="tg-container" id="tg-container">
     <div class="tg-left" id="tg-left">
+            <!-- ✅ REFERRAL BAR START -->
+      <div class="tg-referral-bar" id="tg-referral-bar" style="display:none;background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1.5px solid #ffe500;border-radius:10px;padding:12px 14px;margin-bottom:10px;align-items:center;gap:10px;">
+        <div style="font-size:22px;">💰</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12.5px;font-weight:800;color:#856404;">Referred by a friend</div>
+          <div style="font-size:11px;color:#856404;margin-top:2px;line-height:1.4;">They will earn commission when you order</div>
+        </div>
+      </div>
+      <div id="tg-referral-warning" style="display:none;background:#fff3cd;border:1.5px solid #ffc107;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#856404;line-height:1.4;">
+        ⚠️ <b>Note:</b> You opened your own referral link — commission will not be generated.
+      </div>
+      <!-- ✅ REFERRAL BAR END -->
+
       <div class="tg-pin">
         <div class="tg-pin-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         <div class="tg-pin-body">
@@ -3389,15 +3402,29 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     });
 
 
-    /* 🔗 REFERRAL COMMISSION PROCESSING */
+      /* 🔗 REFERRAL COMMISSION PROCESSING */
     try {
       const buyerRef = tgGetReferrer();
-      if (buyerRef && buyerRef !== currentUser.uid) {
+      const myUid = currentUser.uid;
+
+      console.log('[referral] === REFERRAL CHECK ===');
+      console.log('[referral] buyerRef:', buyerRef || '(empty)');
+      console.log('[referral] currentUser.uid:', myUid);
+
+      if (!buyerRef) {
+        console.warn('[referral] ❌ SKIP — localStorage me referrer nahi mila (Link me &ref= nahi tha ya clear ho gaya)');
+      } else if (buyerRef === myUid) {
+        console.warn('[referral] ❌ SKIP — Self-referral block (Tune apna hi link khola hai)');
+      } else {
+        console.log('[referral] ✅ Proceeding with referral');
+
         let cfg = { defaultPercent: 5, productOverrides: {} };
         try {
           const c = await db.collection('siteSettings').doc('commission').get();
           if (c.exists) cfg = { ...cfg, ...c.data() };
-        } catch(e) {}
+        } catch(cfgErr) {
+          console.warn('[referral] Config load failed, using default 5%');
+        }
 
         let totalAmt = 0, totalComm = 0;
         const lines = [];
@@ -3418,30 +3445,45 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
           });
         }
 
+        console.log('[referral] Calculated — orderAmount:', totalAmt, 'commission:', totalComm);
+
         if (totalComm > 0) {
           const addr = pendingAddress || {};
-          await db.collection('referrals').add({
-            referrerId: buyerRef,
-            buyerId: currentUser.uid,
-            buyerName: addr.name || currentUser.displayName || (currentUser.email || '').split('@')[0] || 'User',
-            orderId: orderRef.id,
-            orderAmount: totalAmt,
-            items: lines,
-            commissionAmount: totalComm,
-            commissionPercent: cfg.defaultPercent || 5,
-            status: 'pending',
-            creditedAt: null,
-            createdAt: FV.serverTimestamp()
-          });
+          
+          try {
+            const refRes = await db.collection('referrals').add({
+              referrerId: buyerRef,
+              buyerId: myUid,
+              buyerName: addr.name || currentUser.displayName || (currentUser.email || '').split('@')[0] || 'User',
+              orderId: orderRef.id,
+              orderAmount: totalAmt,
+              items: lines,
+              commissionAmount: totalComm,
+              commissionPercent: Number(cfg.defaultPercent || 5),
+              status: 'pending',
+              creditedAt: null,
+              createdAt: FV.serverTimestamp()
+            });
+            console.log('[referral] ✅ Referral record created. ID:', refRes.id);
+          } catch(refAddErr) {
+            console.error('[referral] ❌ referrals.add() FAILED:', refAddErr.code, refAddErr.message);
+          }
 
-          await db.collection('users').doc(buyerRef).collection('wallet').doc('summary').set({
-            pending: FV.increment(totalComm),
-            updatedAt: FV.serverTimestamp()
-          }, { merge: true });
+          try {
+            await db.collection('users').doc(buyerRef).collection('wallet').doc('summary').set({
+              pending: FV.increment(totalComm),
+              updatedAt: FV.serverTimestamp()
+            }, { merge: true });
+            console.log('[referral] ✅ Wallet credited (pending +' + totalComm + ') to:', buyerRef);
+          } catch(walletErr) {
+            console.error('[referral] ❌ Wallet write FAILED:', walletErr.code, walletErr.message);
+          }
+        } else {
+          console.warn('[referral] ❌ SKIP — totalComm is 0');
         }
       }
     } catch(refErr) {
-      console.warn('[referral] save failed:', refErr);
+      console.error('[referral] ❌ FATAL ERROR:', refErr);
     }
     return orderRef.id;
   }
@@ -3762,6 +3804,38 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
   loadSelected();
   loadPin();
+    // ✅ NEW: Show referral bar if captured
+  (function tgShowReferralBar() {
+    const bar = document.getElementById('tg-referral-bar');
+    const warning = document.getElementById('tg-referral-warning');
+    
+    function doShow() {
+      try {
+        const raw = localStorage.getItem('toego_referrer');
+        if (!raw) {
+          if (bar) bar.style.display = 'none';
+          if (warning) warning.style.display = 'none';
+          return;
+        }
+        const r = JSON.parse(raw);
+        if (!r || !r.uid) return;
+        
+        const cu = firebase.auth().currentUser;
+        if (cu && cu.uid === r.uid) {
+          if (bar) bar.style.display = 'none';
+          if (warning) warning.style.display = 'block';
+          return;
+        }
+        if (warning) warning.style.display = 'none';
+        if (bar) bar.style.display = 'flex';
+      } catch(e) {}
+    }
+
+    doShow();
+    setTimeout(doShow, 500);
+    setTimeout(doShow, 1500);
+    firebase.auth().onAuthStateChanged(doShow);
+  })();
   loadAppliedCouponFromStorage();
   updateCouponCard();
 
