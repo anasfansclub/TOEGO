@@ -537,6 +537,8 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   const FV = firebase.firestore.FieldValue;
 
   const ORDERS_CACHE_KEY = 'toego_orders_cache_v1';
+const REVIEWS_CACHE_KEY = 'toego_user_reviews_v1';
+const LAST_UID_KEY = 'toego_last_uid';
 
   let CLOUD = { cloudName: '', uploadPreset: '' };
   let rvImages = [];
@@ -807,6 +809,21 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
   let editingReviewId = null;
 
   let ordersReady = false;
+
+  // ⚡ ULTRA FAST: Preload cache BEFORE auth resolves (biggest speed win)
+  (function preloadOrdersCacheFast() {
+    try {
+      const lastUid = localStorage.getItem(LAST_UID_KEY);
+      if (!lastUid || lastUid.length < 10) return;
+      const raw = localStorage.getItem(ORDERS_CACHE_KEY + '_' + lastUid);
+      if (!raw) return;
+      const cachedArr = JSON.parse(raw);
+      if (!Array.isArray(cachedArr) || cachedArr.length === 0) return;
+      ALL_ORDERS = cachedArr.slice().sort(sortByCreatedDesc);
+      ordersReady = true;
+      try { renderOrders(); } catch(e) {}
+    } catch(e) {}
+  })();
 
   window.tgPickTab = function(tab) {
     CURRENT_TAB = tab;
@@ -1758,28 +1775,58 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     }
   };
 
-  async function loadUserReviews() {
+   async function loadUserReviews() {
     REVIEWED_PIDS.clear();
     USER_REVIEWS = [];
     if (!USER) { try { renderOrders(); } catch(e) {} return; }
+    
+    const cacheKey = REVIEWS_CACHE_KEY + '_' + USER.uid;
+    
+    // ⚡ Cache-first: instant render on revisit
+    try {
+      const raw = localStorage.getItem(cacheKey);
+      if (raw) {
+        const cached = JSON.parse(raw);
+        if (Array.isArray(cached)) {
+          cached.forEach(r => {
+            const pid = String(r.productId || '');
+            if (pid) REVIEWED_PIDS.add(pid);
+            USER_REVIEWS.push(r);
+          });
+          try { renderOrders(); } catch(e) {}
+        }
+      }
+    } catch(e) {}
+    
+    // Fetch fresh
     try {
       const snap = await db.collection('reviews')
         .where('userId', '==', USER.uid)
         .get();
+      
+      REVIEWED_PIDS.clear();
+      USER_REVIEWS = [];
       snap.forEach(d => {
         const r = { id: d.id, ...d.data() };
         const pid = String(r.productId || '');
         if (pid) REVIEWED_PIDS.add(pid);
         USER_REVIEWS.push(r);
       });
+      
+      // Save cache for next visit
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify(USER_REVIEWS.slice(0, 50)));
+      } catch(e) {}
     } catch(e) {
       console.warn('[reviews] load failed:', e && e.message);
     }
     try { renderOrders(); } catch(e) {}
   }
 
+
   // ✅ FIX: Simplified loadOrders — removed fallback 100-scan (read bomb) + userMatchesOrder
-  function loadOrders() {
+
+    function loadOrders() {
     if (!USER) {
       ordersReady = true;
       const wrap = document.getElementById('tg-orders');
@@ -1814,17 +1861,30 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
     const liveMap = new Map();
     let l1Done = false, l2Done = false;
     let l1Err = false, l2Err = false;
+    let l2Fired = false;
+    let lastMergeSig = '';
 
     const mergeAndRender = (force) => {
       const merged = new Map();
       cachedMap.forEach((v, k) => merged.set(k, v));
       liveMap.forEach((v, k) => merged.set(k, v));
 
-      ALL_ORDERS = Array.from(merged.values()).sort(sortByCreatedDesc);
+      const arr = Array.from(merged.values()).sort(sortByCreatedDesc);
+      
+      // ⚡ Skip redundant renders — no data change = no re-render
+      const sig = arr.map(o => String(o.id) + ':' + normStatus(o) + ':' + (o.updatedAt && o.updatedAt.seconds ? o.updatedAt.seconds : 0)).join('|');
+      if (!force && sig === lastMergeSig) {
+        const allSuccessSkip = l1Done && (l2Done || !l2Fired) && !l1Err && !l2Err;
+        if (allSuccessSkip && arr.length > 0) saveOrdersCache(uid, arr);
+        return;
+      }
+      lastMergeSig = sig;
+
+      ALL_ORDERS = arr;
       ordersReady = true;
       renderOrders();
 
-      const allSuccess = l1Done && l2Done && !l1Err && !l2Err;
+      const allSuccess = l1Done && (l2Done || !l2Fired) && !l1Err && !l2Err;
       if (allSuccess || force) {
         if (ALL_ORDERS.length > 0) {
           saveOrdersCache(uid, ALL_ORDERS);
@@ -1834,50 +1894,57 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
       }
     };
 
-    // Query 1: customerId
+    function fireUserIdQuery() {
+      if (l2Fired) return;
+      l2Fired = true;
+      try {
+        const u2 = col.where('userId', '==', uid).limit(100).onSnapshot(snap => {
+          snap.docs.forEach(d => liveMap.set(d.id, { id: d.id, ...d.data() }));
+          l2Done = true;
+          mergeAndRender();
+        }, err => {
+          if (!l2Done) {
+            l2Err = true;
+            l2Done = true;
+            mergeAndRender();
+          }
+        });
+        unsubOrders.push(u2);
+      } catch(e) {
+        l2Err = true;
+        l2Done = true;
+      }
+    }
+
+    // ⚡ FAST: Query 1 (customerId) — userId query sirf tab fire karo jab customerId empty ho
     try {
       const u1 = col.where('customerId', '==', uid).limit(100).onSnapshot(snap => {
         snap.docs.forEach(d => liveMap.set(d.id, { id: d.id, ...d.data() }));
         l1Done = true;
+        // Only fire userId if customerId returns 0 results (legacy support)
+        if (snap.empty) fireUserIdQuery();
         mergeAndRender();
       }, err => {
         console.warn('Orders customerId listener error:', err && err.message);
         l1Err = true;
         l1Done = true;
+        fireUserIdQuery();
         mergeAndRender();
       });
       unsubOrders.push(u1);
     } catch(e) {
       l1Err = true;
       l1Done = true;
+      fireUserIdQuery();
     }
 
-    // Query 2: userId (legacy support)
-    try {
-      const u2 = col.where('userId', '==', uid).limit(100).onSnapshot(snap => {
-        snap.docs.forEach(d => liveMap.set(d.id, { id: d.id, ...d.data() }));
-        l2Done = true;
-        mergeAndRender();
-      }, err => {
-        if (!l2Done) {
-          l2Err = true;
-          l2Done = true;
-          mergeAndRender();
-        }
-      });
-      unsubOrders.push(u2);
-    } catch(e) {
-      l2Err = true;
-      l2Done = true;
-    }
-
-    // Safety: ensure render after 6s max
+    // ⚡ Safety: reduced from 6s to 4s for faster fallback
     setTimeout(() => {
       if (!ordersReady) {
         ordersReady = true;
         mergeAndRender(true);
       }
-    }, 6000);
+    }, 4000);
   }
 
   async function updateCartBadge() {
@@ -1929,9 +1996,22 @@ ${items.map((it, i) => { const q = Number(it.qty||1), p = Number(it.price||0); r
   auth.onAuthStateChanged(u => {
     USER = u;
     if (!u) {
+      try { localStorage.removeItem(LAST_UID_KEY); } catch(e) {}
       window.location.replace('log-in.html?redirect=' + encodeURIComponent('my-orders.html'));
       return;
     }
+    
+    // ⚡ Clear stale preload if uid changed (privacy safety)
+    try {
+      const lastUid = localStorage.getItem(LAST_UID_KEY);
+      if (lastUid && lastUid !== u.uid) {
+        ALL_ORDERS = [];
+        ordersReady = false;
+      }
+    } catch(e) {}
+    
+    try { localStorage.setItem(LAST_UID_KEY, u.uid); } catch(e) {}
+    
     loadOrders();
     loadUserReviews();
     updateCartBadge();
