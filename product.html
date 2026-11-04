@@ -237,7 +237,12 @@ a{color:inherit;text-decoration:none;}
 .tg-notify-btn{padding:10px 18px;background:#fff3e0;color:#e65100;border:1.5px solid #ffe0b2;border-radius:8px;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px;}
 .tg-notify-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;}
 
-.tg-recent-scroll{display:flex;gap:12px;overflow-x:auto;padding:16px;scrollbar-width:none;}
+.tg-recent-scroll{display:flex;gap:12px;overflow-x:auto;padding:16px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.tg-recent-scroll::-webkit-scrollbar{display:none;}
+.tg-recent-scroll > .tg-rel-card{flex:0 0 140px;min-width:140px;max-width:140px;width:140px;}
+@media (min-width:600px){
+  .tg-recent-scroll > .tg-rel-card{flex:0 0 170px;min-width:170px;max-width:170px;width:170px;}
+}
 .tg-recent-scroll::-webkit-scrollbar{display:none;}
 
 .tg-seller-card{background:#f8f9fb;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:14px;}
@@ -742,6 +747,7 @@ a{color:inherit;text-decoration:none;}
   let currentUser = null;
 let _cartCountCache = 0;
 let _addCartDebounce = 0;
+const _addedDocIds = new Set();
   let sliderTrack = null;
   let rvRating = 0;
   let rvImages = [];
@@ -1591,6 +1597,13 @@ window.tgSelectSize = function(sz) {
   });
   const wrap = document.getElementById('tg-sizes-wrap');
   if (wrap) { const t = wrap.previousElementSibling; if (t) t.classList.remove('has-error'); }
+  
+  // 🔥 Reset button text when size changes (new variant not yet added)
+  const newDocId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
+  const btn = document.getElementById('tg-add-btn');
+  if (btn && !_addedDocIds.has(newDocId)) {
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> ADD TO BAG';
+  }
 };
 window.tgSelectColor = function(c) {
   SELECTED_COLOR = c; COLOR_ERROR = false;
@@ -1604,6 +1617,13 @@ window.tgSelectColor = function(c) {
   });
   const wrap = document.getElementById('tg-colors-wrap');
   if (wrap) { const t = wrap.previousElementSibling; if (t) t.classList.remove('has-error'); }
+  
+  // 🔥 Reset button text when color changes (new variant not yet added)
+  const newDocId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
+  const btn = document.getElementById('tg-add-btn');
+  if (btn && !_addedDocIds.has(newDocId)) {
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> ADD TO BAG';
+  }
 };
   window.tgChangeQty = function(delta) {
     QTY = Math.max(1, Math.min(10, QTY + delta));
@@ -2689,6 +2709,19 @@ function addToCartInternal() {
     }, { merge: true }).catch(err => {
       console.warn('Cart write failed:', err && err.message);
       bumpCartBadge(-QTY); // rollback
+      
+      // 🔥 RETRY FIX: Write failed → remove from tracking + reset button
+      _addedDocIds.delete(docId);
+      try {
+        let pending = JSON.parse(sessionStorage.getItem('toego_pending_items') || '[]');
+        pending = pending.filter(p => p.docId !== docId);
+        sessionStorage.setItem('toego_pending_items', JSON.stringify(pending));
+      } catch(e) {}
+      const btn = document.getElementById('tg-add-btn');
+      if (btn) {
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> ADD TO BAG';
+      }
+      toast('Cart update failed. Please retry.', 'error');
     });
   }
 
@@ -2700,6 +2733,23 @@ window.tgAddToCart = function() {
     
     if (!PRODUCT) return;
     if (!validateSelection()) return;
+    
+    const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
+    
+    // 🔥 Already added this variant → go to cart (don't add again)
+    if (_addedDocIds.has(docId)) {
+      toast('Item already in bag → Opening cart…', 'info');
+      setTimeout(() => { location.href = 'cart.html'; }, 300);
+      return;
+    }
+    
+    _addedDocIds.add(docId);
+    const btn = document.getElementById('tg-add-btn');
+if (btn) {
+  setTimeout(() => {
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L22 7H6"/></svg> GO TO BAG';
+  }, 500);
+}
     addToCartInternal();
   };
 
