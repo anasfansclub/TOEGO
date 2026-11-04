@@ -2677,13 +2677,16 @@ function addToCartInternal() {
     const docId = PRODUCT.id + '|' + (SELECTED_SIZE || '') + '|' + (SELECTED_COLOR || '');
 
     // 🔥 Save to sessionStorage for INSTANT cart render
-    try {
+       try {
       let pending = JSON.parse(sessionStorage.getItem('toego_pending_items') || '[]');
       pending = pending.filter(p => p.docId !== docId);
       pending.push({ docId, item: { ...item, qty: QTY }, ts: Date.now() });
       sessionStorage.setItem('toego_pending_items', JSON.stringify(pending));
+      // 🔥 Clear the "deleted" flag so re-added item shows up immediately in cart
+      let deletedItems = JSON.parse(sessionStorage.getItem('toego_deleted_cart_items') || '[]');
+      deletedItems = deletedItems.filter(x => x && x.id !== docId);
+      sessionStorage.setItem('toego_deleted_cart_items', JSON.stringify(deletedItems));
     } catch(e) {}
-
     // 🔥 INSTANT feedback — toast + badge (before any network)
     toast(TOAST_MSGS.addCart, 'success');
     bumpCartBadge(QTY);
@@ -2700,13 +2703,17 @@ function addToCartInternal() {
     }
 
     // 🔥 SINGLE WRITE — no read, direct set + increment
-    const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
-    ref.set({
-      ...item,
-      qty: FV.increment(QTY),
-      addedAt: FV.serverTimestamp(),
-      updatedAt: FV.serverTimestamp()
-    }, { merge: true }).catch(err => {
+      const ref = db.collection('carts').doc(currentUser.uid).collection('items').doc(docId);
+    ref.get().then(snap => {
+      const existingQty = snap.exists ? Number(snap.data().qty || 0) : 0;
+      const newQty = Math.min(10, existingQty + QTY);
+      return ref.set({
+        ...item,
+        qty: newQty,
+        addedAt: snap.exists ? (snap.data().addedAt || FV.serverTimestamp()) : FV.serverTimestamp(),
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
+    }).catch(err => {
       console.warn('Cart write failed:', err && err.message);
       bumpCartBadge(-QTY); // rollback
       
