@@ -3020,7 +3020,7 @@ function tgClearFieldValidation() {
     }
   }
 
-  async function reverseGeocode(lat, lng) {
+ async function reverseGeocode(lat, lng) {
   const cityEl = document.getElementById('tg-addr-city');
   const stateEl = document.getElementById('tg-addr-state');
   const pinEl = document.getElementById('tg-addr-pin');
@@ -3035,8 +3035,9 @@ function tgClearFieldValidation() {
 
   let filled = false;
   let filledCount = 0;
+  let pinFound = false;
 
-  // ─── PRIMARY: BigDataCloud (free, no key, generous limits) ───
+  // ─── PRIMARY 1: BigDataCloud ───
   try {
     const res = await fetch(
       `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`,
@@ -3044,11 +3045,10 @@ function tgClearFieldValidation() {
     );
     if (res.ok) {
       const data = await res.json();
-      if (data && (data.city || data.locality || data.principalSubdivision)) {
+    if (data && (data.city || data.locality || data.principalSubdivision || data.postcode)) {
         const admins = data.localityInfo?.administrative || [];
         const infos = data.localityInfo?.informative || [];
 
-        // District — adminLevel 5 (standard for India)
         let district = '';
         for (const a of admins) {
           if (a.adminLevel === 5 && a.name) { district = a.name; break; }
@@ -3061,7 +3061,6 @@ function tgClearFieldValidation() {
           }
         }
 
-        // Locality — prefer explicit locality, else adminLevel 7
         let locality = data.locality || '';
         if (!locality) {
           for (const a of admins) {
@@ -3069,7 +3068,6 @@ function tgClearFieldValidation() {
           }
         }
 
-        // Landmark — road / neighbourhood from informative
         let landmark = '';
         for (const i of infos) {
           if (i.description && /road|street|lane|highway|expressway|market/i.test(i.description) && i.name) {
@@ -3088,8 +3086,16 @@ function tgClearFieldValidation() {
         if (cityEl && data.city && !cityEl.value) { cityEl.value = data.city; filledCount++; }
         if (districtEl && district && !districtEl.value) { districtEl.value = district; filledCount++; }
         if (stateEl && data.principalSubdivision && !stateEl.value) { stateEl.value = data.principalSubdivision; filledCount++; }
-        if (pinEl && data.postcode && !pinEl.value) { pinEl.value = String(data.postcode).replace(/\D/g, '').slice(0, 6); filledCount++; }
         if (landmarkEl && landmark && !landmarkEl.value) { landmarkEl.value = landmark; filledCount++; }
+
+        if (data.postcode && pinEl && !pinEl.value) {
+          const cleanPin = String(data.postcode).replace(/\D/g, '').slice(0, 6);
+          if (cleanPin.length === 6) {
+            pinEl.value = cleanPin;
+            filledCount++;
+            pinFound = true;
+          }
+        }
 
         filled = true;
       }
@@ -3098,7 +3104,7 @@ function tgClearFieldValidation() {
     console.warn('[geocode] BigDataCloud failed:', e);
   }
 
-  // ─── FALLBACK: Nominatim (OSM) ───
+  // ─── FALLBACK 1: Nominatim (OSM) ───
   if (!filled) {
     try {
       const res = await fetch(
@@ -3119,13 +3125,66 @@ function tgClearFieldValidation() {
         if (cityEl && city && !cityEl.value) { cityEl.value = city; filledCount++; }
         if (districtEl && district && !districtEl.value) { districtEl.value = district; filledCount++; }
         if (stateEl && state && !stateEl.value) { stateEl.value = state; filledCount++; }
-        if (pinEl && pin && !pinEl.value) { pinEl.value = String(pin).replace(/\D/g, '').slice(0, 6); filledCount++; }
         if (landmarkEl && road && !landmarkEl.value) { landmarkEl.value = road; filledCount++; }
+
+        if (pin && pinEl && !pinEl.value) {
+          const cleanPin = String(pin).replace(/\D/g, '').slice(0, 6);
+          if (cleanPin.length === 6) {
+            pinEl.value = cleanPin;
+            filledCount++;
+            pinFound = true;
+          }
+        }
 
         filled = true;
       }
     } catch(e) {
       console.warn('[geocode] Nominatim failed:', e);
+    }
+  }
+
+  // ─── FALLBACK 2: Photon (komoot) — STRONG for India Pincodes ───
+  if (!pinFound) {
+    try {
+      const res = await fetch(
+        `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=en`,
+        { cache: 'no-store' }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const f = data.features && data.features[0];
+        if (f && f.properties) {
+          const p = f.properties;
+
+          if (p.postcode && pinEl && !pinEl.value) {
+            const cleanPin = String(p.postcode).replace(/\D/g, '').slice(0, 6);
+            if (cleanPin.length === 6) {
+              pinEl.value = cleanPin;
+              filledCount++;
+              pinFound = true;
+            }
+          }
+
+          if (localityEl && !localityEl.value && (p.locality || p.district)) {
+            localityEl.value = p.locality || p.district;
+            filledCount++;
+          }
+          if (cityEl && !cityEl.value && p.city) {
+            cityEl.value = p.city;
+            filledCount++;
+          }
+          if (districtEl && !districtEl.value && p.county) {
+            districtEl.value = p.county;
+            filledCount++;
+          }
+          if (stateEl && !stateEl.value && p.state) {
+            stateEl.value = p.state;
+            filledCount++;
+          }
+        }
+      }
+    } catch(e) {
+      console.warn('[geocode] Photon failed:', e);
     }
   }
 
@@ -3138,19 +3197,29 @@ function tgClearFieldValidation() {
     if (locStatus) {
       locStatus.style.display = 'flex';
       const span = locStatus.querySelector('span');
-      if (span) span.textContent = '✓ ' + filledCount + ' fields auto-filled! Add flat/house no. and verify phone';
+      if (span) {
+        if (!pinFound) {
+          span.textContent = '✓ ' + filledCount + ' fields auto-filled — Pincode manually daalo';
+        } else {
+          span.textContent = '✓ ' + filledCount + ' fields auto-filled! Add flat/house no. and verify phone';
+        }
+      }
     }
-    toast('📍 ' + filledCount + ' fields auto-filled — verify karo', 'success');
+    toast('📍 ' + filledCount + ' fields auto-filled' + (pinFound ? ' — Pincode bhi mil gaya!' : ''), 'success');
   } else if (filled) {
     toast('Fields already filled hain, auto-fill skip kiya.', 'info');
   } else {
     toast('Address auto-fill fail hua. Manually fill kar sakte ho.', 'error');
   }
 
-  // Smart placeholder in line field
   const lineEl = document.getElementById('tg-addr-line');
   if (lineEl && !lineEl.value && localityEl && localityEl.value) {
     lineEl.placeholder = 'e.g. Flat 301, ' + localityEl.value;
+  }
+
+  // ✅ Auto-validate pincode if auto-filled
+  if (pinFound && pinEl && pinEl.value && typeof window.tgCheckPinInput === 'function') {
+    setTimeout(() => { window.tgCheckPinInput(pinEl); }, 150);
   }
 }
 
