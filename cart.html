@@ -69,7 +69,7 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-selectall-remove:hover { background:#ffebee; }
 
 .tg-items { display:flex; flex-direction:column; gap:10px; }
-.tg-item { background:#fff; border-radius:12px; padding:14px; display:grid; grid-template-columns:auto 100px 1fr; gap:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); position:relative; contain:layout style; animation:tgItemIn .3s cubic-bezier(.34,1.2,.64,1); }
+.tg-item { background:#fff; border-radius:12px; padding:14px; display:grid; grid-template-columns:auto 100px 1fr; gap:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); position:relative; contain:layout style; }
 @keyframes tgItemIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 .tg-item.removing { opacity:.4; transform:scale(.98); pointer-events:none; }
 .tg-item-check { display:flex; align-items:flex-start; padding-top:4px; }
@@ -1118,7 +1118,7 @@ _settingsLoaded = true;
   let _activeBuyNowId = null;
   const _pendingQty = new Map();
   const _pendingCartItems = new Map();
-  const PENDING_CART_TTL = 30000;
+ const PENDING_CART_TTL = 120000; 
   let _bootRendered = false;
   let availableCoupons = [];
   let appliedCoupon = null;
@@ -1431,28 +1431,22 @@ _settingsLoaded = true;
         const node = _itemNodeMap.get(id);
         if (node) {
           node.classList.add('removing');
-          setTimeout(() => { if (node.parentNode) node.remove(); }, 180);
+         setTimeout(() => { if (node.parentNode) node.remove(); }, 0);
         }
         _itemNodeMap.delete(id);
       });
 
       toAdd.forEach(id => {
-        const item = cartItems.find(it => it.id === id);
-        if (!item) return;
-        const temp = document.createElement('div');
-        temp.innerHTML = itemHtml(item, false);
-        const node = temp.firstElementChild;
-        if (!node) return;
-        node.style.opacity = '0';
-        node.style.transform = 'translateY(8px)';
-        itemsWrap.appendChild(node);
-        _itemNodeMap.set(id, node);
-        requestAnimationFrame(() => {
-          node.style.transition = 'opacity .22s ease, transform .22s ease';
-          node.style.opacity = '1';
-          node.style.transform = 'translateY(0)';
-        });
-      });
+  const item = cartItems.find(it => it.id === id);
+  if (!item) return;
+  const temp = document.createElement('div');
+  temp.innerHTML = itemHtml(item, false);
+  const node = temp.firstElementChild;
+  if (!node) return;
+  // ✅ NO opacity animation — item seedha visible rahega
+  itemsWrap.appendChild(node);
+  _itemNodeMap.set(id, node);
+});
 
       toPatch.forEach(id => {
         const item = cartItems.find(it => it.id === id);
@@ -1474,7 +1468,24 @@ _settingsLoaded = true;
 
     _lastRenderSig = sig;
     _lastIdsKey = currentIds.join('§');
-
+// ✅ SAFETY: verify all items actually rendered in DOM
+try {
+  const domItemCount = itemsWrap.querySelectorAll('.tg-item:not(.removing)').length;
+  if (domItemCount !== cartItems.length) {
+    console.warn('[cart] DOM mismatch detected → forcing full rebuild', {
+      dom: domItemCount,
+      data: cartItems.length
+    });
+    _itemNodeMap.clear();
+    itemsWrap.innerHTML = cartItems.map((it, i) => itemHtml(it, i === 0)).join('');
+    itemsWrap.querySelectorAll('.tg-item').forEach(node => {
+      const id = node.getAttribute('data-id');
+      if (id) _itemNodeMap.set(id, node);
+    });
+  }
+} catch(e) {
+  console.error('[cart] safety check failed', e);
+}
     updateSelectAllState();
     updateTotals();
     updateHeaderBadge();
@@ -4385,20 +4396,20 @@ window.tgConfirmPay = async function() {
       usedCouponCodes = new Set();
     }
   });
+  window.tgDebugCart = function() {
+    console.log('═══ CART DEBUG ═══');
+    console.log('cartItems count:', cartItems.length);
+    console.log('cartItems:', cartItems.map(i => ({ id: i.id, name: i.name, qty: i.qty })));
+    console.log('_itemNodeMap size:', _itemNodeMap.size);
+    console.log('DOM .tg-item count:', document.querySelectorAll('#tg-items .tg-item').length);
+    console.log('selectedIds:', [...selectedIds]);
+    console.log('_pendingCartItems:', [..._pendingCartItems.keys()]);
+    console.log('_pendingQty:', [..._pendingQty.keys()]);
+    console.log('_pendingCartDeletes:', [..._pendingCartDeletes]);
+    console.log('_deletedItems:', [..._deletedItems.keys()]);
+    console.log('═══════════════════');
+  };
 
-  document.querySelectorAll('.tg-modal').forEach(m => {
-    m.addEventListener('click', (e) => {
-      if (e.target === m) {
-        m.classList.remove('show');
-        document.body.style.overflow = '';
-        if (m.id === 'tg-pin-modal') refreshDeliveryTagsInPlace();
-      }
-    });
-  });
-
-  const styleSheet = document.createElement("style");
-  styleSheet.innerText = "@keyframes spin { 100% { transform: rotate(360deg); } }";
-  document.head.appendChild(styleSheet);
 
 })();
 </script>
