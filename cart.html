@@ -2863,6 +2863,13 @@ window.tgCheckPinInput = function(input) {
   const clean = raw.replace(/\D/g, '').slice(0, 6);
   if (clean !== raw) input.value = clean;
 
+  // Reset any inline style from auto-fill warning
+  if (msgEl) {
+    msgEl.style.color = '';
+    msgEl.style.fontWeight = '';
+    msgEl.style.display = '';
+  }
+
   if (!clean) {
     input.style.borderColor = '';
     input.style.boxShadow = '';
@@ -2893,8 +2900,8 @@ function tgClearFieldValidation() {
   const pinMsg = document.getElementById('tg-pin-msg');
   const phoneEl = document.getElementById('tg-addr-phone');
   const pinEl = document.getElementById('tg-addr-pin');
-  if (phoneMsg) { phoneMsg.className = 'tg-field-msg'; phoneMsg.textContent = ''; }
-  if (pinMsg) { pinMsg.className = 'tg-field-msg'; pinMsg.textContent = ''; }
+  if (phoneMsg) { phoneMsg.className = 'tg-field-msg'; phoneMsg.textContent = ''; phoneMsg.style.color = ''; phoneMsg.style.fontWeight = ''; phoneMsg.style.display = ''; }
+  if (pinMsg) { pinMsg.className = 'tg-field-msg'; pinMsg.textContent = ''; pinMsg.style.color = ''; pinMsg.style.fontWeight = ''; pinMsg.style.display = ''; }
   if (phoneEl) { phoneEl.style.borderColor = ''; phoneEl.style.boxShadow = ''; }
   if (pinEl) { pinEl.style.borderColor = ''; pinEl.style.boxShadow = ''; }
 }
@@ -3217,12 +3224,29 @@ function tgClearFieldValidation() {
     lineEl.placeholder = 'e.g. Flat 301, ' + localityEl.value;
   }
 
-  // ✅ Auto-validate pincode if auto-filled
-  if (pinFound && pinEl && pinEl.value && typeof window.tgCheckPinInput === 'function') {
-    setTimeout(() => { window.tgCheckPinInput(pinEl); }, 150);
+  // ⚠️ Auto-filled pincode — ORANGE warning (user verify kare)
+  if (pinFound && pinEl && pinEl.value) {
+    pinEl.style.borderColor = '#f57c00';
+    pinEl.style.boxShadow = '0 0 0 3px rgba(245,124,0,.08)';
+    const pinMsg = document.getElementById('tg-pin-msg');
+    if (pinMsg) {
+      pinMsg.className = 'tg-field-msg';
+      pinMsg.style.display = 'block';
+      pinMsg.style.color = '#f57c00';
+      pinMsg.style.fontWeight = '700';
+      pinMsg.innerHTML = '⚠️ Auto-detected: <b>' + pinEl.value + '</b> — Agar galat hai to <b>manually change karo</b>';
+    }
+  }
+
+// ⚠️ Scroll to pincode field + brief highlight
+  if (pinFound && pinEl) {
+    setTimeout(() => {
+      pinEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      pinEl.focus();
+      pinEl.select();
+    }, 400);
   }
 }
-
  window.tgOpenNewAddr = function() {
   const listModal = document.getElementById('tg-addr-list-modal');
   if (listModal) listModal.classList.remove('show');
