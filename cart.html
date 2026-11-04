@@ -324,6 +324,9 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 .tg-loc-btn:hover { background: #e0eaff; }
 .tg-loc-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 .tg-loc-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tg-field-msg { display:none; font-size:11.5px; margin-top:5px; font-weight:600; line-height:1.35; }
+.tg-field-msg.error { display:block; color:#d32f2f; }
+.tg-field-msg.success { display:block; color:#1b8a3a; }
 
 @media (max-width:991px) { .tg-container { grid-template-columns:1fr; } .tg-right { position:static; } }
 @media (max-width:768px) {
@@ -517,9 +520,13 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     <!-- Auto Location Button -->
     <button type="button" class="tg-loc-btn" id="tg-loc-btn" onclick="tgDetectLocation()">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3"/></svg>
-      <span>Use My Current Location</span>
-    </button>
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3"/></svg>
+  <span>Use My Current Location</span>
+</button>
+<div id="tg-loc-status" style="display:none;margin-bottom:16px;padding:10px 14px;background:#e6f7ec;color:#1b8a3a;border-radius:10px;font-size:12.5px;font-weight:600;align-items:center;gap:8px;border:1.5px solid #a5d6b7;">
+  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+  <span>Address auto-filled! Ab bas flat/house no. add karo aur phone verify karo</span>
+</div>
 
     <div class="tg-modal-field">
       <label>Address Type *</label>
@@ -532,7 +539,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
 
     <div class="tg-modal-field"><label>Full Name *</label><input type="text" id="tg-addr-name" placeholder="Enter full name" maxlength="60" autocomplete="name"></div>
 
-    <div class="tg-modal-field"><label>Phone Number *</label><input type="tel" id="tg-addr-phone" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" autocomplete="tel"></div>
+  <div class="tg-modal-field">
+  <label>Phone Number *</label>
+  <input type="tel" id="tg-addr-phone" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" autocomplete="tel">
+  <div class="tg-field-msg" id="tg-phone-msg"></div>
+</div>
 
     <div class="tg-modal-field"><label>Flat / House No., Building Name *</label><textarea id="tg-addr-line" placeholder="e.g. Flat 301, ABC Apartments" maxlength="180" autocomplete="street-address"></textarea></div>
 
@@ -546,7 +557,11 @@ header#top, #top_menu, nav.o_main_navbar, .o_main_navbar, footer#bottom, .o_foot
     </div>
 
     <div class="tg-modal-row">
-      <div class="tg-modal-field"><label>Pincode *</label><input type="text" id="tg-addr-pin" placeholder="6-digit" maxlength="6" inputmode="numeric" autocomplete="postal-code"></div>
+ <div class="tg-modal-field">
+  <label>Pincode *</label>
+  <input type="text" id="tg-addr-pin" placeholder="6-digit" maxlength="6" inputmode="numeric" autocomplete="postal-code">
+  <div class="tg-field-msg" id="tg-pin-msg"></div>
+</div>
       <div class="tg-modal-field"><label>State *</label><input type="text" id="tg-addr-state" placeholder="State" maxlength="40" autocomplete="address-level1"></div>
     </div>
 
@@ -2797,7 +2812,94 @@ async function setSavedAddresses(list) {
       openAddrList(list);
     }
   };
+/* ═══════════════════════════════════════════════════ */
+/* 📱 PHONE + PINCODE VALIDATION (Indian Standard)    */
+/* ═══════════════════════════════════════════════════ */
 
+function tgValidatePhone(phone) {
+  const clean = String(phone || '').replace(/\D/g, '');
+  if (!clean) return { ok: false, msg: 'Phone number required', clean: '' };
+  if (clean.length !== 10) return { ok: false, msg: 'Please enter exactly 10 digits (aapke ' + clean.length + ' digits hain)', clean };
+  if (!/^[6-9]/.test(clean)) return { ok: false, msg: 'Indian mobile number 6, 7, 8 ya 9 se shuru hona chahiye', clean };
+  return { ok: true, msg: '✓ Valid mobile number', clean };
+}
+
+function tgValidatePin(pin) {
+  const clean = String(pin || '').replace(/\D/g, '');
+  if (!clean) return { ok: false, msg: 'Pincode required', clean: '' };
+  if (clean.length !== 6) return { ok: false, msg: 'Please enter exactly 6 digits', clean };
+  if (!/^[1-8]/.test(clean)) return { ok: false, msg: 'Indian pincode 1-8 se start hota hai (0 nahi)', clean };
+  return { ok: true, msg: '✓ Valid pincode', clean };
+}
+
+window.tgCheckPhoneInput = function(input) {
+  const msgEl = document.getElementById('tg-phone-msg');
+  const raw = input.value;
+  const clean = raw.replace(/\D/g, '').slice(0, 10);
+  if (clean !== raw) input.value = clean;
+
+  if (!clean) {
+    input.style.borderColor = '';
+    input.style.boxShadow = '';
+    if (msgEl) { msgEl.className = 'tg-field-msg'; msgEl.textContent = ''; }
+    return;
+  }
+
+  const v = tgValidatePhone(clean);
+  if (!v.ok) {
+    input.style.borderColor = '#d32f2f';
+    input.style.boxShadow = '0 0 0 3px rgba(211,47,47,.08)';
+    if (msgEl) { msgEl.className = 'tg-field-msg error'; msgEl.textContent = v.msg; }
+  } else {
+    input.style.borderColor = '#1b8a3a';
+    input.style.boxShadow = '0 0 0 3px rgba(27,138,58,.08)';
+    if (msgEl) { msgEl.className = 'tg-field-msg success'; msgEl.textContent = v.msg; }
+  }
+};
+
+window.tgCheckPinInput = function(input) {
+  const msgEl = document.getElementById('tg-pin-msg');
+  const raw = input.value;
+  const clean = raw.replace(/\D/g, '').slice(0, 6);
+  if (clean !== raw) input.value = clean;
+
+  if (!clean) {
+    input.style.borderColor = '';
+    input.style.boxShadow = '';
+    if (msgEl) { msgEl.className = 'tg-field-msg'; msgEl.textContent = ''; }
+    return;
+  }
+
+  const v = tgValidatePin(clean);
+  if (clean.length === 6) {
+    if (!v.ok) {
+      input.style.borderColor = '#d32f2f';
+      input.style.boxShadow = '0 0 0 3px rgba(211,47,47,.08)';
+      if (msgEl) { msgEl.className = 'tg-field-msg error'; msgEl.textContent = v.msg; }
+    } else {
+      input.style.borderColor = '#1b8a3a';
+      input.style.boxShadow = '0 0 0 3px rgba(27,138,58,.08)';
+      if (msgEl) { msgEl.className = 'tg-field-msg success'; msgEl.textContent = v.msg; }
+    }
+  } else {
+    input.style.borderColor = '';
+    input.style.boxShadow = '';
+    if (msgEl) { msgEl.className = 'tg-field-msg'; msgEl.textContent = ''; }
+  }
+};
+
+function tgClearFieldValidation() {
+  const phoneMsg = document.getElementById('tg-phone-msg');
+  const pinMsg = document.getElementById('tg-pin-msg');
+  const phoneEl = document.getElementById('tg-addr-phone');
+  const pinEl = document.getElementById('tg-addr-pin');
+  if (phoneMsg) { phoneMsg.className = 'tg-field-msg'; phoneMsg.textContent = ''; }
+  if (pinMsg) { pinMsg.className = 'tg-field-msg'; pinMsg.textContent = ''; }
+  if (phoneEl) { phoneEl.style.borderColor = ''; phoneEl.style.boxShadow = ''; }
+  if (pinEl) { pinEl.style.borderColor = ''; pinEl.style.boxShadow = ''; }
+}
+
+/* ═══════════════════════════════════════════════════ */
   window.tgPickAddrType = function(t, el) {
     pendingAddrType = t;
     document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => b.classList.remove('active'));
@@ -2893,7 +2995,10 @@ async function setSavedAddresses(list) {
 
         if (data.city) document.getElementById('tg-addr-city').value = data.city;
         if (data.region) document.getElementById('tg-addr-state').value = data.region;
-        if (data.postal) document.getElementById('tg-addr-pin').value = data.postal;
+        if (data.postal) {
+          const cleanPin = String(data.postal).replace(/\D/g, '').slice(0, 6);
+          if (cleanPin.length === 6) document.getElementById('tg-addr-pin').value = cleanPin;
+        }
 
         reverseGeocode(lat, lng);
 
@@ -2916,87 +3021,202 @@ async function setSavedAddresses(list) {
   }
 
   async function reverseGeocode(lat, lng) {
-    const cityEl = document.getElementById('tg-addr-city');
-    const stateEl = document.getElementById('tg-addr-state');
-    const pinEl = document.getElementById('tg-addr-pin');
-    const localityEl = document.getElementById('tg-addr-locality');
-    const districtEl = document.getElementById('tg-addr-district');
+  const cityEl = document.getElementById('tg-addr-city');
+  const stateEl = document.getElementById('tg-addr-state');
+  const pinEl = document.getElementById('tg-addr-pin');
+  const localityEl = document.getElementById('tg-addr-locality');
+  const districtEl = document.getElementById('tg-addr-district');
+  const landmarkEl = document.getElementById('tg-addr-landmark');
+  const locStatus = document.getElementById('tg-loc-status');
 
-    [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
-      if(el && !el.value) el.style.opacity = '0.5';
-    });
+  [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
+    if (el) el.style.opacity = '0.5';
+  });
 
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=en`);
+  let filled = false;
+  let filledCount = 0;
+
+  // ─── PRIMARY: BigDataCloud (free, no key, generous limits) ───
+  try {
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`,
+      { cache: 'no-store' }
+    );
+    if (res.ok) {
       const data = await res.json();
+      if (data && (data.city || data.locality || data.principalSubdivision)) {
+        const admins = data.localityInfo?.administrative || [];
+        const infos = data.localityInfo?.informative || [];
 
-      if (data && data.address) {
-        const a = data.address;
+        // District — adminLevel 5 (standard for India)
+        let district = '';
+        for (const a of admins) {
+          if (a.adminLevel === 5 && a.name) { district = a.name; break; }
+        }
+        if (!district) {
+          for (const a of admins) {
+            if (a.description && /district|county/i.test(a.description) && a.name) {
+              district = a.name; break;
+            }
+          }
+        }
 
-        const area = a.suburb || a.neighbourhood || a.residential || a.road || a.city_district || a.county || '';
-        const city = a.city || a.town || a.village || a.municipality || a.county || '';
-        const state = a.state || a.state_district || '';
-        const pin = a.postcode || '';
-        const district = a.state_district || a.county || '';
+        // Locality — prefer explicit locality, else adminLevel 7
+        let locality = data.locality || '';
+        if (!locality) {
+          for (const a of admins) {
+            if (a.adminLevel === 7 && a.name) { locality = a.name; break; }
+          }
+        }
 
-        if (localityEl && area) localityEl.value = area;
-        if (cityEl && city) cityEl.value = city;
-        if (stateEl && state) stateEl.value = state;
-        if (pinEl && pin) pinEl.value = pin;
-        if (districtEl && district) districtEl.value = district;
+        // Landmark — road / neighbourhood from informative
+        let landmark = '';
+        for (const i of infos) {
+          if (i.description && /road|street|lane|highway|expressway|market/i.test(i.description) && i.name) {
+            landmark = i.name; break;
+          }
+        }
+        if (!landmark) {
+          for (const i of infos) {
+            if (i.description && /neighbourhood|suburb|quarter/i.test(i.description) && i.name) {
+              landmark = i.name; break;
+            }
+          }
+        }
+
+        if (localityEl && locality && !localityEl.value) { localityEl.value = locality; filledCount++; }
+        if (cityEl && data.city && !cityEl.value) { cityEl.value = data.city; filledCount++; }
+        if (districtEl && district && !districtEl.value) { districtEl.value = district; filledCount++; }
+        if (stateEl && data.principalSubdivision && !stateEl.value) { stateEl.value = data.principalSubdivision; filledCount++; }
+        if (pinEl && data.postcode && !pinEl.value) { pinEl.value = String(data.postcode).replace(/\D/g, '').slice(0, 6); filledCount++; }
+        if (landmarkEl && landmark && !landmarkEl.value) { landmarkEl.value = landmark; filledCount++; }
+
+        filled = true;
       }
-    } catch (err) {
-      console.warn('Nominatim failed, trying BigDataCloud:', err);
-      try {
-        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+    }
+  } catch(e) {
+    console.warn('[geocode] BigDataCloud failed:', e);
+  }
+
+  // ─── FALLBACK: Nominatim (OSM) ───
+  if (!filled) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=en&addressdetails=1`,
+        { headers: { 'Accept': 'application/json' } }
+      );
+      if (res.ok) {
         const data = await res.json();
-        if (cityEl && !cityEl.value) cityEl.value = data.city || data.locality || '';
-        if (stateEl && !stateEl.value) stateEl.value = data.principalSubdivision || '';
-        if (pinEl && !pinEl.value) pinEl.value = data.postcode || '';
-        if (localityEl && !localityEl.value) localityEl.value = data.locality || '';
-      } catch(e) {}
-    } finally {
-      [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
-        if(el) el.style.opacity = '1';
-      });
+        const a = data.address || {};
+        const area = a.suburb || a.neighbourhood || a.residential || a.village || a.hamlet || a.city_district || '';
+        const city = a.city || a.town || a.municipality || a.village || a.county || '';
+        const state = a.state || '';
+        const pin = a.postcode || '';
+        const district = a.state_district || a.county || a.district || '';
+        const road = a.road || a.pedestrian || a.street || '';
+
+        if (localityEl && area && !localityEl.value) { localityEl.value = area; filledCount++; }
+        if (cityEl && city && !cityEl.value) { cityEl.value = city; filledCount++; }
+        if (districtEl && district && !districtEl.value) { districtEl.value = district; filledCount++; }
+        if (stateEl && state && !stateEl.value) { stateEl.value = state; filledCount++; }
+        if (pinEl && pin && !pinEl.value) { pinEl.value = String(pin).replace(/\D/g, '').slice(0, 6); filledCount++; }
+        if (landmarkEl && road && !landmarkEl.value) { landmarkEl.value = road; filledCount++; }
+
+        filled = true;
+      }
+    } catch(e) {
+      console.warn('[geocode] Nominatim failed:', e);
     }
   }
 
-  window.tgOpenNewAddr = function() {
-    const listModal = document.getElementById('tg-addr-list-modal');
-    if (listModal) listModal.classList.remove('show');
-    pendingAddrType = 'home';
-    document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => {
-      b.classList.toggle('active', b.dataset.type === 'home');
-    });
-    document.getElementById('tg-addr-default').checked = false;
+  [cityEl, stateEl, pinEl, localityEl, districtEl].forEach(el => {
+    if (el) el.style.opacity = '1';
+  });
 
-    try {
-      const saved = getAddr();
-      if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
-      if (saved.phone) document.getElementById('tg-addr-phone').value = saved.phone;
-    } catch(e) {}
-
-    if (userProfile) {
-      const nameEl = document.getElementById('tg-addr-name');
-      const phoneEl = document.getElementById('tg-addr-phone');
-      if (!nameEl.value && userProfile.name) nameEl.value = userProfile.name;
-      if (!phoneEl.value && userProfile.phone) phoneEl.value = userProfile.phone;
+  // Show status badge
+  if (filled && filledCount > 0) {
+    if (locStatus) {
+      locStatus.style.display = 'flex';
+      const span = locStatus.querySelector('span');
+      if (span) span.textContent = '✓ ' + filledCount + ' fields auto-filled! Add flat/house no. and verify phone';
     }
+    toast('📍 ' + filledCount + ' fields auto-filled — verify karo', 'success');
+  } else if (filled) {
+    toast('Fields already filled hain, auto-fill skip kiya.', 'info');
+  } else {
+    toast('Address auto-fill fail hua. Manually fill kar sakte ho.', 'error');
+  }
 
-    ['tg-addr-line','tg-addr-landmark','tg-addr-locality','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state','tg-addr-lat','tg-addr-lng'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
+  // Smart placeholder in line field
+  const lineEl = document.getElementById('tg-addr-line');
+  if (lineEl && !lineEl.value && localityEl && localityEl.value) {
+    lineEl.placeholder = 'e.g. Flat 301, ' + localityEl.value;
+  }
+}
 
-    document.getElementById('tg-addr-save-text').textContent = 'Save & Continue';
-    document.getElementById('tg-addr-modal').classList.add('show');
-    document.body.style.overflow = 'hidden';
+ window.tgOpenNewAddr = function() {
+  const listModal = document.getElementById('tg-addr-list-modal');
+  if (listModal) listModal.classList.remove('show');
 
-    setTimeout(() => {
-      initTgMap(28.6139, 77.2090);
-    }, 300);
-  };
+  pendingAddrType = 'home';
+  document.querySelectorAll('#tg-addr-types .tg-addr-type').forEach(b => {
+    b.classList.toggle('active', b.dataset.type === 'home');
+  });
+  document.getElementById('tg-addr-default').checked = false;
+
+  // ─── Reset all fields ───
+  ['tg-addr-name','tg-addr-phone','tg-addr-line','tg-addr-landmark','tg-addr-locality','tg-addr-city','tg-addr-pin','tg-addr-district','tg-addr-state','tg-addr-lat','tg-addr-lng'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('tg-addr-line').placeholder = 'e.g. Flat 301, ABC Apartments';
+
+  // ─── Clear validation state ───
+  tgClearFieldValidation();
+
+  // ─── Hide location status badge ───
+  const locStatus = document.getElementById('tg-loc-status');
+  if (locStatus) locStatus.style.display = 'none';
+
+  // ─── Pre-fill name from saved addr or profile ───
+  try {
+    const saved = getAddr();
+    if (saved.name) document.getElementById('tg-addr-name').value = saved.name;
+    if (saved.phone) {
+      const p = String(saved.phone).replace(/\D/g, '').slice(-10);
+      document.getElementById('tg-addr-phone').value = p;
+    }
+  } catch(e) {}
+
+  if (userProfile) {
+    const nameEl = document.getElementById('tg-addr-name');
+    const phoneEl = document.getElementById('tg-addr-phone');
+
+    if (!nameEl.value) {
+      const profileName = userProfile.name || userProfile.displayName || userProfile.fullName || '';
+      if (profileName) nameEl.value = profileName;
+    }
+    if (!phoneEl.value) {
+      const profilePhone = userProfile.phone || userProfile.mobile || userProfile.phoneNumber || '';
+      if (profilePhone) {
+        const p = String(profilePhone).replace(/\D/g, '').slice(-10);
+        if (p.length === 10) phoneEl.value = p;
+      }
+    }
+  }
+
+  // Re-validate pre-filled phone
+  const phoneEl = document.getElementById('tg-addr-phone');
+  if (phoneEl && phoneEl.value) tgCheckPhoneInput(phoneEl);
+
+  document.getElementById('tg-addr-save-text').textContent = 'Save & Continue';
+  document.getElementById('tg-addr-modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  setTimeout(() => {
+    initTgMap(28.6139, 77.2090);
+  }, 300);
+};
 
   window.tgCloseAddr = function() {
     document.getElementById('tg-addr-modal').classList.remove('show');
@@ -3004,49 +3224,94 @@ async function setSavedAddresses(list) {
   };
 
   // ✅ FIX #5: Landmark now included
-  window.tgSaveAddr = async function() {
-    const name = (document.getElementById('tg-addr-name').value || '').trim();
-    const phone = (document.getElementById('tg-addr-phone').value || '').trim();
-    const line = (document.getElementById('tg-addr-line').value || '').trim();
-    const landmark = (document.getElementById('tg-addr-landmark')?.value || '').trim();
-    const locality = (document.getElementById('tg-addr-locality').value || '').trim();
-    const city = (document.getElementById('tg-addr-city').value || '').trim();
-    const pin = (document.getElementById('tg-addr-pin').value || '').trim();
-    const district = (document.getElementById('tg-addr-district').value || '').trim();
-    const state = (document.getElementById('tg-addr-state').value || '').trim();
-    const lat = document.getElementById('tg-addr-lat').value;
-    const lng = document.getElementById('tg-addr-lng').value;
-    const isDefault = document.getElementById('tg-addr-default').checked;
-    const type = pendingAddrType || 'home';
+ window.tgSaveAddr = async function() {
+  const name = (document.getElementById('tg-addr-name').value || '').trim();
+  const phoneRaw = (document.getElementById('tg-addr-phone').value || '').trim();
+  const line = (document.getElementById('tg-addr-line').value || '').trim();
+  const landmark = (document.getElementById('tg-addr-landmark')?.value || '').trim();
+  const locality = (document.getElementById('tg-addr-locality').value || '').trim();
+  const city = (document.getElementById('tg-addr-city').value || '').trim();
+  const pinRaw = (document.getElementById('tg-addr-pin').value || '').trim();
+  const district = (document.getElementById('tg-addr-district').value || '').trim();
+  const state = (document.getElementById('tg-addr-state').value || '').trim();
+  const lat = document.getElementById('tg-addr-lat').value;
+  const lng = document.getElementById('tg-addr-lng').value;
+  const isDefault = document.getElementById('tg-addr-default').checked;
+  const type = pendingAddrType || 'home';
 
-    if (!name || name.length < 2) { toast('Please enter full name', 'error'); return; }
-    if (!/^\d{10}$/.test(phone)) { toast('Please enter a valid 10-digit phone', 'error'); return; }
-    if (!line || line.length < 5) { toast('Please enter flat/building details', 'error'); return; }
-    if (!city) { toast('Please enter city', 'error'); return; }
-    if (!/^\d{6}$/.test(pin)) { toast('Please enter a valid 6-digit pincode', 'error'); return; }
-    if (!state) { toast('Please enter state', 'error'); return; }
+  // ─── Validate name ───
+  if (!name || name.length < 2) {
+    toast('Please enter full name (min 2 characters)', 'error');
+    const el = document.getElementById('tg-addr-name');
+    if (el) { el.focus(); el.style.borderColor = '#d32f2f'; }
+    return;
+  }
+  // ✅ Clear border colors (if any)
+  const nameEl = document.getElementById('tg-addr-name');
+  if (nameEl) nameEl.style.borderColor = '';
+  // ─── Validate phone (strict) ───
+  const phoneV = tgValidatePhone(phoneRaw);
+  if (!phoneV.ok) {
+    toast(phoneV.msg, 'error');
+    const el = document.getElementById('tg-addr-phone');
+    if (el) { el.focus(); tgCheckPhoneInput(el); }
+    return;
+  }
+  const phone = phoneV.clean;
 
-    pendingAddress = { name, phone, line, landmark, locality, city, pin, district, state, type, isDefault, lat, lng, country: 'India' };
-    setAddr(pendingAddress);
-    setPin(pin);
-    const cityEl = document.getElementById('tg-pin-city');
-    if (cityEl) cityEl.textContent = city + ' - ' + pin;
-    refreshDeliveryTagsInPlace();
+  // ─── Validate pincode ───
+  const pinV = tgValidatePin(pinRaw);
+  if (!pinV.ok) {
+    toast(pinV.msg, 'error');
+    const el = document.getElementById('tg-addr-pin');
+    if (el) { el.focus(); tgCheckPinInput(el); }
+    return;
+  }
+  const pin = pinV.clean;
 
-    try {
-      const list = await addAddressToList(pendingAddress);
-      const key = (pendingAddress.line||'').toLowerCase() + '|' + (pendingAddress.pin||'') + '|' + (pendingAddress.phone||'');
-      let idx = list.findIndex(a => ((a.line||'').toLowerCase() + '|' + (a.pin||'') + '|' + (a.phone||'')) === key);
-      if (idx < 0) idx = list.length - 1;
-      pendingAddrIndex = idx;
-      try { localStorage.setItem(ADDR_LAST_IDX, String(idx)); } catch(e) {}
-    } catch(e) { console.error('Save failed:', e); }
+  // ─── Other validations ───
+  if (!line || line.length < 5) {
+    toast('Please enter flat/house no. & building (min 5 chars)', 'error');
+    document.getElementById('tg-addr-line').focus();
+    return;
+  }
+  if (!city) {
+    toast('Please enter city', 'error');
+    document.getElementById('tg-addr-city').focus();
+    return;
+  }
+  if (!state) {
+    toast('Please enter state', 'error');
+    document.getElementById('tg-addr-state').focus();
+    return;
+  }
 
-    tgCloseAddr();
-    toast('Address saved', 'success');
-    tgOpenPayModal();
+  // ─── Build address object ───
+  pendingAddress = {
+    name, phone, line, landmark, locality, city, pin, district, state,
+    type, isDefault, lat, lng, country: 'India'
   };
 
+  setAddr(pendingAddress);
+  setPin(pin);
+
+  const cityEl = document.getElementById('tg-pin-city');
+  if (cityEl) cityEl.textContent = city + ' - ' + pin;
+  refreshDeliveryTagsInPlace();
+
+  try {
+    const list = await addAddressToList(pendingAddress);
+    const key = (pendingAddress.line||'').toLowerCase() + '|' + (pendingAddress.pin||'') + '|' + (pendingAddress.phone||'');
+    let idx = list.findIndex(a => ((a.line||'').toLowerCase() + '|' + (a.pin||'') + '|' + (a.phone||'')) === key);
+    if (idx < 0) idx = list.length - 1;
+    pendingAddrIndex = idx;
+    try { localStorage.setItem(ADDR_LAST_IDX, String(idx)); } catch(e) {}
+  } catch(e) { console.error('Save failed:', e); }
+
+  tgCloseAddr();
+  toast('✓ Address saved', 'success');
+  tgOpenPayModal();
+};
   window.tgOpenPayModal = function() {
     const t = calcTotals();
     document.getElementById('tg-pay-amount').textContent = fmtINR(t.grand);
@@ -3942,6 +4207,22 @@ window.tgConfirmPay = async function() {
   loadSellerGlobal();
   watchSellerGlobal();
   watchPaymentSettings();
+  /* ══════════════════════════════════════════════ */
+  /* 📱 REAL-TIME VALIDATION LISTENERS             */
+  /* ══════════════════════════════════════════════ */
+  (function() {
+    const phoneInp = document.getElementById('tg-addr-phone');
+    if (phoneInp) {
+      phoneInp.addEventListener('input', function() { tgCheckPhoneInput(this); });
+      phoneInp.addEventListener('blur', function() {
+        if (this.value && this.value.length === 10) tgCheckPhoneInput(this);
+      });
+    }
+    const pinInp = document.getElementById('tg-addr-pin');
+    if (pinInp) {
+      pinInp.addEventListener('input', function() { tgCheckPinInput(this); });
+    }
+  })();
 
   document.getElementById('tg-coupon-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); window.tgApplyCouponManual(); }
