@@ -377,10 +377,74 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 .tg-paid-badge::before{content:'✓';font-weight:900;font-size:11px;}
 .tg-live-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(34,197,94,0.15);color:#22c55e;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:0.3px;margin-left:6px;}
 .tg-live-badge::before{content:'';width:5px;height:5px;background:#22c55e;border-radius:50%;animation:tgPulse 1.5s infinite;}
+/* ═══════════════════════════════════════════════════ */
+/* 📱 MEESHO STYLE MULTI-STEP FORM CSS                */
+/* ═══════════════════════════════════════════════════ */
+.tg-step-indicator { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding: 0 10px; position: relative; }
+.tg-step-indicator::before { content: ''; position: absolute; top: 14px; left: 20px; right: 20px; height: 2px; background: #e0e0e0; z-index: 1; }
+.tg-step-dot { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 2px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #999; position: relative; z-index: 2; transition: all 0.3s; }
+.tg-step-dot.active { border-color: #2874f0; background: #2874f0; color: #fff; box-shadow: 0 0 0 4px rgba(40,116,240,0.2); }
+.tg-step-dot.done { border-color: #1b8a3a; background: #1b8a3a; color: #fff; }
+.tg-step-label { position: absolute; top: 32px; font-size: 9px; font-weight: 700; color: #666; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.3px; }
+.tg-step-dot.active .tg-step-label { color: #2874f0; }
+.tg-step-dot.done .tg-step-label { color: #1b8a3a; }
+
+.tg-form-step { display: none; animation: tgFadeSlide 0.3s ease; }
+.tg-form-step.active { display: block; }
+@keyframes tgFadeSlide { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+
+.tg-step-nav { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1.5px dashed #e0e0e0; flex-wrap: wrap; }
+.tg-step-btn { flex: 1; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s; }
+.tg-step-btn.next { background: linear-gradient(135deg, #2874f0, #1a5dc7); color: #fff; box-shadow: 0 4px 12px rgba(40,116,240,0.3); }
+.tg-step-btn.next:hover { transform: translateY(-1px); filter: brightness(1.1); }
+.tg-step-btn.prev { background: #f1f3f6; color: #212121; flex: 0 0 30%; }
+.tg-step-btn.prev:hover { background: #e0e0e0; }
+.tg-step-btn.submit { background: linear-gradient(135deg, #1b8a3a, #15803d); color: #fff; box-shadow: 0 4px 12px rgba(27,138,58,0.3); }
+.tg-step-btn.submit:hover { transform: translateY(-1px); filter: brightness(1.1); }
+/* ═══════════════════════════════════════════════════ */
+/* 🚀 SELLER SPLASH SCREEN CSS                        */
+/* ═══════════════════════════════════════════════════ */
+#tg-seller-splash {
+  position: fixed; inset: 0; 
+  background: linear-gradient(135deg, #0d47a1 0%, #2874f0 50%, #0f1729 100%);
+  z-index: 9999999; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+#tg-seller-splash.hide { opacity: 0; visibility: hidden; }
+.tg-sp-logo { 
+  font-family: 'Roboto', sans-serif; font-weight: 900; font-style: italic; 
+  font-size: 52px; color: white; letter-spacing: -2px; 
+  animation: tgPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
+  opacity: 0; transform: scale(0.5); 
+}
+.tg-sp-logo span { color: #ffe500; }
+.tg-sp-sub { 
+  color: #fff; font-size: 16px; font-weight: 800; letter-spacing: 5px; 
+  text-transform: uppercase; margin-top: 10px; 
+  animation: tgFadeUp 0.6s 0.4s ease forwards; opacity: 0; 
+}
+.tg-sp-loader { 
+  width: 150px; height: 4px; background: rgba(255,255,255,0.15); 
+  border-radius: 10px; margin-top: 30px; overflow: hidden; position: relative; 
+}
+.tg-sp-loader-bar { 
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0%; 
+  background: #ffe500; border-radius: 10px; 
+  animation: tgLoad 4s ease-in-out forwards; 
+  box-shadow: 0 0 10px rgba(255,229,0,0.5);
+}
+@keyframes tgPopIn { to { opacity: 1; transform: scale(1); } }
+@keyframes tgFadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes tgLoad { to { width: 100%; } }
 </style>
 </head>
 <body>
-
+<!-- 🚀 SELLER SPLASH SCREEN -->
+<div id="tg-seller-splash">
+  <div class="tg-sp-logo">TOE<span>GO</span></div>
+  <div class="tg-sp-sub">Seller Panel</div>
+  <div class="tg-sp-loader"><div class="tg-sp-loader-bar"></div></div>
+</div>
 <script>
 (function securityGuard(){
   'use strict';
@@ -743,74 +807,99 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 <div class="tg-modal" id="tg-quick-stock-modal"><div class="tg-modal-card" style="max-width:480px;"><div class="tg-modal-head"><div class="tg-modal-title">Stock Update</div><button class="tg-modal-close" onclick="tgCloseModal('tg-quick-stock-modal')">✕</button></div><input type="hidden" id="tg-qs-pid"><div id="tg-qs-body"></div><div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-quick-stock-modal')">Cancel</button><button class="tg-modal-btn primary" onclick="tgSaveQuickStock()">Save</button></div></div></div>
 <div class="tg-modal" id="tg-confirm-modal"><div class="tg-modal-card" style="max-width:420px;"><div class="tg-modal-head"><div class="tg-modal-title" id="tg-confirm-title">Confirm</div><button class="tg-modal-close" onclick="tgCloseModal('tg-confirm-modal')">✕</button></div><p id="tg-confirm-msg" style="font-size:14px;color:#666;line-height:1.6;margin:0 0 18px;"></p><div class="tg-modal-actions"><button class="tg-modal-btn ghost" onclick="tgCloseModal('tg-confirm-modal')">Cancel</button><button class="tg-modal-btn danger" id="tg-confirm-btn" onclick="tgDoConfirm()">Confirm</button></div></div></div>
 
+<!-- ✅ MEESHO STYLE MULTI-STEP PRODUCT MODAL -->
 <div class="tg-modal" id="tg-product-modal">
-  <div class="tg-modal-card" style="max-width:680px;">
+  <div class="tg-modal-card" style="max-width:680px; padding-bottom:20px;">
     <div class="tg-modal-head">
       <div class="tg-modal-title" id="tg-prod-modal-title">Add New Product</div>
       <button class="tg-modal-close" onclick="tgCloseProductModal()">✕</button>
     </div>
     <input type="hidden" id="prod-id">
-    <div class="tg-prod-form-section">
-      <div class="tg-prod-form-section-title">📝 Product Info</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    
+    <!-- Step Indicator -->
+    <div class="tg-step-indicator" id="tg-step-indicator">
+      <div class="tg-step-dot active" data-step="1"><span>1</span><div class="tg-step-label">Basic</div></div>
+      <div class="tg-step-dot" data-step="2"><span>2</span><div class="tg-step-label">Details</div></div>
+      <div class="tg-step-dot" data-step="3"><span>3</span><div class="tg-step-label">Variants</div></div>
+      <div class="tg-step-dot" data-step="4"><span>4</span><div class="tg-step-label">Finish</div></div>
+    </div>
+
+    <!-- STEP 1: Basic Details -->
+    <div class="tg-form-step active" id="prod-step-1">
+      <div class="tg-prod-form-section">
+        <div class="tg-prod-form-section-title">📝 Basic Details</div>
         <div class="tg-field"><label>Product Name *</label><input type="text" id="prod-name" maxlength="150" placeholder="e.g., Stylish EVA Slippers"></div>
-        <div class="tg-field"><label>Product SKU</label><input type="text" id="prod-sku" maxlength="50" placeholder="e.g., SKU-1234"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="tg-field"><label>Brand *</label><select id="prod-brand"><option value="">Select brand</option></select></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="tg-field"><label>Product SKU</label><input type="text" id="prod-sku" maxlength="50" placeholder="e.g., SKU-1234"></div>
+          <div class="tg-field"><label>Brand *</label><select id="prod-brand"><option value="">Select brand</option></select></div>
+        </div>
         <div class="tg-field"><label>Category *</label><select id="prod-category"><option value="">Select category</option></select></div>
-      </div>
-      <div class="tg-field" style="margin-bottom:0;"><label>Description</label><textarea id="prod-desc" rows="3" maxlength="2000" placeholder="Describe your product..." style="min-height:80px;"></textarea></div>
-    </div>
-    <div class="tg-prod-form-section">
-      <div class="tg-prod-form-section-title">📷 Product Images (max 5) *</div>
-      <div class="tg-prod-img-grid" id="prod-img-grid"></div>
-      <input type="file" id="prod-img-input" accept="image/*" multiple style="display:none;">
-      <div class="tg-prod-img-hint">Auto-compressed to <b>100KB</b> · Uploaded to Cloudinary</div>
-    </div>
-    <div class="tg-prod-form-section">
-      <div class="tg-prod-form-section-title">💰 Pricing & Basic Info</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="tg-field"><label>Selling Price (₹) *</label><input type="number" id="prod-price" min="0" oninput="tgCalcSettlement()" placeholder="0"></div>
-        <div class="tg-field"><label>MRP (₹)</label><input type="number" id="prod-mrp" min="0" placeholder="0"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0;">
-        <div class="tg-field"><label>Weight (grams) *</label><input type="number" id="prod-weight" min="0" value="500" oninput="tgCalcSettlement()"></div>
-        <div class="tg-field" style="margin-bottom:0;"><label>GST %</label><select id="prod-gst"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div>
+        <div class="tg-field" style="margin-bottom:0;"><label>Description</label><textarea id="prod-desc" rows="3" maxlength="2000" placeholder="Describe your product..." style="min-height:80px;"></textarea></div>
       </div>
     </div>
-    <div class="tg-prod-form-section">
-      <div class="tg-prod-form-section-title">📏 Sizes & Stock (Meesho Style) *</div>
-      <div style="font-size:11.5px;color:#888;margin-bottom:10px;line-height:1.5;">Har size ka alag stock daalo. Agar single size ho toh sirf "FREE" ya apna default size daal do.</div>
-      <div id="prod-size-rows"></div>
-      <button type="button" class="tg-add-size-btn" onclick="tgAddSizeRow('','')">+ Add Size Variant</button>
+
+    <!-- STEP 2: Additional Details -->
+    <div class="tg-form-step" id="prod-step-2">
+      <div class="tg-prod-form-section">
+        <div class="tg-prod-form-section-title">💰 Pricing & Additional Info</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="tg-field"><label>Selling Price (₹) *</label><input type="number" id="prod-price" min="0" oninput="tgCalcSettlement()" placeholder="0"></div>
+          <div class="tg-field"><label>MRP (₹)</label><input type="number" id="prod-mrp" min="0" placeholder="0"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="tg-field"><label>Weight (grams) *</label><input type="number" id="prod-weight" min="0" value="500" oninput="tgCalcSettlement()"></div>
+          <div class="tg-field"><label>GST %</label><select id="prod-gst"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div>
+        </div>
+        <div class="tg-field" style="margin-bottom:0;"><label>HSN Code *</label><input type="text" id="prod-hsn" maxlength="12" placeholder="e.g., 6404 (GST Report ke liye)"></div>
+      </div>
     </div>
-    <div class="tg-prod-form-section">
-      <div class="tg-prod-form-section-title">🎨 Colors <span class="tg-live-badge">LIVE</span></div>
-      <div id="prod-colors-wrap" class="tg-color-chips"></div>
-      <div style="font-size:11px;color:#888;margin-top:8px;">Admin ke set kiye colors select karo. Multiple colors select kar sakte ho.</div>
+
+    <!-- STEP 3: Variants -->
+    <div class="tg-form-step" id="prod-step-3">
+      <div class="tg-prod-form-section">
+        <div class="tg-prod-form-section-title">📏 Sizes & Stock *</div>
+        <div style="font-size:11.5px;color:#888;margin-bottom:10px;line-height:1.5;">Har size ka alag stock daalo. Agar single size ho toh sirf "FREE" daal do.</div>
+        <div id="prod-size-rows"></div>
+        <button type="button" class="tg-add-size-btn" onclick="tgAddSizeRow('','')">+ Add Size Variant</button>
+      </div>
+      <div class="tg-prod-form-section">
+        <div class="tg-prod-form-section-title">🎨 Colors</div>
+        <div id="prod-colors-wrap" class="tg-color-chips"></div>
+        <div style="font-size:11px;color:#888;margin-top:8px;">Multiple colors select kar sakte ho.</div>
+      </div>
     </div>
-    <div class="tg-prod-form-section">
-      <div class="tg-prod-form-section-title">📍 Pickup Address</div>
-      <div class="tg-pickup-box" id="prod-pickup-box"><div style="color:#888;font-size:12px;">Loading seller address…</div></div>
-      <div class="tg-pickup-hint">Ye address label pe FROM section me show hoga.</div>
+
+    <!-- STEP 4: Images & Pickup -->
+    <div class="tg-form-step" id="prod-step-4">
+      <div class="tg-prod-form-section">
+        <div class="tg-prod-form-section-title">📷 Product Images (max 5) *</div>
+        <div class="tg-prod-img-grid" id="prod-img-grid"></div>
+        <input type="file" id="prod-img-input" accept="image/*" multiple style="display:none;">
+        <div class="tg-prod-img-hint">Auto-compressed to <b>100KB</b></div>
+      </div>
+      <div class="tg-prod-form-section">
+        <div class="tg-prod-form-section-title">📍 Pickup Address</div>
+        <div class="tg-pickup-box" id="prod-pickup-box"><div style="color:#888;font-size:12px;">Loading seller address…</div></div>
+      </div>
+      <div class="tg-settlement-preview" id="prod-settlement">
+        <div class="tg-settlement-title">💵 Settlement Preview (per sale)</div>
+        <div class="tg-settlement-row"><span>Selling Price</span><span id="set-price">₹0</span></div>
+        <div class="tg-settlement-row"><span>Commission (<span id="set-comm-pct">5</span>%)</span><span id="set-comm" style="color:#d32f2f;">− ₹0</span></div>
+        <div class="tg-settlement-row"><span>Delivery (weight-based)</span><span id="set-deliv" style="color:#d32f2f;">− ₹0</span></div>
+        <div class="tg-settlement-row total"><span>Net Earning / Order</span><span id="set-net">₹0</span></div>
+      </div>
     </div>
-    <div class="tg-settlement-preview" id="prod-settlement">
-      <div class="tg-settlement-title">💵 Settlement Preview (per sale) <span class="tg-live-badge">LIVE</span></div>
-      <div class="tg-settlement-row"><span>Selling Price</span><span id="set-price">₹0</span></div>
-      <div class="tg-settlement-row"><span>Commission (<span id="set-comm-pct">5</span>%)</span><span id="set-comm" style="color:#d32f2f;">− ₹0</span></div>
-      <div class="tg-settlement-row"><span>Delivery (weight-based)</span><span id="set-deliv" style="color:#d32f2f;">− ₹0</span></div>
-      <div class="tg-settlement-row total"><span>Net Earning / Order</span><span id="set-net">₹0</span></div>
-    </div>
-    <div class="tg-modal-actions" style="flex-wrap:wrap;">
-      <button class="tg-modal-btn ghost" onclick="tgCloseProductModal()">Cancel</button>
-      <button class="tg-modal-btn danger tg-del-btn" id="prod-del-btn" onclick="tgDeleteProductFromModal()" style="display:none;flex:0 0 auto;padding:14px 16px;min-width:80px;">🗑 Delete</button>
-      <button class="tg-modal-btn primary" id="prod-save-btn" onclick="tgSaveProduct()">Save Product</button>
+
+    <!-- Navigation Buttons -->
+    <div class="tg-step-nav">
+      <button class="tg-step-btn prev" id="tg-btn-prev" onclick="tgPrevStep()" style="display:none;">← Back</button>
+      <button class="tg-step-btn next" id="tg-btn-next" onclick="tgNextStep()">Next Step →</button>
+      <button class="tg-step-btn submit" id="tg-btn-submit" onclick="tgSaveProduct()" style="display:none;">Save Product ✓</button>
+      <button class="tg-modal-btn danger tg-del-btn" id="prod-del-btn" onclick="tgDeleteProductFromModal()" style="display:none; flex:1 0 100%; margin-top:10px; padding:12px;">🗑 Delete Product</button>
     </div>
   </div>
 </div>
-
-<div class="tg-modal" id="tg-label-modal">
+ <div class="tg-modal" id="tg-label-modal"> 
   <div class="tg-modal-card" style="max-width:520px;">
     <div class="tg-modal-head"><div class="tg-modal-title">Download Labels</div><button class="tg-modal-close" onclick="tgCloseModal('tg-label-modal')">✕</button></div>
     <p style="font-size:13px;color:#666;margin:0 0 6px;"><b id="tg-label-count">0</b> label(s) ready</p>
@@ -863,7 +952,18 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
+<script>
+  // 🚀 Splash Screen Hide Logic
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const splash = document.getElementById('tg-seller-splash');
+      if (splash) {
+        splash.classList.add('hide');
+        setTimeout(() => splash.remove(), 600); // DOM se remove
+      }
+    }, 4000); 
+  });
+</script>
 <script>
 (function(){
   'use strict';
@@ -910,6 +1010,56 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   let _prodImages = [];
   let _editProdId = null;
   let _uploadingCount = 0;
+  let _prodStep = 1; // Step track karne ke liye
+
+// ✅ MULTI-STEP LOGIC FUNCTIONS
+window.tgNextStep = function() {
+  if (_prodStep === 1) {
+    if (!document.getElementById('prod-name').value.trim()) { toast('Product Name required', 'error'); return; }
+    if (!document.getElementById('prod-brand').value) { toast('Select Brand', 'error'); return; }
+    if (!document.getElementById('prod-category').value) { toast('Select Category', 'error'); return; }
+  }
+  if (_prodStep === 2) {
+    if (Number(document.getElementById('prod-price').value) <= 0) { toast('Valid Price required', 'error'); return; }
+    if (!document.getElementById('prod-hsn').value.trim()) { toast('HSN Code required', 'error'); return; }
+  }
+  if (_prodStep === 3) {
+    const sizeRows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
+    let hasSize = false;
+    sizeRows.forEach(row => { if ((row.querySelector('.tg-size-name').value || '').trim()) hasSize = true; });
+    if (!hasSize) { toast('Add at least 1 Size/Stock variant', 'error'); return; }
+  }
+  if (_prodStep < 4) {
+    _prodStep++;
+    updateProdStepUI();
+  }
+};
+
+window.tgPrevStep = function() {
+  if (_prodStep > 1) {
+    _prodStep--;
+    updateProdStepUI();
+  }
+};
+
+function updateProdStepUI() {
+  document.querySelectorAll('.tg-form-step').forEach(el => el.classList.remove('active'));
+  document.getElementById('prod-step-' + _prodStep).classList.add('active');
+  
+  document.querySelectorAll('.tg-step-dot').forEach((el, idx) => {
+    const stepNum = idx + 1;
+    el.classList.remove('active', 'done');
+    if (stepNum === _prodStep) el.classList.add('active');
+    else if (stepNum < _prodStep) el.classList.add('done');
+  });
+
+  document.getElementById('tg-btn-prev').style.display = _prodStep === 1 ? 'none' : 'flex';
+  document.getElementById('tg-btn-next').style.display = _prodStep === 4 ? 'none' : 'flex';
+  document.getElementById('tg-btn-submit').style.display = _prodStep === 4 ? 'flex' : 'none';
+  
+  const delBtn = document.getElementById('prod-del-btn');
+  if (delBtn) delBtn.style.display = (_prodStep === 4 && _editProdId) ? 'block' : 'none';
+}
   let _selectedColors = [];
 
   let _audioCtx = null;
@@ -2704,6 +2854,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
   window.tgOpenProductModal = function() {
     if (!USER) { toast('Please log in first', 'error'); return; }
     _editProdId = null;
+     _prodStep = 1; updateProdStepUI();
     _prodImages = [];
     _uploadingCount = 0;
     _selectedColors = [];
@@ -2716,6 +2867,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     document.getElementById('prod-mrp').value = '';
     document.getElementById('prod-weight').value = '500';
     document.getElementById('prod-gst').value = '18';
+    document.getElementById('prod-hsn').value = '';
     document.getElementById('prod-size-rows').innerHTML = '';
     document.getElementById('prod-del-btn').style.display = 'none';
     populateBrandDropdown();
@@ -2740,6 +2892,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     const p = PRODUCTS.find(x => x.id === pid);
     if (!p) { toast('Product not found', 'error'); return; }
     _editProdId = pid;
+     _prodStep = 1; updateProdStepUI();
     _prodImages = [];
     _uploadingCount = 0;
     _selectedColors = Array.isArray(p.colors) ? p.colors.slice() : [];
@@ -2755,6 +2908,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     document.getElementById('prod-mrp').value = p.compareAtPrice || p.mrp || '';
     document.getElementById('prod-weight').value = p.weight || 500;
     document.getElementById('prod-gst').value = String(p.gst || 18);
+    document.getElementById('prod-hsn').value = p.hsn || ''; 
     document.getElementById('prod-size-rows').innerHTML = '';
 
     populateBrandDropdown();
@@ -2933,10 +3087,12 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
     const brand = (document.getElementById('prod-brand').value || '').trim();
     const category = (document.getElementById('prod-category').value || '').trim();
     const price = Number(document.getElementById('prod-price').value || 0);
+    const hsn = (document.getElementById('prod-hsn').value || '').trim(); 
     if (!name) { toast('Enter product name', 'error'); return; }
     if (!brand) { toast('Select brand', 'error'); return; }
     if (!category) { toast('Select category', 'error'); return; }
     if (price <= 0) { toast('Enter valid price', 'error'); return; }
+     if (!hsn) { toast('Enter HSN Code', 'error'); return; } 
     if (_uploadingCount > 0) { toast('Wait for images to upload', 'error'); return; }
     if (_prodImages.length < 1) { toast('Add at least 1 image', 'error'); return; }
     const sizeRows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
@@ -2956,6 +3112,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 
     const payload = {
       name: name, sku: sku, brand: brand, category: category,
+        hsn: hsn,
       description: (document.getElementById('prod-desc').value || '').trim(),
       price: price,
       compareAtPrice: Number(document.getElementById('prod-mrp').value || 0),
