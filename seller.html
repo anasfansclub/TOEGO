@@ -860,72 +860,141 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
           <div class="tg-field"><label>GST %</label><select id="prod-gst"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div>
         </div>
         
-        <!-- 🔥 Yahan hai Smart HSN Code List -->
+         <!-- 🔥 NAYA BADA HSN CODE LIST (Manual Entry Supported) -->
         <div class="tg-field" style="margin-bottom:0;">
-          <label>HSN Code * (Type 1, 2, 64 to search)</label>
-          <input type="text" id="prod-hsn" maxlength="12" list="hsn-codes-list" placeholder="Search or Type HSN Code..." autocomplete="off">
+          <label>HSN Code * (Search from list or type manually)</label>
+          <input type="text" id="prod-hsn" maxlength="12" list="hsn-codes-list" placeholder="Type to search or enter manually..." autocomplete="off">
           
           <datalist id="hsn-codes-list">
-            <!-- Clothing & Apparel -->
-            <option value="6109">T-shirts, Singlets (Cotton)</option>
-            <option value="61091000">T-shirts of cotton</option>
-            <option value="6203">Men's suits, jackets, trousers</option>
-            <option value="6204">Women's suits, jackets, dresses</option>
-            <option value="6205">Men's shirts</option>
-            <option value="6206">Women's blouses, shirts</option>
-            <option value="6104">Women's suits, dresses (knitted)</option>
-            <option value="6110">Sweaters, pullovers, cardigans</option>
-            
-            <!-- Footwear -->
-            <option value="6401">Waterproof footwear (rubber/plastic)</option>
-            <option value="6402">Footwear with outer soles rubber/plastic</option>
-            <option value="6403">Footwear with leather uppers</option>
-            <option value="6404">Footwear with textile uppers (Sneakers, Slippers)</option>
-            <option value="6405">Other footwear (Slippers, Sandals)</option>
-            <option value="64041100">Sports footwear, tennis shoes</option>
-            <option value="64041900">Other footwear with textile uppers</option>
-            <option value="64029900">Slippers with rubber/plastic soles</option>
-            
-            <!-- Electronics -->
-            <option value="8517">Telephones, Smartphones, Routers</option>
-            <option value="85171300">Smartphones</option>
-            <option value="8471">Computers, Laptops, Printers</option>
-            <option value="8504">Electrical transformers, chargers</option>
-            <option value="85044000">Static converters (Chargers/Adapters)</option>
-            <option value="8518">Microphones, Headphones, Speakers</option>
-            <option value="85183000">Headphones and earphones</option>
-            <option value="85183020">Earphones</option>
-            <option value="8544">Insulated wires and cables (Charging cables)</option>
-            <option value="8507">Electric accumulators (Power banks, Batteries)</option>
-            <option value="85076000">Lithium-ion batteries</option>
-            
-            <!-- Watches & Accessories -->
-            <option value="9101">Wrist-watches (Precious metal)</option>
-            <option value="9102">Wrist-watches (Other materials)</option>
-            <option value="4202">Trunks, suitcases, bags, wallets</option>
-            <option value="42022100">Handbags with outer surface of leather</option>
-            <option value="42029200">Bags with outer surface of plastics/textiles</option>
-            <option value="9004">Spectacles, goggles, sunglasses</option>
-            <option value="90049000">Sunglasses & goggles</option>
-            
-            <!-- Beauty -->
-            <option value="3304">Beauty/makeup preparations (Lipsticks)</option>
-            <option value="33049900">Other beauty or make-up preparations</option>
-            <option value="3305">Preparations for use on hair (Shampoo, Oil)</option>
-            <option value="3401">Soap, organic surface-active products</option>
-            
-            <!-- Sports -->
-            <option value="9506">Articles for gymnastics, athletics, sports</option>
-            <option value="95066200">Sports balls (Inflatable)</option>
-            
-            <!-- Home & Kitchen -->
-            <option value="7323">Table, kitchen or other household articles (Iron)</option>
-            <option value="3924">Plastic household articles (Tiffins, Bottles)</option>
-            <option value="6912">Ceramic tableware, kitchenware</option>
-            
-            <!-- Toys -->
-            <option value="9503">Toys, tricycles, scooters, dolls</option>
+            <!-- 👕 CLOTHING & APPAREL -->
+            <optgroup label="Clothing & Apparel">
+              <option value="6109">T-shirts, Singlets (Cotton)</option>
+              <option value="61091000">T-shirts of cotton</option>
+              <option value="6203">Men's suits, jackets, trousers</option>
+              <option value="6204">Women's suits, jackets, dresses</option>
+              <option value="6205">Men's shirts</option>
+              <option value="6206">Women's blouses, shirts</option>
+              <option value="6104">Women's suits, dresses (knitted)</option>
+              <option value="6110">Sweaters, pullovers, cardigans</option>
+              <option value="6209">Baby garments and clothing</option>
+              <option value="6211">Track suits, ski suits, swimwear</option>
+              <option value="6212">Brassieres, girdles, corsets</option>
+              <option value="6214">Shawls, scarves, mufflers, veils</option>
+              <option value="6215">Ties, bow ties and cravats</option>
+              <option value="6217">Other made up clothing accessories</option>
+              <option value="6302">Bed linen, table linen, toilet linen</option>
+              <option value="6304">Other furnishing articles</option>
+              <option value="6307">Other made up articles (incl. dusters)</option>
+            </optgroup>
+
+            <!-- 👟 FOOTWEAR -->
+            <optgroup label="Footwear">
+              <option value="6401">Waterproof footwear (rubber/plastic)</option>
+              <option value="6402">Footwear with outer soles rubber/plastic</option>
+              <option value="6403">Footwear with leather uppers</option>
+              <option value="6404">Footwear with textile uppers (Sneakers, Slippers)</option>
+              <option value="6405">Other footwear (Slippers, Sandals)</option>
+              <option value="64041100">Sports footwear, tennis shoes</option>
+              <option value="64041900">Other footwear with textile uppers</option>
+              <option value="64029900">Slippers with rubber/plastic soles</option>
+              <option value="64039900">Other leather footwear</option>
+              <option value="64069000">Parts of footwear (soles, heels)</option>
+            </optgroup>
+
+            <!-- 📱 ELECTRONICS & MOBILES -->
+            <optgroup label="Electronics & Mobiles">
+              <option value="8517">Telephones, Smartphones, Routers</option>
+              <option value="85171300">Smartphones</option>
+              <option value="8471">Computers, Laptops, Printers</option>
+              <option value="84713010">Personal computers (Laptops)</option>
+              <option value="8504">Electrical transformers, chargers</option>
+              <option value="85044000">Static converters (Chargers/Adapters)</option>
+              <option value="8518">Microphones, Headphones, Speakers</option>
+              <option value="85183000">Headphones and earphones</option>
+              <option value="85183020">Earphones</option>
+              <option value="85176290">Smartwatches</option>
+              <option value="8544">Insulated wires and cables (Charging cables)</option>
+              <option value="8507">Electric accumulators (Power banks, Batteries)</option>
+              <option value="85076000">Lithium-ion batteries</option>
+              <option value="85081100">Vacuum cleaners</option>
+              <option value="8516">Electric water heaters, hair dryers</option>
+              <option value="8528">Monitors and projectors</option>
+              <option value="9504">Video game consoles</option>
+            </optgroup>
+
+            <!-- ⌚ WATCHES & BAGS -->
+            <optgroup label="Watches & Accessories">
+              <option value="9101">Wrist-watches (Precious metal)</option>
+              <option value="9102">Wrist-watches (Other materials)</option>
+              <option value="9105">Other clocks</option>
+              <option value="4202">Trunks, suitcases, bags, wallets</option>
+              <option value="42022100">Handbags with outer surface of leather</option>
+              <option value="42022200">Handbags of plastic/textile</option>
+              <option value="42029200">Bags with outer surface of plastics/textiles</option>
+              <option value="42023100">Wallets and purses (Leather)</option>
+              <option value="9004">Spectacles, goggles, sunglasses</option>
+              <option value="90049000">Sunglasses & goggles</option>
+              <option value="7117">Imitation jewellery</option>
+              <option value="71179000">Imitation jewellery of base metal</option>
+            </optgroup>
+
+            <!-- 💄 BEAUTY & PERSONAL CARE -->
+            <optgroup label="Beauty & Personal Care">
+              <option value="3304">Beauty/makeup preparations (Lipsticks)</option>
+              <option value="33049900">Other beauty or make-up preparations</option>
+              <option value="3305">Preparations for use on hair (Shampoo, Oil)</option>
+              <option value="33051000">Shampoos</option>
+              <option value="33059000">Hair oils and conditioners</option>
+              <option value="3401">Soap, organic surface-active products</option>
+              <option value="3307">Shaving preparations, deodorants</option>
+              <option value="33072000">Personal deodorants and antiperspirants</option>
+              <option value="9616">Scent sprays and similar toilet sprays</option>
+              <option value="3303">Perfumes and toilet waters</option>
+            </optgroup>
+
+            <!-- 🏠 HOME & KITCHEN -->
+            <optgroup label="Home & Kitchen">
+              <option value="7323">Table, kitchen or other household articles (Iron)</option>
+              <option value="7615">Aluminium household articles</option>
+              <option value="3924">Plastic household articles (Tiffins, Bottles)</option>
+              <option value="6912">Ceramic tableware, kitchenware</option>
+              <option value="7013">Glassware (Glasses, jars)</option>
+              <option value="9403">Furniture and parts thereof</option>
+              <option value="9404">Mattresses, sleeping bags</option>
+              <option value="6303">Curtains, interior blinds</option>
+              <option value="6302">Bed sheets, pillow covers</option>
+              <option value="4419">Wooden tableware and kitchenware</option>
+            </optgroup>
+
+            <!-- 🏏 SPORTS & FITNESS -->
+            <optgroup label="Sports & Fitness">
+              <option value="9506">Articles for gymnastics, athletics, sports</option>
+              <option value="95066200">Sports balls (Inflatable)</option>
+              <option value="95069100">Gymnastics or athletics articles</option>
+              <option value="9506">Yoga mats, dumbbells, fitness equipment</option>
+              <option value="9507">Fishing rods and tackle</option>
+              <option value="9508">Fairground amusements</option>
+            </optgroup>
+
+            <!-- 🧸 TOYS & BABY -->
+            <optgroup label="Toys & Baby Care">
+              <option value="9503">Toys, tricycles, scooters, dolls</option>
+              <option value="95030010">Toys (Electric)</option>
+              <option value="95030090">Toys (Other)</option>
+              <option value="9619">Sanitary towels, napkins, diapers</option>
+              <option value="4014">Hygienic or pharmaceutical rubber articles</option>
+            </optgroup>
+
+            <!-- 📚 STATIONERY & OFFICE -->
+            <optgroup label="Stationery & Office">
+              <option value="4820">Registers, account books, notebooks</option>
+              <option value="4821">Paper or paperboard labels</option>
+              <option value="9608">Pens, ballpoint pens, markers</option>
+              <option value="9609">Pencils, crayons, chalks</option>
+              <option value="8472">Other office machines (staplers)</option>
+            </optgroup>
           </datalist>
+          <div class="tg-prod-img-hint" style="margin-top:6px;">List me se select karo, ya agar code nahi mil raha toh manually type kar do.</div>
         </div>
       </div>
     </div>
