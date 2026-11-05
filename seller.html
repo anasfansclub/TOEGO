@@ -824,21 +824,30 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
       <div class="tg-step-dot" data-step="4"><span>4</span><div class="tg-step-label">Finish</div></div>
     </div>
 
-    <!-- STEP 1: Basic Details -->
+       <!-- STEP 1: Images & Basic Details -->
     <div class="tg-form-step active" id="prod-step-1">
+      <!-- 1. Sabse pehle Photos (Images) -->
+      <div class="tg-prod-form-section">
+        <div class="tg-prod-form-section-title">📷 Product Images (max 5) *</div>
+        <div class="tg-prod-img-grid" id="prod-img-grid"></div>
+        <input type="file" id="prod-img-input" accept="image/*" multiple style="display:none;">
+        <div class="tg-prod-img-hint">Auto-compressed to <b>100KB</b></div>
+      </div>
+
+      <!-- 2. Uske baad Title, Description, SKU, Brand, Category -->
       <div class="tg-prod-form-section">
         <div class="tg-prod-form-section-title">📝 Basic Details</div>
-        <div class="tg-field"><label>Product Name *</label><input type="text" id="prod-name" maxlength="150" placeholder="e.g., Stylish EVA Slippers"></div>
+        <div class="tg-field"><label>Product Name (Title) *</label><input type="text" id="prod-name" maxlength="150" placeholder="e.g., Stylish EVA Slippers"></div>
+        <div class="tg-field"><label>Description</label><textarea id="prod-desc" rows="3" maxlength="2000" placeholder="Describe your product..." style="min-height:80px;"></textarea></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="tg-field"><label>Product SKU</label><input type="text" id="prod-sku" maxlength="50" placeholder="e.g., SKU-1234"></div>
           <div class="tg-field"><label>Brand *</label><select id="prod-brand"><option value="">Select brand</option></select></div>
         </div>
-        <div class="tg-field"><label>Category *</label><select id="prod-category"><option value="">Select category</option></select></div>
-        <div class="tg-field" style="margin-bottom:0;"><label>Description</label><textarea id="prod-desc" rows="3" maxlength="2000" placeholder="Describe your product..." style="min-height:80px;"></textarea></div>
+        <div class="tg-field" style="margin-bottom:0;"><label>Category *</label><select id="prod-category"><option value="">Select category</option></select></div>
       </div>
     </div>
 
-    <!-- STEP 2: Additional Details -->
+    <!-- STEP 2: Pricing & HSN -->
     <div class="tg-form-step" id="prod-step-2">
       <div class="tg-prod-form-section">
         <div class="tg-prod-form-section-title">💰 Pricing & Additional Info</div>
@@ -850,10 +859,76 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
           <div class="tg-field"><label>Weight (grams) *</label><input type="number" id="prod-weight" min="0" value="500" oninput="tgCalcSettlement()"></div>
           <div class="tg-field"><label>GST %</label><select id="prod-gst"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18" selected>18%</option><option value="28">28%</option></select></div>
         </div>
-        <div class="tg-field" style="margin-bottom:0;"><label>HSN Code *</label><input type="text" id="prod-hsn" maxlength="12" placeholder="e.g., 6404 (GST Report ke liye)"></div>
+        
+        <!-- 🔥 Yahan hai Smart HSN Code List -->
+        <div class="tg-field" style="margin-bottom:0;">
+          <label>HSN Code * (Type 1, 2, 64 to search)</label>
+          <input type="text" id="prod-hsn" maxlength="12" list="hsn-codes-list" placeholder="Search or Type HSN Code..." autocomplete="off">
+          
+          <datalist id="hsn-codes-list">
+            <!-- Clothing & Apparel -->
+            <option value="6109">T-shirts, Singlets (Cotton)</option>
+            <option value="61091000">T-shirts of cotton</option>
+            <option value="6203">Men's suits, jackets, trousers</option>
+            <option value="6204">Women's suits, jackets, dresses</option>
+            <option value="6205">Men's shirts</option>
+            <option value="6206">Women's blouses, shirts</option>
+            <option value="6104">Women's suits, dresses (knitted)</option>
+            <option value="6110">Sweaters, pullovers, cardigans</option>
+            
+            <!-- Footwear -->
+            <option value="6401">Waterproof footwear (rubber/plastic)</option>
+            <option value="6402">Footwear with outer soles rubber/plastic</option>
+            <option value="6403">Footwear with leather uppers</option>
+            <option value="6404">Footwear with textile uppers (Sneakers, Slippers)</option>
+            <option value="6405">Other footwear (Slippers, Sandals)</option>
+            <option value="64041100">Sports footwear, tennis shoes</option>
+            <option value="64041900">Other footwear with textile uppers</option>
+            <option value="64029900">Slippers with rubber/plastic soles</option>
+            
+            <!-- Electronics -->
+            <option value="8517">Telephones, Smartphones, Routers</option>
+            <option value="85171300">Smartphones</option>
+            <option value="8471">Computers, Laptops, Printers</option>
+            <option value="8504">Electrical transformers, chargers</option>
+            <option value="85044000">Static converters (Chargers/Adapters)</option>
+            <option value="8518">Microphones, Headphones, Speakers</option>
+            <option value="85183000">Headphones and earphones</option>
+            <option value="85183020">Earphones</option>
+            <option value="8544">Insulated wires and cables (Charging cables)</option>
+            <option value="8507">Electric accumulators (Power banks, Batteries)</option>
+            <option value="85076000">Lithium-ion batteries</option>
+            
+            <!-- Watches & Accessories -->
+            <option value="9101">Wrist-watches (Precious metal)</option>
+            <option value="9102">Wrist-watches (Other materials)</option>
+            <option value="4202">Trunks, suitcases, bags, wallets</option>
+            <option value="42022100">Handbags with outer surface of leather</option>
+            <option value="42029200">Bags with outer surface of plastics/textiles</option>
+            <option value="9004">Spectacles, goggles, sunglasses</option>
+            <option value="90049000">Sunglasses & goggles</option>
+            
+            <!-- Beauty -->
+            <option value="3304">Beauty/makeup preparations (Lipsticks)</option>
+            <option value="33049900">Other beauty or make-up preparations</option>
+            <option value="3305">Preparations for use on hair (Shampoo, Oil)</option>
+            <option value="3401">Soap, organic surface-active products</option>
+            
+            <!-- Sports -->
+            <option value="9506">Articles for gymnastics, athletics, sports</option>
+            <option value="95066200">Sports balls (Inflatable)</option>
+            
+            <!-- Home & Kitchen -->
+            <option value="7323">Table, kitchen or other household articles (Iron)</option>
+            <option value="3924">Plastic household articles (Tiffins, Bottles)</option>
+            <option value="6912">Ceramic tableware, kitchenware</option>
+            
+            <!-- Toys -->
+            <option value="9503">Toys, tricycles, scooters, dolls</option>
+          </datalist>
+        </div>
       </div>
     </div>
-
     <!-- STEP 3: Variants -->
     <div class="tg-form-step" id="prod-step-3">
       <div class="tg-prod-form-section">
@@ -871,12 +946,6 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 
     <!-- STEP 4: Images & Pickup -->
     <div class="tg-form-step" id="prod-step-4">
-      <div class="tg-prod-form-section">
-        <div class="tg-prod-form-section-title">📷 Product Images (max 5) *</div>
-        <div class="tg-prod-img-grid" id="prod-img-grid"></div>
-        <input type="file" id="prod-img-input" accept="image/*" multiple style="display:none;">
-        <div class="tg-prod-img-hint">Auto-compressed to <b>100KB</b></div>
-      </div>
       <div class="tg-prod-form-section">
         <div class="tg-prod-form-section-title">📍 Pickup Address</div>
         <div class="tg-pickup-box" id="prod-pickup-box"><div style="color:#888;font-size:12px;">Loading seller address…</div></div>
@@ -1018,11 +1087,16 @@ window.tgNextStep = function() {
     if (!document.getElementById('prod-name').value.trim()) { toast('Product Name required', 'error'); return; }
     if (!document.getElementById('prod-brand').value) { toast('Select Brand', 'error'); return; }
     if (!document.getElementById('prod-category').value) { toast('Select Category', 'error'); return; }
+    
+    // ✅ Photo Check Yahan add kiya hai (Step 1 ke liye)
+    if (_uploadingCount > 0) { toast('Please wait for images to upload...', 'info'); return; }
+    if (_prodImages.length < 1) { toast('Please upload at least 1 product image', 'error'); return; }
   }
   if (_prodStep === 2) {
     if (Number(document.getElementById('prod-price').value) <= 0) { toast('Valid Price required', 'error'); return; }
     if (!document.getElementById('prod-hsn').value.trim()) { toast('HSN Code required', 'error'); return; }
   }
+  
   if (_prodStep === 3) {
     const sizeRows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
     let hasSize = false;
