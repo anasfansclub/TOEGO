@@ -1022,16 +1022,19 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script>
-  // 🚀 Splash Screen Hide Logic
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      const splash = document.getElementById('tg-seller-splash');
-      if (splash) {
-        splash.classList.add('hide');
-        setTimeout(() => splash.remove(), 600); // DOM se remove
-      }
-    }, 2500); 
-  });
+  // 🚀 Splash Screen Hide Logic (Global Function)
+  window.tgHideSplash = function() {
+    const splash = document.getElementById('tg-seller-splash');
+    if (splash && !splash.classList.contains('hide')) {
+      splash.classList.add('hide');
+      setTimeout(() => splash.remove(), 600);
+    }
+  };
+
+  // Fallback: Agar kisi wajah se data load nahi hota, toh max 5 sec baad splash hata do
+  setTimeout(() => {
+    window.tgHideSplash();
+  }, 5000);
 </script>
 <script>
 (function(){
@@ -3323,18 +3326,33 @@ function updateProdStepUI() {
     }
   }
 
-  auth.onAuthStateChanged(async (u) => {
+    auth.onAuthStateChanged(async (u) => {
     USER = u;
-    if (!u) { window.location.replace('log-in.html?redirect=' + encodeURIComponent('seller.html')); return; }
+    if (!u) { 
+      window.tgHideSplash();
+      window.location.replace('log-in.html?redirect=' + encodeURIComponent('seller.html')); 
+      return; 
+    }
     try {
       const us = await db.collection('users').doc(u.uid).get();
       const role = us.exists ? (us.data().role || '').toLowerCase() : '';
       if (role !== 'seller' && !['admin','superadmin'].includes(role)) {
         const sd = await db.collection('sellers').doc(u.uid).get();
-        if (!sd.exists || (sd.data().status || '').toLowerCase() !== 'approved') { toast('Seller access required', 'error'); setTimeout(() => location.href = 'account.html', 1200); return; }
+        if (!sd.exists || (sd.data().status || '').toLowerCase() !== 'approved') { 
+          window.tgHideSplash();
+          toast('Seller access required', 'error'); 
+          setTimeout(() => location.href = 'account.html', 1200); 
+          return; 
+        }
       }
+      
+      // ✅ Profile aur Settings load karo
       await loadSettings();
       await loadProfile();
+      
+      // ✅ Data load hone ke baad Splash hatao (Turant dashboard dikhega)
+      window.tgHideSplash();
+
       updateRingBtn();
       initHistory();
       listenCategories();
@@ -3347,6 +3365,7 @@ function updateProdStepUI() {
       setTimeout(initGSTPanel, 800);
       setTimeout(initDailyDelivExport, 900);
     } catch(e) {
+      window.tgHideSplash(); // Error aane par bhi splash hata do
       await loadSettings();
       await loadProfile();
       updateRingBtn();
