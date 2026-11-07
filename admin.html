@@ -1321,7 +1321,125 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       <div class="tg-fld-row" style="margin-bottom:0;">
         <div class="tg-fld"><label>Weight (grams)</label><input type="number" id="mp-w" min="0"></div>
         <div class="tg-fld" style="margin-bottom:0;"><label>GST %</label><select id="mp-g"><option value="0">0%</option><option value="5">5%</option><option value="12">12%</option><option value="18">18%</option><option value="28">28%</option></select></div>
-      </div>
+              </div>
+      <!-- 🔥 HSN CODE FIELD (NEW) -->
+<div class="tg-fld" style="margin-top:10px;">
+  <label>HSN Code <span class="rq">*</span></label>
+  <input type="text" id="mp-hsn" maxlength="12" list="mp-hsn-list" 
+         placeholder="Type to search or enter manually..." autocomplete="off">
+  <datalist id="mp-hsn-list">
+    <!-- 👕 CLOTHING -->
+    <optgroup label="Clothing & Apparel">
+      <option value="6109">T-shirts, Singlets (Cotton)</option>
+      <option value="61091000">T-shirts of cotton</option>
+      <option value="6203">Men's suits, jackets, trousers</option>
+      <option value="6204">Women's suits, jackets, dresses</option>
+      <option value="6205">Men's shirts</option>
+      <option value="6206">Women's blouses, shirts</option>
+      <option value="6104">Women's suits, dresses (knitted)</option>
+      <option value="6110">Sweaters, pullovers, cardigans</option>
+      <option value="6209">Baby garments and clothing</option>
+      <option value="6211">Track suits, swimwear</option>
+      <option value="6212">Brassieres, girdles, corsets</option>
+      <option value="6214">Shawls, scarves, mufflers</option>
+      <option value="6217">Other clothing accessories</option>
+      <option value="6302">Bed linen, table linen</option>
+      <option value="6304">Furnishing articles</option>
+      <option value="6307">Other made up articles</option>
+    </optgroup>
+    <!-- 👟 FOOTWEAR -->
+    <optgroup label="Footwear">
+      <option value="6401">Waterproof footwear</option>
+      <option value="6402">Rubber/plastic sole footwear</option>
+      <option value="6403">Leather upper footwear</option>
+      <option value="6404">Textile upper (Sneakers, Slippers)</option>
+      <option value="6405">Other footwear (Sandals)</option>
+      <option value="64041100">Sports shoes, tennis shoes</option>
+      <option value="64041900">Other textile upper footwear</option>
+      <option value="64029900">Slippers (rubber/plastic sole)</option>
+      <option value="64039900">Other leather footwear</option>
+    </optgroup>
+    <!-- 📱 ELECTRONICS -->
+    <optgroup label="Electronics & Mobiles">
+      <option value="8517">Telephones, Smartphones, Routers</option>
+      <option value="85171300">Smartphones</option>
+      <option value="8471">Computers, Laptops, Printers</option>
+      <option value="84713010">Personal computers (Laptops)</option>
+      <option value="8504">Transformers, chargers</option>
+      <option value="85044000">Chargers/Adapters</option>
+      <option value="8518">Microphones, Headphones, Speakers</option>
+      <option value="85183000">Headphones and earphones</option>
+      <option value="85176290">Smartwatches</option>
+      <option value="8544">Charging cables</option>
+      <option value="8507">Power banks, Batteries</option>
+      <option value="85076000">Lithium-ion batteries</option>
+      <option value="8516">Hair dryers, water heaters</option>
+      <option value="8528">Monitors and projectors</option>
+    </optgroup>
+    <!-- ⌚ WATCHES & BAGS -->
+    <optgroup label="Watches & Accessories">
+      <option value="9101">Wrist-watches (Precious)</option>
+      <option value="9102">Wrist-watches (Other)</option>
+      <option value="9105">Other clocks</option>
+      <option value="4202">Bags, suitcases, wallets</option>
+      <option value="42022100">Handbags (Leather)</option>
+      <option value="42022200">Handbags (Plastic/textile)</option>
+      <option value="42023100">Wallets & purses (Leather)</option>
+      <option value="9004">Spectacles, goggles, sunglasses</option>
+      <option value="90049000">Sunglasses & goggles</option>
+      <option value="7117">Imitation jewellery</option>
+      <option value="71179000">Imitation jewellery (base metal)</option>
+    </optgroup>
+    <!-- 💄 BEAUTY -->
+    <optgroup label="Beauty & Personal Care">
+      <option value="3304">Makeup preparations, Lipsticks</option>
+      <option value="33049900">Other beauty preparations</option>
+      <option value="3305">Hair products (Shampoo, Oil)</option>
+      <option value="33051000">Shampoos</option>
+      <option value="33059000">Hair oils and conditioners</option>
+      <option value="3401">Soap</option>
+      <option value="3307">Shaving prep, deodorants</option>
+      <option value="33072000">Deodorants</option>
+      <option value="3303">Perfumes and toilet waters</option>
+      <option value="9616">Scent sprays</option>
+    </optgroup>
+    <!-- 🏠 HOME & KITCHEN -->
+    <optgroup label="Home & Kitchen">
+      <option value="7323">Iron household articles</option>
+      <option value="7615">Aluminium household articles</option>
+      <option value="3924">Plastic household articles</option>
+      <option value="6912">Ceramic tableware</option>
+      <option value="7013">Glassware</option>
+      <option value="9403">Furniture</option>
+      <option value="9404">Mattresses, sleeping bags</option>
+      <option value="6303">Curtains, blinds</option>
+      <option value="4419">Wooden tableware</option>
+    </optgroup>
+    <!-- 🏏 SPORTS -->
+    <optgroup label="Sports & Fitness">
+      <option value="9506">Gymnastics, athletics, sports</option>
+      <option value="95066200">Sports balls (Inflatable)</option>
+      <option value="95069100">Yoga mats, dumbbells</option>
+      <option value="9507">Fishing rods</option>
+    </optgroup>
+    <!-- 🧸 TOYS -->
+    <optgroup label="Toys & Baby Care">
+      <option value="9503">Toys, tricycles, dolls</option>
+      <option value="95030010">Electric toys</option>
+      <option value="95030090">Other toys</option>
+      <option value="9619">Sanitary towels, diapers</option>
+      <option value="4014">Hygienic rubber articles</option>
+    </optgroup>
+    <!-- 📚 STATIONERY -->
+    <optgroup label="Stationery & Office">
+      <option value="4820">Registers, notebooks</option>
+      <option value="4821">Paper labels</option>
+      <option value="9608">Pens, markers</option>
+      <option value="9609">Pencils, crayons</option>
+    </optgroup>
+  </datalist>
+  <div class="tg-fld-h">GST filing ke liye zaroori — list se chuno ya manually type karo</div>
+</div>
     </div>
     <div class="mp-section">
       <div class="mp-section-title">📏 Sizes & Stock (per size)</div>
@@ -1575,6 +1693,26 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       .replace(/"/g, '&quot;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
+  }
+    /* 🔥 HSN LOOKUP HELPER — Product-level fallback ke saath */
+  function getHsnFromItem(it) {
+    if (!it) return '0000';
+    // Priority 1: Item me direct HSN
+    if (it.hsn) return String(it.hsn).trim();
+    if (it.hsnCode) return String(it.hsnCode).trim();
+    // Priority 2: Product ID se product lookup
+    const pid = it.productId || it.product_id || it.pid || it.productDocId;
+    if (pid) {
+      const p = (typeof ALL_PRODUCTS !== 'undefined' ? ALL_PRODUCTS : []).find(x => x.id === pid);
+      if (p && p.hsn) return String(p.hsn).trim();
+    }
+    // Priority 3: SKU se product lookup
+    if (it.sku) {
+      const p = (typeof ALL_PRODUCTS !== 'undefined' ? ALL_PRODUCTS : []).find(x => x.sku === it.sku);
+      if (p && p.hsn) return String(p.hsn).trim();
+    }
+    // Priority 4: Fallback
+    return '0000';
   }
   function inr(n){ return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0}); }
   function fdate(d){ if(!d) return '—'; const dt = d.toDate?d.toDate():new Date(d); return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
@@ -2744,6 +2882,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
         'Shipping Address': addrStr,
         'Pincode': (typeof addr === 'object' ? addr.pincode : '') || o.pincode || '',
         'Items': items.map(it => `${it.name} (${it.size||'N/A'}) x${it.qty}`).join(' | '),
+      'HSN Codes': items.map(it => getHsnFromItem(it)).join(', '),
         'Total Items': items.reduce((a,i)=>a+Number(i.qty||1),0),
         'Total Amount (₹)': Number(o.total||0),
         'Payment Method': (o.paymentMethod || 'COD').toUpperCase(),
@@ -3848,6 +3987,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
     document.getElementById('mp-m').value = p.compareAtPrice||p.mrp||0;
     document.getElementById('mp-w').value = p.weight||0;
     document.getElementById('mp-g').value = String(p.gst||18);
+document.getElementById('mp-hsn').value = p.hsn || p.hsnCode || '';
     document.getElementById('mp-d').value = p.description||'';
     document.getElementById('mp-a').checked = p.active!==false;
     document.getElementById('mp-saleTag').value = p.saleTag || '';
@@ -3905,6 +4045,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,footer#bottom,.o_footer,#f
       compareAtPrice: Number(document.getElementById('mp-m').value||0),
       weight: Number(document.getElementById('mp-w').value||0),
       gst: Number(document.getElementById('mp-g').value||18),
+       hsn: (document.getElementById('mp-hsn').value||'').trim(), 
       description: (document.getElementById('mp-d').value||'').trim(),
       active: document.getElementById('mp-a').checked,
       saleTag: (document.getElementById('mp-saleTag').value||'').trim(),
