@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Advanced Admin — TOEGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0f1729">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#f1f3f6;font-family:'Roboto',Arial,sans-serif;color:#212121;overflow-x:hidden;}
+  a{text-decoration:none;color:inherit;}
+  button{font:inherit;cursor:pointer;border:none;background:none;}
+
+  /* 🚀 SPLASH SCREEN */
+  #tg-splash { position: fixed; inset: 0; background: linear-gradient(135deg, #0f1729 0%, #1a5dc7 50%, #2874f0 100%); z-index: 9999999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.5s ease, visibility 0.5s ease; }
+  #tg-splash.hide { opacity: 0; visibility: hidden; }
+  .tg-sp-logo { font-weight: 900; font-style: italic; font-size: 52px; color: white; letter-spacing: -2px; animation: tgPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; opacity: 0; transform: scale(0.5); }
+  .tg-sp-logo span { color: #ffe500; }
+  .tg-sp-sub { color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; animation: tgFadeUp 0.6s 0.4s ease forwards; opacity: 0; }
+  .tg-sp-loader { width: 150px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 10px; margin-top: 30px; overflow: hidden; position: relative; }
+  .tg-sp-loader-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: #ffe500; border-radius: 10px; animation: tgLoad 2s ease-in-out forwards; box-shadow: 0 0 10px rgba(255,229,0,0.5); }
+  @keyframes tgPopIn { to { opacity: 1; transform: scale(1); } }
+  @keyframes tgFadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes tgLoad { to { width: 100%; } }
+
+  /* HEADER & LAYOUT */
+  .tg-hd{background:linear-gradient(135deg,#0f1729 0%,#1a5dc7 100%);position:fixed;top:0;left:0;right:0;z-index:1000;box-shadow:0 2px 12px rgba(0,0,0,0.2);padding:10px 14px;display:flex;align-items:center;gap:10px;color:#fff;height:60px;}
+  .tg-menu-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,0.1);}
+  .tg-menu-btn:hover{background:rgba(255,255,255,0.2);}
+  .tg-menu-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;}
+  .tg-hd-title{font-weight:900;font-style:italic;font-size:20px;}
+  .tg-hd-title span{color:#ffe500;}
+  .tg-badge{background:#ffe500;color:#0f1729;font-size:9px;font-weight:900;padding:3px 8px;border-radius:4px;text-transform:uppercase;margin-left:8px;}
+  .tg-hd-spacer{flex:1;}
+  .tg-back-btn{background:rgba(255,255,255,0.15);color:#fff;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;transition:all .2s;}
+  .tg-back-btn:hover{background:rgba(255,255,255,0.25);transform:translateX(-2px);}
+
+  .tg-wrap{padding-top:70px;padding-bottom:20px;min-height:100vh;display:flex;gap:16px;max-width:1400px;margin:0 auto;padding-left:16px;padding-right:16px;}
+  @media(max-width:900px){ .tg-wrap{flex-direction:column;padding:70px 10px 20px;} }
+
+  /* SIDEBAR */
+  .tg-sidebar{width:260px;background:#fff;border-radius:12px;padding:16px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);position:sticky;top:76px;height:calc(100vh - 90px);overflow-y:auto;}
+  @media(max-width:900px){ .tg-sidebar{width:100%;height:auto;position:static;display:flex;overflow-x:auto;padding:10px;gap:8px;} .tg-sb-item{white-space:nowrap;margin:0;} }
+  .tg-sb-sec{font-size:10px;font-weight:900;color:#999;text-transform:uppercase;letter-spacing:1px;margin:16px 10px 8px;}
+  .tg-sb-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;font-size:13.5px;font-weight:700;color:#555;cursor:pointer;transition:all .15s;margin-bottom:4px;}
+  .tg-sb-item:hover{background:#f1f3f6;color:#2874f0;}
+  .tg-sb-item.active{background:#eef3ff;color:#2874f0;box-shadow:inset 3px 0 0 #2874f0;}
+  .tg-sb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .tg-sb-icon.blue{background:#e0eaff;color:#2874f0;}
+  .tg-sb-icon.purple{background:#ede7f6;color:#5b21b6;}
+  .tg-sb-icon.green{background:#e6f7ec;color:#1b8a3a;}
+  .tg-sb-icon.orange{background:#fff3e0;color:#f57c00;}
+  .tg-sb-icon.red{background:#ffebee;color:#d32f2f;}
+
+  /* MAIN CONTENT & CARDS */
+  .tg-main{flex:1;min-width:0;}
+  .tg-view{display:none;animation:tgFadeIn .3s ease;}
+  .tg-view.active{display:block;}
+  @keyframes tgFadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .tg-sec-title{font-size:22px;font-weight:900;margin-bottom:6px;color:#0f1729;display:flex;align-items:center;gap:8px;}
+  .tg-sec-sub{font-size:13.5px;color:#666;margin-bottom:20px;}
+
+  .tg-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;margin-bottom:20px;}
+  .tg-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #eef1f6;}
+  .tg-stat-card{border-left:4px solid #2874f0;display:flex;flex-direction:column;justify-content:center;}
+  .tg-stat-label{font-size:12px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+  .tg-stat-val{font-size:28px;font-weight:900;color:#0f1729;line-height:1;}
+  .tg-stat-hint{font-size:11px;color:#888;margin-top:8px;}
+
+  .tg-table-wrap{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);overflow:hidden;border:1px solid #eef1f6;}
+  .tg-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .tg-table th{text-align:left;padding:14px 16px;background:#f8f9fb;color:#666;font-weight:800;font-size:11.5px;text-transform:uppercase;border-bottom:2px solid #e0e0e0;}
+  .tg-table td{padding:14px 16px;border-bottom:1px solid #f1f3f6;vertical-align:middle;}
+  .tg-table tr:hover{background:#fcfdff;}
+  
+  .tg-pill{padding:4px 10px;border-radius:99px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;display:inline-block;}
+  .tg-pill.active{background:#e6f7ec;color:#1b8a3a;}
+  .tg-pill.blocked{background:#ffebee;color:#d32f2f;}
+  
+  .tg-btn{padding:10px 16px;border-radius:8px;font-weight:800;font-size:12.5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;}
+  .tg-btn.primary{background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;box-shadow:0 4px 12px rgba(40,116,240,0.2);}
+  .tg-btn.primary:hover{filter:brightness(1.1);transform:translateY(-1px);}
+  .tg-btn.danger{background:#ffebee;color:#d32f2f;border:1.5px solid #ffcdd2;}
+  .tg-btn.danger:hover{background:#d32f2f;color:#fff;}
+  .tg-btn.success{background:#e6f7ec;color:#1b8a3a;border:1.5px solid #a5d6b7;}
+  .tg-btn.success:hover{background:#1b8a3a;color:#fff;}
+  .tg-btn.outline{background:#fff;color:#2874f0;border:1.5px solid #2874f0;}
+
+  .tg-input, .tg-select{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;background:#fff;transition:all .15s;}
+  .tg-input:focus, .tg-select:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.1);}
+  
+  .tg-feed-item{display:flex;gap:14px;padding:14px 16px;border-bottom:1px solid #f1f3f6;align-items:flex-start;}
+  .tg-feed-item:last-child{border-bottom:none;}
+  .tg-feed-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .tg-feed-icon.view{background:#e3f2fd;color:#1565c0;}
+  .tg-feed-icon.search{background:#fff8e1;color:#f57c00;}
+  .tg-feed-icon.cart{background:#e6f7ec;color:#1b8a3a;}
+  .tg-feed-body{flex:1;min-width:0;}
+  .tg-feed-title{font-weight:700;font-size:13.5px;margin-bottom:2px;}
+  .tg-feed-title b{color:#2874f0;}
+  .tg-feed-meta{font-size:11.5px;color:#888;display:flex;gap:10px;flex-wrap:wrap;}
+  
+  .tg-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#212121;color:#fff;padding:14px 24px;border-radius:8px;font-size:14px;font-weight:600;z-index:99999;opacity:0;visibility:hidden;transition:all .3s;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+  .tg-toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(-5px);}
+  .tg-toast.suc{background:#1b8a3a;}
+  .tg-toast.err{background:#d32f2f;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="tg-splash">
+  <div class="tg-sp-logo">TOE<span>GO</span></div>
+  <div class="tg-sp-sub">Advanced Admin</div>
+  <div class="tg-sp-loader"><div class="tg-sp-loader-bar"></div></div>
+</div>
+
+<!-- HEADER -->
+<header class="tg-hd">
+  <button class="tg-menu-btn" onclick="toggleSidebar()">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="tg-hd-title">TOE<span>GO</span> <span class="tg-badge">Advanced</span></div>
+  <div class="tg-hd-spacer"></div>
+  <a href="super-admin.html" class="tg-back-btn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Main Admin
+  </a>
+</header>
+
+<!-- WRAPPER -->
+<div class="tg-wrap">
+  
+  <!-- SIDEBAR -->
+  <aside class="tg-sidebar" id="tg-sidebar">
+    <div class="tg-sb-sec">Analytics</div>
+    <div class="tg-sb-item active" onclick="switchView('activity')"><div class="tg-sb-icon blue">📊</div> Live Activity</div>
+    <div class="tg-sb-item" onclick="switchView('analytics')"><div class="tg-sb-icon purple">📈</div> Date Analytics</div>
+    
+    <div class="tg-sb-sec">Management</div>
+    <div class="tg-sb-item" onclick="switchView('users')"><div class="tg-sb-icon red">👤</div> User Blocking</div>
+    <div class="tg-sb-item" onclick="switchView('settings')"><div class="tg-sb-icon orange">⚙️</div> Platform Settings</div>
+    
+    <div class="tg-sb-sec">System</div>
+    <div class="tg-sb-item" onclick="switchView('logs')"><div class="tg-sb-icon green">📝</div> Admin Logs</div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="tg-main">
+
+    <!-- VIEW 1: LIVE USER ACTIVITY -->
+    <div class="tg-view active" id="view-activity">
+      <h2 class="tg-sec-title">📊 Shop Home — Live User Activity</h2>
+      <p class="tg-sec-sub">Real-time tracking of what users are viewing, searching, and doing on your platform.</p>
+
+      <div class="tg-grid">
+        <div class="tg-card tg-stat-card">
+          <div class="tg-stat-label">Total Page Views</div>
+          <div class="tg-stat-val" id="stat-views">0</div>
+          <div class="tg-stat-hint">Users browsing shop home</div>
+        </div>
+        <div class="tg-card tg-stat-card" style="border-left-color:#f57c00;">
+          <div class="tg-stat-label">Top Search Query</div>
+          <div class="tg-stat-val" id="stat-search" style="font-size:20px;">—</div>
+          <div class="tg-stat-hint">What people are looking for</div>
+        </div>
+        <div class="tg-card tg-stat-card" style="border-left-color:#1b8a3a;">
+          <div class="tg-stat-label">Products Viewed</div>
+          <div class="tg-stat-val" id="stat-prodviews">0</div>
+          <div class="tg-stat-hint">Total product clicks</div>
+        </div>
+      </div>
+
+      <div class="tg-card" style="padding:0;overflow:hidden;">
+        <div style="padding:16px 20px;border-bottom:1.5px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;background:#f8f9fb;">
+          <div style="font-weight:800;font-size:15px;">🔴 Live Activity Feed</div>
+          <button class="tg-btn outline" style="padding:6px 12px;font-size:11px;" onclick="loadActivity()">↻ Refresh</button>
+        </div>
+        <div id="activity-feed">
+          <div style="padding:40px;text-align:center;color:#888;">Loading live feed...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: DATE ANALYTICS -->
+    <div class="tg-view" id="view-analytics">
+      <h2 class="tg-sec-title">📈 Custom Date Analytics</h2>
+      <p class="tg-sec-sub">Filter revenue and orders by any specific date range.</p>
+
+      <div class="tg-card" style="background:#f8f9fb;display:flex;gap:16px;align-items:end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <label style="display:block;font-size:11px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">From Date</label>
+          <input type="date" id="an-from" class="tg-input">
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <label style="display:block;font-size:11px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">To Date</label>
+          <input type="date" id="an-to" class="tg-input">
+        </div>
+        <button class="tg-btn primary" onclick="runAnalytics()" style="height:44px;">Filter Data</button>
+      </div>
+
+      <div class="tg-grid">
+        <div class="tg-card tg-stat-card">
+          <div class="tg-stat-label">Total Revenue</div>
+          <div class="tg-stat-val" id="an-rev" style="color:#2874f0;">₹0</div>
+        </div>
+        <div class="tg-card tg-stat-card" style="border-left-color:#1b8a3a;">
+          <div class="tg-stat-label">Total Orders</div>
+          <div class="tg-stat-val" id="an-ord" style="color:#1b8a3a;">0</div>
+        </div>
+        <div class="tg-card tg-stat-card" style="border-left-color:#f57c00;">
+          <div class="tg-stat-label">Delivered Orders</div>
+          <div class="tg-stat-val" id="an-del" style="color:#f57c00;">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: USER BLOCKING -->
+    <div class="tg-view" id="view-users">
+      <h2 class="tg-sec-title">👤 Customer Management</h2>
+      <p class="tg-sec-sub">Block or unblock users who create fake orders or misbehave.</p>
+
+      <div class="tg-card" style="margin-bottom:16px;">
+        <input type="text" id="user-search" class="tg-input" placeholder="Search by name, email, or phone..." oninput="renderUsers()">
+      </div>
+
+      <div class="tg-table-wrap">
+        <table class="tg-table">
+          <thead><tr><th>Customer Name</th><th>Contact Info</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="users-list">
+            <tr><td colspan="4" style="text-align:center;padding:30px;color:#888;">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 4: PLATFORM SETTINGS -->
+    <div class="tg-view" id="view-settings">
+      <h2 class="tg-sec-title">⚙️ Platform Settings</h2>
+      <p class="tg-sec-sub">Configure global settings including TCS GSTIN for exports.</p>
+
+      <div class="tg-card" style="max-width:600px;">
+        <div style="font-size:15px;font-weight:800;color:#2874f0;margin-bottom:16px;border-bottom:1.5px solid #e0e0e0;padding-bottom:10px;">📋 TCS / GST Configuration</div>
+        
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:11.5px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">Platform TCS GSTIN</label>
+          <input type="text" id="set-tcs-gstin" class="tg-input" placeholder="e.g., 09AARCM9332R1CM">
+          <div style="font-size:11px;color:#888;margin-top:4px;">Ye GSTIN Meesho Format Export me auto-fill hoga.</div>
+        </div>
+        
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:11.5px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">Default Platform GST %</label>
+          <input type="number" id="set-gst-pct" class="tg-input" value="18">
+        </div>
+        
+        <button class="tg-btn primary" style="width:100%;" onclick="saveSettings()">💾 Save Settings</button>
+      </div>
+    </div>
+
+    <!-- VIEW 5: ADMIN LOGS -->
+    <div class="tg-view" id="view-logs">
+      <h2 class="tg-sec-title">📝 Admin Logs</h2>
+      <p class="tg-sec-sub">Security audit trail of all admin actions.</p>
+
+      <div class="tg-card" style="text-align:center;padding:60px 20px;background:#f8f9fb;">
+        <div style="font-size:48px;margin-bottom:12px;">🚧</div>
+        <div style="font-size:18px;font-weight:900;color:#0f1729;margin-bottom:6px;">Coming Soon</div>
+        <div style="font-size:13px;color:#666;max-width:400px;margin:0 auto;">Is feature mein hum track karenge ki kaunse admin ne kab kaunsa order cancel kiya, seller block kiya, ya settings change ki.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="tg-toast" id="tg-toast"></div>
+
+<script>
+  // 1. INITIALIZE FIREBASE
+  if (!window.__TOEGO_FB__) {
+    window.__TOEGO_FB__ = firebase.initializeApp({
+      apiKey: "AIzaSyAhxecFY9TwZTYbdCVRAcnp1whI-Uqc-P8",
+      authDomain: "toego-ecommerce.firebaseapp.com",
+      projectId: "toego-ecommerce",
+      storageBucket: "toego-ecommerce.firebasestorage.app",
+      messagingSenderId: "234167880880",
+      appId: "1:234167880880:web:b89d4b8e5f8cc9af3c3f75"
+    });
+  }
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const FV = firebase.firestore.FieldValue;
+
+  // 2. GLOBAL VARIABLES
+  let ALL_USERS = [];
+  let ALL_ORDERS = [];
+  let ALL_ACTIVITY = [];
+
+  // 3. HELPERS
+  const toastEl = document.getElementById('tg-toast');
+  function toast(msg, type = '') {
+    toastEl.textContent = msg;
+    toastEl.className = 'tg-toast show ' + type;
+    setTimeout(() => toastEl.classList.remove('show'), 3000);
+  }
+  function esc(s) { return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtINR(n) { return '₹' + Number(n||0).toLocaleString('en-IN', {maximumFractionDigits:0}); }
+  function tago(d) {
+    if (!d) return '—';
+    const dt = d.toDate ? d.toDate() : new Date(d);
+    const diff = Math.floor((Date.now() - dt.getTime()) / 1000);
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+  }
+
+  // 4. NAVIGATION
+  window.toggleSidebar = function() {
+    const sb = document.getElementById('tg-sidebar');
+    if (window.innerWidth <= 900) {
+      sb.style.display = sb.style.display === 'flex' ? 'none' : 'flex';
+      sb.style.flexDirection = 'column';
+    }
+  };
+
+  window.switchView = function(v) {
+    document.querySelectorAll('.tg-view').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById('view-' + v);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.tg-sb-item').forEach(el => el.classList.remove('active'));
+    const menuItem = document.querySelector(`.tg-sb-item[onclick="switchView('${v}')"]`);
+    if (menuItem) menuItem.classList.add('active');
+
+    if (v === 'users') renderUsers();
+    if (v === 'analytics') runAnalytics();
+    if (v === 'activity') loadActivity();
+    
+    if (window.innerWidth <= 900) {
+      document.getElementById('tg-sidebar').style.display = 'none';
+    }
+  };
+
+  // 5. ACTIVITY TRACKING LOGIC
+  window.loadActivity = function() {
+    const feed = document.getElementById('activity-feed');
+    if (!ALL_ACTIVITY.length) {
+      feed.innerHTML = '<div style="padding:40px;text-align:center;color:#888;"><div style="font-size:40px;margin-bottom:10px;opacity:0.5;">📭</div>No activity recorded yet.<br><span style="font-size:11px;margin-top:10px;display:inline-block;">Shop-home.html se tracking start karein.</span></div>';
+      return;
+    }
+
+    let html = '';
+    let totalViews = 0;
+    let totalProdViews = 0;
+    let searchMap = {};
+
+    ALL_ACTIVITY.forEach(a => {
+      if (a.type === 'view_page') totalViews++;
+      if (a.type === 'view_product') totalProdViews++;
+      if (a.type === 'search' && a.query) {
+        searchMap[a.query] = (searchMap[a.query] || 0) + 1;
+      }
+    });
+
+    const topSearch = Object.keys(searchMap).sort((a,b) => searchMap[b] - searchMap[a])[0] || '—';
+    
+    document.getElementById('stat-views').textContent = totalViews;
+    document.getElementById('stat-prodviews').textContent = totalProdViews;
+    document.getElementById('stat-search').textContent = topSearch;
+
+    ALL_ACTIVITY.slice(0, 50).forEach(a => {
+      let iconCls = 'view';
+      let icon = '👁️';
+      let title = '';
+
+      if (a.type === 'search') {
+        iconCls = 'search';
+        icon = '🔍';
+        title = `<b>${esc(a.userName || 'Guest')}</b> searched for "<b>${esc(a.query)}</b>"`;
+      } else if (a.type === 'view_product') {
+        iconCls = 'cart';
+        icon = '🛒';
+        title = `<b>${esc(a.userName || 'Guest')}</b> viewed product <b>${esc(a.productName)}</b>`;
+      } else {
+        title = `<b>${esc(a.userName || 'Guest')}</b> visited shop home`;
+      }
+
+      html += `
+        <div class="tg-feed-item">
+          <div class="tg-feed-icon ${iconCls}">${icon}</div>
+          <div class="tg-feed-body">
+            <div class="tg-feed-title">${title}</div>
+            <div class="tg-feed-meta">
+              <span>⏱ ${tago(a.timestamp)}</span>
+              ${a.userId ? `<span>ID: ${esc(a.userId.slice(0,8))}</span>` : '<span>Guest User</span>'}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    feed.innerHTML = html;
+  };
+
+  // 6. DATE ANALYTICS LOGIC
+  window.runAnalytics = function() {
+    const from = document.getElementById('an-from').value;
+    const to = document.getElementById('an-to').value;
+    if (!from || !to) { toast('Please select both dates', 'err'); return; }
+
+    const start = new Date(from + 'T00:00:00').getTime();
+    const end = new Date(to + 'T23:59:59').getTime();
+    
+    let rev = 0, ordCount = 0, delCount = 0;
+
+    ALL_ORDERS.forEach(o => {
+      const oTime = o.createdAt?.toDate?.()?.getTime?.() || 0;
+      if (oTime >= start && oTime <= end) {
+        const st = String(o.status||'').toLowerCase();
+        if (st.includes('cancel') || st.includes('return')) return;
+
+        ordCount++;
+        rev += Number(o.total || 0);
+        if (st.includes('deliver')) delCount++;
+      }
+    });
+
+    document.getElementById('an-rev').textContent = fmtINR(rev);
+    document.getElementById('an-ord').textContent = ordCount;
+    document.getElementById('an-del').textContent = delCount;
+    toast('Analytics updated!', 'suc');
+  };
+
+  // 7. USER BLOCKING LOGIC
+  window.renderUsers = function() {
+    const el = document.getElementById('users-list');
+    const q = (document.getElementById('user-search').value || '').toLowerCase().trim();
+    
+    let list = ALL_USERS.filter(u => (u.role||'customer').toLowerCase() === 'customer');
+    
+    if (q) {
+      list = list.filter(u => 
+        (u.name||'').toLowerCase().includes(q) || 
+        (u.email||'').toLowerCase().includes(q) || 
+        (u.phone||'').includes(q)
+      );
+    }
+
+    if (!list.length) {
+      el.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#888;">No users found</td></tr>';
+      return;
+    }
+
+    el.innerHTML = list.slice(0, 50).map(u => {
+      const isBlocked = u.blocked === true;
+      return `<tr>
+        <td>
+          <div style="font-weight:800;color:#0f1729;">${esc(u.name || 'User')}</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">Joined: ${u.createdAt ? tago(u.createdAt) : '—'}</div>
+        </td>
+        <td>
+          <div style="font-weight:600;">${esc(u.email || '—')}</div>
+          <div style="font-size:11.5px;color:#666;">📱 ${esc(u.phone || '—')}</div>
+        </td>
+        <td><span class="tg-pill ${isBlocked ? 'blocked' : 'active'}">${isBlocked ? 'Blocked' : 'Active'}</span></td>
+        <td>
+          ${isBlocked 
+            ? `<button class="tg-btn success" style="padding:6px 12px;font-size:11.5px;" onclick="toggleUserBlock('${u.id}', false)">✓ Unblock</button>`
+            : `<button class="tg-btn danger" style="padding:6px 12px;font-size:11.5px;" onclick="toggleUserBlock('${u.id}', true)">🚫 Block</button>`
+          }
+        </td>
+      </tr>`;
+    }).join('');
+  };
+
+  window.toggleUserBlock = async function(uid, block) {
+    try {
+      await db.collection('users').doc(uid).update({ blocked: block, updatedAt: FV.serverTimestamp() });
+      toast(block ? 'User Blocked!' : 'User Unblocked!', 'suc');
+      const idx = ALL_USERS.findIndex(u => u.id === uid);
+      if (idx >= 0) ALL_USERS[idx].blocked = block;
+      renderUsers();
+    } catch(e) {
+      toast('Failed: ' + e.message, 'err');
+    }
+  };
+
+  // 8. PLATFORM SETTINGS LOGIC
+  window.saveSettings = async function() {
+    const tcs = document.getElementById('set-tcs-gstin').value.trim();
+    const gst = Number(document.getElementById('set-gst-pct').value || 18);
+    try {
+      await db.collection('siteSettings').doc('platform').set({
+        tcsGstin: tcs,
+        gstPercent: gst,
+        updatedAt: FV.serverTimestamp()
+      }, { merge: true });
+      toast('Settings saved successfully!', 'suc');
+    } catch(e) {
+      toast('Failed to save: ' + e.message, 'err');
+    }
+  };
+
+  // 9. INIT & DATA LISTENERS
+  auth.onAuthStateChanged(async (u) => {
+    if (!u) { window.location.href = 'log-in.html'; return; }
+    try {
+      const s = await db.collection('users').doc(u.uid).get();
+      const r = s.exists ? (s.data().role||'').toLowerCase() : '';
+      if (!['admin','superadmin'].includes(r)) {
+        alert('Access Denied'); window.location.href = 'index.html'; return;
+      }
+      
+      // Hide Splash Screen
+      setTimeout(() => {
+        document.getElementById('tg-splash').classList.add('hide');
+      }, 1000);
+
+      // Set default dates
+      const today = new Date();
+      const last30 = new Date(); last30.setDate(today.getDate() - 30);
+      document.getElementById('an-to').value = today.toISOString().slice(0,10);
+      document.getElementById('an-from').value = last30.toISOString().slice(0,10);
+
+      // Listeners
+      db.collection('users').limit(1000).onSnapshot(snap => {
+        ALL_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (document.getElementById('view-users').classList.contains('active')) renderUsers();
+      });
+
+      db.collection('orders').limit(1000).onSnapshot(snap => {
+        ALL_ORDERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (document.getElementById('view-analytics').classList.contains('active')) runAnalytics();
+      });
+
+      db.collection('user_activity').orderBy('timestamp', 'desc').limit(100).onSnapshot(snap => {
+        ALL_ACTIVITY = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (document.getElementById('view-activity').classList.contains('active')) loadActivity();
+      }, err => {});
+
+      db.collection('siteSettings').doc('platform').get().then(snap => {
+        if (snap.exists) {
+          const d = snap.data();
+          document.getElementById('set-tcs-gstin').value = d.tcsGstin || '';
+          document.getElementById('set-gst-pct').value = d.gstPercent || 18;
+        }
+      });
+
+      switchView('activity');
+
+    } catch(e) {
+      console.error(e);
+      document.getElementById('tg-splash').classList.add('hide');
+    }
+  });
+</script>
+</body>
+</html>
