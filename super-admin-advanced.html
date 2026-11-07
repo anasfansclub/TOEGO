@@ -64,12 +64,15 @@
   .tg-sec-title{font-size:22px;font-weight:900;margin-bottom:6px;color:#0f1729;display:flex;align-items:center;gap:8px;}
   .tg-sec-sub{font-size:13.5px;color:#666;margin-bottom:20px;}
 
-  .tg-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;margin-bottom:20px;}
-  .tg-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #eef1f6;}
+  .tg-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:16px;margin-bottom:20px;}
+  .tg-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid #eef1f6;transition:all .2s;cursor:pointer;}
+  .tg-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.08);}
+  .tg-card.no-click{cursor:default;}
+  .tg-card.no-click:hover{transform:none;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
   .tg-stat-card{border-left:4px solid #2874f0;display:flex;flex-direction:column;justify-content:center;}
   .tg-stat-label{font-size:12px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
   .tg-stat-val{font-size:28px;font-weight:900;color:#0f1729;line-height:1;}
-  .tg-stat-hint{font-size:11px;color:#888;margin-top:8px;}
+  .tg-stat-hint{font-size:11px;color:#888;margin-top:8px;display:flex;align-items:center;gap:4px;}
 
   .tg-table-wrap{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);overflow:hidden;border:1px solid #eef1f6;}
   .tg-table{width:100%;border-collapse:collapse;font-size:13.5px;}
@@ -80,6 +83,7 @@
   .tg-pill{padding:4px 10px;border-radius:99px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;display:inline-block;}
   .tg-pill.active{background:#e6f7ec;color:#1b8a3a;}
   .tg-pill.blocked{background:#ffebee;color:#d32f2f;}
+  .tg-pill.warn{background:#fff8e1;color:#f57c00;}
   
   .tg-btn{padding:10px 16px;border-radius:8px;font-weight:800;font-size:12.5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;}
   .tg-btn.primary{background:linear-gradient(135deg,#2874f0,#1a5dc7);color:#fff;box-shadow:0 4px 12px rgba(40,116,240,0.2);}
@@ -88,7 +92,6 @@
   .tg-btn.danger:hover{background:#d32f2f;color:#fff;}
   .tg-btn.success{background:#e6f7ec;color:#1b8a3a;border:1.5px solid #a5d6b7;}
   .tg-btn.success:hover{background:#1b8a3a;color:#fff;}
-  .tg-btn.outline{background:#fff;color:#2874f0;border:1.5px solid #2874f0;}
 
   .tg-input, .tg-select{width:100%;padding:12px 14px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;background:#fff;transition:all .15s;}
   .tg-input:focus, .tg-select:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.1);}
@@ -99,6 +102,7 @@
   .tg-feed-icon.view{background:#e3f2fd;color:#1565c0;}
   .tg-feed-icon.search{background:#fff8e1;color:#f57c00;}
   .tg-feed-icon.cart{background:#e6f7ec;color:#1b8a3a;}
+  .tg-feed-icon.admin{background:#ede7f6;color:#5b21b6;}
   .tg-feed-body{flex:1;min-width:0;}
   .tg-feed-title{font-weight:700;font-size:13.5px;margin-bottom:2px;}
   .tg-feed-title b{color:#2874f0;}
@@ -126,7 +130,8 @@
   </button>
   <div class="tg-hd-title">TOE<span>GO</span> <span class="tg-badge">Advanced</span></div>
   <div class="tg-hd-spacer"></div>
-  <a href="super-admin.html" class="tg-back-btn">
+  <!-- ⭐ Back Button Link Changed to admin.html as requested -->
+  <a href="admin.html" class="tg-back-btn">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     Main Admin
   </a>
@@ -137,94 +142,111 @@
   
   <!-- SIDEBAR -->
   <aside class="tg-sidebar" id="tg-sidebar">
-    <div class="tg-sb-sec">Analytics</div>
-    <div class="tg-sb-item active" onclick="switchView('activity')"><div class="tg-sb-icon blue">📊</div> Live Activity</div>
-    <div class="tg-sb-item" onclick="switchView('analytics')"><div class="tg-sb-icon purple">📈</div> Date Analytics</div>
+    <div class="tg-sb-sec">Overview</div>
+    <div class="tg-sb-item active" onclick="switchView('dashboard')"><div class="tg-sb-icon blue">📊</div> Dashboard</div>
+    <div class="tg-sb-item" onclick="switchView('activity')"><div class="tg-sb-icon purple">📡</div> Live Activity</div>
     
     <div class="tg-sb-sec">Management</div>
+    <div class="tg-sb-item" onclick="switchView('abandoned')"><div class="tg-sb-icon orange">🛒</div> Abandoned Carts</div>
     <div class="tg-sb-item" onclick="switchView('users')"><div class="tg-sb-icon red">👤</div> User Blocking</div>
-    <div class="tg-sb-item" onclick="switchView('settings')"><div class="tg-sb-icon orange">⚙️</div> Platform Settings</div>
+    <div class="tg-sb-item" onclick="switchView('analytics')"><div class="tg-sb-icon green">📈</div> Date Analytics</div>
     
     <div class="tg-sb-sec">System</div>
-    <div class="tg-sb-item" onclick="switchView('logs')"><div class="tg-sb-icon green">📝</div> Admin Logs</div>
+    <div class="tg-sb-item" onclick="switchView('settings')"><div class="tg-sb-icon blue">⚙️</div> Platform Settings</div>
+    <div class="tg-sb-item" onclick="switchView('logs')"><div class="tg-sb-icon purple">📝</div> Admin Logs</div>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="tg-main">
 
-    <!-- VIEW 1: LIVE USER ACTIVITY -->
-    <div class="tg-view active" id="view-activity">
-      <h2 class="tg-sec-title">📊 Shop Home — Live User Activity</h2>
-      <p class="tg-sec-sub">Real-time tracking of what users are viewing, searching, and doing on your platform.</p>
+    <!-- VIEW 1: DASHBOARD -->
+    <div class="tg-view active" id="view-dashboard">
+      <h2 class="tg-sec-title">👋 Welcome, Admin!</h2>
+      <p class="tg-sec-sub">Aapke platform ka aaj ka mukammal overview. Kisi bhi card par click karke details dekhein.</p>
 
       <div class="tg-grid">
-        <div class="tg-card tg-stat-card">
-          <div class="tg-stat-label">Total Page Views</div>
-          <div class="tg-stat-val" id="stat-views">0</div>
-          <div class="tg-stat-hint">Users browsing shop home</div>
+        <div class="tg-card tg-stat-card" onclick="switchView('analytics')">
+          <div class="tg-stat-label">Total Revenue</div>
+          <div class="tg-stat-val" id="dash-rev" style="color:#1b8a3a;">₹0</div>
+          <div class="tg-stat-hint">↗ Click to view date-wise <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
         </div>
-        <div class="tg-card tg-stat-card" style="border-left-color:#f57c00;">
-          <div class="tg-stat-label">Top Search Query</div>
-          <div class="tg-stat-val" id="stat-search" style="font-size:20px;">—</div>
-          <div class="tg-stat-hint">What people are looking for</div>
+        <div class="tg-card tg-stat-card" onclick="switchView('analytics')" style="border-left-color:#2874f0;">
+          <div class="tg-stat-label">Total Orders</div>
+          <div class="tg-stat-val" id="dash-ord">0</div>
+          <div class="tg-stat-hint">↗ Click to filter orders</div>
         </div>
-        <div class="tg-card tg-stat-card" style="border-left-color:#1b8a3a;">
-          <div class="tg-stat-label">Products Viewed</div>
-          <div class="tg-stat-val" id="stat-prodviews">0</div>
-          <div class="tg-stat-hint">Total product clicks</div>
+        <div class="tg-card tg-stat-card" onclick="switchView('abandoned')" style="border-left-color:#f57c00;">
+          <div class="tg-stat-label">Abandoned Carts</div>
+          <div class="tg-stat-val" id="dash-aband" style="color:#f57c00;">0</div>
+          <div class="tg-stat-hint">↗ Click to see dropped carts</div>
+        </div>
+        <div class="tg-card tg-stat-card" onclick="switchView('users')" style="border-left-color:#d32f2f;">
+          <div class="tg-stat-label">Total Customers</div>
+          <div class="tg-stat-val" id="dash-users" style="color:#d32f2f;">0</div>
+          <div class="tg-stat-hint">↗ Click to manage users</div>
         </div>
       </div>
 
-      <div class="tg-card" style="padding:0;overflow:hidden;">
+      <div class="tg-card no-click" style="background:linear-gradient(135deg,#e8f0ff,#d0e2ff); border:none; padding:24px;">
+        <h3 style="font-size:16px; font-weight:900; color:#1565c0; margin-bottom:8px;">💡 Pro Tip</h3>
+        <p style="font-size:13px; color:#333; line-height:1.6;">
+          Aap "Abandoned Carts" check karke un users ko special discount ya notification bhej sakte hain. Isse aapki sales 20-30% tak badh sakti hai!
+        </p>
+      </div>
+    </div>
+
+    <!-- VIEW 2: LIVE USER ACTIVITY -->
+    <div class="tg-view" id="view-activity">
+      <h2 class="tg-sec-title">📡 Shop Home — Live Activity</h2>
+      <p class="tg-sec-sub">Real-time tracking of what users are viewing and searching.</p>
+
+      <div class="tg-grid">
+        <div class="tg-card tg-stat-card no-click">
+          <div class="tg-stat-label">Total Page Views</div>
+          <div class="tg-stat-val" id="stat-views">0</div>
+        </div>
+        <div class="tg-card tg-stat-card no-click" style="border-left-color:#f57c00;">
+          <div class="tg-stat-label">Top Search Query</div>
+          <div class="tg-stat-val" id="stat-search" style="font-size:20px;">—</div>
+        </div>
+        <div class="tg-card tg-stat-card no-click" style="border-left-color:#1b8a3a;">
+          <div class="tg-stat-label">Products Viewed</div>
+          <div class="tg-stat-val" id="stat-prodviews">0</div>
+        </div>
+      </div>
+
+      <div class="tg-card no-click" style="padding:0;overflow:hidden;">
         <div style="padding:16px 20px;border-bottom:1.5px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;background:#f8f9fb;">
-          <div style="font-weight:800;font-size:15px;">🔴 Live Activity Feed</div>
+          <div style="font-weight:800;font-size:15px;">🔴 Live Feed</div>
           <button class="tg-btn outline" style="padding:6px 12px;font-size:11px;" onclick="loadActivity()">↻ Refresh</button>
         </div>
         <div id="activity-feed">
-          <div style="padding:40px;text-align:center;color:#888;">Loading live feed...</div>
+          <div style="padding:40px;text-align:center;color:#888;">Loading feed...</div>
         </div>
       </div>
     </div>
 
-    <!-- VIEW 2: DATE ANALYTICS -->
-    <div class="tg-view" id="view-analytics">
-      <h2 class="tg-sec-title">📈 Custom Date Analytics</h2>
-      <p class="tg-sec-sub">Filter revenue and orders by any specific date range.</p>
+    <!-- VIEW 3: ABANDONED CARTS -->
+    <div class="tg-view" id="view-abandoned">
+      <h2 class="tg-sec-title">🛒 Abandoned Carts</h2>
+      <p class="tg-sec-sub">Ye users cart mein products daal kar bhool gaye hain. Inko follow-up bhej kar order complete karwayein.</p>
 
-      <div class="tg-card" style="background:#f8f9fb;display:flex;gap:16px;align-items:end;flex-wrap:wrap;">
-        <div style="flex:1;min-width:200px;">
-          <label style="display:block;font-size:11px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">From Date</label>
-          <input type="date" id="an-from" class="tg-input">
-        </div>
-        <div style="flex:1;min-width:200px;">
-          <label style="display:block;font-size:11px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">To Date</label>
-          <input type="date" id="an-to" class="tg-input">
-        </div>
-        <button class="tg-btn primary" onclick="runAnalytics()" style="height:44px;">Filter Data</button>
-      </div>
-
-      <div class="tg-grid">
-        <div class="tg-card tg-stat-card">
-          <div class="tg-stat-label">Total Revenue</div>
-          <div class="tg-stat-val" id="an-rev" style="color:#2874f0;">₹0</div>
-        </div>
-        <div class="tg-card tg-stat-card" style="border-left-color:#1b8a3a;">
-          <div class="tg-stat-label">Total Orders</div>
-          <div class="tg-stat-val" id="an-ord" style="color:#1b8a3a;">0</div>
-        </div>
-        <div class="tg-card tg-stat-card" style="border-left-color:#f57c00;">
-          <div class="tg-stat-label">Delivered Orders</div>
-          <div class="tg-stat-val" id="an-del" style="color:#f57c00;">0</div>
-        </div>
+      <div class="tg-table-wrap">
+        <table class="tg-table">
+          <thead><tr><th>User Details</th><th>Items in Cart</th><th>Total Value</th><th>Last Active</th></tr></thead>
+          <tbody id="abandoned-list">
+            <tr><td colspan="4" style="text-align:center;padding:30px;color:#888;">Loading carts...</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <!-- VIEW 3: USER BLOCKING -->
+    <!-- VIEW 4: USER BLOCKING -->
     <div class="tg-view" id="view-users">
       <h2 class="tg-sec-title">👤 Customer Management</h2>
       <p class="tg-sec-sub">Block or unblock users who create fake orders or misbehave.</p>
 
-      <div class="tg-card" style="margin-bottom:16px;">
+      <div class="tg-card no-click" style="margin-bottom:16px;">
         <input type="text" id="user-search" class="tg-input" placeholder="Search by name, email, or phone..." oninput="renderUsers()">
       </div>
 
@@ -238,18 +260,62 @@
       </div>
     </div>
 
-    <!-- VIEW 4: PLATFORM SETTINGS -->
+    <!-- VIEW 5: DATE ANALYTICS -->
+    <div class="tg-view" id="view-analytics">
+      <h2 class="tg-sec-title">📈 Custom Date Analytics</h2>
+      <p class="tg-sec-sub">Filter revenue and orders by any specific date range.</p>
+
+      <div class="tg-card no-click" style="background:#f8f9fb;display:flex;gap:16px;align-items:end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <label style="display:block;font-size:11px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">From Date</label>
+          <input type="date" id="an-from" class="tg-input">
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <label style="display:block;font-size:11px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">To Date</label>
+          <input type="date" id="an-to" class="tg-input">
+        </div>
+        <button class="tg-btn primary" onclick="runAnalytics()" style="height:44px;">Filter Data</button>
+      </div>
+
+      <div class="tg-grid">
+        <div class="tg-card tg-stat-card no-click">
+          <div class="tg-stat-label">Total Revenue</div>
+          <div class="tg-stat-val" id="an-rev" style="color:#2874f0;">₹0</div>
+        </div>
+        <div class="tg-card tg-stat-card no-click" style="border-left-color:#1b8a3a;">
+          <div class="tg-stat-label">Total Orders</div>
+          <div class="tg-stat-val" id="an-ord" style="color:#1b8a3a;">0</div>
+        </div>
+        <div class="tg-card tg-stat-card no-click" style="border-left-color:#f57c00;">
+          <div class="tg-stat-label">Delivered Orders</div>
+          <div class="tg-stat-val" id="an-del" style="color:#f57c00;">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 6: ADMIN LOGS -->
+    <div class="tg-view" id="view-logs">
+      <h2 class="tg-sec-title">📝 Admin Logs</h2>
+      <p class="tg-sec-sub">Security audit trail. Track who did what and when.</p>
+
+      <div class="tg-card no-click" style="padding:0;overflow:hidden;">
+        <div id="logs-feed">
+          <div style="padding:40px;text-align:center;color:#888;">Loading logs...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 7: PLATFORM SETTINGS -->
     <div class="tg-view" id="view-settings">
       <h2 class="tg-sec-title">⚙️ Platform Settings</h2>
-      <p class="tg-sec-sub">Configure global settings including TCS GSTIN for exports.</p>
+      <p class="tg-sec-sub">Configure global settings including TCS GSTIN.</p>
 
-      <div class="tg-card" style="max-width:600px;">
+      <div class="tg-card no-click" style="max-width:600px;">
         <div style="font-size:15px;font-weight:800;color:#2874f0;margin-bottom:16px;border-bottom:1.5px solid #e0e0e0;padding-bottom:10px;">📋 TCS / GST Configuration</div>
         
         <div style="margin-bottom:16px;">
           <label style="display:block;font-size:11.5px;font-weight:800;color:#666;margin-bottom:6px;text-transform:uppercase;">Platform TCS GSTIN</label>
           <input type="text" id="set-tcs-gstin" class="tg-input" placeholder="e.g., 09AARCM9332R1CM">
-          <div style="font-size:11px;color:#888;margin-top:4px;">Ye GSTIN Meesho Format Export me auto-fill hoga.</div>
         </div>
         
         <div style="margin-bottom:16px;">
@@ -258,18 +324,6 @@
         </div>
         
         <button class="tg-btn primary" style="width:100%;" onclick="saveSettings()">💾 Save Settings</button>
-      </div>
-    </div>
-
-    <!-- VIEW 5: ADMIN LOGS -->
-    <div class="tg-view" id="view-logs">
-      <h2 class="tg-sec-title">📝 Admin Logs</h2>
-      <p class="tg-sec-sub">Security audit trail of all admin actions.</p>
-
-      <div class="tg-card" style="text-align:center;padding:60px 20px;background:#f8f9fb;">
-        <div style="font-size:48px;margin-bottom:12px;">🚧</div>
-        <div style="font-size:18px;font-weight:900;color:#0f1729;margin-bottom:6px;">Coming Soon</div>
-        <div style="font-size:13px;color:#666;max-width:400px;margin:0 auto;">Is feature mein hum track karenge ki kaunse admin ne kab kaunsa order cancel kiya, seller block kiya, ya settings change ki.</div>
       </div>
     </div>
 
@@ -298,6 +352,9 @@
   let ALL_USERS = [];
   let ALL_ORDERS = [];
   let ALL_ACTIVITY = [];
+  let ALL_CARTS = [];
+  let ALL_LOGS = [];
+  let CURRENT_ADMIN = null;
 
   // 3. HELPERS
   const toastEl = document.getElementById('tg-toast');
@@ -318,6 +375,20 @@
     return Math.floor(diff/86400) + 'd ago';
   }
 
+  // ⭐ ADMIN LOGGER ⭐
+  async function logAdminAction(action, details) {
+    if (!CURRENT_ADMIN) return;
+    try {
+      await db.collection('admin_logs').add({
+        action: action,
+        details: details,
+        adminUid: CURRENT_ADMIN.uid,
+        adminEmail: CURRENT_ADMIN.email || 'Admin',
+        timestamp: FV.serverTimestamp()
+      });
+    } catch(e) { console.warn('Log failed', e); }
+  }
+
   // 4. NAVIGATION
   window.toggleSidebar = function() {
     const sb = document.getElementById('tg-sidebar');
@@ -336,20 +407,39 @@
     const menuItem = document.querySelector(`.tg-sb-item[onclick="switchView('${v}')"]`);
     if (menuItem) menuItem.classList.add('active');
 
+    if (v === 'dashboard') renderDashboard();
     if (v === 'users') renderUsers();
     if (v === 'analytics') runAnalytics();
     if (v === 'activity') loadActivity();
+    if (v === 'abandoned') renderAbandonedCarts();
+    if (v === 'logs') renderLogs();
     
     if (window.innerWidth <= 900) {
       document.getElementById('tg-sidebar').style.display = 'none';
     }
   };
 
-  // 5. ACTIVITY TRACKING LOGIC
+  // 5. DASHBOARD LOGIC
+  window.renderDashboard = function() {
+    let rev = 0, ord = 0;
+    ALL_ORDERS.forEach(o => {
+      const st = String(o.status||'').toLowerCase();
+      if (st.includes('cancel') || st.includes('return')) return;
+      ord++;
+      rev += Number(o.total || 0);
+    });
+
+    document.getElementById('dash-rev').textContent = fmtINR(rev);
+    document.getElementById('dash-ord').textContent = ord;
+    document.getElementById('dash-aband').textContent = ALL_CARTS.length;
+    document.getElementById('dash-users').textContent = ALL_USERS.filter(u => (u.role||'customer')==='customer').length;
+  };
+
+  // 6. LIVE ACTIVITY LOGIC
   window.loadActivity = function() {
     const feed = document.getElementById('activity-feed');
     if (!ALL_ACTIVITY.length) {
-      feed.innerHTML = '<div style="padding:40px;text-align:center;color:#888;"><div style="font-size:40px;margin-bottom:10px;opacity:0.5;">📭</div>No activity recorded yet.<br><span style="font-size:11px;margin-top:10px;display:inline-block;">Shop-home.html se tracking start karein.</span></div>';
+      feed.innerHTML = '<div style="padding:40px;text-align:center;color:#888;">No activity recorded yet.</div>';
       return;
     }
 
@@ -378,76 +468,53 @@
       let title = '';
 
       if (a.type === 'search') {
-        iconCls = 'search';
-        icon = '🔍';
+        iconCls = 'search'; icon = '🔍';
         title = `<b>${esc(a.userName || 'Guest')}</b> searched for "<b>${esc(a.query)}</b>"`;
       } else if (a.type === 'view_product') {
-        iconCls = 'cart';
-        icon = '🛒';
+        iconCls = 'cart'; icon = '🛒';
         title = `<b>${esc(a.userName || 'Guest')}</b> viewed product <b>${esc(a.productName)}</b>`;
       } else {
         title = `<b>${esc(a.userName || 'Guest')}</b> visited shop home`;
       }
 
-      html += `
-        <div class="tg-feed-item">
-          <div class="tg-feed-icon ${iconCls}">${icon}</div>
-          <div class="tg-feed-body">
-            <div class="tg-feed-title">${title}</div>
-            <div class="tg-feed-meta">
-              <span>⏱ ${tago(a.timestamp)}</span>
-              ${a.userId ? `<span>ID: ${esc(a.userId.slice(0,8))}</span>` : '<span>Guest User</span>'}
-            </div>
-          </div>
-        </div>
-      `;
+      html += `<div class="tg-feed-item"><div class="tg-feed-icon ${iconCls}">${icon}</div><div class="tg-feed-body"><div class="tg-feed-title">${title}</div><div class="tg-feed-meta"><span>⏱ ${tago(a.timestamp)}</span></div></div></div>`;
     });
-
     feed.innerHTML = html;
   };
 
-  // 6. DATE ANALYTICS LOGIC
-  window.runAnalytics = function() {
-    const from = document.getElementById('an-from').value;
-    const to = document.getElementById('an-to').value;
-    if (!from || !to) { toast('Please select both dates', 'err'); return; }
+  // 7. ABANDONED CARTS LOGIC
+  window.renderAbandonedCarts = function() {
+    const el = document.getElementById('abandoned-list');
+    if (!ALL_CARTS.length) {
+      el.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#888;">No abandoned carts found. Sab clear hai!</td></tr>';
+      return;
+    }
 
-    const start = new Date(from + 'T00:00:00').getTime();
-    const end = new Date(to + 'T23:59:59').getTime();
-    
-    let rev = 0, ordCount = 0, delCount = 0;
-
-    ALL_ORDERS.forEach(o => {
-      const oTime = o.createdAt?.toDate?.()?.getTime?.() || 0;
-      if (oTime >= start && oTime <= end) {
-        const st = String(o.status||'').toLowerCase();
-        if (st.includes('cancel') || st.includes('return')) return;
-
-        ordCount++;
-        rev += Number(o.total || 0);
-        if (st.includes('deliver')) delCount++;
-      }
-    });
-
-    document.getElementById('an-rev').textContent = fmtINR(rev);
-    document.getElementById('an-ord').textContent = ordCount;
-    document.getElementById('an-del').textContent = delCount;
-    toast('Analytics updated!', 'suc');
+    el.innerHTML = ALL_CARTS.map(c => {
+      const user = ALL_USERS.find(u => u.id === c.id) || {};
+      const itemsHtml = c.items.map(i => `<div style="font-size:12px;margin-bottom:2px;">• ${esc(i.name)} (x${i.qty})</div>`).join('');
+      
+      return `<tr>
+        <td>
+          <div style="font-weight:800;color:#0f1729;">${esc(user.name || 'Unknown User')}</div>
+          <div style="font-size:11px;color:#888;">${esc(user.email || c.id)}</div>
+          <div style="font-size:11px;color:#666;">${esc(user.phone || '')}</div>
+        </td>
+        <td>${itemsHtml}</td>
+        <td><span style="font-weight:800;color:#1b8a3a;font-size:14px;">${fmtINR(c.total)}</span></td>
+        <td><span class="tg-pill warn">Idle</span></td>
+      </tr>`;
+    }).join('');
   };
 
-  // 7. USER BLOCKING LOGIC
+  // 8. USER BLOCKING LOGIC
   window.renderUsers = function() {
     const el = document.getElementById('users-list');
     const q = (document.getElementById('user-search').value || '').toLowerCase().trim();
     
     let list = ALL_USERS.filter(u => (u.role||'customer').toLowerCase() === 'customer');
-    
     if (q) {
-      list = list.filter(u => 
-        (u.name||'').toLowerCase().includes(q) || 
-        (u.email||'').toLowerCase().includes(q) || 
-        (u.phone||'').includes(q)
-      );
+      list = list.filter(u => (u.name||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q) || (u.phone||'').includes(q));
     }
 
     if (!list.length) {
@@ -458,38 +525,80 @@
     el.innerHTML = list.slice(0, 50).map(u => {
       const isBlocked = u.blocked === true;
       return `<tr>
-        <td>
-          <div style="font-weight:800;color:#0f1729;">${esc(u.name || 'User')}</div>
-          <div style="font-size:11px;color:#888;margin-top:2px;">Joined: ${u.createdAt ? tago(u.createdAt) : '—'}</div>
-        </td>
-        <td>
-          <div style="font-weight:600;">${esc(u.email || '—')}</div>
-          <div style="font-size:11.5px;color:#666;">📱 ${esc(u.phone || '—')}</div>
-        </td>
+        <td><div style="font-weight:800;color:#0f1729;">${esc(u.name || 'User')}</div></td>
+        <td><div style="font-weight:600;">${esc(u.email || '—')}</div><div style="font-size:11.5px;color:#666;">📱 ${esc(u.phone || '—')}</div></td>
         <td><span class="tg-pill ${isBlocked ? 'blocked' : 'active'}">${isBlocked ? 'Blocked' : 'Active'}</span></td>
         <td>
           ${isBlocked 
-            ? `<button class="tg-btn success" style="padding:6px 12px;font-size:11.5px;" onclick="toggleUserBlock('${u.id}', false)">✓ Unblock</button>`
-            : `<button class="tg-btn danger" style="padding:6px 12px;font-size:11.5px;" onclick="toggleUserBlock('${u.id}', true)">🚫 Block</button>`
+            ? `<button class="tg-btn success" style="padding:6px 12px;font-size:11.5px;" onclick="toggleUserBlock('${u.id}', '${esc(u.name)}', false)">✓ Unblock</button>`
+            : `<button class="tg-btn danger" style="padding:6px 12px;font-size:11.5px;" onclick="toggleUserBlock('${u.id}', '${esc(u.name)}', true)">🚫 Block</button>`
           }
         </td>
       </tr>`;
     }).join('');
   };
 
-  window.toggleUserBlock = async function(uid, block) {
+  window.toggleUserBlock = async function(uid, uname, block) {
     try {
       await db.collection('users').doc(uid).update({ blocked: block, updatedAt: FV.serverTimestamp() });
       toast(block ? 'User Blocked!' : 'User Unblocked!', 'suc');
+      
+      // ⭐ LOG THE ACTION
+      logAdminAction(block ? 'Blocked User' : 'Unblocked User', `Name: ${uname} | UID: ${uid}`);
+
       const idx = ALL_USERS.findIndex(u => u.id === uid);
       if (idx >= 0) ALL_USERS[idx].blocked = block;
       renderUsers();
-    } catch(e) {
-      toast('Failed: ' + e.message, 'err');
-    }
+    } catch(e) { toast('Failed: ' + e.message, 'err'); }
   };
 
-  // 8. PLATFORM SETTINGS LOGIC
+  // 9. DATE ANALYTICS LOGIC
+  window.runAnalytics = function() {
+    const from = document.getElementById('an-from').value;
+    const to = document.getElementById('an-to').value;
+    if (!from || !to) { toast('Please select both dates', 'err'); return; }
+
+    const start = new Date(from + 'T00:00:00').getTime();
+    const end = new Date(to + 'T23:59:59').getTime();
+    let rev = 0, ordCount = 0, delCount = 0;
+
+    ALL_ORDERS.forEach(o => {
+      const oTime = o.createdAt?.toDate?.()?.getTime?.() || 0;
+      if (oTime >= start && oTime <= end) {
+        const st = String(o.status||'').toLowerCase();
+        if (st.includes('cancel') || st.includes('return')) return;
+        ordCount++;
+        rev += Number(o.total || 0);
+        if (st.includes('deliver')) delCount++;
+      }
+    });
+
+    document.getElementById('an-rev').textContent = fmtINR(rev);
+    document.getElementById('an-ord').textContent = ordCount;
+    document.getElementById('an-del').textContent = delCount;
+  };
+
+  // 10. ADMIN LOGS LOGIC
+  window.renderLogs = function() {
+    const feed = document.getElementById('logs-feed');
+    if (!ALL_LOGS.length) {
+      feed.innerHTML = '<div style="padding:40px;text-align:center;color:#888;">No logs recorded yet.</div>';
+      return;
+    }
+
+    feed.innerHTML = ALL_LOGS.map(l => `
+      <div class="tg-feed-item">
+        <div class="tg-feed-icon admin">🛡️</div>
+        <div class="tg-feed-body">
+          <div class="tg-feed-title"><b>${esc(l.adminEmail)}</b> performed <b>${esc(l.action)}</b></div>
+          <div style="font-size:12px;color:#555;margin-top:4px;">${esc(l.details || '')}</div>
+          <div class="tg-feed-meta"><span>⏱ ${tago(l.timestamp)}</span></div>
+        </div>
+      </div>
+    `).join('');
+  };
+
+  // 11. PLATFORM SETTINGS LOGIC
   window.saveSettings = async function() {
     const tcs = document.getElementById('set-tcs-gstin').value.trim();
     const gst = Number(document.getElementById('set-gst-pct').value || 18);
@@ -499,13 +608,15 @@
         gstPercent: gst,
         updatedAt: FV.serverTimestamp()
       }, { merge: true });
+      
+      // ⭐ LOG THE ACTION
+      logAdminAction('Updated Platform Settings', `TCS GSTIN: ${tcs}, GST%: ${gst}`);
+
       toast('Settings saved successfully!', 'suc');
-    } catch(e) {
-      toast('Failed to save: ' + e.message, 'err');
-    }
+    } catch(e) { toast('Failed to save: ' + e.message, 'err'); }
   };
 
-  // 9. INIT & DATA LISTENERS
+  // 12. INIT & DATA LISTENERS
   auth.onAuthStateChanged(async (u) => {
     if (!u) { window.location.href = 'log-in.html'; return; }
     try {
@@ -514,11 +625,10 @@
       if (!['admin','superadmin'].includes(r)) {
         alert('Access Denied'); window.location.href = 'index.html'; return;
       }
+      CURRENT_ADMIN = u;
       
       // Hide Splash Screen
-      setTimeout(() => {
-        document.getElementById('tg-splash').classList.add('hide');
-      }, 1000);
+      setTimeout(() => { document.getElementById('tg-splash').classList.add('hide'); }, 1000);
 
       // Set default dates
       const today = new Date();
@@ -530,16 +640,23 @@
       db.collection('users').limit(1000).onSnapshot(snap => {
         ALL_USERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         if (document.getElementById('view-users').classList.contains('active')) renderUsers();
+        if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
       });
 
       db.collection('orders').limit(1000).onSnapshot(snap => {
         ALL_ORDERS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         if (document.getElementById('view-analytics').classList.contains('active')) runAnalytics();
+        if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
       });
 
       db.collection('user_activity').orderBy('timestamp', 'desc').limit(100).onSnapshot(snap => {
         ALL_ACTIVITY = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         if (document.getElementById('view-activity').classList.contains('active')) loadActivity();
+      }, err => {});
+
+      db.collection('admin_logs').orderBy('timestamp', 'desc').limit(100).onSnapshot(snap => {
+        ALL_LOGS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (document.getElementById('view-logs').classList.contains('active')) renderLogs();
       }, err => {});
 
       db.collection('siteSettings').doc('platform').get().then(snap => {
@@ -550,7 +667,29 @@
         }
       });
 
-      switchView('activity');
+      // ⭐ ABANDONED CARTS LISTENER ⭐
+      db.collection('carts').onSnapshot(async snap => {
+        let carts = [];
+        for (const doc of snap.docs) {
+          const itemsSnap = await doc.ref.collection('items').get();
+          if (!itemsSnap.empty) {
+            let total = 0;
+            let items = [];
+            itemsSnap.forEach(i => {
+              const itemData = i.data();
+              items.push(itemData);
+              total += Number(itemData.price || 0) * Number(itemData.qty || 1);
+            });
+            carts.push({ id: doc.id, items: items, total: total });
+          }
+        }
+        ALL_CARTS = carts;
+        if (document.getElementById('view-abandoned').classList.contains('active')) renderAbandonedCarts();
+        if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
+      });
+
+      // Default View
+      switchView('dashboard');
 
     } catch(e) {
       console.error(e);
