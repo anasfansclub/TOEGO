@@ -3638,8 +3638,8 @@ window.tgConfirmPay = async function() {
         gst: gstPct,
         gstIncluded: gstIncluded,
         gstAmount: Number((gstPct > 0 ? (gstIncluded ? lineTotal - (lineTotal / (1 + gstPct/100)) : lineTotal * gstPct / 100) : 0).toFixed(2)),
-         hsn: String(p.hsn || p.hsnCode || '').trim(),
-  sku: String(p.sku || '').trim(),
+        hsn: String(p.hsn || p.hsnCode || '').trim(),
+        sku: String(p.sku || '').trim(),
         sellerId: p.sellerId || p.seller_id || p.sid || p.sellerUid || '',
         sellerName: p.sellerName || p.shopName || ''
       });
