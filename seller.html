@@ -2314,6 +2314,24 @@ function updateProdStepUI() {
     tgDownloadGST();
   };
 
+   // ✅ Helper: Order item se HSN nikalo
+  function getHsnFromProduct(item) {
+    if (!item) return '0000';
+    if (item.hsn) return String(item.hsn).trim();
+    if (item.hsnCode) return String(item.hsnCode).trim();
+    const pid = item.productId || item.product_id || item.pid || item.productDocId;
+    if (pid) {
+      const p = PRODUCTS.find(x => x.id === pid);
+      if (p && p.hsn) return String(p.hsn).trim();
+    }
+    if (item.sku) {
+      const p = PRODUCTS.find(x => x.sku === item.sku);
+      if (p && p.hsn) return String(p.hsn).trim();
+    }
+    return '0000';
+  }
+
+  // ✅ MEESHO FORMAT GST REPORT — 2 Sheets: Sales + Returns
   window.tgDownloadGST = function() {
     const monthInput = (document.getElementById('tg-gst-month').value || '').trim();
     if (!monthInput) { toast('Please select a month', 'error'); return; }
@@ -2321,176 +2339,134 @@ function updateProdStepUI() {
     const year = Number(parts[0]);
     const month = Number(parts[1]);
     if (!year || !month) { toast('Invalid month', 'error'); return; }
+
     const startDate = new Date(year, month - 1, 1, 0, 0, 0);
     const endDate = new Date(year, month, 0, 23, 59, 59);
-    const orders = ORDERS.filter(o => {
+    const monthNum = month;
+    const fyStart = month >= 4 ? year : year - 1;
+
+    const deliveredOrders = ORDERS.filter(o => {
       if (normStatus(o) !== 'delivered') return false;
       const dd = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
       return dd && dd >= startDate && dd <= endDate;
     });
-    if (!orders.length) { toast('No delivered orders in ' + monthInput, 'error'); return; }
+
+    const returnedOrders = ORDERS.filter(o => {
+      const s = normStatus(o);
+      if (s !== 'returned' && s !== 'cancelled') return false;
+      const dd = o.returnApprovedAt?.toDate?.() || o.cancelledAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+      if (!dd) return false;
+      return dd >= startDate && dd <= endDate;
+    });
+
+    if (!deliveredOrders.length && !returnedOrders.length) {
+      toast('No sales/returns in ' + monthInput, 'error');
+      return;
+    }
+
     const sellerName = (SELLER && SELLER.shopName) || 'Seller';
-    const sellerGSTIN = (SELLER && SELLER.gst) || 'Not Registered';
-    const sellerState = String((SELLER && SELLER.state) || '').trim();
-    const sellerAddr = sellerAddrString();
-    const monthName = startDate.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
-    const fyStart = month >= 4 ? year : year - 1;
-    const fyLabel = String(fyStart).slice(-2) + '-' + String(fyStart + 1).slice(-2);
-    const rows = [];
-    let invoiceCounter = 1;
-    let totalBase = 0, totalCGST = 0, totalSGST = 0, totalIGST = 0, totalGST = 0, totalGross = 0;
+    const sellerGSTIN = (SELLER && SELLER.gst) || '';
+    const sellerUID = USER ? USER.uid : '';
+    const TCS_GSTIN = (SELLER && SELLER.tcsGstin) || '';
 
-    orders.forEach(o => {
+    const HEADERS = [
+      'identifier','sup_name','gstin','sub_order_num','order_date','hsn_code',
+      'quantity','gst_rate','total_taxable_sale_value','tax_amount',
+      'total_invoice_value','taxable_shipping','end_customer_state_new',
+      'enrollment_no','cancel_return_date','manifest_date','transaction_type',
+      'eco_tcs_gstin','financial_year','month_number','supplier_id'
+    ];
+
+    function buildRow(o, item, itemIdx, isReversal) {
+      const a = addrOf(o);
+      const qty = Number(item.qty || 1);
+      const price = Number(item.price || 0);
+      const gstPct = Number(item.gst || 18);
+      const gstIncluded = item.gstIncluded === true;
+
+      let taxableValue, taxAmount, totalInvoiceValue;
+      if (gstIncluded) {
+        totalInvoiceValue = price * qty;
+        taxableValue = totalInvoiceValue / (1 + gstPct / 100);
+        taxAmount = totalInvoiceValue - taxableValue;
+      } else {
+        taxableValue = price * qty;
+        taxAmount = taxableValue * gstPct / 100;
+        totalInvoiceValue = taxableValue + taxAmount;
+      }
+
+      const orderDate = (o.createdAt?.toDate?.() || new Date()).toISOString().slice(0, 10);
+      const deliveredDt = o.deliveredAt?.toDate?.() || o.updatedAt?.toDate?.() || null;
+      const manifestDate = deliveredDt ? deliveredDt.toISOString().slice(0, 10) : orderDate;
+      const returnDt = o.returnApprovedAt?.toDate?.() || o.cancelledAt?.toDate?.() || null;
+      const cancelReturnDate = returnDt ? returnDt.toISOString().slice(0, 10) : '';
+
+      const hsn = getHsnFromProduct(item);
+      const rev = (v) => isReversal ? -v : v;
+
+      return {
+        'identifier': 'toego',
+        'sup_name': sellerName,
+        'gstin': sellerGSTIN,
+        'sub_order_num': o.id + '_' + (itemIdx + 1),
+        'order_date': orderDate,
+        'hsn_code': hsn,
+        'quantity': isReversal ? 0 : qty,
+        'gst_rate': gstPct.toFixed(2),
+        'total_taxable_sale_value': rev(Number(taxableValue.toFixed(2))),
+        'tax_amount': rev(Number(taxAmount.toFixed(2))),
+        'total_invoice_value': rev(Number(totalInvoiceValue.toFixed(2))),
+        'taxable_shipping': 0,
+        'end_customer_state_new': String(a.state || '').toUpperCase(),
+        'enrollment_no': '',
+        'cancel_return_date': cancelReturnDate,
+        'manifest_date': manifestDate,
+        'transaction_type': '',
+        'eco_tcs_gstin': TCS_GSTIN,
+        'financial_year': String(fyStart),
+        'month_number': String(monthNum),
+        'supplier_id': sellerUID
+      };
+    }
+
+    const salesRows = [];
+    deliveredOrders.forEach(o => {
       const mi = myItems(o);
-      if (!mi.length) return;
-      const addr = addrOf(o);
-      const buyerState = String(addr.state || '').trim();
-      const isIntraState = !sellerState || !buyerState || sellerState.toLowerCase() === buyerState.toLowerCase();
-      const invoiceNo = 'TG/' + fyLabel + '/' + String(invoiceCounter).padStart(4, '0');
-      const invoiceDate = fdate(o.deliveredAt || o.updatedAt || o.createdAt);
-      invoiceCounter++;
-
-      mi.forEach(it => {
-        const qty = Number(it.qty || 1);
-        const price = Number(it.price || 0);
-        const lineTotal = price * qty;
-        const gstPct = Number(it.gst || 18);
-        const baseAmount = lineTotal / (1 + gstPct / 100);
-        const gstAmount = lineTotal - baseAmount;
-        const cgst = isIntraState ? gstAmount / 2 : 0;
-        const sgst = isIntraState ? gstAmount / 2 : 0;
-        const igst = isIntraState ? 0 : gstAmount;
-        totalBase += baseAmount;
-        totalCGST += cgst;
-        totalSGST += sgst;
-        totalIGST += igst;
-        totalGST += gstAmount;
-        totalGross += lineTotal;
-        const hsn = it.hsn || it.hsnCode || '6404';
-        rows.push({
-          'Invoice No': invoiceNo,
-          'Invoice Date': invoiceDate,
-          'Order ID': (o.id || '').slice(0, 12).toUpperCase(),
-          'Supply Type': isIntraState ? 'Intra-State' : 'Inter-State',
-          'Buyer Name': addr.name || o.userName || o.customerName || '',
-          'Buyer State': buyerState || 'N/A',
-          'Buyer Pincode': addr.pincode || '',
-          'Product Description': it.name || '',
-          'HSN/SAC': hsn,
-          'Size': it.size || '',
-          'Color': it.color || '',
-          'Qty': qty,
-          'Unit Price (₹)': Number(price.toFixed(2)),
-          'Gross Amount (₹)': Number(lineTotal.toFixed(2)),
-          'GST Rate %': gstPct,
-          'Taxable Value (₹)': Number(baseAmount.toFixed(2)),
-          'CGST (₹)': Number(cgst.toFixed(2)),
-          'SGST (₹)': Number(sgst.toFixed(2)),
-          'IGST (₹)': Number(igst.toFixed(2)),
-          'Total Tax (₹)': Number(gstAmount.toFixed(2)),
-          'Total with Tax (₹)': Number(lineTotal.toFixed(2))
-        });
+      mi.forEach((item, idx) => {
+        salesRows.push(buildRow(o, item, idx, false));
       });
     });
 
-    const summary = [
-      { 'Field': 'SELLER DETAILS', 'Value': '' },
-      { 'Field': 'Business Name', 'Value': sellerName },
-      { 'Field': 'Owner Name', 'Value': (SELLER && SELLER.ownerName) || '' },
-      { 'Field': 'GSTIN', 'Value': sellerGSTIN },
-      { 'Field': 'Registered Address', 'Value': sellerAddr },
-      { 'Field': 'State', 'Value': sellerState || 'N/A' },
-      { 'Field': 'Phone', 'Value': (SELLER && SELLER.phone) || '' },
-      { 'Field': 'Email', 'Value': (SELLER && SELLER.email) || '' },
-      { 'Field': '', 'Value': '' },
-      { 'Field': 'REPORT PERIOD', 'Value': '' },
-      { 'Field': 'Month', 'Value': monthName },
-      { 'Field': 'Financial Year', 'Value': fyLabel },
-      { 'Field': 'From Date', 'Value': startDate.toLocaleDateString('en-IN') },
-      { 'Field': 'To Date', 'Value': endDate.toLocaleDateString('en-IN') },
-      { 'Field': 'Generated On', 'Value': new Date().toLocaleString('en-IN') },
-      { 'Field': '', 'Value': '' },
-      { 'Field': 'SALES SUMMARY', 'Value': '' },
-      { 'Field': 'Total Orders', 'Value': orders.length },
-      { 'Field': 'Total Line Items', 'Value': rows.length },
-      { 'Field': '', 'Value': '' },
-      { 'Field': 'GST SUMMARY', 'Value': '' },
-      { 'Field': 'Total Taxable Value (₹)', 'Value': Number(totalBase.toFixed(2)) },
-      { 'Field': 'Total CGST (₹)', 'Value': Number(totalCGST.toFixed(2)) },
-      { 'Field': 'Total SGST (₹)', 'Value': Number(totalSGST.toFixed(2)) },
-      { 'Field': 'Total IGST (₹)', 'Value': Number(totalIGST.toFixed(2)) },
-      { 'Field': 'Total GST (₹)', 'Value': Number(totalGST.toFixed(2)) },
-      { 'Field': 'Total Invoice Value (₹)', 'Value': Number(totalGross.toFixed(2)) },
-      { 'Field': '', 'Value': '' },
-      { 'Field': 'DECLARATION', 'Value': '' },
-      { 'Field': 'Declaration', 'Value': 'I/We certify that the particulars given above are true and correct.' },
-      { 'Field': 'Signature', 'Value': sellerName + ' (Authorized Signatory)' }
-    ];
-
-    const stateMap = {};
-    rows.forEach(r => {
-      const st = r['Buyer State'] || 'N/A';
-      if (!stateMap[st]) stateMap[st] = { state: st, taxable: 0, cgst: 0, sgst: 0, igst: 0, total: 0, count: 0 };
-      stateMap[st].taxable += r['Taxable Value (₹)'];
-      stateMap[st].cgst += r['CGST (₹)'];
-      stateMap[st].sgst += r['SGST (₹)'];
-      stateMap[st].igst += r['IGST (₹)'];
-      stateMap[st].total += r['Total with Tax (₹)'];
-      stateMap[st].count += 1;
+    const returnRows = [];
+    returnedOrders.forEach(o => {
+      const mi = myItems(o);
+      mi.forEach((item, idx) => {
+        returnRows.push(buildRow(o, item, idx, false));
+        returnRows.push(buildRow(o, item, idx, true));
+      });
     });
-    const stateBreakup = Object.values(stateMap).map(s => ({
-      'Buyer State': s.state,
-      'Items': s.count,
-      'Taxable Value (₹)': Number(s.taxable.toFixed(2)),
-      'CGST (₹)': Number(s.cgst.toFixed(2)),
-      'SGST (₹)': Number(s.sgst.toFixed(2)),
-      'IGST (₹)': Number(s.igst.toFixed(2)),
-      'Total Invoice Value (₹)': Number(s.total.toFixed(2))
-    })).sort((a, b) => b['Total Invoice Value (₹)'] - a['Total Invoice Value (₹)']);
-
-    const hsnMap = {};
-    rows.forEach(r => {
-      const h = String(r['HSN/SAC'] || '6404');
-      if (!hsnMap[h]) hsnMap[h] = { hsn: h, rate: r['GST Rate %'], qty: 0, taxable: 0, tax: 0, total: 0 };
-      hsnMap[h].qty += r['Qty'];
-      hsnMap[h].taxable += r['Taxable Value (₹)'];
-      hsnMap[h].tax += r['Total Tax (₹)'];
-      hsnMap[h].total += r['Total with Tax (₹)'];
-    });
-    const hsnBreakup = Object.values(hsnMap).map(h => ({
-      'HSN/SAC': h.hsn,
-      'GST Rate %': h.rate,
-      'Total Qty': h.qty,
-      'Taxable Value (₹)': Number(h.taxable.toFixed(2)),
-      'Total Tax (₹)': Number(h.tax.toFixed(2)),
-      'Total Invoice Value (₹)': Number(h.total.toFixed(2))
-    })).sort((a, b) => b['Taxable Value (₹)'] - a['Taxable Value (₹)']);
 
     try {
       const wb = XLSX.utils.book_new();
-      const wsSum = XLSX.utils.json_to_sheet(summary);
-      wsSum['!cols'] = [{ wch: 28 }, { wch: 55 }];
-      XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
-      const ws = XLSX.utils.json_to_sheet(rows);
-      ws['!cols'] = [
-        { wch: 16 }, { wch: 12 }, { wch: 14 }, { wch: 13 }, { wch: 22 }, { wch: 14 },
-        { wch: 12 }, { wch: 32 }, { wch: 10 }, { wch: 8 }, { wch: 10 }, { wch: 6 },
-        { wch: 12 }, { wch: 14 }, { wch: 10 }, { wch: 14 }, { wch: 10 }, { wch: 10 },
-        { wch: 10 }, { wch: 12 }, { wch: 14 }
-      ];
-      XLSX.utils.book_append_sheet(wb, ws, 'GST Details');
-      const wsState = XLSX.utils.json_to_sheet(stateBreakup);
-      wsState['!cols'] = [{ wch: 18 }, { wch: 8 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 18 }];
-      XLSX.utils.book_append_sheet(wb, wsState, 'State-wise');
-      const wsHSN = XLSX.utils.json_to_sheet(hsnBreakup);
-      wsHSN['!cols'] = [{ wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 16 }, { wch: 14 }, { wch: 18 }];
-      XLSX.utils.book_append_sheet(wb, wsHSN, 'HSN-wise');
-      const fname = 'TOEGO_GST_' + sellerName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + monthInput + '.xlsx';
+
+      if (salesRows.length) {
+        const ws1 = XLSX.utils.json_to_sheet(salesRows, { header: HEADERS });
+        ws1['!cols'] = HEADERS.map(h => ({ wch: Math.max(14, h.length + 3) }));
+        XLSX.utils.book_append_sheet(wb, ws1, 'Sales');
+      }
+
+      if (returnRows.length) {
+        const ws2 = XLSX.utils.json_to_sheet(returnRows, { header: HEADERS });
+        ws2['!cols'] = HEADERS.map(h => ({ wch: Math.max(14, h.length + 3) }));
+        XLSX.utils.book_append_sheet(wb, ws2, 'Returns');
+      }
+
+      const fname = 'TOEGO_TCS_' + sellerName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + monthInput + '.xlsx';
       XLSX.writeFile(wb, fname);
-      toast('✓ GST Report downloaded (' + rows.length + ' items)', 'success');
+      toast('✓ Downloaded — ' + salesRows.length + ' sales, ' + returnRows.length + ' return entries', 'success');
     } catch(err) {
       console.error('[GST ERROR]', err);
-      toast('Failed to generate report: ' + (err.message || 'Error'), 'error');
+      toast('Failed: ' + (err.message || 'Error'), 'error');
     }
   };
 
