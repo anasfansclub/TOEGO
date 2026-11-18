@@ -7,7 +7,7 @@
   <link rel="manifest" href="/manifest.json">
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="SyTviiia-uKwYUNk6qM5st2Caom6d4tQopJJHPpmtxs" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ✅ PRIMARY SEO TITLE -->
   <title>TOEGO - Buy Footwear, Shoes, Watches & Fashion Online in India</title>
@@ -34,7 +34,6 @@
 
   <!-- ✅ HREFLANG (India) -->
   <link rel="alternate" hreflang="en-in" href="https://toego.in/shop-home.html">
-  <link rel="alternate" hreflang="hi-in" href="https://toego.in/shop-home.html">
   <link rel="alternate" hreflang="x-default" href="https://toego.in/">
 
   <!-- ✅ FAVICON (ALL SIZES - Google Approved PNG) -->
@@ -557,6 +556,7 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 .tg-mft h5{color:#9ba2ab;font-size:12px;text-transform:uppercase;margin:0 0 12px;font-weight:700;letter-spacing:.5px;}
 .tg-mft a{display:block;padding:5px 0;font-size:13px;opacity:.85;transition:opacity .15s,color .15s;}
 .tg-mft a:hover{opacity:1;color:#ffe500;}
+   
 .tg-mft-bottom{max-width:100%;margin:32px auto 0;padding:22px 20px 0;border-top:1px solid #2b3a4d;text-align:center;font-size:12px;color:#9ba2ab;}
 
 .tg-mbnav{position:fixed!important;bottom:0!important;left:0!important;right:0!important;background:#fff;border-top:1px solid #e0e0e0;display:flex;z-index:9999;box-shadow:0 -2px 8px rgba(0,0,0,.06);padding-bottom:env(safe-area-inset-bottom,0);}
@@ -2076,6 +2076,145 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   background: #2874f0 !important; /* Gradient hatakar solid blue */
   background-image: none !important;
 }
+/* ═══════════ SCROLL SMOOTHNESS FIX ═══════════ */
+#tg-meesho{background-attachment:scroll!important;}
+.tg-msearch-placeholder,
+.tg-mcart-badge,
+.tg-mflash,
+.tg-mflash-cta,
+.tg-mabanner-slide::after,
+.tg-mcard,
+.tg-lcard,
+.tg-mini{animation:none!important;}
+.tg-mabanner-dots,
+.tg-mabanner-count{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+/* ═════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   TOEGO SEO ADDITIONS + SCROLL FIX
+   ═══════════════════════════════════════════════════════════ */
+
+/* ✅ H1 - visually hidden, Google-readable */
+.tg-seo-h1{
+  position:absolute!important;left:-9999px!important;top:auto!important;
+  width:1px!important;height:1px!important;overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+  margin:0!important;padding:0!important;border:0!important;
+}
+
+/* ✅ USP Trust Strip */
+.tg-usp-strip{
+  display:grid!important;grid-template-columns:repeat(4,1fr)!important;
+  gap:10px!important;background:#fff!important;border-radius:12px!important;
+  padding:14px 12px!important;margin:8px 0 12px!important;
+  box-shadow:0 2px 8px rgba(15,23,41,.06)!important;
+  border:1px solid rgba(40,116,240,.08)!important;
+}
+.tg-usp-item{
+  display:flex!important;align-items:center!important;gap:10px!important;
+  padding:6px 8px!important;border-radius:8px!important;
+  transition:background-color .15s!important;
+}
+.tg-usp-item:hover{background:#f0f5ff!important;}
+.tg-usp-icon{
+  font-size:26px!important;line-height:1!important;flex-shrink:0!important;
+  width:42px!important;height:42px!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;
+  background:linear-gradient(135deg,#eef3ff,#e0eaff)!important;
+  border-radius:10px!important;
+}
+.tg-usp-text{display:flex!important;flex-direction:column!important;gap:2px!important;min-width:0!important;}
+.tg-usp-text strong{font-size:12.5px!important;font-weight:800!important;color:#0d47a1!important;line-height:1.2!important;}
+.tg-usp-text span{font-size:10.5px!important;font-weight:600!important;color:#666!important;line-height:1.2!important;}
+@media (max-width:768px){
+  .tg-usp-strip{grid-template-columns:repeat(4,1fr)!important;gap:3px!important;padding:8px 5px!important;}
+  .tg-usp-item{flex-direction:column!important;align-items:center!important;text-align:center!important;gap:3px!important;padding:3px 1px!important;}
+  .tg-usp-icon{width:30px!important;height:30px!important;font-size:17px!important;border-radius:8px!important;}
+  .tg-usp-text{gap:0!important;align-items:center!important;}
+  .tg-usp-text strong{font-size:9px!important;line-height:1.15!important;white-space:normal!important;overflow:visible!important;}
+  .tg-usp-text span{font-size:7.5px!important;line-height:1.15!important;white-space:normal!important;overflow:visible!important;}
+}
+@media (max-width:380px){
+  .tg-usp-strip{gap:2px!important;padding:6px 4px!important;}
+  .tg-usp-icon{width:26px!important;height:26px!important;font-size:15px!important;border-radius:7px!important;}
+  .tg-usp-text strong{font-size:8px!important;}
+  .tg-usp-text span{font-size:7px!important;}
+}
+
+/* ✅ SEO Intro Text Block */
+.tg-seo-intro{
+  background:#fff!important;border-radius:14px!important;padding:24px 28px!important;
+  margin:16px 0 20px!important;box-shadow:0 2px 10px rgba(15,23,41,.06)!important;
+  border:1px solid rgba(40,116,240,.06)!important;color:#212121!important;line-height:1.7!important;
+}
+.tg-seo-intro h2{font-size:24px!important;font-weight:900!important;color:#0d47a1!important;margin:0 0 14px!important;line-height:1.3!important;letter-spacing:-.4px!important;}
+.tg-seo-intro h3{font-size:17px!important;font-weight:800!important;color:#0d47a1!important;margin:20px 0 10px!important;line-height:1.3!important;}
+.tg-seo-intro p{font-size:14.5px!important;color:#424242!important;line-height:1.75!important;margin:0 0 12px!important;}
+.tg-seo-intro p strong{color:#0d47a1!important;font-weight:800!important;}
+.tg-seo-intro .tg-seo-list{list-style:none!important;padding:0!important;margin:10px 0 16px!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px 20px!important;}
+.tg-seo-intro .tg-seo-list li{position:relative!important;padding-left:22px!important;font-size:14px!important;color:#424242!important;line-height:1.5!important;}
+.tg-seo-intro .tg-seo-list li::before{content:'✅'!important;position:absolute!important;left:0!important;top:0!important;font-size:13px!important;}
+.tg-seo-intro .tg-seo-list li strong{color:#0d47a1!important;font-weight:800!important;}
+@media (max-width:768px){
+  .tg-seo-intro{padding:16px 14px!important;margin:10px 0 14px!important;border-radius:10px!important;}
+  .tg-seo-intro h2{font-size:18px!important;margin-bottom:10px!important;}
+  .tg-seo-intro h3{font-size:15px!important;margin:16px 0 8px!important;}
+  .tg-seo-intro p{font-size:13px!important;line-height:1.65!important;margin-bottom:10px!important;}
+  .tg-seo-intro .tg-seo-list{grid-template-columns:1fr!important;gap:6px!important;}
+  .tg-seo-intro .tg-seo-list li{font-size:12.5px!important;padding-left:20px!important;}
+}
+
+/* ✅ Visible FAQ */
+.tg-faq{background:#fff!important;border-radius:14px!important;padding:24px 28px!important;margin:16px 0 20px!important;box-shadow:0 2px 10px rgba(15,23,41,.06)!important;border:1px solid rgba(40,116,240,.06)!important;}
+.tg-faq h2{font-size:24px!important;font-weight:900!important;color:#0d47a1!important;margin:0 0 16px!important;line-height:1.3!important;letter-spacing:-.4px!important;}
+.tg-faq-item{border:1px solid #e8ecf3!important;border-radius:10px!important;margin-bottom:10px!important;overflow:hidden!important;transition:border-color .2s, box-shadow .2s!important;background:#fafbfd!important;}
+.tg-faq-item[open]{border-color:#2874f0!important;box-shadow:0 3px 12px rgba(40,116,240,.12)!important;background:#fff!important;}
+.tg-faq-item summary{list-style:none!important;cursor:pointer!important;padding:14px 18px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;font-size:14.5px!important;font-weight:700!important;color:#212121!important;line-height:1.4!important;user-select:none!important;transition:background-color .15s!important;}
+.tg-faq-item summary::-webkit-details-marker{display:none!important;}
+.tg-faq-item summary:hover{background:#f0f5ff!important;}
+.tg-faq-icon{font-size:22px!important;font-weight:400!important;color:#2874f0!important;line-height:1!important;transition:transform .25s!important;flex-shrink:0!important;width:24px!important;height:24px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+.tg-faq-item[open] .tg-faq-icon{transform:rotate(45deg)!important;color:#fb641b!important;}
+.tg-faq-answer{padding:0 18px 16px!important;border-top:1px solid #eef2f8!important;}
+.tg-faq-answer p{margin:12px 0 0!important;font-size:13.5px!important;color:#424242!important;line-height:1.7!important;}
+.tg-faq-answer strong{color:#0d47a1!important;font-weight:800!important;}
+.tg-faq-answer a{color:#2874f0!important;font-weight:700!important;text-decoration:underline!important;}
+@media (max-width:768px){
+  .tg-faq{padding:16px 14px!important;margin:10px 0 14px!important;border-radius:10px!important;}
+  .tg-faq h2{font-size:18px!important;margin-bottom:12px!important;}
+  .tg-faq-item{margin-bottom:8px!important;border-radius:8px!important;}
+  .tg-faq-item summary{padding:12px 14px!important;font-size:13px!important;gap:10px!important;}
+  .tg-faq-icon{font-size:20px!important;width:20px!important;height:20px!important;}
+  .tg-faq-answer{padding:0 14px 14px!important;}
+  .tg-faq-answer p{font-size:12.5px!important;line-height:1.65!important;}
+}
+
+/* ✅ Footer SEO Links */
+.tg-mft-seo-links{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:32px!important;max-width:1200px!important;margin:32px auto 0!important;padding:32px 20px 0!important;border-top:1px solid #2b3a4d!important;}
+.tg-mft-col h5{color:#ffe500!important;font-size:12px!important;font-weight:900!important;text-transform:uppercase!important;letter-spacing:1px!important;margin:0 0 12px!important;}
+.tg-mft-col a{display:block!important;color:rgba(255,255,255,.75)!important;font-size:13px!important;font-weight:500!important;text-decoration:none!important;padding:6px 0!important;transition:color .15s, padding-left .15s!important;}
+.tg-mft-col a:hover{color:#ffe500!important;padding-left:4px!important;}
+@media (max-width:768px){
+  .tg-mft-seo-links{grid-template-columns:1fr 1fr!important;gap:20px 16px!important;padding:24px 16px 0!important;margin-top:24px!important;}
+  .tg-mft-col h5{font-size:11px!important;margin-bottom:8px!important;}
+  .tg-mft-col a{font-size:12px!important;padding:5px 0!important;}
+}
+@media (max-width:380px){
+  .tg-mft-seo-links{gap:16px 10px!important;}
+  .tg-mft-col a{font-size:11px!important;}
+}
+
+/* ═══════════ SCROLL SMOOTHNESS FIX ═══════════ */
+#tg-meesho{background-attachment:scroll!important;}
+.tg-msearch-placeholder,
+.tg-mcart-badge,
+.tg-mflash,
+.tg-mflash-cta,
+.tg-mabanner-slide::after,
+.tg-mcard,
+.tg-lcard,
+.tg-mini{animation:none!important;}
+.tg-mabanner-dots,
+.tg-mabanner-count{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+
 </style>
 <script type="speculationrules">
 {
@@ -2115,6 +2254,40 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
 </div>
 
 <div id="tg-meesho">
+    <!-- ✅ SEO H1 - hidden but readable -->
+  <h1 class="tg-seo-h1">Buy Footwear, Shoes, Watches & Fashion Online in India — TOEGO</h1>
+
+  <!-- ✅ USP TRUST STRIP -->
+  <div class="tg-usp-strip" aria-label="Why shop at TOEGO">
+    <div class="tg-usp-item">
+      <span class="tg-usp-icon">🚚</span>
+      <div class="tg-usp-text">
+        <strong>Free Delivery</strong>
+        <span>Across India</span>
+      </div>
+    </div>
+    <div class="tg-usp-item">
+      <span class="tg-usp-icon">↩️</span>
+      <div class="tg-usp-text">
+        <strong>7-Day Returns</strong>
+        <span>Easy & Hassle-free</span>
+      </div>
+    </div>
+    <div class="tg-usp-item">
+      <span class="tg-usp-icon">🔒</span>
+      <div class="tg-usp-text">
+        <strong>100% Secure</strong>
+        <span>UPI, Cards, COD</span>
+      </div>
+    </div>
+    <div class="tg-usp-item">
+      <span class="tg-usp-icon">⭐</span>
+      <div class="tg-usp-text">
+        <strong>Best Prices</strong>
+        <span>Guaranteed</span>
+      </div>
+    </div>
+  </div>
   <header class="tg-mhd" id="tg-mhd">
     <div class="tg-mhd-inner">
             <a href="shop-home.html" class="tg-mlogo" style="display:flex; align-items:center; gap:8px;">
@@ -2182,13 +2355,100 @@ header#top,#top_menu,nav.o_main_navbar,.o_main_navbar,#wrapwrap>header,footer#bo
   </section>
 
 
+  <!-- ✅ SEO CATEGORY INTRO TEXT -->
+  <section class="tg-seo-intro" aria-label="About TOEGO Online Shopping">
 
+    <h2>Shop Footwear, Fashion & Accessories Online at Best Prices in India</h2>
+
+    <p>
+      Welcome to <strong>TOEGO</strong> — India's trusted online shopping destination for 
+      <strong>footwear, slippers, sandals, sneakers, watches, bags and electronic accessories</strong>. 
+      Whether you're looking for stylish running shoes, comfortable daily-wear slippers, trendy 
+      sneakers for men and women, or a premium wristwatch to complete your look, TOEGO brings 
+      you the best collection at unbeatable prices — all in one place.
+    </p>
+
+    <p>
+      We understand that shopping online should be simple, safe, and affordable. That's why 
+      every product on TOEGO is carefully curated, quality-checked, and priced to fit every 
+      budget. From <strong>budget-friendly slippers under ₹299</strong> to 
+      <strong>premium branded watches</strong>, we have something for everyone. 
+      Enjoy <strong>free delivery across India</strong>, easy 7-day returns, and 
+      100% secure payment options including UPI, credit cards, debit cards, net banking, 
+      and Cash on Delivery.
+    </p>
+
+    <h3>Why Choose TOEGO for Online Footwear Shopping?</h3>
+
+    <ul class="tg-seo-list">
+      <li><strong>Wide Range:</strong> 1000+ products across footwear, fashion, watches & electronics</li>
+      <li><strong>Best Prices:</strong> Daily deals, flash sales, and discounts up to 70% off</li>
+      <li><strong>Fast Delivery:</strong> Ships to almost all pin codes in India within 3–7 business days</li>
+      <li><strong>Easy Returns:</strong> 7-day hassle-free return policy on eligible products</li>
+      <li><strong>100% Secure Payments:</strong> UPI, Cards, Net Banking, and Cash on Delivery</li>
+      <li><strong>Trusted Quality:</strong> Every product verified for durability and comfort</li>
+    </ul>
+
+    <h3>Popular Categories on TOEGO</h3>
+
+    <p>
+      Browse our most-loved categories: <strong>men's shoes</strong>, <strong>women's footwear</strong>, 
+      <strong>casual sneakers</strong>, <strong>formal shoes</strong>, <strong>sports shoes</strong>, 
+      <strong>daily-wear slippers</strong>, <strong>bathroom slippers</strong>, 
+      <strong>sandals & flip-flops</strong>, <strong>analog & digital watches</strong>, 
+      <strong>smart watches</strong>, <strong>backpacks</strong>, <strong>wallets</strong>, 
+      and <strong>mobile & electronic accessories</strong>. New arrivals drop every week — 
+      so there's always something fresh to explore.
+    </p>
+
+    <p>
+      Start shopping today and experience why thousands of happy customers across India 
+      trust <strong>TOEGO.in</strong> for their everyday footwear and fashion needs. 
+      Quality products, honest prices, and reliable delivery — that's the TOEGO promise.
+    </p>
+  </section>
+  
 <footer class="tg-mft">
     <div class="tg-mft-inner">
+
       <div><h5>Shop</h5><a href="products.html">All Products</a><a href="products.html?sort=newest">New Arrivals</a><a href="products.html?sale=50">Sale</a></div>
       <div><h5>Help</h5><a href="payments.html">Payments</a><a href="shipping.html">Shipping</a><a href="returns.html">Returns</a></div>
       <div><h5>Company</h5><a href="about.html">About Us</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a></div>
       <div><h5>Sell on TOEGO</h5><a href="seller-apply.html">Become a Seller</a><a href="seller.html">Seller Dashboard</a></div>
+    </div>
+        <!-- ✅ SEO FOOTER LINKS — Real <a> tags for Google crawl -->
+    <div class="tg-mft-seo-links" aria-label="Important pages">
+      <div class="tg-mft-col">
+        <h5>Shop</h5>
+        <a href="/products.html?category=shoes">Shoes & Sneakers</a>
+        <a href="/products.html?category=slippers">Slippers & Sandals</a>
+        <a href="/products.html?category=watches">Watches</a>
+        <a href="/products.html?category=bags">Bags & Backpacks</a>
+        <a href="/products.html?category=electronics">Electronic Accessories</a>
+        <a href="/products.html">All Products</a>
+      </div>
+      <div class="tg-mft-col">
+        <h5>Company</h5>
+        <a href="/about.html">About Us</a>
+        <a href="/contact.html">Contact Us</a>
+        <a href="/blog/">Blog</a>
+        <a href="/careers.html">Careers</a>
+      </div>
+      <div class="tg-mft-col">
+        <h5>Help</h5>
+        <a href="/track-order.html">Track Order</a>
+        <a href="/returns.html">Returns & Refunds</a>
+        <a href="/shipping.html">Shipping Policy</a>
+        <a href="/faq.html">FAQ</a>
+        <a href="/size-guide.html">Size Guide</a>
+      </div>
+      <div class="tg-mft-col">
+        <h5>Legal</h5>
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms & Conditions</a>
+        <a href="/refund-policy.html">Refund Policy</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
     </div>
   <div class="tg-mft-bottom" style="display:flex;flex-direction:column;align-items:center;gap:14px;">
 
