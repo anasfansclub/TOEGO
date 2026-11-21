@@ -3904,104 +3904,144 @@ function getFlashEnd() {
       if (!allProducts.length) renderProducts(true);
     }
   }
-  async function loadReviewsForProducts() {
-    try {
-      const allPids = allProducts.map(p => p.id).filter(Boolean);
-      if (!allPids.length) return;
+// ═══════════════════════════════════════════════════════════
+// TOEGO RATINGS SYSTEM — FIXED VERSION
+// ═══════════════════════════════════════════════════════════
 
-      const now = Date.now();
-      const pids = allPids.filter(pid => {
-        const cached = _ratingsMap.get(pid);
-        return !cached || (now - cached.ts) > RATINGS_TTL;
-      });
+async function loadReviewsForProducts(forceRefresh) {
+  try {
+    const allPids = allProducts.map(p => p.id).filter(Boolean);
+    if (!allPids.length) return;
 
-      if (!pids.length) {
-        console.log('[ratings] all fresh from cache:', _ratingsMap.size);
-        updateRatingsInPlace();
-        return;
-      }
+    const now = Date.now();
+    const pids = forceRefresh
+      ? allPids
+      : allPids.filter(pid => {
+          const cached = _ratingsMap.get(pid);
+          return !cached || (now - cached.ts) > RATINGS_TTL;
+        });
 
-      console.log('[ratings] fetching for', pids.length, 'products');
-
-      const all = [];
-      const chunks = [];
-      for (let i = 0; i < pids.length; i += 10) chunks.push(pids.slice(i, i + 10));
-
-      for (let i = 0; i < chunks.length; i += 3) {
-        const batch = chunks.slice(i, i + 3);
-        await Promise.all(batch.map(async chunk => {
-          try {
-            const snap = await db.collection('reviews').where('productId', 'in', chunk).limit(300).get();
-            snap.forEach(d => all.push({ ...d.data(), id: d.id }));
-          } catch(e) {}
-        }));
-      }
-
-      allReviews = all;
-
-      const agg = new Map();
-      all.forEach(r => {
-        const pid = r.productId;
-        if (!pid) return;
-        const rt = Number(r.rating || 0);
-        if (rt <= 0) return;
-        if (!agg.has(pid)) agg.set(pid, { sum: 0, count: 0 });
-        const a = agg.get(pid);
-        a.sum += rt;
-        a.count += 1;
-      });
-
-      agg.forEach((a, pid) => {
-        if (a.count > 0) {
-          _ratingsMap.set(pid, {
-            avg: a.sum / a.count,
-            count: a.count,
-            ts: now
-          });
-        }
-      });
-
-      saveRatingsCache();
+    if (!pids.length) {
+      console.log('[ratings] all fresh from cache:', _ratingsMap.size);
       updateRatingsInPlace();
-      console.log('[ratings] ✓ loaded', agg.size, 'products,', all.length, 'reviews total');
-    } catch(e) {
-      console.warn('[ratings] load failed:', e && e.message);
+      return;
     }
-  }
 
-  function updateRatingsInPlace() {
-    document.querySelectorAll('[data-rating-pid]').forEach(el => {
-      const pid = el.dataset.ratingPid;
-      const type = el.dataset.ratingType;
-      const r = getProductRating(pid);
-      if (type === 'mcard') {
-        el.innerHTML = r.hasRating
-          ? '<span class="tg-mcard-rating-star">' + r.avg.toFixed(1) + ' ' + starSvg() + '</span><span class="tg-mcard-rating-count">(' + r.count + ')</span>'
-          : '<span class="tg-mcard-rating-star">New ' + starSvg() + '</span>';
-        el.classList.toggle('no-rating', !r.hasRating);
-      } else if (type === 'lcard') {
-        el.innerHTML = r.hasRating
-          ? '<span class="tg-lcard-rating-star">' + r.avg.toFixed(1) + ' ' + starSvg() + '</span><span class="tg-lcard-rating-count">(' + r.count + ')</span>'
-          : '<span class="tg-lcard-rating-star">New ' + starSvg() + '</span>';
-        el.classList.toggle('no-rating', !r.hasRating);
+    console.log('[ratings] fetching for', pids.length, 'products', forceRefresh ? '(forced)' : '');
+
+    const fetchedReviews = [];
+    const chunks = [];
+    for (let i = 0; i < pids.length; i += 10) chunks.push(pids.slice(i, i + 10));
+
+    for (let i = 0; i < chunks.length; i += 3) {
+      const batch = chunks.slice(i, i + 3);
+      await Promise.all(batch.map(async chunk => {
+        try {
+          // ✅ BUG 1 FIX: limit hata diya — chunk pe limit lagana galat tha
+          const snap = await db.collection('reviews')
+            .where('productId', 'in', chunk)
+            .get();
+          snap.forEach(d => fetchedReviews.push({ ...d.data(), id: d.id }));
+        } catch(e) {
+          console.warn('[ratings] chunk failed:', e && e.message);
+        }
+      }));
+    }
+
+    // ✅ BUG 2 FIX: merge karo, replace mat karo
+    const fetchedPids = new Set(pids);
+    const keptReviews = allReviews.filter(r => !fetchedPids.has(r.productId));
+    allReviews = [...keptReviews, ...fetchedReviews];
+
+    // ✅ Rebuild aggregate for ALL products from allReviews
+    const agg = new Map();
+    allReviews.forEach(r => {
+      const pid = r.productId;
+      if (!pid) return;
+      const rt = Number(r.rating || 0);
+      if (rt <= 0) return;
+      if (!agg.has(pid)) agg.set(pid, { sum: 0, count: 0 });
+      const a = agg.get(pid);
+      a.sum += rt;
+      a.count += 1;
+    });
+
+    // ✅ BUG 3 FIX: har product ke liye cache set karo (0 bhi)
+    pids.forEach(pid => {
+      const a = agg.get(pid);
+      if (a && a.count > 0) {
+        _ratingsMap.set(pid, {
+          avg: a.sum / a.count,
+          count: a.count,
+          ts: now
+        });
+      } else {
+        _ratingsMap.set(pid, { avg: 0, count: 0, ts: now });
       }
     });
-  }
 
-  function getProductRating(pid) {
-    const cached = _ratingsMap.get(pid);
-    if (cached && cached.count > 0) {
-      return { avg: cached.avg, count: cached.count, hasRating: true };
-    }
-    const reviews = allReviews.filter(r => r.productId === pid);
-    if (!reviews.length) return { avg: 0, count: 0, hasRating: false };
-    let sum = 0, cnt = 0;
-    reviews.forEach(r => { const rt = Number(r.rating || 0); if (rt > 0) { sum += rt; cnt++; } });
-    if (!cnt) return { avg: 0, count: 0, hasRating: false };
-    const result = { avg: sum / cnt, count: cnt, hasRating: true };
-    _ratingsMap.set(pid, { ...result, ts: Date.now() });
-    return result;
+    saveRatingsCache();
+    updateRatingsInPlace();
+    console.log('[ratings] ✓ loaded', agg.size, 'products,', fetchedReviews.length, 'reviews');
+  } catch(e) {
+    console.warn('[ratings] load failed:', e && e.message);
   }
+}
+
+// ✅ NAYA: Rating submit ke baad cache clear karne ke liye
+function invalidateProductRating(pid) {
+  if (!pid) return;
+  _ratingsMap.delete(pid);
+  allReviews = allReviews.filter(r => r.productId !== pid);
+  saveRatingsCache();
+  console.log('[ratings] invalidated:', pid);
+}
+
+// ✅ NAYA: Rating save hone ke turant baad call karo
+async function refreshRatingAfterSubmit(pid) {
+  invalidateProductRating(pid);
+  await loadReviewsForProducts(true);   // force refresh
+  updateRatingsInPlace();
+}
+
+function updateRatingsInPlace() {
+  document.querySelectorAll('[data-rating-pid]').forEach(el => {
+    const pid = el.dataset.ratingPid;
+    const type = el.dataset.ratingType;
+    const r = getProductRating(pid);
+    if (type === 'mcard') {
+      el.innerHTML = r.hasRating
+        ? '<span class="tg-mcard-rating-star">' + r.avg.toFixed(1) + ' ' + starSvg() + '</span><span class="tg-mcard-rating-count">(' + r.count + ')</span>'
+        : '<span class="tg-mcard-rating-star">New ' + starSvg() + '</span>';
+      el.classList.toggle('no-rating', !r.hasRating);
+    } else if (type === 'lcard') {
+      el.innerHTML = r.hasRating
+        ? '<span class="tg-lcard-rating-star">' + r.avg.toFixed(1) + ' ' + starSvg() + '</span><span class="tg-lcard-rating-count">(' + r.count + ')</span>'
+        : '<span class="tg-lcard-rating-star">New ' + starSvg() + '</span>';
+      el.classList.toggle('no-rating', !r.hasRating);
+    }
+  });
+}
+
+// ✅ BUG 3 FIX: cache hit me count=0 ho to bhi return karo
+function getProductRating(pid) {
+  const cached = _ratingsMap.get(pid);
+  if (cached) {
+    return {
+      avg: Number(cached.avg) || 0,
+      count: Number(cached.count) || 0,
+      hasRating: (Number(cached.count) || 0) > 0
+    };
+  }
+  const reviews = allReviews.filter(r => r.productId === pid);
+  if (!reviews.length) return { avg: 0, count: 0, hasRating: false };
+  let sum = 0, cnt = 0;
+  reviews.forEach(r => { const rt = Number(r.rating || 0); if (rt > 0) { sum += rt; cnt++; } });
+  if (!cnt) return { avg: 0, count: 0, hasRating: false };
+  const result = { avg: sum / cnt, count: cnt, hasRating: true };
+  _ratingsMap.set(pid, { ...result, ts: Date.now() });
+  return result;
+}
 
   function filterByCategory(list) {
     if (currentCategory === 'all') return list;
