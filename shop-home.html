@@ -5035,6 +5035,94 @@ else if(y < 25 && isScrolled){
     setTimeout(function(){ prefetch(p); }, 3000);
   });
 })();
+
+</script>
+<!-- ✅ TOEGO FAST LOAD FIX — No empty flash, skeleton loading -->
+<script>
+(function () {
+  'use strict';
+  var EMPTY_SELECTOR   = '.tg-mempty';
+  var PRODUCT_SELECTOR = '.tg-mcard, .tg-lcard, .tg-mini';
+  var GRID_SELECTOR    = '.tg-mgrid, .tg-mgrid-lg, .tg-mmini';
+  var GRACE_MS         = 8000;
+
+  var css = document.createElement('style');
+  css.textContent =
+    EMPTY_SELECTOR + '{display:none!important;}' +
+    'body.tg-loaded ' + EMPTY_SELECTOR + '{display:block!important;}' +
+    '.tg-skel{background:#fff;border:1px solid #ececec;border-radius:12px;overflow:hidden;}' +
+    '.tg-skel-img{aspect-ratio:1/1;background:linear-gradient(90deg,#eef1f6 25%,#e2e8f0 50%,#eef1f6 75%);background-size:200% 100%;animation:tgSkelShine 1.3s linear infinite;}' +
+    '.tg-skel-line{height:12px;margin:10px;border-radius:6px;background:linear-gradient(90deg,#eef1f6 25%,#e2e8f0 50%,#eef1f6 75%);background-size:200% 100%;animation:tgSkelShine 1.3s linear infinite;}' +
+    '.tg-skel-line.short{width:55%;}' +
+    '@keyframes tgSkelShine{0%{background-position:200% 0;}100%{background-position:-200% 0;}}';
+  document.head.appendChild(css);
+
+  var loaded = false, graceTimer = null;
+
+  function hasProducts() { return !!document.querySelector(PRODUCT_SELECTOR); }
+
+  function markLoaded() {
+    if (loaded) return;
+    loaded = true;
+    document.body.classList.add('tg-loaded');
+    if (graceTimer) { clearTimeout(graceTimer); graceTimer = null; }
+  }
+
+  function startGrace() {
+    if (graceTimer) return;
+    graceTimer = setTimeout(markLoaded, GRACE_MS);
+  }
+
+  function injectSkeletons() {
+    var grids = document.querySelectorAll(GRID_SELECTOR);
+    for (var i = 0; i < grids.length; i++) {
+      var g = grids[i];
+      if (g.dataset.tgSkel || g.querySelector(PRODUCT_SELECTOR)) continue;
+      g.dataset.tgSkel = '1';
+      var count = window.innerWidth <= 480 ? 6 : 12;
+      for (var j = 0; j < count; j++) {
+        var s = document.createElement('div');
+        s.className = 'tg-skel';
+        s.innerHTML = '<div class="tg-skel-img"></div><div class="tg-skel-line"></div><div class="tg-skel-line short"></div>';
+        g.appendChild(s);
+      }
+    }
+  }
+  function removeSkeletons() {
+    var sk = document.querySelectorAll('.tg-skel');
+    for (var i = 0; i < sk.length; i++) sk[i].remove();
+    var marked = document.querySelectorAll('[data-tg-skel]');
+    for (var k = 0; k < marked.length; k++) delete marked[k].dataset.tgSkel;
+  }
+
+  var scheduled = false;
+  function handleMutations() {
+    if (hasProducts()) {
+      removeSkeletons();
+      markLoaded();
+    } else {
+      injectSkeletons();
+    }
+  }
+  var mo = new MutationObserver(function () {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () { scheduled = false; handleMutations(); });
+  });
+
+  function boot() {
+    injectSkeletons();
+    startGrace();
+    mo.observe(document.body, { childList: true, subtree: true });
+    if (hasProducts()) { removeSkeletons(); markLoaded(); }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
 </script>
 </body>
 </html>
