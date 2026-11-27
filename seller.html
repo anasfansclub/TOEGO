@@ -3043,12 +3043,12 @@ function updateProdStepUI() {
     openModal('tg-product-modal');
   };
 
-  window.tgAddSizeRow = function(size, stock, sku) {
+ window.tgAddSizeRow = function(size, stock, sku) {
   const wrap = document.getElementById('prod-size-rows');
   const row = document.createElement('div');
   row.className = 'tg-size-stock-row';
   row.innerHTML =
-    '<input type="text" placeholder="Size (S, M, L, 8, 9)" value="' + esc(size || '') + '" maxlength="20" class="tg-size-name">' +
+    '<input type="text" placeholder="Size (S, M, L)" value="' + esc(size || '') + '" maxlength="20" class="tg-size-name">' +
     '<input type="text" placeholder="SKU ID *" value="' + esc(sku || '') + '" maxlength="50" class="tg-size-sku">' +
     '<input type="number" placeholder="Stock qty" value="' + (stock !== undefined && stock !== null && stock !== '' ? stock : '') + '" min="0" class="tg-size-stock">' +
     '<button type="button" class="tg-size-stock-rm" onclick="this.parentElement.remove()" title="Remove">✕</button>';
@@ -3060,7 +3060,6 @@ function updateProdStepUI() {
     }, 50);
   }
 };
-
   window.tgRemoveProdImage = function(i) {
     _prodImages.splice(i, 1);
     renderProdImages();
@@ -3180,10 +3179,9 @@ function updateProdStepUI() {
     setText('set-net', inr(net));
   };
 
- window.tgSaveProduct = async function() {
+window.tgSaveProduct = async function() {
   if (!USER) { toast('Please log in', 'error'); return; }
 
-  // ⚡ FIX #1: Sahi button ID + instant visual feedback
   const btn = document.getElementById('tg-btn-submit') 
            || document.querySelector('#tg-product-modal .tg-step-btn.submit');
   const originalHTML = btn ? btn.innerHTML : 'Save Product ✓';
@@ -3202,7 +3200,6 @@ function updateProdStepUI() {
     }
   };
 
-  // ═══════════════ VALIDATION ═══════════════
   const name = (document.getElementById('prod-name').value || '').trim();
   const sku = (document.getElementById('prod-sku').value || '').trim();
   const brand = (document.getElementById('prod-brand').value || '').trim();
@@ -3218,50 +3215,57 @@ function updateProdStepUI() {
   if (_uploadingCount > 0) { toast('Wait for images to upload', 'error'); restoreBtn(); return; }
   if (_prodImages.length < 1) { toast('Add at least 1 image', 'error'); restoreBtn(); return; }
 
-  // ═══════════════ SIZE + STOCK + SKU (per size) ═══════════════
   const sizeRows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
   const sizeStock = {};
-  const skuMap = {};           // ⚡ NEW: per-size SKU map
+  const skuMap = {};
   let totalStockQty = 0;
   let hasSizes = false;
   const seenSkus = [];
+  let filledRowCount = 0;
 
   for (let i = 0; i < sizeRows.length; i++) {
     const row = sizeRows[i];
-    const szEl    = row.querySelector('.tg-size-name');
-    const stEl    = row.querySelector('.tg-size-stock');
-    const skuEl   = row.querySelector('.tg-size-sku');   // ⚡ NEW — agar field hai to
+    const szEl  = row.querySelector('.tg-size-name');
+    const skuEl = row.querySelector('.tg-size-sku');
+    const stEl  = row.querySelector('.tg-size-stock');
 
-    const sz = (szEl?.value || '').trim();
-    const st = Number(stEl?.value || 0);
+    const sz     = (szEl?.value  || '').trim();
     const skuVal = (skuEl?.value || '').trim();
+    const stRaw  = (stEl?.value  || '').trim();
+
+    if (!sz && !skuVal && !stRaw) continue;
+
+    filledRowCount++;
 
     if (!sz) {
-      toast('Size name khali hai (row #' + (i + 1) + ')', 'error');
+      toast('Size name khali hai (row #' + filledRowCount + ')', 'error');
       szEl?.focus();
       restoreBtn();
       return;
     }
-
-    // ⚡ FIX #2: Per-size SKU required
-    if (skuEl && !skuVal) {
+    if (!skuVal) {
       toast('"' + sz + '" ke liye SKU ID zaroori hai', 'error');
-      skuEl.focus();
+      skuEl?.focus();
+      restoreBtn();
+      return;
+    }
+    if (seenSkus.indexOf(skuVal.toLowerCase()) !== -1) {
+      toast('Duplicate SKU: "' + skuVal + '" — har size ka alag SKU daalo', 'error');
+      skuEl?.focus();
+      restoreBtn();
+      return;
+    }
+    seenSkus.push(skuVal.toLowerCase());
+    skuMap[sz] = skuVal;
+
+    if (stRaw === '' || isNaN(Number(stRaw))) {
+      toast('"' + sz + '" ka stock number daalo', 'error');
+      stEl?.focus();
       restoreBtn();
       return;
     }
 
-    if (skuVal) {
-      if (seenSkus.indexOf(skuVal.toLowerCase()) !== -1) {
-        toast('Duplicate SKU: "' + skuVal + '" — har size ka alag SKU daalo', 'error');
-        skuEl?.focus();
-        restoreBtn();
-        return;
-      }
-      seenSkus.push(skuVal.toLowerCase());
-      skuMap[sz] = skuVal;
-    }
-
+    const st = Number(stRaw);
     sizeStock[sz] = Math.max(0, st);
     totalStockQty += Math.max(0, st);
     hasSizes = true;
@@ -3270,13 +3274,8 @@ function updateProdStepUI() {
   if (!hasSizes) { toast('Add at least 1 size variant', 'error'); restoreBtn(); return; }
   if (totalStockQty <= 0) { toast('Total stock 0 se zyada hona chahiye', 'error'); restoreBtn(); return; }
 
-  // ═══════════════ PAYLOAD ═══════════════
   const payload = {
-    name: name,
-    sku: sku,
-    brand: brand,
-    category: category,
-    hsn: hsn,
+    name: name, sku: sku, brand: brand, category: category, hsn: hsn,
     description: (document.getElementById('prod-desc').value || '').trim(),
     price: price,
     compareAtPrice: Number(document.getElementById('prod-mrp').value || 0),
@@ -3286,7 +3285,7 @@ function updateProdStepUI() {
     colors: _selectedColors.slice(),
     sizeStock: sizeStock,
     sizes: Object.keys(sizeStock),
-    skuMap: skuMap,                    // ⚡ NEW
+    skuMap: skuMap,
     stock: totalStockQty,
     images: _prodImages.slice(),
     image: _prodImages[0] || '',
@@ -3305,7 +3304,6 @@ function updateProdStepUI() {
     updatedAt: FV.serverTimestamp()
   };
 
-  // ═══════════════ SAVE (fast single write) ═══════════════
   try {
     if (_editProdId) {
       const existing = PRODUCTS.find(x => x.id === _editProdId);
@@ -3327,13 +3325,10 @@ function updateProdStepUI() {
       toast('✅ Product saved successfully!', 'success');
       if (btn) btn.innerHTML = '✅ Saved!';
     }
-
-    // ⚡ Instant close + reset — turant band
     setTimeout(() => {
       try { tgCloseProductModal(); } catch(e) {}
       restoreBtn();
     }, 500);
-
   } catch (err) {
     console.error(err);
     toast('❌ Failed: ' + (err.message || 'Try again'), 'error');
