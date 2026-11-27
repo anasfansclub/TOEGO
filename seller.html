@@ -3482,123 +3482,121 @@ function updateProdStepUI() {
 </script>
 <script>
 /* ═══════════════════════════════════════════════════════════
-   TOEGO SELLER — 3 FIXES (SKU + HSN CLICK + FAST SAVE)
-   Ye block existing functions ko override karta hai,
-   tumhara original code untouched rehta hai.
+   TOEGO FINAL FIX — SKU + HSN Click + Fast Save
+   Bas ye ek script paste karo, sab kuch ho jayega.
    ═══════════════════════════════════════════════════════════ */
-
 (function(){
   'use strict';
 
-  /* ══════ FIX 1: Variant me SKU ID ══════ */
+  /* ─────── 1. tgAddSizeRow — SKU field ke saath ─────── */
   window.tgAddSizeRow = function(size, stock, sku){
     var wrap = document.getElementById('prod-size-rows');
     if(!wrap) return;
     var row = document.createElement('div');
     row.className = 'tg-size-stock-row';
     row.innerHTML = 
-      '<input type="text" placeholder="Size" value="' + (size||'') + '" class="tg-v-size">' +
-      '<input type="text" placeholder="SKU ID *" value="' + (sku||'') + '" class="tg-v-sku">' +
-      '<input type="number" placeholder="Stock" value="' + (stock!=='' && stock!==undefined ? stock : '') + '" min="0" class="tg-v-stock">' +
+      '<input type="text" placeholder="Size" value="' + (size||'') + '" class="tg-v-size tg-size-name">' +
+      '<input type="text" placeholder="SKU ID *" value="' + (sku||'') + '" class="tg-v-sku tg-size-sku">' +
+      '<input type="number" placeholder="Stock" min="0" value="' + (stock!=='' && stock!==undefined && stock!==null ? stock : '') + '" class="tg-v-stock tg-size-stock">' +
       '<button type="button" class="tg-size-stock-rm" onclick="this.parentElement.remove()">×</button>';
     wrap.appendChild(row);
   };
 
-  /* ══════ FIX 2: HSN click pe apply (custom dropdown) ══════ */
-  function initHsnDropdown(){
-    var hsnInput = document.getElementById('prod-hsn');
-    var datalist = document.getElementById('tg-hsn-list');
-    if(!hsnInput || !datalist || hsnInput._tgHsnPatched) return;
+  /* ─────── 2. HSN Custom Dropdown — click pe apply ─────── */
+  function setupHsn(){
+    var inp = document.getElementById('prod-hsn');
+    var dl  = document.getElementById('hsn-codes-list');
+    if(!inp || !dl || inp._tgHsnDone) return;
 
-    var opts = Array.prototype.slice.call(datalist.querySelectorAll('option')).map(function(o){
-      return { code: o.value, label: o.textContent };
+    var opts = [];
+    Array.prototype.forEach.call(dl.querySelectorAll('option'), function(o){
+      var label = (o.textContent || '').trim();
+      opts.push({ code: o.value, label: label });
     });
     if(!opts.length) return;
 
     var dd = document.createElement('div');
     dd.id = 'tg-hsn-dd';
     dd.style.cssText = 'display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;background:#fff;border:1.5px solid #e0e0e0;border-radius:10px;max-height:260px;overflow-y:auto;z-index:10000;box-shadow:0 8px 24px rgba(0,0,0,0.18);';
-    hsnInput.parentElement.appendChild(dd);
-    hsnInput.removeAttribute('list');
-    hsnInput._tgHsnPatched = true;
+    inp.parentElement.appendChild(dd);
+    inp.removeAttribute('list');
+    inp._tgHsnDone = true;
 
     function render(q){
-      var term = (q||'').toLowerCase().trim();
-      var matches = term
-        ? opts.filter(function(o){ return o.code.toLowerCase().indexOf(term)>=0 || o.label.toLowerCase().indexOf(term)>=0; })
-        : opts;
-      if(!matches.length){
+      var term = (q || '').toLowerCase().trim();
+      var list = term ? opts.filter(function(o){
+        return o.code.toLowerCase().indexOf(term) >= 0 || o.label.toLowerCase().indexOf(term) >= 0;
+      }) : opts;
+      if(!list.length){
         dd.innerHTML = '<div style="padding:14px;color:#888;font-size:12px;text-align:center;">No match — manually type kar do</div>';
       } else {
-        dd.innerHTML = matches.slice(0, 80).map(function(o){
-          var cleanLabel = o.label.replace(o.code + ' – ', '').replace(o.code + ' - ', '');
-          return '<div data-hsn="' + o.code + '" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid #f1f3f6;font-size:13px;"><b style="color:#2874f0;">' + o.code + '</b> — ' + cleanLabel + '</div>';
+        dd.innerHTML = list.slice(0, 80).map(function(o){
+          return '<div data-hsn="' + o.code + '" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid #f1f3f6;font-size:13px;"><b style="color:#2874f0;">' + o.code + '</b> — ' + o.label + '</div>';
         }).join('');
       }
       dd.style.display = 'block';
     }
 
-    hsnInput.addEventListener('focus', function(){ render(this.value); });
-    hsnInput.addEventListener('input', function(){ render(this.value); });
+    inp.addEventListener('focus', function(){ render(this.value); });
+    inp.addEventListener('input', function(){ render(this.value); });
 
-    // 🔥 Click pe apply — yahi main fix hai
+    // 🔥 Click pe code apply
     dd.addEventListener('mousedown', function(e){
       var el = e.target.closest('[data-hsn]');
       if(!el) return;
       e.preventDefault();
-      hsnInput.value = el.getAttribute('data-hsn');
+      inp.value = el.getAttribute('data-hsn');
       dd.style.display = 'none';
-      hsnInput.focus();
+      inp.focus();
     });
+    // 🔥 Touch pe bhi apply (mobile)
     dd.addEventListener('touchstart', function(e){
       var el = e.target.closest('[data-hsn]');
       if(!el) return;
       e.preventDefault();
-      hsnInput.value = el.getAttribute('data-hsn');
+      inp.value = el.getAttribute('data-hsn');
       dd.style.display = 'none';
-    }, {passive:false});
+    }, { passive: false });
 
     document.addEventListener('click', function(e){
-      if(e.target !== hsnInput && !dd.contains(e.target)) dd.style.display = 'none';
+      if(e.target !== inp && !dd.contains(e.target)) dd.style.display = 'none';
     });
   }
 
-  /* ══════ FIX 3: Save fast + "Please wait" ══════ */
+  /* ─────── 3. Fast Save — "Please wait" + SKU collect ─────── */
   function patchSave(){
-    if(typeof window.tgSaveProduct !== 'function' || window.tgSaveProduct._tgPatched) return;
-    var originalSave = window.tgSaveProduct;
-    window.tgSaveProduct = function(){
-      var btn = document.getElementById('tg-btn-submit');
-      if(!btn || btn.disabled) return;
-      btn.disabled = true;
-      btn.setAttribute('data-orig', btn.innerHTML);
-      btn.innerHTML = '⏳ Please wait...';
-      btn.style.opacity = '0.8';
+    if(typeof window.tgSaveProduct !== 'function' || window.tgSaveProduct._patched) return;
+    var orig = window.tgSaveProduct;
 
-      setTimeout(function(){
-        try {
-          originalSave.apply(this, arguments);
-          btn.innerHTML = '✓ Saved!';
-          btn.style.opacity = '1';
-          setTimeout(function(){
-            btn.disabled = false;
-            btn.innerHTML = btn.getAttribute('data-orig') || 'Save Product ✓';
-          }, 500);
-        } catch(err){
-          console.error('[tgSaveProduct]', err);
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          btn.innerHTML = btn.getAttribute('data-orig') || 'Save Product ✓';
-          if(typeof window.tgToast === 'function') window.tgToast('Error: ' + err.message, 'error');
-        }
-      }, 10);
+    window.tgSaveProduct = async function(){
+      var btn = document.getElementById('prod-save-btn')
+             || document.getElementById('tg-btn-submit');
+      if(!btn || btn.disabled) return;
+
+      var origText = btn.textContent || 'Save Product';
+      btn.disabled = true;
+      btn.textContent = '⏳ Please wait...';
+      btn.style.opacity = '0.85';
+
+      // UI update ke liye chhota delay
+      await new Promise(function(r){ setTimeout(r, 30); });
+
+      try {
+        await orig.apply(this, arguments);
+      } catch(err){
+        console.error('[tgSaveProduct]', err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origText;
+        btn.style.opacity = '1';
+      }
     };
-    window.tgSaveProduct._tgPatched = true;
+    window.tgSaveProduct._patched = true;
   }
 
-  /* ══════ Init on load ══════ */
+  /* ─────── Init ─────── */
   function boot(){
-    initHsnDropdown();
+    setupHsn();
     patchSave();
   }
   if(document.readyState === 'loading'){
@@ -3606,12 +3604,12 @@ function updateProdStepUI() {
   } else {
     setTimeout(boot, 0);
   }
-  // Safety net — modal khulte waqt bhi try karo
-  var origOpenProduct = window.tgOpenProductModal;
-  if(typeof origOpenProduct === 'function'){
+  // Product modal khulte waqt bhi retry
+  var _open = window.tgOpenProductModal;
+  if(typeof _open === 'function'){
     window.tgOpenProductModal = function(){
-      origOpenProduct.apply(this, arguments);
-      setTimeout(boot, 50);
+      _open.apply(this, arguments);
+      setTimeout(boot, 60);
     };
   }
 })();
