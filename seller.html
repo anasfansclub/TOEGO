@@ -322,7 +322,7 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
 .tg-prod-img-add:hover{border-color:#2874f0;background:#f0f5ff;color:#2874f0;}
 .tg-prod-img-add svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;}
 .tg-prod-img-hint{font-size:10.5px;color:#888;text-align:center;margin-top:8px;line-height:1.4;}
-.tg-size-stock-row{display:grid;grid-template-columns:1fr 1.1fr 0.8fr 40px;gap:6px;align-items:center;margin-bottom:8px;}
+.tg-size-stock-row{display:grid;grid-template-columns:1.2fr 1fr 40px;gap:8px;align-items:center;margin-bottom:8px;}
 .tg-size-stock-row input{padding:10px 12px;font-size:13px;border:1.5px solid #e0e0e0;border-radius:8px;outline:none;width:100%;box-sizing:border-box;background:#fff;font-weight:600;}
 .tg-size-stock-row input:focus{border-color:#2874f0;box-shadow:0 0 0 3px rgba(40,116,240,0.10);}
 .tg-size-stock-rm{width:38px;height:38px;border-radius:8px;background:#ffebee;color:#d32f2f;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;border:none;cursor:pointer;line-height:1;}
@@ -863,108 +863,137 @@ header#top,#top_menu,nav.o_main_navbar,footer#bottom,.o_footer,.o_breadcrumb,.br
          <!-- 🔥 NAYA BADA HSN CODE LIST (Manual Entry Supported) -->
         <div class="tg-field" style="margin-bottom:0;">
           <label>HSN Code * (Search from list or type manually)</label>
-          <input type="text" id="prod-hsn" maxlength="12" list="tg-hsn-list" placeholder="Type to search or enter manually..." autocomplete="off">
+          <input type="text" id="prod-hsn" maxlength="12" list="hsn-codes-list" placeholder="Type to search or enter manually..." autocomplete="off">
           
-          <datalist id="tg-hsn-list">
-    <option value="6109">6109 – T-shirts, Singlets (Cotton)</option>
-    <option value="61091000">61091000 – T-shirts of cotton</option>
-    <option value="6203">6203 – Men's suits, jackets, trousers</option>
-    <option value="6204">6204 – Women's suits, jackets, dresses</option>
-    <option value="6205">6205 – Men's shirts</option>
-    <option value="6206">6206 – Women's blouses, shirts</option>
-    <option value="6104">6104 – Women's suits, dresses (knitted)</option>
-    <option value="6110">6110 – Sweaters, pullovers, cardigans</option>
-    <option value="6209">6209 – Baby garments and clothing</option>
-    <option value="6211">6211 – Track suits, ski suits, swimwear</option>
-    <option value="6212">6212 – Brassieres, girdles, corsets</option>
-    <option value="6214">6214 – Shawls, scarves, mufflers, veils</option>
-    <option value="6215">6215 – Ties, bow ties and cravats</option>
-    <option value="6217">6217 – Other clothing accessories</option>
-    <option value="6302">6302 – Bed linen, table linen, toilet linen</option>
-    <option value="6304">6304 – Other furnishing articles</option>
-    <option value="6307">6307 – Other made up articles (dusters)</option>
+          <datalist id="hsn-codes-list">
+            <!-- 👕 CLOTHING & APPAREL -->
+            <optgroup label="Clothing & Apparel">
+              <option value="6109">T-shirts, Singlets (Cotton)</option>
+              <option value="61091000">T-shirts of cotton</option>
+              <option value="6203">Men's suits, jackets, trousers</option>
+              <option value="6204">Women's suits, jackets, dresses</option>
+              <option value="6205">Men's shirts</option>
+              <option value="6206">Women's blouses, shirts</option>
+              <option value="6104">Women's suits, dresses (knitted)</option>
+              <option value="6110">Sweaters, pullovers, cardigans</option>
+              <option value="6209">Baby garments and clothing</option>
+              <option value="6211">Track suits, ski suits, swimwear</option>
+              <option value="6212">Brassieres, girdles, corsets</option>
+              <option value="6214">Shawls, scarves, mufflers, veils</option>
+              <option value="6215">Ties, bow ties and cravats</option>
+              <option value="6217">Other made up clothing accessories</option>
+              <option value="6302">Bed linen, table linen, toilet linen</option>
+              <option value="6304">Other furnishing articles</option>
+              <option value="6307">Other made up articles (incl. dusters)</option>
+            </optgroup>
 
-    <option value="6401">6401 – Waterproof footwear (rubber/plastic)</option>
-    <option value="6402">6402 – Footwear with outer soles rubber/plastic</option>
-    <option value="6403">6403 – Footwear with leather uppers</option>
-    <option value="6404">6404 – Footwear with textile uppers (Sneakers)</option>
-    <option value="6405">6405 – Other footwear (Slippers, Sandals)</option>
-    <option value="64041100">64041100 – Sports footwear, tennis shoes</option>
-    <option value="64041900">64041900 – Other footwear with textile uppers</option>
-    <option value="64029900">64029900 – Slippers with rubber/plastic soles</option>
-    <option value="64039900">64039900 – Other leather footwear</option>
-    <option value="64069000">64069000 – Parts of footwear (soles, heels)</option>
+            <!-- 👟 FOOTWEAR -->
+            <optgroup label="Footwear">
+              <option value="6401">Waterproof footwear (rubber/plastic)</option>
+              <option value="6402">Footwear with outer soles rubber/plastic</option>
+              <option value="6403">Footwear with leather uppers</option>
+              <option value="6404">Footwear with textile uppers (Sneakers, Slippers)</option>
+              <option value="6405">Other footwear (Slippers, Sandals)</option>
+              <option value="64041100">Sports footwear, tennis shoes</option>
+              <option value="64041900">Other footwear with textile uppers</option>
+              <option value="64029900">Slippers with rubber/plastic soles</option>
+              <option value="64039900">Other leather footwear</option>
+              <option value="64069000">Parts of footwear (soles, heels)</option>
+            </optgroup>
 
-    <option value="8517">8517 – Telephones, Smartphones, Routers</option>
-    <option value="85171300">85171300 – Smartphones</option>
-    <option value="8471">8471 – Computers, Laptops, Printers</option>
-    <option value="84713010">84713010 – Personal computers (Laptops)</option>
-    <option value="8504">8504 – Electrical transformers, chargers</option>
-    <option value="85044000">85044000 – Static converters (Chargers/Adapters)</option>
-    <option value="8518">8518 – Microphones, Headphones, Speakers</option>
-    <option value="85183000">85183000 – Headphones and earphones</option>
-    <option value="85183020">85183020 – Earphones</option>
-    <option value="85176290">85176290 – Smartwatches</option>
-    <option value="8544">8544 – Insulated wires and cables</option>
-    <option value="8507">8507 – Electric accumulators (Power banks)</option>
-    <option value="85076000">85076000 – Lithium-ion batteries</option>
-    <option value="85081100">85081100 – Vacuum cleaners</option>
-    <option value="8516">8516 – Electric water heaters, hair dryers</option>
-    <option value="8528">8528 – Monitors and projectors</option>
-    <option value="9504">9504 – Video game consoles</option>
+            <!-- 📱 ELECTRONICS & MOBILES -->
+            <optgroup label="Electronics & Mobiles">
+              <option value="8517">Telephones, Smartphones, Routers</option>
+              <option value="85171300">Smartphones</option>
+              <option value="8471">Computers, Laptops, Printers</option>
+              <option value="84713010">Personal computers (Laptops)</option>
+              <option value="8504">Electrical transformers, chargers</option>
+              <option value="85044000">Static converters (Chargers/Adapters)</option>
+              <option value="8518">Microphones, Headphones, Speakers</option>
+              <option value="85183000">Headphones and earphones</option>
+              <option value="85183020">Earphones</option>
+              <option value="85176290">Smartwatches</option>
+              <option value="8544">Insulated wires and cables (Charging cables)</option>
+              <option value="8507">Electric accumulators (Power banks, Batteries)</option>
+              <option value="85076000">Lithium-ion batteries</option>
+              <option value="85081100">Vacuum cleaners</option>
+              <option value="8516">Electric water heaters, hair dryers</option>
+              <option value="8528">Monitors and projectors</option>
+              <option value="9504">Video game consoles</option>
+            </optgroup>
 
-    <option value="9101">9101 – Wrist-watches (Precious metal)</option>
-    <option value="9102">9102 – Wrist-watches (Other materials)</option>
-    <option value="9105">9105 – Other clocks</option>
-    <option value="4202">4202 – Trunks, suitcases, bags, wallets</option>
-    <option value="42022100">42022100 – Handbags with outer surface of leather</option>
-    <option value="42022200">42022200 – Handbags of plastic/textile</option>
-    <option value="42029200">42029200 – Bags with outer surface of plastics/textiles</option>
-    <option value="42023100">42023100 – Wallets and purses (Leather)</option>
-    <option value="9004">9004 – Spectacles, goggles, sunglasses</option>
-    <option value="90049000">90049000 – Sunglasses & goggles</option>
-    <option value="7117">7117 – Imitation jewellery</option>
-    <option value="71179000">71179000 – Imitation jewellery of base metal</option>
+            <!-- ⌚ WATCHES & BAGS -->
+            <optgroup label="Watches & Accessories">
+              <option value="9101">Wrist-watches (Precious metal)</option>
+              <option value="9102">Wrist-watches (Other materials)</option>
+              <option value="9105">Other clocks</option>
+              <option value="4202">Trunks, suitcases, bags, wallets</option>
+              <option value="42022100">Handbags with outer surface of leather</option>
+              <option value="42022200">Handbags of plastic/textile</option>
+              <option value="42029200">Bags with outer surface of plastics/textiles</option>
+              <option value="42023100">Wallets and purses (Leather)</option>
+              <option value="9004">Spectacles, goggles, sunglasses</option>
+              <option value="90049000">Sunglasses & goggles</option>
+              <option value="7117">Imitation jewellery</option>
+              <option value="71179000">Imitation jewellery of base metal</option>
+            </optgroup>
 
-    <option value="3303">3303 – Perfumes and toilet waters</option>
-    <option value="3304">3304 – Beauty/makeup preparations (Lipsticks)</option>
-    <option value="33049900">33049900 – Other beauty or make-up preparations</option>
-    <option value="3305">3305 – Preparations for use on hair (Shampoo, Oil)</option>
-    <option value="33051000">33051000 – Shampoos</option>
-    <option value="33059000">33059000 – Hair oils and conditioners</option>
-    <option value="3307">3307 – Shaving preparations, deodorants</option>
-    <option value="33072000">33072000 – Personal deodorants and antiperspirants</option>
-    <option value="3401">3401 – Soap, organic surface-active products</option>
-    <option value="9616">9616 – Scent sprays and similar toilet sprays</option>
+            <!-- 💄 BEAUTY & PERSONAL CARE -->
+            <optgroup label="Beauty & Personal Care">
+              <option value="3304">Beauty/makeup preparations (Lipsticks)</option>
+              <option value="33049900">Other beauty or make-up preparations</option>
+              <option value="3305">Preparations for use on hair (Shampoo, Oil)</option>
+              <option value="33051000">Shampoos</option>
+              <option value="33059000">Hair oils and conditioners</option>
+              <option value="3401">Soap, organic surface-active products</option>
+              <option value="3307">Shaving preparations, deodorants</option>
+              <option value="33072000">Personal deodorants and antiperspirants</option>
+              <option value="9616">Scent sprays and similar toilet sprays</option>
+              <option value="3303">Perfumes and toilet waters</option>
+            </optgroup>
 
-    <option value="7323">7323 – Table, kitchen or household articles (Iron)</option>
-    <option value="7615">7615 – Aluminium household articles</option>
-    <option value="3924">3924 – Plastic household articles (Tiffins, Bottles)</option>
-    <option value="6912">6912 – Ceramic tableware, kitchenware</option>
-    <option value="7013">7013 – Glassware (Glasses, jars)</option>
-    <option value="9403">9403 – Furniture and parts thereof</option>
-    <option value="9404">9404 – Mattresses, sleeping bags</option>
-    <option value="6303">6303 – Curtains, interior blinds</option>
-    <option value="4419">4419 – Wooden tableware and kitchenware</option>
+            <!-- 🏠 HOME & KITCHEN -->
+            <optgroup label="Home & Kitchen">
+              <option value="7323">Table, kitchen or other household articles (Iron)</option>
+              <option value="7615">Aluminium household articles</option>
+              <option value="3924">Plastic household articles (Tiffins, Bottles)</option>
+              <option value="6912">Ceramic tableware, kitchenware</option>
+              <option value="7013">Glassware (Glasses, jars)</option>
+              <option value="9403">Furniture and parts thereof</option>
+              <option value="9404">Mattresses, sleeping bags</option>
+              <option value="6303">Curtains, interior blinds</option>
+              <option value="6302">Bed sheets, pillow covers</option>
+              <option value="4419">Wooden tableware and kitchenware</option>
+            </optgroup>
 
-    <option value="9506">9506 – Gymnastics, athletics, yoga mats, dumbbells</option>
-    <option value="95066200">95066200 – Sports balls (Inflatable)</option>
-    <option value="95069100">95069100 – Gymnastics or athletics articles</option>
-    <option value="9507">9507 – Fishing rods and tackle</option>
-    <option value="9508">9508 – Fairground amusements</option>
+            <!-- 🏏 SPORTS & FITNESS -->
+            <optgroup label="Sports & Fitness">
+              <option value="9506">Articles for gymnastics, athletics, sports</option>
+              <option value="95066200">Sports balls (Inflatable)</option>
+              <option value="95069100">Gymnastics or athletics articles</option>
+              <option value="9506">Yoga mats, dumbbells, fitness equipment</option>
+              <option value="9507">Fishing rods and tackle</option>
+              <option value="9508">Fairground amusements</option>
+            </optgroup>
 
-    <option value="9503">9503 – Toys, tricycles, scooters, dolls</option>
-    <option value="95030010">95030010 – Toys (Electric)</option>
-    <option value="95030090">95030090 – Toys (Other)</option>
-    <option value="9619">9619 – Sanitary towels, napkins, diapers</option>
-    <option value="4014">4014 – Hygienic or pharmaceutical rubber articles</option>
+            <!-- 🧸 TOYS & BABY -->
+            <optgroup label="Toys & Baby Care">
+              <option value="9503">Toys, tricycles, scooters, dolls</option>
+              <option value="95030010">Toys (Electric)</option>
+              <option value="95030090">Toys (Other)</option>
+              <option value="9619">Sanitary towels, napkins, diapers</option>
+              <option value="4014">Hygienic or pharmaceutical rubber articles</option>
+            </optgroup>
 
-    <option value="4820">4820 – Registers, account books, notebooks</option>
-    <option value="4821">4821 – Paper or paperboard labels</option>
-    <option value="9608">9608 – Pens, ballpoint pens, markers</option>
-    <option value="9609">9609 – Pencils, crayons, chalks</option>
-    <option value="8472">8472 – Other office machines (staplers)</option>
-  </datalist>
+            <!-- 📚 STATIONERY & OFFICE -->
+            <optgroup label="Stationery & Office">
+              <option value="4820">Registers, account books, notebooks</option>
+              <option value="4821">Paper or paperboard labels</option>
+              <option value="9608">Pens, ballpoint pens, markers</option>
+              <option value="9609">Pencils, crayons, chalks</option>
+              <option value="8472">Other office machines (staplers)</option>
+            </optgroup>
+          </datalist>
           <div class="tg-prod-img-hint" style="margin-top:6px;">List me se select karo, ya agar code nahi mil raha toh manually type kar do.</div>
         </div>
       </div>
@@ -3043,23 +3072,17 @@ function updateProdStepUI() {
     openModal('tg-product-modal');
   };
 
- window.tgAddSizeRow = function(size, stock, sku) {
-  const wrap = document.getElementById('prod-size-rows');
-  const row = document.createElement('div');
-  row.className = 'tg-size-stock-row';
-  row.innerHTML =
-    '<input type="text" placeholder="Size (S, M, L)" value="' + esc(size || '') + '" maxlength="20" class="tg-size-name">' +
-    '<input type="text" placeholder="SKU ID *" value="' + esc(sku || '') + '" maxlength="50" class="tg-size-sku">' +
-    '<input type="number" placeholder="Stock qty" value="' + (stock !== undefined && stock !== null && stock !== '' ? stock : '') + '" min="0" class="tg-size-stock">' +
-    '<button type="button" class="tg-size-stock-rm" onclick="this.parentElement.remove()" title="Remove">✕</button>';
-  wrap.appendChild(row);
-  if (!size) {
-    setTimeout(function() {
-      const firstInput = row.querySelector('.tg-size-name');
-      if (firstInput) firstInput.focus();
-    }, 50);
-  }
-};
+  window.tgAddSizeRow = function(size, stock) {
+    const wrap = document.getElementById('prod-size-rows');
+    const row = document.createElement('div');
+    row.className = 'tg-size-stock-row';
+    row.innerHTML =
+      '<input type="text" placeholder="Size (S, M, L, 8, 9)" value="' + esc(size || '') + '" maxlength="20" class="tg-size-name">' +
+      '<input type="number" placeholder="Stock qty" value="' + (stock !== undefined && stock !== null && stock !== '' ? stock : '') + '" min="0" class="tg-size-stock">' +
+      '<button type="button" class="tg-size-stock-rm" onclick="this.parentElement.remove()" title="Remove">✕</button>';
+    wrap.appendChild(row);
+  };
+
   window.tgRemoveProdImage = function(i) {
     _prodImages.splice(i, 1);
     renderProdImages();
@@ -3179,162 +3202,97 @@ function updateProdStepUI() {
     setText('set-net', inr(net));
   };
 
-window.tgSaveProduct = async function() {
-  if (!USER) { toast('Please log in', 'error'); return; }
-
-  const btn = document.getElementById('tg-btn-submit') 
-           || document.querySelector('#tg-product-modal .tg-step-btn.submit');
-  const originalHTML = btn ? btn.innerHTML : 'Save Product ✓';
-  if (btn) {
-    btn.disabled = true;
-    btn.innerHTML = '⏳ Saving...';
-    btn.style.opacity = '0.75';
-    btn.style.cursor = 'wait';
-  }
-  const restoreBtn = () => {
-    if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = originalHTML;
-      btn.style.opacity = '';
-      btn.style.cursor = '';
-    }
-  };
-
-  const name = (document.getElementById('prod-name').value || '').trim();
-  const sku = (document.getElementById('prod-sku').value || '').trim();
-  const brand = (document.getElementById('prod-brand').value || '').trim();
-  const category = (document.getElementById('prod-category').value || '').trim();
-  const price = Number(document.getElementById('prod-price').value || 0);
-  const hsn = (document.getElementById('prod-hsn').value || '').trim();
-
-  if (!name) { toast('Enter product name', 'error'); restoreBtn(); return; }
-  if (!brand) { toast('Select brand', 'error'); restoreBtn(); return; }
-  if (!category) { toast('Select category', 'error'); restoreBtn(); return; }
-  if (price <= 0) { toast('Enter valid price', 'error'); restoreBtn(); return; }
-  if (!hsn) { toast('Enter HSN Code', 'error'); restoreBtn(); return; }
-  if (_uploadingCount > 0) { toast('Wait for images to upload', 'error'); restoreBtn(); return; }
-  if (_prodImages.length < 1) { toast('Add at least 1 image', 'error'); restoreBtn(); return; }
-
-  const sizeRows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
-  const sizeStock = {};
-  const skuMap = {};
-  let totalStockQty = 0;
-  let hasSizes = false;
-  const seenSkus = [];
-  let filledRowCount = 0;
-
-  for (let i = 0; i < sizeRows.length; i++) {
-    const row = sizeRows[i];
-    const szEl  = row.querySelector('.tg-size-name');
-    const skuEl = row.querySelector('.tg-size-sku');
-    const stEl  = row.querySelector('.tg-size-stock');
-
-    const sz     = (szEl?.value  || '').trim();
-    const skuVal = (skuEl?.value || '').trim();
-    const stRaw  = (stEl?.value  || '').trim();
-
-    if (!sz && !skuVal && !stRaw) continue;
-
-    filledRowCount++;
-
-    if (!sz) {
-      toast('Size name khali hai (row #' + filledRowCount + ')', 'error');
-      szEl?.focus();
-      restoreBtn();
-      return;
-    }
-    if (!skuVal) {
-      toast('"' + sz + '" ke liye SKU ID zaroori hai', 'error');
-      skuEl?.focus();
-      restoreBtn();
-      return;
-    }
-    if (seenSkus.indexOf(skuVal.toLowerCase()) !== -1) {
-      toast('Duplicate SKU: "' + skuVal + '" — har size ka alag SKU daalo', 'error');
-      skuEl?.focus();
-      restoreBtn();
-      return;
-    }
-    seenSkus.push(skuVal.toLowerCase());
-    skuMap[sz] = skuVal;
-
-    if (stRaw === '' || isNaN(Number(stRaw))) {
-      toast('"' + sz + '" ka stock number daalo', 'error');
-      stEl?.focus();
-      restoreBtn();
-      return;
-    }
-
-    const st = Number(stRaw);
-    sizeStock[sz] = Math.max(0, st);
-    totalStockQty += Math.max(0, st);
-    hasSizes = true;
-  }
-
-  if (!hasSizes) { toast('Add at least 1 size variant', 'error'); restoreBtn(); return; }
-  if (totalStockQty <= 0) { toast('Total stock 0 se zyada hona chahiye', 'error'); restoreBtn(); return; }
-
-  const payload = {
-    name: name, sku: sku, brand: brand, category: category, hsn: hsn,
-    description: (document.getElementById('prod-desc').value || '').trim(),
-    price: price,
-    compareAtPrice: Number(document.getElementById('prod-mrp').value || 0),
-    mrp: Number(document.getElementById('prod-mrp').value || 0),
-    weight: Number(document.getElementById('prod-weight').value || 0),
-    gst: Number(document.getElementById('prod-gst').value || 18),
-    colors: _selectedColors.slice(),
-    sizeStock: sizeStock,
-    sizes: Object.keys(sizeStock),
-    skuMap: skuMap,
-    stock: totalStockQty,
-    images: _prodImages.slice(),
-    image: _prodImages[0] || '',
-    sellerId: USER.uid,
-    sellerName: (SELLER && SELLER.shopName) || 'Seller',
-    shopName: (SELLER && SELLER.shopName) || '',
-    pickupAddress: {
-      name: (SELLER && SELLER.shopName) || '',
-      line1: (SELLER && SELLER.address) || '',
-      city: (SELLER && SELLER.city) || '',
-      state: (SELLER && SELLER.state) || '',
-      pincode: (SELLER && SELLER.pincode) || '',
-      phone: (SELLER && SELLER.phone) || ''
-    },
-    active: true,
-    updatedAt: FV.serverTimestamp()
-  };
-
-  try {
-    if (_editProdId) {
-      const existing = PRODUCTS.find(x => x.id === _editProdId);
-      if (existing && existing.rejectionStatus === 'rejected') {
-        payload.approved = false;
-        payload.rejectionStatus = null;
-        payload.approvalStatus = 'pending';
+  window.tgSaveProduct = async function() {
+    if (!USER) { toast('Please log in', 'error'); return; }
+    const name = (document.getElementById('prod-name').value || '').trim();
+    const sku = (document.getElementById('prod-sku').value || '').trim();
+    const brand = (document.getElementById('prod-brand').value || '').trim();
+    const category = (document.getElementById('prod-category').value || '').trim();
+    const price = Number(document.getElementById('prod-price').value || 0);
+    const hsn = (document.getElementById('prod-hsn').value || '').trim(); 
+    if (!name) { toast('Enter product name', 'error'); return; }
+    if (!brand) { toast('Select brand', 'error'); return; }
+    if (!category) { toast('Select category', 'error'); return; }
+    if (price <= 0) { toast('Enter valid price', 'error'); return; }
+     if (!hsn) { toast('Enter HSN Code', 'error'); return; } 
+    if (_uploadingCount > 0) { toast('Wait for images to upload', 'error'); return; }
+    if (_prodImages.length < 1) { toast('Add at least 1 image', 'error'); return; }
+    const sizeRows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
+    const sizeStock = {};
+    let totalStockQty = 0;
+    let hasSizes = false;
+    sizeRows.forEach(row => {
+      const sz = (row.querySelector('.tg-size-name').value || '').trim();
+      const st = Number(row.querySelector('.tg-size-stock').value || 0);
+      if (sz) {
+        sizeStock[sz] = Math.max(0, st);
+        totalStockQty += Math.max(0, st);
+        hasSizes = true;
       }
-      await db.collection('products').doc(_editProdId).update(payload);
-      toast('✓ Product updated!', 'success');
-      if (btn) btn.innerHTML = '✅ Updated!';
-    } else {
-      payload.approved = false;
-      payload.approvalStatus = 'pending';
-      payload.views = 0;
-      payload.sales = 0;
-      payload.createdAt = FV.serverTimestamp();
-      await db.collection('products').add(payload);
-      toast('✅ Product saved successfully!', 'success');
-      if (btn) btn.innerHTML = '✅ Saved!';
+    });
+    if (!hasSizes) { toast('Add at least 1 size variant', 'error'); return; }
+
+    const payload = {
+      name: name, sku: sku, brand: brand, category: category,
+        hsn: hsn,
+      description: (document.getElementById('prod-desc').value || '').trim(),
+      price: price,
+      compareAtPrice: Number(document.getElementById('prod-mrp').value || 0),
+      mrp: Number(document.getElementById('prod-mrp').value || 0),
+      weight: Number(document.getElementById('prod-weight').value || 0),
+      gst: Number(document.getElementById('prod-gst').value || 18),
+      colors: _selectedColors.slice(),
+      sizeStock: sizeStock,
+      sizes: Object.keys(sizeStock),
+      stock: totalStockQty,
+      images: _prodImages.slice(),
+      image: _prodImages[0] || '',
+      sellerId: USER.uid,
+      sellerName: (SELLER && SELLER.shopName) || 'Seller',
+      shopName: (SELLER && SELLER.shopName) || '',
+      pickupAddress: {
+        name: (SELLER && SELLER.shopName) || '',
+        line1: (SELLER && SELLER.address) || '',
+        city: (SELLER && SELLER.city) || '',
+        state: (SELLER && SELLER.state) || '',
+        pincode: (SELLER && SELLER.pincode) || '',
+        phone: (SELLER && SELLER.phone) || ''
+      },
+      active: true,
+      updatedAt: FV.serverTimestamp()
+    };
+
+    const btn = document.getElementById('prod-save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      if (_editProdId) {
+        const existing = PRODUCTS.find(x => x.id === _editProdId);
+        if (existing && existing.rejectionStatus === 'rejected') {
+          payload.approved = false;
+          payload.rejectionStatus = null;
+          payload.approvalStatus = 'pending';
+        }
+        await db.collection('products').doc(_editProdId).update(payload);
+        toast('✓ Product updated', 'success');
+      } else {
+        payload.approved = false;
+        payload.approvalStatus = 'pending';
+        payload.views = 0;
+        payload.sales = 0;
+        payload.createdAt = FV.serverTimestamp();
+        await db.collection('products').add(payload);
+        toast('✓ Product submitted for approval', 'success');
+      }
+      tgCloseProductModal();
+    } catch(err) {
+      console.error(err);
+      toast('Failed: ' + (err.message || 'Try again'), 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Product';
     }
-    setTimeout(() => {
-      try { tgCloseProductModal(); } catch(e) {}
-      restoreBtn();
-    }, 500);
-  } catch (err) {
-    console.error(err);
-    toast('❌ Failed: ' + (err.message || 'Try again'), 'error');
-    restoreBtn();
-  }
-};
+  };
 
   window.tgDeleteProductFromModal = function() {
     if (!_editProdId) return;
@@ -3473,193 +3431,6 @@ window.tgSaveProduct = async function() {
     m.addEventListener('click', e => { if (e.target === m) { m.classList.remove('show'); if (!document.querySelector('.tg-modal.show')) document.body.style.overflow = ''; } });
   });
 
-})();
-</script>
-<!-- 🩹 TOEGO QUICK FIX PATCH -->
-<script>
-(function () {
-  'use strict';
-  
-  // ═══════════════════════════════════════════════════
-  // FIX 1: SKU field add karo har size row mein + CSS badlo
-  // ═══════════════════════════════════════════════════
-  
-  // Size row ka grid 3 column se 4 column karo (Size | SKU | Stock | ✕)
-  const patchStyle = document.createElement('style');
-  patchStyle.textContent = `
-    .tg-size-stock-row {
-      grid-template-columns: 1fr 1fr 1fr 40px !important;
-    }
-    .tg-size-stock-row input.sku-input {
-      font-family: monospace;
-      text-transform: uppercase;
-    }
-  `;
-  document.head.appendChild(patchStyle);
-  
-  // Row mein SKU input inject karo (agar nahi hai to)
-  function ensureSkuField(row) {
-    if (!row || row.querySelector('.sku-input')) return;
-    const firstInput = row.querySelector('input');
-    if (!firstInput) return;
-    
-    const skuInput = document.createElement('input');
-    skuInput.type = 'text';
-    skuInput.className = 'sku-input';
-    skuInput.placeholder = 'SKU ID *';
-    skuInput.maxLength = 50;
-    skuInput.required = true;
-    
-    firstInput.insertAdjacentElement('afterend', skuInput);
-  }
-  
-  // Har existing row ko check karo + naye rows ko watch karo
-  function scanRows() {
-    document.querySelectorAll('.tg-size-stock-row').forEach(ensureSkuField);
-  }
-  
-  // MutationObserver — jab bhi naya size row add ho, SKU daal do
-  const sizeContainer = document.getElementById('prod-size-rows');
-  if (sizeContainer) {
-    const obs = new MutationObserver(function (mutations) {
-      mutations.forEach(function (m) {
-        m.addedNodes.forEach(function (node) {
-          if (node.nodeType === 1 && node.classList && node.classList.contains('tg-size-stock-row')) {
-            ensureSkuField(node);
-          }
-        });
-      });
-    });
-    obs.observe(sizeContainer, { childList: true, subtree: true });
-  }
-  
-  // ═══════════════════════════════════════════════════
-  // FIX 2: Free Size pre-selected hatana
-  // ═══════════════════════════════════════════════════
-  
-  function removeFreeSizeDefault() {
-    document.querySelectorAll('.tg-size-stock-row').forEach(function (row) {
-      const sizeInput = row.querySelector('input:nth-child(1)');
-      const skuInput = row.querySelector('.sku-input');
-      const stockInput = row.querySelector('input:nth-child(3)');
-      
-      // Agar "Free Size" default hai AUR stock/SKU khali hai → iska matlab auto-added hai
-      if (sizeInput && sizeInput.value && 
-          (sizeInput.value.trim() === 'Free Size' || sizeInput.value.trim().toUpperCase() === 'FREE') &&
-          (!stockInput || !stockInput.value) && (!skuInput || !skuInput.value)) {
-        sizeInput.value = '';
-      }
-    });
-  }
-  
-  // Modal khulte hi check karo
-  const modalObserver = new MutationObserver(function (mutations) {
-    mutations.forEach(function (m) {
-      if (m.type === 'attributes' && m.attributeName === 'class') {
-        const modal = m.target;
-        if (modal.id === 'tg-product-modal' && modal.classList.contains('show')) {
-          setTimeout(function () {
-            removeFreeSizeDefault();
-            scanRows();
-          }, 150);
-        }
-      }
-    });
-  });
-  
-  const prodModal = document.getElementById('tg-product-modal');
-  if (prodModal) {
-    modalObserver.observe(prodModal, { attributes: true });
-  }
-  
-  // ═══════════════════════════════════════════════════
-  // FIX 3: Save button pe SKU validation wrap karo
-  // ═══════════════════════════════════════════════════
-  
-  function wrapSaveProduct() {
-    if (typeof window.tgSaveProduct !== 'function') {
-      // Function abhi define nahi hua (script load ho rahi hai) — 1 sec baad retry
-      setTimeout(wrapSaveProduct, 500);
-      return;
-    }
-    if (window.__tgSaveWrapped) return;
-    window.__tgSaveWrapped = true;
-    
-    const originalSave = window.tgSaveProduct;
-    
-    window.tgSaveProduct = function () {
-      // 1. HSN check
-      const hsn = document.getElementById('prod-hsn');
-      if (hsn && !hsn.value.trim()) {
-        alert('❌ HSN Code select karo ya type karo');
-        hsn.focus();
-        return;
-      }
-      
-      // 2. Size + SKU + Stock check
-      const rows = document.querySelectorAll('#prod-size-rows .tg-size-stock-row');
-      if (!rows.length) {
-        alert('❌ Kam se kam ek size add karo');
-        return;
-      }
-      
-      const seen = [];
-      for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const sizeInput = row.querySelector('input:nth-child(1)');
-        const skuInput = row.querySelector('.sku-input');
-        const stockInput = row.querySelector('input:nth-child(3)');
-        
-        const size = (sizeInput?.value || '').trim();
-        const sku = (skuInput?.value || '').trim();
-        const stock = (stockInput?.value || '').trim();
-        
-        if (!size) {
-          alert('❌ Size name khali hai (row #' + (i + 1) + ')');
-          sizeInput?.focus();
-          return;
-        }
-        if (!sku) {
-          alert('❌ "' + size + '" ke liye SKU ID zaroori hai');
-          skuInput?.focus();
-          return;
-        }
-        if (seen.indexOf(sku.toLowerCase()) !== -1) {
-          alert('❌ Duplicate SKU: "' + sku + '" — har size ka alag SKU daalo');
-          skuInput?.focus();
-          return;
-        }
-        seen.push(sku.toLowerCase());
-        
-        if (stock === '' || isNaN(Number(stock))) {
-          alert('❌ "' + size + '" ka stock number daalo');
-          stockInput?.focus();
-          return;
-        }
-      }
-      
-      // Sab sahi — original save chalao
-      return originalSave.apply(this, arguments);
-    };
-    
-    console.log('✅ TOEGO: Save wrapper active');
-  }
-  
-  // Page load hone ke baad apply karo
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      setTimeout(function () {
-        scanRows();
-        wrapSaveProduct();
-      }, 800);
-    });
-  } else {
-    setTimeout(function () {
-      scanRows();
-      wrapSaveProduct();
-    }, 800);
-  }
-  
 })();
 </script>
 </body>
